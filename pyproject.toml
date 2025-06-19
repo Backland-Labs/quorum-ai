@@ -1,10 +1,42 @@
 #https://docs.astral.sh/uv/getting-started/
 [project]
-name = "projectName"
+name = "quorum-ai"
 version = "0.1.0"
-description = "project description"
+description = "Backend for sorting and summarizing DAO proposals using Pydantic AI"
 readme = "README.md"
 requires-python = ">= 3.12"
 dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.10.0",
+    "pydantic-ai>=0.0.14",
+    "logfire>=2.4.0",
+    "httpx>=0.28.0",
+    "python-multipart>=0.0.12",
+    "python-dotenv>=1.0.0",
     "pre-commit>=4.1.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "black>=24.0.0",
+    "ruff>=0.8.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "ARG", "SIM"]
+ignore = ["E501", "W503", "E203"]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
