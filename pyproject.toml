@@ -1,10 +1,88 @@
 #https://docs.astral.sh/uv/getting-started/
 [project]
-name = "projectName"
+name = "quorum-ai"
 version = "0.1.0"
-description = "project description"
+description = "Backend for sorting and summarizing DAO proposals using Pydantic AI"
 readme = "README.md"
 requires-python = ">= 3.12"
 dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+    "pydantic-ai>=0.0.14",
+    "logfire>=2.4.0",
+    "httpx>=0.28.0",
+    "python-multipart>=0.0.12",
+    "python-dotenv>=1.0.0",
     "pre-commit>=4.1.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-mock>=3.14.0",
+    "pytest-httpx>=0.30.0",
+    "pytest-cov>=6.0.0",
+    "httpx>=0.28.0",
+    "black>=24.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.8.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+exclude = [
+    "tests/",
+    ".env*",
+    "*.md",
+    "Dockerfile",
+    ".git*",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-v --tb=short --strict-markers --disable-warnings"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["."]
+omit = ["tests/*", "venv/*", ".venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "ARG", "SIM"]
+ignore = ["E501", "W503", "E203"]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
