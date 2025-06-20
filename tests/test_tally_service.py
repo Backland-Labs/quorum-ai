@@ -5,6 +5,7 @@ from datetime import datetime
 from unittest.mock import Mock, patch
 import httpx
 from pytest_httpx import HTTPXMock
+import json
 
 from services.tally_service import TallyService
 from models import DAO, Proposal, ProposalFilters, ProposalState, SortCriteria, SortOrder
@@ -24,25 +25,23 @@ class TestTallyService:
         """Create mock DAO response data."""
         return {
             "data": {
-                "daos": {
+                "governors": {
                     "nodes": [
                         {
                             "id": "dao-1",
                             "name": "Test DAO 1",
                             "slug": "test-dao-1",
-                            "description": "A test DAO",
-                            "organizationId": "org-1",
-                            "proposalsCount": 10,
-                            "activeProposalsCount": 3
+                            "organization": {"id": "org-1"},
+                            "metadata": {"description": "A test DAO"},
+                            "proposalStats": {"total": 10, "active": 3}
                         },
                         {
                             "id": "dao-2",
                             "name": "Test DAO 2",
                             "slug": "test-dao-2",
-                            "description": None,
-                            "organizationId": "org-2",
-                            "proposalsCount": 5,
-                            "activeProposalsCount": 1
+                            "organization": {"id": "org-2"},
+                            "metadata": {"description": None},
+                            "proposalStats": {"total": 5, "active": 1}
                         }
                     ]
                 }
@@ -54,14 +53,13 @@ class TestTallyService:
         """Create mock single DAO response data."""
         return {
             "data": {
-                "dao": {
+                "governor": {
                     "id": "dao-1",
                     "name": "Test DAO",
                     "slug": "test-dao",
-                    "description": "A test DAO",
-                    "organizationId": "org-1",
-                    "proposalsCount": 10,
-                    "activeProposalsCount": 3
+                    "organization": {"id": "org-1"},
+                    "metadata": {"description": "A test DAO"},
+                    "proposalStats": {"total": 10, "active": 3}
                 }
             }
         }
@@ -72,39 +70,35 @@ class TestTallyService:
         return {
             "data": {
                 "proposals": {
-                    "totalCount": 2,
+                    "pageInfo": {"count": 2},
                     "nodes": [
                         {
                             "id": "prop-1",
-                            "title": "Test Proposal 1",
-                            "description": "Description 1",
-                            "state": "ACTIVE",
-                            "createdAt": "2024-01-01T00:00:00Z",
-                            "startBlock": 1000,
-                            "endBlock": 2000,
-                            "votesFor": "100",
-                            "votesAgainst": "50",
-                            "votesAbstain": "10",
-                            "dao": {
-                                "id": "dao-1",
-                                "name": "Test DAO"
-                            }
+                            "metadata": {"title": "Test Proposal 1", "description": "Description 1"},
+                            "status": "active",
+                            "start": {"timestamp": 1704067200},
+                            "end": {"timestamp": 1704070800},
+                            "voteStats": [
+                                {"type": "for", "votesCount": "100"},
+                                {"type": "against", "votesCount": "50"},
+                                {"type": "abstain", "votesCount": "10"}
+                            ],
+                            "governor": {"id": "dao-1", "name": "Test DAO"},
+                            "organization": {"id": "org-1", "name": "Test Org"}
                         },
                         {
                             "id": "prop-2",
-                            "title": "Test Proposal 2",
-                            "description": "Description 2",
-                            "state": "SUCCEEDED",
-                            "createdAt": "2024-01-02T00:00:00Z",
-                            "startBlock": 2000,
-                            "endBlock": 3000,
-                            "votesFor": "200",
-                            "votesAgainst": "25",
-                            "votesAbstain": "5",
-                            "dao": {
-                                "id": "dao-1",
-                                "name": "Test DAO"
-                            }
+                            "metadata": {"title": "Test Proposal 2", "description": "Description 2"},
+                            "status": "succeeded",
+                            "start": {"timestamp": 1704153600},
+                            "end": {"timestamp": 1704157200},
+                            "voteStats": [
+                                {"type": "for", "votesCount": "200"},
+                                {"type": "against", "votesCount": "25"},
+                                {"type": "abstain", "votesCount": "5"}
+                            ],
+                            "governor": {"id": "dao-1", "name": "Test DAO"},
+                            "organization": {"id": "org-1", "name": "Test Org"}
                         }
                     ]
                 }
@@ -118,19 +112,16 @@ class TestTallyService:
             "data": {
                 "proposal": {
                     "id": "prop-1",
-                    "title": "Test Proposal",
-                    "description": "Test description",
-                    "state": "ACTIVE",
-                    "createdAt": "2024-01-01T00:00:00Z",
-                    "startBlock": 1000,
-                    "endBlock": 2000,
-                    "votesFor": "100",
-                    "votesAgainst": "50",
-                    "votesAbstain": "10",
-                    "dao": {
-                        "id": "dao-1",
-                        "name": "Test DAO"
-                    }
+                    "metadata": {"title": "Test Proposal", "description": "Test description"},
+                    "status": "active",
+                    "start": {"timestamp": 1704067200},
+                    "end": {"timestamp": 1704070800},
+                    "voteStats": [
+                        {"type": "for", "votesCount": "100"},
+                        {"type": "against", "votesCount": "50"},
+                        {"type": "abstain", "votesCount": "10"}
+                    ],
+                    "governor": {"id": "dao-1", "name": "Test DAO"}
                 }
             }
         }
@@ -248,7 +239,7 @@ class TestTallyServiceGetDAOById:
         httpx_mock: HTTPXMock
     ) -> None:
         """Test DAO fetching when DAO not found."""
-        response_data = {"data": {"dao": None}}
+        response_data = {"data": {"governor": None}}
         httpx_mock.add_response(
             method="POST",
             url=settings.tally_api_base_url,
@@ -298,10 +289,14 @@ class TestTallyServiceGetProposals:
         """Test proposals fetching with filters."""
         def check_query(request):
             body = request.content.decode()
-            # Should contain the DAO filter
-            assert 'daoIds: ["dao-1"]' in body
-            # Should contain the state filter
-            assert 'states: [ACTIVE]' in body
+            data = json.loads(body)
+            variables = data.get("variables", {})
+            input_obj = variables.get("input", {})
+            filters = input_obj.get("filters", {})
+            # Should contain the governorId filter
+            assert filters.get("governorId") == "dao-1"
+            # Should contain the status filter
+            assert filters.get("status") == "active"
             return httpx.Response(200, json=mock_proposals_response)
         
         httpx_mock.add_callback(check_query)
@@ -400,19 +395,16 @@ class TestTallyServiceGetMultipleProposals:
                 "data": {
                     "proposal": {
                         "id": "prop-2",
-                        "title": "Test Proposal 2",
-                        "description": "Test description 2",
-                        "state": "SUCCEEDED",
-                        "createdAt": "2024-01-02T00:00:00Z",
-                        "startBlock": 2000,
-                        "endBlock": 3000,
-                        "votesFor": "200",
-                        "votesAgainst": "25",
-                        "votesAbstain": "5",
-                        "dao": {
-                            "id": "dao-1",
-                            "name": "Test DAO"
-                        }
+                        "metadata": {"title": "Test Proposal 2", "description": "Test description 2"},
+                        "status": "succeeded",
+                        "start": {"timestamp": 1704153600},
+                        "end": {"timestamp": 1704157200},
+                        "voteStats": [
+                            {"type": "for", "votesCount": "200"},
+                            {"type": "against", "votesCount": "25"},
+                            {"type": "abstain", "votesCount": "5"}
+                        ],
+                        "governor": {"id": "dao-1", "name": "Test DAO"}
                     }
                 }
             }
