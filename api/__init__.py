@@ -1,4 +1,5 @@
 from importlib import import_module as _imp
+import sys
 
 # Re-export commonly patched services for test suite compatibility
 
@@ -9,5 +10,8 @@ _ai = _imp('services.ai_service')
 
 globals()['tally_service'] = _tally
 globals()['ai_service'] = _ai
+
+sys.modules['api.tally_service'] = _tally
+sys.modules['api.ai_service'] = _ai
 
 __all__ = ['tally_service', 'ai_service']
