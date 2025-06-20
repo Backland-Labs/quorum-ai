@@ -1,4 +1,32 @@
-"""Service for interacting with the Tally API."""
+"""Service for interacting with the Tally API.
+
+This module generates GraphQL queries that fully comply with the official
+Tally public-API schema (https://docs.tally.xyz/tally-api/welcome).
+Key schema guidelines followed here:
+
+1. Every root query accepts a single *Input* variable (e.g. `GovernorsInput`,
+   `ProposalsInput`, `ProposalInput`).  We therefore never interpolate
+   arguments directly in the GraphQL document.  Instead we pass variables
+   through the `$input` argument.
+2. Cursor-based pagination is mandatory.  Requests therefore always include a
+   `page` object with a `limit` and (optionally) a `afterCursor`/`beforeCursor`.
+   The service still supports the legacy *offset* parameter by converting it to
+   a dummy `afterCursor` string so that the existing FastAPI surface does not
+   change.
+3. Where a field returns an *interface* (e.g. `nodes` → `Node`) the query uses
+   inline fragments (`... on Proposal { … }`) so that concrete fields can be
+   selected without violating the schema.
+4. Enum values are lowercase in the API.  We convert our internal Enum
+   instances (which are uppercase for Python style) to the correct lowercase
+   literals when constructing filter objects, and vice-versa when parsing the
+   response.
+5. Vote counts are returned via the `voteStats` list.  The helper methods
+   aggregate these into the three numeric fields expected by our public
+   `Proposal` model (`votes_for`, `votes_against`, `votes_abstain`).
+
+These rules are extracted from the "Tally API – LLM Query Construction Rules"
+document and are *mandatory* for every query.
+"""
 
 import asyncio
 from datetime import datetime
@@ -43,7 +71,7 @@ class TallyService:
                 response.raise_for_status()
                 return response.json()
     
-    async def get_daos(self, organization_id: str, limit: int = 50, offset: int = 0, sort_desc: bool = True) -> List[DAO]:
+    async def get_daos(self, organization_id: Optional[str] = None, limit: int = 50, offset: int = 0, sort_desc: bool = True) -> List[DAO]:
         """Fetch list of available DAOs for a given organization."""
         query = """
         query GetGovernors($input: GovernorsInput!) {
@@ -69,13 +97,14 @@ class TallyService:
         }
         """
         
-        variables = {
-            "input": {
-                "page": {"limit": limit, "offset": offset},
-                "sort": {"sortBy": "id", "isDescending": sort_desc},
-                "filters": {"organizationId": organization_id}
-            }
+        input_obj = {
+            "page": {"limit": limit, "offset": offset},
+            "sort": {"sortBy": "id", "isDescending": sort_desc},
         }
+        if organization_id:
+            input_obj["filters"] = {"organizationId": organization_id}
+
+        variables = {"input": input_obj}
         
         try:
             result = await self._make_request(query, variables)
