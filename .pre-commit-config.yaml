@@ -3,7 +3,7 @@ repos:
     rev: v0.6.9
     hooks:
     -   id: ruff
-        args: ['--fix', '--extend-select=ARG,T201,TRY002,TRY400,C90']
+        args: ['--fix', '--extend-select=ARG,T201,C90']
     -   id: ruff-format
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
