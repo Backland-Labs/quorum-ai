@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from config import settings
 from models import (
     DAO,
+    Organization,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -91,16 +92,38 @@ async def health_check():
     }
 
 
+# Organization endpoints
+@app.get("/organizations", response_model=List[Organization])
+async def get_organizations(
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0)
+):
+    """Get list of available organizations, sorted alphabetically."""
+    try:
+        with logfire.span("get_organizations", limit=limit, offset=offset):
+            organizations = await tally_service.get_organizations(limit=limit, offset=offset)
+            return organizations
+            
+    except Exception as e:
+        logfire.error("Failed to fetch organizations", error=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to fetch organizations: {str(e)}")
+
+
 # DAO endpoints
 @app.get("/daos", response_model=List[DAO])
 async def get_daos(
+    organization_id: str,
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0)
 ):
     """Get list of available DAOs."""
     try:
         with logfire.span("get_daos", limit=limit, offset=offset):
-            daos = await tally_service.get_daos(limit=limit, offset=offset)
+            daos = await tally_service.get_daos(
+                organization_id=organization_id,
+                limit=limit, 
+                offset=offset
+            )
             return daos
             
     except Exception as e:

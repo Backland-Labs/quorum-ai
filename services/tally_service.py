@@ -8,7 +8,13 @@ import httpx
 import logfire
 
 from config import settings
-from models import DAO, Proposal, ProposalFilters, ProposalState
+from models import (
+    DAO,
+    Organization,
+    Proposal,
+    ProposalFilters,
+    ProposalState,
+)
 
 
 class TallyService:
@@ -42,6 +48,42 @@ class TallyService:
                 )
                 response.raise_for_status()
                 return response.json()
+    
+    async def get_organizations(self, limit: int = 100, offset: int = 0) -> List[Organization]:
+        """Fetch a list of organizations."""
+        query = """
+        query GetOrganizations($input: OrganizationsInput) {
+            organizations(input: $input) {
+                nodes {
+                    ... on Organization {
+                        id
+                        name
+                        slug
+                    }
+                }
+            }
+        }
+        """
+        
+        variables = {
+            "input": {
+                "page": {"limit": limit, "offset": offset},
+                "sort": {"sortBy": "name", "isDescending": False}
+            }
+        }
+        
+        try:
+            result = await self._make_request(query, variables)
+            org_data = result.get("data", {}).get("organizations", {}).get("nodes", [])
+            
+            organizations = [Organization(**org) for org in org_data if org]
+            
+            logfire.info("Fetched organizations", count=len(organizations))
+            return organizations
+            
+        except Exception as e:
+            logfire.error("Failed to fetch organizations", error=str(e))
+            raise
     
     async def get_daos(self, organization_id: str, limit: int = 50, offset: int = 0, sort_desc: bool = True) -> List[DAO]:
         """Fetch list of available DAOs for a given organization."""

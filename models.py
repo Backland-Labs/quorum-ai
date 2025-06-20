@@ -7,6 +7,13 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
+class Organization(BaseModel):
+    """Represents a DAO organization."""
+    id: str
+    name: str
+    slug: str
+
+
 class ProposalState(str, Enum):
     """Proposal state enumeration."""
     ACTIVE = "ACTIVE"
