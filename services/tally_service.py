@@ -43,40 +43,56 @@ class TallyService:
                 response.raise_for_status()
                 return response.json()
     
-    async def get_daos(self, limit: int = 50, offset: int = 0) -> List[DAO]:
-        """Fetch list of available DAOs."""
+    async def get_daos(self, organization_id: str, limit: int = 50, offset: int = 0, sort_desc: bool = True) -> List[DAO]:
+        """Fetch list of available DAOs for a given organization."""
         query = """
-        query GetDAOs($limit: Int!, $offset: Int!) {
-            daos(pagination: {limit: $limit, offset: $offset}) {
+        query GetGovernors($input: GovernorsInput!) {
+            governors(input: $input) {
                 nodes {
-                    id
-                    name
-                    slug
-                    description
-                    organizationId
-                    proposalsCount
-                    activeProposalsCount
+                    ... on Governor {
+                        id
+                        name
+                        slug
+                        organization {
+                            id
+                        }
+                        metadata {
+                            description
+                        }
+                        proposalStats {
+                            active
+                            total
+                        }
+                    }
                 }
             }
         }
         """
         
-        variables = {"limit": limit, "offset": offset}
+        variables = {
+            "input": {
+                "page": {"limit": limit, "offset": offset},
+                "sort": {"sortBy": "id", "isDescending": sort_desc},
+                "filters": {"organizationId": organization_id}
+            }
+        }
         
         try:
             result = await self._make_request(query, variables)
-            dao_data = result.get("data", {}).get("daos", {}).get("nodes", [])
+            dao_data = result.get("data", {}).get("governors", {}).get("nodes", [])
             
             daos = []
             for dao in dao_data:
+                if not dao:
+                    continue
                 daos.append(DAO(
                     id=dao["id"],
                     name=dao["name"],
                     slug=dao["slug"],
-                    description=dao.get("description"),
-                    organization_id=dao["organizationId"],
-                    active_proposals_count=dao.get("activeProposalsCount", 0),
-                    total_proposals_count=dao.get("proposalsCount", 0)
+                    description=dao.get("metadata", {}).get("description"),
+                    organization_id=dao["organization"]["id"],
+                    active_proposals_count=dao.get("proposalStats", {}).get("active", 0),
+                    total_proposals_count=dao.get("proposalStats", {}).get("total", 0)
                 ))
             
             logfire.info("Fetched DAOs", count=len(daos))
@@ -89,24 +105,30 @@ class TallyService:
     async def get_dao_by_id(self, dao_id: str) -> Optional[DAO]:
         """Fetch a specific DAO by ID."""
         query = """
-        query GetDAO($id: ID!) {
-            dao(id: $id) {
+        query GetGovernor($input: GovernorInput!) {
+            governor(input: $input) {
                 id
                 name
                 slug
-                description
-                organizationId
-                proposalsCount
-                activeProposalsCount
+                organization {
+                    id
+                }
+                metadata {
+                    description
+                }
+                proposalStats {
+                    active
+                    total
+                }
             }
         }
         """
         
-        variables = {"id": dao_id}
+        variables = {"input": {"id": dao_id}}
         
         try:
             result = await self._make_request(query, variables)
-            dao_data = result.get("data", {}).get("dao")
+            dao_data = result.get("data", {}).get("governor")
             
             if not dao_data:
                 return None
@@ -115,10 +137,10 @@ class TallyService:
                 id=dao_data["id"],
                 name=dao_data["name"],
                 slug=dao_data["slug"],
-                description=dao_data.get("description"),
-                organization_id=dao_data["organizationId"],
-                active_proposals_count=dao_data.get("activeProposalsCount", 0),
-                total_proposals_count=dao_data.get("proposalsCount", 0)
+                description=dao_data.get("metadata", {}).get("description"),
+                organization_id=dao_data["organization"]["id"],
+                active_proposals_count=dao_data.get("proposalStats", {}).get("active", 0),
+                total_proposals_count=dao_data.get("proposalStats", {}).get("total", 0)
             )
             
         except Exception as e:

@@ -62,6 +62,7 @@ class AIService:
         include_recommendations: bool = True
     ) -> ProposalSummary:
         """Summarize a single proposal using AI."""
+
         try:
             with logfire.span("ai_proposal_summary", proposal_id=proposal.id):
                 summary_data = await self._generate_summary(
