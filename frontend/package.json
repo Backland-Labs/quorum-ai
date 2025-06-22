@@ -16,10 +16,10 @@
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.21",
     "daisyui": "^4.10.1",
     "openapi-typescript": "^7.8.0",
-    "postcss": "^8.4.38",
+    "postcss": "^8.5.6",
     "svelte": "^4.2.7",
     "svelte-check": "^3.6.0",
     "typescript": "^5.0.0",
@@ -27,6 +27,10 @@
     "vite-plugin-devtools-json": "^0.2.0"
   },
   "dependencies": {
-    "openapi-fetch": "^0.14.0"
+    "@tailwindcss/typography": "^0.5.16",
+    "lucide-svelte": "^0.522.0",
+    "openapi-fetch": "^0.14.0",
+    "shadcn-svelte": "^1.0.3",
+    "tailwindcss": "^4.1.10"
   }
 }
