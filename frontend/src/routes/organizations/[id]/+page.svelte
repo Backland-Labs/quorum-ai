@@ -36,10 +36,15 @@
       organization = {
         id: orgId,
         name: "DAO Organization", // This would come from API
-        description: "Decentralized Autonomous Organization",
+        slug: `dao-org-${orgId}`,
         proposals_count: proposals.length,
-        members_count: 150,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        chain_ids: ["ethereum", "polygon"],
+        token_ids: [],
+        governor_ids: [],
+        metadata: null,
+        endorsement_service: null
       };
 
     } catch (err) {
@@ -121,8 +126,8 @@
         <div class="flex items-start justify-between">
           <div>
             <h1 class="text-2xl font-bold text-secondary-900">{organization.name}</h1>
-            {#if organization.description}
-              <p class="text-secondary-600 mt-1">{organization.description}</p>
+            {#if organization.slug}
+              <p class="text-secondary-600 mt-1">@{organization.slug}</p>
             {/if}
             <div class="flex items-center space-x-6 mt-4 text-sm text-secondary-500">
               <div class="flex items-center">
@@ -131,12 +136,12 @@
                 </svg>
                 {organization.proposals_count} proposals
               </div>
-              {#if organization.members_count}
+              {#if organization.chain_ids && organization.chain_ids.length > 0}
                 <div class="flex items-center">
                   <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
-                  {organization.members_count} members
+                  {organization.chain_ids.length} {organization.chain_ids.length === 1 ? 'chain' : 'chains'}
                 </div>
               {/if}
             </div>
