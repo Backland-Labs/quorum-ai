@@ -41,7 +41,6 @@
         name: "DAO Organization", // This would come from API
         slug: `dao-org-${orgId}`,
         proposals_count: proposals.length,
-        updated_at: new Date().toISOString(),
         chain_ids: ["ethereum", "polygon"],
         token_ids: [],
         governor_ids: [],
@@ -206,11 +205,7 @@
                   
                   <div class="flex items-center justify-between mt-4 text-xs text-secondary-500">
                     <span>Created: {formatDate(proposal.created_at)}</span>
-                    {#if proposal.end_time}
-                      <span>Ends: {formatDate(proposal.end_time)}</span>
-                    {:else}
-                      <span>Block: {proposal.end_block}</span>
-                    {/if}
+                    <span>End Block: {proposal.end_block}</span>
                   </div>
                 </div>
                 
