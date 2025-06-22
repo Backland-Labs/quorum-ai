@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
   import apiClient from "$lib/api";
   import type { components } from "$lib/api/client";
 
@@ -27,7 +28,7 @@
   });
 
   const handleOrganizationClick = (orgId: string) => {
-    window.location.href = `/organizations/${orgId}`;
+    goto(`/organizations/${orgId}`);
   };
 </script>
 
