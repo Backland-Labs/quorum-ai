@@ -24,7 +24,9 @@
       });
 
       if (proposalsError) {
-        error = "message" in proposalsError ? String(proposalsError.message) : "Failed to load proposals";
+        error = proposalsError && typeof proposalsError === 'object' && 'message' in proposalsError 
+          ? String((proposalsError as any).message) 
+          : "Failed to load proposals";
       } else if (proposalsData) {
         proposals = proposalsData.proposals;
       }

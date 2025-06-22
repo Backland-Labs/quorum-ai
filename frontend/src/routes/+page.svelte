@@ -17,10 +17,9 @@
     });
 
     if (apiError) {
-      error =
-        "message" in apiError
-          ? String(apiError.message)
-          : "An unknown error occurred";
+      error = apiError && typeof apiError === 'object' && 'message' in apiError 
+        ? String((apiError as any).message)
+        : "Failed to load organizations";
     } else if (data) {
       organizations = data.organizations;
     }
