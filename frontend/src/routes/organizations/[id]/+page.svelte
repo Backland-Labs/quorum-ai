@@ -45,7 +45,11 @@
         token_ids: [],
         governor_ids: [],
         metadata: null,
-        endorsement_service: null
+        endorsement_service: null,
+        has_active_proposals: false,
+        delegates_count: 0,
+        delegates_votes_count: "0",
+        token_owners_count: 0
       };
 
     } catch (err) {
