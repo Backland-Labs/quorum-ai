@@ -4,9 +4,9 @@
   import apiClient from "$lib/api";
   import type { components } from "$lib/api/client";
 
-  let organizations: components["schemas"]["Organization"][] = [];
-  let loading = true;
-  let error: string | null = null;
+  let organizations: components["schemas"]["Organization"][] = $state([]);
+  let loading = $state(true);
+  let error: string | null = $state(null);
 
   onMount(async () => {
     const { data, error: apiError } = await apiClient.GET("/organizations", {
@@ -75,8 +75,8 @@
       {#each organizations as org}
         <div 
           class="card hover:shadow-md transition-shadow duration-200 cursor-pointer group"
-          on:click={() => handleOrganizationClick(org.id)}
-          on:keydown={(e) => e.key === 'Enter' && handleOrganizationClick(org.id)}
+          onclick={() => handleOrganizationClick(org.id)}
+          onkeydown={(e) => e.key === 'Enter' && handleOrganizationClick(org.id)}
           role="button"
           tabindex="0"
           aria-label="View {org.name} organization details"

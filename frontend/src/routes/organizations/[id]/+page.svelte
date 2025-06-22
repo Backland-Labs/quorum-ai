@@ -4,12 +4,12 @@
   import apiClient from '$lib/api';
   import type { components } from '$lib/api/client';
 
-  let proposals: components["schemas"]["Proposal"][] = [];
-  let organization: components["schemas"]["Organization"] | null = null;
-  let loading = true;
-  let error: string | null = null;
+  let proposals: components["schemas"]["Proposal"][] = $state([]);
+  let organization: components["schemas"]["Organization"] | null = $state(null);
+  let loading = $state(true);
+  let error: string | null = $state(null);
 
-  $: orgId = $page.params.id;
+  let orgId = $derived($page.params.id);
 
   onMount(async () => {
     if (!orgId) return;
