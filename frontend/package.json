@@ -27,6 +27,7 @@
     "vite-plugin-devtools-json": "^0.2.0"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.10",
     "@tailwindcss/typography": "^0.5.16",
     "lucide-svelte": "^0.522.0",
     "openapi-fetch": "^0.14.0",
