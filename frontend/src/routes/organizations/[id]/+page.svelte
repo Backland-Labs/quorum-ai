@@ -15,21 +15,24 @@
     if (!orgId) return;
 
     try {
-      // Load organization proposals
-      const { data: proposalsData, error: proposalsError } = await apiClient.GET("/organizations/{org_id}/proposals", {
-        params: {
-          path: { org_id: orgId },
-          query: { limit: 50 }
-        }
-      });
+      // TODO: Uncomment when the proposals endpoint is available
+      // const { data: proposalsData, error: proposalsError } = await apiClient.GET("/organizations/{org_id}/proposals", {
+      //   params: {
+      //     path: { org_id: orgId },
+      //     query: { limit: 50 }
+      //   }
+      // });
 
-      if (proposalsError) {
-        error = proposalsError && typeof proposalsError === 'object' && 'message' in proposalsError 
-          ? String((proposalsError as any).message) 
-          : "Failed to load proposals";
-      } else if (proposalsData) {
-        proposals = proposalsData.proposals;
-      }
+      // if (proposalsError) {
+      //   error = proposalsError && typeof proposalsError === 'object' && 'message' in proposalsError 
+      //     ? String((proposalsError as any).message) 
+      //     : "Failed to load proposals";
+      // } else if (proposalsData) {
+      //   proposals = proposalsData;
+      // }
+
+      // For now, using empty proposals array since API endpoint is not yet available
+      proposals = [];
 
       // For now, we'll create a mock organization object since we don't have an endpoint for single org
       // In a real implementation, you'd have a separate endpoint
@@ -38,7 +41,6 @@
         name: "DAO Organization", // This would come from API
         slug: `dao-org-${orgId}`,
         proposals_count: proposals.length,
-        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         chain_ids: ["ethereum", "polygon"],
         token_ids: [],
@@ -54,12 +56,16 @@
     }
   });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'passed': return 'bg-blue-100 text-blue-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
+  const getStatusColor = (state: string) => {
+    switch (state) {
+      case 'ACTIVE': return 'bg-green-100 text-green-800';
+      case 'SUCCEEDED': return 'bg-blue-100 text-blue-800';
+      case 'EXECUTED': return 'bg-blue-100 text-blue-800';
+      case 'DEFEATED': return 'bg-red-100 text-red-800';
+      case 'CANCELED': return 'bg-red-100 text-red-800';
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'QUEUED': return 'bg-yellow-100 text-yellow-800';
+      case 'EXPIRED': return 'bg-secondary-100 text-secondary-800';
       default: return 'bg-secondary-100 text-secondary-800';
     }
   };
@@ -72,7 +78,9 @@
     });
   };
 
-  const calculateVotePercentage = (votesFor: number, votesAgainst: number) => {
+  const calculateVotePercentage = (votesForStr: string, votesAgainstStr: string) => {
+    const votesFor = parseInt(votesForStr) || 0;
+    const votesAgainst = parseInt(votesAgainstStr) || 0;
     const total = votesFor + votesAgainst;
     if (total === 0) return { for: 0, against: 0 };
     return {
@@ -170,20 +178,22 @@
                 <div class="flex-1">
                   <div class="flex items-center space-x-3 mb-2">
                     <h3 class="text-lg font-medium text-secondary-900">{proposal.title}</h3>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {getStatusColor(proposal.status)}">
-                      {proposal.status}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {getStatusColor(proposal.state)}">
+                      {proposal.state}
                     </span>
                   </div>
                   
                   <p class="text-secondary-600 text-sm mb-4">{proposal.description}</p>
                   
                   <!-- Voting Progress -->
-                  {#if proposal.votes_for > 0 || proposal.votes_against > 0}
+                  {#if proposal.votes_for && proposal.votes_against && (parseInt(proposal.votes_for) > 0 || parseInt(proposal.votes_against) > 0)}
                     {@const percentages = calculateVotePercentage(proposal.votes_for, proposal.votes_against)}
+                    {@const votesFor = parseInt(proposal.votes_for) || 0}
+                    {@const votesAgainst = parseInt(proposal.votes_against) || 0}
                     <div class="space-y-2">
                       <div class="flex justify-between items-center text-sm">
-                        <span class="text-green-700">For: {proposal.votes_for} ({percentages.for}%)</span>
-                        <span class="text-red-700">Against: {proposal.votes_against} ({percentages.against}%)</span>
+                        <span class="text-green-700">For: {votesFor} ({percentages.for}%)</span>
+                        <span class="text-red-700">Against: {votesAgainst} ({percentages.against}%)</span>
                       </div>
                       <div class="w-full bg-secondary-200 rounded-full h-2">
                         <div class="bg-green-500 h-2 rounded-l-full" style="width: {percentages.for}%"></div>
@@ -196,13 +206,17 @@
                   
                   <div class="flex items-center justify-between mt-4 text-xs text-secondary-500">
                     <span>Created: {formatDate(proposal.created_at)}</span>
-                    <span>Ends: {formatDate(proposal.ends_at)}</span>
+                    {#if proposal.end_time}
+                      <span>Ends: {formatDate(proposal.end_time)}</span>
+                    {:else}
+                      <span>Block: {proposal.end_block}</span>
+                    {/if}
                   </div>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="ml-6 flex space-x-2">
-                  {#if proposal.status === 'active'}
+                  {#if proposal.state === 'ACTIVE'}
                     <button class="btn-primary text-sm">Vote For</button>
                     <button class="btn-secondary text-sm">Vote Against</button>
                   {/if}
