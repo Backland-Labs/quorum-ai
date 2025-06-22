@@ -58,6 +58,14 @@ class TallyService:
                         id
                         name
                         slug
+                        chainIds
+                        tokenIds
+                        governorIds
+                        hasActiveProposals
+                        proposalsCount
+                        delegatesCount
+                        delegatesVotesCount
+                        tokenOwnersCount
                     }
                 }
                 pageInfo {
@@ -74,7 +82,7 @@ class TallyService:
         variables = {
             "input": {
                 "page": page_input,
-                "sort": {"sortBy": "name", "isDescending": False},
+                "sort": {"sortBy": "explore", "isDescending": True},
             }
         }
 
@@ -83,7 +91,23 @@ class TallyService:
             org_data = result.get("data", {}).get("organizations", {})
             org_nodes = org_data.get("nodes", [])
 
-            organizations = [Organization(**org) for org in org_nodes if org]
+            organizations = [
+                Organization(
+                    id=org["id"],
+                    name=org["name"],
+                    slug=org["slug"],
+                    chain_ids=org.get("chainIds", []),
+                    token_ids=org.get("tokenIds", []),
+                    governor_ids=org.get("governorIds", []),
+                    has_active_proposals=org.get("hasActiveProposals", False),
+                    proposals_count=org.get("proposalsCount", 0),
+                    delegates_count=org.get("delegatesCount", 0),
+                    delegates_votes_count=str(org.get("delegatesVotesCount", "0")),
+                    token_owners_count=org.get("tokenOwnersCount", 0),
+                )
+                for org in org_nodes
+                if org
+            ]
 
             last_cursor = org_data.get("pageInfo", {}).get("lastCursor")
 

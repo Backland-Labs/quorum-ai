@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -13,6 +13,17 @@ class Organization(BaseModel):
     id: str
     name: str
     slug: str
+    chain_ids: List[str] = Field(default_factory=list)
+    token_ids: List[str] = Field(default_factory=list)
+    governor_ids: List[str] = Field(default_factory=list)
+    metadata: Optional[Dict[str, Any]] = None
+    creator: Optional[Dict[str, Any]] = None
+    has_active_proposals: bool = False
+    proposals_count: int = 0
+    delegates_count: int = 0
+    delegates_votes_count: str = "0"
+    token_owners_count: int = 0
+    endorsement_service: Optional[Dict[str, Any]] = None
 
 
 class ProposalState(str, Enum):
