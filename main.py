@@ -22,6 +22,8 @@ from models import (
     SortOrder,
     SummarizeRequest,
     SummarizeResponse,
+    OrganizationListResponse,
+    DAOListResponse,
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
@@ -94,17 +96,20 @@ async def health_check():
 
 
 # Organization endpoints
-@app.get("/organizations", response_model=List[Organization])
+@app.get("/organizations", response_model=OrganizationListResponse)
 async def get_organizations(
-    limit: int = Query(default=100, ge=1, le=200), offset: int = Query(default=0, ge=0)
+    limit: int = Query(default=100, ge=1, le=200),
+    after_cursor: Optional[str] = Query(default=None),
 ):
     """Get list of available organizations, sorted alphabetically."""
     try:
-        with logfire.span("get_organizations", limit=limit, offset=offset):
-            organizations = await tally_service.get_organizations(
-                limit=limit, offset=offset
+        with logfire.span("get_organizations", limit=limit, after_cursor=after_cursor):
+            organizations, next_cursor = await tally_service.get_organizations(
+                limit=limit, after_cursor=after_cursor
             )
-            return organizations
+            return OrganizationListResponse(
+                organizations=organizations, next_cursor=next_cursor
+            )
 
     except Exception as e:
         logfire.error("Failed to fetch organizations", error=str(e))
@@ -114,19 +119,19 @@ async def get_organizations(
 
 
 # DAO endpoints
-@app.get("/daos", response_model=List[DAO])
+@app.get("/daos", response_model=DAOListResponse)
 async def get_daos(
     organization_id: str,
     limit: int = Query(default=50, ge=1, le=100),
-    offset: int = Query(default=0, ge=0),
+    after_cursor: Optional[str] = Query(default=None),
 ):
     """Get list of available DAOs."""
     try:
-        with logfire.span("get_daos", limit=limit, offset=offset):
-            daos = await tally_service.get_daos(
-                organization_id=organization_id, limit=limit, offset=offset
+        with logfire.span("get_daos", limit=limit, after_cursor=after_cursor):
+            daos, next_cursor = await tally_service.get_daos(
+                organization_id=organization_id, limit=limit, after_cursor=after_cursor
             )
-            return daos
+            return DAOListResponse(daos=daos, next_cursor=next_cursor)
 
     except Exception as e:
         logfire.error("Failed to fetch DAOs", error=str(e))
@@ -160,23 +165,22 @@ async def get_proposals(
     dao_id: Optional[str] = Query(default=None),
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
-    offset: int = Query(default=0, ge=0),
+    after_cursor: Optional[str] = Query(default=None),
     sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
     sort_order: SortOrder = Query(default=SortOrder.DESC),
 ):
     """Get list of proposals with optional filtering and sorting."""
     try:
         filters = _build_proposal_filters(
-            dao_id, state, limit, offset, sort_by, sort_order
+            dao_id, state, limit, after_cursor, sort_by, sort_order
         )
 
         with logfire.span("get_proposals", filters=filters.dict()):
-            proposals, total_count = await tally_service.get_proposals(filters)
+            proposals, next_cursor = await tally_service.get_proposals(filters)
 
             return ProposalListResponse(
                 proposals=proposals,
-                total_count=total_count,
-                has_more=offset + len(proposals) < total_count,
+                next_cursor=next_cursor,
             )
 
     except Exception as e:
@@ -252,7 +256,7 @@ def _build_proposal_filters(
     dao_id: Optional[str],
     state: Optional[ProposalState],
     limit: int,
-    offset: int,
+    after_cursor: Optional[str],
     sort_by: SortCriteria,
     sort_order: SortOrder,
 ) -> ProposalFilters:
@@ -261,7 +265,7 @@ def _build_proposal_filters(
         dao_id=dao_id,
         state=state,
         limit=limit,
-        offset=offset,
+        after_cursor=after_cursor,
         sort_by=sort_by,
         sort_order=sort_order,
     )
