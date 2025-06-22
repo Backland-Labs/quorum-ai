@@ -65,10 +65,7 @@ class TestVote:
     def test_vote_creation_with_all_fields(self) -> None:
         """Test successful Vote creation with all fields."""
         vote = Vote(
-            voter="0x123",
-            support=VoteType.FOR,
-            weight="1000",
-            reason="Good proposal"
+            voter="0x123", support=VoteType.FOR, weight="1000", reason="Good proposal"
         )
         assert vote.voter == "0x123"
         assert vote.support == VoteType.FOR
@@ -77,21 +74,13 @@ class TestVote:
 
     def test_vote_creation_without_reason(self) -> None:
         """Test Vote creation without optional reason field."""
-        vote = Vote(
-            voter="0x123",
-            support=VoteType.AGAINST,
-            weight="500"
-        )
+        vote = Vote(voter="0x123", support=VoteType.AGAINST, weight="500")
         assert vote.reason is None
 
     def test_vote_creation_with_invalid_support_type(self) -> None:
         """Test that Vote creation fails with invalid support type."""
         with pytest.raises(ValidationError):
-            Vote(
-                voter="0x123",
-                support="INVALID",  # type: ignore
-                weight="1000"
-            )
+            Vote(voter="0x123", support="INVALID", weight="1000")  # type: ignore
 
 
 class TestDAO:
@@ -110,7 +99,7 @@ class TestDAO:
         """Test DAO creation with only required fields."""
         dao_data = self._create_valid_dao_data()
         dao = DAO(**dao_data)
-        
+
         assert dao.id == "dao-123"
         assert dao.name == "Test DAO"
         assert dao.slug == "test-dao"
@@ -122,12 +111,14 @@ class TestDAO:
     def test_dao_creation_with_all_fields(self) -> None:
         """Test DAO creation with all fields."""
         dao_data = self._create_valid_dao_data()
-        dao_data.update({
-            "description": "A test DAO",
-            "active_proposals_count": 5,
-            "total_proposals_count": 20
-        })
-        
+        dao_data.update(
+            {
+                "description": "A test DAO",
+                "active_proposals_count": 5,
+                "total_proposals_count": 20,
+            }
+        )
+
         dao = DAO(**dao_data)
         assert dao.description == "A test DAO"
         assert dao.active_proposals_count == 5
@@ -160,7 +151,7 @@ class TestProposal:
         """Test Proposal creation with required fields."""
         proposal_data = self._create_valid_proposal_data()
         proposal = Proposal(**proposal_data)
-        
+
         assert proposal.id == "prop-123"
         assert proposal.title == "Test Proposal"
         assert proposal.state == ProposalState.ACTIVE
@@ -172,12 +163,10 @@ class TestProposal:
     def test_proposal_creation_with_vote_counts(self) -> None:
         """Test Proposal creation with vote counts."""
         proposal_data = self._create_valid_proposal_data()
-        proposal_data.update({
-            "votes_for": "1000",
-            "votes_against": "500",
-            "votes_abstain": "100"
-        })
-        
+        proposal_data.update(
+            {"votes_for": "1000", "votes_against": "500", "votes_abstain": "100"}
+        )
+
         proposal = Proposal(**proposal_data)
         assert proposal.votes_for == "1000"
         assert proposal.votes_against == "500"
@@ -187,7 +176,7 @@ class TestProposal:
         """Test Proposal creation with URL."""
         proposal_data = self._create_valid_proposal_data()
         proposal_data["url"] = "https://tally.xyz/proposal/123"
-        
+
         proposal = Proposal(**proposal_data)
         assert proposal.url == "https://tally.xyz/proposal/123"
 
@@ -211,7 +200,7 @@ class TestProposalSummary:
         """Test ProposalSummary creation with valid data."""
         summary_data = self._create_valid_summary_data()
         summary = ProposalSummary(**summary_data)
-        
+
         assert summary.proposal_id == "prop-123"
         assert summary.title == "Test Proposal"
         assert summary.summary == "This is a summary"
@@ -223,22 +212,22 @@ class TestProposalSummary:
     def test_proposal_summary_confidence_score_validation(self) -> None:
         """Test that confidence score is validated to be between 0 and 1."""
         summary_data = self._create_valid_summary_data()
-        
+
         # Test invalid confidence score > 1
         summary_data["confidence_score"] = 1.5
         with pytest.raises(ValidationError):
             ProposalSummary(**summary_data)
-        
+
         # Test invalid confidence score < 0
         summary_data["confidence_score"] = -0.1
         with pytest.raises(ValidationError):
             ProposalSummary(**summary_data)
-        
+
         # Test valid boundary values
         summary_data["confidence_score"] = 0.0
         summary = ProposalSummary(**summary_data)
         assert summary.confidence_score == 0.0
-        
+
         summary_data["confidence_score"] = 1.0
         summary = ProposalSummary(**summary_data)
         assert summary.confidence_score == 1.0
@@ -250,7 +239,7 @@ class TestProposalFilters:
     def test_proposal_filters_with_defaults(self) -> None:
         """Test ProposalFilters creation with default values."""
         filters = ProposalFilters()
-        
+
         assert filters.state is None
         assert filters.dao_id is None
         assert filters.limit == 20
@@ -266,9 +255,9 @@ class TestProposalFilters:
             limit=50,
             offset=10,
             sort_by=SortCriteria.VOTE_COUNT,
-            sort_order=SortOrder.ASC
+            sort_order=SortOrder.ASC,
         )
-        
+
         assert filters.state == ProposalState.ACTIVE
         assert filters.dao_id == "dao-123"
         assert filters.limit == 50
@@ -281,15 +270,15 @@ class TestProposalFilters:
         # Test limit too low
         with pytest.raises(ValidationError):
             ProposalFilters(limit=0)
-        
+
         # Test limit too high
         with pytest.raises(ValidationError):
             ProposalFilters(limit=101)
-        
+
         # Test valid boundaries
         filters_min = ProposalFilters(limit=1)
         assert filters_min.limit == 1
-        
+
         filters_max = ProposalFilters(limit=100)
         assert filters_max.limit == 100
 
@@ -297,7 +286,7 @@ class TestProposalFilters:
         """Test that offset cannot be negative."""
         with pytest.raises(ValidationError):
             ProposalFilters(offset=-1)
-        
+
         filters = ProposalFilters(offset=0)
         assert filters.offset == 0
 
@@ -310,9 +299,9 @@ class TestSummarizeRequest:
         request = SummarizeRequest(
             proposal_ids=["prop-1", "prop-2"],
             include_risk_assessment=True,
-            include_recommendations=False
+            include_recommendations=False,
         )
-        
+
         assert request.proposal_ids == ["prop-1", "prop-2"]
         assert request.include_risk_assessment is True
         assert request.include_recommendations is False
@@ -320,7 +309,7 @@ class TestSummarizeRequest:
     def test_summarize_request_with_defaults(self) -> None:
         """Test SummarizeRequest creation with default values."""
         request = SummarizeRequest(proposal_ids=["prop-1"])
-        
+
         assert request.include_risk_assessment is True
         assert request.include_recommendations is True
 
@@ -329,16 +318,16 @@ class TestSummarizeRequest:
         # Test empty list
         with pytest.raises(ValidationError):
             SummarizeRequest(proposal_ids=[])
-        
+
         # Test too many items
         too_many_ids = [f"prop-{i}" for i in range(51)]
         with pytest.raises(ValidationError):
             SummarizeRequest(proposal_ids=too_many_ids)
-        
+
         # Test valid boundaries
         min_request = SummarizeRequest(proposal_ids=["prop-1"])
         assert len(min_request.proposal_ids) == 1
-        
+
         max_ids = [f"prop-{i}" for i in range(50)]
         max_request = SummarizeRequest(proposal_ids=max_ids)
         assert len(max_request.proposal_ids) == 50
@@ -359,16 +348,14 @@ class TestProposalListResponse:
                 start_block=1000,
                 end_block=2000,
                 dao_id="dao-1",
-                dao_name="DAO 1"
+                dao_name="DAO 1",
             )
         ]
-        
+
         response = ProposalListResponse(
-            proposals=proposals,
-            total_count=1,
-            has_more=False
+            proposals=proposals, total_count=1, has_more=False
         )
-        
+
         assert len(response.proposals) == 1
         assert response.total_count == 1
         assert response.has_more is False
@@ -387,16 +374,14 @@ class TestSummarizeResponse:
                 key_points=["Point 1"],
                 risk_level="LOW",
                 recommendation="Approve",
-                confidence_score=0.9
+                confidence_score=0.9,
             )
         ]
-        
+
         response = SummarizeResponse(
-            summaries=summaries,
-            processing_time=1.5,
-            model_used="gpt-4o-mini"
+            summaries=summaries, processing_time=1.5, model_used="gpt-4o-mini"
         )
-        
+
         assert len(response.summaries) == 1
         assert response.processing_time == 1.5
         assert response.model_used == "gpt-4o-mini"
