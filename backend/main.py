@@ -6,13 +6,14 @@ from datetime import datetime
 from typing import List, Optional
 
 import logfire
-from fastapi import FastAPI, HTTPException, Query, Depends
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import settings
 from models import (
     DAO,
+    Organization,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -21,6 +22,8 @@ from models import (
     SortOrder,
     SummarizeRequest,
     SummarizeResponse,
+    OrganizationListResponse,
+    DAOListResponse,
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
@@ -38,15 +41,17 @@ async def lifespan(app: FastAPI):
     global tally_service, ai_service
     tally_service = TallyService()
     ai_service = AIService()
-    
+
     # Configure Logfire if credentials are available
     if settings.logfire_token:
-        logfire.configure(token=settings.logfire_token, project_name=settings.logfire_project)
-    
+        logfire.configure(
+            token=settings.logfire_token, project_name=settings.logfire_project
+        )
+
     logfire.info("Application started", version="0.1.0")
-    
+
     yield
-    
+
     # Shutdown
     logfire.info("Application shutdown")
 
@@ -75,8 +80,7 @@ async def general_exception_handler(request, exc):
     """Handle general exceptions."""
     logfire.error("Unhandled exception", error=str(exc), path=str(request.url))
     return JSONResponse(
-        status_code=500,
-        content={"error": "Internal server error", "message": str(exc)}
+        status_code=500, content={"error": "Internal server error", "message": str(exc)}
     )
 
 
@@ -87,22 +91,48 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "0.1.0"
+        "version": "0.1.0",
     }
 
 
+# Organization endpoints
+@app.get("/organizations", response_model=OrganizationListResponse)
+async def get_organizations(
+    limit: int = Query(default=100, ge=1, le=200),
+    after_cursor: Optional[str] = Query(default=None),
+):
+    """Get list of available organizations, sorted alphabetically."""
+    try:
+        with logfire.span("get_organizations", limit=limit, after_cursor=after_cursor):
+            organizations, next_cursor = await tally_service.get_organizations(
+                limit=limit, after_cursor=after_cursor
+            )
+            return OrganizationListResponse(
+                organizations=organizations, next_cursor=next_cursor
+            )
+
+    except Exception as e:
+        logfire.error("Failed to fetch organizations", error=str(e))
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch organizations: {str(e)}"
+        )
+
+
 # DAO endpoints
-@app.get("/daos", response_model=List[DAO])
+@app.get("/daos", response_model=DAOListResponse)
 async def get_daos(
+    organization_id: str,
     limit: int = Query(default=50, ge=1, le=100),
-    offset: int = Query(default=0, ge=0)
+    after_cursor: Optional[str] = Query(default=None),
 ):
     """Get list of available DAOs."""
     try:
-        with logfire.span("get_daos", limit=limit, offset=offset):
-            daos = await tally_service.get_daos(limit=limit, offset=offset)
-            return daos
-            
+        with logfire.span("get_daos", limit=limit, after_cursor=after_cursor):
+            daos, next_cursor = await tally_service.get_daos(
+                organization_id=organization_id, limit=limit, after_cursor=after_cursor
+            )
+            return DAOListResponse(daos=daos, next_cursor=next_cursor)
+
     except Exception as e:
         logfire.error("Failed to fetch DAOs", error=str(e))
         raise HTTPException(status_code=500, detail=f"Failed to fetch DAOs: {str(e)}")
@@ -114,12 +144,14 @@ async def get_dao_by_id(dao_id: str):
     try:
         with logfire.span("get_dao_by_id", dao_id=dao_id):
             dao = await tally_service.get_dao_by_id(dao_id)
-            
+
             if not dao:
-                raise HTTPException(status_code=404, detail=f"DAO with ID {dao_id} not found")
-                
+                raise HTTPException(
+                    status_code=404, detail=f"DAO with ID {dao_id} not found"
+                )
+
             return dao
-            
+
     except HTTPException:
         raise
     except Exception as e:
@@ -133,28 +165,29 @@ async def get_proposals(
     dao_id: Optional[str] = Query(default=None),
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
-    offset: int = Query(default=0, ge=0),
+    after_cursor: Optional[str] = Query(default=None),
     sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
-    sort_order: SortOrder = Query(default=SortOrder.DESC)
+    sort_order: SortOrder = Query(default=SortOrder.DESC),
 ):
     """Get list of proposals with optional filtering and sorting."""
     try:
         filters = _build_proposal_filters(
-            dao_id, state, limit, offset, sort_by, sort_order
+            dao_id, state, limit, after_cursor, sort_by, sort_order
         )
-        
+
         with logfire.span("get_proposals", filters=filters.dict()):
-            proposals, total_count = await tally_service.get_proposals(filters)
-            
+            proposals, next_cursor = await tally_service.get_proposals(filters)
+
             return ProposalListResponse(
                 proposals=proposals,
-                total_count=total_count,
-                has_more=offset + len(proposals) < total_count
+                next_cursor=next_cursor,
             )
-            
+
     except Exception as e:
         logfire.error("Failed to fetch proposals", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to fetch proposals: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch proposals: {str(e)}"
+        )
 
 
 @app.get("/proposals/{proposal_id}", response_model=Proposal)
@@ -163,20 +196,21 @@ async def get_proposal_by_id(proposal_id: str):
     try:
         with logfire.span("get_proposal_by_id", proposal_id=proposal_id):
             proposal = await tally_service.get_proposal_by_id(proposal_id)
-            
+
             if not proposal:
                 raise HTTPException(
-                    status_code=404, 
-                    detail=f"Proposal with ID {proposal_id} not found"
+                    status_code=404, detail=f"Proposal with ID {proposal_id} not found"
                 )
-                
+
             return proposal
-            
+
     except HTTPException:
         raise
     except Exception as e:
         logfire.error("Failed to fetch proposal", proposal_id=proposal_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to fetch proposal: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch proposal: {str(e)}"
+        )
 
 
 # AI Summarization endpoints
@@ -184,36 +218,36 @@ async def get_proposal_by_id(proposal_id: str):
 async def summarize_proposals(request: SummarizeRequest):
     """Summarize multiple proposals using AI."""
     start_time = time.time()
-    
+
     try:
-        with logfire.span("summarize_proposals", proposal_count=len(request.proposal_ids)):
+        with logfire.span(
+            "summarize_proposals", proposal_count=len(request.proposal_ids)
+        ):
             # Fetch proposals
             proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
-            
+
             if not proposals:
                 raise HTTPException(
-                    status_code=404,
-                    detail="No proposals found for the provided IDs"
+                    status_code=404, detail="No proposals found for the provided IDs"
                 )
-            
+
             # Generate summaries
             summaries = await _generate_proposal_summaries(request, proposals)
-            
+
             processing_time = time.time() - start_time
-            
+
             return SummarizeResponse(
                 summaries=summaries,
                 processing_time=processing_time,
-                model_used=settings.ai_model
+                model_used=settings.ai_model,
             )
-            
+
     except HTTPException:
         raise
     except Exception as e:
         logfire.error("Failed to summarize proposals", error=str(e))
         raise HTTPException(
-            status_code=500, 
-            detail=f"Failed to summarize proposals: {str(e)}"
+            status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
         )
 
 
@@ -222,18 +256,18 @@ def _build_proposal_filters(
     dao_id: Optional[str],
     state: Optional[ProposalState],
     limit: int,
-    offset: int,
+    after_cursor: Optional[str],
     sort_by: SortCriteria,
-    sort_order: SortOrder
+    sort_order: SortOrder,
 ) -> ProposalFilters:
     """Build ProposalFilters object from query parameters."""
     return ProposalFilters(
         dao_id=dao_id,
         state=state,
         limit=limit,
-        offset=offset,
+        after_cursor=after_cursor,
         sort_by=sort_by,
-        sort_order=sort_order
+        sort_order=sort_order,
     )
 
 
@@ -246,17 +280,16 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
 
 
 async def _generate_proposal_summaries(
-    request: SummarizeRequest, 
-    proposals: List[Proposal]
+    request: SummarizeRequest, proposals: List[Proposal]
 ) -> List:
     """Generate AI summaries for proposals."""
     with logfire.span("generate_proposal_summaries"):
         summaries = await ai_service.summarize_multiple_proposals(
             proposals,
             include_risk_assessment=request.include_risk_assessment,
-            include_recommendations=request.include_recommendations
+            include_recommendations=request.include_recommendations,
         )
-        
+
         logfire.info("Generated proposal summaries", count=len(summaries))
         return summaries
 
@@ -264,10 +297,11 @@ async def _generate_proposal_summaries(
 # Development server
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         "main:app",
         host=settings.host,
         port=settings.port,
         reload=settings.debug,
-        log_level="info" if not settings.debug else "debug"
+        log_level="info" if not settings.debug else "debug",
     )
