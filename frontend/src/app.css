@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --color-primary-50: #fef2f2;
+  --color-primary-100: #fee2e2;
+  --color-primary-200: #fecaca;
+  --color-primary-300: #fca5a5;
+  --color-primary-400: #f87171;
+  --color-primary-500: #ef4444;
+  --color-primary-600: #dc2626;
+  --color-primary-700: #b91c1c;
+  --color-primary-800: #991b1b;
+  --color-primary-900: #7f1d1d;
+  
+  --color-secondary-50: #f9fafb;
+  --color-secondary-100: #f3f4f6;
+  --color-secondary-200: #e5e7eb;
+  --color-secondary-300: #d1d5db;
+  --color-secondary-400: #9ca3af;
+  --color-secondary-500: #6b7280;
+  --color-secondary-600: #4b5563;
+  --color-secondary-700: #374151;
+  --color-secondary-800: #1f2937;
+  --color-secondary-900: #111827;
+  
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-family-sans);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-secondary-50 text-secondary-700 font-medium py-2 px-4 rounded-lg border border-secondary-300 transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-secondary-200 p-6;
+  }
+}
