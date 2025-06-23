@@ -60,31 +60,31 @@ Quorum AI is a comprehensive platform for analyzing and summarizing DAO (Decentr
 
 ```mermaid
 graph TB
-    subgraph "Client Layer"
+    subgraph Client["Client Layer"]
         UI[SvelteKit Frontend]
         Mobile[Mobile Browser]
         Desktop[Desktop Browser]
     end
     
-    subgraph "API Gateway"
+    subgraph Gateway["API Gateway"]
         FastAPI[FastAPI Backend]
         CORS[CORS Middleware]
         Auth[Authentication]
     end
     
-    subgraph "Service Layer"
+    subgraph Services["Service Layer"]
         AIService[AI Service]
         TallyService[Tally Service]
         CacheService[Cache Service]
     end
     
-    subgraph "External Services"
+    subgraph External["External Services"]
         OpenAI[OpenAI API]
         Anthropic[Anthropic API]
         TallyAPI[Tally GraphQL API]
     end
     
-    subgraph "Observability"
+    subgraph Observability["Observability"]
         Logfire[Logfire Monitoring]
         Metrics[Application Metrics]
     end
@@ -114,18 +114,18 @@ graph TB
 
 ```mermaid
 graph LR
-    subgraph "FastAPI Application"
+    subgraph FastAPIApp["FastAPI Application"]
         Main[main.py]
         Config[config.py]
         Models[models.py]
     end
     
-    subgraph "Services"
+    subgraph ServiceLayer["Services"]
         AI[ai_service.py]
         Tally[tally_service.py]
     end
     
-    subgraph "Tests"
+    subgraph TestSuite["Tests"]
         TestAPI[test_api.py]
         TestAI[test_ai_service.py]
         TestTally[test_tally_service.py]
@@ -198,22 +198,22 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "SvelteKit Application"
+    subgraph SvelteApp["SvelteKit Application"]
         App[app.html]
         Layout[+layout.svelte]
         
-        subgraph "Routes"
+        subgraph Routes["Routes"]
             Home[+page.svelte]
-            OrgDetail[organizations/[id]/+page.svelte]
+            OrgDetail["organizations/[id]/+page.svelte"]
         end
         
-        subgraph "Library"
-            API[lib/api/client.ts]
-            Components[lib/components/]
-            Utils[lib/utils/]
+        subgraph Library["Library"]
+            API["lib/api/client.ts"]
+            Components["lib/components/"]
+            Utils["lib/utils/"]
         end
         
-        subgraph "Styling"
+        subgraph Styling["Styling"]
             CSS[app.css]
             Tailwind[tailwind.config.js]
             PostCSS[postcss.config.js]
@@ -284,9 +284,9 @@ erDiagram
         string id PK
         string name
         string slug
-        string[] chain_ids
-        string[] token_ids
-        string[] governor_ids
+        string chain_ids
+        string token_ids
+        string governor_ids
         int proposals_count
         int delegates_count
         boolean has_active_proposals
@@ -306,7 +306,7 @@ erDiagram
         string id PK
         string title
         string description
-        ProposalState state
+        string state
         datetime created_at
         int start_block
         int end_block
@@ -322,7 +322,7 @@ erDiagram
         string proposal_id FK
         string title
         string summary
-        string[] key_points
+        string key_points
         string risk_level
         string recommendation
         float confidence_score
