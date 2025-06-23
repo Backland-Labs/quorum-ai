@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import apiClient from '$lib/api';
   import type { components } from '$lib/api/client';
@@ -11,14 +10,14 @@
 
   let orgId = $derived($page.params.id);
 
-  onMount(async () => {
-    if (!orgId) return;
+  const loadOrganizationData = async (id: string) => {
+    if (!id) return;
 
     try {
       // TODO: Uncomment when the proposals endpoint is available
       // const { data: proposalsData, error: proposalsError } = await apiClient.GET("/organizations/{org_id}/proposals", {
       //   params: {
-      //     path: { org_id: orgId },
+      //     path: { org_id: id },
       //     query: { limit: 50 }
       //   }
       // });
@@ -37,9 +36,9 @@
       // For now, we'll create a mock organization object since we don't have an endpoint for single org
       // In a real implementation, you'd have a separate endpoint
       organization = {
-        id: orgId,
+        id: id,
         name: "DAO Organization", // This would come from API
-        slug: `dao-org-${orgId}`,
+        slug: `dao-org-${id}`,
         proposals_count: proposals.length,
         chain_ids: ["ethereum", "polygon"],
         token_ids: [],
@@ -56,6 +55,12 @@
       error = err instanceof Error ? err.message : "An unknown error occurred";
     } finally {
       loading = false;
+    }
+  };
+
+  $effect(() => {
+    if (orgId) {
+      loadOrganizationData(orgId);
     }
   });
 

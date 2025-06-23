@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import apiClient from "$lib/api";
   import type { components } from "$lib/api/client";
@@ -8,7 +7,8 @@
   let loading = $state(true);
   let error: string | null = $state(null);
 
-  onMount(async () => {
+  const loadOrganizations = async () => {
+    console.log("Loading organizations");
     const { data, error: apiError } = await apiClient.GET("/organizations", {
       params: {
         query: {
@@ -25,6 +25,10 @@
       organizations = data.organizations;
     }
     loading = false;
+  };
+
+  $effect(() => {
+    loadOrganizations();
   });
 
   const handleOrganizationClick = (orgId: string) => {
