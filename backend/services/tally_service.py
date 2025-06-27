@@ -439,17 +439,38 @@ class TallyService:
         top_org_slugs = settings.top_organizations
         results = []
         
+        logfire.info(
+            "Starting to fetch top organizations with proposals",
+            organization_slugs=top_org_slugs,
+            org_count=len(top_org_slugs)
+        )
+        
         # First, get organization details for each slug
         for org_slug in top_org_slugs:
             try:
+                logfire.info(f"Fetching organization: {org_slug}")
+                
                 # Get organization by slug
                 org_data = await self._get_organization_by_slug(org_slug)
                 if not org_data:
                     logfire.warning(f"Organization not found: {org_slug}")
                     continue
                 
+                logfire.info(
+                    f"Found organization: {org_data['name']}",
+                    org_id=org_data["id"],
+                    proposals_count=org_data["proposals_count"],
+                    has_active=org_data["has_active_proposals"]
+                )
+                
                 # Get the 3 most active proposals for this organization
                 proposals = await self._get_most_active_proposals_for_org(org_data["id"], limit=3)
+                
+                logfire.info(
+                    f"Retrieved proposals for {org_data['name']}",
+                    proposals_found=len(proposals),
+                    proposal_titles=[p.title for p in proposals]
+                )
                 
                 results.append({
                     "organization": org_data,
@@ -457,8 +478,18 @@ class TallyService:
                 })
                 
             except Exception as e:
-                logfire.error(f"Failed to fetch data for organization {org_slug}", error=str(e))
+                logfire.error(
+                    f"Failed to fetch data for organization {org_slug}", 
+                    error=str(e),
+                    error_type=type(e).__name__
+                )
                 continue
+        
+        logfire.info(
+            "Completed fetching organizations with proposals",
+            total_orgs_found=len(results),
+            total_proposals=sum(len(r["proposals"]) for r in results)
+        )
         
         return results
     

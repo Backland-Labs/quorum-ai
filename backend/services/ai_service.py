@@ -22,16 +22,32 @@ class AIService:
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
+        logfire.info(
+            "Creating AI model",
+            has_openrouter_key=bool(settings.openrouter_api_key),
+            has_anthropic_key=bool(settings.anthropic_api_key),
+            has_openai_key=bool(settings.openai_api_key)
+        )
+        
         if settings.openrouter_api_key:
-            return OpenAIModel(
-                'anthropic/claude-3.5-sonnet',
-                provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
-            )
+            logfire.info("Using OpenRouter with Claude 3.5 Sonnet")
+            try:
+                model = OpenAIModel(
+                    'anthropic/claude-3.5-sonnet',
+                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
+                )
+                logfire.info("Successfully created OpenRouter model", model_type=str(type(model)))
+                return model
+            except Exception as e:
+                logfire.error("Failed to create OpenRouter model", error=str(e), error_type=type(e).__name__)
+                raise
         else:
             # Fallback to direct provider if OpenRouter key not available
             if settings.anthropic_api_key:
+                logfire.info("Using direct Anthropic API")
                 return 'anthropic:claude-3-5-sonnet'
             elif settings.openai_api_key:
+                logfire.info("Using direct OpenAI API")
                 return 'openai:gpt-4o-mini'
             else:
                 logfire.warning("No AI API keys configured, using default model")
@@ -39,10 +55,28 @@ class AIService:
 
     def _create_agent(self) -> Agent:
         """Create and configure the Pydantic AI agent."""
-        return Agent(
-            model=self.model,
-            system_prompt=self._get_system_prompt(),
-        )
+        try:
+            logfire.info(
+                "Creating Pydantic AI agent",
+                model_type=str(type(self.model)),
+                model_value=str(self.model)
+            )
+            
+            agent = Agent(
+                model=self.model,
+                system_prompt=self._get_system_prompt(),
+            )
+            
+            logfire.info("Successfully created Pydantic AI agent", agent_type=str(type(agent)))
+            return agent
+        except Exception as e:
+            logfire.error(
+                "Failed to create Pydantic AI agent",
+                error=str(e),
+                error_type=type(e).__name__,
+                model_type=str(type(self.model))
+            )
+            raise
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI agent."""
@@ -70,8 +104,27 @@ class AIService:
 
         try:
             with logfire.span("ai_proposal_summary", proposal_id=proposal.id):
+                logfire.info(
+                    "Starting proposal summarization",
+                    proposal_id=proposal.id,
+                    proposal_title=proposal.title,
+                    model_type=str(type(self.model)),
+                    has_openrouter_key=bool(settings.openrouter_api_key),
+                    has_anthropic_key=bool(settings.anthropic_api_key),
+                    has_openai_key=bool(settings.openai_api_key)
+                )
+                
                 summary_data = await self._generate_summary(
                     proposal, include_risk_assessment, include_recommendations
+                )
+
+                logfire.info(
+                    "Successfully generated proposal summary",
+                    proposal_id=proposal.id,
+                    summary_length=len(summary_data.get("summary", "")),
+                    key_points_count=len(summary_data.get("key_points", [])),
+                    risk_level=summary_data.get("risk_level"),
+                    confidence_score=summary_data.get("confidence_score")
                 )
 
                 return ProposalSummary(
@@ -86,7 +139,13 @@ class AIService:
 
         except Exception as e:
             logfire.error(
-                "Failed to summarize proposal", proposal_id=proposal.id, error=str(e)
+                "Failed to summarize proposal", 
+                proposal_id=proposal.id, 
+                proposal_title=proposal.title,
+                error=str(e),
+                error_type=type(e).__name__,
+                model_type=str(type(self.model)),
+                has_openrouter_key=bool(settings.openrouter_api_key)
             )
             raise
 
@@ -218,13 +277,33 @@ class AIService:
     async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
         try:
+            logfire.info(
+                "Calling AI model",
+                model_type=str(type(self.model)),
+                prompt_length=len(prompt),
+                agent_type=str(type(self.agent))
+            )
+            
             result = await self.agent.run(prompt)
+            
+            logfire.info(
+                "AI model response received",
+                result_type=str(type(result)),
+                has_data_attr=hasattr(result, "data"),
+                result_str_preview=str(result)[:200] if result else "None"
+            )
 
             # PydanticAI returns a RunResult, extract the data
             if hasattr(result, "data"):
+                logfire.info("Extracting data from result.data", data_type=str(type(result.data)))
                 return result.data
             else:
                 # Fallback if response format is different
+                logfire.warning(
+                    "Using fallback response format",
+                    result_value=str(result),
+                    result_type=str(type(result))
+                )
                 return {
                     "summary": str(result),
                     "key_points": [],
@@ -234,7 +313,14 @@ class AIService:
                 }
 
         except Exception as e:
-            logfire.error("AI model call failed", error=str(e))
+            logfire.error(
+                "AI model call failed", 
+                error=str(e),
+                error_type=type(e).__name__,
+                model_type=str(type(self.model)),
+                agent_type=str(type(self.agent)),
+                prompt_preview=prompt[:200] if prompt else "None"
+            )
             raise
 
     def _parse_ai_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
