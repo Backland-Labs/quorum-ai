@@ -27,8 +27,13 @@
     loading = false;
   };
 
+  let mounted = $state(false);
+
   $effect(() => {
-    loadOrganizations();
+    if (!mounted) {
+      mounted = true;
+      loadOrganizations();
+    }
   });
 
   const handleOrganizationClick = (orgId: string) => {

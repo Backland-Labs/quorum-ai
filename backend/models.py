@@ -31,6 +31,7 @@ class ProposalState(str, Enum):
 
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"
+    CROSSCHAINEXECUTED = "CROSSCHAINEXECUTED"
     DEFEATED = "DEFEATED"
     EXECUTED = "EXECUTED"
     EXPIRED = "EXPIRED"
@@ -121,6 +122,7 @@ class ProposalFilters(BaseModel):
 
     state: Optional[ProposalState] = None
     dao_id: Optional[str] = None
+    organization_id: Optional[str] = None
     limit: int = Field(default=20, ge=1, le=100)
     after_cursor: Optional[str] = None
     sort_by: SortCriteria = Field(default=SortCriteria.CREATED_DATE)
@@ -131,21 +133,27 @@ class ProposalListResponse(BaseModel):
     """Response model for proposal listing."""
 
     proposals: List[Proposal] = Field(..., description="List of proposals")
-    next_cursor: Optional[str] = Field(None, description="Cursor for the next page of results")
+    next_cursor: Optional[str] = Field(
+        None, description="Cursor for the next page of results"
+    )
 
 
 class OrganizationListResponse(BaseModel):
     """Response model for organization listing."""
 
     organizations: List[Organization] = Field(..., description="List of organizations")
-    next_cursor: Optional[str] = Field(None, description="Cursor for the next page of results")
+    next_cursor: Optional[str] = Field(
+        None, description="Cursor for the next page of results"
+    )
 
 
 class DAOListResponse(BaseModel):
     """Response model for DAO listing."""
 
     daos: List[DAO] = Field(..., description="List of DAOs")
-    next_cursor: Optional[str] = Field(None, description="Cursor for the next page of results")
+    next_cursor: Optional[str] = Field(
+        None, description="Cursor for the next page of results"
+    )
 
 
 class SummarizeRequest(BaseModel):
