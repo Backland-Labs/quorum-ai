@@ -147,7 +147,8 @@ class AIService:
                 model_type=str(type(self.model)),
                 has_openrouter_key=bool(settings.openrouter_api_key)
             )
-            raise
+            print(e)
+            raise e
 
     async def summarize_multiple_proposals(
         self,
@@ -294,9 +295,23 @@ class AIService:
             )
 
             # PydanticAI returns a RunResult, extract the data
-            if hasattr(result, "data"):
-                logfire.info("Extracting data from result.data", data_type=str(type(result.data)))
-                return result.data
+            if hasattr(result, "output"):
+                logfire.info("Extracting data from result.output", data_type=str(type(result.output)))
+                # If output is a string, try to parse it as JSON
+                if isinstance(result.output, str):
+                    import json
+                    try:
+                        return json.loads(result.output)
+                    except json.JSONDecodeError:
+                        # If JSON parsing fails, return structured fallback
+                        return {
+                            "summary": result.output,
+                            "key_points": [],
+                            "risk_level": "NOT_ASSESSED", 
+                            "recommendation": "NOT_PROVIDED",
+                            "confidence_score": 0.5,
+                        }
+                return result.output
             else:
                 # Fallback if response format is different
                 logfire.warning(
@@ -313,6 +328,7 @@ class AIService:
                 }
 
         except Exception as e:
+            print(e)
             logfire.error(
                 "AI model call failed", 
                 error=str(e),
