@@ -254,19 +254,18 @@ class TallyService:
             query GetProposals($input: ProposalsInput!) {
                 proposals(input: $input) {
                     nodes {
-                        id
-                        title
-                        description
-                        state
-                        createdAt
-                        startBlock
-                        endBlock
-                        votesFor
-                        votesAgainst
-                        votesAbstain
-                        dao {
+                        ... on Proposal {
                             id
-                            name
+                            status
+                            createdAt
+                            metadata {
+                                title
+                                description
+                            }
+                            governor {
+                                id
+                                name
+                            }
                         }
                     }
                     pageInfo {
@@ -290,7 +289,9 @@ class TallyService:
         }
 
         filter_input = {}
-        if filters.dao_id:
+        if filters.organization_id:
+            filter_input["organizationId"] = filters.organization_id
+        elif filters.dao_id:
             filter_input["governorId"] = filters.dao_id
         if filters.state:
             # The API expects a list of states, but our filter is for a single state
@@ -319,24 +320,29 @@ class TallyService:
 
             proposals = []
             for prop in proposal_nodes:
-                dao_info = prop.get("dao", {})
+                governor_info = prop.get("governor", {})
+                metadata = prop.get("metadata", {})
+                
+                # Convert API status to our enum format
+                status = prop["status"].upper()
+                
                 proposals.append(
                     Proposal(
                         id=prop["id"],
-                        title=prop["title"],
-                        description=prop["description"],
-                        state=ProposalState(prop["state"]),
+                        title=metadata.get("title", ""),
+                        description=metadata.get("description", ""),
+                        state=ProposalState(status),
                         created_at=datetime.fromisoformat(
                             prop["createdAt"].replace("Z", "+00:00")
                         ),
-                        start_block=prop["startBlock"],
-                        end_block=prop["endBlock"],
-                        votes_for=str(prop.get("votesFor", "0")),
-                        votes_against=str(prop.get("votesAgainst", "0")),
-                        votes_abstain=str(prop.get("votesAbstain", "0")),
-                        dao_id=dao_info.get("id", ""),
-                        dao_name=dao_info.get("name", ""),
-                        url=f"https://www.tally.xyz/gov/{dao_info.get('id', '')}/proposal/{prop['id']}",
+                        start_block=0,  # Will be populated later if needed
+                        end_block=0,    # Will be populated later if needed
+                        votes_for="0",  # Will be populated later if needed
+                        votes_against="0",  # Will be populated later if needed
+                        votes_abstain="0",  # Will be populated later if needed
+                        dao_id=governor_info.get("id", ""),
+                        dao_name=governor_info.get("name", ""),
+                        url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
                     )
                 )
 
@@ -355,16 +361,13 @@ class TallyService:
         query GetProposal($id: ID!) {
             proposal(id: $id) {
                 id
-                title
-                description
-                state
+                status
                 createdAt
-                startBlock
-                endBlock
-                votesFor
-                votesAgainst
-                votesAbstain
-                dao {
+                metadata {
+                    title
+                    description
+                }
+                governor {
                     id
                     name
                 }
@@ -381,23 +384,28 @@ class TallyService:
             if not prop_data:
                 return None
 
-            dao_info = prop_data.get("dao", {})
+            governor_info = prop_data.get("governor", {})
+            metadata = prop_data.get("metadata", {})
+
+            # Convert API status to our enum format
+            status = prop_data["status"].upper()
+            
             return Proposal(
                 id=prop_data["id"],
-                title=prop_data["title"],
-                description=prop_data["description"],
-                state=ProposalState(prop_data["state"]),
+                title=metadata.get("title", ""),
+                description=metadata.get("description", ""),
+                state=ProposalState(status),
                 created_at=datetime.fromisoformat(
                     prop_data["createdAt"].replace("Z", "+00:00")
                 ),
-                start_block=prop_data["startBlock"],
-                end_block=prop_data["endBlock"],
-                votes_for=str(prop_data.get("votesFor", "0")),
-                votes_against=str(prop_data.get("votesAgainst", "0")),
-                votes_abstain=str(prop_data.get("votesAbstain", "0")),
-                dao_id=dao_info.get("id", ""),
-                dao_name=dao_info.get("name", ""),
-                url=f"https://www.tally.xyz/gov/{dao_info.get('id', '')}/proposal/{prop_data['id']}",
+                start_block=0,  # Will be populated later if needed
+                end_block=0,    # Will be populated later if needed
+                votes_for="0",  # Will be populated later if needed
+                votes_against="0",  # Will be populated later if needed
+                votes_abstain="0",  # Will be populated later if needed
+                dao_id=governor_info.get("id", ""),
+                dao_name=governor_info.get("name", ""),
+                url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop_data['id']}",
             )
 
         except Exception as e:

@@ -29,7 +29,9 @@ class Settings(BaseSettings):
     # Logfire settings
     logfire_token: Optional[str] = Field(default=None, env="LOGFIRE_TOKEN")
     logfire_project: Optional[str] = Field(default=None, env="LOGFIRE_PROJECT")
-    logfire_ignore_no_config: bool = Field(default=False, env="LOGFIRE_IGNORE_NO_CONFIG")
+    logfire_ignore_no_config: bool = Field(
+        default=False, env="LOGFIRE_IGNORE_NO_CONFIG"
+    )
 
     # Performance settings
     max_proposals_per_request: int = Field(default=50, env="MAX_PROPOSALS_PER_REQUEST")
