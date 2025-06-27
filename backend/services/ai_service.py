@@ -24,16 +24,13 @@ class AIService:
         """Create the AI model with OpenRouter configuration."""
         logfire.info(
             "Creating AI model",
-            has_openrouter_key=bool(settings.openrouter_api_key),
-            has_anthropic_key=bool(settings.anthropic_api_key),
-            has_openai_key=bool(settings.openai_api_key)
         )
         
         if settings.openrouter_api_key:
             logfire.info("Using OpenRouter with Claude 3.5 Sonnet")
             try:
                 model = OpenAIModel(
-                    'anthropic/claude-3.5-sonnet',
+                    "openrouter/auto",
                     provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
                 )
                 logfire.info("Successfully created OpenRouter model", model_type=str(type(model)))

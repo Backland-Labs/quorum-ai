@@ -70,3 +70,12 @@ disallow_incomplete_defs = true
 check_untyped_defs = true
 disallow_untyped_decorators = true
 
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.2.1",
+    "pytest-httpx>=0.35.0",
+    "pytest-mock>=3.14.1",
+]
+
