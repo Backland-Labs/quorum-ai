@@ -206,4 +206,5 @@ cython_debug/
 
 .fridayrules
 .cursor/
+.claude/
 CLAUDE.md
