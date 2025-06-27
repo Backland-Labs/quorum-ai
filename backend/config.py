@@ -1,6 +1,6 @@
 """Configuration management following 12-factor app principles."""
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings
 from pydantic import Field
@@ -36,6 +36,21 @@ class Settings(BaseSettings):
     # Performance settings
     max_proposals_per_request: int = Field(default=50, env="MAX_PROPOSALS_PER_REQUEST")
     request_timeout: int = Field(default=30, env="REQUEST_TIMEOUT")
+
+    # OpenRouter configuration
+    openrouter_api_key: Optional[str] = Field(default=None, env="OPENROUTER_API_KEY")
+
+    # Top organizations configuration
+    top_organizations_env: str = Field(
+        default="compound,nounsdao,arbitrum", 
+        env="TOP_ORGANIZATIONS",
+        description="Comma-separated list of top organization slugs"
+    )
+
+    @property
+    def top_organizations(self) -> List[str]:
+        """Parse comma-separated string to list."""
+        return [org.strip() for org in self.top_organizations_env.split(',') if org.strip()]
 
     class Config:
         env_file = ".env"

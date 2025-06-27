@@ -3,26 +3,21 @@
   import apiClient from "$lib/api";
   import type { components } from "$lib/api/client";
 
-  let organizations: components["schemas"]["Organization"][] = $state([]);
+  let organizationsWithProposals: any[] = $state([]);
   let loading = $state(true);
   let error: string | null = $state(null);
 
   const loadOrganizations = async () => {
     console.log("Loading organizations");
-    const { data, error: apiError } = await apiClient.GET("/organizations", {
-      params: {
-        query: {
-          limit: 20,
-        },
-      },
-    });
+    const { data, error: apiError } = await apiClient.GET("/organizations");
 
     if (apiError) {
       error = apiError && typeof apiError === 'object' && 'message' in apiError 
         ? String((apiError as any).message)
         : "Failed to load organizations";
     } else if (data) {
-      organizations = data.organizations;
+      // Store the full data structure including proposals
+      organizationsWithProposals = data.organizations;
     }
     loading = false;
   };
@@ -81,7 +76,8 @@
   <!-- Organizations Grid -->
   {:else}
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {#each organizations as org}
+      {#each organizationsWithProposals as orgData}
+        {@const org = orgData.organization}
         <div 
           class="card hover:shadow-md transition-shadow duration-200 cursor-pointer group"
           onclick={() => handleOrganizationClick(org.id)}
@@ -124,6 +120,31 @@
               </div>
             {/if}
           </div>
+
+          <!-- Show AI-summarized proposals -->
+          {#if orgData.proposals && orgData.proposals.length > 0}
+            <div class="mt-4 border-t pt-4">
+              <h4 class="text-sm font-medium text-secondary-700 mb-2">Recent Proposals</h4>
+              <div class="space-y-2">
+                {#each orgData.proposals.slice(0, 2) as proposal}
+                  <div class="text-xs text-secondary-600">
+                    <div class="font-medium">{proposal.title}</div>
+                    <div class="text-secondary-500 mt-1">{proposal.summary}</div>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                        {proposal.risk_level === 'LOW' ? 'bg-green-100 text-green-800' : 
+                         proposal.risk_level === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' : 
+                         'bg-red-100 text-red-800'}">
+                        {proposal.risk_level}
+                      </span>
+                      <span class="text-secondary-400">•</span>
+                      <span class="text-secondary-500">{proposal.recommendation}</span>
+                    </div>
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {/if}
         </div>
       {/each}
     </div>

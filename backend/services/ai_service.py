@@ -5,7 +5,8 @@ from typing import Dict, List, Any
 
 import logfire
 from pydantic_ai import Agent
-from pydantic_ai.models import KnownModelName
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
 from models import Proposal, ProposalSummary
@@ -16,26 +17,30 @@ class AIService:
 
     def __init__(self) -> None:
         """Initialize the AI service with configured model."""
-        self.model_name = self._parse_model_name(settings.ai_model)
+        self.model = self._create_model()
         self.agent = self._create_agent()
 
-    def _parse_model_name(self, model_string: str) -> KnownModelName:
-        """Parse model string into PydanticAI model name."""
-        # Handle different model formats: "openai:gpt-4o-mini", "anthropic:claude-3-sonnet", etc.
-        if ":" in model_string:
-            provider, model = model_string.split(":", 1)
-            if provider == "openai":
-                return f"openai:{model}"
-            elif provider == "anthropic":
-                return f"anthropic:{model}"
-
-        # Default to OpenAI GPT-4o-mini if parsing fails
-        return "openai:gpt-4o-mini"
+    def _create_model(self) -> Any:
+        """Create the AI model with OpenRouter configuration."""
+        if settings.openrouter_api_key:
+            return OpenAIModel(
+                'anthropic/claude-3.5-sonnet',
+                provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
+            )
+        else:
+            # Fallback to direct provider if OpenRouter key not available
+            if settings.anthropic_api_key:
+                return 'anthropic:claude-3-5-sonnet'
+            elif settings.openai_api_key:
+                return 'openai:gpt-4o-mini'
+            else:
+                logfire.warning("No AI API keys configured, using default model")
+                return 'openai:gpt-4o-mini'
 
     def _create_agent(self) -> Agent:
         """Create and configure the Pydantic AI agent."""
         return Agent(
-            model=self.model_name,
+            model=self.model,
             system_prompt=self._get_system_prompt(),
         )
 
