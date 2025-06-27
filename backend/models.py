@@ -132,21 +132,27 @@ class ProposalListResponse(BaseModel):
     """Response model for proposal listing."""
 
     proposals: List[Proposal] = Field(..., description="List of proposals")
-    next_cursor: Optional[str] = Field(None, description="Cursor for the next page of results")
+    next_cursor: Optional[str] = Field(
+        None, description="Cursor for the next page of results"
+    )
 
 
 class OrganizationListResponse(BaseModel):
     """Response model for organization listing."""
 
     organizations: List[Organization] = Field(..., description="List of organizations")
-    next_cursor: Optional[str] = Field(None, description="Cursor for the next page of results")
+    next_cursor: Optional[str] = Field(
+        None, description="Cursor for the next page of results"
+    )
 
 
 class DAOListResponse(BaseModel):
     """Response model for DAO listing."""
 
     daos: List[DAO] = Field(..., description="List of DAOs")
-    next_cursor: Optional[str] = Field(None, description="Cursor for the next page of results")
+    next_cursor: Optional[str] = Field(
+        None, description="Cursor for the next page of results"
+    )
 
 
 class SummarizeRequest(BaseModel):

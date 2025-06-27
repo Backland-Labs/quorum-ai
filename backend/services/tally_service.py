@@ -351,7 +351,6 @@ class TallyService:
             )
             # Temporary: Return mock data for testing when API fails
             if filters.organization_id:
-                from datetime import datetime
                 mock_proposals = [
                     Proposal(
                         id="mock-1",
@@ -366,7 +365,7 @@ class TallyService:
                         votes_abstain="100",
                         dao_id="mock-dao-1",
                         dao_name="Mock DAO",
-                        url="https://example.com/proposal/mock-1"
+                        url="https://example.com/proposal/mock-1",
                     ),
                     Proposal(
                         id="mock-2",
@@ -381,10 +380,12 @@ class TallyService:
                         votes_abstain="50",
                         dao_id="mock-dao-1",
                         dao_name="Mock DAO",
-                        url="https://example.com/proposal/mock-2"
-                    )
+                        url="https://example.com/proposal/mock-2",
+                    ),
                 ]
-                logfire.info("Returning mock proposals for testing", count=len(mock_proposals))
+                logfire.info(
+                    "Returning mock proposals for testing", count=len(mock_proposals)
+                )
                 return mock_proposals, None
             raise
 

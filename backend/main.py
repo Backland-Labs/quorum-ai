@@ -13,7 +13,6 @@ from fastapi.responses import JSONResponse
 from config import settings
 from models import (
     DAO,
-    Organization,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -159,7 +158,9 @@ async def get_organization_proposals(
             sort_order=sort_order,
         )
 
-        with logfire.span("get_organization_proposals", org_id=org_id, filters=filters.dict()):
+        with logfire.span(
+            "get_organization_proposals", org_id=org_id, filters=filters.dict()
+        ):
             proposals, next_cursor = await tally_service.get_proposals(filters)
 
             return ProposalListResponse(
@@ -168,7 +169,9 @@ async def get_organization_proposals(
             )
 
     except Exception as e:
-        logfire.error("Failed to fetch organization proposals", org_id=org_id, error=str(e))
+        logfire.error(
+            "Failed to fetch organization proposals", org_id=org_id, error=str(e)
+        )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch organization proposals: {str(e)}"
         )
