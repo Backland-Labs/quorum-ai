@@ -121,6 +121,7 @@ class ProposalFilters(BaseModel):
 
     state: Optional[ProposalState] = None
     dao_id: Optional[str] = None
+    organization_id: Optional[str] = None
     limit: int = Field(default=20, ge=1, le=100)
     after_cursor: Optional[str] = None
     sort_by: SortCriteria = Field(default=SortCriteria.CREATED_DATE)

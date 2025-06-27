@@ -138,6 +138,42 @@ async def get_daos(
         raise HTTPException(status_code=500, detail=f"Failed to fetch DAOs: {str(e)}")
 
 
+@app.get("/organizations/{org_id}/proposals", response_model=ProposalListResponse)
+async def get_organization_proposals(
+    org_id: str,
+    state: Optional[ProposalState] = Query(default=None),
+    limit: int = Query(default=20, ge=1, le=100),
+    after_cursor: Optional[str] = Query(default=None),
+    sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
+    sort_order: SortOrder = Query(default=SortOrder.DESC),
+):
+    """Get list of proposals for a specific organization."""
+    try:
+        filters = _build_proposal_filters(
+            dao_id=None,
+            organization_id=org_id,
+            state=state,
+            limit=limit,
+            after_cursor=after_cursor,
+            sort_by=sort_by,
+            sort_order=sort_order,
+        )
+
+        with logfire.span("get_organization_proposals", org_id=org_id, filters=filters.dict()):
+            proposals, next_cursor = await tally_service.get_proposals(filters)
+
+            return ProposalListResponse(
+                proposals=proposals,
+                next_cursor=next_cursor,
+            )
+
+    except Exception as e:
+        logfire.error("Failed to fetch organization proposals", org_id=org_id, error=str(e))
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch organization proposals: {str(e)}"
+        )
+
+
 @app.get("/daos/{dao_id}", response_model=DAO)
 async def get_dao_by_id(dao_id: str):
     """Get a specific DAO by ID."""
@@ -163,6 +199,7 @@ async def get_dao_by_id(dao_id: str):
 @app.get("/proposals", response_model=ProposalListResponse)
 async def get_proposals(
     dao_id: Optional[str] = Query(default=None),
+    organization_id: Optional[str] = Query(default=None),
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     after_cursor: Optional[str] = Query(default=None),
@@ -172,7 +209,7 @@ async def get_proposals(
     """Get list of proposals with optional filtering and sorting."""
     try:
         filters = _build_proposal_filters(
-            dao_id, state, limit, after_cursor, sort_by, sort_order
+            dao_id, organization_id, state, limit, after_cursor, sort_by, sort_order
         )
 
         with logfire.span("get_proposals", filters=filters.dict()):
@@ -254,6 +291,7 @@ async def summarize_proposals(request: SummarizeRequest):
 # Private helper functions
 def _build_proposal_filters(
     dao_id: Optional[str],
+    organization_id: Optional[str],
     state: Optional[ProposalState],
     limit: int,
     after_cursor: Optional[str],
@@ -263,6 +301,7 @@ def _build_proposal_filters(
     """Build ProposalFilters object from query parameters."""
     return ProposalFilters(
         dao_id=dao_id,
+        organization_id=organization_id,
         state=state,
         limit=limit,
         after_cursor=after_cursor,

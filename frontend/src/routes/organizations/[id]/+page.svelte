@@ -14,24 +14,20 @@
     if (!id) return;
 
     try {
-      // TODO: Uncomment when the proposals endpoint is available
-      // const { data: proposalsData, error: proposalsError } = await apiClient.GET("/organizations/{org_id}/proposals", {
-      //   params: {
-      //     path: { org_id: id },
-      //     query: { limit: 50 }
-      //   }
-      // });
+      const { data: proposalsData, error: proposalsError } = await apiClient.GET("/organizations/{org_id}/proposals", {
+        params: {
+          path: { org_id: id },
+          query: { limit: 50 }
+        }
+      });
 
-      // if (proposalsError) {
-      //   error = proposalsError && typeof proposalsError === 'object' && 'message' in proposalsError 
-      //     ? String((proposalsError as any).message) 
-      //     : "Failed to load proposals";
-      // } else if (proposalsData) {
-      //   proposals = proposalsData;
-      // }
-
-      // For now, using empty proposals array since API endpoint is not yet available
-      proposals = [];
+      if (proposalsError) {
+        error = proposalsError && typeof proposalsError === 'object' && 'message' in proposalsError 
+          ? String((proposalsError as any).message) 
+          : "Failed to load proposals";
+      } else if (proposalsData) {
+        proposals = proposalsData.proposals;
+      }
 
       // For now, we'll create a mock organization object since we don't have an endpoint for single org
       // In a real implementation, you'd have a separate endpoint
@@ -58,8 +54,11 @@
     }
   };
 
+  let previousOrgId: string | undefined = $state(undefined);
+
   $effect(() => {
-    if (orgId) {
+    if (orgId && orgId !== previousOrgId) {
+      previousOrgId = orgId;
       loadOrganizationData(orgId);
     }
   });
