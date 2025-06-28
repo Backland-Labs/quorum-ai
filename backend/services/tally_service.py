@@ -648,7 +648,7 @@ class TallyService:
         assert len(org_id.strip()) > 0, "Organization ID cannot be empty string"
 
         query = self._build_organization_overview_query()
-        variables = {"input": {"id": org_id}}
+        variables = {"input": {"slug": org_id}}
 
         try:
             result = await self._make_request(query, variables)
@@ -670,14 +670,16 @@ class TallyService:
                 chainIds
                 tokenIds
                 governorIds
+                proposalsCount
+                delegatesCount
+                delegatesVotesCount
+                tokenOwnersCount
+                hasActiveProposals
                 metadata {
                     description
+                    color
+                    icon
                 }
-                delegatesCount
-                tokenOwnersCount
-                proposalsCount
-                delegatesVotesCount
-                hasActiveProposals
             }
         }
         """
