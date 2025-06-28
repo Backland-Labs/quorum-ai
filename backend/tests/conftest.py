@@ -126,26 +126,27 @@ def mock_dao_response() -> dict:
     """Mock response data for DAO API calls."""
     return {
         "data": {
-            "daos": [
-                {
-                    "id": "dao-1",
-                    "name": "Test DAO 1",
-                    "slug": "test-dao-1",
-                    "description": "A test DAO",
-                    "organization": {"id": "org-1"},
-                    "proposalsCount": 10,
-                    "activeProposalsCount": 3,
-                },
-                {
-                    "id": "dao-2",
-                    "name": "Test DAO 2",
-                    "slug": "test-dao-2",
-                    "description": None,
-                    "organization": {"id": "org-2"},
-                    "proposalsCount": 5,
-                    "activeProposalsCount": 1,
-                },
-            ]
+            "governors": {
+                "nodes": [
+                    {
+                        "id": "dao-1",
+                        "name": "Test DAO 1",
+                        "slug": "test-dao-1",
+                        "metadata": {"description": "A test DAO"},
+                        "organization": {"id": "org-1"},
+                        "proposalStats": {"total": 10, "active": 3},
+                    },
+                    {
+                        "id": "dao-2",
+                        "name": "Test DAO 2",
+                        "slug": "test-dao-2",
+                        "metadata": {"description": None},
+                        "organization": {"id": "org-2"},
+                        "proposalStats": {"total": 5, "active": 1},
+                    },
+                ],
+                "pageInfo": {"lastCursor": None},
+            }
         }
     }
 
@@ -155,14 +156,13 @@ def mock_single_dao_response() -> dict:
     """Mock response data for single DAO API call."""
     return {
         "data": {
-            "dao": {
+            "governor": {
                 "id": "dao-1",
                 "name": "Test DAO",
                 "slug": "test-dao",
-                "description": "A test DAO",
+                "metadata": {"description": "A test DAO"},
                 "organization": {"id": "org-1"},
-                "proposalsCount": 10,
-                "activeProposalsCount": 3,
+                "proposalStats": {"total": 10, "active": 3},
             }
         }
     }
@@ -173,34 +173,31 @@ def mock_proposals_response() -> dict:
     """Mock response data for proposals API calls."""
     return {
         "data": {
-            "proposals": [
-                {
-                    "id": "prop-1",
-                    "title": "Test Proposal 1",
-                    "description": "Test description 1",
-                    "state": "ACTIVE",
-                    "createdAt": "2024-01-01T00:00:00Z",
-                    "startBlock": 1000,
-                    "endBlock": 2000,
-                    "votesFor": "100",
-                    "votesAgainst": "10",
-                    "votesAbstain": "1",
-                    "dao": {"id": "dao-1", "name": "Test DAO"},
-                },
-                {
-                    "id": "prop-2",
-                    "title": "Test Proposal 2",
-                    "description": "Test description 2",
-                    "state": "SUCCEEDED",
-                    "createdAt": "2024-01-02T00:00:00Z",
-                    "startBlock": 2000,
-                    "endBlock": 3000,
-                    "votesFor": "200",
-                    "votesAgainst": "20",
-                    "votesAbstain": "2",
-                    "dao": {"id": "dao-1", "name": "Test DAO"},
-                },
-            ]
+            "proposals": {
+                "nodes": [
+                    {
+                        "id": "prop-1",
+                        "status": "ACTIVE",
+                        "createdAt": "2024-01-01T00:00:00Z",
+                        "metadata": {
+                            "title": "Test Proposal 1",
+                            "description": "Test description 1",
+                        },
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
+                    },
+                    {
+                        "id": "prop-2",
+                        "status": "SUCCEEDED",
+                        "createdAt": "2024-01-02T00:00:00Z",
+                        "metadata": {
+                            "title": "Test Proposal 2",
+                            "description": "Test description 2",
+                        },
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
+                    },
+                ],
+                "pageInfo": {"lastCursor": None},
+            }
         }
     }
 
@@ -212,16 +209,13 @@ def mock_single_proposal_response() -> dict:
         "data": {
             "proposal": {
                 "id": "prop-1",
-                "title": "Test Proposal",
-                "description": "Test description",
-                "state": "ACTIVE",
+                "status": "ACTIVE",
                 "createdAt": "2024-01-01T00:00:00Z",
-                "startBlock": 1000,
-                "endBlock": 2000,
-                "votesFor": "100",
-                "votesAgainst": "10",
-                "votesAbstain": "1",
-                "dao": {"id": "dao-1", "name": "Test DAO"},
+                "metadata": {
+                    "title": "Test Proposal",
+                    "description": "Test description",
+                },
+                "governor": {"id": "dao-1", "name": "Test DAO"},
             }
         }
     }
