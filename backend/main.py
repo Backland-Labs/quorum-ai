@@ -196,6 +196,9 @@ async def get_organizations_list(
 )
 async def get_organization_overview(org_id: str):
     """Get comprehensive overview data for a specific organization."""
+    assert org_id, "Organization ID cannot be empty"
+    assert isinstance(org_id, str), "Organization ID must be a string"
+
     try:
         with logfire.span("get_organization_overview", org_id=org_id):
             overview_data = await tally_service.get_organization_overview(org_id)

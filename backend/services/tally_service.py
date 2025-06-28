@@ -250,7 +250,26 @@ class TallyService:
         self, filters: ProposalFilters
     ) -> tuple[List[Proposal], Optional[str]]:
         """Fetch proposals based on filters."""
-        query = """
+        assert filters, "Filters cannot be None"
+        assert isinstance(
+            filters, ProposalFilters
+        ), "Filters must be ProposalFilters instance"
+
+        query = self._build_proposals_query()
+        variables = self._build_proposals_variables(filters)
+
+        try:
+            result = await self._make_request(query, variables)
+            return self._process_proposals_response(result)
+        except Exception as e:
+            logfire.error(
+                "Failed to fetch proposals", filters=filters.dict(), error=str(e)
+            )
+            raise
+
+    def _build_proposals_query(self) -> str:
+        """Build GraphQL query for fetching proposals."""
+        return """
             query GetProposals($input: ProposalsInput!) {
                 proposals(input: $input) {
                     nodes {
@@ -275,106 +294,108 @@ class TallyService:
             }
         """
 
+    def _build_proposals_variables(self, filters: ProposalFilters) -> Dict:
+        """Build GraphQL variables for proposals query."""
+        assert filters, "Filters are required"
+        assert filters.limit > 0, "Limit must be positive"
+
+        page_input = self._build_page_input(filters)
+        sort_input = self._build_sort_input(filters)
+        filter_input = self._build_filter_input(filters)
+
+        return {
+            "input": {"page": page_input, "sort": sort_input, "filters": filter_input}
+        }
+
+    def _build_page_input(self, filters: ProposalFilters) -> Dict:
+        """Build pagination input for proposals query."""
+        assert filters, "Filters are required"
+        assert filters.limit > 0, "Limit must be positive"
+
         page_input = {"limit": filters.limit}
         if filters.after_cursor:
             page_input["afterCursor"] = filters.after_cursor
 
-        sort_input = {
-            "sortBy": (
-                "id"
-                if filters.sort_by == SortCriteria.CREATED_DATE
-                else filters.sort_by.value
-            ),
+        return page_input
+
+    def _build_sort_input(self, filters: ProposalFilters) -> Dict:
+        """Build sort input for proposals query."""
+        assert filters, "Filters are required"
+        assert filters.sort_by, "Sort criteria is required"
+
+        sort_by = (
+            "id"
+            if filters.sort_by == SortCriteria.CREATED_DATE
+            else filters.sort_by.value
+        )
+
+        return {
+            "sortBy": sort_by,
             "isDescending": filters.sort_order == SortOrder.DESC,
         }
+
+    def _build_filter_input(self, filters: ProposalFilters) -> Dict:
+        """Build filter input for proposals query."""
+        assert filters, "Filters are required"
 
         filter_input = {}
         if filters.organization_id:
             filter_input["organizationId"] = filters.organization_id
         elif filters.dao_id:
             filter_input["governorId"] = filters.dao_id
-        if filters.state:
-            # The API expects a list of states, but our filter is for a single state
-            # The old query string building was also incorrect in not wrapping state in quotes.
-            # The API seems to have changed from a 'where' clause to a 'filters' object.
-            # I am assuming based on `ProposalsFiltersInput` that it does not support `states`.
-            # I will look at the documentation again.
-            # After looking at `ProposalsFiltersInput` in the docs, there is no `state` or `states` filter.
-            # The old implementation was `where: {states: [${filters.state.value}]}`
-            # The new input type `ProposalsFiltersInput` does not have this.
-            # It has `governorId`, `includeArchived`, `isDraft`, `organizationId`, `proposer`.
-            # The old query was probably for a different version of the API altogether.
-            # The new query for proposals does not seem to support filtering by state directly.
-            # I will omit the state filter for now as it seems unsupported.
-            pass
 
-        variables = {
-            "input": {"page": page_input, "sort": sort_input, "filters": filter_input}
-        }
+        # Note: API doesn't support state filtering in current version
+        return filter_input
 
-        try:
-            result = await self._make_request(query, variables)
-            proposals_data = result.get("data", {}).get("proposals", {})
-            proposal_nodes = proposals_data.get("nodes", [])
-            last_cursor = proposals_data.get("pageInfo", {}).get("lastCursor")
+    def _process_proposals_response(
+        self, result: Dict
+    ) -> tuple[List[Proposal], Optional[str]]:
+        """Process proposals API response into Proposal objects."""
+        assert result, "API result cannot be empty"
+        assert "data" in result, "API result must contain data"
 
-            proposals = []
-            for prop in proposal_nodes:
-                governor_info = prop.get("governor", {})
-                metadata = prop.get("metadata", {})
+        proposals_data = result.get("data", {}).get("proposals", {})
+        proposal_nodes = proposals_data.get("nodes", [])
+        last_cursor = proposals_data.get("pageInfo", {}).get("lastCursor")
 
-                # Convert API status to our enum format
-                status = prop["status"].upper()
+        proposals = [
+            self._create_proposal_from_node(node) for node in proposal_nodes if node
+        ]
 
-                proposals.append(
-                    Proposal(
-                        id=prop["id"],
-                        title=metadata.get("title", ""),
-                        description=metadata.get("description", ""),
-                        state=ProposalState(status),
-                        created_at=datetime.fromisoformat(
-                            prop["createdAt"].replace("Z", "+00:00")
-                        ),
-                        start_block=0,  # Will be populated later if needed
-                        end_block=0,  # Will be populated later if needed
-                        votes_for="0",  # Will be populated later if needed
-                        votes_against="0",  # Will be populated later if needed
-                        votes_abstain="0",  # Will be populated later if needed
-                        dao_id=governor_info.get("id", ""),
-                        dao_name=governor_info.get("name", ""),
-                        url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
-                    )
-                )
+        logfire.info("Fetched proposals", count=len(proposals))
+        return proposals, last_cursor
 
-            logfire.info("Fetched proposals", count=len(proposals))
-            return proposals, last_cursor
+    def _create_proposal_from_node(self, node: Dict) -> Proposal:
+        """Create Proposal object from API node data."""
+        assert node, "Node data is required"
+        assert "id" in node, "Node must contain id"
 
-        except Exception as e:
-            logfire.error(
-                "Failed to fetch proposals", filters=filters.dict(), error=str(e)
-            )
-            raise
+        governor_info = node.get("governor", {})
+        metadata = node.get("metadata", {})
+        status = node["status"].upper()
+
+        return Proposal(
+            id=node["id"],
+            title=metadata.get("title", ""),
+            description=metadata.get("description", ""),
+            state=ProposalState(status),
+            created_at=datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00")),
+            start_block=0,  # Will be populated later if needed
+            end_block=0,  # Will be populated later if needed
+            votes_for="0",  # Will be populated later if needed
+            votes_against="0",  # Will be populated later if needed
+            votes_abstain="0",  # Will be populated later if needed
+            dao_id=governor_info.get("id", ""),
+            dao_name=governor_info.get("name", ""),
+            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{node['id']}",
+        )
 
     async def get_proposal_by_id(self, proposal_id: str) -> Optional[Proposal]:
         """Fetch a specific proposal by ID."""
-        query = """
-        query GetProposal($id: ID!) {
-            proposal(id: $id) {
-                id
-                status
-                createdAt
-                metadata {
-                    title
-                    description
-                }
-                governor {
-                    id
-                    name
-                }
-            }
-        }
-        """
+        assert proposal_id, "Proposal ID cannot be empty"
+        assert isinstance(proposal_id, str), "Proposal ID must be a string"
 
+        query = self._build_single_proposal_query()
         variables = {"id": proposal_id}
 
         try:
@@ -612,7 +633,35 @@ class TallyService:
 
     async def get_organization_overview(self, org_id: str) -> Optional[Dict]:
         """Get comprehensive overview data for a specific organization."""
-        query = """
+        assert org_id, "Organization ID cannot be empty"
+        assert isinstance(org_id, str), "Organization ID must be a string"
+
+        org_data = await self._fetch_organization_data(org_id)
+        if not org_data:
+            return None
+
+        return self._build_organization_overview_response(org_data)
+
+    async def _fetch_organization_data(self, org_id: str) -> Optional[Dict]:
+        """Fetch raw organization data from Tally API."""
+        assert org_id, "Organization ID is required"
+        assert len(org_id.strip()) > 0, "Organization ID cannot be empty string"
+
+        query = self._build_organization_overview_query()
+        variables = {"input": {"id": org_id}}
+
+        try:
+            result = await self._make_request(query, variables)
+            return result.get("data", {}).get("organization")
+        except Exception as e:
+            logfire.error(
+                "Failed to fetch organization overview", org_id=org_id, error=str(e)
+            )
+            raise
+
+    def _build_organization_overview_query(self) -> str:
+        """Build GraphQL query for organization overview."""
+        return """
         query GetOrganizationOverview($input: OrganizationInput!) {
             organization(input: $input) {
                 id
@@ -633,61 +682,86 @@ class TallyService:
         }
         """
 
-        variables = {"input": {"id": org_id}}
+    def _build_organization_overview_response(self, org_data: Dict) -> Dict:
+        """Build organization overview response from raw API data."""
+        assert org_data, "Organization data cannot be empty"
+        assert "id" in org_data, "Organization data must contain id"
 
-        try:
-            result = await self._make_request(query, variables)
-            org_data = result.get("data", {}).get("organization")
+        delegate_count = org_data.get("delegatesCount", 0)
+        token_holder_count = org_data.get("tokenOwnersCount", 0)
+        total_proposals = org_data.get("proposalsCount", 0)
 
-            if not org_data:
-                return None
+        proposal_counts = self._calculate_proposal_counts_by_status(
+            org_data, total_proposals
+        )
+        participation_rate = self._calculate_governance_participation_rate(
+            delegate_count, token_holder_count
+        )
 
-            # Extract basic organization data
-            delegate_count = org_data.get("delegatesCount", 0)
-            token_holder_count = org_data.get("tokenOwnersCount", 0)
-            total_proposals = org_data.get("proposalsCount", 0)
-            has_active_proposals = org_data.get("hasActiveProposals", False)
+        overview_data = {
+            "organization_id": org_data["id"],
+            "organization_name": org_data["name"],
+            "organization_slug": org_data["slug"],
+            "description": org_data.get("metadata", {}).get("description"),
+            "delegate_count": delegate_count,
+            "token_holder_count": token_holder_count,
+            "total_proposals_count": total_proposals,
+            "proposal_counts_by_status": proposal_counts,
+            "recent_activity_count": proposal_counts.get("ACTIVE", 0),
+            "governance_participation_rate": participation_rate,
+        }
 
-            # Since the API doesn't provide proposal counts by status in the organization query,
-            # we'll provide a simplified version based on available data
-            proposal_counts_by_status = {}
-            if has_active_proposals:
-                # Rough estimate: if there are active proposals, assume some distribution
-                proposal_counts_by_status["ACTIVE"] = min(
-                    total_proposals, 3
-                )  # Estimate active
+        logfire.info(
+            "Fetched organization overview",
+            org_id=org_data["id"],
+            delegate_count=delegate_count,
+        )
+        return overview_data
 
-            # Calculate governance participation rate (simplified calculation)
-            # Simple participation rate: delegates / token holders (capped at 1.0)
-            participation_rate = 0.0
-            if token_holder_count > 0:
-                participation_rate = min(delegate_count / token_holder_count, 1.0)
+    def _calculate_proposal_counts_by_status(
+        self, org_data: Dict, total_proposals: int
+    ) -> Dict[str, int]:
+        """Calculate proposal counts by status from organization data."""
+        assert org_data, "Organization data is required"
+        assert isinstance(org_data, dict), "Organization data must be a dictionary"
 
-            # Calculate recent activity count (simplified - using active proposals indicator)
-            recent_activity_count = proposal_counts_by_status.get("ACTIVE", 0)
+        has_active_proposals = org_data.get("hasActiveProposals", False)
+        proposal_counts = {}
 
-            overview_data = {
-                "organization_id": org_data["id"],
-                "organization_name": org_data["name"],
-                "organization_slug": org_data["slug"],
-                "description": org_data.get("metadata", {}).get("description"),
-                "delegate_count": delegate_count,
-                "token_holder_count": token_holder_count,
-                "total_proposals_count": total_proposals,
-                "proposal_counts_by_status": proposal_counts_by_status,
-                "recent_activity_count": recent_activity_count,
-                "governance_participation_rate": participation_rate,
+        if has_active_proposals:
+            # Estimate active proposals based on available data
+            proposal_counts["ACTIVE"] = min(total_proposals, 3)
+
+        return proposal_counts
+
+    def _calculate_governance_participation_rate(
+        self, delegate_count: int, token_holder_count: int
+    ) -> float:
+        """Calculate governance participation rate as delegates/token_holders."""
+        assert delegate_count >= 0, "Delegate count must be non-negative"
+        assert token_holder_count >= 0, "Token holder count must be non-negative"
+
+        if token_holder_count == 0:
+            return 0.0
+
+        return min(delegate_count / token_holder_count, 1.0)
+
+    def _build_single_proposal_query(self) -> str:
+        """Build GraphQL query for fetching a single proposal by ID."""
+        return """
+        query GetProposal($id: ID!) {
+            proposal(id: $id) {
+                id
+                status
+                createdAt
+                metadata {
+                    title
+                    description
+                }
+                governor {
+                    id
+                    name
+                }
             }
-
-            logfire.info(
-                "Fetched organization overview",
-                org_id=org_id,
-                delegate_count=delegate_count,
-            )
-            return overview_data
-
-        except Exception as e:
-            logfire.error(
-                "Failed to fetch organization overview", org_id=org_id, error=str(e)
-            )
-            raise
+        }
+        """
