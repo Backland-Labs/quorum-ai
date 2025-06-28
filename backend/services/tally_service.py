@@ -322,10 +322,10 @@ class TallyService:
             for prop in proposal_nodes:
                 governor_info = prop.get("governor", {})
                 metadata = prop.get("metadata", {})
-                
+
                 # Convert API status to our enum format
                 status = prop["status"].upper()
-                
+
                 proposals.append(
                     Proposal(
                         id=prop["id"],
@@ -336,7 +336,7 @@ class TallyService:
                             prop["createdAt"].replace("Z", "+00:00")
                         ),
                         start_block=0,  # Will be populated later if needed
-                        end_block=0,    # Will be populated later if needed
+                        end_block=0,  # Will be populated later if needed
                         votes_for="0",  # Will be populated later if needed
                         votes_against="0",  # Will be populated later if needed
                         votes_abstain="0",  # Will be populated later if needed
@@ -389,7 +389,7 @@ class TallyService:
 
             # Convert API status to our enum format
             status = prop_data["status"].upper()
-            
+
             return Proposal(
                 id=prop_data["id"],
                 title=metadata.get("title", ""),
@@ -399,7 +399,7 @@ class TallyService:
                     prop_data["createdAt"].replace("Z", "+00:00")
                 ),
                 start_block=0,  # Will be populated later if needed
-                end_block=0,    # Will be populated later if needed
+                end_block=0,  # Will be populated later if needed
                 votes_for="0",  # Will be populated later if needed
                 votes_against="0",  # Will be populated later if needed
                 votes_abstain="0",  # Will be populated later if needed
@@ -438,68 +438,67 @@ class TallyService:
         """Fetch the top organizations with their 3 most active proposals each."""
         top_org_slugs = settings.top_organizations
         results = []
-        
+
         logfire.info(
             "Starting to fetch top organizations with proposals",
             organization_slugs=top_org_slugs,
-            org_count=len(top_org_slugs)
+            org_count=len(top_org_slugs),
         )
-        
+
         # First, get organization details for each slug
         for org_slug in top_org_slugs:
             try:
                 logfire.info(f"Fetching organization: {org_slug}")
-                
+
                 # Get organization by slug
                 org_data = await self._get_organization_by_slug(org_slug)
                 if not org_data:
                     logfire.warning(f"Organization not found: {org_slug}")
                     continue
-                
+
                 logfire.info(
                     f"Found organization: {org_data['name']}",
                     org_id=org_data["id"],
                     proposals_count=org_data["proposals_count"],
-                    has_active=org_data["has_active_proposals"]
+                    has_active=org_data["has_active_proposals"],
                 )
-                
+
                 # Get the 3 most active proposals for this organization
-                proposals = await self._get_most_active_proposals_for_org(org_data["id"], limit=3)
-                
+                proposals = await self._get_most_active_proposals_for_org(
+                    org_data["id"], limit=3
+                )
+
                 logfire.info(
                     f"Retrieved proposals for {org_data['name']}",
                     proposals_found=len(proposals),
-                    proposal_titles=[p.title for p in proposals]
+                    proposal_titles=[p.title for p in proposals],
                 )
-                
-                results.append({
-                    "organization": org_data,
-                    "proposals": proposals
-                })
-                
+
+                results.append({"organization": org_data, "proposals": proposals})
+
             except Exception as e:
                 logfire.error(
-                    f"Failed to fetch data for organization {org_slug}", 
+                    f"Failed to fetch data for organization {org_slug}",
                     error=str(e),
-                    error_type=type(e).__name__
+                    error_type=type(e).__name__,
                 )
                 continue
-        
+
         logfire.info(
             "Completed fetching organizations with proposals",
             total_orgs_found=len(results),
-            total_proposals=sum(len(r["proposals"]) for r in results)
+            total_proposals=sum(len(r["proposals"]) for r in results),
         )
-        
+
         return results
-    
+
     async def _get_organization_by_slug(self, slug: str) -> Optional[Dict]:
         """Get organization details by slug."""
         # First, let's try to find the organization by getting all orgs and filtering
         # since the direct slug filter might not be working as expected
         try:
             organizations, _ = await self.get_organizations(limit=200)
-            
+
             for org in organizations:
                 if org.slug.lower() == slug.lower():
                     return {
@@ -515,14 +514,16 @@ class TallyService:
                         "delegates_votes_count": org.delegates_votes_count,
                         "token_owners_count": org.token_owners_count,
                     }
-            
+
             return None
-            
+
         except Exception as e:
             logfire.error(f"Failed to fetch organization by slug: {slug}", error=str(e))
             return None
-    
-    async def _get_most_active_proposals_for_org(self, org_id: str, limit: int = 3) -> List[Proposal]:
+
+    async def _get_most_active_proposals_for_org(
+        self, org_id: str, limit: int = 3
+    ) -> List[Proposal]:
         """Get the most active proposals for an organization (sorted by active state first, then by creation date)."""
         query = """
         query GetActiveProposals($input: ProposalsInput!) {
@@ -545,31 +546,31 @@ class TallyService:
             }
         }
         """
-        
+
         variables = {
             "input": {
                 "page": {"limit": limit * 2},  # Get more to filter for active ones
                 "sort": {"sortBy": "id", "isDescending": True},  # Most recent first
-                "filters": {"organizationId": org_id}
+                "filters": {"organizationId": org_id},
             }
         }
-        
+
         try:
             result = await self._make_request(query, variables)
             proposals_data = result.get("data", {}).get("proposals", {})
             proposal_nodes = proposals_data.get("nodes", [])
-            
+
             active_proposals = []
             other_proposals = []
-            
+
             for prop in proposal_nodes:
                 if not prop:
                     continue
-                    
+
                 governor_info = prop.get("governor", {})
                 metadata = prop.get("metadata", {})
                 status = prop["status"].upper()
-                
+
                 proposal = Proposal(
                     id=prop["id"],
                     title=metadata.get("title", ""),
@@ -587,20 +588,106 @@ class TallyService:
                     dao_name=governor_info.get("name", ""),
                     url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
                 )
-                
+
                 # Prioritize active proposals
                 if status == "ACTIVE":
                     active_proposals.append(proposal)
                 else:
                     other_proposals.append(proposal)
-            
+
             # Return active proposals first, then others, up to limit
             result_proposals = active_proposals[:limit]
             if len(result_proposals) < limit:
-                result_proposals.extend(other_proposals[:limit - len(result_proposals)])
-            
+                result_proposals.extend(
+                    other_proposals[: limit - len(result_proposals)]
+                )
+
             return result_proposals[:limit]
-            
+
         except Exception as e:
-            logfire.error(f"Failed to fetch proposals for organization {org_id}", error=str(e))
+            logfire.error(
+                f"Failed to fetch proposals for organization {org_id}", error=str(e)
+            )
             return []
+
+    async def get_organization_overview(self, org_id: str) -> Optional[Dict]:
+        """Get comprehensive overview data for a specific organization."""
+        query = """
+        query GetOrganizationOverview($input: OrganizationInput!) {
+            organization(input: $input) {
+                id
+                name
+                slug
+                chainIds
+                tokenIds
+                governorIds
+                metadata {
+                    description
+                }
+                delegatesCount
+                tokenOwnersCount
+                proposalsCount
+                delegatesVotesCount
+                hasActiveProposals
+            }
+        }
+        """
+
+        variables = {"input": {"id": org_id}}
+
+        try:
+            result = await self._make_request(query, variables)
+            org_data = result.get("data", {}).get("organization")
+
+            if not org_data:
+                return None
+
+            # Extract basic organization data
+            delegate_count = org_data.get("delegatesCount", 0)
+            token_holder_count = org_data.get("tokenOwnersCount", 0)
+            total_proposals = org_data.get("proposalsCount", 0)
+            has_active_proposals = org_data.get("hasActiveProposals", False)
+
+            # Since the API doesn't provide proposal counts by status in the organization query,
+            # we'll provide a simplified version based on available data
+            proposal_counts_by_status = {}
+            if has_active_proposals:
+                # Rough estimate: if there are active proposals, assume some distribution
+                proposal_counts_by_status["ACTIVE"] = min(
+                    total_proposals, 3
+                )  # Estimate active
+
+            # Calculate governance participation rate (simplified calculation)
+            # Simple participation rate: delegates / token holders (capped at 1.0)
+            participation_rate = 0.0
+            if token_holder_count > 0:
+                participation_rate = min(delegate_count / token_holder_count, 1.0)
+
+            # Calculate recent activity count (simplified - using active proposals indicator)
+            recent_activity_count = proposal_counts_by_status.get("ACTIVE", 0)
+
+            overview_data = {
+                "organization_id": org_data["id"],
+                "organization_name": org_data["name"],
+                "organization_slug": org_data["slug"],
+                "description": org_data.get("metadata", {}).get("description"),
+                "delegate_count": delegate_count,
+                "token_holder_count": token_holder_count,
+                "total_proposals_count": total_proposals,
+                "proposal_counts_by_status": proposal_counts_by_status,
+                "recent_activity_count": recent_activity_count,
+                "governance_participation_rate": participation_rate,
+            }
+
+            logfire.info(
+                "Fetched organization overview",
+                org_id=org_id,
+                delegate_count=delegate_count,
+            )
+            return overview_data
+
+        except Exception as e:
+            logfire.error(
+                "Failed to fetch organization overview", org_id=org_id, error=str(e)
+            )
+            raise

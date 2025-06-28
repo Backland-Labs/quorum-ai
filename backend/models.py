@@ -174,14 +174,41 @@ class SummarizeResponse(BaseModel):
 
 class OrganizationWithProposals(BaseModel):
     """Organization with its top proposals."""
-    
+
     organization: Organization = Field(..., description="Organization details")
-    proposals: List[ProposalSummary] = Field(..., description="Top 3 summarized proposals")
+    proposals: List[ProposalSummary] = Field(
+        ..., description="Top 3 summarized proposals"
+    )
 
 
 class TopOrganizationsResponse(BaseModel):
     """Response model for top organizations with proposals."""
-    
-    organizations: List[OrganizationWithProposals] = Field(..., description="Top organizations with proposals")
+
+    organizations: List[OrganizationWithProposals] = Field(
+        ..., description="Top organizations with proposals"
+    )
     processing_time: float = Field(..., description="Time taken to process in seconds")
     model_used: str = Field(..., description="AI model used for summarization")
+
+
+class OrganizationOverviewResponse(BaseModel):
+    """Response model for organization overview."""
+
+    organization_id: str = Field(..., description="Organization unique identifier")
+    organization_name: str = Field(..., description="Organization name")
+    organization_slug: str = Field(..., description="Organization slug for URLs")
+    description: Optional[str] = Field(None, description="Organization description")
+    delegate_count: int = Field(..., ge=0, description="Number of delegates")
+    token_holder_count: int = Field(..., ge=0, description="Number of token holders")
+    total_proposals_count: int = Field(
+        ..., ge=0, description="Total number of proposals"
+    )
+    proposal_counts_by_status: Dict[str, int] = Field(
+        ..., description="Proposal counts grouped by status"
+    )
+    recent_activity_count: int = Field(
+        ..., ge=0, description="Recent governance activity count"
+    )
+    governance_participation_rate: float = Field(
+        ..., ge=0.0, le=1.0, description="Governance participation rate"
+    )

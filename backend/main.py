@@ -15,6 +15,7 @@ from models import (
     DAO,
     Organization,
     OrganizationWithProposals,
+    OrganizationOverviewResponse,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -102,25 +103,25 @@ async def health_check():
 async def get_organizations():
     """Get top 3 organizations with their 3 most active proposals, summarized with AI."""
     start_time = time.time()
-    
+
     try:
         with logfire.span("get_top_organizations_with_proposals"):
             # Fetch top organizations with their proposals
             org_data = await tally_service.get_top_organizations_with_proposals()
-            
+
             if not org_data:
                 return TopOrganizationsResponse(
                     organizations=[],
                     processing_time=time.time() - start_time,
                     model_used=settings.ai_model,
                 )
-            
+
             organizations_with_proposals = []
-            
+
             for org_info in org_data:
                 org_dict = org_info["organization"]
                 proposals = org_info["proposals"]
-                
+
                 # Create Organization object
                 organization = Organization(
                     id=org_dict["id"],
@@ -135,24 +136,25 @@ async def get_organizations():
                     delegates_votes_count=org_dict["delegates_votes_count"],
                     token_owners_count=org_dict["token_owners_count"],
                 )
-                
+
                 # Summarize proposals if any exist
                 summarized_proposals = []
                 if proposals:
                     summaries = await ai_service.summarize_multiple_proposals(
-                        proposals, 
-                        include_risk_assessment=True, 
-                        include_recommendations=True
+                        proposals,
+                        include_risk_assessment=True,
+                        include_recommendations=True,
                     )
                     summarized_proposals = summaries
-                
-                organizations_with_proposals.append(OrganizationWithProposals(
-                    organization=organization,
-                    proposals=summarized_proposals
-                ))
-            
+
+                organizations_with_proposals.append(
+                    OrganizationWithProposals(
+                        organization=organization, proposals=summarized_proposals
+                    )
+                )
+
             processing_time = time.time() - start_time
-            
+
             return TopOrganizationsResponse(
                 organizations=organizations_with_proposals,
                 processing_time=processing_time,
@@ -162,7 +164,8 @@ async def get_organizations():
     except Exception as e:
         logfire.error("Failed to fetch top organizations with proposals", error=str(e))
         raise HTTPException(
-            status_code=500, detail=f"Failed to fetch top organizations with proposals: {str(e)}"
+            status_code=500,
+            detail=f"Failed to fetch top organizations with proposals: {str(e)}",
         )
 
 
@@ -185,6 +188,33 @@ async def get_organizations_list(
         logfire.error("Failed to fetch organizations", error=str(e))
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch organizations: {str(e)}"
+        )
+
+
+@app.get(
+    "/organizations/{org_id}/overview", response_model=OrganizationOverviewResponse
+)
+async def get_organization_overview(org_id: str):
+    """Get comprehensive overview data for a specific organization."""
+    try:
+        with logfire.span("get_organization_overview", org_id=org_id):
+            overview_data = await tally_service.get_organization_overview(org_id)
+
+            if not overview_data:
+                raise HTTPException(
+                    status_code=404, detail=f"Organization with ID {org_id} not found"
+                )
+
+            return OrganizationOverviewResponse(**overview_data)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logfire.error(
+            "Failed to fetch organization overview", org_id=org_id, error=str(e)
+        )
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch organization overview: {str(e)}"
         )
 
 

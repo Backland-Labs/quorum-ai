@@ -314,3 +314,60 @@ class TestTallyServiceGetMultipleProposals:
         proposals = await tally_service.get_multiple_proposals([])
 
         assert len(proposals) == 0
+
+
+class TestTallyServiceGetOrganizationOverview:
+    """Test TallyService get_organization_overview method."""
+
+    async def test_get_organization_overview_success(
+        self,
+        tally_service: TallyService,
+        mock_organization_overview_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test successful organization overview fetching."""
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=mock_organization_overview_response,
+        )
+
+        overview = await tally_service.get_organization_overview("org-123")
+
+        assert overview is not None
+        assert overview["organization_id"] == "org-123"
+        assert overview["organization_name"] == "Test DAO"
+        assert overview["delegate_count"] == 150
+        assert overview["token_holder_count"] == 1000
+        assert overview["total_proposals_count"] == 50
+
+    async def test_get_organization_overview_not_found(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test organization overview fetching when organization not found."""
+        response_data = {"data": {"organization": None}}
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=response_data
+        )
+
+        overview = await tally_service.get_organization_overview("nonexistent-org")
+
+        assert overview is None
+
+    async def test_get_organization_overview_network_error(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test organization overview fetching with network error."""
+        httpx_mock.add_exception(httpx.RequestError("Network error"))
+
+        with pytest.raises(httpx.RequestError):
+            await tally_service.get_organization_overview("org-123")
+
+    async def test_get_organization_overview_http_error(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test organization overview fetching with HTTP error."""
+        httpx_mock.add_response(status_code=500)
+
+        with pytest.raises(httpx.HTTPStatusError):
+            await tally_service.get_organization_overview("org-123")

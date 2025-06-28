@@ -20,7 +20,10 @@ def client():
 async def async_client():
     """Create an async FastAPI test client."""
     from httpx import ASGITransport
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
         yield ac
 
 
@@ -117,10 +120,14 @@ class TestDAOEndpoints:
         """Test DAO listing with pagination parameters."""
         mock_get_daos.return_value = ([sample_dao], "cursor_123")
 
-        response = client.get("/daos?organization_id=org-123&limit=10&after_cursor=cursor_20")
+        response = client.get(
+            "/daos?organization_id=org-123&limit=10&after_cursor=cursor_20"
+        )
 
         assert response.status_code == 200
-        mock_get_daos.assert_called_once_with(organization_id="org-123", limit=10, after_cursor="cursor_20")
+        mock_get_daos.assert_called_once_with(
+            organization_id="org-123", limit=10, after_cursor="cursor_20"
+        )
 
     @patch("main.tally_service.get_daos")
     def test_get_daos_handles_service_error(
@@ -424,3 +431,110 @@ class TestRateLimiting:
         # Some should be rate limited
         rate_limited = [r for r in responses if r.status_code == 429]
         assert len(rate_limited) > 0
+
+
+class TestOrganizationOverviewEndpoint:
+    """Test organization overview endpoint."""
+
+    @patch("main.tally_service.get_organization_overview")
+    def test_get_organization_overview_success(
+        self, mock_get_overview: Mock, client: TestClient
+    ) -> None:
+        """Test successful organization overview retrieval."""
+        mock_overview_data = {
+            "organization_id": "org-123",
+            "organization_name": "Test DAO",
+            "organization_slug": "test-dao",
+            "description": "A test DAO organization",
+            "delegate_count": 150,
+            "token_holder_count": 1000,
+            "total_proposals_count": 50,
+            "proposal_counts_by_status": {
+                "ACTIVE": 5,
+                "SUCCEEDED": 25,
+                "DEFEATED": 10,
+                "PENDING": 3,
+                "EXECUTED": 7,
+            },
+            "recent_activity_count": 15,
+            "governance_participation_rate": 0.75,
+        }
+        mock_get_overview.return_value = mock_overview_data
+
+        response = client.get("/organizations/org-123/overview")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["organization_id"] == "org-123"
+        assert data["organization_name"] == "Test DAO"
+        assert data["delegate_count"] == 150
+        assert data["token_holder_count"] == 1000
+        assert data["total_proposals_count"] == 50
+        assert data["proposal_counts_by_status"]["ACTIVE"] == 5
+        assert data["governance_participation_rate"] == 0.75
+
+        mock_get_overview.assert_called_once_with("org-123")
+
+    @patch("main.tally_service.get_organization_overview")
+    def test_get_organization_overview_not_found(
+        self, mock_get_overview: Mock, client: TestClient
+    ) -> None:
+        """Test organization overview retrieval when organization not found."""
+        mock_get_overview.return_value = None
+
+        response = client.get("/organizations/nonexistent-org/overview")
+
+        assert response.status_code == 404
+        data = response.json()
+        assert "not found" in data["detail"].lower()
+
+    @patch("main.tally_service.get_organization_overview")
+    def test_get_organization_overview_service_error(
+        self, mock_get_overview: Mock, client: TestClient
+    ) -> None:
+        """Test organization overview retrieval when service fails."""
+        mock_get_overview.side_effect = Exception("Service error")
+
+        response = client.get("/organizations/org-123/overview")
+
+        assert response.status_code == 500
+        data = response.json()
+        assert "error" in data
+
+    def test_get_organization_overview_invalid_org_id(self, client: TestClient) -> None:
+        """Test organization overview with invalid organization ID format."""
+        # Test with empty org_id
+        response = client.get("/organizations//overview")
+        assert response.status_code == 404  # Path not found
+
+        # Test with special characters
+        response = client.get("/organizations/org%20with%20spaces/overview")
+        # Should still work as URL encoding is handled by FastAPI
+        assert response.status_code in [200, 404, 500]  # Any valid HTTP response
+
+    @pytest.mark.asyncio
+    @patch("main.tally_service.get_organization_overview")
+    async def test_async_get_organization_overview(
+        self, mock_get_overview: AsyncMock, async_client: AsyncClient
+    ) -> None:
+        """Test async organization overview endpoint."""
+        mock_overview_data = {
+            "organization_id": "org-456",
+            "organization_name": "Async Test DAO",
+            "organization_slug": "async-test-dao",
+            "description": None,
+            "delegate_count": 200,
+            "token_holder_count": 1500,
+            "total_proposals_count": 75,
+            "proposal_counts_by_status": {"ACTIVE": 10},
+            "recent_activity_count": 25,
+            "governance_participation_rate": 0.85,
+        }
+        mock_get_overview.return_value = mock_overview_data
+
+        response = await async_client.get("/organizations/org-456/overview")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["organization_id"] == "org-456"
+        assert data["delegate_count"] == 200

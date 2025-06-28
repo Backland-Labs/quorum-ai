@@ -2,14 +2,11 @@
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock
 
 from models import (
-    Proposal, 
-    ProposalState, 
-    ProposalSummary,
+    Proposal,
+    ProposalState,
     DAO,
-    ProposalFilters,
 )
 from services.ai_service import AIService
 from services.tally_service import TallyService
@@ -225,6 +222,29 @@ def mock_single_proposal_response() -> dict:
                 "votesAgainst": "10",
                 "votesAbstain": "1",
                 "dao": {"id": "dao-1", "name": "Test DAO"},
+            }
+        }
+    }
+
+
+@pytest.fixture
+def mock_organization_overview_response() -> dict:
+    """Mock response data for organization overview API call."""
+    return {
+        "data": {
+            "organization": {
+                "id": "org-123",
+                "name": "Test DAO",
+                "slug": "test-dao",
+                "metadata": {"description": "A test DAO organization"},
+                "delegatesCount": 150,
+                "tokenOwnersCount": 1000,
+                "proposalsCount": 50,
+                "hasActiveProposals": True,
+                "chainIds": ["1"],
+                "tokenIds": ["token-123"],
+                "governorIds": ["gov-123"],
+                "delegatesVotesCount": "1500000",
             }
         }
     }
