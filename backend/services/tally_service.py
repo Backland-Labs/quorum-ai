@@ -2,7 +2,7 @@
 
 import asyncio
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import httpx
 import logfire
@@ -22,7 +22,7 @@ from models import (
 class TallyService:
     """Service for interacting with the Tally API."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.base_url = settings.tally_api_base_url
         self.api_key = settings.tally_api_key
         self.timeout = settings.request_timeout
@@ -75,7 +75,7 @@ class TallyService:
         }
         """
 
-        page_input = {"limit": limit}
+        page_input: Dict[str, Any] = {"limit": limit}
         if after_cursor:
             page_input["afterCursor"] = after_cursor
 
@@ -153,7 +153,7 @@ class TallyService:
         }
         """
 
-        page_input = {"limit": limit}
+        page_input: Dict[str, Any] = {"limit": limit}
         if after_cursor:
             page_input["afterCursor"] = after_cursor
 
@@ -441,7 +441,7 @@ class TallyService:
         tasks = [self.get_proposal_by_id(pid) for pid in proposal_ids]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        proposals = []
+        proposals: List[Proposal] = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logfire.error(
