@@ -19,7 +19,8 @@ def client():
 @pytest.fixture
 async def async_client():
     """Create an async FastAPI test client."""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    from httpx import ASGITransport
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
 
 
@@ -94,34 +95,34 @@ class TestHealthEndpoint:
 class TestDAOEndpoints:
     """Test DAO-related endpoints."""
 
-    @patch("api.tally_service.get_daos")
+    @patch("main.tally_service.get_daos")
     def test_get_daos_success(
         self, mock_get_daos: Mock, client: TestClient, sample_dao: DAO
     ) -> None:
         """Test successful DAO listing."""
-        mock_get_daos.return_value = [sample_dao]
+        mock_get_daos.return_value = ([sample_dao], None)
 
-        response = client.get("/daos")
+        response = client.get("/daos?organization_id=org-123")
 
         assert response.status_code == 200
         data = response.json()
-        assert len(data) == 1
-        assert data[0]["id"] == "dao-123"
-        assert data[0]["name"] == "Test DAO"
+        assert len(data["daos"]) == 1
+        assert data["daos"][0]["id"] == "dao-123"
+        assert data["daos"][0]["name"] == "Test DAO"
 
-    @patch("api.tally_service.get_daos")
+    @patch("main.tally_service.get_daos")
     def test_get_daos_with_pagination(
         self, mock_get_daos: Mock, client: TestClient, sample_dao: DAO
     ) -> None:
         """Test DAO listing with pagination parameters."""
-        mock_get_daos.return_value = [sample_dao]
+        mock_get_daos.return_value = ([sample_dao], "cursor_123")
 
-        response = client.get("/daos?limit=10&offset=20")
+        response = client.get("/daos?organization_id=org-123&limit=10&after_cursor=cursor_20")
 
         assert response.status_code == 200
-        mock_get_daos.assert_called_once_with(limit=10, offset=20)
+        mock_get_daos.assert_called_once_with(organization_id="org-123", limit=10, after_cursor="cursor_20")
 
-    @patch("api.tally_service.get_daos")
+    @patch("main.tally_service.get_daos")
     def test_get_daos_handles_service_error(
         self, mock_get_daos: Mock, client: TestClient
     ) -> None:
@@ -134,7 +135,7 @@ class TestDAOEndpoints:
         data = response.json()
         assert "error" in data
 
-    @patch("api.tally_service.get_dao_by_id")
+    @patch("main.tally_service.get_dao_by_id")
     def test_get_dao_by_id_success(
         self, mock_get_dao: Mock, client: TestClient, sample_dao: DAO
     ) -> None:
@@ -148,7 +149,7 @@ class TestDAOEndpoints:
         assert data["id"] == "dao-123"
         assert data["name"] == "Test DAO"
 
-    @patch("api.tally_service.get_dao_by_id")
+    @patch("main.tally_service.get_dao_by_id")
     def test_get_dao_by_id_not_found(
         self, mock_get_dao: Mock, client: TestClient
     ) -> None:
@@ -165,7 +166,7 @@ class TestDAOEndpoints:
 class TestProposalEndpoints:
     """Test proposal-related endpoints."""
 
-    @patch("api.tally_service.get_proposals")
+    @patch("main.tally_service.get_proposals")
     def test_get_proposals_success(
         self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
     ) -> None:
@@ -180,7 +181,7 @@ class TestProposalEndpoints:
         assert len(data["proposals"]) == 1
         assert data["proposals"][0]["id"] == "prop-123"
 
-    @patch("api.tally_service.get_proposals")
+    @patch("main.tally_service.get_proposals")
     def test_get_proposals_with_filters(
         self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
     ) -> None:
@@ -199,7 +200,7 @@ class TestProposalEndpoints:
         assert call_args.state == ProposalState.ACTIVE
         assert call_args.limit == 10
 
-    @patch("api.tally_service.get_proposals")
+    @patch("main.tally_service.get_proposals")
     def test_get_proposals_invalid_state_filter(
         self, mock_get_proposals: Mock, client: TestClient
     ) -> None:
@@ -208,7 +209,7 @@ class TestProposalEndpoints:
 
         assert response.status_code == 422  # Validation error
 
-    @patch("api.tally_service.get_proposal_by_id")
+    @patch("main.tally_service.get_proposal_by_id")
     def test_get_proposal_by_id_success(
         self, mock_get_proposal: Mock, client: TestClient, sample_proposal: Proposal
     ) -> None:
@@ -222,7 +223,7 @@ class TestProposalEndpoints:
         assert data["id"] == "prop-123"
         assert data["title"] == "Test Proposal"
 
-    @patch("api.tally_service.get_proposal_by_id")
+    @patch("main.tally_service.get_proposal_by_id")
     def test_get_proposal_by_id_not_found(
         self, mock_get_proposal: Mock, client: TestClient
     ) -> None:
@@ -237,8 +238,8 @@ class TestProposalEndpoints:
 class TestSummarizeEndpoints:
     """Test proposal summarization endpoints."""
 
-    @patch("api.ai_service.summarize_multiple_proposals")
-    @patch("api.tally_service.get_multiple_proposals")
+    @patch("main.ai_service.summarize_multiple_proposals")
+    @patch("main.tally_service.get_multiple_proposals")
     def test_summarize_proposals_success(
         self,
         mock_get_proposals: Mock,
@@ -268,7 +269,7 @@ class TestSummarizeEndpoints:
         assert data["processing_time"] == 1.5
         assert "model_used" in data
 
-    @patch("api.tally_service.get_multiple_proposals")
+    @patch("main.tally_service.get_multiple_proposals")
     def test_summarize_proposals_no_proposals_found(
         self, mock_get_proposals: Mock, client: TestClient
     ) -> None:
@@ -302,8 +303,8 @@ class TestSummarizeEndpoints:
 
         assert response.status_code == 422  # Validation error
 
-    @patch("api.ai_service.summarize_multiple_proposals")
-    @patch("api.tally_service.get_multiple_proposals")
+    @patch("main.ai_service.summarize_multiple_proposals")
+    @patch("main.tally_service.get_multiple_proposals")
     def test_summarize_proposals_ai_service_error(
         self,
         mock_get_proposals: Mock,
@@ -328,7 +329,7 @@ class TestAsyncEndpoints:
     """Test async endpoint functionality."""
 
     @pytest.mark.asyncio
-    @patch("api.tally_service.get_daos")
+    @patch("main.tally_service.get_daos")
     async def test_async_get_daos(
         self, mock_get_daos: AsyncMock, async_client: AsyncClient, sample_dao: DAO
     ) -> None:
@@ -342,8 +343,8 @@ class TestAsyncEndpoints:
         assert len(data) == 1
 
     @pytest.mark.asyncio
-    @patch("api.ai_service.summarize_multiple_proposals")
-    @patch("api.tally_service.get_multiple_proposals")
+    @patch("main.ai_service.summarize_multiple_proposals")
+    @patch("main.tally_service.get_multiple_proposals")
     async def test_async_summarize_proposals(
         self,
         mock_get_proposals: AsyncMock,
@@ -371,7 +372,7 @@ class TestAsyncEndpoints:
 class TestErrorHandling:
     """Test error handling across endpoints."""
 
-    @patch("api.tally_service.get_daos")
+    @patch("main.tally_service.get_daos")
     def test_internal_server_error_handling(
         self, mock_get_daos: Mock, client: TestClient
     ) -> None:

@@ -1,277 +1,200 @@
-# Quorum AI - DAO Proposal Summarization Backend
+# Quorum AI
 
-A modern, production-ready backend for sorting and summarizing DAO proposals using AI. Built with FastAPI, Pydantic AI, and following 12-factor app principles.
-
-## Features
-
-- **DAO Management**: Fetch and browse available DAOs from Tally
-- **Proposal Filtering**: Advanced filtering and sorting of governance proposals
-- **AI Summarization**: Generate plain-English summaries of complex proposals
-- **Risk Assessment**: AI-powered risk analysis of proposals
-- **Scalable Architecture**: Built with async/await and designed for high performance
-- **Comprehensive Testing**: Full test coverage with pytest
-- **Production Ready**: Observability with Logfire, health checks, and error handling
-
-## Tech Stack
-
-- **FastAPI**: Modern, fast web framework for building APIs
-- **Pydantic AI**: Type-safe AI integration with multiple model providers
-- **Logfire**: Advanced observability and logging
-- **UV**: Fast Python package installer and resolver
-- **Docker**: Containerized deployment
-- **Tally API**: Governance data source
+A full-stack DAO proposal summarization application with Python FastAPI backend and SvelteKit frontend, featuring AI-powered analysis using Claude 3.5 Sonnet via OpenRouter.
 
 ## Quick Start
 
-### Prerequisites
+### 🚀 One-Command Launch
 
-- Python 3.12+
-- [UV](https://docs.astral.sh/uv/) (recommended) or pip
-- Docker (optional)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd quorum-ai
-   ```
-
-2. **Install dependencies**
-   ```bash
-   # With UV (recommended)
-   uv sync
-
-   # Or with pip
-   pip install -e .
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Configure your environment**
-   
-   Required environment variables:
-   ```bash
-   # AI Provider (choose one)
-   OPENAI_API_KEY=your_openai_api_key
-   # OR
-   ANTHROPIC_API_KEY=your_anthropic_api_key
-
-   # Optional but recommended
-   TALLY_API_KEY=your_tally_api_key
-   LOGFIRE_TOKEN=your_logfire_token
-   ```
-
-### Running the Application
-
-**Development Mode:**
 ```bash
+./startup.sh
+```
+
+This will start both backend and frontend services automatically.
+
+### Manual Setup
+
+#### Prerequisites
+- Python 3.8+ with `uv` package manager
+- Node.js 18+ with npm
+- OpenRouter API key (for AI summarization)
+
+#### Environment Variables
+
+Create a `.env` file in the backend directory:
+
+```bash
+# Required for AI summarization
+OPENROUTER_API_KEY=your_openrouter_api_key
+
+# Optional configuration
+TOP_ORGANIZATIONS=compound,nounsdao,arbitrum  # Default organizations
+TALLY_API_KEY=your_tally_api_key  # For higher rate limits
+LOGFIRE_TOKEN=your_logfire_token  # For observability
+```
+
+#### Backend Setup
+
+```bash
+cd backend
+uv sync
 uv run main.py
 ```
 
-**Production Mode:**
+#### Frontend Setup
+
 ```bash
-uv run uvicorn main:app --host 0.0.0.0 --port 8000
+cd frontend
+npm install
+npm run generate-api  # Generate API client from backend
+npm run dev
 ```
 
-**With Docker:**
-```bash
-docker build -t quorum-ai .
-docker run -p 8000:8000 --env-file .env quorum-ai
-```
+## Features
 
-## API Documentation
+### 🎯 Core Functionality
+- **Top Organizations**: Automatically fetches top 3 DAO organizations
+- **Active Proposals**: Gets 3 most active proposals per organization
+- **AI Summarization**: Uses Claude 3.5 Sonnet via OpenRouter for proposal analysis
+- **Risk Assessment**: AI-powered risk evaluation for each proposal
+- **Recommendations**: Smart voting recommendations based on proposal analysis
 
-Once running, visit:
-- **Interactive API Docs**: http://localhost:8000/docs
-- **OpenAPI Schema**: http://localhost:8000/openapi.json
-- **Health Check**: http://localhost:8000/health
+### 🔗 API Endpoints
 
-### Key Endpoints
+- `GET /organizations` - Top 3 organizations with summarized proposals
+- `GET /organizations/list` - Full organization listing
+- `GET /proposals` - Proposal search and filtering
+- `POST /proposals/summarize` - AI summarization for specific proposals
+- `GET /docs` - Interactive API documentation
 
-#### DAOs
-- `GET /daos` - List available DAOs
-- `GET /daos/{dao_id}` - Get specific DAO details
+### 🏗️ Architecture
 
-#### Proposals
-- `GET /proposals` - List proposals with filtering
-- `GET /proposals/{proposal_id}` - Get specific proposal
-- `POST /proposals/summarize` - Generate AI summaries
+**Backend (Python FastAPI)**
+- Async/await for high performance
+- Pydantic AI integration with OpenRouter
+- Tally GraphQL API integration
+- Service-oriented architecture
+- Comprehensive error handling and logging
 
-#### Example Usage
-
-**Get DAOs:**
-```bash
-curl "http://localhost:8000/daos?limit=10"
-```
-
-**Get Proposals with Filters:**
-```bash
-curl "http://localhost:8000/proposals?dao_id=erc20:1:0x123&state=ACTIVE&limit=5"
-```
-
-**Summarize Proposals:**
-```bash
-curl -X POST "http://localhost:8000/proposals/summarize" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "proposal_ids": ["prop1", "prop2"],
-    "include_risk_assessment": true,
-    "include_recommendations": true
-  }'
-```
-
-## Configuration
-
-The application follows 12-factor app principles with all configuration through environment variables:
-
-### Core Settings
-- `APP_NAME`: Application name (default: "Quorum AI")
-- `DEBUG`: Enable debug mode (default: false)
-- `HOST`: Server host (default: "0.0.0.0")
-- `PORT`: Server port (default: 8000)
-
-### External Services
-- `TALLY_API_BASE_URL`: Tally GraphQL endpoint
-- `TALLY_API_KEY`: Optional API key for higher rate limits
-- `AI_MODEL`: AI model to use (e.g., "openai:gpt-4o-mini")
-
-### AI Configuration
-- `OPENAI_API_KEY`: OpenAI API key
-- `ANTHROPIC_API_KEY`: Anthropic API key
-- Choose the appropriate key based on your `AI_MODEL` setting
-
-### Observability
-- `LOGFIRE_TOKEN`: Logfire authentication token
-- `LOGFIRE_PROJECT`: Logfire project name
+**Frontend (SvelteKit)**
+- TypeScript for type safety
+- TailwindCSS for styling
+- Auto-generated API client
+- Responsive design
+- Real-time proposal updates
 
 ## Development
 
-### Running Tests
+### Commands
 
+**Backend:**
 ```bash
-# Run all tests
-uv run pytest
-
-# Run with coverage
-uv run pytest --cov=. --cov-report=html
-
-# Run specific test file
-uv run pytest tests/test_models.py -v
+uv run main.py              # Start dev server
+uv run pytest              # Run tests
+uv run ruff check .         # Lint code
+uv run mypy .              # Type checking
+uv run black .             # Format code
 ```
 
-### Code Quality
-
+**Frontend:**
 ```bash
-# Format code
-uv run black .
-
-# Lint code
-uv run ruff check .
-
-# Type checking
-uv run mypy .
+npm run dev                 # Start dev server
+npm run build              # Build for production
+npm run preview            # Preview production build
+npm run check              # Type checking
+npm run generate-api       # Generate API client
 ```
-
-### Development Workflow
-
-This project follows Test-Driven Development (TDD):
-
-1. Write tests first
-2. Implement functionality to pass tests
-3. Refactor with confidence
 
 ### Project Structure
 
 ```
 quorum-ai/
-├── config.py              # Configuration management
-├── models.py               # Pydantic data models
-├── main.py                 # FastAPI application
-├── services/               # Business logic services
-│   ├── tally_service.py    # Tally API integration
-│   └── ai_service.py       # AI summarization service
-├── tests/                  # Test suite
-├── pyproject.toml          # Project configuration
-├── Dockerfile              # Container configuration
-└── README.md               # This file
+├── backend/
+│   ├── main.py           # FastAPI application
+│   ├── config.py         # Configuration management
+│   ├── models.py         # Pydantic data models
+│   └── services/
+│       ├── ai_service.py     # AI summarization
+│       └── tally_service.py  # DAO data fetching
+├── frontend/
+│   ├── src/
+│   │   ├── routes/           # SvelteKit pages
+│   │   └── lib/             # Shared components
+│   └── package.json
+├── startup.sh           # Launch script
+└── README.md
 ```
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `OPENROUTER_API_KEY` | OpenRouter API key for Claude 3.5 Sonnet | - | Yes |
+| `TOP_ORGANIZATIONS` | Comma-separated organization slugs | `compound,nounsdao,arbitrum` | No |
+| `TALLY_API_KEY` | Tally API key for higher rate limits | - | No |
+| `LOGFIRE_TOKEN` | Logfire token for observability | - | No |
+| `DEBUG` | Enable debug mode | `false` | No |
+| `HOST` | Server host | `0.0.0.0` | No |
+| `PORT` | Server port | `8000` | No |
+
+### AI Model Configuration
+
+The application uses Claude 3.5 Sonnet via OpenRouter by default. You can modify the AI service configuration in `backend/services/ai_service.py` to use different models or providers.
 
 ## Deployment
 
-### Docker Deployment
+### Docker
 
 ```bash
-# Build image
 docker build -t quorum-ai .
-
-# Run container
-docker run -d \
-  --name quorum-ai \
-  -p 8000:8000 \
-  --env-file .env \
-  quorum-ai
+docker run -p 8000:8000 --env-file .env quorum-ai
 ```
 
-### Environment Variables for Production
+### Production Considerations
 
-Ensure these are set in your production environment:
+- Set `DEBUG=false` in production
+- Configure proper CORS origins
+- Use environment-specific `.env` files
+- Set up reverse proxy (nginx/caddy) for frontend
+- Enable HTTPS with SSL certificates
+- Configure rate limiting and monitoring
+
+## Startup Script Features
+
+The `startup.sh` script provides:
+
+- ✅ **Dependency Checking**: Verifies `uv` and `npm` are installed
+- ✅ **Port Availability**: Checks if ports 8000 and 5173 are free
+- ✅ **Graceful Shutdown**: Handles Ctrl+C to stop all services
+- ✅ **Process Monitoring**: Automatically restarts if services crash
+- ✅ **Logging**: Separate log files for backend and frontend
+- ✅ **Status Display**: Shows service URLs and process IDs
+
+### Usage
 
 ```bash
-DEBUG=false
-OPENAI_API_KEY=your_production_key
-TALLY_API_KEY=your_production_key
-LOGFIRE_TOKEN=your_production_token
+# Make executable (first time only)
+chmod +x startup.sh
+
+# Start all services
+./startup.sh
+
+# Services will be available at:
+# Backend API: http://localhost:8000
+# API Docs: http://localhost:8000/docs  
+# Frontend: http://localhost:5173
 ```
-
-### Health Checks
-
-The application provides a health check endpoint at `/health` that returns:
-- Application status
-- Timestamp
-- Version information
-
-## Monitoring and Observability
-
-The application integrates with Logfire for comprehensive observability:
-
-- **Structured Logging**: All operations are logged with context
-- **Distributed Tracing**: Request tracing across services
-- **Performance Metrics**: Timing and performance data
-- **Error Tracking**: Detailed error capture and analysis
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Write tests for your changes
-4. Implement the feature
-5. Run the test suite
-6. Submit a pull request
-
-### Code Style
-
-- Follow PEP 8
-- Use type hints throughout
-- Write comprehensive docstrings
-- Maintain test coverage above 90%
-- Prefer small, focused functions
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
 
 ## License
 
-[MIT License](LICENSE)
-
-## Support
-
-For issues and questions:
-- Create an issue on GitHub
-- Check the API documentation at `/docs`
-- Review the test suite for usage examples
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
+MIT License - see LICENSE file for details.

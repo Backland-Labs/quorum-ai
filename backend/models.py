@@ -159,7 +159,7 @@ class DAOListResponse(BaseModel):
 class SummarizeRequest(BaseModel):
     """Request model for proposal summarization."""
 
-    proposal_ids: List[str] = Field(..., min_items=1, max_items=50)
+    proposal_ids: List[str] = Field(..., min_length=1, max_length=50)
     include_risk_assessment: bool = Field(default=True)
     include_recommendations: bool = Field(default=True)
 
@@ -168,5 +168,20 @@ class SummarizeResponse(BaseModel):
     """Response model for proposal summarization."""
 
     summaries: List[ProposalSummary] = Field(..., description="AI-generated summaries")
+    processing_time: float = Field(..., description="Time taken to process in seconds")
+    model_used: str = Field(..., description="AI model used for summarization")
+
+
+class OrganizationWithProposals(BaseModel):
+    """Organization with its top proposals."""
+    
+    organization: Organization = Field(..., description="Organization details")
+    proposals: List[ProposalSummary] = Field(..., description="Top 3 summarized proposals")
+
+
+class TopOrganizationsResponse(BaseModel):
+    """Response model for top organizations with proposals."""
+    
+    organizations: List[OrganizationWithProposals] = Field(..., description="Top organizations with proposals")
     processing_time: float = Field(..., description="Time taken to process in seconds")
     model_used: str = Field(..., description="AI model used for summarization")
