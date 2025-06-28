@@ -28,6 +28,7 @@ class TestProposalState:
         expected_states = {
             "ACTIVE",
             "CANCELED",
+            "CROSSCHAINEXECUTED",
             "DEFEATED",
             "EXECUTED",
             "EXPIRED",
@@ -243,7 +244,7 @@ class TestProposalFilters:
         assert filters.state is None
         assert filters.dao_id is None
         assert filters.limit == 20
-        assert filters.offset == 0
+        assert filters.after_cursor is None
         assert filters.sort_by == SortCriteria.CREATED_DATE
         assert filters.sort_order == SortOrder.DESC
 
@@ -253,7 +254,7 @@ class TestProposalFilters:
             state=ProposalState.ACTIVE,
             dao_id="dao-123",
             limit=50,
-            offset=10,
+            after_cursor="cursor_10",
             sort_by=SortCriteria.VOTE_COUNT,
             sort_order=SortOrder.ASC,
         )
@@ -261,7 +262,7 @@ class TestProposalFilters:
         assert filters.state == ProposalState.ACTIVE
         assert filters.dao_id == "dao-123"
         assert filters.limit == 50
-        assert filters.offset == 10
+        assert filters.after_cursor == "cursor_10"
         assert filters.sort_by == SortCriteria.VOTE_COUNT
         assert filters.sort_order == SortOrder.ASC
 
@@ -282,13 +283,10 @@ class TestProposalFilters:
         filters_max = ProposalFilters(limit=100)
         assert filters_max.limit == 100
 
-    def test_proposal_filters_offset_validation(self) -> None:
-        """Test that offset cannot be negative."""
-        with pytest.raises(ValidationError):
-            ProposalFilters(offset=-1)
-
-        filters = ProposalFilters(offset=0)
-        assert filters.offset == 0
+    def test_proposal_filters_cursor_validation(self) -> None:
+        """Test that after_cursor can be set to any string value."""
+        filters = ProposalFilters(after_cursor="test_cursor")
+        assert filters.after_cursor == "test_cursor"
 
 
 class TestSummarizeRequest:
@@ -353,12 +351,11 @@ class TestProposalListResponse:
         ]
 
         response = ProposalListResponse(
-            proposals=proposals, total_count=1, has_more=False
+            proposals=proposals, next_cursor="cursor_123"
         )
 
         assert len(response.proposals) == 1
-        assert response.total_count == 1
-        assert response.has_more is False
+        assert response.next_cursor == "cursor_123"
 
 
 class TestSummarizeResponse:

@@ -13,6 +13,8 @@ from fastapi.responses import JSONResponse
 from config import settings
 from models import (
     DAO,
+    Organization,
+    OrganizationWithProposals,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -21,6 +23,7 @@ from models import (
     SortOrder,
     SummarizeRequest,
     SummarizeResponse,
+    TopOrganizationsResponse,
     OrganizationListResponse,
     DAOListResponse,
 )
@@ -95,8 +98,76 @@ async def health_check():
 
 
 # Organization endpoints
-@app.get("/organizations", response_model=OrganizationListResponse)
-async def get_organizations(
+@app.get("/organizations", response_model=TopOrganizationsResponse)
+async def get_organizations():
+    """Get top 3 organizations with their 3 most active proposals, summarized with AI."""
+    start_time = time.time()
+    
+    try:
+        with logfire.span("get_top_organizations_with_proposals"):
+            # Fetch top organizations with their proposals
+            org_data = await tally_service.get_top_organizations_with_proposals()
+            
+            if not org_data:
+                return TopOrganizationsResponse(
+                    organizations=[],
+                    processing_time=time.time() - start_time,
+                    model_used=settings.ai_model,
+                )
+            
+            organizations_with_proposals = []
+            
+            for org_info in org_data:
+                org_dict = org_info["organization"]
+                proposals = org_info["proposals"]
+                
+                # Create Organization object
+                organization = Organization(
+                    id=org_dict["id"],
+                    name=org_dict["name"],
+                    slug=org_dict["slug"],
+                    chain_ids=org_dict["chain_ids"],
+                    token_ids=org_dict["token_ids"],
+                    governor_ids=org_dict["governor_ids"],
+                    has_active_proposals=org_dict["has_active_proposals"],
+                    proposals_count=org_dict["proposals_count"],
+                    delegates_count=org_dict["delegates_count"],
+                    delegates_votes_count=org_dict["delegates_votes_count"],
+                    token_owners_count=org_dict["token_owners_count"],
+                )
+                
+                # Summarize proposals if any exist
+                summarized_proposals = []
+                if proposals:
+                    summaries = await ai_service.summarize_multiple_proposals(
+                        proposals, 
+                        include_risk_assessment=True, 
+                        include_recommendations=True
+                    )
+                    summarized_proposals = summaries
+                
+                organizations_with_proposals.append(OrganizationWithProposals(
+                    organization=organization,
+                    proposals=summarized_proposals
+                ))
+            
+            processing_time = time.time() - start_time
+            
+            return TopOrganizationsResponse(
+                organizations=organizations_with_proposals,
+                processing_time=processing_time,
+                model_used=settings.ai_model,
+            )
+
+    except Exception as e:
+        logfire.error("Failed to fetch top organizations with proposals", error=str(e))
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch top organizations with proposals: {str(e)}"
+        )
+
+
+@app.get("/organizations/list", response_model=OrganizationListResponse)
+async def get_organizations_list(
     limit: int = Query(default=100, ge=1, le=200),
     after_cursor: Optional[str] = Query(default=None),
 ):

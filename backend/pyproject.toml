@@ -10,7 +10,7 @@ dependencies = [
     "uvicorn[standard]>=0.32.0",
     "pydantic>=2.10.0",
     "pydantic-settings>=2.6.0",
-    "pydantic-ai>=0.0.14",
+    "pydantic-ai-slim[openai]>=0.0.14",
     "logfire>=2.4.0",
     "httpx>=0.28.0",
     "python-multipart>=0.0.12",
@@ -69,4 +69,13 @@ disallow_untyped_defs = true
 disallow_incomplete_defs = true
 check_untyped_defs = true
 disallow_untyped_decorators = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.2.1",
+    "pytest-httpx>=0.35.0",
+    "pytest-mock>=3.14.1",
+]
 
