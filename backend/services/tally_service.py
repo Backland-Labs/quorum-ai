@@ -402,22 +402,9 @@ class TallyService:
         metadata = node.get("metadata", {})
         status = node["status"].upper()
         
-        # Parse vote statistics
+        # Parse vote statistics using helper method
         vote_stats = node.get("voteStats", [])
-        votes_for = "0"
-        votes_against = "0"
-        votes_abstain = "0"
-        
-        for vote_stat in vote_stats:
-            vote_type = vote_stat.get("type", "").upper()
-            vote_count = vote_stat.get("votesCount", "0")
-            
-            if vote_type == "FOR":
-                votes_for = vote_count
-            elif vote_type == "AGAINST":
-                votes_against = vote_count
-            elif vote_type == "ABSTAIN":
-                votes_abstain = vote_count
+        votes_for, votes_against, votes_abstain = self._parse_vote_statistics(vote_stats)
 
         return Proposal(
             id=node["id"],
@@ -456,22 +443,9 @@ class TallyService:
             # Convert API status to our enum format
             status = prop_data["status"].upper()
             
-            # Parse vote statistics
+            # Parse vote statistics using helper method
             vote_stats = prop_data.get("voteStats", [])
-            votes_for = "0"
-            votes_against = "0"
-            votes_abstain = "0"
-            
-            for vote_stat in vote_stats:
-                vote_type = vote_stat.get("type", "").upper()
-                vote_count = vote_stat.get("votesCount", "0")
-                
-                if vote_type == "FOR":
-                    votes_for = vote_count
-                elif vote_type == "AGAINST":
-                    votes_against = vote_count
-                elif vote_type == "ABSTAIN":
-                    votes_abstain = vote_count
+            votes_for, votes_against, votes_abstain = self._parse_vote_statistics(vote_stats)
 
             return Proposal(
                 id=prop_data["id"],
@@ -607,8 +581,26 @@ class TallyService:
     async def _get_most_active_proposals_for_org(
         self, org_id: str, limit: int = 3
     ) -> List[Proposal]:
-        """Get the most active proposals for an organization (sorted by active state first, then by creation date)."""
-        query = """
+        """Get the most active proposals for an organization."""
+        assert org_id, "Organization ID cannot be empty"
+        assert limit > 0, "Limit must be positive"
+        
+        try:
+            query = self._build_active_proposals_query()
+            variables = self._build_active_proposals_variables(org_id, limit)
+            result = await self._make_request(query, variables)
+            proposals = self._process_active_proposals_response(result, limit)
+            return proposals
+            
+        except Exception as e:
+            logfire.error(
+                f"Failed to fetch proposals for organization {org_id}", error=str(e)
+            )
+            return []
+
+    def _build_active_proposals_query(self) -> str:
+        """Build GraphQL query for fetching active proposals."""
+        return """
         query GetActiveProposals($input: ProposalsInput!) {
             proposals(input: $input) {
                 nodes {
@@ -634,7 +626,12 @@ class TallyService:
         }
         """
 
-        variables = {
+    def _build_active_proposals_variables(self, org_id: str, limit: int) -> Dict:
+        """Build variables for active proposals query."""
+        assert org_id, "Organization ID is required"
+        assert limit > 0, "Limit must be positive"
+        
+        return {
             "input": {
                 "page": {"limit": limit * 2},  # Get more to filter for active ones
                 "sort": {"sortBy": "id", "isDescending": True},  # Most recent first
@@ -642,77 +639,79 @@ class TallyService:
             }
         }
 
-        try:
-            result = await self._make_request(query, variables)
-            proposals_data = result.get("data", {}).get("proposals", {})
-            proposal_nodes = proposals_data.get("nodes", [])
+    def _process_active_proposals_response(
+        self, result: Dict, limit: int
+    ) -> List[Proposal]:
+        """Process API response and categorize proposals by activity."""
+        assert result, "API result cannot be empty"
+        assert limit > 0, "Limit must be positive"
+        
+        proposals_data = result.get("data", {}).get("proposals", {})
+        proposal_nodes = proposals_data.get("nodes", [])
 
-            active_proposals = []
-            other_proposals = []
+        active_proposals = []
+        other_proposals = []
 
-            for prop in proposal_nodes:
-                if not prop:
-                    continue
+        for prop in proposal_nodes:
+            if not prop:
+                continue
 
-                governor_info = prop.get("governor", {})
-                metadata = prop.get("metadata", {})
-                status = prop["status"].upper()
+            proposal = self._create_proposal_from_active_node(prop)
+            
+            # Prioritize active proposals
+            if proposal.state == ProposalState.ACTIVE:
+                active_proposals.append(proposal)
+            else:
+                other_proposals.append(proposal)
 
-                # Parse vote statistics
-                vote_stats = prop.get("voteStats", [])
-                votes_for = "0"
-                votes_against = "0"
-                votes_abstain = "0"
-                
-                for vote_stat in vote_stats:
-                    vote_type = vote_stat.get("type", "").upper()
-                    vote_count = vote_stat.get("votesCount", "0")
-                    
-                    if vote_type == "FOR":
-                        votes_for = vote_count
-                    elif vote_type == "AGAINST":
-                        votes_against = vote_count
-                    elif vote_type == "ABSTAIN":
-                        votes_abstain = vote_count
+        return self._select_top_proposals(active_proposals, other_proposals, limit)
 
-                proposal = Proposal(
-                    id=prop["id"],
-                    title=metadata.get("title", ""),
-                    description=metadata.get("description", ""),
-                    state=ProposalState(status),
-                    created_at=datetime.fromisoformat(
-                        prop["createdAt"].replace("Z", "+00:00")
-                    ),
-                    start_block=0,
-                    end_block=0,
-                    votes_for=votes_for,
-                    votes_against=votes_against,
-                    votes_abstain=votes_abstain,
-                    dao_id=governor_info.get("id", ""),
-                    dao_name=governor_info.get("name", ""),
-                    url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
-                )
+    def _create_proposal_from_active_node(self, prop: Dict) -> Proposal:
+        """Create Proposal object from active proposals API node data."""
+        assert prop, "Proposal node data cannot be empty"
+        assert "id" in prop, "Proposal node must contain id"
+        
+        governor_info = prop.get("governor", {})
+        metadata = prop.get("metadata", {})
+        status = prop["status"].upper()
 
-                # Prioritize active proposals
-                if status == "ACTIVE":
-                    active_proposals.append(proposal)
-                else:
-                    other_proposals.append(proposal)
+        # Parse vote statistics using helper method
+        vote_stats = prop.get("voteStats", [])
+        votes_for, votes_against, votes_abstain = self._parse_vote_statistics(vote_stats)
 
-            # Return active proposals first, then others, up to limit
-            result_proposals = active_proposals[:limit]
-            if len(result_proposals) < limit:
-                result_proposals.extend(
-                    other_proposals[: limit - len(result_proposals)]
-                )
+        return Proposal(
+            id=prop["id"],
+            title=metadata.get("title", ""),
+            description=metadata.get("description", ""),
+            state=ProposalState(status),
+            created_at=datetime.fromisoformat(
+                prop["createdAt"].replace("Z", "+00:00")
+            ),
+            start_block=0,
+            end_block=0,
+            votes_for=votes_for,
+            votes_against=votes_against,
+            votes_abstain=votes_abstain,
+            dao_id=governor_info.get("id", ""),
+            dao_name=governor_info.get("name", ""),
+            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
+        )
 
-            return result_proposals[:limit]
-
-        except Exception as e:
-            logfire.error(
-                f"Failed to fetch proposals for organization {org_id}", error=str(e)
+    def _select_top_proposals(
+        self, active_proposals: List[Proposal], other_proposals: List[Proposal], limit: int
+    ) -> List[Proposal]:
+        """Select top proposals prioritizing active ones first."""
+        assert isinstance(active_proposals, list), "Active proposals must be a list"
+        assert isinstance(other_proposals, list), "Other proposals must be a list"
+        
+        # Return active proposals first, then others, up to limit
+        result_proposals = active_proposals[:limit]
+        if len(result_proposals) < limit:
+            result_proposals.extend(
+                other_proposals[: limit - len(result_proposals)]
             )
-            return []
+
+        return result_proposals[:limit]
 
     async def get_organization_overview(self, org_id: str) -> Optional[Dict]:
         """Get comprehensive overview data for a specific organization."""
@@ -830,6 +829,35 @@ class TallyService:
             return 0.0
 
         return min(delegate_count / token_holder_count, 1.0)
+
+    def _parse_vote_statistics(self, vote_stats_data: List[Dict]) -> tuple[str, str, str]:
+        """Parse vote statistics from API response data.
+        
+        Args:
+            vote_stats_data: List of vote statistics from API
+            
+        Returns:
+            Tuple of (votes_for, votes_against, votes_abstain) as strings
+        """
+        assert isinstance(vote_stats_data, list), "Vote stats data must be a list"
+        assert vote_stats_data is not None, "Vote stats data cannot be None"
+        
+        votes_for = "0"
+        votes_against = "0"
+        votes_abstain = "0"
+        
+        for vote_stat in vote_stats_data:
+            vote_type = vote_stat.get("type", "").upper()
+            vote_count = vote_stat.get("votesCount", "0")
+            
+            if vote_type == "FOR":
+                votes_for = vote_count
+            elif vote_type == "AGAINST":
+                votes_against = vote_count
+            elif vote_type == "ABSTAIN":
+                votes_abstain = vote_count
+                
+        return votes_for, votes_against, votes_abstain
 
     def _sort_proposals_by_vote_count(
         self, proposals: List[Proposal], sort_order: SortOrder
