@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from main import app
-from models import DAO, Proposal, ProposalState, ProposalSummary
+from models import DAO, Proposal, ProposalState, ProposalSummary, SortCriteria, SortOrder
 from services.tally_service import TallyService
 from services.ai_service import AIService
 
@@ -212,6 +212,227 @@ class TestProposalEndpoints:
         assert call_args.dao_id == "dao-123"
         assert call_args.state == ProposalState.ACTIVE
         assert call_args.limit == 10
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_with_vote_count_sorting(
+        self, mock_get_proposals: Mock, client: TestClient
+    ) -> None:
+        """Test proposal listing with vote count sorting."""
+        # Create proposals with different vote counts for testing
+        high_vote_proposal = Proposal(
+            id="prop-high",
+            title="High Vote Proposal",
+            description="This proposal has the most votes",
+            state=ProposalState.ACTIVE,
+            created_at=datetime(2024, 1, 1, 12, 0, 0),
+            start_block=1000,
+            end_block=2000,
+            votes_for="5000000",
+            votes_against="500000",
+            votes_abstain="100000",
+            dao_id="dao-123",
+            dao_name="Test DAO",
+        )
+        
+        medium_vote_proposal = Proposal(
+            id="prop-medium",
+            title="Medium Vote Proposal",
+            description="This proposal has medium votes",
+            state=ProposalState.ACTIVE,
+            created_at=datetime(2024, 1, 2, 12, 0, 0),
+            start_block=2000,
+            end_block=3000,
+            votes_for="2000000",
+            votes_against="300000",
+            votes_abstain="50000",
+            dao_id="dao-123",
+            dao_name="Test DAO",
+        )
+        
+        low_vote_proposal = Proposal(
+            id="prop-low",
+            title="Low Vote Proposal",
+            description="This proposal has the least votes",
+            state=ProposalState.ACTIVE,
+            created_at=datetime(2024, 1, 3, 12, 0, 0),
+            start_block=3000,
+            end_block=4000,
+            votes_for="100000",
+            votes_against="50000",
+            votes_abstain="10000",
+            dao_id="dao-123",
+            dao_name="Test DAO",
+        )
+
+        mock_get_proposals.return_value = (
+            [high_vote_proposal, medium_vote_proposal, low_vote_proposal], 
+            None
+        )
+
+        response = client.get(
+            "/proposals?organization_id=org-123&sort_by=vote_count&sort_order=desc&limit=3"
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["proposals"]) == 3
+
+        # Verify the service was called with correct filters
+        call_args = mock_get_proposals.call_args[0][0]  # ProposalFilters object
+        assert call_args.organization_id == "org-123"
+        assert call_args.sort_by == SortCriteria.VOTE_COUNT
+        assert call_args.sort_order == SortOrder.DESC
+        assert call_args.limit == 3
+
+        # Verify proposals are returned in descending vote order
+        proposals = data["proposals"]
+        assert proposals[0]["id"] == "prop-high"
+        assert proposals[0]["votes_for"] == "5000000"
+        assert proposals[1]["id"] == "prop-medium"
+        assert proposals[1]["votes_for"] == "2000000"
+        assert proposals[2]["id"] == "prop-low"
+        assert proposals[2]["votes_for"] == "100000"
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_top_3_by_votes(
+        self, mock_get_proposals: Mock, client: TestClient
+    ) -> None:
+        """Test getting top 3 proposals by vote count (BAC-106 requirement)."""
+        # Create multiple proposals with different vote counts
+        proposals = []
+        for i in range(5):
+            proposal = Proposal(
+                id=f"prop-{i}",
+                title=f"Proposal {i}",
+                description=f"Description {i}",
+                state=ProposalState.ACTIVE,
+                created_at=datetime(2024, 1, i+1, 12, 0, 0),
+                start_block=1000 + i*1000,
+                end_block=2000 + i*1000,
+                votes_for=str((5-i) * 1000000),  # Descending vote counts
+                votes_against="100000",
+                votes_abstain="50000",
+                dao_id="dao-123",
+                dao_name="Test DAO",
+            )
+            proposals.append(proposal)
+
+        mock_get_proposals.return_value = (proposals[:3], None)  # Return top 3
+
+        response = client.get(
+            "/proposals?organization_id=org-123&sort_by=vote_count&sort_order=desc&limit=3"
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["proposals"]) == 3
+
+        # Verify we get the top 3 by vote count
+        call_args = mock_get_proposals.call_args[0][0]
+        assert call_args.limit == 3
+        assert call_args.sort_by == SortCriteria.VOTE_COUNT
+        assert call_args.sort_order == SortOrder.DESC
+
+        # Verify proposals are sorted by vote count descending
+        proposals_data = data["proposals"]
+        assert int(proposals_data[0]["votes_for"]) >= int(proposals_data[1]["votes_for"])
+        assert int(proposals_data[1]["votes_for"]) >= int(proposals_data[2]["votes_for"])
+
+    def test_get_proposals_top_3_by_votes_bac_106(self, client: TestClient) -> None:
+        """Test BAC-106: API can handle top 3 proposals by vote count filtering."""
+        # Test the exact BAC-106 requirement: filtering for top 3 proposals by vote count
+        
+        with patch('main.tally_service.get_proposals') as mock_get_proposals:
+            # Mock proposals with realistic vote data
+            high_vote_proposal = Proposal(
+                id="prop-1",
+                title="High Participation Proposal",
+                description="This proposal has high community engagement",
+                state=ProposalState.ACTIVE,
+                created_at=datetime(2024, 1, 15, 12, 0, 0),
+                start_block=5000,
+                end_block=6000,
+                votes_for="10000000",
+                votes_against="2000000", 
+                votes_abstain="500000",
+                dao_id="dao-123",
+                dao_name="Test DAO",
+                url="https://tally.xyz/proposal/1"
+            )
+            
+            medium_vote_proposal = Proposal(
+                id="prop-2",
+                title="Medium Participation Proposal", 
+                description="This proposal has moderate engagement",
+                state=ProposalState.SUCCEEDED,
+                created_at=datetime(2024, 1, 10, 12, 0, 0),
+                start_block=4000,
+                end_block=5000,
+                votes_for="5000000",
+                votes_against="1000000",
+                votes_abstain="250000", 
+                dao_id="dao-123",
+                dao_name="Test DAO",
+                url="https://tally.xyz/proposal/2"
+            )
+            
+            low_vote_proposal = Proposal(
+                id="prop-3",
+                title="Low Participation Proposal",
+                description="This proposal has minimal engagement", 
+                state=ProposalState.DEFEATED,
+                created_at=datetime(2024, 1, 5, 12, 0, 0),
+                start_block=3000,
+                end_block=4000,
+                votes_for="500000",
+                votes_against="100000",
+                votes_abstain="50000",
+                dao_id="dao-123", 
+                dao_name="Test DAO",
+                url="https://tally.xyz/proposal/3"
+            )
+
+            mock_get_proposals.return_value = (
+                [high_vote_proposal, medium_vote_proposal, low_vote_proposal],
+                None
+            )
+
+            # Make request for top 3 proposals by vote count (BAC-106 use case)
+            response = client.get(
+                "/proposals"
+                "?organization_id=test-org"
+                "&limit=3"
+                "&sort_by=vote_count"
+                "&sort_order=desc"
+            )
+
+            # Verify response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify we get exactly 3 proposals
+            assert len(data["proposals"]) == 3
+            
+            # Verify they are sorted by total vote count descending
+            proposals = data["proposals"]
+            total_votes = []
+            for proposal in proposals:
+                total = (int(proposal["votes_for"]) + 
+                        int(proposal["votes_against"]) + 
+                        int(proposal["votes_abstain"]))
+                total_votes.append(total)
+            
+            # Verify descending order by total votes
+            assert total_votes[0] > total_votes[1] > total_votes[2]
+            
+            # Verify the service was called with correct filters for BAC-106
+            call_args = mock_get_proposals.call_args[0][0]
+            assert call_args.organization_id == "test-org"
+            assert call_args.limit == 3
+            assert call_args.sort_by == SortCriteria.VOTE_COUNT
+            assert call_args.sort_order == SortOrder.DESC
+            
+            print("✅ BAC-106 test passed: Top 3 proposals filtering by vote count works correctly")
 
     @patch("main.tally_service.get_proposals")
     def test_get_proposals_invalid_state_filter(

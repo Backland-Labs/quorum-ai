@@ -154,7 +154,9 @@ class TestTallyServiceGetProposals:
         assert prop1.id == "prop-1"
         assert prop1.title == "Test Proposal 1"
         assert prop1.state == ProposalState.ACTIVE
-        assert prop1.votes_for == "0"  # Default value since vote counts aren't in query
+        assert prop1.votes_for == "1000000"  # Now we parse vote counts from voteStats
+        assert prop1.votes_against == "250000"
+        assert prop1.votes_abstain == "50000"
         assert prop1.dao_id == "dao-1"
 
     async def test_get_proposals_with_filters(
@@ -181,6 +183,114 @@ class TestTallyServiceGetProposals:
         )
 
         await tally_service.get_proposals(filters)
+
+    async def test_get_proposals_with_vote_count_sorting(
+        self,
+        tally_service: TallyService,
+        mock_proposals_with_vote_counts_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching with vote count sorting."""
+        httpx_mock.add_response(
+            method="POST", 
+            url=settings.tally_api_base_url, 
+            json=mock_proposals_with_vote_counts_response
+        )
+
+        filters = ProposalFilters(
+            organization_id="org-1",
+            sort_by=SortCriteria.VOTE_COUNT,
+            sort_order=SortOrder.DESC,
+            limit=3
+        )
+        
+        proposals, next_cursor = await tally_service.get_proposals(filters)
+
+        assert len(proposals) == 3
+        assert next_cursor is None
+
+        # Check that proposals have vote data populated
+        prop_high = proposals[0]
+        assert prop_high.id == "prop-high-votes"
+        assert prop_high.votes_for == "5000000"
+        assert prop_high.votes_against == "500000"
+        assert prop_high.votes_abstain == "100000"
+
+        prop_medium = proposals[1]
+        assert prop_medium.id == "prop-medium-votes"
+        assert prop_medium.votes_for == "2000000"
+
+        prop_low = proposals[2]
+        assert prop_low.id == "prop-low-votes"
+        assert prop_low.votes_for == "100000"
+
+    async def test_get_proposals_vote_stats_parsing(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test that voteStats are correctly parsed into vote fields."""
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
+        )
+
+        filters = ProposalFilters(organization_id="org-1")
+        proposals, _ = await tally_service.get_proposals(filters)
+
+        # Check first proposal vote stats
+        prop1 = proposals[0]
+        assert prop1.votes_for == "1000000"
+        assert prop1.votes_against == "250000"
+        assert prop1.votes_abstain == "50000"
+
+        # Check second proposal vote stats
+        prop2 = proposals[1]
+        assert prop2.votes_for == "2000000"
+        assert prop2.votes_against == "100000"
+        assert prop2.votes_abstain == "25000"
+
+    async def test_get_proposals_missing_vote_stats(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test handling of proposals without voteStats."""
+        response_without_votes = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-no-votes",
+                            "status": "PENDING",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {
+                                "title": "No Votes Proposal",
+                                "description": "This proposal has no votes yet",
+                            },
+                            "governor": {"id": "dao-1", "name": "Test DAO"},
+                            # No voteStats field
+                        },
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+        
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=response_without_votes
+        )
+
+        filters = ProposalFilters(organization_id="org-1")
+        proposals, _ = await tally_service.get_proposals(filters)
+
+        assert len(proposals) == 1
+        prop = proposals[0]
+        assert prop.id == "prop-no-votes"
+        # Should default to "0" when no vote stats available
+        assert prop.votes_for == "0"
+        assert prop.votes_against == "0"
+        assert prop.votes_abstain == "0"
 
     async def test_get_proposals_datetime_parsing(
         self,
