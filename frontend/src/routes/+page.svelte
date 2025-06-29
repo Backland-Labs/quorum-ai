@@ -63,6 +63,37 @@
 
   // Get organizations list for dropdown
   const organizations = $derived(organizationsWithProposals.map(org => org.organization));
+
+  // Helper function to parse JSON from proposal summary if it exists
+  const parseProposalSummary = (proposal: any) => {
+    try {
+      // Check if the summary contains JSON
+      if (proposal.summary && proposal.summary.includes('```json')) {
+        const jsonMatch = proposal.summary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[1]);
+          return {
+            summary: parsed.summary || proposal.summary,
+            key_points: parsed.key_points || proposal.key_points || [],
+            risk_level: parsed.risk_level || proposal.risk_level,
+            recommendation: parsed.recommendation || proposal.recommendation,
+            confidence_score: parsed.confidence_score || proposal.confidence_score
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse proposal summary JSON:', e);
+    }
+    
+    // Return original proposal data if parsing fails
+    return {
+      summary: proposal.summary,
+      key_points: proposal.key_points || [],
+      risk_level: proposal.risk_level,
+      recommendation: proposal.recommendation,
+      confidence_score: proposal.confidence_score
+    };
+  };
 </script>
 
 <svelte:head>
@@ -185,28 +216,97 @@
               <!-- Recent Proposals -->
               {#if currentOrgData.proposals && currentOrgData.proposals.length > 0}
                 <div class="card lg:col-span-2">
-                  <h4 class="text-lg font-semibold text-secondary-900 mb-4">Recent Proposals</h4>
-                  <div class="space-y-4">
+                  <div class="flex items-center justify-between mb-6">
+                    <h4 class="text-lg font-semibold text-secondary-900">Recent Proposals</h4>
+                    <span class="text-sm text-secondary-500">{currentOrgData.proposals.length} total</span>
+                  </div>
+                  <div class="space-y-6">
                     {#each currentOrgData.proposals.slice(0, 3) as proposal}
-                      <div class="border-b border-secondary-200 pb-4 last:border-b-0 last:pb-0">
-                        <div class="flex items-start justify-between">
-                          <div class="flex-1">
-                            <h5 class="font-medium text-secondary-900">{proposal.title}</h5>
-                            <p class="text-sm text-secondary-600 mt-1">{proposal.summary}</p>
-                            <div class="flex items-center gap-2 mt-2">
-                              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                                {proposal.risk_level === 'LOW' ? 'bg-green-100 text-green-800' : 
-                                 proposal.risk_level === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' : 
-                                 'bg-red-100 text-red-800'}">
-                                {proposal.risk_level}
+                      {@const parsedProposal = parseProposalSummary(proposal)}
+                      <div class="group relative">
+                        <div class="relative bg-white border border-secondary-200 rounded-lg p-5 hover:border-primary-300 hover:shadow-md transition-all duration-200">
+                          <!-- Header with title and badges -->
+                          <div class="flex items-start justify-between mb-3">
+                            <h5 class="font-semibold text-secondary-900 text-base leading-tight pr-4">
+                              {proposal.title.replace(/^#\s*/, '')}
+                            </h5>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border
+                                {parsedProposal.risk_level === 'LOW' ? 'bg-green-50 text-green-700 border-green-200' : 
+                                 parsedProposal.risk_level === 'MEDIUM' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' : 
+                                 'bg-red-50 text-red-700 border-red-200'}">
+                                {parsedProposal.risk_level} Risk
                               </span>
-                              <span class="text-secondary-400">•</span>
-                              <span class="text-sm text-secondary-600">{proposal.recommendation}</span>
+                            </div>
+                          </div>
+
+                          <!-- Summary -->
+                          <p class="text-sm text-secondary-600 leading-relaxed mb-4">
+                            {parsedProposal.summary}
+                          </p>
+
+                          <!-- Key Points (if available) -->
+                          {#if parsedProposal.key_points && parsedProposal.key_points.length > 0}
+                            <div class="mb-4">
+                              <h6 class="text-xs font-medium text-secondary-700 mb-2">Key Highlights</h6>
+                              <div class="space-y-1">
+                                {#each parsedProposal.key_points.slice(0, 2) as point}
+                                  <div class="flex items-start text-xs text-secondary-600">
+                                    <div class="flex-shrink-0 w-1.5 h-1.5 bg-primary-400 rounded-full mt-1.5 mr-2"></div>
+                                    <span class="leading-relaxed">{point}</span>
+                                  </div>
+                                {/each}
+                                {#if parsedProposal.key_points.length > 2}
+                                  <div class="text-xs text-secondary-500 ml-3.5">
+                                    +{parsedProposal.key_points.length - 2} more points
+                                  </div>
+                                {/if}
+                              </div>
+                            </div>
+                          {/if}
+
+                          <!-- Footer with recommendation and confidence -->
+                          <div class="flex items-center justify-between pt-3 border-t border-secondary-100">
+                            <div class="flex items-center gap-3">
+                              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                                {parsedProposal.recommendation === 'APPROVE' ? 'bg-green-100 text-green-800' : 
+                                 parsedProposal.recommendation === 'REJECT' ? 'bg-red-100 text-red-800' : 
+                                 'bg-gray-100 text-gray-800'}">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  {#if parsedProposal.recommendation === 'APPROVE'}
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                  {:else if parsedProposal.recommendation === 'REJECT'}
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                  {:else}
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                  {/if}
+                                </svg>
+                                {parsedProposal.recommendation}
+                              </span>
+                            </div>
+                            <div class="flex items-center text-xs text-secondary-500">
+                              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                              </svg>
+                              {Math.round(parsedProposal.confidence_score * 100)}% confidence
                             </div>
                           </div>
                         </div>
                       </div>
                     {/each}
+                  </div>
+                  
+                  <!-- View All Link -->
+                  <div class="mt-6 text-center">
+                    <button
+                      onclick={() => handleTabChange('proposals')}
+                      class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200"
+                    >
+                      View all {currentOrgData.proposals.length} proposals
+                      <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               {/if}

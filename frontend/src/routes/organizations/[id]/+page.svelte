@@ -2,13 +2,27 @@
   import { page } from '$app/stores';
   import apiClient from '$lib/api';
   import type { components } from '$lib/api/client';
+  import type { TabType } from '$lib/types/dashboard';
+  import TabNavigation from '$lib/components/TabNavigation.svelte';
+  import OverviewTab from '$lib/components/OverviewTab.svelte';
 
   let proposals: components["schemas"]["Proposal"][] = $state([]);
   let organization: components["schemas"]["Organization"] | null = $state(null);
   let loading = $state(true);
   let error: string | null = $state(null);
+  let activeTab: TabType = $state('overview');
 
   let orgId = $derived($page.params.id);
+
+  const tabs = [
+    { id: 'overview' as TabType, label: 'Overview' },
+    { id: 'proposals' as TabType, label: 'Proposals' },
+    { id: 'activity' as TabType, label: 'Activity' }
+  ];
+
+  const handleTabChange = (tabId: TabType) => {
+    activeTab = tabId;
+  };
 
   const loadOrganizationData = async (id: string) => {
     if (!id) return;
@@ -165,68 +179,89 @@
       </div>
     {/if}
 
-    <!-- Proposals Section -->
-    <div>
-      <h2 class="text-xl font-semibold text-secondary-900 mb-4">Active Proposals</h2>
-      
-      {#if proposals.length === 0}
-        <div class="card text-center py-12">
-          <svg class="mx-auto h-12 w-12 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <h3 class="mt-2 text-sm font-medium text-secondary-900">No proposals</h3>
-          <p class="mt-1 text-sm text-secondary-500">This organization doesn't have any proposals yet.</p>
-        </div>
-      {:else}
-        <div class="space-y-4">
-          {#each proposals as proposal}
-            <div class="card hover:shadow-md transition-shadow duration-200">
-              <div class="flex items-start justify-between">
-                <div class="flex-1">
-                  <div class="flex items-center space-x-3 mb-2">
-                    <h3 class="text-lg font-medium text-secondary-900">{proposal.title}</h3>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {getStatusColor(proposal.state)}">
-                      {proposal.state}
-                    </span>
-                  </div>
-                  
-                  <p class="text-secondary-600 text-sm mb-4">{proposal.description}</p>
-                  
-                  <!-- Voting Progress -->
-                  {#if proposal.votes_for && proposal.votes_against && (parseInt(proposal.votes_for) > 0 || parseInt(proposal.votes_against) > 0)}
-                    {@const percentages = calculateVotePercentage(proposal.votes_for, proposal.votes_against)}
-                    {@const votesFor = parseInt(proposal.votes_for) || 0}
-                    {@const votesAgainst = parseInt(proposal.votes_against) || 0}
-                    <div class="space-y-2">
-                      <div class="flex justify-between items-center text-sm">
-                        <span class="text-green-700">For: {votesFor} ({percentages.for}%)</span>
-                        <span class="text-red-700">Against: {votesAgainst} ({percentages.against}%)</span>
+    <!-- Tab Navigation -->
+    <div class="card">
+      <TabNavigation {tabs} {activeTab} onTabChange={handleTabChange} />
+    </div>
+
+    <!-- Tab Content -->
+    <div class="card" id="tab-panel-{activeTab}" role="tabpanel" aria-labelledby="tab-{activeTab}">
+      {#if activeTab === 'overview'}
+        <OverviewTab organizationId={orgId} />
+      {:else if activeTab === 'proposals'}
+        <!-- Proposals Section -->
+        <div>
+          <h2 class="text-xl font-semibold text-secondary-900 mb-4">Active Proposals</h2>
+          
+          {#if proposals.length === 0}
+            <div class="text-center py-12">
+              <svg class="mx-auto h-12 w-12 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-secondary-900">No proposals</h3>
+              <p class="mt-1 text-sm text-secondary-500">This organization doesn't have any proposals yet.</p>
+            </div>
+          {:else}
+            <div class="space-y-4">
+              {#each proposals as proposal}
+                <div class="border border-secondary-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-3 mb-2">
+                        <h3 class="text-lg font-medium text-secondary-900">{proposal.title}</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {getStatusColor(proposal.state)}">
+                          {proposal.state}
+                        </span>
                       </div>
-                      <div class="w-full bg-secondary-200 rounded-full h-2">
-                        <div class="bg-green-500 h-2 rounded-l-full" style="width: {percentages.for}%"></div>
-                        <div class="bg-red-500 h-2 rounded-r-full -mt-2 ml-auto" style="width: {percentages.against}%"></div>
+                      
+                      <p class="text-secondary-600 text-sm mb-4">{proposal.description}</p>
+                      
+                      <!-- Voting Progress -->
+                      {#if proposal.votes_for && proposal.votes_against && (parseInt(proposal.votes_for) > 0 || parseInt(proposal.votes_against) > 0)}
+                        {@const percentages = calculateVotePercentage(proposal.votes_for, proposal.votes_against)}
+                        {@const votesFor = parseInt(proposal.votes_for) || 0}
+                        {@const votesAgainst = parseInt(proposal.votes_against) || 0}
+                        <div class="space-y-2">
+                          <div class="flex justify-between items-center text-sm">
+                            <span class="text-green-700">For: {votesFor} ({percentages.for}%)</span>
+                            <span class="text-red-700">Against: {votesAgainst} ({percentages.against}%)</span>
+                          </div>
+                          <div class="w-full bg-secondary-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-l-full" style="width: {percentages.for}%"></div>
+                            <div class="bg-red-500 h-2 rounded-r-full -mt-2 ml-auto" style="width: {percentages.against}%"></div>
+                          </div>
+                        </div>
+                      {:else}
+                        <p class="text-sm text-secondary-500">No votes yet</p>
+                      {/if}
+                      
+                      <div class="flex items-center justify-between mt-4 text-xs text-secondary-500">
+                        <span>Created: {formatDate(proposal.created_at)}</span>
+                        <span>End Block: {proposal.end_block}</span>
                       </div>
                     </div>
-                  {:else}
-                    <p class="text-sm text-secondary-500">No votes yet</p>
-                  {/if}
-                  
-                  <div class="flex items-center justify-between mt-4 text-xs text-secondary-500">
-                    <span>Created: {formatDate(proposal.created_at)}</span>
-                    <span>End Block: {proposal.end_block}</span>
+                    
+                    <!-- Action Buttons -->
+                    <div class="ml-6 flex space-x-2">
+                      {#if proposal.state === 'ACTIVE'}
+                        <button class="btn-primary text-sm">Vote For</button>
+                        <button class="btn-secondary text-sm">Vote Against</button>
+                      {/if}
+                    </div>
                   </div>
                 </div>
-                
-                <!-- Action Buttons -->
-                <div class="ml-6 flex space-x-2">
-                  {#if proposal.state === 'ACTIVE'}
-                    <button class="btn-primary text-sm">Vote For</button>
-                    <button class="btn-secondary text-sm">Vote Against</button>
-                  {/if}
-                </div>
-              </div>
+              {/each}
             </div>
-          {/each}
+          {/if}
+        </div>
+      {:else if activeTab === 'activity'}
+        <!-- Activity Tab Content -->
+        <div class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-secondary-900">Activity Coming Soon</h3>
+          <p class="mt-1 text-sm text-secondary-500">Activity tracking and analytics will be available soon.</p>
         </div>
       {/if}
     </div>
