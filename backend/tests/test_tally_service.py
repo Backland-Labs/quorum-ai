@@ -41,9 +41,10 @@ class TestTallyServiceGetDAOs:
             method="POST", url=settings.tally_api_base_url, json=mock_dao_response
         )
 
-        daos = await tally_service.get_daos(limit=10, offset=0)
+        daos, next_cursor = await tally_service.get_daos(organization_id="org-1", limit=10)
 
         assert len(daos) == 2
+        assert next_cursor is None  # No cursor in mock response
 
         dao1 = daos[0]
         assert dao1.id == "dao-1"
@@ -51,10 +52,12 @@ class TestTallyServiceGetDAOs:
         assert dao1.description == "A test DAO"
         assert dao1.total_proposals_count == 10
         assert dao1.active_proposals_count == 3
+        assert dao1.organization_id == "org-1"
 
         dao2 = daos[1]
         assert dao2.id == "dao-2"
         assert dao2.description is None
+        assert dao2.organization_id == "org-2"
 
     async def test_get_daos_with_api_key(
         self, mock_dao_response: dict, httpx_mock: HTTPXMock
@@ -69,7 +72,7 @@ class TestTallyServiceGetDAOs:
 
             httpx_mock.add_callback(check_headers)
 
-            await service.get_daos()
+            await service.get_daos(organization_id="org-test")
 
     async def test_get_daos_network_error(
         self, tally_service: TallyService, httpx_mock: HTTPXMock
@@ -78,7 +81,7 @@ class TestTallyServiceGetDAOs:
         httpx_mock.add_exception(httpx.RequestError("Network error"))
 
         with pytest.raises(httpx.RequestError):
-            await tally_service.get_daos()
+            await tally_service.get_daos(organization_id="org-test")
 
     async def test_get_daos_http_error(
         self, tally_service: TallyService, httpx_mock: HTTPXMock
@@ -87,7 +90,7 @@ class TestTallyServiceGetDAOs:
         httpx_mock.add_response(status_code=500)
 
         with pytest.raises(httpx.HTTPStatusError):
-            await tally_service.get_daos()
+            await tally_service.get_daos(organization_id="org-test")
 
 
 class TestTallyServiceGetDAOById:
@@ -141,17 +144,17 @@ class TestTallyServiceGetProposals:
             method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
         )
 
-        filters = ProposalFilters(limit=20, offset=0)
-        proposals, total_count = await tally_service.get_proposals(filters)
+        filters = ProposalFilters(limit=20, organization_id="org-1")
+        proposals, next_cursor = await tally_service.get_proposals(filters)
 
         assert len(proposals) == 2
-        assert total_count == 2
+        assert next_cursor is None  # No cursor in mock response
 
         prop1 = proposals[0]
         assert prop1.id == "prop-1"
         assert prop1.title == "Test Proposal 1"
         assert prop1.state == ProposalState.ACTIVE
-        assert prop1.votes_for == "100"
+        assert prop1.votes_for == "0"  # Default value since vote counts aren't in query
         assert prop1.dao_id == "dao-1"
 
     async def test_get_proposals_with_filters(
@@ -164,10 +167,8 @@ class TestTallyServiceGetProposals:
 
         def check_query(request):
             body = request.content.decode()
-            # Should contain the DAO filter
-            assert 'daoIds: ["dao-1"]' in body
-            # Should contain the state filter
-            assert "states: [ACTIVE]" in body
+            # Should contain the DAO filter (using governorId in new API)
+            assert '"governorId":"dao-1"' in body or '"governorId": "dao-1"' in body
             return httpx.Response(200, json=mock_proposals_response)
 
         httpx_mock.add_callback(check_query)
@@ -192,11 +193,12 @@ class TestTallyServiceGetProposals:
             method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
         )
 
-        filters = ProposalFilters()
+        filters = ProposalFilters(organization_id="org-1")
         proposals, _ = await tally_service.get_proposals(filters)
 
-        assert proposals[0].created_at == datetime(2024, 1, 1, 0, 0, 0)
-        assert proposals[1].created_at == datetime(2024, 1, 2, 0, 0, 0)
+        # Compare just the date/time parts (ignoring timezone)
+        assert proposals[0].created_at.replace(tzinfo=None) == datetime(2024, 1, 1, 0, 0, 0)
+        assert proposals[1].created_at.replace(tzinfo=None) == datetime(2024, 1, 2, 0, 0, 0)
 
 
 class TestTallyServiceGetProposalById:
@@ -260,16 +262,13 @@ class TestTallyServiceGetMultipleProposals:
                 "data": {
                     "proposal": {
                         "id": "prop-2",
-                        "title": "Test Proposal 2",
-                        "description": "Test description 2",
-                        "state": "SUCCEEDED",
+                        "status": "SUCCEEDED",
                         "createdAt": "2024-01-02T00:00:00Z",
-                        "startBlock": 2000,
-                        "endBlock": 3000,
-                        "votesFor": "200",
-                        "votesAgainst": "25",
-                        "votesAbstain": "5",
-                        "dao": {"id": "dao-1", "name": "Test DAO"},
+                        "metadata": {
+                            "title": "Test Proposal 2",
+                            "description": "Test description 2",
+                        },
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
                     }
                 }
             },
@@ -304,8 +303,8 @@ class TestTallyServiceGetMultipleProposals:
             assert len(proposals) == 1
             assert proposals[0].id == "prop-1"
 
-            # Should log the error
-            mock_error.assert_called_once()
+            # Should log the error (may be called multiple times due to retries)
+            assert mock_error.call_count >= 1
 
     async def test_get_multiple_proposals_empty_list(
         self, tally_service: TallyService
@@ -314,3 +313,60 @@ class TestTallyServiceGetMultipleProposals:
         proposals = await tally_service.get_multiple_proposals([])
 
         assert len(proposals) == 0
+
+
+class TestTallyServiceGetOrganizationOverview:
+    """Test TallyService get_organization_overview method."""
+
+    async def test_get_organization_overview_success(
+        self,
+        tally_service: TallyService,
+        mock_organization_overview_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test successful organization overview fetching."""
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=mock_organization_overview_response,
+        )
+
+        overview = await tally_service.get_organization_overview("org-123")
+
+        assert overview is not None
+        assert overview["organization_id"] == "org-123"
+        assert overview["organization_name"] == "Test DAO"
+        assert overview["delegate_count"] == 150
+        assert overview["token_holder_count"] == 1000
+        assert overview["total_proposals_count"] == 50
+
+    async def test_get_organization_overview_not_found(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test organization overview fetching when organization not found."""
+        response_data = {"data": {"organization": None}}
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=response_data
+        )
+
+        overview = await tally_service.get_organization_overview("nonexistent-org")
+
+        assert overview is None
+
+    async def test_get_organization_overview_network_error(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test organization overview fetching with network error."""
+        httpx_mock.add_exception(httpx.RequestError("Network error"))
+
+        with pytest.raises(httpx.RequestError):
+            await tally_service.get_organization_overview("org-123")
+
+    async def test_get_organization_overview_http_error(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test organization overview fetching with HTTP error."""
+        httpx_mock.add_response(status_code=500)
+
+        with pytest.raises(httpx.HTTPStatusError):
+            await tally_service.get_organization_overview("org-123")

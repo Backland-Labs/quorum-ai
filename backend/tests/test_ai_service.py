@@ -392,11 +392,13 @@ class TestAIServiceCallModel:
     """Test AI service _call_ai_model method and string response handling."""
 
     @pytest.mark.asyncio
-    async def test_call_ai_model_with_dict_response(self, ai_service: AIService) -> None:
+    async def test_call_ai_model_with_dict_response(
+        self, ai_service: AIService
+    ) -> None:
         """Test _call_ai_model when result.output is already a dictionary."""
         with patch.object(ai_service.agent, "run") as mock_run:
             # Mock result with dictionary output
-            mock_result = type('MockResult', (), {})()
+            mock_result = type("MockResult", (), {})()
             mock_result.output = {
                 "summary": "Test summary",
                 "key_points": ["Point 1"],
@@ -413,11 +415,13 @@ class TestAIServiceCallModel:
             assert result["key_points"] == ["Point 1"]
 
     @pytest.mark.asyncio
-    async def test_call_ai_model_with_json_string_response(self, ai_service: AIService) -> None:
+    async def test_call_ai_model_with_json_string_response(
+        self, ai_service: AIService
+    ) -> None:
         """Test _call_ai_model when result.output is a JSON string."""
         with patch.object(ai_service.agent, "run") as mock_run:
             # Mock result with JSON string output
-            mock_result = type('MockResult', (), {})()
+            mock_result = type("MockResult", (), {})()
             mock_result.output = '{"summary": "Test summary", "key_points": ["Point 1"], "risk_level": "LOW", "recommendation": "APPROVE", "confidence_score": 0.8}'
             mock_run.return_value = mock_result
 
@@ -429,11 +433,13 @@ class TestAIServiceCallModel:
             assert result["risk_level"] == "LOW"
 
     @pytest.mark.asyncio
-    async def test_call_ai_model_with_invalid_json_string(self, ai_service: AIService) -> None:
+    async def test_call_ai_model_with_invalid_json_string(
+        self, ai_service: AIService
+    ) -> None:
         """Test _call_ai_model when result.output is a non-JSON string."""
         with patch.object(ai_service.agent, "run") as mock_run:
             # Mock result with plain string output (not valid JSON)
-            mock_result = type('MockResult', (), {})()
+            mock_result = type("MockResult", (), {})()
             mock_result.output = "This is just a plain text response that is not JSON"
             mock_run.return_value = mock_result
 
@@ -441,7 +447,10 @@ class TestAIServiceCallModel:
 
             # Should return fallback structure with the string as summary
             assert isinstance(result, dict)
-            assert result["summary"] == "This is just a plain text response that is not JSON"
+            assert (
+                result["summary"]
+                == "This is just a plain text response that is not JSON"
+            )
             assert result["key_points"] == []
             assert result["risk_level"] == "NOT_ASSESSED"
             assert result["recommendation"] == "NOT_PROVIDED"
@@ -452,7 +461,7 @@ class TestAIServiceCallModel:
         """Test _call_ai_model when result.output is an empty string."""
         with patch.object(ai_service.agent, "run") as mock_run:
             # Mock result with empty string output
-            mock_result = type('MockResult', (), {})()
+            mock_result = type("MockResult", (), {})()
             mock_result.output = ""
             mock_run.return_value = mock_result
 
@@ -467,11 +476,13 @@ class TestAIServiceCallModel:
             assert result["confidence_score"] == 0.5
 
     @pytest.mark.asyncio
-    async def test_call_ai_model_fallback_for_no_output_attribute(self, ai_service: AIService) -> None:
+    async def test_call_ai_model_fallback_for_no_output_attribute(
+        self, ai_service: AIService
+    ) -> None:
         """Test _call_ai_model fallback when result has no output attribute."""
         with patch.object(ai_service.agent, "run") as mock_run:
             # Mock result without output attribute
-            mock_result = type('MockResult', (), {})()
+            mock_result = type("MockResult", (), {})()
             # No output attribute
             mock_run.return_value = mock_result
 

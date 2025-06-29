@@ -350,9 +350,7 @@ class TestProposalListResponse:
             )
         ]
 
-        response = ProposalListResponse(
-            proposals=proposals, next_cursor="cursor_123"
-        )
+        response = ProposalListResponse(proposals=proposals, next_cursor="cursor_123")
 
         assert len(response.proposals) == 1
         assert response.next_cursor == "cursor_123"
@@ -382,3 +380,126 @@ class TestSummarizeResponse:
         assert len(response.summaries) == 1
         assert response.processing_time == 1.5
         assert response.model_used == "gpt-4o-mini"
+
+
+class TestOrganizationOverviewResponse:
+    """Test cases for OrganizationOverviewResponse model."""
+
+    def _create_valid_overview_data(self) -> dict:
+        """Create valid organization overview data for testing."""
+        return {
+            "organization_id": "org-123",
+            "organization_name": "Test DAO",
+            "organization_slug": "test-dao",
+            "description": "A test DAO organization",
+            "delegate_count": 150,
+            "token_holder_count": 1000,
+            "total_proposals_count": 50,
+            "proposal_counts_by_status": {
+                "ACTIVE": 5,
+                "SUCCEEDED": 25,
+                "DEFEATED": 10,
+                "PENDING": 3,
+                "EXECUTED": 7,
+            },
+            "recent_activity_count": 15,
+            "governance_participation_rate": 0.75,
+        }
+
+    def test_organization_overview_response_creation_with_all_fields(self) -> None:
+        """Test OrganizationOverviewResponse creation with all fields."""
+        from models import OrganizationOverviewResponse
+
+        overview_data = self._create_valid_overview_data()
+        response = OrganizationOverviewResponse(**overview_data)
+
+        assert response.organization_id == "org-123"
+        assert response.organization_name == "Test DAO"
+        assert response.organization_slug == "test-dao"
+        assert response.description == "A test DAO organization"
+        assert response.delegate_count == 150
+        assert response.token_holder_count == 1000
+        assert response.total_proposals_count == 50
+        assert response.proposal_counts_by_status["ACTIVE"] == 5
+        assert response.recent_activity_count == 15
+        assert response.governance_participation_rate == 0.75
+
+    def test_organization_overview_response_creation_with_required_fields_only(
+        self,
+    ) -> None:
+        """Test OrganizationOverviewResponse creation with only required fields."""
+        from models import OrganizationOverviewResponse
+
+        minimal_data = {
+            "organization_id": "org-123",
+            "organization_name": "Test DAO",
+            "organization_slug": "test-dao",
+            "delegate_count": 150,
+            "token_holder_count": 1000,
+            "total_proposals_count": 50,
+            "proposal_counts_by_status": {},
+            "recent_activity_count": 15,
+            "governance_participation_rate": 0.75,
+        }
+
+        response = OrganizationOverviewResponse(**minimal_data)
+        assert response.organization_id == "org-123"
+        assert response.description is None
+        assert response.proposal_counts_by_status == {}
+
+    def test_organization_overview_response_participation_rate_validation(self) -> None:
+        """Test that governance_participation_rate is validated to be between 0 and 1."""
+        from models import OrganizationOverviewResponse
+
+        overview_data = self._create_valid_overview_data()
+
+        # Test invalid participation rate > 1
+        overview_data["governance_participation_rate"] = 1.5
+        with pytest.raises(ValidationError):
+            OrganizationOverviewResponse(**overview_data)
+
+        # Test invalid participation rate < 0
+        overview_data["governance_participation_rate"] = -0.1
+        with pytest.raises(ValidationError):
+            OrganizationOverviewResponse(**overview_data)
+
+        # Test valid boundary values
+        overview_data["governance_participation_rate"] = 0.0
+        response = OrganizationOverviewResponse(**overview_data)
+        assert response.governance_participation_rate == 0.0
+
+        overview_data["governance_participation_rate"] = 1.0
+        response = OrganizationOverviewResponse(**overview_data)
+        assert response.governance_participation_rate == 1.0
+
+    def test_organization_overview_response_negative_counts_validation(self) -> None:
+        """Test that count fields are validated to be non-negative."""
+        from models import OrganizationOverviewResponse
+
+        overview_data = self._create_valid_overview_data()
+
+        # Test negative delegate_count
+        overview_data["delegate_count"] = -1
+        with pytest.raises(ValidationError):
+            OrganizationOverviewResponse(**overview_data)
+
+        overview_data = self._create_valid_overview_data()
+        # Test negative token_holder_count
+        overview_data["token_holder_count"] = -5
+        with pytest.raises(ValidationError):
+            OrganizationOverviewResponse(**overview_data)
+
+        overview_data = self._create_valid_overview_data()
+        # Test negative total_proposals_count
+        overview_data["total_proposals_count"] = -10
+        with pytest.raises(ValidationError):
+            OrganizationOverviewResponse(**overview_data)
+
+    def test_organization_overview_response_creation_fails_with_missing_required_fields(
+        self,
+    ) -> None:
+        """Test that OrganizationOverviewResponse creation fails when required fields are missing."""
+        from models import OrganizationOverviewResponse
+
+        with pytest.raises(ValidationError):
+            OrganizationOverviewResponse(organization_name="Test DAO")
