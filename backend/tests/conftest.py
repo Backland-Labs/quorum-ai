@@ -184,6 +184,11 @@ def mock_proposals_response() -> dict:
                             "description": "Test description 1",
                         },
                         "governor": {"id": "dao-1", "name": "Test DAO"},
+                        "voteStats": [
+                            {"type": "FOR", "votesCount": "1000000"},
+                            {"type": "AGAINST", "votesCount": "250000"},
+                            {"type": "ABSTAIN", "votesCount": "50000"}
+                        ]
                     },
                     {
                         "id": "prop-2",
@@ -194,6 +199,11 @@ def mock_proposals_response() -> dict:
                             "description": "Test description 2",
                         },
                         "governor": {"id": "dao-1", "name": "Test DAO"},
+                        "voteStats": [
+                            {"type": "FOR", "votesCount": "2000000"},
+                            {"type": "AGAINST", "votesCount": "100000"},
+                            {"type": "ABSTAIN", "votesCount": "25000"}
+                        ]
                     },
                 ],
                 "pageInfo": {"lastCursor": None},
@@ -216,6 +226,70 @@ def mock_single_proposal_response() -> dict:
                     "description": "Test description",
                 },
                 "governor": {"id": "dao-1", "name": "Test DAO"},
+                "voteStats": [
+                    {"type": "FOR", "votesCount": "1000000"},
+                    {"type": "AGAINST", "votesCount": "250000"},
+                    {"type": "ABSTAIN", "votesCount": "50000"}
+                ]
+            }
+        }
+    }
+
+
+@pytest.fixture
+def mock_proposals_with_vote_counts_response() -> dict:
+    """Mock response for proposals sorted by vote count."""
+    return {
+        "data": {
+            "proposals": {
+                "nodes": [
+                    {
+                        "id": "prop-high-votes",
+                        "status": "ACTIVE",
+                        "createdAt": "2024-01-01T00:00:00Z",
+                        "metadata": {
+                            "title": "High Vote Proposal",
+                            "description": "This proposal has the most votes",
+                        },
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
+                        "voteStats": [
+                            {"type": "FOR", "votesCount": "5000000"},
+                            {"type": "AGAINST", "votesCount": "500000"},
+                            {"type": "ABSTAIN", "votesCount": "100000"}
+                        ]
+                    },
+                    {
+                        "id": "prop-medium-votes",
+                        "status": "ACTIVE",
+                        "createdAt": "2024-01-02T00:00:00Z",
+                        "metadata": {
+                            "title": "Medium Vote Proposal",
+                            "description": "This proposal has medium votes",
+                        },
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
+                        "voteStats": [
+                            {"type": "FOR", "votesCount": "2000000"},
+                            {"type": "AGAINST", "votesCount": "300000"},
+                            {"type": "ABSTAIN", "votesCount": "50000"}
+                        ]
+                    },
+                    {
+                        "id": "prop-low-votes",
+                        "status": "ACTIVE",
+                        "createdAt": "2024-01-03T00:00:00Z",
+                        "metadata": {
+                            "title": "Low Vote Proposal",
+                            "description": "This proposal has the least votes",
+                        },
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
+                        "voteStats": [
+                            {"type": "FOR", "votesCount": "100000"},
+                            {"type": "AGAINST", "votesCount": "50000"},
+                            {"type": "ABSTAIN", "votesCount": "10000"}
+                        ]
+                    },
+                ],
+                "pageInfo": {"lastCursor": None},
             }
         }
     }

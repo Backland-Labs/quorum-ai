@@ -256,11 +256,35 @@ class TallyService:
         ), "Filters must be ProposalFilters instance"
 
         query = self._build_proposals_query()
-        variables = self._build_proposals_variables(filters)
+        
+        # For vote count sorting, we need to fetch more proposals to sort client-side
+        # since Tally API doesn't support sorting by vote count
+        original_limit = filters.limit
+        if filters.sort_by == SortCriteria.VOTE_COUNT:
+            # Fetch more proposals to ensure we have enough for sorting
+            # Use 3x the requested limit to get a good selection for sorting
+            fetch_filters = filters.model_copy()
+            fetch_filters.limit = min(original_limit * 3, 100)  # Cap at API limit
+            fetch_filters.sort_by = SortCriteria.CREATED_DATE  # Use default API sorting
+            variables = self._build_proposals_variables(fetch_filters)
+        else:
+            variables = self._build_proposals_variables(filters)
 
         try:
             result = await self._make_request(query, variables)
-            return self._process_proposals_response(result)
+            proposals, next_cursor = self._process_proposals_response(result)
+            
+            # Apply client-side sorting if needed
+            if filters.sort_by == SortCriteria.VOTE_COUNT and proposals:
+                proposals = self._sort_proposals_by_vote_count(proposals, filters.sort_order)
+                # Limit to requested amount after sorting
+                proposals = proposals[:original_limit]
+                # Note: next_cursor may not be accurate for vote sorting
+                # since we're doing client-side sorting
+                if len(proposals) == original_limit:
+                    next_cursor = None  # Don't provide cursor for vote sorting
+            
+            return proposals, next_cursor
         except Exception as e:
             logfire.error(
                 "Failed to fetch proposals", filters=filters.dict(), error=str(e)
@@ -268,7 +292,7 @@ class TallyService:
             raise
 
     def _build_proposals_query(self) -> str:
-        """Build GraphQL query for fetching proposals."""
+        """Build GraphQL query for fetching proposals with vote statistics."""
         return """
             query GetProposals($input: ProposalsInput!) {
                 proposals(input: $input) {
@@ -284,6 +308,10 @@ class TallyService:
                             governor {
                                 id
                                 name
+                            }
+                            voteStats {
+                                type
+                                votesCount
                             }
                         }
                     }
@@ -373,6 +401,23 @@ class TallyService:
         governor_info = node.get("governor", {})
         metadata = node.get("metadata", {})
         status = node["status"].upper()
+        
+        # Parse vote statistics
+        vote_stats = node.get("voteStats", [])
+        votes_for = "0"
+        votes_against = "0"
+        votes_abstain = "0"
+        
+        for vote_stat in vote_stats:
+            vote_type = vote_stat.get("type", "").upper()
+            vote_count = vote_stat.get("votesCount", "0")
+            
+            if vote_type == "FOR":
+                votes_for = vote_count
+            elif vote_type == "AGAINST":
+                votes_against = vote_count
+            elif vote_type == "ABSTAIN":
+                votes_abstain = vote_count
 
         return Proposal(
             id=node["id"],
@@ -382,9 +427,9 @@ class TallyService:
             created_at=datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00")),
             start_block=0,  # Will be populated later if needed
             end_block=0,  # Will be populated later if needed
-            votes_for="0",  # Will be populated later if needed
-            votes_against="0",  # Will be populated later if needed
-            votes_abstain="0",  # Will be populated later if needed
+            votes_for=votes_for,
+            votes_against=votes_against,
+            votes_abstain=votes_abstain,
             dao_id=governor_info.get("id", ""),
             dao_name=governor_info.get("name", ""),
             url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{node['id']}",
@@ -410,6 +455,23 @@ class TallyService:
 
             # Convert API status to our enum format
             status = prop_data["status"].upper()
+            
+            # Parse vote statistics
+            vote_stats = prop_data.get("voteStats", [])
+            votes_for = "0"
+            votes_against = "0"
+            votes_abstain = "0"
+            
+            for vote_stat in vote_stats:
+                vote_type = vote_stat.get("type", "").upper()
+                vote_count = vote_stat.get("votesCount", "0")
+                
+                if vote_type == "FOR":
+                    votes_for = vote_count
+                elif vote_type == "AGAINST":
+                    votes_against = vote_count
+                elif vote_type == "ABSTAIN":
+                    votes_abstain = vote_count
 
             return Proposal(
                 id=prop_data["id"],
@@ -421,9 +483,9 @@ class TallyService:
                 ),
                 start_block=0,  # Will be populated later if needed
                 end_block=0,  # Will be populated later if needed
-                votes_for="0",  # Will be populated later if needed
-                votes_against="0",  # Will be populated later if needed
-                votes_abstain="0",  # Will be populated later if needed
+                votes_for=votes_for,
+                votes_against=votes_against,
+                votes_abstain=votes_abstain,
                 dao_id=governor_info.get("id", ""),
                 dao_name=governor_info.get("name", ""),
                 url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop_data['id']}",
@@ -562,6 +624,10 @@ class TallyService:
                             id
                             name
                         }
+                        voteStats {
+                            type
+                            votesCount
+                        }
                     }
                 }
             }
@@ -592,6 +658,23 @@ class TallyService:
                 metadata = prop.get("metadata", {})
                 status = prop["status"].upper()
 
+                # Parse vote statistics
+                vote_stats = prop.get("voteStats", [])
+                votes_for = "0"
+                votes_against = "0"
+                votes_abstain = "0"
+                
+                for vote_stat in vote_stats:
+                    vote_type = vote_stat.get("type", "").upper()
+                    vote_count = vote_stat.get("votesCount", "0")
+                    
+                    if vote_type == "FOR":
+                        votes_for = vote_count
+                    elif vote_type == "AGAINST":
+                        votes_against = vote_count
+                    elif vote_type == "ABSTAIN":
+                        votes_abstain = vote_count
+
                 proposal = Proposal(
                     id=prop["id"],
                     title=metadata.get("title", ""),
@@ -602,9 +685,9 @@ class TallyService:
                     ),
                     start_block=0,
                     end_block=0,
-                    votes_for="0",
-                    votes_against="0",
-                    votes_abstain="0",
+                    votes_for=votes_for,
+                    votes_against=votes_against,
+                    votes_abstain=votes_abstain,
                     dao_id=governor_info.get("id", ""),
                     dao_name=governor_info.get("name", ""),
                     url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
@@ -748,6 +831,36 @@ class TallyService:
 
         return min(delegate_count / token_holder_count, 1.0)
 
+    def _sort_proposals_by_vote_count(
+        self, proposals: List[Proposal], sort_order: SortOrder
+    ) -> List[Proposal]:
+        """Sort proposals by total vote count (for + against + abstain)."""
+        assert proposals, "Proposals list cannot be empty"
+        assert sort_order, "Sort order is required"
+
+        def get_total_votes(proposal: Proposal) -> int:
+            """Get total vote count for a proposal."""
+            try:
+                votes_for = int(proposal.votes_for) if proposal.votes_for else 0
+                votes_against = int(proposal.votes_against) if proposal.votes_against else 0
+                votes_abstain = int(proposal.votes_abstain) if proposal.votes_abstain else 0
+                return votes_for + votes_against + votes_abstain
+            except ValueError:
+                # If vote counts are not valid numbers, treat as 0
+                return 0
+
+        reverse_order = sort_order == SortOrder.DESC
+        sorted_proposals = sorted(proposals, key=get_total_votes, reverse=reverse_order)
+        
+        logfire.info(
+            "Sorted proposals by vote count",
+            count=len(sorted_proposals),
+            sort_order=sort_order.value,
+            top_vote_count=get_total_votes(sorted_proposals[0]) if sorted_proposals else 0
+        )
+        
+        return sorted_proposals
+
     def _build_single_proposal_query(self) -> str:
         """Build GraphQL query for fetching a single proposal by ID."""
         return """
@@ -763,6 +876,10 @@ class TallyService:
                 governor {
                     id
                     name
+                }
+                voteStats {
+                    type
+                    votesCount
                 }
             }
         }
