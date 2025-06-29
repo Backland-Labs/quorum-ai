@@ -214,7 +214,7 @@ async def get_organization_proposals(
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     after_cursor: Optional[str] = Query(default=None),
-    sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
+    sort_by: SortCriteria = Query(default=SortCriteria.VOTE_COUNT),
     sort_order: SortOrder = Query(default=SortOrder.DESC),
 ):
     """Get list of proposals for a specific organization."""
@@ -277,7 +277,7 @@ async def get_proposals(
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     after_cursor: Optional[str] = Query(default=None),
-    sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
+    sort_by: SortCriteria = Query(default=SortCriteria.VOTE_COUNT),
     sort_order: SortOrder = Query(default=SortOrder.DESC),
 ):
     """Get list of proposals with optional filtering and sorting."""

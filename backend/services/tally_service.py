@@ -277,9 +277,10 @@ class TallyService:
                                 name
                             }
                             voteStats {
-                                support
-                                weight
-                                votes
+                                type
+                                votesCount
+                                votersCount
+                                percent
                             }
                         }
                     }
@@ -290,17 +291,22 @@ class TallyService:
             }
         """
 
-        page_input = {"limit": filters.limit}
+        # For vote-based sorting, we need to fetch more proposals and sort client-side
+        # since Tally API doesn't support vote count sorting
+        api_limit = filters.limit
+        if filters.sort_by == SortCriteria.VOTE_COUNT:
+            # Fetch 3x more proposals to ensure we get the most popular ones
+            api_limit = min(filters.limit * 3, 100)  # Cap at API maximum
+        
+        page_input = {"limit": api_limit}
         if filters.after_cursor:
             page_input["afterCursor"] = filters.after_cursor
 
+        # Always use "id" sorting for API (chronological order)
+        # Vote-based sorting is handled client-side after fetching
         sort_input = {
-            "sortBy": (
-                "id"
-                if filters.sort_by == SortCriteria.CREATED_DATE
-                else filters.sort_by.value
-            ),
-            "isDescending": filters.sort_order == SortOrder.DESC,
+            "sortBy": "id", 
+            "isDescending": True,  # Most recent first by default
         }
 
         filter_input = {}
@@ -350,15 +356,15 @@ class TallyService:
                 votes_abstain = "0"
                 
                 for vote_stat in vote_stats:
-                    support = vote_stat.get("support", "").upper()
-                    weight = str(vote_stat.get("weight", "0"))
+                    vote_type = vote_stat.get("type", "").lower()
+                    vote_count = str(vote_stat.get("votesCount", "0"))
                     
-                    if support == "FOR":
-                        votes_for = weight
-                    elif support == "AGAINST":
-                        votes_against = weight
-                    elif support == "ABSTAIN":
-                        votes_abstain = weight
+                    if vote_type == "for":
+                        votes_for = vote_count
+                    elif vote_type == "against":
+                        votes_against = vote_count
+                    elif vote_type == "abstain":
+                        votes_abstain = vote_count
                 
                 # Convert API status to our enum format
                 status = prop["status"].upper()
@@ -386,6 +392,8 @@ class TallyService:
             # Apply client-side sorting if needed for vote-based sorting
             if filters.sort_by == SortCriteria.VOTE_COUNT:
                 proposals = self._sort_proposals_by_votes(proposals, filters.sort_order)
+                # Limit to the requested number after sorting
+                proposals = proposals[:filters.limit]
             
             logfire.info("Fetched proposals", count=len(proposals))
             return proposals, last_cursor
@@ -423,9 +431,10 @@ class TallyService:
                     name
                 }
                 voteStats {
-                    support
-                    weight
-                    votes
+                    type
+                    votesCount
+                    votersCount
+                    percent
                 }
             }
         }
@@ -452,15 +461,15 @@ class TallyService:
             votes_abstain = "0"
             
             for vote_stat in vote_stats:
-                support = vote_stat.get("support", "").upper()
-                weight = str(vote_stat.get("weight", "0"))
+                vote_type = vote_stat.get("type", "").lower()
+                vote_count = str(vote_stat.get("votesCount", "0"))
                 
-                if support == "FOR":
-                    votes_for = weight
-                elif support == "AGAINST":
-                    votes_against = weight
-                elif support == "ABSTAIN":
-                    votes_abstain = weight
+                if vote_type == "for":
+                    votes_for = vote_count
+                elif vote_type == "against":
+                    votes_against = vote_count
+                elif vote_type == "abstain":
+                    votes_abstain = vote_count
 
             # Convert API status to our enum format
             status = prop_data["status"].upper()
@@ -681,16 +690,27 @@ class TallyService:
             return []
 
     def _sort_proposals_by_votes(self, proposals: List[Proposal], sort_order: SortOrder) -> List[Proposal]:
-        """Sort proposals by total vote count (votes_for + votes_against + votes_abstain)."""
-        def get_total_votes(proposal: Proposal) -> int:
-            """Calculate total vote count for a proposal."""
+        """Sort proposals by total vote count, with creation date as tiebreaker."""
+        def get_sort_key(proposal: Proposal) -> tuple:
+            """Get sort key for proposal: (total_votes, created_at)."""
             try:
                 votes_for = int(proposal.votes_for) if proposal.votes_for else 0
                 votes_against = int(proposal.votes_against) if proposal.votes_against else 0
                 votes_abstain = int(proposal.votes_abstain) if proposal.votes_abstain else 0
-                return votes_for + votes_against + votes_abstain
-            except (ValueError, TypeError):
-                return 0
+                total_votes = votes_for + votes_against + votes_abstain
+                
+                # Use creation date as tiebreaker (newer first for DESC, older first for ASC)
+                created_timestamp = proposal.created_at.timestamp()
+                if sort_order == SortOrder.DESC:
+                    # For descending: higher votes first, then newer proposals first  
+                    return (total_votes, created_timestamp)
+                else:
+                    # For ascending: lower votes first, then older proposals first
+                    return (total_votes, -created_timestamp)
+                    
+            except (ValueError, TypeError, AttributeError):
+                # Fallback for invalid data
+                return (0, 0)
         
         reverse = sort_order == SortOrder.DESC
-        return sorted(proposals, key=get_total_votes, reverse=reverse)
+        return sorted(proposals, key=get_sort_key, reverse=reverse)

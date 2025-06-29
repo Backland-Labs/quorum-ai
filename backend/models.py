@@ -85,6 +85,16 @@ class Proposal(BaseModel):
     dao_id: str = Field(..., description="DAO this proposal belongs to")
     dao_name: str = Field(..., description="Name of the DAO")
     url: Optional[str] = Field(None, description="URL to view proposal")
+    
+    def calculate_total_votes(self) -> int:
+        """Calculate total vote count (for + against + abstain)."""
+        return int(self.votes_for) + int(self.votes_against) + int(self.votes_abstain)
+    
+    def calculate_total_voters(self) -> int:
+        """Calculate total number of unique voters (if available)."""
+        # Note: This would require voter count data from voteStats
+        # For now, return total votes as proxy
+        return self.calculate_total_votes()
 
 
 class ProposalSummary(BaseModel):
@@ -104,10 +114,7 @@ class ProposalSummary(BaseModel):
 class SortCriteria(str, Enum):
     """Criteria for sorting proposals."""
 
-    CREATED_DATE = "created_date"
     VOTE_COUNT = "vote_count"
-    STATE = "state"
-    TITLE = "title"
 
 
 class SortOrder(str, Enum):
@@ -125,7 +132,7 @@ class ProposalFilters(BaseModel):
     organization_id: Optional[str] = None
     limit: int = Field(default=20, ge=1, le=100)
     after_cursor: Optional[str] = None
-    sort_by: SortCriteria = Field(default=SortCriteria.CREATED_DATE)
+    sort_by: SortCriteria = Field(default=SortCriteria.VOTE_COUNT)
     sort_order: SortOrder = Field(default=SortOrder.DESC)
 
 
