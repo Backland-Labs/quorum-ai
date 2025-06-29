@@ -258,6 +258,16 @@ class TallyService:
                             id
                             status
                             createdAt
+                            start {
+                                ... on Block {
+                                    number
+                                }
+                            }
+                            end {
+                                ... on Block {
+                                    number
+                                }
+                            }
                             metadata {
                                 title
                                 description
@@ -265,6 +275,11 @@ class TallyService:
                             governor {
                                 id
                                 name
+                            }
+                            voteStats {
+                                support
+                                weight
+                                votes
                             }
                         }
                     }
@@ -320,8 +335,30 @@ class TallyService:
 
             proposals = []
             for prop in proposal_nodes:
+                if not prop:
+                    continue
+                    
                 governor_info = prop.get("governor", {})
                 metadata = prop.get("metadata", {})
+                vote_stats = prop.get("voteStats", [])
+                start_block = prop.get("start", {}).get("number", 0) if prop.get("start") else 0
+                end_block = prop.get("end", {}).get("number", 0) if prop.get("end") else 0
+                
+                # Parse vote statistics
+                votes_for = "0"
+                votes_against = "0"
+                votes_abstain = "0"
+                
+                for vote_stat in vote_stats:
+                    support = vote_stat.get("support", "").upper()
+                    weight = str(vote_stat.get("weight", "0"))
+                    
+                    if support == "FOR":
+                        votes_for = weight
+                    elif support == "AGAINST":
+                        votes_against = weight
+                    elif support == "ABSTAIN":
+                        votes_abstain = weight
                 
                 # Convert API status to our enum format
                 status = prop["status"].upper()
@@ -335,17 +372,21 @@ class TallyService:
                         created_at=datetime.fromisoformat(
                             prop["createdAt"].replace("Z", "+00:00")
                         ),
-                        start_block=0,  # Will be populated later if needed
-                        end_block=0,    # Will be populated later if needed
-                        votes_for="0",  # Will be populated later if needed
-                        votes_against="0",  # Will be populated later if needed
-                        votes_abstain="0",  # Will be populated later if needed
+                        start_block=start_block,
+                        end_block=end_block,
+                        votes_for=votes_for,
+                        votes_against=votes_against,
+                        votes_abstain=votes_abstain,
                         dao_id=governor_info.get("id", ""),
                         dao_name=governor_info.get("name", ""),
                         url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
                     )
                 )
 
+            # Apply client-side sorting if needed for vote-based sorting
+            if filters.sort_by == SortCriteria.VOTE_COUNT:
+                proposals = self._sort_proposals_by_votes(proposals, filters.sort_order)
+            
             logfire.info("Fetched proposals", count=len(proposals))
             return proposals, last_cursor
 
@@ -363,6 +404,16 @@ class TallyService:
                 id
                 status
                 createdAt
+                start {
+                    ... on Block {
+                        number
+                    }
+                }
+                end {
+                    ... on Block {
+                        number
+                    }
+                }
                 metadata {
                     title
                     description
@@ -370,6 +421,11 @@ class TallyService:
                 governor {
                     id
                     name
+                }
+                voteStats {
+                    support
+                    weight
+                    votes
                 }
             }
         }
@@ -386,6 +442,25 @@ class TallyService:
 
             governor_info = prop_data.get("governor", {})
             metadata = prop_data.get("metadata", {})
+            vote_stats = prop_data.get("voteStats", [])
+            start_block = prop_data.get("start", {}).get("number", 0) if prop_data.get("start") else 0
+            end_block = prop_data.get("end", {}).get("number", 0) if prop_data.get("end") else 0
+            
+            # Parse vote statistics
+            votes_for = "0"
+            votes_against = "0"
+            votes_abstain = "0"
+            
+            for vote_stat in vote_stats:
+                support = vote_stat.get("support", "").upper()
+                weight = str(vote_stat.get("weight", "0"))
+                
+                if support == "FOR":
+                    votes_for = weight
+                elif support == "AGAINST":
+                    votes_against = weight
+                elif support == "ABSTAIN":
+                    votes_abstain = weight
 
             # Convert API status to our enum format
             status = prop_data["status"].upper()
@@ -398,11 +473,11 @@ class TallyService:
                 created_at=datetime.fromisoformat(
                     prop_data["createdAt"].replace("Z", "+00:00")
                 ),
-                start_block=0,  # Will be populated later if needed
-                end_block=0,    # Will be populated later if needed
-                votes_for="0",  # Will be populated later if needed
-                votes_against="0",  # Will be populated later if needed
-                votes_abstain="0",  # Will be populated later if needed
+                start_block=start_block,
+                end_block=end_block,
+                votes_for=votes_for,
+                votes_against=votes_against,
+                votes_abstain=votes_abstain,
                 dao_id=governor_info.get("id", ""),
                 dao_name=governor_info.get("name", ""),
                 url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop_data['id']}",
@@ -604,3 +679,18 @@ class TallyService:
         except Exception as e:
             logfire.error(f"Failed to fetch proposals for organization {org_id}", error=str(e))
             return []
+
+    def _sort_proposals_by_votes(self, proposals: List[Proposal], sort_order: SortOrder) -> List[Proposal]:
+        """Sort proposals by total vote count (votes_for + votes_against + votes_abstain)."""
+        def get_total_votes(proposal: Proposal) -> int:
+            """Calculate total vote count for a proposal."""
+            try:
+                votes_for = int(proposal.votes_for) if proposal.votes_for else 0
+                votes_against = int(proposal.votes_against) if proposal.votes_against else 0
+                votes_abstain = int(proposal.votes_abstain) if proposal.votes_abstain else 0
+                return votes_for + votes_against + votes_abstain
+            except (ValueError, TypeError):
+                return 0
+        
+        reverse = sort_order == SortOrder.DESC
+        return sorted(proposals, key=get_total_votes, reverse=reverse)

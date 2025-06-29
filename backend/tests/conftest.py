@@ -2,14 +2,11 @@
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock
 
 from models import (
     Proposal, 
     ProposalState, 
-    ProposalSummary,
     DAO,
-    ProposalFilters,
 )
 from services.ai_service import AIService
 from services.tally_service import TallyService
@@ -56,6 +53,7 @@ def sample_proposal() -> Proposal:
         votes_abstain="50000",
         dao_id="dao-123",
         dao_name="Test DAO",
+        url="https://tally.xyz/proposal/123",
     )
 
 
@@ -107,6 +105,7 @@ def complex_proposal() -> Proposal:
         votes_abstain="300000",
         dao_id="dao-456",
         dao_name="Complex DAO",
+        url="https://tally.xyz/proposal/456",
     )
 
 

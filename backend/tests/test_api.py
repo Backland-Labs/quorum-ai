@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from main import app
-from models import DAO, Proposal, ProposalState, ProposalSummary
+from models import DAO, Proposal, ProposalState, ProposalSummary, SortCriteria, SortOrder
 
 
 @pytest.fixture
@@ -171,13 +171,12 @@ class TestProposalEndpoints:
         self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
     ) -> None:
         """Test successful proposal listing."""
-        mock_get_proposals.return_value = ([sample_proposal], 1)
+        mock_get_proposals.return_value = ([sample_proposal], None)
 
         response = client.get("/proposals")
 
         assert response.status_code == 200
         data = response.json()
-        assert data["total_count"] == 1
         assert len(data["proposals"]) == 1
         assert data["proposals"][0]["id"] == "prop-123"
 
@@ -186,7 +185,7 @@ class TestProposalEndpoints:
         self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
     ) -> None:
         """Test proposal listing with filters."""
-        mock_get_proposals.return_value = ([sample_proposal], 1)
+        mock_get_proposals.return_value = ([sample_proposal], None)
 
         response = client.get(
             "/proposals?dao_id=dao-123&state=ACTIVE&limit=10&sort_by=created_date&sort_order=desc"
@@ -233,6 +232,115 @@ class TestProposalEndpoints:
         response = client.get("/proposals/nonexistent")
 
         assert response.status_code == 404
+
+    # BAC-106: New tests for enhanced proposals endpoint
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_with_limit_parameter(
+        self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
+    ) -> None:
+        """Test proposal listing with limit parameter."""
+        mock_get_proposals.return_value = ([sample_proposal], None)
+
+        response = client.get("/proposals?limit=3")
+
+        assert response.status_code == 200
+        # Verify the service was called with correct limit
+        call_args = mock_get_proposals.call_args[0][0]  # ProposalFilters object
+        assert call_args.limit == 3
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_sort_by_votes(
+        self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
+    ) -> None:
+        """Test proposal listing sorted by vote count."""
+        mock_get_proposals.return_value = ([sample_proposal], None)
+
+        response = client.get("/proposals?sort_by=vote_count&sort_order=desc")
+
+        assert response.status_code == 200
+        # Verify the service was called with correct sort parameters
+        call_args = mock_get_proposals.call_args[0][0]  # ProposalFilters object
+        assert call_args.sort_by.value == "vote_count"
+        assert call_args.sort_order.value == "desc"
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_top_3_by_votes(
+        self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
+    ) -> None:
+        """Test getting top 3 proposals by vote count."""
+        # Create 3 proposals with different vote counts
+        proposals = []
+        for i in range(3):
+            prop = Proposal(
+                id=f"prop-{i}",
+                title=f"Test Proposal {i}",
+                description="A test proposal description",
+                state=ProposalState.ACTIVE,
+                created_at=datetime(2024, 1, 1, 12, 0, 0),
+                start_block=1000,
+                end_block=2000,
+                votes_for=str(1000000 + i * 100000),  # Different vote counts
+                votes_against="250000",
+                votes_abstain="50000",
+                dao_id="dao-123",
+                dao_name="Test DAO",
+                url=f"https://tally.xyz/proposal/{i}",
+            )
+            proposals.append(prop)
+
+        mock_get_proposals.return_value = (proposals, None)
+
+        response = client.get("/proposals?limit=3&sort_by=vote_count&sort_order=desc")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["proposals"]) == 3
+        
+        # Verify the service was called with correct parameters
+        call_args = mock_get_proposals.call_args[0][0]
+        assert call_args.limit == 3
+        assert call_args.sort_by.value == "vote_count"
+        assert call_args.sort_order.value == "desc"
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_backward_compatibility(
+        self, mock_get_proposals: Mock, client: TestClient, sample_proposal: Proposal
+    ) -> None:
+        """Test that existing API usage still works (backward compatibility)."""
+        mock_get_proposals.return_value = ([sample_proposal], None)
+
+        # Test the old way of calling the API still works
+        response = client.get("/proposals?dao_id=dao-123&state=ACTIVE")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["proposals"]) == 1
+        
+        # Verify default values are used when new parameters aren't specified
+        call_args = mock_get_proposals.call_args[0][0]
+        assert call_args.dao_id == "dao-123"
+        assert call_args.state == ProposalState.ACTIVE
+        assert call_args.limit == 20  # Default limit
+        assert call_args.sort_by == SortCriteria.CREATED_DATE  # Default sort
+        assert call_args.sort_order == SortOrder.DESC  # Default order
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_invalid_sort_by(
+        self, mock_get_proposals: Mock, client: TestClient
+    ) -> None:
+        """Test proposal listing with invalid sort_by parameter."""
+        response = client.get("/proposals?sort_by=invalid_sort")
+
+        assert response.status_code == 422  # Validation error
+
+    @patch("main.tally_service.get_proposals")
+    def test_get_proposals_invalid_sort_order(
+        self, mock_get_proposals: Mock, client: TestClient
+    ) -> None:
+        """Test proposal listing with invalid sort_order parameter."""
+        response = client.get("/proposals?sort_order=invalid_order")
+
+        assert response.status_code == 422  # Validation error
 
 
 class TestSummarizeEndpoints:
