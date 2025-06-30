@@ -102,7 +102,7 @@
           onViewAllProposals={handleViewAllProposals}
         />
       {:else if $dashboardState.activeTab === 'proposals'}
-        <ProposalsTab {currentOrgData} />
+        <ProposalsTab {currentOrgData} {dashboardStore} />
       {:else if $dashboardState.activeTab === 'activity'}
         <ActivityTab />
       {/if}

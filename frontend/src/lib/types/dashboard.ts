@@ -38,6 +38,21 @@ export interface Proposal {
   confidence_score: number;
 }
 
+export interface ProposalDetails extends Proposal {
+  id: string;
+  description: string;
+  state: string;
+  created_at: string;
+  start_block: number;
+  end_block: number;
+  votes_for: string;
+  votes_against: string;
+  votes_abstain: string;
+  dao_id: string;
+  dao_name: string;
+  url?: string;
+}
+
 export interface DashboardState {
   activeTab: TabType;
   selectedOrganization: Organization | null;
