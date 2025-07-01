@@ -774,3 +774,153 @@ class TestAIServiceCaching:
                 mock_summarize.assert_not_called()
                 # Verify cache was checked twice
                 assert mock_cache_service.get.call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_cache_hit_logging(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that cache hits are logged for performance monitoring."""
+        # Arrange
+        cached_result = [
+            {
+                "proposal_id": "prop-123",
+                "title": sample_proposal.title,
+                "summary": "Cached summary",
+                "key_points": ["Cached point"],
+                "risk_level": "LOW",
+                "recommendation": "APPROVE",
+                "confidence_score": 0.8,
+            }
+        ]
+        
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=cached_result)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock logfire.info to capture logging calls
+            with patch('services.ai_service.logfire.info') as mock_logfire:
+                # Act
+                result = await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                assert len(result) == 1
+                
+                # Verify cache hit was logged
+                mock_logfire.assert_called()
+                log_calls = [call for call in mock_logfire.call_args_list 
+                            if 'Cache hit for AI summary' in str(call)]
+                assert len(log_calls) >= 1
+                
+                # Verify log includes cache key
+                cache_hit_call = log_calls[0]
+                assert 'cache_key' in cache_hit_call.kwargs
+
+    @pytest.mark.asyncio
+    async def test_cache_miss_logging(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that cache misses and cache sets are logged for performance monitoring."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)  # Cache miss
+        mock_cache_service.set = AsyncMock(return_value=True)
+        mock_cache_service.acquire_lock = AsyncMock(return_value=True)
+        mock_cache_service.release_lock = AsyncMock(return_value=True)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.return_value = ProposalSummary(
+                    proposal_id="prop-123",
+                    title=sample_proposal.title,
+                    summary="Test summary",
+                    key_points=["Point 1"],
+                    risk_level="LOW",
+                    recommendation="APPROVE",
+                    confidence_score=0.8,
+                )
+
+                # Mock logfire.info to capture logging calls
+                with patch('services.ai_service.logfire.info') as mock_logfire:
+                    # Act
+                    result = await ai_service.summarize_multiple_proposals(proposals)
+
+                    # Assert
+                    assert len(result) == 1
+                    
+                    # Verify cache set was logged
+                    mock_logfire.assert_called()
+                    log_calls = [call for call in mock_logfire.call_args_list 
+                                if 'Cache set for AI summary' in str(call)]
+                    assert len(log_calls) >= 1
+                    
+                    # Verify log includes cache key and count
+                    cache_set_call = log_calls[0]
+                    assert 'cache_key' in cache_set_call.kwargs
+                    assert 'count' in cache_set_call.kwargs
+                    assert cache_set_call.kwargs['count'] == 1
+
+    @pytest.mark.asyncio
+    async def test_performance_metrics_logging(
+        self, sample_proposal: Proposal, complex_proposal: Proposal
+    ) -> None:
+        """Test that performance metrics are logged including processing times."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)  # Cache miss
+        mock_cache_service.set = AsyncMock(return_value=True)
+        mock_cache_service.acquire_lock = AsyncMock(return_value=True)
+        mock_cache_service.release_lock = AsyncMock(return_value=True)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal, complex_proposal]
+            
+            # Mock the original method with some processing time
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.side_effect = [
+                    ProposalSummary(
+                        proposal_id="prop-123",
+                        title=sample_proposal.title,
+                        summary="Test summary 1",
+                        key_points=["Point 1"],
+                        risk_level="LOW",
+                        recommendation="APPROVE",
+                        confidence_score=0.8,
+                    ),
+                    ProposalSummary(
+                        proposal_id="prop-456",
+                        title=complex_proposal.title,
+                        summary="Test summary 2",
+                        key_points=["Point 2"],
+                        risk_level="HIGH",
+                        recommendation="REVIEW",
+                        confidence_score=0.9,
+                    ),
+                ]
+
+                # Mock logfire.info to capture logging calls
+                with patch('services.ai_service.logfire.info') as mock_logfire:
+                    # Act
+                    result = await ai_service.summarize_multiple_proposals(proposals)
+
+                    # Assert
+                    assert len(result) == 2
+                    
+                    # Verify cache performance logging
+                    mock_logfire.assert_called()
+                    
+                    # Check for cache set logging with metrics
+                    cache_set_calls = [call for call in mock_logfire.call_args_list 
+                                      if 'Cache set for AI summary' in str(call)]
+                    assert len(cache_set_calls) >= 1
+                    
+                    # Verify metrics include count of processed proposals
+                    cache_set_call = cache_set_calls[0]
+                    assert cache_set_call.kwargs['count'] == 2
