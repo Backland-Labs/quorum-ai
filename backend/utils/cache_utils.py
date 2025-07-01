@@ -88,14 +88,33 @@ def serialize_for_cache(data: Any) -> str:
             return [convert_for_json(item) for item in obj]
         elif isinstance(obj, dict):
             return {key: convert_for_json(value) for key, value in obj.items()}
+        elif callable(obj) and not isinstance(obj, type):
+            # Reject callable objects like functions/lambdas
+            raise TypeError(f"Cannot serialize callable object: {obj}")
+        elif hasattr(obj, '__dict__'):
+            # Handle objects with attributes by checking for problematic types
+            converted_attrs = {}
+            for key, value in obj.__dict__.items():
+                if callable(value) and not isinstance(value, type):
+                    raise TypeError(f"Cannot serialize object with callable attribute '{key}': {value}")
+                converted_attrs[key] = convert_for_json(value)
+            return converted_attrs
         else:
             return obj
     
     try:
         converted_data = convert_for_json(data)
-        return json.dumps(converted_data, default=str, ensure_ascii=False)
+        # Try to serialize the converted data
+        return json.dumps(converted_data, ensure_ascii=False)
     except TypeError as e:
-        raise TypeError(f"Unable to serialize data for cache: {e}")
+        # Re-raise conversion errors as-is, but handle JSON serialization errors
+        if "Cannot serialize" in str(e):
+            raise e
+        # For other JSON serialization errors, try with string conversion
+        try:
+            return json.dumps(converted_data, default=str, ensure_ascii=False)
+        except (TypeError, NameError) as json_e:
+            raise TypeError(f"Unable to serialize data for cache: {json_e}")
 
 
 def deserialize_from_cache(serialized_data: str) -> Any:
