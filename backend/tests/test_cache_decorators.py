@@ -182,3 +182,133 @@ class TestCacheResultDecorator:
         
         result = function_default_ttl(42)
         assert result == 42
+
+
+class TestCacheResultDecoratorFailureHandling:
+    """Test @cache_result decorator failure handling and graceful fallback."""
+    
+    async def test_cache_service_unavailable_calls_function_directly(self):
+        """Test that when cache service is unavailable, function is called directly."""
+        with patch.object(cache_service, '_is_available', False):
+            call_count = 0
+            
+            @cache_result(ttl=300)
+            async def function_with_unavailable_cache(x: int) -> int:
+                nonlocal call_count
+                call_count += 1
+                return x * 2
+            
+            result = await function_with_unavailable_cache(5)
+            
+            # Should return function result
+            assert result == 10
+            # Function should be called directly
+            assert call_count == 1
+    
+    async def test_cache_get_exception_calls_function_directly(self):
+        """Test that cache.get() exceptions result in direct function call."""
+        with patch.object(cache_service, '_is_available', True), \
+             patch.object(cache_service, 'get', new_callable=AsyncMock) as mock_get:
+            # Mock cache.get to raise an exception
+            mock_get.side_effect = Exception("Redis connection failed")
+            
+            call_count = 0
+            
+            @cache_result(ttl=300)
+            async def function_with_cache_error(x: int) -> int:
+                nonlocal call_count
+                call_count += 1
+                return x * 3
+            
+            result = await function_with_cache_error(4)
+            
+            # Should return function result despite cache error
+            assert result == 12
+            # Function should be called directly
+            assert call_count == 1
+    
+    async def test_cache_set_failure_does_not_affect_result(self):
+        """Test that cache.set() failures don't affect function result."""
+        with patch.object(cache_service, '_is_available', True), \
+             patch.object(cache_service, 'get', new_callable=AsyncMock) as mock_get, \
+             patch.object(cache_service, 'set', new_callable=AsyncMock) as mock_set:
+            # Cache miss
+            mock_get.return_value = None
+            # Cache set fails
+            mock_set.side_effect = Exception("Redis write failed")
+            
+            call_count = 0
+            
+            @cache_result(ttl=300)
+            async def function_with_cache_write_error(x: int) -> dict:
+                nonlocal call_count
+                call_count += 1
+                return {"value": x * 4}
+            
+            result = await function_with_cache_write_error(3)
+            
+            # Should return function result
+            assert result == {"value": 12}
+            # Function should be called
+            assert call_count == 1
+            # get should be called
+            mock_get.assert_called_once()
+            # set should be attempted but fail
+            mock_set.assert_called_once()
+    
+    async def test_serialization_error_falls_back_to_function(self):
+        """Test that serialization errors result in fallback to function."""
+        with patch.object(cache_service, '_is_available', True), \
+             patch.object(cache_service, 'get', new_callable=AsyncMock) as mock_get, \
+             patch.object(cache_service, 'set', new_callable=AsyncMock) as mock_set, \
+             patch('utils.cache_decorators.serialize_for_cache') as mock_serialize:
+            # Cache miss
+            mock_get.return_value = None
+            # Serialization fails
+            mock_serialize.side_effect = TypeError("Cannot serialize")
+            
+            call_count = 0
+            
+            @cache_result(ttl=300)
+            async def function_with_serialization_error(x: int) -> int:
+                nonlocal call_count
+                call_count += 1
+                return x * 5
+            
+            result = await function_with_serialization_error(2)
+            
+            # Should return function result
+            assert result == 10
+            # Function should be called
+            assert call_count == 1
+            # get should be called
+            mock_get.assert_called_once()
+            # set should not be called due to serialization error
+            mock_set.assert_not_called()
+    
+    async def test_deserialization_error_falls_back_to_function(self):
+        """Test that deserialization errors result in fallback to function."""
+        with patch.object(cache_service, '_is_available', True), \
+             patch.object(cache_service, 'get', new_callable=AsyncMock) as mock_get, \
+             patch('utils.cache_decorators.deserialize_from_cache') as mock_deserialize:
+            # Cache hit with corrupt data
+            mock_get.return_value = "corrupted cache data"
+            # Deserialization fails
+            mock_deserialize.side_effect = ValueError("Invalid JSON")
+            
+            call_count = 0
+            
+            @cache_result(ttl=300)
+            async def function_with_deserialization_error(x: int) -> int:
+                nonlocal call_count
+                call_count += 1
+                return x * 6
+            
+            result = await function_with_deserialization_error(1)
+            
+            # Should return function result
+            assert result == 6
+            # Function should be called
+            assert call_count == 1
+            # get should be called
+            mock_get.assert_called_once()
