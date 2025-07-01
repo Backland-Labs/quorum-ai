@@ -1,12 +1,10 @@
 """Tests for cache utility functions."""
 
 import pytest
-import unittest.mock
 from datetime import datetime
-from typing import Dict, Any
 from unittest.mock import AsyncMock, patch
 
-from models import Proposal, ProposalState, DAO
+from models import Proposal, ProposalState
 from utils.cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
 from services.cache_service import cache_service
 
@@ -335,12 +333,6 @@ class TestCacheInvalidationUtilities:
         deleted_count = await invalidate_dao_cache("dao_123")
         
         # Should call keys with patterns for DAO-related cache entries
-        expected_calls = [
-            unittest.mock.call("cache:*dao_123*"),
-            unittest.mock.call("cache:get_dao_proposals:dao_123:*"),
-            unittest.mock.call("cache:get_proposals:*dao_id:dao_123*")
-        ]
-        
         assert mock_redis.keys.call_count >= 1
         assert deleted_count >= 0
     

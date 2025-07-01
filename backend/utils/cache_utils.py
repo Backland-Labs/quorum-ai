@@ -3,7 +3,7 @@
 import hashlib
 import json
 import logging
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -157,6 +157,8 @@ async def invalidate_cache_pattern(pattern: str) -> int:
     
     try:
         # Find all keys matching the pattern
+        if cache_service._redis_client is None:
+            return 0
         keys = await cache_service._redis_client.keys(pattern)
         
         if not keys:
@@ -164,9 +166,11 @@ async def invalidate_cache_pattern(pattern: str) -> int:
             return 0
         
         # Delete all matching keys
-        deleted_count = await cache_service._redis_client.delete(*keys)
-        logger.info(f"Invalidated {deleted_count} cache keys for pattern: {pattern}")
-        return deleted_count
+        if cache_service._redis_client is not None:
+            deleted_count = await cache_service._redis_client.delete(*keys)
+            logger.info(f"Invalidated {deleted_count} cache keys for pattern: {pattern}")
+            return int(deleted_count)
+        return 0
         
     except Exception as e:
         logger.error(f"Failed to invalidate cache pattern {pattern}: {e}")

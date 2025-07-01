@@ -6,7 +6,6 @@ import pytest
 from datetime import datetime
 
 from services.cache_service import CacheService
-from config import settings
 
 
 # Skip integration tests if SKIP_INTEGRATION_TESTS is set

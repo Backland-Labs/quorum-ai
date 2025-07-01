@@ -4,7 +4,6 @@ import json
 import logging
 from typing import Any, Optional
 
-import redis
 from redis.asyncio import ConnectionPool, Redis
 from redis.exceptions import ConnectionError, ResponseError, TimeoutError
 

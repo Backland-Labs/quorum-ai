@@ -1,11 +1,11 @@
 """Tests for cache decorator functionality."""
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 from datetime import datetime
 from typing import List
 
-from models import Proposal, ProposalState, DAO
+from models import Proposal, ProposalState
 from utils.cache_decorators import cache_result
 from services.cache_service import cache_service
 
@@ -44,9 +44,7 @@ class TestCacheResultDecorator:
         assert result == "processed_test"
         
     async def test_cache_result_decorator_with_async_function(self, setup_cache_service):
-        """Test that @cache_result decorator works with async functions."""
-        mocks = setup_cache_service
-        
+        """Test that @cache_result decorator works with async functions."""        
         @cache_result(ttl=300)
         async def async_function(x: int) -> int:
             return x * 3

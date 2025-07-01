@@ -1,9 +1,8 @@
 """Tests for Redis cache service."""
 
-import asyncio
 import json
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 from redis.exceptions import ConnectionError, ResponseError, TimeoutError
 

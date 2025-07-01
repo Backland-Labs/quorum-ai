@@ -1,10 +1,9 @@
 """Cache decorators for automatic method result caching."""
 
-import asyncio
 import functools
 import inspect
 import logging
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, TypeVar
 
 from .cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
 from services.cache_service import cache_service
@@ -32,11 +31,8 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
     def decorator(func: F) -> F:
         # Preserve function metadata
         @functools.wraps(func)
-        def sync_wrapper(*args, **kwargs):
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             """Synchronous wrapper for sync functions."""
-            # Generate cache key from function name and parameters
-            cache_key = generate_cache_key(func.__name__, args, kwargs)
-            
             try:
                 # Try to get from cache (Note: this won't work in sync context with async cache)
                 # For now, just call the function directly for sync functions
@@ -47,7 +43,7 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
                 return func(*args, **kwargs)
         
         @functools.wraps(func)
-        async def async_wrapper(*args, **kwargs):
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
             """Asynchronous wrapper for async functions."""
             # Generate cache key from function name and parameters
             cache_key = generate_cache_key(func.__name__, args, kwargs)
@@ -85,8 +81,8 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
         
         # Return appropriate wrapper based on function type
         if inspect.iscoroutinefunction(func):
-            return async_wrapper
+            return async_wrapper  # type: ignore
         else:
-            return sync_wrapper
+            return sync_wrapper  # type: ignore
     
     return decorator
