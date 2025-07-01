@@ -657,3 +657,120 @@ class TestAIServiceCaching:
                 mock_cache_service.set.assert_called()
                 cache_set_call = mock_cache_service.set.call_args
                 assert cache_set_call[1]['expire_seconds'] == 14400  # 4 hours
+
+    @pytest.mark.asyncio
+    async def test_distributed_locking_prevents_duplicate_processing(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that distributed locking prevents duplicate AI processing."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)  # Cache miss
+        mock_cache_service.set = AsyncMock(return_value=True)
+        # Mock lock acquisition - first call gets lock, second waits
+        mock_cache_service.acquire_lock = AsyncMock(side_effect=[True, False])
+        mock_cache_service.release_lock = AsyncMock(return_value=True)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method to simulate slow processing
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.return_value = ProposalSummary(
+                    proposal_id="prop-123",
+                    title=sample_proposal.title,
+                    summary="Test summary",
+                    key_points=["Point 1"],
+                    risk_level="LOW",
+                    recommendation="APPROVE",
+                    confidence_score=0.8,
+                )
+
+                # Act - simulate concurrent requests
+                result = await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                assert len(result) == 1
+                # Verify lock was acquired
+                mock_cache_service.acquire_lock.assert_called()
+                # Verify lock was released
+                mock_cache_service.release_lock.assert_called()
+
+    @pytest.mark.asyncio
+    async def test_lock_timeout_allows_processing_to_continue(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that lock timeout allows processing to continue after wait."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)  # Cache miss
+        mock_cache_service.set = AsyncMock(return_value=True)
+        # First request can't get lock, but continues after timeout
+        mock_cache_service.acquire_lock = AsyncMock(return_value=False)
+        mock_cache_service.wait_for_lock = AsyncMock(return_value=False)  # Timeout
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.return_value = ProposalSummary(
+                    proposal_id="prop-123",
+                    title=sample_proposal.title,
+                    summary="Test summary",
+                    key_points=["Point 1"],
+                    risk_level="LOW",
+                    recommendation="APPROVE",
+                    confidence_score=0.8,
+                )
+
+                # Act
+                result = await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                assert len(result) == 1
+                # Verify processing continued after lock timeout
+                mock_summarize.assert_called()
+                
+    @pytest.mark.asyncio
+    async def test_lock_wait_returns_cached_result(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that waiting for lock returns cached result when available."""
+        # Arrange
+        cached_result = [
+            {
+                "proposal_id": "prop-123",
+                "title": sample_proposal.title,
+                "summary": "Cached summary from other process",
+                "key_points": ["Cached point"],
+                "risk_level": "LOW",
+                "recommendation": "APPROVE",
+                "confidence_score": 0.8,
+            }
+        ]
+        
+        mock_cache_service = MagicMock(spec=CacheService)
+        # First get() returns None, second get() (after waiting) returns cached result
+        mock_cache_service.get = AsyncMock(side_effect=[None, cached_result])
+        mock_cache_service.acquire_lock = AsyncMock(return_value=False)
+        mock_cache_service.wait_for_lock = AsyncMock(return_value=True)  # Success
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method to ensure it's not called
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                # Act
+                result = await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                assert len(result) == 1
+                assert result[0].summary == "Cached summary from other process"
+                # Verify AI was not called (result came from cache after wait)
+                mock_summarize.assert_not_called()
+                # Verify cache was checked twice
+                assert mock_cache_service.get.call_count == 2

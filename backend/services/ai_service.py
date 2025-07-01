@@ -165,13 +165,19 @@ class AIService:
         include_risk_assessment: bool = True,
         include_recommendations: bool = True,
     ) -> List[ProposalSummary]:
-        """Summarize multiple proposals concurrently with caching."""
+        """Summarize multiple proposals concurrently with caching and distributed locking."""
         if not proposals:
             return []
 
+        cache_key = None
+        lock_key = None
+        lock_acquired = False
+        
         # Check cache if available
         if self.cache_service:
             cache_key = self._generate_cache_key(proposals, include_risk_assessment, include_recommendations)
+            lock_key = f"ai_processing:{cache_key}"
+            
             cached_result = await self.cache_service.get(cache_key)
             if cached_result:
                 logfire.info("Cache hit for AI summary", cache_key=cache_key)
@@ -179,35 +185,61 @@ class AIService:
                     ProposalSummary(**summary_data) for summary_data in cached_result
                 ]
 
-        # Cache miss or no cache service - generate summaries
-        tasks = [
-            self.summarize_proposal(
-                proposal, include_risk_assessment, include_recommendations
-            )
-            for proposal in proposals
-        ]
+            # Try to acquire lock to prevent duplicate processing
+            lock_acquired = await self.cache_service.acquire_lock(lock_key, timeout_seconds=300)  # 5 minutes
+            
+            if not lock_acquired:
+                # Another process is already working on this, wait for it
+                logfire.info("Waiting for concurrent AI processing to complete", lock_key=lock_key)
+                wait_successful = await self.cache_service.wait_for_lock(lock_key, max_wait_seconds=10)
+                
+                if wait_successful:
+                    # Check cache again after waiting
+                    cached_result = await self.cache_service.get(cache_key)
+                    if cached_result:
+                        logfire.info("Cache hit after waiting for lock", cache_key=cache_key)
+                        return [
+                            ProposalSummary(**summary_data) for summary_data in cached_result
+                        ]
+                
+                # Either wait timed out or still no cached result, proceed with processing
+                logfire.info("Proceeding with AI processing after lock wait", lock_key=lock_key)
 
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-
-        summaries = []
-        for i, result in enumerate(results):
-            if isinstance(result, Exception):
-                logfire.error(
-                    "Failed to summarize proposal in batch",
-                    proposal_id=proposals[i].id,
-                    error=str(result),
+        try:
+            # Cache miss or no cache service - generate summaries
+            tasks = [
+                self.summarize_proposal(
+                    proposal, include_risk_assessment, include_recommendations
                 )
-                continue
-            summaries.append(result)
+                for proposal in proposals
+            ]
 
-        # Cache the results if cache service is available
-        if self.cache_service and summaries:
-            cache_key = self._generate_cache_key(proposals, include_risk_assessment, include_recommendations)
-            cache_data = [summary.dict() for summary in summaries]
-            await self.cache_service.set(cache_key, cache_data, expire_seconds=14400)  # 4 hours
-            logfire.info("Cache set for AI summary", cache_key=cache_key, count=len(summaries))
+            results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        return summaries
+            summaries = []
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    logfire.error(
+                        "Failed to summarize proposal in batch",
+                        proposal_id=proposals[i].id,
+                        error=str(result),
+                    )
+                    continue
+                summaries.append(result)
+
+            # Cache the results if cache service is available
+            if self.cache_service and summaries and cache_key:
+                cache_data = [summary.dict() for summary in summaries]
+                await self.cache_service.set(cache_key, cache_data, expire_seconds=14400)  # 4 hours
+                logfire.info("Cache set for AI summary", cache_key=cache_key, count=len(summaries))
+
+            return summaries
+            
+        finally:
+            # Always release the lock if we acquired it
+            if self.cache_service and lock_key and lock_acquired:
+                await self.cache_service.release_lock(lock_key)
+                logfire.info("Released AI processing lock", lock_key=lock_key)
 
     def _generate_cache_key(
         self, 
