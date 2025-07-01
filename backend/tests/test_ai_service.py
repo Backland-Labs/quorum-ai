@@ -1,10 +1,13 @@
 """Tests for AI service."""
 
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock, AsyncMock
 from datetime import datetime
+import hashlib
+import json
 
 from services.ai_service import AIService
+from services.cache_service import CacheService
 from models import Proposal, ProposalState, ProposalSummary
 
 
@@ -495,3 +498,162 @@ class TestAIServiceCallModel:
             assert result["risk_level"] == "NOT_ASSESSED"
             assert result["recommendation"] == "NOT_PROVIDED"
             assert result["confidence_score"] == 0.5
+
+
+class TestAIServiceCaching:
+    """Test AI service caching functionality."""
+
+    @pytest.mark.asyncio
+    async def test_summarize_multiple_proposals_uses_cache(
+        self, sample_proposal: Proposal, complex_proposal: Proposal
+    ) -> None:
+        """Test that summarize_multiple_proposals uses cache for repeated calls."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)  # Cache miss
+        mock_cache_service.set = AsyncMock(return_value=True)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal, complex_proposal]
+            
+            # Mock the original summarize_proposal method to return predictable results
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.side_effect = [
+                    ProposalSummary(
+                        proposal_id="prop-123",
+                        title=sample_proposal.title,
+                        summary="Test summary 1",
+                        key_points=["Point 1"],
+                        risk_level="LOW",
+                        recommendation="APPROVE",
+                        confidence_score=0.8,
+                    ),
+                    ProposalSummary(
+                        proposal_id="prop-456", 
+                        title=complex_proposal.title,
+                        summary="Test summary 2",
+                        key_points=["Point 2"],
+                        risk_level="HIGH",
+                        recommendation="REVIEW",
+                        confidence_score=0.9,
+                    ),
+                ]
+
+                # Act
+                result = await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                assert len(result) == 2
+                # Verify cache was checked
+                mock_cache_service.get.assert_called()
+                # Verify cache was set
+                mock_cache_service.set.assert_called()
+
+    @pytest.mark.asyncio
+    async def test_summarize_multiple_proposals_cache_hit(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that cache hit returns cached results without calling AI."""
+        # Arrange
+        cached_result = [
+            {
+                "proposal_id": "prop-123",
+                "title": sample_proposal.title,
+                "summary": "Cached summary",
+                "key_points": ["Cached point"],
+                "risk_level": "LOW",
+                "recommendation": "APPROVE",
+                "confidence_score": 0.8,
+            }
+        ]
+        
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=cached_result)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method to ensure it's not called
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                # Act
+                result = await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                assert len(result) == 1
+                assert result[0].summary == "Cached summary"
+                # Verify AI was not called
+                mock_summarize.assert_not_called()
+                # Verify cache was checked
+                mock_cache_service.get.assert_called()
+            
+    @pytest.mark.asyncio
+    async def test_cache_key_includes_proposal_content_hash(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that cache keys include proposal content hash."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)
+        mock_cache_service.set = AsyncMock(return_value=True)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.return_value = ProposalSummary(
+                    proposal_id="prop-123",
+                    title=sample_proposal.title,
+                    summary="Test summary",
+                    key_points=["Point 1"],
+                    risk_level="LOW",
+                    recommendation="APPROVE",
+                    confidence_score=0.8,
+                )
+
+                # Act
+                await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                # Verify cache key includes content hash
+                cache_get_call = mock_cache_service.get.call_args[0][0]
+                assert "ai_summary" in cache_get_call
+                assert len(cache_get_call.split(":")) >= 3  # Should have hash component
+            
+    @pytest.mark.asyncio
+    async def test_cache_ttl_is_four_hours(
+        self, sample_proposal: Proposal
+    ) -> None:
+        """Test that cache TTL is set to 4 hours (14400 seconds)."""
+        # Arrange
+        mock_cache_service = MagicMock(spec=CacheService)
+        mock_cache_service.get = AsyncMock(return_value=None)
+        mock_cache_service.set = AsyncMock(return_value=True)
+        
+        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+            ai_service = AIService(cache_service=mock_cache_service)
+            proposals = [sample_proposal]
+            
+            # Mock the original method
+            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+                mock_summarize.return_value = ProposalSummary(
+                    proposal_id="prop-123",
+                    title=sample_proposal.title,
+                    summary="Test summary",
+                    key_points=["Point 1"],
+                    risk_level="LOW",
+                    recommendation="APPROVE",
+                    confidence_score=0.8,
+                )
+
+                # Act
+                await ai_service.summarize_multiple_proposals(proposals)
+
+                # Assert
+                # Verify cache set was called with 4-hour TTL
+                mock_cache_service.set.assert_called()
+                cache_set_call = mock_cache_service.set.call_args
+                assert cache_set_call[1]['expire_seconds'] == 14400  # 4 hours

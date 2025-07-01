@@ -1,7 +1,9 @@
 """AI service for proposal summarization using Pydantic AI."""
 
 import asyncio
-from typing import Dict, List, Any
+import hashlib
+import json
+from typing import Dict, List, Any, Optional
 
 import logfire
 from pydantic_ai import Agent
@@ -10,15 +12,17 @@ from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
 from models import Proposal, ProposalSummary
+from services.cache_service import CacheService
 
 
 class AIService:
     """Service for AI-powered proposal analysis and summarization."""
 
-    def __init__(self) -> None:
+    def __init__(self, cache_service: Optional[CacheService] = None) -> None:
         """Initialize the AI service with configured model."""
         self.model = self._create_model()
         self.agent = self._create_agent()
+        self.cache_service = cache_service
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
@@ -161,10 +165,21 @@ class AIService:
         include_risk_assessment: bool = True,
         include_recommendations: bool = True,
     ) -> List[ProposalSummary]:
-        """Summarize multiple proposals concurrently."""
+        """Summarize multiple proposals concurrently with caching."""
         if not proposals:
             return []
 
+        # Check cache if available
+        if self.cache_service:
+            cache_key = self._generate_cache_key(proposals, include_risk_assessment, include_recommendations)
+            cached_result = await self.cache_service.get(cache_key)
+            if cached_result:
+                logfire.info("Cache hit for AI summary", cache_key=cache_key)
+                return [
+                    ProposalSummary(**summary_data) for summary_data in cached_result
+                ]
+
+        # Cache miss or no cache service - generate summaries
         tasks = [
             self.summarize_proposal(
                 proposal, include_risk_assessment, include_recommendations
@@ -185,7 +200,48 @@ class AIService:
                 continue
             summaries.append(result)
 
+        # Cache the results if cache service is available
+        if self.cache_service and summaries:
+            cache_key = self._generate_cache_key(proposals, include_risk_assessment, include_recommendations)
+            cache_data = [summary.dict() for summary in summaries]
+            await self.cache_service.set(cache_key, cache_data, expire_seconds=14400)  # 4 hours
+            logfire.info("Cache set for AI summary", cache_key=cache_key, count=len(summaries))
+
         return summaries
+
+    def _generate_cache_key(
+        self, 
+        proposals: List[Proposal], 
+        include_risk_assessment: bool, 
+        include_recommendations: bool
+    ) -> str:
+        """Generate a cache key based on proposal content and parameters."""
+        # Create a hash of proposal contents to detect changes
+        proposal_data = []
+        for proposal in proposals:
+            proposal_content = {
+                'id': proposal.id,
+                'title': proposal.title,
+                'description': proposal.description,
+                'state': proposal.state.value,
+                'votes_for': proposal.votes_for,
+                'votes_against': proposal.votes_against,
+                'votes_abstain': proposal.votes_abstain,
+            }
+            proposal_data.append(proposal_content)
+        
+        # Include analysis parameters in the key
+        cache_input = {
+            'proposals': proposal_data,
+            'include_risk_assessment': include_risk_assessment,
+            'include_recommendations': include_recommendations,
+        }
+        
+        # Create hash of the input
+        cache_input_str = json.dumps(cache_input, sort_keys=True)
+        content_hash = hashlib.sha256(cache_input_str.encode()).hexdigest()[:16]
+        
+        return f"ai_summary:{len(proposals)}:{content_hash}"
 
     async def _generate_summary(
         self,
