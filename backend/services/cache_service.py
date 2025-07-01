@@ -2,7 +2,7 @@
 
 import json
 import logging
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from redis.asyncio import ConnectionPool, Redis
 from redis.exceptions import ConnectionError, ResponseError, TimeoutError
@@ -125,24 +125,28 @@ class CacheService:
             self._handle_redis_error("set", key, e)
             return False
     
-    async def delete(self, key: str) -> bool:
-        """Delete value from cache by key.
+    async def delete(self, *keys: str) -> int:
+        """Delete value(s) from cache by key(s).
         
         Args:
-            key: Cache key
+            keys: Cache key(s) to delete
             
         Returns:
-            True if deleted, False otherwise
+            Number of keys deleted
         """
         if not self._ensure_available():
-            return False
+            return 0
+            
+        if not keys:
+            return 0
             
         try:
-            result = await self._redis_client.delete(key)
-            return bool(result)
+            result = await self._redis_client.delete(*keys)
+            return int(result) if result else 0
         except Exception as e:
-            self._handle_redis_error("delete", key, e)
-            return False
+            key_str = ", ".join(keys[:3]) + ("..." if len(keys) > 3 else "")
+            self._handle_redis_error("delete", key_str, e)
+            return 0
     
     async def exists(self, key: str) -> bool:
         """Check if key exists in cache.
@@ -161,6 +165,25 @@ class CacheService:
         except Exception as e:
             self._handle_redis_error("exists", key, e)
             return False
+    
+    async def keys(self, pattern: str) -> List[str]:
+        """Get all keys matching a pattern.
+        
+        Args:
+            pattern: Redis key pattern (e.g., "cache:*")
+            
+        Returns:
+            List of matching keys
+        """
+        if not self._ensure_available():
+            return []
+            
+        try:
+            keys = await self._redis_client.keys(pattern)
+            return keys if keys else []
+        except Exception as e:
+            self._handle_redis_error("keys", pattern, e)
+            return []
     
     @property
     def is_available(self) -> bool:

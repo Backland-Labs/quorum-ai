@@ -43,11 +43,13 @@ async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
     global tally_service, ai_service
-    tally_service = TallyService()
-    ai_service = AIService()
     
-    # Initialize cache service
+    # Initialize cache service first
     await cache_service.initialize()
+    
+    # Initialize services with cache dependency
+    tally_service = TallyService(cache_service=cache_service)
+    ai_service = AIService()
 
     # Configure Logfire if credentials are available
     if settings.logfire_token:
