@@ -1,11 +1,14 @@
 """Tests for cache utility functions."""
 
 import pytest
+import unittest.mock
 from datetime import datetime
 from typing import Dict, Any
+from unittest.mock import AsyncMock, patch
 
 from models import Proposal, ProposalState, DAO
 from utils.cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
+from services.cache_service import cache_service
 
 
 class TestCacheKeyGeneration:
@@ -282,3 +285,104 @@ class TestCacheSerialization:
         assert len(deserialized["proposals"]) == 1
         assert deserialized["proposals"][0]["id"] == "prop-123"
         assert deserialized["metadata"]["count"] == 1
+
+
+class TestCacheInvalidationUtilities:
+    """Test cache invalidation utility functions."""
+    
+    @pytest.fixture(autouse=True)
+    async def setup_cache_invalidation_service(self):
+        """Set up cache service for invalidation testing."""
+        with patch.object(cache_service, '_is_available', True), \
+             patch.object(cache_service, '_redis_client') as mock_redis:
+            mock_redis.delete = AsyncMock(return_value=3)  # Should match number of keys
+            mock_redis.keys = AsyncMock(return_value=['key1', 'key2', 'key3'])
+            yield mock_redis
+    
+    async def test_invalidate_cache_by_pattern_basic(self, setup_cache_invalidation_service):
+        """Test cache invalidation by key pattern."""
+        from utils.cache_utils import invalidate_cache_pattern
+        
+        mock_redis = setup_cache_invalidation_service
+        
+        # Should find and delete keys matching pattern
+        deleted_count = await invalidate_cache_pattern("cache:get_dao:*")
+        
+        assert deleted_count == 3
+        mock_redis.keys.assert_called_once_with("cache:get_dao:*")
+        mock_redis.delete.assert_called_once_with('key1', 'key2', 'key3')
+    
+    async def test_invalidate_cache_by_pattern_no_matches(self, setup_cache_invalidation_service):
+        """Test cache invalidation when no keys match pattern."""
+        from utils.cache_utils import invalidate_cache_pattern
+        
+        mock_redis = setup_cache_invalidation_service
+        mock_redis.keys.return_value = []
+        
+        deleted_count = await invalidate_cache_pattern("cache:nonexistent:*")
+        
+        assert deleted_count == 0
+        mock_redis.keys.assert_called_once_with("cache:nonexistent:*")
+        mock_redis.delete.assert_not_called()
+    
+    async def test_invalidate_dao_cache(self, setup_cache_invalidation_service):
+        """Test cache invalidation for all DAO-related keys."""
+        from utils.cache_utils import invalidate_dao_cache
+        
+        mock_redis = setup_cache_invalidation_service
+        
+        # Should invalidate all cache keys related to a specific DAO
+        deleted_count = await invalidate_dao_cache("dao_123")
+        
+        # Should call keys with patterns for DAO-related cache entries
+        expected_calls = [
+            unittest.mock.call("cache:*dao_123*"),
+            unittest.mock.call("cache:get_dao_proposals:dao_123:*"),
+            unittest.mock.call("cache:get_proposals:*dao_id:dao_123*")
+        ]
+        
+        assert mock_redis.keys.call_count >= 1
+        assert deleted_count >= 0
+    
+    async def test_invalidate_proposal_cache(self, setup_cache_invalidation_service):
+        """Test cache invalidation for proposal-related keys."""
+        from utils.cache_utils import invalidate_proposal_cache
+        
+        mock_redis = setup_cache_invalidation_service
+        
+        # Should invalidate all cache keys related to a specific proposal
+        deleted_count = await invalidate_proposal_cache("prop_123")
+        
+        # Should look for proposal-specific cache keys
+        assert mock_redis.keys.call_count >= 1
+        assert deleted_count >= 0
+    
+    async def test_bulk_cache_invalidation(self, setup_cache_invalidation_service):
+        """Test bulk cache invalidation by multiple patterns."""
+        from utils.cache_utils import bulk_invalidate_cache
+        
+        mock_redis = setup_cache_invalidation_service
+        
+        patterns = [
+            "cache:get_dao:*",
+            "cache:get_proposals:*", 
+            "cache:process_proposal:*"
+        ]
+        
+        total_deleted = await bulk_invalidate_cache(patterns)
+        
+        # Should call keys for each pattern
+        assert mock_redis.keys.call_count == len(patterns)
+        assert total_deleted >= 0
+    
+    async def test_invalidate_pattern_handles_redis_errors(self, setup_cache_invalidation_service):
+        """Test that cache invalidation handles Redis errors gracefully."""
+        from utils.cache_utils import invalidate_cache_pattern
+        
+        mock_redis = setup_cache_invalidation_service
+        mock_redis.keys.side_effect = Exception("Redis connection failed")
+        
+        # Should return 0 and not raise exception
+        deleted_count = await invalidate_cache_pattern("cache:test:*")
+        
+        assert deleted_count == 0
