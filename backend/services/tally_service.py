@@ -17,15 +17,18 @@ from models import (
     SortCriteria,
     SortOrder,
 )
+from utils.cache_decorators import cache_result
+from utils.cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
 
 
 class TallyService:
     """Service for interacting with the Tally API."""
 
-    def __init__(self) -> None:
+    def __init__(self, cache_service: Optional[Any] = None) -> None:
         self.base_url = settings.tally_api_base_url
         self.api_key = settings.tally_api_key
         self.timeout = settings.request_timeout
+        self.cache_service = cache_service
 
     async def _make_request(self, query: str, variables: Optional[Dict] = None) -> Dict:
         """Make a GraphQL request to the Tally API."""
@@ -427,6 +430,24 @@ class TallyService:
         assert proposal_id, "Proposal ID cannot be empty"
         assert isinstance(proposal_id, str), "Proposal ID must be a string"
 
+        # Generate cache key
+        cache_key = generate_cache_key("get_proposal_by_id", (proposal_id,), {})
+        
+        # Try to get from cache if cache service is available
+        if self.cache_service and self.cache_service.is_available:
+            try:
+                cached_result = await self.cache_service.get(cache_key)
+                if cached_result is not None:
+                    logfire.info("Cache hit for get_proposal_by_id", proposal_id=proposal_id)
+                    cached_data = deserialize_from_cache(cached_result)
+                    # Reconstruct Proposal object from cached data
+                    if isinstance(cached_data, dict):
+                        return Proposal(**cached_data)
+                    return cached_data
+                logfire.info("Cache miss for get_proposal_by_id", proposal_id=proposal_id)
+            except Exception as e:
+                logfire.warning(f"Cache error for get_proposal_by_id: {e}")
+
         query = self._build_single_proposal_query()
         variables = {"id": proposal_id}
 
@@ -437,39 +458,198 @@ class TallyService:
             if not prop_data:
                 return None
 
-            governor_info = prop_data.get("governor", {})
-            metadata = prop_data.get("metadata", {})
-
-            # Convert API status to our enum format
-            status = prop_data["status"].upper()
+            proposal = self._create_proposal_from_api_data(prop_data)
             
-            # Parse vote statistics using helper method
-            vote_stats = prop_data.get("voteStats", [])
-            votes_for, votes_against, votes_abstain = self._parse_vote_statistics(vote_stats)
-
-            return Proposal(
-                id=prop_data["id"],
-                title=metadata.get("title", ""),
-                description=metadata.get("description", ""),
-                state=ProposalState(status),
-                created_at=datetime.fromisoformat(
-                    prop_data["createdAt"].replace("Z", "+00:00")
-                ),
-                start_block=0,  # Will be populated later if needed
-                end_block=0,  # Will be populated later if needed
-                votes_for=votes_for,
-                votes_against=votes_against,
-                votes_abstain=votes_abstain,
-                dao_id=governor_info.get("id", ""),
-                dao_name=governor_info.get("name", ""),
-                url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop_data['id']}",
-            )
+            # Cache the result with dynamic TTL based on proposal status
+            if self.cache_service and self.cache_service.is_available and proposal:
+                try:
+                    ttl = self._get_proposal_cache_ttl(proposal.state)
+                    serialized_result = serialize_for_cache(proposal)
+                    await self.cache_service.set(cache_key, serialized_result, expire_seconds=ttl)
+                    logfire.info("Cached get_proposal_by_id result", proposal_id=proposal_id, ttl=ttl)
+                except Exception as e:
+                    logfire.warning(f"Failed to cache get_proposal_by_id result: {e}")
+            
+            return proposal
 
         except Exception as e:
             logfire.error(
                 "Failed to fetch proposal", proposal_id=proposal_id, error=str(e)
             )
             raise
+
+    def _get_proposal_cache_ttl(self, state: ProposalState) -> int:
+        """Get cache TTL based on proposal state."""
+        # Active proposals change frequently, cache for 30 minutes
+        if state == ProposalState.ACTIVE:
+            return 1800  # 30 minutes
+        
+        # Completed proposals (succeeded, defeated, etc.) are stable, cache for 6 hours
+        return 21600  # 6 hours
+
+    def _create_proposal_from_api_data(self, prop_data: Dict) -> Proposal:
+        """Create Proposal object from API data."""
+        governor_info = prop_data.get("governor", {})
+        metadata = prop_data.get("metadata", {})
+
+        # Convert API status to our enum format
+        status = prop_data["status"].upper()
+        
+        # Parse vote statistics using helper method
+        vote_stats = prop_data.get("voteStats", [])
+        votes_for, votes_against, votes_abstain = self._parse_vote_statistics(vote_stats)
+
+        return Proposal(
+            id=prop_data["id"],
+            title=metadata.get("title", ""),
+            description=metadata.get("description", ""),
+            state=ProposalState(status),
+            created_at=datetime.fromisoformat(
+                prop_data["createdAt"].replace("Z", "+00:00")
+            ),
+            start_block=0,  # Will be populated later if needed
+            end_block=0,  # Will be populated later if needed
+            votes_for=votes_for,
+            votes_against=votes_against,
+            votes_abstain=votes_abstain,
+            dao_id=governor_info.get("id", ""),
+            dao_name=governor_info.get("name", ""),
+            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop_data['id']}",
+        )
+
+    # Cache invalidation methods
+    async def invalidate_organization_cache(self, org_id: str) -> int:
+        """Invalidate all cache entries related to a specific organization."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return 0
+            
+        try:
+            # Find all keys related to this organization
+            patterns = [
+                f"cache:*{org_id}*",
+                "cache:get_top_organizations_with_proposals:*",  # This might contain the org
+            ]
+            
+            total_deleted = 0
+            for pattern in patterns:
+                keys = await self.cache_service.keys(pattern)
+                if keys:
+                    deleted_count = await self.cache_service.delete(*keys)
+                    total_deleted += deleted_count
+            
+            logfire.info(f"Invalidated {total_deleted} cache keys for organization: {org_id}")
+            return total_deleted
+            
+        except Exception as e:
+            logfire.warning(f"Failed to invalidate organization cache: {e}")
+            return 0
+
+    async def invalidate_proposal_cache(self, proposal_id: str) -> int:
+        """Invalidate all cache entries related to a specific proposal."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return 0
+            
+        try:
+            # Find all keys related to this proposal
+            patterns = [
+                f"cache:*{proposal_id}*",
+            ]
+            
+            total_deleted = 0
+            for pattern in patterns:
+                keys = await self.cache_service.keys(pattern)
+                if keys:
+                    deleted_count = await self.cache_service.delete(*keys)
+                    total_deleted += deleted_count
+            
+            logfire.info(f"Invalidated {total_deleted} cache keys for proposal: {proposal_id}")
+            return total_deleted
+            
+        except Exception as e:
+            logfire.warning(f"Failed to invalidate proposal cache: {e}")
+            return 0
+
+    async def invalidate_all_cache(self) -> int:
+        """Invalidate all Tally-related cache entries."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return 0
+            
+        try:
+            # Find all cache keys
+            keys = await self.cache_service.keys("cache:*")
+            if keys:
+                deleted_count = await self.cache_service.delete(*keys)
+                logfire.info(f"Invalidated {deleted_count} total cache keys")
+                return deleted_count
+            return 0
+            
+        except Exception as e:
+            logfire.warning(f"Failed to invalidate all cache: {e}")
+            return 0
+
+    # Cache warming methods
+    async def warm_top_organizations_cache(self) -> bool:
+        """Warm the cache for top organizations data."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return False
+            
+        try:
+            # Check if cache already exists
+            cache_key = generate_cache_key("get_top_organizations_with_proposals", (), {})
+            
+            if await self.cache_service.exists(cache_key):
+                logfire.info("Top organizations cache already warmed")
+                return True
+            
+            # Fetch and cache the data
+            data = await self._get_organizations_data()
+            if data:
+                serialized_data = serialize_for_cache(data)
+                await self.cache_service.set(cache_key, serialized_data, expire_seconds=7200)  # 2 hours
+                logfire.info("Successfully warmed top organizations cache")
+                return True
+            
+            return False
+            
+        except Exception as e:
+            logfire.warning(f"Failed to warm top organizations cache: {e}")
+            return False
+
+    async def warm_organization_overview_cache(self) -> bool:
+        """Warm the cache for organization overview data for top organizations."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return False
+            
+        try:
+            top_orgs = settings.top_organizations
+            success_count = 0
+            
+            for org_slug in top_orgs:
+                try:
+                    cache_key = generate_cache_key("get_organization_overview", (org_slug,), {})
+                    
+                    # Skip if already cached
+                    if await self.cache_service.exists(cache_key):
+                        continue
+                    
+                    # Fetch and cache the overview data
+                    org_data = await self._fetch_organization_data(org_slug)
+                    if org_data:
+                        overview_data = self._build_organization_overview_response(org_data)
+                        serialized_data = serialize_for_cache(overview_data)
+                        await self.cache_service.set(cache_key, serialized_data, expire_seconds=7200)  # 2 hours
+                        success_count += 1
+                        
+                except Exception as e:
+                    logfire.warning(f"Failed to warm cache for organization {org_slug}: {e}")
+                    continue
+            
+            logfire.info(f"Successfully warmed overview cache for {success_count}/{len(top_orgs)} organizations")
+            return True
+            
+        except Exception as e:
+            logfire.warning(f"Failed to warm organization overview cache: {e}")
+            return False
 
     async def get_multiple_proposals(self, proposal_ids: List[str]) -> List[Proposal]:
         """Fetch multiple proposals by their IDs."""
@@ -493,6 +673,36 @@ class TallyService:
 
     async def get_top_organizations_with_proposals(self) -> List[Dict]:
         """Fetch the top organizations with their 3 most active proposals each."""
+        # Generate cache key
+        cache_key = generate_cache_key("get_top_organizations_with_proposals", (), {})
+        
+        # Try to get from cache if cache service is available
+        if self.cache_service and self.cache_service.is_available:
+            try:
+                cached_result = await self.cache_service.get(cache_key)
+                if cached_result is not None:
+                    logfire.info("Cache hit for get_top_organizations_with_proposals")
+                    return deserialize_from_cache(cached_result)
+                logfire.info("Cache miss for get_top_organizations_with_proposals")
+            except Exception as e:
+                logfire.warning(f"Cache error for get_top_organizations_with_proposals: {e}")
+        
+        # Fetch data from API
+        result = await self._get_organizations_data()
+        
+        # Cache the result with 2-hour TTL if cache service is available
+        if self.cache_service and self.cache_service.is_available and result:
+            try:
+                serialized_result = serialize_for_cache(result)
+                await self.cache_service.set(cache_key, serialized_result, expire_seconds=7200)  # 2 hours
+                logfire.info("Cached get_top_organizations_with_proposals result")
+            except Exception as e:
+                logfire.warning(f"Failed to cache get_top_organizations_with_proposals result: {e}")
+        
+        return result
+
+    async def _get_organizations_data(self) -> List[Dict]:
+        """Internal method to fetch organizations data from API."""
         top_org_slugs = settings.top_organizations
         results = []
 
@@ -718,11 +928,36 @@ class TallyService:
         assert org_id, "Organization ID cannot be empty"
         assert isinstance(org_id, str), "Organization ID must be a string"
 
+        # Generate cache key
+        cache_key = generate_cache_key("get_organization_overview", (org_id,), {})
+        
+        # Try to get from cache if cache service is available
+        if self.cache_service and self.cache_service.is_available:
+            try:
+                cached_result = await self.cache_service.get(cache_key)
+                if cached_result is not None:
+                    logfire.info("Cache hit for get_organization_overview", org_id=org_id)
+                    return deserialize_from_cache(cached_result)
+                logfire.info("Cache miss for get_organization_overview", org_id=org_id)
+            except Exception as e:
+                logfire.warning(f"Cache error for get_organization_overview: {e}")
+
         org_data = await self._fetch_organization_data(org_id)
         if not org_data:
             return None
 
-        return self._build_organization_overview_response(org_data)
+        result = self._build_organization_overview_response(org_data)
+        
+        # Cache the result with 2-hour TTL if cache service is available
+        if self.cache_service and self.cache_service.is_available and result:
+            try:
+                serialized_result = serialize_for_cache(result)
+                await self.cache_service.set(cache_key, serialized_result, expire_seconds=7200)  # 2 hours
+                logfire.info("Cached get_organization_overview result", org_id=org_id)
+            except Exception as e:
+                logfire.warning(f"Failed to cache get_organization_overview result: {e}")
+        
+        return result
 
     async def _fetch_organization_data(self, org_id: str) -> Optional[Dict]:
         """Fetch raw organization data from Tally API."""

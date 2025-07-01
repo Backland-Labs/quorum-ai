@@ -176,7 +176,7 @@ class TestCacheOperations:
         
         result = await cache_service.delete("test_key")
         
-        assert result is True
+        assert result == 1
         mock_redis.delete.assert_called_once_with("test_key")
     
     @pytest.mark.asyncio
@@ -188,7 +188,7 @@ class TestCacheOperations:
         
         result = await cache_service.delete("nonexistent")
         
-        assert result is False
+        assert result == 0
     
     @pytest.mark.asyncio
     async def test_exists_for_existing_key(self, cache_service, mock_redis):
@@ -250,7 +250,7 @@ class TestErrorHandling:
         
         result = await cache_service.delete("test_key")
         
-        assert result is False
+        assert result == 0
         assert cache_service.is_available is False
     
     @pytest.mark.asyncio
