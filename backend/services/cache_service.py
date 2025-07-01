@@ -52,6 +52,31 @@ class CacheService:
             await self._pool.disconnect()
             logger.info("Redis cache service closed")
     
+    def _ensure_available(self) -> bool:
+        """Check if service is available and ready for operations."""
+        return self._is_available and self._redis_client is not None
+    
+    def _deserialize_value(self, value: str) -> Any:
+        """Deserialize value from Redis storage."""
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return value
+    
+    def _serialize_value(self, value: Any) -> str:
+        """Serialize value to string for Redis storage."""
+        if isinstance(value, str):
+            return value
+        return json.dumps(value)
+    
+    def _handle_redis_error(self, operation: str, key: str, error: Exception) -> None:
+        """Handle Redis errors with consistent logging and availability updates."""
+        if isinstance(error, (ConnectionError, TimeoutError, ResponseError)):
+            logger.warning(f"Cache {operation} error for key '{key}': {error}")
+            self._is_available = False
+        else:
+            logger.error(f"Unexpected cache {operation} error for key '{key}': {error}")
+    
     async def get(self, key: str) -> Optional[Any]:
         """Get value from cache by key.
         
@@ -61,25 +86,14 @@ class CacheService:
         Returns:
             Cached value or None if not found or Redis unavailable
         """
-        if not self._is_available or not self._redis_client:
+        if not self._ensure_available():
             return None
             
         try:
             value = await self._redis_client.get(key)
-            if value:
-                try:
-                    # Try to deserialize JSON
-                    return json.loads(value)
-                except json.JSONDecodeError:
-                    # Return as string if not JSON
-                    return value
-            return None
-        except (ConnectionError, TimeoutError, ResponseError) as e:
-            logger.warning(f"Cache get error for key '{key}': {e}")
-            self._is_available = False
-            return None
+            return self._deserialize_value(value) if value else None
         except Exception as e:
-            logger.error(f"Unexpected cache get error for key '{key}': {e}")
+            self._handle_redis_error("get", key, e)
             return None
     
     async def set(
@@ -98,25 +112,18 @@ class CacheService:
         Returns:
             True if successful, False otherwise
         """
-        if not self._is_available or not self._redis_client:
+        if not self._ensure_available():
             return False
             
         try:
-            # Serialize to JSON if not string
-            if not isinstance(value, str):
-                value = json.dumps(value)
-                
+            serialized_value = self._serialize_value(value)
             if expire_seconds:
-                await self._redis_client.setex(key, expire_seconds, value)
+                await self._redis_client.setex(key, expire_seconds, serialized_value)
             else:
-                await self._redis_client.set(key, value)
+                await self._redis_client.set(key, serialized_value)
             return True
-        except (ConnectionError, TimeoutError, ResponseError) as e:
-            logger.warning(f"Cache set error for key '{key}': {e}")
-            self._is_available = False
-            return False
         except Exception as e:
-            logger.error(f"Unexpected cache set error for key '{key}': {e}")
+            self._handle_redis_error("set", key, e)
             return False
     
     async def delete(self, key: str) -> bool:
@@ -128,18 +135,14 @@ class CacheService:
         Returns:
             True if deleted, False otherwise
         """
-        if not self._is_available or not self._redis_client:
+        if not self._ensure_available():
             return False
             
         try:
             result = await self._redis_client.delete(key)
             return bool(result)
-        except (ConnectionError, TimeoutError, ResponseError) as e:
-            logger.warning(f"Cache delete error for key '{key}': {e}")
-            self._is_available = False
-            return False
         except Exception as e:
-            logger.error(f"Unexpected cache delete error for key '{key}': {e}")
+            self._handle_redis_error("delete", key, e)
             return False
     
     async def exists(self, key: str) -> bool:
@@ -151,17 +154,13 @@ class CacheService:
         Returns:
             True if exists, False otherwise
         """
-        if not self._is_available or not self._redis_client:
+        if not self._ensure_available():
             return False
             
         try:
             return bool(await self._redis_client.exists(key))
-        except (ConnectionError, TimeoutError, ResponseError) as e:
-            logger.warning(f"Cache exists error for key '{key}': {e}")
-            self._is_available = False
-            return False
         except Exception as e:
-            logger.error(f"Unexpected cache exists error for key '{key}': {e}")
+            self._handle_redis_error("exists", key, e)
             return False
     
     @property

@@ -303,3 +303,64 @@ class TestHealthCheck:
         result = await cache_service.health_check()
         
         assert result is False
+
+
+class TestPrivateHelperMethods:
+    """Test private helper methods for completeness."""
+    
+    def test_ensure_available_when_available(self, cache_service):
+        """Test _ensure_available returns True when service is ready."""
+        cache_service._is_available = True
+        cache_service._redis_client = AsyncMock()
+        
+        result = cache_service._ensure_available()
+        
+        assert result is True
+        assert cache_service._is_available is True
+    
+    def test_ensure_available_when_unavailable(self, cache_service):
+        """Test _ensure_available returns False when service not ready."""
+        cache_service._is_available = False
+        cache_service._redis_client = None
+        
+        result = cache_service._ensure_available()
+        
+        assert result is False
+        assert cache_service._redis_client is None
+    
+    def test_serialize_value_string(self, cache_service):
+        """Test _serialize_value with string input."""
+        test_string = "test_value"
+        
+        result = cache_service._serialize_value(test_string)
+        
+        assert result == test_string
+        assert isinstance(result, str)
+    
+    def test_serialize_value_dict(self, cache_service):
+        """Test _serialize_value with dictionary input."""
+        test_dict = {"key": "value", "number": 42}
+        
+        result = cache_service._serialize_value(test_dict)
+        
+        assert result == json.dumps(test_dict)
+        assert isinstance(result, str)
+    
+    def test_deserialize_value_json(self, cache_service):
+        """Test _deserialize_value with valid JSON."""
+        test_dict = {"key": "value", "number": 42}
+        json_string = json.dumps(test_dict)
+        
+        result = cache_service._deserialize_value(json_string)
+        
+        assert result == test_dict
+        assert isinstance(result, dict)
+    
+    def test_deserialize_value_string(self, cache_service):
+        """Test _deserialize_value with non-JSON string."""
+        test_string = "not_json_string"
+        
+        result = cache_service._deserialize_value(test_string)
+        
+        assert result == test_string
+        assert isinstance(result, str)
