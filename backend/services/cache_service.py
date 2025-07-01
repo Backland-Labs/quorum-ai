@@ -207,6 +207,83 @@ class CacheService:
             logger.warning(f"Redis health check failed: {e}")
             self._is_available = False
             return False
+    
+    async def acquire_lock(self, lock_key: str, timeout_seconds: int = 30) -> bool:
+        """Acquire a distributed lock.
+        
+        Args:
+            lock_key: The lock key
+            timeout_seconds: Lock timeout in seconds
+            
+        Returns:
+            True if lock acquired, False otherwise
+        """
+        if not self._ensure_available():
+            return False
+            
+        try:
+            # Use Redis SET with NX (only if not exists) and EX (expiration)
+            result = await self._redis_client.set(
+                f"lock:{lock_key}", 
+                "locked", 
+                nx=True, 
+                ex=timeout_seconds
+            )
+            return bool(result)
+        except Exception as e:
+            self._handle_redis_error("acquire_lock", lock_key, e)
+            return False
+    
+    async def release_lock(self, lock_key: str) -> bool:
+        """Release a distributed lock.
+        
+        Args:
+            lock_key: The lock key
+            
+        Returns:
+            True if lock released, False otherwise
+        """
+        if not self._ensure_available():
+            return False
+            
+        try:
+            result = await self._redis_client.delete(f"lock:{lock_key}")
+            return bool(result)
+        except Exception as e:
+            self._handle_redis_error("release_lock", lock_key, e)
+            return False
+    
+    async def wait_for_lock(self, lock_key: str, max_wait_seconds: int = 10) -> bool:
+        """Wait for a lock to be released.
+        
+        Args:
+            lock_key: The lock key
+            max_wait_seconds: Maximum time to wait in seconds
+            
+        Returns:
+            True if lock was released (and we can proceed), False if timeout
+        """
+        if not self._ensure_available():
+            return False
+            
+        import asyncio
+        
+        wait_interval = 0.1  # 100ms
+        total_waited = 0
+        
+        while total_waited < max_wait_seconds:
+            try:
+                exists = await self._redis_client.exists(f"lock:{lock_key}")
+                if not exists:
+                    return True  # Lock is gone, we can proceed
+                    
+                await asyncio.sleep(wait_interval)
+                total_waited += wait_interval
+            except Exception as e:
+                self._handle_redis_error("wait_for_lock", lock_key, e)
+                return False
+                
+        return False  # Timeout
 
 
 # Global cache service instance

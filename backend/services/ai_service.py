@@ -1,7 +1,9 @@
 """AI service for proposal summarization using Pydantic AI."""
 
 import asyncio
-from typing import Dict, List, Any
+import hashlib
+import json
+from typing import Dict, List, Any, Optional, Union
 
 import logfire
 from pydantic_ai import Agent
@@ -10,15 +12,17 @@ from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
 from models import Proposal, ProposalSummary
+from services.cache_service import CacheService
 
 
 class AIService:
     """Service for AI-powered proposal analysis and summarization."""
 
-    def __init__(self) -> None:
+    def __init__(self, cache_service: Optional[CacheService] = None) -> None:
         """Initialize the AI service with configured model."""
         self.model = self._create_model()
         self.agent = self._create_agent()
+        self.cache_service = cache_service
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
@@ -161,14 +165,122 @@ class AIService:
         include_risk_assessment: bool = True,
         include_recommendations: bool = True,
     ) -> List[ProposalSummary]:
-        """Summarize multiple proposals concurrently."""
+        """Summarize multiple proposals concurrently with caching and distributed locking."""
         if not proposals:
             return []
 
-        tasks = [
-            self.summarize_proposal(
-                proposal, include_risk_assessment, include_recommendations
+        # Check cache for existing results
+        cache_result = await self._check_cache_for_summaries(
+            proposals, include_risk_assessment, include_recommendations
+        )
+        if cache_result:
+            return cache_result
+
+        # Acquire processing lock and handle concurrency
+        lock_result = await self._acquire_processing_lock(
+            proposals, include_risk_assessment, include_recommendations
+        )
+        
+        # If we got a cached result while waiting for lock, return it
+        if isinstance(lock_result, list):  # Cached summaries
+            return lock_result
+            
+        cache_key, lock_key, lock_acquired = lock_result
+
+        try:
+            # Process proposals and cache results
+            return await self._process_and_cache_summaries(
+                proposals, include_risk_assessment, include_recommendations, cache_key
             )
+        finally:
+            await self._release_processing_lock(lock_key, lock_acquired)
+
+    async def _check_cache_for_summaries(
+        self,
+        proposals: List[Proposal],
+        include_risk_assessment: bool,
+        include_recommendations: bool,
+    ) -> Optional[List[ProposalSummary]]:
+        """Check cache for existing proposal summaries."""
+        if not self.cache_service:
+            return None
+
+        cache_key = self._generate_cache_key(proposals, include_risk_assessment, include_recommendations)
+        cached_result = await self.cache_service.get(cache_key)
+        
+        if cached_result:
+            logfire.info("Cache hit for AI summary", cache_key=cache_key)
+            return [ProposalSummary(**summary_data) for summary_data in cached_result]
+            
+        return None
+
+    async def _acquire_processing_lock(
+        self,
+        proposals: List[Proposal],
+        include_risk_assessment: bool,
+        include_recommendations: bool,
+    ) -> Union[tuple[str, str, bool], List[ProposalSummary]]:
+        """Acquire distributed lock for AI processing."""
+        if not self.cache_service:
+            return None, None, False
+
+        cache_key = self._generate_cache_key(proposals, include_risk_assessment, include_recommendations)
+        lock_key = f"ai_processing:{cache_key}"
+        
+        # Try to acquire lock to prevent duplicate processing
+        lock_acquired = await self.cache_service.acquire_lock(lock_key, timeout_seconds=300)
+        
+        if not lock_acquired:
+            # Wait for concurrent processing and check cache again
+            cached_result = await self._wait_for_concurrent_processing(cache_key, lock_key)
+            if cached_result:
+                return cached_result  # Return cached summaries directly
+                
+        return cache_key, lock_key, lock_acquired
+
+    async def _wait_for_concurrent_processing(
+        self, cache_key: str, lock_key: str
+    ) -> Optional[List[ProposalSummary]]:
+        """Wait for concurrent AI processing and check cache."""
+        logfire.info("Waiting for concurrent AI processing to complete", lock_key=lock_key)
+        wait_successful = await self.cache_service.wait_for_lock(lock_key, max_wait_seconds=10)
+        
+        if wait_successful:
+            cached_result = await self.cache_service.get(cache_key)
+            if cached_result:
+                logfire.info("Cache hit after waiting for lock", cache_key=cache_key)
+                return [ProposalSummary(**summary_data) for summary_data in cached_result]
+        
+        logfire.info("Proceeding with AI processing after lock wait", lock_key=lock_key)
+        return None
+
+    async def _process_and_cache_summaries(
+        self,
+        proposals: List[Proposal],
+        include_risk_assessment: bool,
+        include_recommendations: bool,
+        cache_key: Optional[str],
+    ) -> List[ProposalSummary]:
+        """Process proposals with AI and cache the results."""
+        # Generate AI summaries concurrently
+        summaries = await self._generate_ai_summaries(
+            proposals, include_risk_assessment, include_recommendations
+        )
+
+        # Cache the results if cache service is available
+        await self._cache_summaries(summaries, cache_key)
+        
+        return summaries
+
+    async def _generate_ai_summaries(
+        self,
+        proposals: List[Proposal],
+        include_risk_assessment: bool,
+        include_recommendations: bool,
+    ) -> List[ProposalSummary]:
+        """Generate AI summaries for proposals concurrently."""
+        tasks = [
+            self.summarize_proposal(proposal, include_risk_assessment, include_recommendations)
             for proposal in proposals
         ]
 
@@ -186,6 +298,55 @@ class AIService:
             summaries.append(result)
 
         return summaries
+
+    async def _cache_summaries(
+        self, summaries: List[ProposalSummary], cache_key: Optional[str]
+    ) -> None:
+        """Cache the generated summaries."""
+        if self.cache_service and summaries and cache_key:
+            cache_data = [summary.dict() for summary in summaries]
+            await self.cache_service.set(cache_key, cache_data, expire_seconds=14400)
+            logfire.info("Cache set for AI summary", cache_key=cache_key, count=len(summaries))
+
+    async def _release_processing_lock(self, lock_key: Optional[str], lock_acquired: bool) -> None:
+        """Release the distributed processing lock."""
+        if self.cache_service and lock_key and lock_acquired:
+            await self.cache_service.release_lock(lock_key)
+            logfire.info("Released AI processing lock", lock_key=lock_key)
+
+    def _generate_cache_key(
+        self, 
+        proposals: List[Proposal], 
+        include_risk_assessment: bool, 
+        include_recommendations: bool
+    ) -> str:
+        """Generate a cache key based on proposal content and parameters."""
+        # Create a hash of proposal contents to detect changes
+        proposal_data = []
+        for proposal in proposals:
+            proposal_content = {
+                'id': proposal.id,
+                'title': proposal.title,
+                'description': proposal.description,
+                'state': proposal.state.value,
+                'votes_for': proposal.votes_for,
+                'votes_against': proposal.votes_against,
+                'votes_abstain': proposal.votes_abstain,
+            }
+            proposal_data.append(proposal_content)
+        
+        # Include analysis parameters in the key
+        cache_input = {
+            'proposals': proposal_data,
+            'include_risk_assessment': include_risk_assessment,
+            'include_recommendations': include_recommendations,
+        }
+        
+        # Create hash of the input
+        cache_input_str = json.dumps(cache_input, sort_keys=True)
+        content_hash = hashlib.sha256(cache_input_str.encode()).hexdigest()[:16]
+        
+        return f"ai_summary:{len(proposals)}:{content_hash}"
 
     async def _generate_summary(
         self,
