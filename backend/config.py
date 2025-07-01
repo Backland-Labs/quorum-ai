@@ -33,6 +33,15 @@ class Settings(BaseSettings):
     # Performance settings
     max_proposals_per_request: int = 50
     request_timeout: int = 30
+    
+    # Redis settings
+    redis_url: str = "redis://localhost:6379/0"
+    redis_password: Optional[str] = None
+    redis_max_connections: int = 50
+    redis_decode_responses: bool = True
+    redis_socket_connect_timeout: int = 10
+    redis_socket_keepalive: bool = True
+    redis_health_check_interval: int = 30
 
     # OpenRouter configuration
     openrouter_api_key: Optional[str] = None
@@ -46,6 +55,27 @@ class Settings(BaseSettings):
         return [
             org.strip() for org in self.top_organizations_env.split(",") if org.strip()
         ]
+    
+    @property
+    def redis_connection_url(self) -> str:
+        """Build Redis connection URL with password if provided."""
+        if self.redis_password:
+            # Parse the URL and insert password
+            from urllib.parse import urlparse, urlunparse
+            parsed = urlparse(self.redis_url)
+            # Create new netloc with password
+            netloc = f":{self.redis_password}@{parsed.hostname}"
+            if parsed.port:
+                netloc += f":{parsed.port}"
+            return urlunparse((
+                parsed.scheme,
+                netloc,
+                parsed.path,
+                parsed.params,
+                parsed.query,
+                parsed.fragment
+            ))
+        return self.redis_url
 
 
 # Global settings instance
