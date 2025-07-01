@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 from models import Proposal, ProposalState, DAO
-from utils.cache_utils import generate_cache_key
+from utils.cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
 
 
 class TestCacheKeyGeneration:
@@ -101,3 +101,184 @@ class TestCacheKeyGeneration:
         key2 = generate_cache_key(method_name, args, kwargs2)
         
         assert key1 == key2
+
+
+class TestCacheSerialization:
+    """Test cache serialization and deserialization functionality."""
+    
+    def test_serialize_simple_types(self):
+        """Test serialization of simple Python types."""
+        test_data = {
+            "string": "hello",
+            "number": 42,
+            "float": 3.14,
+            "boolean": True,
+            "none": None,
+            "list": [1, 2, 3],
+            "dict": {"key": "value"}
+        }
+        
+        serialized = serialize_for_cache(test_data)
+        
+        assert isinstance(serialized, str)
+        assert "hello" in serialized
+        assert "42" in serialized
+        
+    def test_serialize_pydantic_models(self):
+        """Test serialization of Pydantic models."""
+        proposal = Proposal(
+            id="prop-123",
+            title="Test Proposal",
+            description="Test description",
+            state=ProposalState.ACTIVE,
+            created_at=datetime(2024, 1, 1),
+            start_block=1000,
+            end_block=2000,
+            votes_for="1000",
+            votes_against="100",
+            votes_abstain="10",
+            dao_id="dao-123",
+            dao_name="Test DAO"
+        )
+        
+        serialized = serialize_for_cache(proposal)
+        
+        assert isinstance(serialized, str)
+        assert "prop-123" in serialized
+        assert "Test Proposal" in serialized
+        
+    def test_deserialize_simple_types(self):
+        """Test deserialization of simple Python types."""
+        original_data = {
+            "string": "hello",
+            "number": 42,
+            "float": 3.14,
+            "boolean": True,
+            "none": None,
+            "list": [1, 2, 3],
+            "dict": {"key": "value"}
+        }
+        
+        serialized = serialize_for_cache(original_data)
+        deserialized = deserialize_from_cache(serialized)
+        
+        assert deserialized == original_data
+        
+    def test_deserialize_pydantic_models_to_dict(self):
+        """Test that Pydantic models are deserialized as dictionaries."""
+        proposal = Proposal(
+            id="prop-123",
+            title="Test Proposal",
+            description="Test description",
+            state=ProposalState.ACTIVE,
+            created_at=datetime(2024, 1, 1),
+            start_block=1000,
+            end_block=2000,
+            votes_for="1000",
+            votes_against="100",
+            votes_abstain="10",
+            dao_id="dao-123",
+            dao_name="Test DAO"
+        )
+        
+        serialized = serialize_for_cache(proposal)
+        deserialized = deserialize_from_cache(serialized)
+        
+        assert isinstance(deserialized, dict)
+        assert deserialized["id"] == "prop-123"
+        assert deserialized["title"] == "Test Proposal"
+        
+    def test_serialize_list_of_pydantic_models(self):
+        """Test serialization of lists containing Pydantic models."""
+        proposals = [
+            Proposal(
+                id="prop-1",
+                title="Proposal 1",
+                description="Description 1",
+                state=ProposalState.ACTIVE,
+                created_at=datetime(2024, 1, 1),
+                start_block=1000,
+                end_block=2000,
+                votes_for="1000",
+                votes_against="100",
+                votes_abstain="10",
+                dao_id="dao-123",
+                dao_name="Test DAO"
+            ),
+            Proposal(
+                id="prop-2",
+                title="Proposal 2",
+                description="Description 2",
+                state=ProposalState.SUCCEEDED,
+                created_at=datetime(2024, 1, 2),
+                start_block=2000,
+                end_block=3000,
+                votes_for="2000",
+                votes_against="200",
+                votes_abstain="20",
+                dao_id="dao-123",
+                dao_name="Test DAO"
+            )
+        ]
+        
+        serialized = serialize_for_cache(proposals)
+        deserialized = deserialize_from_cache(serialized)
+        
+        assert isinstance(deserialized, list)
+        assert len(deserialized) == 2
+        assert deserialized[0]["id"] == "prop-1"
+        assert deserialized[1]["id"] == "prop-2"
+        
+    def test_serialize_invalid_data_raises_error(self):
+        """Test that serializing invalid data raises appropriate error."""
+        # Create a non-serializable object
+        class NonSerializable:
+            def __init__(self):
+                self.func = lambda x: x
+        
+        non_serializable = NonSerializable()
+        
+        with pytest.raises(TypeError):
+            serialize_for_cache(non_serializable)
+            
+    def test_deserialize_invalid_json_raises_error(self):
+        """Test that deserializing invalid JSON raises appropriate error."""
+        invalid_json = "invalid json string {"
+        
+        with pytest.raises(ValueError):
+            deserialize_from_cache(invalid_json)
+            
+    def test_round_trip_serialization(self):
+        """Test that data survives round-trip serialization."""
+        complex_data = {
+            "proposals": [
+                Proposal(
+                    id="prop-123",
+                    title="Test Proposal",
+                    description="Test description",
+                    state=ProposalState.ACTIVE,
+                    created_at=datetime(2024, 1, 1),
+                    start_block=1000,
+                    end_block=2000,
+                    votes_for="1000",
+                    votes_against="100",
+                    votes_abstain="10",
+                    dao_id="dao-123",
+                    dao_name="Test DAO"
+                )
+            ],
+            "metadata": {
+                "count": 1,
+                "cached_at": "2024-01-01T00:00:00Z"
+            }
+        }
+        
+        serialized = serialize_for_cache(complex_data)
+        deserialized = deserialize_from_cache(serialized)
+        
+        assert isinstance(deserialized, dict)
+        assert "proposals" in deserialized
+        assert "metadata" in deserialized
+        assert len(deserialized["proposals"]) == 1
+        assert deserialized["proposals"][0]["id"] == "prop-123"
+        assert deserialized["metadata"]["count"] == 1
