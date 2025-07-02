@@ -1163,5 +1163,80 @@ class TallyService:
         assert proposal_id, "Proposal ID cannot be empty"
         assert limit > 0, "Limit must be positive"
         
-        # Minimal implementation to pass the basic test
-        return []
+        query = self._build_proposal_votes_query()
+        variables = self._build_proposal_votes_variables(proposal_id, limit)
+        
+        try:
+            result = await self._make_request(query, variables)
+            return self._process_proposal_votes_response(result)
+        except Exception as e:
+            logfire.error(
+                "Failed to fetch proposal votes", 
+                proposal_id=proposal_id, 
+                limit=limit,
+                error=str(e)
+            )
+            # Return empty list on failure as per requirement
+            return []
+
+    def _build_proposal_votes_query(self) -> str:
+        """Build GraphQL query for fetching proposal votes."""
+        return """
+        query GetProposalVotes($input: VotesInput!) {
+            votes(input: $input) {
+                nodes {
+                    amount
+                    type
+                    voter {
+                        address
+                    }
+                }
+            }
+        }
+        """
+
+    def _build_proposal_votes_variables(self, proposal_id: str, limit: int) -> Dict:
+        """Build variables for proposal votes query."""
+        assert proposal_id, "Proposal ID is required"
+        assert limit > 0, "Limit must be positive"
+        
+        return {
+            "input": {
+                "proposalId": proposal_id,
+                "limit": limit
+            }
+        }
+
+    def _process_proposal_votes_response(self, result: Dict) -> List[ProposalVoter]:
+        """Process proposal votes API response into ProposalVoter objects."""
+        assert result, "API result cannot be empty"
+        assert "data" in result, "API result must contain data"
+        
+        votes_data = result.get("data", {}).get("votes", {})
+        vote_nodes = votes_data.get("nodes", [])
+        
+        voters = []
+        for vote in vote_nodes:
+            if not vote:
+                continue
+                
+            voter_info = vote.get("voter", {})
+            address = voter_info.get("address", "")
+            amount = vote.get("amount", "0")
+            vote_type_str = vote.get("type", "").upper()
+            
+            # Convert string to VoteType enum
+            try:
+                vote_type = VoteType(vote_type_str)
+            except ValueError:
+                # Skip invalid vote types
+                continue
+                
+            voters.append(ProposalVoter(
+                address=address,
+                amount=amount,
+                vote_type=vote_type
+            ))
+        
+        logfire.info("Processed proposal votes", count=len(voters))
+        return voters

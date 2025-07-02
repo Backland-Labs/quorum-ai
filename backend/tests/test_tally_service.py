@@ -7,7 +7,7 @@ import httpx
 from pytest_httpx import HTTPXMock
 
 from services.tally_service import TallyService
-from models import ProposalFilters, ProposalState, SortCriteria, SortOrder
+from models import ProposalFilters, ProposalState, ProposalVoter, SortCriteria, SortOrder, VoteType
 from config import settings
 
 
@@ -497,3 +497,72 @@ class TestTallyServiceGetProposalVotes:
         
         assert isinstance(voters, list)
         assert len(voters) <= limit
+
+    async def test_get_proposal_votes_graphql_query_structure(
+        self, 
+        tally_service: TallyService, 
+        mock_proposal_votes_response: dict,
+        httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that get_proposal_votes uses correct GraphQL query structure."""
+        proposal_id = "prop-123"
+        limit = 10
+
+        def check_graphql_query(request):
+            """Verify the GraphQL query structure matches specification."""
+            body = request.content.decode()
+            
+            # Should contain the GetProposalVotes query
+            assert "GetProposalVotes" in body
+            assert "votes(input: $input)" in body
+            assert '"amount"' in body or 'amount' in body
+            assert '"type"' in body or 'type' in body  
+            assert '"voter"' in body or 'voter' in body
+            assert '"address"' in body or 'address' in body
+            
+            # Should contain variables with proposal ID and limit
+            assert f'"proposalId":"{proposal_id}"' in body or f'"proposalId": "{proposal_id}"' in body
+            assert f'"limit":{limit}' in body or f'"limit": {limit}' in body
+            
+            return httpx.Response(200, json=mock_proposal_votes_response)
+
+        httpx_mock.add_callback(check_graphql_query)
+        
+        await tally_service.get_proposal_votes(proposal_id, limit)
+
+    async def test_get_proposal_votes_data_transformation(
+        self,
+        tally_service: TallyService,
+        mock_proposal_votes_response: dict,
+        httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that API response is correctly transformed to ProposalVoter objects."""
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=mock_proposal_votes_response
+        )
+        
+        proposal_id = "prop-123"
+        voters = await tally_service.get_proposal_votes(proposal_id, 10)
+        
+        assert len(voters) == 3
+        
+        # Check first voter (highest amount)
+        voter1 = voters[0]
+        assert isinstance(voter1, ProposalVoter)
+        assert voter1.address == "0x123...abc"
+        assert voter1.amount == "1000000"
+        assert voter1.vote_type == VoteType.FOR
+        
+        # Check second voter
+        voter2 = voters[1]
+        assert voter2.address == "0x456...def"
+        assert voter2.amount == "750000"
+        assert voter2.vote_type == VoteType.FOR
+        
+        # Check third voter (different vote type)
+        voter3 = voters[2]
+        assert voter3.address == "0x789...ghi"
+        assert voter3.amount == "500000"
+        assert voter3.vote_type == VoteType.AGAINST
