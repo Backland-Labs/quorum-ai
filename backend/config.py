@@ -48,6 +48,11 @@ class Settings(BaseSettings):
 
     # Top organizations configuration
     top_organizations_env: str = "compound,nounsdao,arbitrum"
+    
+    # Cache TTL settings (in seconds)
+    cache_ttl_proposal_votes_active: int = 900      # 15 minutes for active proposals
+    cache_ttl_proposal_votes_completed: int = 21600 # 6 hours for completed proposals  
+    cache_ttl_proposal_votes_failed: int = 86400    # 24 hours for failed/expired proposals
 
     @property
     def top_organizations(self) -> List[str]:
