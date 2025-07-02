@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Literal
 
 from pydantic import BaseModel, Field
 
@@ -212,3 +212,18 @@ class OrganizationOverviewResponse(BaseModel):
     governance_participation_rate: float = Field(
         ..., ge=0.0, le=1.0, description="Governance participation rate"
     )
+
+
+class ProposalVoter(BaseModel):
+    """Individual voter information for a proposal."""
+
+    address: str = Field(..., description="Voter's address")
+    amount: str = Field(..., description="Voting power as string to handle large numbers")
+    vote_type: Literal["FOR", "AGAINST", "ABSTAIN"] = Field(..., description="Vote choice")
+
+
+class ProposalTopVoters(BaseModel):
+    """Collection of top voters for a proposal."""
+
+    proposal_id: str = Field(..., description="Proposal identifier")
+    voters: List[ProposalVoter] = Field(..., description="List of top voters")

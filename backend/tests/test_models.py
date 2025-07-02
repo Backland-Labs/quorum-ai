@@ -17,6 +17,8 @@ from models import (
     Vote,
     SortCriteria,
     SortOrder,
+    ProposalVoter,
+    ProposalTopVoters,
 )
 
 
@@ -503,3 +505,29 @@ class TestOrganizationOverviewResponse:
 
         with pytest.raises(ValidationError):
             OrganizationOverviewResponse(organization_name="Test DAO")
+
+
+class TestProposalVoter:
+    """Test cases for ProposalVoter model."""
+
+    def test_proposal_voter_creation_with_valid_data(self) -> None:
+        """Test ProposalVoter creation with valid data."""
+        voter = ProposalVoter(
+            address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            amount="1000000000000000000",
+            vote_type="FOR"
+        )
+        
+        assert voter.address == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        assert voter.amount == "1000000000000000000"
+        assert voter.vote_type == "FOR"
+
+    def test_proposal_voter_creation_with_against_vote(self) -> None:
+        """Test ProposalVoter creation with AGAINST vote."""
+        voter = ProposalVoter(
+            address="0x123abc",
+            amount="500000000000000000",
+            vote_type="AGAINST"
+        )
+        
+        assert voter.vote_type == "AGAINST"
