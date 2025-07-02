@@ -516,32 +516,32 @@ class TestProposalVoter:
         voter = ProposalVoter(
             address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
             amount="1000000000000000000",
-            vote_type="FOR"
+            vote_type=VoteType.FOR
         )
         
         assert voter.address == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
         assert voter.amount == "1000000000000000000"
-        assert voter.vote_type == "FOR"
+        assert voter.vote_type == VoteType.FOR
 
     def test_proposal_voter_creation_with_against_vote(self) -> None:
         """Test ProposalVoter creation with AGAINST vote."""
         voter = ProposalVoter(
             address="0x123abc",
             amount="500000000000000000",
-            vote_type="AGAINST"
+            vote_type=VoteType.AGAINST
         )
         
-        assert voter.vote_type == "AGAINST"
+        assert voter.vote_type == VoteType.AGAINST
 
     def test_proposal_voter_creation_with_abstain_vote(self) -> None:
         """Test ProposalVoter creation with ABSTAIN vote."""
         voter = ProposalVoter(
             address="0xdef456",
             amount="250000000000000000",
-            vote_type="ABSTAIN"
+            vote_type=VoteType.ABSTAIN
         )
         
-        assert voter.vote_type == "ABSTAIN"
+        assert voter.vote_type == VoteType.ABSTAIN
 
     def test_proposal_voter_creation_with_invalid_vote_type_fails(self) -> None:
         """Test ProposalVoter creation fails with invalid vote type."""
@@ -567,12 +567,12 @@ class TestProposalTopVoters:
             ProposalVoter(
                 address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
                 amount="1000000000000000000",
-                vote_type="FOR"
+                vote_type=VoteType.FOR
             ),
             ProposalVoter(
                 address="0x123abc456def789",
                 amount="500000000000000000",
-                vote_type="AGAINST"
+                vote_type=VoteType.AGAINST
             )
         ]
 
@@ -587,7 +587,7 @@ class TestProposalTopVoters:
         assert top_voters.proposal_id == "proposal-123"
         assert len(top_voters.voters) == 2
         assert top_voters.voters[0].address == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
-        assert top_voters.voters[1].vote_type == "AGAINST"
+        assert top_voters.voters[1].vote_type == VoteType.AGAINST
 
     def test_proposal_top_voters_creation_with_empty_voters_list(self) -> None:
         """Test ProposalTopVoters creation with empty voters list."""
@@ -612,7 +612,7 @@ class TestProposalTopVoters:
         voter = ProposalVoter(
             address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
             amount=large_amount,
-            vote_type="FOR"
+            vote_type=VoteType.FOR
         )
         
         assert voter.amount == large_amount
@@ -622,7 +622,7 @@ class TestProposalTopVoters:
         voter = ProposalVoter(
             address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
             amount="0",
-            vote_type="ABSTAIN"
+            vote_type=VoteType.ABSTAIN
         )
         
         assert voter.amount == "0"
@@ -633,7 +633,7 @@ class TestProposalTopVoters:
             ProposalVoter(
                 address="",
                 amount="1000000000000000000",
-                vote_type="FOR"
+                vote_type=VoteType.FOR
             )
 
     def test_proposal_top_voters_with_single_voter(self) -> None:
@@ -641,7 +641,7 @@ class TestProposalTopVoters:
         voter = ProposalVoter(
             address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
             amount="1000000000000000000",
-            vote_type="FOR"
+            vote_type=VoteType.FOR
         )
         
         top_voters = ProposalTopVoters(

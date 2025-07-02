@@ -223,7 +223,7 @@ class ProposalVoter(BaseModel):
 
     address: str = Field(..., min_length=1, description="Voter's blockchain address")
     amount: str = Field(..., description="Voting power as string to handle large numbers")
-    vote_type: Literal["FOR", "AGAINST", "ABSTAIN"] = Field(..., description="Vote choice")
+    vote_type: VoteType = Field(..., description="Vote choice")
 
 
 class ProposalTopVoters(BaseModel):
