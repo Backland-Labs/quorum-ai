@@ -87,6 +87,14 @@ class Proposal(BaseModel):
     url: Optional[str] = Field(None, description="URL to view proposal")
 
 
+class ProposalVoter(BaseModel):
+    """Individual voter information for a proposal."""
+
+    address: str = Field(..., description="Voter wallet address")
+    amount: str = Field(..., description="Amount of voting power used")
+    vote_type: VoteType = Field(..., description="Type of vote (FOR/AGAINST/ABSTAIN)")
+
+
 class ProposalSummary(BaseModel):
     """AI-generated proposal summary."""
 

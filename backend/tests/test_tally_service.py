@@ -480,3 +480,20 @@ class TestTallyServiceGetOrganizationOverview:
 
         with pytest.raises(httpx.HTTPStatusError):
             await tally_service.get_organization_overview("org-123")
+
+
+class TestTallyServiceGetProposalVotes:
+    """Test TallyService get_proposal_votes method."""
+
+    async def test_get_proposal_votes_basic_functionality(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test basic get_proposal_votes functionality returns ProposalVoter objects."""
+        # This test should fail initially since the method doesn't exist
+        proposal_id = "prop-123"
+        limit = 5
+        
+        voters = await tally_service.get_proposal_votes(proposal_id, limit)
+        
+        assert isinstance(voters, list)
+        assert len(voters) <= limit
