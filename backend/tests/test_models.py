@@ -2,6 +2,7 @@
 
 import pytest
 from datetime import datetime
+from typing import List
 from pydantic import ValidationError
 
 from models import (
@@ -531,3 +532,122 @@ class TestProposalVoter:
         )
         
         assert voter.vote_type == "AGAINST"
+
+    def test_proposal_voter_creation_with_abstain_vote(self) -> None:
+        """Test ProposalVoter creation with ABSTAIN vote."""
+        voter = ProposalVoter(
+            address="0xdef456",
+            amount="250000000000000000",
+            vote_type="ABSTAIN"
+        )
+        
+        assert voter.vote_type == "ABSTAIN"
+
+    def test_proposal_voter_creation_with_invalid_vote_type_fails(self) -> None:
+        """Test ProposalVoter creation fails with invalid vote type."""
+        with pytest.raises(ValidationError):
+            ProposalVoter(
+                address="0x123abc",
+                amount="1000000000000000000",
+                vote_type="INVALID"  # type: ignore
+            )
+
+    def test_proposal_voter_creation_with_missing_fields_fails(self) -> None:
+        """Test ProposalVoter creation fails when required fields are missing."""
+        with pytest.raises(ValidationError):
+            ProposalVoter(address="0x123abc")  # type: ignore
+
+
+class TestProposalTopVoters:
+    """Test cases for ProposalTopVoters model."""
+
+    def _create_sample_voters(self) -> List[ProposalVoter]:
+        """Create sample voters for testing."""
+        return [
+            ProposalVoter(
+                address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+                amount="1000000000000000000",
+                vote_type="FOR"
+            ),
+            ProposalVoter(
+                address="0x123abc456def789",
+                amount="500000000000000000",
+                vote_type="AGAINST"
+            )
+        ]
+
+    def test_proposal_top_voters_creation_with_valid_data(self) -> None:
+        """Test ProposalTopVoters creation with valid data."""
+        voters = self._create_sample_voters()
+        top_voters = ProposalTopVoters(
+            proposal_id="proposal-123",
+            voters=voters
+        )
+        
+        assert top_voters.proposal_id == "proposal-123"
+        assert len(top_voters.voters) == 2
+        assert top_voters.voters[0].address == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        assert top_voters.voters[1].vote_type == "AGAINST"
+
+    def test_proposal_top_voters_creation_with_empty_voters_list(self) -> None:
+        """Test ProposalTopVoters creation with empty voters list."""
+        top_voters = ProposalTopVoters(
+            proposal_id="proposal-456",
+            voters=[]
+        )
+        
+        assert top_voters.proposal_id == "proposal-456"
+        assert len(top_voters.voters) == 0
+
+    def test_proposal_top_voters_creation_with_missing_fields_fails(self) -> None:
+        """Test ProposalTopVoters creation fails when required fields are missing."""
+        voters = self._create_sample_voters()
+        
+        with pytest.raises(ValidationError):
+            ProposalTopVoters(voters=voters)  # type: ignore
+
+    def test_proposal_voter_with_very_large_amount(self) -> None:
+        """Test ProposalVoter can handle very large voting amounts."""
+        large_amount = "999999999999999999999999999999999999"
+        voter = ProposalVoter(
+            address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            amount=large_amount,
+            vote_type="FOR"
+        )
+        
+        assert voter.amount == large_amount
+
+    def test_proposal_voter_with_zero_amount(self) -> None:
+        """Test ProposalVoter can handle zero voting amount."""
+        voter = ProposalVoter(
+            address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            amount="0",
+            vote_type="ABSTAIN"
+        )
+        
+        assert voter.amount == "0"
+
+    def test_proposal_voter_with_empty_address_fails(self) -> None:
+        """Test ProposalVoter creation fails with empty address."""
+        with pytest.raises(ValidationError):
+            ProposalVoter(
+                address="",
+                amount="1000000000000000000",
+                vote_type="FOR"
+            )
+
+    def test_proposal_top_voters_with_single_voter(self) -> None:
+        """Test ProposalTopVoters with a single voter."""
+        voter = ProposalVoter(
+            address="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            amount="1000000000000000000",
+            vote_type="FOR"
+        )
+        
+        top_voters = ProposalTopVoters(
+            proposal_id="proposal-789",
+            voters=[voter]
+        )
+        
+        assert len(top_voters.voters) == 1
+        assert top_voters.voters[0] == voter
