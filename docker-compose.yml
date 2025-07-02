@@ -32,7 +32,7 @@ services:
       - .env
     environment:
       # Override Redis URL to use Docker service name
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: redis://:${REDIS_PASSWORD:-quorum}@redis:6379/0
     ports:
       - "8000:8000"
     depends_on:
@@ -51,8 +51,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: quorum_frontend
-    env_file:
-      - .env
     environment:
       - PUBLIC_API_BASE_URL=http://backend:8000
     ports:
