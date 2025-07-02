@@ -489,7 +489,37 @@ class TestTallyServiceGetProposalVotes:
         self, tally_service: TallyService, httpx_mock: HTTPXMock
     ) -> None:
         """Test basic get_proposal_votes functionality returns ProposalVoter objects."""
-        # This test should fail initially since the method doesn't exist
+        # Mock the API response
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json={
+                "data": {
+                    "votes": {
+                        "nodes": []
+                    }
+                }
+            }
+        )
+        
+        # Mock proposal lookup for caching
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json={
+                "data": {
+                    "proposal": {
+                        "id": "prop-123",
+                        "status": "ACTIVE",
+                        "createdAt": "2024-01-01T00:00:00Z",
+                        "metadata": {"title": "Test", "description": "Test"},
+                        "governor": {"id": "dao-1", "name": "Test DAO"},
+                        "voteStats": []
+                    }
+                }
+            }
+        )
+        
         proposal_id = "prop-123"
         limit = 5
         
@@ -566,3 +596,221 @@ class TestTallyServiceGetProposalVotes:
         assert voter3.address == "0x789...ghi"
         assert voter3.amount == "500000"
         assert voter3.vote_type == VoteType.AGAINST
+
+    async def test_get_proposal_votes_caching_active_proposal(
+        self, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test caching for active proposals with 15-minute TTL."""
+        from unittest.mock import AsyncMock
+        
+        # Create a mock cache service
+        mock_cache_service = AsyncMock()
+        mock_cache_service.is_available = True
+        mock_cache_service.get.return_value = None  # Cache miss
+        
+        # Create service with cache
+        tally_service = TallyService(cache_service=mock_cache_service)
+        
+        # Mock the _get_proposal_state method to return ACTIVE
+        with patch.object(tally_service, '_get_proposal_state', return_value=ProposalState.ACTIVE):
+            httpx_mock.add_response(
+                method="POST",
+                url=settings.tally_api_base_url,
+                json={
+                    "data": {
+                        "votes": {
+                            "nodes": []
+                        }
+                    }
+                }
+            )
+            
+            proposal_id = "prop-123"
+            limit = 10
+            await tally_service.get_proposal_votes(proposal_id, limit)
+            
+            # Verify cache was checked (cache key includes prefix and hash)
+            mock_cache_service.get.assert_called_once()
+            cache_key_call = mock_cache_service.get.call_args[0][0]
+            assert cache_key_call.startswith("cache:proposal_votes:")
+            assert f"{proposal_id}:{limit}" in cache_key_call
+            
+            # Verify cache was set with 15-minute TTL (900 seconds) for active proposal
+            mock_cache_service.set.assert_called_once()
+            call_args = mock_cache_service.set.call_args
+            assert call_args[0][0] == cache_key_call  # same cache key
+            assert call_args[1]["expire_seconds"] == 900  # 15 minutes for active
+
+    async def test_get_proposal_votes_caching_completed_proposal(
+        self, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test caching for completed proposals with 6-hour TTL."""
+        from unittest.mock import AsyncMock
+        
+        mock_cache_service = AsyncMock()
+        mock_cache_service.is_available = True
+        mock_cache_service.get.return_value = None  # Cache miss
+        
+        tally_service = TallyService(cache_service=mock_cache_service)
+        
+        # Mock the _get_proposal_state method to return SUCCEEDED
+        with patch.object(tally_service, '_get_proposal_state', return_value=ProposalState.SUCCEEDED):
+            httpx_mock.add_response(
+                method="POST",
+                url=settings.tally_api_base_url,
+                json={
+                    "data": {
+                        "votes": {
+                            "nodes": []
+                        }
+                    }
+                }
+            )
+            
+            proposal_id = "prop-456"
+            limit = 5
+            await tally_service.get_proposal_votes(proposal_id, limit)
+            
+            # Verify cache was set with 6-hour TTL (21600 seconds) for completed proposal
+            mock_cache_service.set.assert_called_once()
+            call_args = mock_cache_service.set.call_args
+            assert call_args[1]["expire_seconds"] == 21600  # 6 hours for completed
+
+    async def test_get_proposal_votes_caching_failed_proposal(
+        self, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test caching for failed/expired proposals with 24-hour TTL."""
+        from unittest.mock import AsyncMock
+        
+        mock_cache_service = AsyncMock()
+        mock_cache_service.is_available = True
+        mock_cache_service.get.return_value = None  # Cache miss
+        
+        tally_service = TallyService(cache_service=mock_cache_service)
+        
+        # Mock the _get_proposal_state method to return DEFEATED
+        with patch.object(tally_service, '_get_proposal_state', return_value=ProposalState.DEFEATED):
+            httpx_mock.add_response(
+                method="POST",
+                url=settings.tally_api_base_url,
+                json={
+                    "data": {
+                        "votes": {
+                            "nodes": []
+                        }
+                    }
+                }
+            )
+            
+            proposal_id = "prop-789"
+            limit = 20
+            await tally_service.get_proposal_votes(proposal_id, limit)
+            
+            # Verify cache was set with 24-hour TTL (86400 seconds) for failed proposal
+            mock_cache_service.set.assert_called_once()
+            call_args = mock_cache_service.set.call_args
+            assert call_args[1]["expire_seconds"] == 86400  # 24 hours for failed
+
+    async def test_get_proposal_votes_network_error(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that network errors return empty list gracefully."""
+        httpx_mock.add_exception(httpx.RequestError("Network error"))
+        
+        proposal_id = "prop-123"
+        voters = await tally_service.get_proposal_votes(proposal_id, 10)
+        
+        # Should return empty list on network error as per requirement
+        assert voters == []
+
+    async def test_get_proposal_votes_http_error(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that HTTP errors return empty list gracefully."""
+        httpx_mock.add_response(status_code=500)
+        
+        proposal_id = "prop-123"
+        voters = await tally_service.get_proposal_votes(proposal_id, 10)
+        
+        # Should return empty list on HTTP error as per requirement
+        assert voters == []
+
+    async def test_get_proposal_votes_invalid_response_format(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test handling of invalid API response format."""
+        # Response missing required fields
+        invalid_response = {"data": {"votes": {"invalid": "structure"}}}
+        
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=invalid_response
+        )
+        
+        proposal_id = "prop-123"
+        voters = await tally_service.get_proposal_votes(proposal_id, 10)
+        
+        # Should handle gracefully and return empty list
+        assert voters == []
+
+    async def test_get_proposal_votes_invalid_vote_types(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test handling of invalid vote types in API response."""
+        response_with_invalid_types = {
+            "data": {
+                "votes": {
+                    "nodes": [
+                        {
+                            "amount": "1000000",
+                            "type": "INVALID_TYPE",  # Invalid vote type
+                            "voter": {"address": "0x123...abc"}
+                        },
+                        {
+                            "amount": "750000",
+                            "type": "FOR",  # Valid vote type
+                            "voter": {"address": "0x456...def"}
+                        }
+                    ]
+                }
+            }
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=response_with_invalid_types
+        )
+        
+        proposal_id = "prop-123"
+        voters = await tally_service.get_proposal_votes(proposal_id, 10)
+        
+        # Should skip invalid vote type and return only valid ones
+        assert len(voters) == 1
+        assert voters[0].vote_type == VoteType.FOR
+        assert voters[0].address == "0x456...def"
+
+    async def test_invalidate_proposal_votes_cache(
+        self, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test cache invalidation for proposal votes."""
+        from unittest.mock import AsyncMock
+        
+        mock_cache_service = AsyncMock()
+        mock_cache_service.is_available = True
+        mock_cache_service.keys.return_value = [
+            "cache:proposal_votes:prop-123:10:hash1",
+            "cache:proposal_votes:prop-123:5:hash2"
+        ]
+        mock_cache_service.delete.return_value = 2
+        
+        tally_service = TallyService(cache_service=mock_cache_service)
+        
+        proposal_id = "prop-123"
+        deleted_count = await tally_service.invalidate_proposal_votes_cache(proposal_id)
+        
+        # Should find keys matching the proposal and delete them
+        mock_cache_service.keys.assert_called_once_with(f"*{proposal_id}*")
+        mock_cache_service.delete.assert_called_once()
+        assert deleted_count == 2

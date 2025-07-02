@@ -1,7 +1,7 @@
 """Tests for TallyService caching functionality using TDD approach."""
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 from datetime import datetime
 from typing import List, Dict, Any
 

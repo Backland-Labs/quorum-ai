@@ -2,12 +2,11 @@
 
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
-from datetime import datetime
 import asyncio
 
 from services.ai_service import AIService
 from services.cache_service import CacheService
-from models import Proposal, ProposalState, ProposalSummary
+from models import Proposal, ProposalSummary
 
 
 class TestAICacheIntegration:

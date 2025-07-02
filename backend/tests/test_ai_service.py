@@ -3,8 +3,6 @@
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 from datetime import datetime
-import hashlib
-import json
 
 from services.ai_service import AIService
 from services.cache_service import CacheService
