@@ -9,7 +9,7 @@ ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 
 # Copy dependency files first for better Docker layer caching
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock ./
 
 # Install dependencies using UV
 RUN uv sync --frozen --no-install-project --no-dev
@@ -20,8 +20,8 @@ COPY . .
 # Install the application
 RUN uv sync --frozen --no-dev
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Create non-root user for security with home directory
+RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m appuser
 RUN chown -R appuser:appuser /app
 USER appuser
 

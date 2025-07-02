@@ -4,14 +4,15 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
-ENV NODE_ENV=production
-
 # Copy package files for dependency installation
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install all dependencies (including dev dependencies for build)
+# Temporarily set NODE_ENV to development for installation
+RUN NODE_ENV=development npm install --legacy-peer-deps && npm cache clean --force
+
+# Set environment variables for runtime
+ENV NODE_ENV=production
 
 # Copy application source code
 COPY . .
