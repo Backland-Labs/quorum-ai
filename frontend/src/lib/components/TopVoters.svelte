@@ -69,7 +69,7 @@
     error = null;
 
     try {
-      // Temporarily use mock endpoint for testing
+      // Use mock API for testing until backend has real data
       const response = await fetch(`/api/mock-voters?proposalId=${proposalId}&limit=${limit}`);
       
       if (!response.ok) {
