@@ -63,7 +63,7 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
                 cached_result = await cache_service.get(cache_key)
                 if cached_result is not None:
                     logger.debug(f"Cache hit for {func.__name__} with key {cache_key}")
-                    return deserialize_from_cache(cached_result)
+                    return cached_result
 
                 # Cache miss - call the function
                 logger.debug(f"Cache miss for {func.__name__} with key {cache_key}")

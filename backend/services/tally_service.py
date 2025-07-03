@@ -494,7 +494,7 @@ class TallyService:
                 logfire.info(
                     "Cache hit for get_proposal_by_id", proposal_id=proposal_id
                 )
-                cached_data = deserialize_from_cache(cached_result)
+                cached_data = cached_result
                 # Reconstruct Proposal object from cached data
                 if isinstance(cached_data, dict):
                     return Proposal(**cached_data)
@@ -1261,7 +1261,7 @@ class TallyService:
                     proposal_id=proposal_id,
                     limit=limit,
                 )
-                cached_data = deserialize_from_cache(cached_result)
+                cached_data = cached_result
                 return self._reconstruct_cached_voters(cached_data)
 
             logfire.info(
