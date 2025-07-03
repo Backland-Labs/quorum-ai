@@ -6,6 +6,28 @@
   import { parseProposalSummary, cleanProposalTitle } from '$lib/utils/proposals.js';
   import type { components } from '$lib/api/client.js';
 
+  // Constants
+  const TOP_VOTERS_LIMIT = 10;
+  const DATE_FORMAT_OPTIONS = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  } as const;
+  
+  // CSS Classes
+  const RISK_LEVEL_CLASSES = {
+    LOW: 'bg-green-50 text-green-700 border-green-200',
+    MEDIUM: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    HIGH: 'bg-red-50 text-red-700 border-red-200'
+  } as const;
+  
+  const RECOMMENDATION_CLASSES = {
+    APPROVE: 'bg-green-100 text-green-800',
+    REJECT: 'bg-red-100 text-red-800',
+    DEFAULT: 'bg-gray-100 text-gray-800'
+  } as const;
+
   type Proposal = components['schemas']['Proposal'];
 
   let proposalId = $page.params.id;
@@ -14,6 +36,10 @@
   let error = $state<string | null>(null);
 
   async function fetchProposal() {
+    // Runtime assertions for fetchProposal
+    console.assert(typeof proposalId === 'string', 'proposalId must be a string');
+    console.assert(proposalId.length > 0, 'proposalId cannot be empty');
+    
     loading = true;
     error = null;
 
@@ -39,30 +65,28 @@
   }
 
   function formatDate(dateString: string): string {
+    // Runtime assertions for formatDate
+    console.assert(typeof dateString === 'string', 'dateString must be a string');
+    console.assert(dateString.length > 0, 'dateString cannot be empty');
+    
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    return date.toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
   }
 
   function getRiskLevelClasses(riskLevel: string): string {
-    const riskClasses: Record<string, string> = {
-      'LOW': 'bg-green-50 text-green-700 border-green-200',
-      'MEDIUM': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-      'HIGH': 'bg-red-50 text-red-700 border-red-200'
-    };
-    return riskClasses[riskLevel] || riskClasses['MEDIUM'];
+    // Runtime assertions for getRiskLevelClasses
+    console.assert(typeof riskLevel === 'string', 'riskLevel must be a string');
+    console.assert(riskLevel.length > 0, 'riskLevel cannot be empty');
+    
+    return RISK_LEVEL_CLASSES[riskLevel as keyof typeof RISK_LEVEL_CLASSES] || RISK_LEVEL_CLASSES.MEDIUM;
   }
 
   function getRecommendationClasses(recommendation: string): string {
-    const recClasses: Record<string, string> = {
-      'APPROVE': 'bg-green-100 text-green-800',
-      'REJECT': 'bg-red-100 text-red-800'
-    };
-    return recClasses[recommendation] || 'bg-gray-100 text-gray-800';
+    // Runtime assertions for getRecommendationClasses
+    console.assert(typeof recommendation === 'string', 'recommendation must be a string');
+    console.assert(recommendation.length > 0, 'recommendation cannot be empty');
+    
+    return RECOMMENDATION_CLASSES[recommendation as keyof typeof RECOMMENDATION_CLASSES] || RECOMMENDATION_CLASSES.DEFAULT;
   }
 
   $effect(() => {
@@ -204,7 +228,7 @@
 
         <!-- Right Column - Top Voters -->
         <div class="bg-white rounded-lg shadow p-6">
-          <TopVoters proposalId={proposalId} limit={10} />
+          <TopVoters proposalId={proposalId} limit={TOP_VOTERS_LIMIT} />
         </div>
       </div>
     {/if}

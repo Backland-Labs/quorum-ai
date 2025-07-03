@@ -2,12 +2,22 @@
   import LoadingSkeleton from './LoadingSkeleton.svelte';
   import type { components } from '$lib/api/client.js';
 
+  // Constants
+  const DEFAULT_LIMIT = 10;
+  const ADDRESS_TRUNCATE_LENGTH = 10;
+  const ADDRESS_START_CHARS = 6;
+  const ADDRESS_END_CHARS = 4;
+  const LARGE_AMOUNT_THRESHOLD = 1e21;
+  const WEI_CONVERSION_FACTOR = 1e18;
+  const EXPONENTIAL_NOTATION_PRECISION = 2;
+  const LOADING_SKELETON_COUNT = 5;
+
   interface Props {
     proposalId: string;
     limit?: number;
   }
 
-  let { proposalId, limit = 10 }: Props = $props();
+  let { proposalId, limit = DEFAULT_LIMIT }: Props = $props();
 
   type ProposalTopVoters = components['schemas']['ProposalTopVoters'];
   type ProposalVoter = components['schemas']['ProposalVoter'];
@@ -19,13 +29,20 @@
   let voters = $state<ProposalVoter[]>([]);
   let retryCount = $state(0);
 
+  // Computed properties for template state management
+  let hasVoters = $derived(voters.length > 0);
+  let isEmptyState = $derived(!loading && !error && !hasVoters);
+  let isErrorState = $derived(!loading && error !== null);
+  let isLoadingState = $derived(loading);
+  let isVotersState = $derived(!loading && !error && hasVoters);
+
   // Utility functions
   function truncateAddress(address: string): string {
     console.assert(typeof address === 'string', 'Address must be a string');
     console.assert(address.length > 0, 'Address cannot be empty');
     
-    if (address.length <= 10) return address;
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    if (address.length <= ADDRESS_TRUNCATE_LENGTH) return address;
+    return `${address.slice(0, ADDRESS_START_CHARS)}...${address.slice(-ADDRESS_END_CHARS)}`;
   }
 
   function formatVotingPower(amount: string): string {
@@ -34,10 +51,10 @@
 
     try {
       const num = parseFloat(amount);
-      if (num >= 1e21) {
-        return (num / 1e18).toExponential(2);
+      if (num >= LARGE_AMOUNT_THRESHOLD) {
+        return (num / WEI_CONVERSION_FACTOR).toExponential(EXPONENTIAL_NOTATION_PRECISION);
       }
-      return new Intl.NumberFormat('en-US').format(num / 1e18);
+      return new Intl.NumberFormat('en-US').format(num / WEI_CONVERSION_FACTOR);
     } catch {
       return amount;
     }
@@ -102,11 +119,11 @@
 <div class="space-y-4" data-testid="top-voters-container">
   <h3 class="text-lg font-semibold text-gray-900">Top Voters</h3>
   
-  {#if loading}
+  {#if isLoadingState}
     <div class="space-y-3" data-testid="loading-state" aria-label="Loading top voters">
-      <LoadingSkeleton count={5} height="h-12" />
+      <LoadingSkeleton count={LOADING_SKELETON_COUNT} height="h-12" />
     </div>
-  {:else if error}
+  {:else if isErrorState}
     <div class="text-center py-8" data-testid="error-state">
       <div class="text-red-600 mb-4">
         <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -124,7 +141,7 @@
         Try Again
       </button>
     </div>
-  {:else if voters.length === 0}
+  {:else if isEmptyState}
     <div class="text-center py-8" data-testid="empty-state">
       <div class="text-gray-400 mb-4">
         <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
