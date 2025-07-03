@@ -1313,7 +1313,7 @@ class TallyService:
         self, proposal_id: str, limit: int, voters: List[ProposalVoter]
     ) -> None:
         """Cache the proposal votes result with appropriate TTL."""
-        if not self._is_cache_available() or voters is None:
+        if not self._is_cache_available():
             return
 
         try:
