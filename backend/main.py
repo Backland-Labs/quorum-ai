@@ -413,32 +413,34 @@ async def summarize_proposals(request: SummarizeRequest):
 
 @app.get("/proposals/{proposal_id}/top-voters")
 async def get_proposal_top_voters(
-    proposal_id: str, 
+    proposal_id: str,
     limit: int = Query(
         default=settings.default_top_voters_limit,
         ge=settings.min_top_voters_limit,
-        le=settings.max_top_voters_limit
-    )
+        le=settings.max_top_voters_limit,
+    ),
 ):
     """Get top voters for a specific proposal by voting power."""
     _validate_proposal_id(proposal_id)
-    
+
     try:
-        with logfire.span("get_proposal_top_voters", proposal_id=proposal_id, limit=limit):
+        with logfire.span(
+            "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
+        ):
             # Fetch data
             voters = await tally_service.get_proposal_votes(proposal_id, limit)
             proposal = await _validate_proposal_exists(proposal_id)
-            
+
             # Build response
             response_data = ProposalTopVoters(proposal_id=proposal_id, voters=voters)
             headers = _build_cache_headers(proposal, response_data)
-            
+
             # Log if no voters found
             if not voters:
                 logfire.info("No voters found for proposal", proposal_id=proposal_id)
-            
+
             return JSONResponse(content=response_data.model_dump(), headers=headers)
-    
+
     except HTTPException:
         raise
     except Exception as e:
@@ -471,19 +473,19 @@ async def _validate_proposal_exists(proposal_id: str) -> Proposal:
 def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -> dict:
     """Build HTTP cache headers based on proposal state."""
     headers = {}
-    
+
     if proposal.state == ProposalState.ACTIVE:
         max_age = settings.cache_ttl_proposal_votes_active
     else:
         max_age = settings.cache_ttl_proposal_votes_completed
-    
+
     headers["Cache-Control"] = f"public, max-age={max_age}"
-    
+
     # Generate ETag based on response content
     response_json = response_data.model_dump_json()
     etag = hashlib.md5(response_json.encode()).hexdigest()
     headers["ETag"] = f'"{etag}"'
-    
+
     return headers
 
 

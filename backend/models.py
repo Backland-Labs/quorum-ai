@@ -227,24 +227,24 @@ class ProposalVoter(BaseModel):
     )
     vote_type: VoteType = Field(..., description="Vote choice")
 
-    @field_validator('address')
+    @field_validator("address")
     @classmethod
     def validate_address(cls, v: str) -> str:
         """Validate blockchain address format."""
         if not v or not v.strip():
-            raise ValueError('Address cannot be empty')
+            raise ValueError("Address cannot be empty")
         return v.strip()
 
-    @field_validator('amount')
+    @field_validator("amount")
     @classmethod
     def validate_amount(cls, v: str) -> str:
         """Validate voting amount is numeric and non-negative."""
         try:
             amount = float(v)
             if amount < 0:
-                raise ValueError('Voting amount cannot be negative')
+                raise ValueError("Voting amount cannot be negative")
         except ValueError as e:
-            raise ValueError(f'Amount must be a valid number: {e}')
+            raise ValueError(f"Amount must be a valid number: {e}")
         return v
 
 
@@ -260,12 +260,12 @@ class ProposalTopVoters(BaseModel):
         ..., description="List of top voters by voting power"
     )
 
-    @field_validator('voters')
+    @field_validator("voters")
     @classmethod
     def validate_voters_list(cls, v: List[ProposalVoter]) -> List[ProposalVoter]:
         """Validate voters list constraints."""
         if not isinstance(v, list):
-            raise ValueError('Voters must be a list')
+            raise ValueError("Voters must be a list")
         if len(v) > 100:
-            raise ValueError('Voters list cannot exceed 100 entries')
+            raise ValueError("Voters list cannot exceed 100 entries")
         return v

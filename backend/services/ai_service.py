@@ -156,7 +156,6 @@ class AIService:
                 model_type=str(type(self.model)),
                 has_openrouter_key=bool(settings.openrouter_api_key),
             )
-            print(e)
             raise e
 
     async def summarize_multiple_proposals(
@@ -518,7 +517,6 @@ class AIService:
                 }
 
         except Exception as e:
-            print(e)
             logfire.error(
                 "AI model call failed",
                 error=str(e),

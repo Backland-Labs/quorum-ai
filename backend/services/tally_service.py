@@ -1239,18 +1239,18 @@ class TallyService:
             List of ProposalVoter objects sorted by voting power
         """
         self._validate_proposal_votes_params(proposal_id, limit)
-        
+
         # Try cache first
         cached_result = await self._get_cached_proposal_votes(proposal_id, limit)
         if cached_result is not None:
             return cached_result
-        
+
         # Fetch from API
         voters = await self._fetch_proposal_votes_from_api(proposal_id, limit)
-        
+
         # Cache the result
         await self._cache_proposal_votes_result(proposal_id, limit, voters)
-        
+
         return voters
 
     def _validate_proposal_votes_params(self, proposal_id: str, limit: int) -> None:
@@ -1266,9 +1266,9 @@ class TallyService:
         """Attempt to retrieve proposal votes from cache."""
         if not self._is_cache_available():
             return None
-        
+
         cache_key = generate_cache_key("proposal_votes", (proposal_id, limit), {})
-        
+
         try:
             cached_result = await self.cache_service.get(cache_key)
             if cached_result is not None:
@@ -1279,7 +1279,7 @@ class TallyService:
                 )
                 cached_data = deserialize_from_cache(cached_result)
                 return self._reconstruct_cached_voters(cached_data)
-            
+
             logfire.info(
                 "Cache miss for get_proposal_votes",
                 proposal_id=proposal_id,
@@ -1296,7 +1296,7 @@ class TallyService:
         """Fetch proposal votes from the Tally API."""
         query = self._build_proposal_votes_query()
         variables = self._build_proposal_votes_variables(proposal_id, limit)
-        
+
         try:
             result = await self._make_request(query, variables)
             return self._process_proposal_votes_response(result)
@@ -1315,15 +1315,17 @@ class TallyService:
         """Cache the proposal votes result with appropriate TTL."""
         if not self._is_cache_available() or voters is None:
             return
-        
+
         try:
             proposal_state = await self._get_proposal_state(proposal_id)
             ttl = self._get_proposal_votes_cache_ttl(proposal_state)
             cache_key = generate_cache_key("proposal_votes", (proposal_id, limit), {})
-            
+
             serialized_result = serialize_for_cache(voters)
-            await self.cache_service.set(cache_key, serialized_result, expire_seconds=ttl)
-            
+            await self.cache_service.set(
+                cache_key, serialized_result, expire_seconds=ttl
+            )
+
             logfire.info(
                 "Cached get_proposal_votes result",
                 proposal_id=proposal_id,
@@ -1364,14 +1366,7 @@ class TallyService:
         assert limit > 0, "Limit must be positive"
 
         return {
-            "input": {
-                "filters": {
-                    "proposalId": proposal_id
-                },
-                "page": {
-                    "limit": limit
-                }
-            }
+            "input": {"filters": {"proposalId": proposal_id}, "page": {"limit": limit}}
         }
 
     def _process_proposal_votes_response(self, result: Dict) -> List[ProposalVoter]:
