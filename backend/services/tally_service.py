@@ -1238,64 +1238,68 @@ class TallyService:
         Returns:
             List of ProposalVoter objects sorted by voting power
         """
+        self._validate_proposal_votes_params(proposal_id, limit)
+        
+        # Try cache first
+        cached_result = await self._get_cached_proposal_votes(proposal_id, limit)
+        if cached_result is not None:
+            return cached_result
+        
+        # Fetch from API
+        voters = await self._fetch_proposal_votes_from_api(proposal_id, limit)
+        
+        # Cache the result
+        await self._cache_proposal_votes_result(proposal_id, limit, voters)
+        
+        return voters
+
+    def _validate_proposal_votes_params(self, proposal_id: str, limit: int) -> None:
+        """Validate parameters for get_proposal_votes method."""
         assert proposal_id, "Proposal ID cannot be empty"
+        assert isinstance(proposal_id, str), "Proposal ID must be a string"
         assert limit > 0, "Limit must be positive"
+        assert isinstance(limit, int), "Limit must be an integer"
 
-        # Generate cache key
+    async def _get_cached_proposal_votes(
+        self, proposal_id: str, limit: int
+    ) -> Optional[List[ProposalVoter]]:
+        """Attempt to retrieve proposal votes from cache."""
+        if not self._is_cache_available():
+            return None
+        
         cache_key = generate_cache_key("proposal_votes", (proposal_id, limit), {})
-
-        # Try to get from cache if cache service is available
-        if self.cache_service and self.cache_service.is_available:
-            try:
-                cached_result = await self.cache_service.get(cache_key)
-                if cached_result is not None:
-                    logfire.info(
-                        "Cache hit for get_proposal_votes",
-                        proposal_id=proposal_id,
-                        limit=limit,
-                    )
-                    cached_data = deserialize_from_cache(cached_result)
-                    # Reconstruct ProposalVoter objects from cached data
-                    reconstructed_voters = self._reconstruct_cached_voters(cached_data)
-                    return reconstructed_voters
+        
+        try:
+            cached_result = await self.cache_service.get(cache_key)
+            if cached_result is not None:
                 logfire.info(
-                    "Cache miss for get_proposal_votes",
+                    "Cache hit for get_proposal_votes",
                     proposal_id=proposal_id,
                     limit=limit,
                 )
-            except Exception as e:
-                logfire.warning(f"Cache error for get_proposal_votes: {e}")
+                cached_data = deserialize_from_cache(cached_result)
+                return self._reconstruct_cached_voters(cached_data)
+            
+            logfire.info(
+                "Cache miss for get_proposal_votes",
+                proposal_id=proposal_id,
+                limit=limit,
+            )
+            return None
+        except Exception as e:
+            logfire.warning(f"Cache error for get_proposal_votes: {e}")
+            return None
 
+    async def _fetch_proposal_votes_from_api(
+        self, proposal_id: str, limit: int
+    ) -> List[ProposalVoter]:
+        """Fetch proposal votes from the Tally API."""
         query = self._build_proposal_votes_query()
         variables = self._build_proposal_votes_variables(proposal_id, limit)
-
+        
         try:
             result = await self._make_request(query, variables)
-            voters = self._process_proposal_votes_response(result)
-
-            # Cache the result with dynamic TTL based on proposal state
-            if (
-                self.cache_service
-                and self.cache_service.is_available
-                and voters is not None
-            ):
-                try:
-                    proposal_state = await self._get_proposal_state(proposal_id)
-                    ttl = self._get_proposal_votes_cache_ttl(proposal_state)
-                    serialized_result = serialize_for_cache(voters)
-                    await self.cache_service.set(
-                        cache_key, serialized_result, expire_seconds=ttl
-                    )
-                    logfire.info(
-                        "Cached get_proposal_votes result",
-                        proposal_id=proposal_id,
-                        limit=limit,
-                        ttl=ttl,
-                    )
-                except Exception as e:
-                    logfire.warning(f"Failed to cache get_proposal_votes result: {e}")
-
-            return voters
+            return self._process_proposal_votes_response(result)
         except Exception as e:
             logfire.error(
                 "Failed to fetch proposal votes",
@@ -1303,8 +1307,35 @@ class TallyService:
                 limit=limit,
                 error=str(e),
             )
-            # Return empty list on failure as per requirement
             return []
+
+    async def _cache_proposal_votes_result(
+        self, proposal_id: str, limit: int, voters: List[ProposalVoter]
+    ) -> None:
+        """Cache the proposal votes result with appropriate TTL."""
+        if not self._is_cache_available() or voters is None:
+            return
+        
+        try:
+            proposal_state = await self._get_proposal_state(proposal_id)
+            ttl = self._get_proposal_votes_cache_ttl(proposal_state)
+            cache_key = generate_cache_key("proposal_votes", (proposal_id, limit), {})
+            
+            serialized_result = serialize_for_cache(voters)
+            await self.cache_service.set(cache_key, serialized_result, expire_seconds=ttl)
+            
+            logfire.info(
+                "Cached get_proposal_votes result",
+                proposal_id=proposal_id,
+                limit=limit,
+                ttl=ttl,
+            )
+        except Exception as e:
+            logfire.warning(f"Failed to cache get_proposal_votes result: {e}")
+
+    def _is_cache_available(self) -> bool:
+        """Check if cache service is available."""
+        return self.cache_service and self.cache_service.is_available
 
     def _build_proposal_votes_query(self) -> str:
         """Build GraphQL query for fetching proposal votes."""

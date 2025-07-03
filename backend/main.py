@@ -413,47 +413,32 @@ async def summarize_proposals(request: SummarizeRequest):
 
 @app.get("/proposals/{proposal_id}/top-voters")
 async def get_proposal_top_voters(
-    proposal_id: str, limit: int = Query(default=10, ge=1, le=50)
+    proposal_id: str, 
+    limit: int = Query(
+        default=settings.default_top_voters_limit,
+        ge=settings.min_top_voters_limit,
+        le=settings.max_top_voters_limit
+    )
 ):
     """Get top voters for a specific proposal by voting power."""
+    _validate_proposal_id(proposal_id)
+    
     try:
-        with logfire.span(
-            "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
-        ):
-            # Get the voters data
+        with logfire.span("get_proposal_top_voters", proposal_id=proposal_id, limit=limit):
+            # Fetch data
             voters = await tally_service.get_proposal_votes(proposal_id, limit)
-
-            # Get proposal details to determine caching strategy
-            proposal = await tally_service.get_proposal_by_id(proposal_id)
-
-            # Check if proposal exists
-            if not proposal:
-                raise HTTPException(
-                    status_code=404, detail=f"Proposal with ID {proposal_id} not found"
-                )
-
-            # Prepare response data
+            proposal = await _validate_proposal_exists(proposal_id)
+            
+            # Build response
             response_data = ProposalTopVoters(proposal_id=proposal_id, voters=voters)
-
-            # Set caching headers based on proposal state
-            headers = {}
-            if proposal.state == ProposalState.ACTIVE:
-                # Active proposals change frequently, cache for 15 minutes
-                headers["Cache-Control"] = "public, max-age=900"
-            else:
-                # Completed proposals are stable, cache for 6 hours
-                headers["Cache-Control"] = "public, max-age=21600"
-
-            # Generate ETag based on response content
-            response_json = response_data.model_dump_json()
-            etag = hashlib.md5(response_json.encode()).hexdigest()
-            headers["ETag"] = f'"{etag}"'
-
+            headers = _build_cache_headers(proposal, response_data)
+            
+            # Log if no voters found
             if not voters:
                 logfire.info("No voters found for proposal", proposal_id=proposal_id)
-
+            
             return JSONResponse(content=response_data.model_dump(), headers=headers)
-
+    
     except HTTPException:
         raise
     except Exception as e:
@@ -463,6 +448,43 @@ async def get_proposal_top_voters(
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"
         )
+
+
+# Private helper functions for top voters endpoint
+def _validate_proposal_id(proposal_id: str) -> None:
+    """Validate proposal ID parameter."""
+    assert proposal_id, "Proposal ID cannot be empty"
+    assert isinstance(proposal_id, str), "Proposal ID must be a string"
+    assert proposal_id.strip(), "Proposal ID cannot be whitespace only"
+
+
+async def _validate_proposal_exists(proposal_id: str) -> Proposal:
+    """Validate that proposal exists and return it."""
+    proposal = await tally_service.get_proposal_by_id(proposal_id)
+    if not proposal:
+        raise HTTPException(
+            status_code=404, detail=f"Proposal with ID {proposal_id} not found"
+        )
+    return proposal
+
+
+def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -> dict:
+    """Build HTTP cache headers based on proposal state."""
+    headers = {}
+    
+    if proposal.state == ProposalState.ACTIVE:
+        max_age = settings.cache_ttl_proposal_votes_active
+    else:
+        max_age = settings.cache_ttl_proposal_votes_completed
+    
+    headers["Cache-Control"] = f"public, max-age={max_age}"
+    
+    # Generate ETag based on response content
+    response_json = response_data.model_dump_json()
+    etag = hashlib.md5(response_json.encode()).hexdigest()
+    headers["ETag"] = f'"{etag}"'
+    
+    return headers
 
 
 # Private helper functions

@@ -56,6 +56,11 @@ class Settings(BaseSettings):
         86400  # 24 hours for failed/expired proposals
     )
 
+    # Top voters endpoint settings
+    default_top_voters_limit: int = 10
+    max_top_voters_limit: int = 50
+    min_top_voters_limit: int = 1
+
     @property
     def top_organizations(self) -> List[str]:
         """Parse comma-separated string to list."""
