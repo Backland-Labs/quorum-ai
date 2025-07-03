@@ -49,16 +49,8 @@ class AIService:
                 )
                 raise
         else:
-            # Fallback to direct provider if OpenRouter key not available
-            if settings.anthropic_api_key:
-                logfire.info("Using direct Anthropic API")
-                return "anthropic:claude-3-5-sonnet"
-            elif settings.openai_api_key:
-                logfire.info("Using direct OpenAI API")
-                return "openai:gpt-4o-mini"
-            else:
                 logfire.warning("No AI API keys configured, using default model")
-                return "openai:gpt-4o-mini"
+                return "openai:gpt-4o-mini" #TODO: need to fix how this is handled
 
     def _create_agent(self) -> Agent:
         """Create and configure the Pydantic AI agent."""
@@ -119,8 +111,6 @@ class AIService:
                     proposal_title=proposal.title,
                     model_type=str(type(self.model)),
                     has_openrouter_key=bool(settings.openrouter_api_key),
-                    has_anthropic_key=bool(settings.anthropic_api_key),
-                    has_openai_key=bool(settings.openai_api_key),
                 )
 
                 summary_data = await self._generate_summary(
