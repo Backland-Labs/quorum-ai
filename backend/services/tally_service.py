@@ -1205,20 +1205,22 @@ class TallyService:
         return """
         query GetProposal($id: ID!) {
             proposal(id: $id) {
-                id
-                status
-                createdAt
-                metadata {
-                    title
-                    description
-                }
-                governor {
+                ... on Proposal {
                     id
-                    name
-                }
-                voteStats {
-                    type
-                    votesCount
+                    status
+                    createdAt
+                    metadata {
+                        title
+                        description
+                    }
+                    governor {
+                        id
+                        name
+                    }
+                    voteStats {
+                        type
+                        votesCount
+                    }
                 }
             }
         }
@@ -1313,10 +1315,12 @@ class TallyService:
         query GetProposalVotes($input: VotesInput!) {
             votes(input: $input) {
                 nodes {
-                    amount
-                    type
-                    voter {
-                        address
+                    ... on OnchainVote {
+                        amount
+                        type
+                        voter {
+                            address
+                        }
                     }
                 }
             }
@@ -1328,7 +1332,16 @@ class TallyService:
         assert proposal_id, "Proposal ID is required"
         assert limit > 0, "Limit must be positive"
 
-        return {"input": {"proposalId": proposal_id, "limit": limit}}
+        return {
+            "input": {
+                "filters": {
+                    "proposalId": proposal_id
+                },
+                "page": {
+                    "limit": limit
+                }
+            }
+        }
 
     def _process_proposal_votes_response(self, result: Dict) -> List[ProposalVoter]:
         """Process proposal votes API response into ProposalVoter objects."""
