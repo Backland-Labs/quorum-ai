@@ -40,6 +40,18 @@ port_available() {
     ! lsof -i :$1 >/dev/null 2>&1
 }
 
+# Function to load environment variables from .env file
+load_env() {
+    if [ -f ".env" ]; then
+        print_status "Loading environment variables from .env file..."
+        # Export variables from .env file, ignoring comments and empty lines
+        export $(grep -v '^#' .env | grep -v '^$' | xargs)
+        print_success "Environment variables loaded"
+    else
+        print_warning ".env file not found. Using system environment variables only."
+    fi
+}
+
 # Function to cleanup background processes on script exit
 cleanup() {
     print_status "Shutting down services..."
@@ -90,6 +102,9 @@ case "${1:-}" in
 esac
 
 print_status "Starting Quorum AI services..."
+
+# Load environment variables
+load_env
 
 # Check required commands
 if ! command_exists uv; then

@@ -30,6 +30,8 @@ class AIService:
             "Creating AI model",
         )
 
+        assert settings.openrouter_api_key, "OpenRouter API key is not configured"
+
         if settings.openrouter_api_key:
             logfire.info("Using OpenRouter with Claude 3.5 Sonnet")
             try:
