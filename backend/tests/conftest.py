@@ -31,15 +31,15 @@ def sample_proposal() -> Proposal:
         id="prop-123",
         title="Increase Treasury Allocation for Development",
         description="""
-        This proposal suggests increasing the treasury allocation for development 
-        activities from 10% to 15% of total funds. The additional 5% will be used 
+        This proposal suggests increasing the treasury allocation for development
+        activities from 10% to 15% of total funds. The additional 5% will be used
         to hire more developers and accelerate the roadmap implementation.
-        
+
         Key benefits:
         - Faster development cycles
         - More robust security audits
         - Enhanced user experience
-        
+
         Risks:
         - Reduced funds for other activities
         - Potential for scope creep
@@ -64,31 +64,31 @@ def complex_proposal() -> Proposal:
         title="Multi-Phase Protocol Upgrade with Governance Changes",
         description="""
         This comprehensive proposal outlines a multi-phase protocol upgrade that includes:
-        
+
         Phase 1: Smart Contract Upgrades
         - Upgrade core protocol contracts to v2.0
         - Implement new fee structure
         - Add support for cross-chain transactions
-        
+
         Phase 2: Governance Mechanism Changes
         - Reduce proposal threshold from 100,000 to 50,000 tokens
         - Implement quadratic voting for certain proposal types
         - Add time-locked voting for critical proposals
-        
+
         Phase 3: Economic Model Adjustments
         - Modify tokenomics to include staking rewards
         - Implement burn mechanism for excess tokens
         - Introduce liquidity mining incentives
-        
+
         Timeline: 6 months total
         Budget: 2.5M tokens
         Team: 15 developers, 3 auditors, 2 project managers
-        
+
         Technical Requirements:
         - Solidity 0.8.19+
         - Multi-signature wallet support
         - Integration with existing DeFi protocols
-        
+
         Risk Assessment:
         - High technical complexity
         - Potential for smart contract vulnerabilities
@@ -187,8 +187,8 @@ def mock_proposals_response() -> dict:
                         "voteStats": [
                             {"type": "FOR", "votesCount": "1000000"},
                             {"type": "AGAINST", "votesCount": "250000"},
-                            {"type": "ABSTAIN", "votesCount": "50000"}
-                        ]
+                            {"type": "ABSTAIN", "votesCount": "50000"},
+                        ],
                     },
                     {
                         "id": "prop-2",
@@ -202,8 +202,8 @@ def mock_proposals_response() -> dict:
                         "voteStats": [
                             {"type": "FOR", "votesCount": "2000000"},
                             {"type": "AGAINST", "votesCount": "100000"},
-                            {"type": "ABSTAIN", "votesCount": "25000"}
-                        ]
+                            {"type": "ABSTAIN", "votesCount": "25000"},
+                        ],
                     },
                 ],
                 "pageInfo": {"lastCursor": None},
@@ -229,8 +229,8 @@ def mock_single_proposal_response() -> dict:
                 "voteStats": [
                     {"type": "FOR", "votesCount": "1000000"},
                     {"type": "AGAINST", "votesCount": "250000"},
-                    {"type": "ABSTAIN", "votesCount": "50000"}
-                ]
+                    {"type": "ABSTAIN", "votesCount": "50000"},
+                ],
             }
         }
     }
@@ -255,8 +255,8 @@ def mock_proposals_with_vote_counts_response() -> dict:
                         "voteStats": [
                             {"type": "FOR", "votesCount": "5000000"},
                             {"type": "AGAINST", "votesCount": "500000"},
-                            {"type": "ABSTAIN", "votesCount": "100000"}
-                        ]
+                            {"type": "ABSTAIN", "votesCount": "100000"},
+                        ],
                     },
                     {
                         "id": "prop-medium-votes",
@@ -270,8 +270,8 @@ def mock_proposals_with_vote_counts_response() -> dict:
                         "voteStats": [
                             {"type": "FOR", "votesCount": "2000000"},
                             {"type": "AGAINST", "votesCount": "300000"},
-                            {"type": "ABSTAIN", "votesCount": "50000"}
-                        ]
+                            {"type": "ABSTAIN", "votesCount": "50000"},
+                        ],
                     },
                     {
                         "id": "prop-low-votes",
@@ -285,8 +285,8 @@ def mock_proposals_with_vote_counts_response() -> dict:
                         "voteStats": [
                             {"type": "FOR", "votesCount": "100000"},
                             {"type": "AGAINST", "votesCount": "50000"},
-                            {"type": "ABSTAIN", "votesCount": "10000"}
-                        ]
+                            {"type": "ABSTAIN", "votesCount": "10000"},
+                        ],
                     },
                 ],
                 "pageInfo": {"lastCursor": None},
@@ -328,18 +328,18 @@ def mock_proposal_votes_response() -> dict:
                     {
                         "amount": "1000000",
                         "type": "FOR",
-                        "voter": {"address": "0x123...abc"}
+                        "voter": {"address": "0x123...abc"},
                     },
                     {
                         "amount": "750000",
-                        "type": "FOR", 
-                        "voter": {"address": "0x456...def"}
+                        "type": "FOR",
+                        "voter": {"address": "0x456...def"},
                     },
                     {
                         "amount": "500000",
                         "type": "AGAINST",
-                        "voter": {"address": "0x789...ghi"}
-                    }
+                        "voter": {"address": "0x789...ghi"},
+                    },
                 ]
             }
         }

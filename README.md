@@ -183,7 +183,7 @@ chmod +x startup.sh
 
 # Services will be available at:
 # Backend API: http://localhost:8000
-# API Docs: http://localhost:8000/docs  
+# API Docs: http://localhost:8000/docs
 # Frontend: http://localhost:5173
 ```
 

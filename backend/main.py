@@ -45,10 +45,10 @@ async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
     global tally_service, ai_service
-    
+
     # Initialize cache service first
     await cache_service.initialize()
-    
+
     # Initialize services with cache dependency
     tally_service = TallyService(cache_service=cache_service)
     ai_service = AIService()
@@ -108,9 +108,9 @@ async def health_check():
         "services": {
             "redis": {
                 "status": "healthy" if redis_healthy else "unhealthy",
-                "available": cache_service.is_available
+                "available": cache_service.is_available,
             }
-        }
+        },
     }
 
 
@@ -413,31 +413,28 @@ async def summarize_proposals(request: SummarizeRequest):
 
 @app.get("/proposals/{proposal_id}/top-voters")
 async def get_proposal_top_voters(
-    proposal_id: str,
-    limit: int = Query(default=10, ge=1, le=50)
+    proposal_id: str, limit: int = Query(default=10, ge=1, le=50)
 ):
     """Get top voters for a specific proposal by voting power."""
     try:
-        with logfire.span("get_proposal_top_voters", proposal_id=proposal_id, limit=limit):
+        with logfire.span(
+            "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
+        ):
             # Get the voters data
             voters = await tally_service.get_proposal_votes(proposal_id, limit)
-            
+
             # Get proposal details to determine caching strategy
             proposal = await tally_service.get_proposal_by_id(proposal_id)
-            
+
             # Check if proposal exists
             if not proposal:
                 raise HTTPException(
-                    status_code=404,
-                    detail=f"Proposal with ID {proposal_id} not found"
+                    status_code=404, detail=f"Proposal with ID {proposal_id} not found"
                 )
-            
+
             # Prepare response data
-            response_data = ProposalTopVoters(
-                proposal_id=proposal_id,
-                voters=voters
-            )
-            
+            response_data = ProposalTopVoters(proposal_id=proposal_id, voters=voters)
+
             # Set caching headers based on proposal state
             headers = {}
             if proposal.state == ProposalState.ACTIVE:
@@ -446,27 +443,25 @@ async def get_proposal_top_voters(
             else:
                 # Completed proposals are stable, cache for 6 hours
                 headers["Cache-Control"] = "public, max-age=21600"
-            
+
             # Generate ETag based on response content
             response_json = response_data.model_dump_json()
             etag = hashlib.md5(response_json.encode()).hexdigest()
             headers["ETag"] = f'"{etag}"'
-            
+
             if not voters:
                 logfire.info("No voters found for proposal", proposal_id=proposal_id)
-            
-            return JSONResponse(
-                content=response_data.model_dump(),
-                headers=headers
-            )
-    
+
+            return JSONResponse(content=response_data.model_dump(), headers=headers)
+
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error("Failed to fetch proposal top voters", proposal_id=proposal_id, error=str(e))
+        logfire.error(
+            "Failed to fetch proposal top voters", proposal_id=proposal_id, error=str(e)
+        )
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch proposal top voters: {str(e)}"
+            status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"
         )
 
 

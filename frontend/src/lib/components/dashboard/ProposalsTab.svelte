@@ -5,14 +5,14 @@
   import EmptyState from './EmptyState.svelte';
   import LoadingSkeleton from '../LoadingSkeleton.svelte';
   import { onMount } from 'svelte';
-  
+
   interface Props {
     currentOrgData: OrganizationWithProposals | null;
     dashboardStore: any;
   }
-  
+
   let { currentOrgData, dashboardStore }: Props = $props();
-  
+
   let allProposals = $derived($dashboardStore.allProposals);
   let proposalSummaries = $derived($dashboardStore.proposalSummaries);
   let proposalsLoading = $derived($dashboardStore.proposalsLoading);
@@ -20,7 +20,7 @@
   let proposalsCursor = $derived($dashboardStore.proposalsCursor);
   let proposalFilters = $derived($dashboardStore.proposalFilters);
   let selectedOrganization = $derived($dashboardStore.selectedOrganization);
-  
+
   const proposalStates: Array<{ value: components['schemas']['ProposalState'] | undefined; label: string }> = [
     { value: undefined, label: 'All States' },
     { value: 'ACTIVE', label: 'Active' },
@@ -32,58 +32,58 @@
     { value: 'CANCELED', label: 'Canceled' },
     { value: 'EXPIRED', label: 'Expired' }
   ];
-  
+
   const sortOptions: Array<{ value: components['schemas']['SortCriteria']; label: string }> = [
     { value: 'created_date', label: 'Date Created' },
     { value: 'vote_count', label: 'Vote Count' },
     { value: 'state', label: 'Status' },
     { value: 'title', label: 'Title' }
   ];
-  
+
   onMount(() => {
     console.assert(dashboardStore, 'Dashboard store should be provided');
     console.assert(typeof dashboardStore.loadProposals === 'function', 'Dashboard store should have loadProposals method');
-    
+
     if (selectedOrganization && allProposals.length === 0) {
       dashboardStore.loadProposals(true);
     }
   });
-  
+
   function handleFilterChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const state = target.value as components['schemas']['ProposalState'] | undefined;
-    
+
     console.assert(dashboardStore, 'Dashboard store should be available');
-    
+
     dashboardStore.updateProposalFilters({ state: state || undefined });
   }
-  
+
   function handleSortChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const sortBy = target.value as components['schemas']['SortCriteria'];
-    
+
     console.assert(dashboardStore, 'Dashboard store should be available');
-    
+
     dashboardStore.updateProposalFilters({ sortBy });
   }
-  
+
   function handleSortOrderToggle(): void {
     console.assert(dashboardStore, 'Dashboard store should be available');
-    
+
     const newOrder = proposalFilters.sortOrder === 'asc' ? 'desc' : 'asc';
     dashboardStore.updateProposalFilters({ sortOrder: newOrder });
   }
-  
+
   function handleLoadMore(): void {
     console.assert(dashboardStore, 'Dashboard store should be available');
     console.assert(proposalsCursor, 'Should have cursor for loading more');
-    
+
     dashboardStore.loadProposals(false);
   }
-  
+
   function getProposalWithSummary(proposal: components['schemas']['Proposal']) {
     const summary = proposalSummaries.get(proposal.id);
-    
+
     return summary ? {
       ...proposal,
       proposal_id: proposal.id,
@@ -103,7 +103,7 @@
         <h3 class="text-lg font-semibold text-secondary-900">
           Proposals for {selectedOrganization.name}
         </h3>
-        
+
         <div class="flex flex-col sm:flex-row gap-3">
           <select
             class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -114,7 +114,7 @@
               <option value={state.value}>{state.label}</option>
             {/each}
           </select>
-          
+
           <div class="flex items-center gap-2">
             <select
               class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -125,7 +125,7 @@
                 <option value={option.value}>{option.label}</option>
               {/each}
             </select>
-            
+
             <button
               onclick={handleSortOrderToggle}
               class="p-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -144,9 +144,9 @@
           </div>
         </div>
       </div>
-      
+
       {#if proposalsError}
-        <EmptyState 
+        <EmptyState
           title="Error loading proposals"
           description={proposalsError}
           icon="error"
@@ -160,10 +160,10 @@
           {#each allProposals as proposal}
             {@const proposalWithSummary = getProposalWithSummary(proposal)}
             {#if proposalWithSummary}
-              <ProposalCard 
-                proposal={proposalWithSummary} 
+              <ProposalCard
+                proposal={proposalWithSummary}
                 fullProposal={proposal}
-                variant="detailed" 
+                variant="detailed"
               />
             {:else}
               <div class="p-4 border border-gray-200 rounded-lg">
@@ -173,7 +173,7 @@
             {/if}
           {/each}
         </div>
-        
+
         {#if proposalsCursor}
           <div class="mt-6 flex justify-center">
             <button
@@ -186,7 +186,7 @@
           </div>
         {/if}
       {:else}
-        <EmptyState 
+        <EmptyState
           title="No proposals found"
           description="No proposals match your current filters."
           icon="proposals"
@@ -194,7 +194,7 @@
       {/if}
     </div>
   {:else}
-    <EmptyState 
+    <EmptyState
       title="No organization selected"
       description="Choose an organization from the dropdown to view its proposals."
       icon="organization"

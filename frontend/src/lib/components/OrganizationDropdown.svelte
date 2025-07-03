@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { OrganizationDropdownProps } from '../types/dashboard.js';
-  
+
   interface Props extends OrganizationDropdownProps {}
-  
-  let { 
-    organizations, 
-    selectedOrganization, 
-    onOrganizationChange, 
-    loading = false 
+
+  let {
+    organizations,
+    selectedOrganization,
+    onOrganizationChange,
+    loading = false
   }: Props = $props();
 
   let isOpen = $state(false);
@@ -40,9 +40,9 @@
 <div class="relative">
   <button
     type="button"
-    class="inline-flex items-center justify-between w-64 px-4 py-2 text-sm font-medium 
-           text-secondary-700 bg-white border border-secondary-300 rounded-md 
-           hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 
+    class="inline-flex items-center justify-between w-64 px-4 py-2 text-sm font-medium
+           text-secondary-700 bg-white border border-secondary-300 rounded-md
+           hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-primary-500
            focus:border-primary-500 transition-colors duration-200
            {loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}"
     onclick={handleToggle}
@@ -65,11 +65,11 @@
         Select organization
       {/if}
     </span>
-    <svg 
+    <svg
       class="ml-2 h-4 w-4 text-secondary-400 transition-transform duration-200
-             {isOpen ? 'rotate-180' : 'rotate-0'}" 
-      fill="none" 
-      viewBox="0 0 24 24" 
+             {isOpen ? 'rotate-180' : 'rotate-0'}"
+      fill="none"
+      viewBox="0 0 24 24"
       stroke="currentColor"
     >
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -77,7 +77,7 @@
   </button>
 
   {#if isOpen && organizations.length > 0}
-    <div 
+    <div
       class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg
              max-h-60 overflow-auto"
       id="organization-listbox"
@@ -103,7 +103,7 @@
           </div>
           <div class="flex items-center text-xs text-secondary-500">
             <svg class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             {organization.proposals_count}
@@ -115,8 +115,8 @@
 </div>
 
 {#if isOpen}
-  <div 
-    class="fixed inset-0 z-40" 
+  <div
+    class="fixed inset-0 z-40"
     onclick={() => isOpen = false}
     onkeydown={(e) => e.key === 'Escape' && (isOpen = false)}
     aria-hidden="true"

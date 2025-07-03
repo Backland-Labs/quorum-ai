@@ -142,7 +142,7 @@ describe('Dashboard Layout', () => {
 
     it('should display Dashboard title', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Dashboard')).toBeInTheDocument();
       });
@@ -150,7 +150,7 @@ describe('Dashboard Layout', () => {
 
     it('should display three tabs: Overview, Proposals, Activity', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Overview')).toBeInTheDocument();
         expect(screen.getByText('Proposals')).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe('Dashboard Layout', () => {
 
     it('should display organization dropdown in top-right area', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         expect(screen.getByRole('combobox', { name: /select organization/i })).toBeInTheDocument();
       });
@@ -168,7 +168,7 @@ describe('Dashboard Layout', () => {
 
     it('should show Overview tab as active by default', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         const overviewTab = screen.getByRole('tab', { name: 'Overview' });
         expect(overviewTab).toHaveAttribute('aria-selected', 'true');
@@ -177,7 +177,7 @@ describe('Dashboard Layout', () => {
 
     it('should switch tabs when clicked', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute('aria-selected', 'true');
       });
@@ -191,7 +191,7 @@ describe('Dashboard Layout', () => {
 
     it('should maintain tab selection when switching organizations', async () => {
       renderComponent(HomePage);
-      
+
       // Wait for initial load and switch to Proposals tab
       await waitFor(() => {
         expect(screen.getByRole('tab', { name: 'Proposals' })).toBeInTheDocument();
@@ -199,11 +199,11 @@ describe('Dashboard Layout', () => {
 
       const proposalsTab = screen.getByRole('tab', { name: 'Proposals' });
       await fireEvent.click(proposalsTab);
-      
+
       // Switch organization
       const dropdown = screen.getByRole('combobox', { name: /select organization/i });
       await fireEvent.click(dropdown);
-      
+
       // Select a different organization (assuming dropdown options are loaded)
       const orgOption = screen.getByText('Nouns DAO');
       await fireEvent.click(orgOption);
@@ -214,11 +214,11 @@ describe('Dashboard Layout', () => {
 
     it('should populate organization dropdown from API', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         const dropdown = screen.getByRole('combobox', { name: /select organization/i });
         fireEvent.click(dropdown);
-        
+
         expect(screen.getByText('Compound')).toBeInTheDocument();
         expect(screen.getByText('Nouns DAO')).toBeInTheDocument();
       });
@@ -226,7 +226,7 @@ describe('Dashboard Layout', () => {
 
     it('should display organization data in Overview tab', async () => {
       renderComponent(HomePage);
-      
+
       await waitFor(() => {
         // Should show overview content by default
         expect(screen.getByText('408 proposals')).toBeInTheDocument();

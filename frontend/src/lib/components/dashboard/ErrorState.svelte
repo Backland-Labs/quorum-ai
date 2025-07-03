@@ -3,7 +3,7 @@
     error: string;
     title?: string;
   }
-  
+
   let { error, title = "Failed to load dashboard" }: Props = $props();
 </script>
 

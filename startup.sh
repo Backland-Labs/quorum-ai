@@ -183,21 +183,21 @@ else
     # In foreground mode, start both services with log streaming
     print_status "Generating API client from backend..."
     npm run generate-api || print_warning "API client generation failed. Will continue anyway."
-    
+
     cd ..
     print_status "Starting services in foreground with streaming logs..."
     print_status "Press Ctrl+C to stop all services"
     echo ""
-    
+
     # Use a process substitution to stream logs with prefixes
     (cd backend && uv run --active main.py 2>&1 | sed 's/^/[BACKEND] /') &
     BACKEND_PID=$!
-    
+
     sleep 2  # Give backend a moment to start
-    
+
     (cd frontend && npm run dev 2>&1 | sed 's/^/[FRONTEND] /') &
     FRONTEND_PID=$!
-    
+
     # Wait for both processes
     wait $BACKEND_PID $FRONTEND_PID
     exit 0

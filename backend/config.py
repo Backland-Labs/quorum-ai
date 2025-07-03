@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     # Performance settings
     max_proposals_per_request: int = 50
     request_timeout: int = 30
-    
+
     # Redis settings
     redis_url: str = "redis://localhost:6379/0"
     redis_password: Optional[str] = None
@@ -48,11 +48,13 @@ class Settings(BaseSettings):
 
     # Top organizations configuration
     top_organizations_env: str = "compound,nounsdao,arbitrum"
-    
+
     # Cache TTL settings (in seconds)
-    cache_ttl_proposal_votes_active: int = 900      # 15 minutes for active proposals
-    cache_ttl_proposal_votes_completed: int = 21600 # 6 hours for completed proposals  
-    cache_ttl_proposal_votes_failed: int = 86400    # 24 hours for failed/expired proposals
+    cache_ttl_proposal_votes_active: int = 900  # 15 minutes for active proposals
+    cache_ttl_proposal_votes_completed: int = 21600  # 6 hours for completed proposals
+    cache_ttl_proposal_votes_failed: int = (
+        86400  # 24 hours for failed/expired proposals
+    )
 
     @property
     def top_organizations(self) -> List[str]:
@@ -60,26 +62,29 @@ class Settings(BaseSettings):
         return [
             org.strip() for org in self.top_organizations_env.split(",") if org.strip()
         ]
-    
+
     @property
     def redis_connection_url(self) -> str:
         """Build Redis connection URL with password if provided."""
         if self.redis_password:
             # Parse the URL and insert password
             from urllib.parse import urlparse, urlunparse
+
             parsed = urlparse(self.redis_url)
             # Create new netloc with password
             netloc = f":{self.redis_password}@{parsed.hostname}"
             if parsed.port:
                 netloc += f":{parsed.port}"
-            return urlunparse((
-                parsed.scheme,
-                netloc,
-                parsed.path,
-                parsed.params,
-                parsed.query,
-                parsed.fragment
-            ))
+            return urlunparse(
+                (
+                    parsed.scheme,
+                    netloc,
+                    parsed.path,
+                    parsed.params,
+                    parsed.query,
+                    parsed.fragment,
+                )
+            )
         return self.redis_url
 
 

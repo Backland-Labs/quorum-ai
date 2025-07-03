@@ -20,7 +20,7 @@ class TestAICacheIntegration:
         # Arrange - Mock Redis operations but keep cache service logic
         mock_redis_client = AsyncMock()
         mock_pool = MagicMock()
-        
+
         # Mock Redis operations for caching
         mock_redis_client.get = AsyncMock(return_value=None)  # Cache miss first
         mock_redis_client.setex = AsyncMock(return_value=True)
@@ -28,19 +28,21 @@ class TestAICacheIntegration:
         mock_redis_client.delete = AsyncMock(return_value=1)
         mock_redis_client.exists = AsyncMock(return_value=False)
         mock_redis_client.ping = AsyncMock(return_value=True)
-        
+
         # Create cache service with mocked Redis
         cache_service = CacheService()
         cache_service._redis_client = mock_redis_client
         cache_service._pool = mock_pool
         cache_service._is_available = True
-        
-        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+
+        with patch.object(AIService, "_create_model"), patch.object(
+            AIService, "_create_agent"
+        ):
             ai_service = AIService(cache_service=cache_service)
             proposals = [sample_proposal, complex_proposal]
-            
+
             # Mock the actual AI calls
-            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+            with patch.object(ai_service, "summarize_proposal") as mock_summarize:
                 mock_summarize.side_effect = [
                     ProposalSummary(
                         proposal_id="prop-123",
@@ -52,7 +54,7 @@ class TestAICacheIntegration:
                         confidence_score=0.85,
                     ),
                     ProposalSummary(
-                        proposal_id="prop-456", 
+                        proposal_id="prop-456",
                         title=complex_proposal.title,
                         summary="AI generated summary 2",
                         key_points=["Complex point 1", "Complex point 2"],
@@ -70,7 +72,7 @@ class TestAICacheIntegration:
                 assert result1[0].summary == "AI generated summary 1"
                 assert result1[1].summary == "AI generated summary 2"
                 assert mock_summarize.call_count == 2
-                
+
                 # Verify cache operations occurred
                 mock_redis_client.get.assert_called()  # Cache check
                 mock_redis_client.setex.assert_called()  # Cache set
@@ -79,6 +81,7 @@ class TestAICacheIntegration:
 
                 # Simulate cache hit for second call
                 import json
+
                 cached_data = [summary.dict() for summary in result1]
                 mock_redis_client.get.return_value = json.dumps(cached_data)
                 mock_summarize.reset_mock()
@@ -100,7 +103,7 @@ class TestAICacheIntegration:
         # Arrange
         mock_redis_client = AsyncMock()
         mock_pool = MagicMock()
-        
+
         # First request gets lock, second waits
         lock_acquired = [True, False]  # First call gets lock, second doesn't
         mock_redis_client.set = AsyncMock(side_effect=lock_acquired)
@@ -109,18 +112,21 @@ class TestAICacheIntegration:
         mock_redis_client.delete = AsyncMock(return_value=1)
         mock_redis_client.exists = AsyncMock(return_value=False)  # Lock released
         mock_redis_client.ping = AsyncMock(return_value=True)
-        
+
         cache_service = CacheService()
         cache_service._redis_client = mock_redis_client
         cache_service._pool = mock_pool
         cache_service._is_available = True
-        
-        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+
+        with patch.object(AIService, "_create_model"), patch.object(
+            AIService, "_create_agent"
+        ):
             ai_service = AIService(cache_service=cache_service)
             proposals = [sample_proposal]
-            
+
             # Mock AI processing with delay
-            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+            with patch.object(ai_service, "summarize_proposal") as mock_summarize:
+
                 async def slow_summarize(*args, **kwargs):
                     await asyncio.sleep(0.1)  # Simulate processing time
                     return ProposalSummary(
@@ -132,7 +138,7 @@ class TestAICacheIntegration:
                         recommendation="APPROVE",
                         confidence_score=0.8,
                     )
-                
+
                 mock_summarize.side_effect = slow_summarize
 
                 # Act - Simulate concurrent requests
@@ -149,7 +155,7 @@ class TestAICacheIntegration:
                 assert len(results) == 2
                 assert len(results[0]) == 1
                 assert len(results[1]) == 1
-                
+
                 # Verify locking was attempted
                 assert mock_redis_client.set.call_count >= 2  # Lock attempts
 
@@ -161,23 +167,25 @@ class TestAICacheIntegration:
         # Arrange
         mock_redis_client = AsyncMock()
         mock_pool = MagicMock()
-        
+
         mock_redis_client.get = AsyncMock(return_value=None)
         mock_redis_client.setex = AsyncMock(return_value=True)
         mock_redis_client.set = AsyncMock(return_value=True)
         mock_redis_client.delete = AsyncMock(return_value=1)
         mock_redis_client.exists = AsyncMock(return_value=False)
         mock_redis_client.ping = AsyncMock(return_value=True)
-        
+
         cache_service = CacheService()
         cache_service._redis_client = mock_redis_client
         cache_service._pool = mock_pool
         cache_service._is_available = True
-        
-        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+
+        with patch.object(AIService, "_create_model"), patch.object(
+            AIService, "_create_agent"
+        ):
             ai_service = AIService(cache_service=cache_service)
-            
-            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+
+            with patch.object(ai_service, "summarize_proposal") as mock_summarize:
                 mock_summarize.return_value = ProposalSummary(
                     proposal_id="prop-123",
                     title=sample_proposal.title,
@@ -191,7 +199,7 @@ class TestAICacheIntegration:
                 # Act - First call with original proposal
                 proposals1 = [sample_proposal]
                 await ai_service.summarize_multiple_proposals(proposals1)
-                
+
                 # Get first cache key
                 first_call = mock_redis_client.get.call_args_list[0]
                 first_cache_key = first_call[0][0]
@@ -217,7 +225,7 @@ class TestAICacheIntegration:
                 # Act - Second call with modified proposal
                 proposals2 = [modified_proposal]
                 await ai_service.summarize_multiple_proposals(proposals2)
-                
+
                 # Get second cache key
                 second_call = mock_redis_client.get.call_args_list[0]
                 second_cache_key = second_call[0][0]
@@ -226,31 +234,31 @@ class TestAICacheIntegration:
                 assert first_cache_key != second_cache_key
 
     @pytest.mark.asyncio
-    async def test_cache_ttl_configuration(
-        self, sample_proposal: Proposal
-    ) -> None:
+    async def test_cache_ttl_configuration(self, sample_proposal: Proposal) -> None:
         """Test that cache TTL is properly configured to 4 hours."""
         # Arrange
         mock_redis_client = AsyncMock()
         mock_pool = MagicMock()
-        
+
         mock_redis_client.get = AsyncMock(return_value=None)
         mock_redis_client.setex = AsyncMock(return_value=True)
         mock_redis_client.set = AsyncMock(return_value=True)
         mock_redis_client.delete = AsyncMock(return_value=1)
         mock_redis_client.exists = AsyncMock(return_value=False)
         mock_redis_client.ping = AsyncMock(return_value=True)
-        
+
         cache_service = CacheService()
         cache_service._redis_client = mock_redis_client
         cache_service._pool = mock_pool
         cache_service._is_available = True
-        
-        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+
+        with patch.object(AIService, "_create_model"), patch.object(
+            AIService, "_create_agent"
+        ):
             ai_service = AIService(cache_service=cache_service)
             proposals = [sample_proposal]
-            
-            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+
+            with patch.object(ai_service, "summarize_proposal") as mock_summarize:
                 mock_summarize.return_value = ProposalSummary(
                     proposal_id="prop-123",
                     title=sample_proposal.title,
@@ -268,21 +276,23 @@ class TestAICacheIntegration:
                 mock_redis_client.setex.assert_called()
                 setex_call = mock_redis_client.setex.call_args
                 cache_key, ttl, cache_data = setex_call[0]
-                
+
                 assert ttl == 14400  # 4 hours in seconds
                 assert "ai_summary" in cache_key
 
-    @pytest.mark.asyncio 
+    @pytest.mark.asyncio
     async def test_graceful_fallback_when_cache_unavailable(
         self, sample_proposal: Proposal
     ) -> None:
         """Test that AI service works normally when cache is unavailable."""
         # Arrange - Create AI service without cache
-        with patch.object(AIService, '_create_model'), patch.object(AIService, '_create_agent'):
+        with patch.object(AIService, "_create_model"), patch.object(
+            AIService, "_create_agent"
+        ):
             ai_service = AIService(cache_service=None)  # No cache service
             proposals = [sample_proposal]
-            
-            with patch.object(ai_service, 'summarize_proposal') as mock_summarize:
+
+            with patch.object(ai_service, "summarize_proposal") as mock_summarize:
                 mock_summarize.return_value = ProposalSummary(
                     proposal_id="prop-123",
                     title=sample_proposal.title,

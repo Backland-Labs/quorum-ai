@@ -6,7 +6,7 @@
 export function parseProposalSummary(proposal: any) {
   console.assert(proposal !== null, 'Proposal should not be null');
   console.assert(proposal !== undefined, 'Proposal should not be undefined');
-  
+
   try {
     if (hasJsonSummary(proposal)) {
       const parsed = extractJsonFromSummary(proposal.summary);
@@ -17,7 +17,7 @@ export function parseProposalSummary(proposal: any) {
   } catch (e) {
     console.warn('Failed to parse proposal summary JSON:', e);
   }
-  
+
   return createFallbackProposal(proposal);
 }
 
@@ -29,9 +29,9 @@ export function parseProposalSummary(proposal: any) {
 function hasJsonSummary(proposal: any): boolean {
   console.assert(proposal !== null, 'Proposal should not be null');
   console.assert(typeof proposal === 'object', 'Proposal should be an object');
-  
-  return proposal.summary && 
-         typeof proposal.summary === 'string' && 
+
+  return proposal.summary &&
+         typeof proposal.summary === 'string' &&
          proposal.summary.includes('```json');
 }
 
@@ -43,7 +43,7 @@ function hasJsonSummary(proposal: any): boolean {
 function extractJsonFromSummary(summary: string): any | null {
   console.assert(typeof summary === 'string', 'Summary must be a string');
   console.assert(summary.length > 0, 'Summary should not be empty');
-  
+
   const jsonMatch = summary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
   if (jsonMatch) {
     return JSON.parse(jsonMatch[1]);
@@ -60,7 +60,7 @@ function extractJsonFromSummary(summary: string): any | null {
 function createParsedProposal(parsed: any, original: any) {
   console.assert(parsed !== null, 'Parsed data should not be null');
   console.assert(original !== null, 'Original proposal should not be null');
-  
+
   return {
     summary: parsed.summary || original.summary,
     key_points: parsed.key_points || original.key_points || [],
@@ -78,7 +78,7 @@ function createParsedProposal(parsed: any, original: any) {
 function createFallbackProposal(proposal: any) {
   console.assert(proposal !== null, 'Proposal should not be null');
   console.assert(typeof proposal === 'object', 'Proposal should be an object');
-  
+
   return {
     summary: proposal.summary,
     key_points: proposal.key_points || [],
@@ -96,7 +96,7 @@ function createFallbackProposal(proposal: any) {
 export function cleanProposalTitle(title: string): string {
   console.assert(typeof title === 'string', 'Title must be a string');
   console.assert(title !== null, 'Title should not be null');
-  
+
   return title.replace(/^#\s*/, '');
 }
 
@@ -108,6 +108,6 @@ export function cleanProposalTitle(title: string): string {
 export function calculateConfidencePercentage(score: number): number {
   console.assert(typeof score === 'number', 'Score must be a number');
   console.assert(score >= 0 && score <= 1, 'Score must be between 0 and 1');
-  
+
   return Math.round(score * 100);
 }

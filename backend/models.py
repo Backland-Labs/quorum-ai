@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Literal
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -224,22 +224,26 @@ class OrganizationOverviewResponse(BaseModel):
 
 class ProposalVoter(BaseModel):
     """Individual voter information for a proposal.
-    
+
     Represents a single voter's participation in a proposal vote,
     including their address, voting power, and vote choice.
     """
 
     address: str = Field(..., min_length=1, description="Voter's blockchain address")
-    amount: str = Field(..., description="Voting power as string to handle large numbers")
+    amount: str = Field(
+        ..., description="Voting power as string to handle large numbers"
+    )
     vote_type: VoteType = Field(..., description="Vote choice")
 
 
 class ProposalTopVoters(BaseModel):
     """Collection of top voters for a proposal.
-    
+
     Contains a list of the most influential voters for a specific proposal,
     useful for displaying voting participation and influence distribution.
     """
 
     proposal_id: str = Field(..., description="Unique proposal identifier")
-    voters: List[ProposalVoter] = Field(..., description="List of top voters by voting power")
+    voters: List[ProposalVoter] = Field(
+        ..., description="List of top voters by voting power"
+    )
