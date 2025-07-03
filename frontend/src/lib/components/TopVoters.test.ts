@@ -44,12 +44,12 @@ describe('TopVoters Component', () => {
     it('should render loading skeleton while fetching data', async () => {
       // Arrange: Mock pending fetch call
       mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-      
+
       // Act: Render component
       render(TopVoters, {
         proposalId: 'test-proposal-123'
       });
-      
+
       // Assert: Loading skeleton should be visible
       const loadingSkeleton = screen.getByTestId('loading-skeleton');
       expect(loadingSkeleton).toBeInTheDocument();
@@ -59,12 +59,12 @@ describe('TopVoters Component', () => {
     it('should show loading skeleton with correct accessibility labels', async () => {
       // Arrange: Mock pending fetch call
       mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-      
+
       // Act: Render component
       render(TopVoters, {
         proposalId: 'test-proposal-123'
       });
-      
+
       // Assert: Loading skeleton should have proper accessibility
       const loadingSkeletons = screen.getAllByTestId('loading-skeleton');
       expect(loadingSkeletons.length).toBeGreaterThan(0);

@@ -51,8 +51,8 @@ class AIService:
                 )
                 raise
         else:
-                logfire.warning("No AI API keys configured, using default model")
-                return "openai:gpt-4o-mini" #TODO: need to fix how this is handled
+            logfire.warning("No AI API keys configured, using default model")
+            return "openai:gpt-4o-mini"  # TODO: need to fix how this is handled
 
     def _create_agent(self) -> Agent:
         """Create and configure the Pydantic AI agent."""

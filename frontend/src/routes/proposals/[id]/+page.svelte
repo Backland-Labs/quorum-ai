@@ -14,14 +14,14 @@
     month: 'long',
     day: 'numeric'
   } as const;
-  
+
   // CSS Classes
   const RISK_LEVEL_CLASSES = {
     LOW: 'bg-green-50 text-green-700 border-green-200',
     MEDIUM: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     HIGH: 'bg-red-50 text-red-700 border-red-200'
   } as const;
-  
+
   const RECOMMENDATION_CLASSES = {
     APPROVE: 'bg-green-100 text-green-800',
     REJECT: 'bg-red-100 text-red-800',
@@ -39,7 +39,7 @@
     // Runtime assertions for fetchProposal
     console.assert(typeof proposalId === 'string', 'proposalId must be a string');
     console.assert(proposalId.length > 0, 'proposalId cannot be empty');
-    
+
     loading = true;
     error = null;
 
@@ -68,7 +68,7 @@
     // Runtime assertions for formatDate
     console.assert(typeof dateString === 'string', 'dateString must be a string');
     console.assert(dateString.length > 0, 'dateString cannot be empty');
-    
+
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
   }
@@ -77,7 +77,7 @@
     // Runtime assertions for getRiskLevelClasses
     console.assert(typeof riskLevel === 'string', 'riskLevel must be a string');
     console.assert(riskLevel.length > 0, 'riskLevel cannot be empty');
-    
+
     return RISK_LEVEL_CLASSES[riskLevel as keyof typeof RISK_LEVEL_CLASSES] || RISK_LEVEL_CLASSES.MEDIUM;
   }
 
@@ -85,7 +85,7 @@
     // Runtime assertions for getRecommendationClasses
     console.assert(typeof recommendation === 'string', 'recommendation must be a string');
     console.assert(recommendation.length > 0, 'recommendation cannot be empty');
-    
+
     return RECOMMENDATION_CLASSES[recommendation as keyof typeof RECOMMENDATION_CLASSES] || RECOMMENDATION_CLASSES.DEFAULT;
   }
 
@@ -129,7 +129,7 @@
       </div>
     {:else if proposal}
       {@const parsedProposal = parseProposalSummary(proposal)}
-      
+
       <!-- Header -->
       <div class="mb-8">
         <nav class="flex mb-4" aria-label="Breadcrumb">
@@ -147,7 +147,7 @@
             </li>
           </ol>
         </nav>
-        
+
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">

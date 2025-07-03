@@ -40,7 +40,7 @@
   function truncateAddress(address: string): string {
     console.assert(typeof address === 'string', 'Address must be a string');
     console.assert(address.length > 0, 'Address cannot be empty');
-    
+
     if (address.length <= ADDRESS_TRUNCATE_LENGTH) return address;
     return `${address.slice(0, ADDRESS_START_CHARS)}...${address.slice(-ADDRESS_END_CHARS)}`;
   }
@@ -65,7 +65,7 @@
     console.assert(['FOR', 'AGAINST', 'ABSTAIN'].includes(voteType), 'Vote type must be valid');
 
     const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
-    
+
     switch (voteType) {
       case 'FOR':
         return `${baseClasses} bg-green-100 text-green-800`;
@@ -88,14 +88,14 @@
     try {
       // Use real backend API endpoint
       const response = await fetch(`http://localhost:8000/proposals/${proposalId}/top-voters?limit=${limit}`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch top voters: ${response.status}`);
       }
 
       const data: ProposalTopVoters = await response.json();
       voters = data.voters || [];
-      
+
     } catch (err) {
       console.error('Error fetching top voters:', err);
       error = err instanceof Error ? err.message : 'Failed to load top voters';
@@ -106,7 +106,7 @@
 
   function handleRetry(): void {
     console.assert(typeof retryCount === 'number', 'Retry count must be a number');
-    
+
     retryCount += 1;
     fetchTopVoters();
   }
@@ -118,7 +118,7 @@
 
 <div class="space-y-4" data-testid="top-voters-container">
   <h3 class="text-lg font-semibold text-gray-900">Top Voters</h3>
-  
+
   {#if isLoadingState}
     <div class="space-y-3" data-testid="loading-state" aria-label="Loading top voters">
       <LoadingSkeleton count={LOADING_SKELETON_COUNT} height="h-12" />
@@ -153,7 +153,7 @@
   {:else}
     <div class="space-y-3" data-testid="voters-list">
       {#each voters as voter, index (voter.address)}
-        <div 
+        <div
           class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           data-testid="voter-item"
           role="listitem"
@@ -177,7 +177,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <span 
+            <span
               class={getVoteBadgeClasses(voter.vote_type)}
               data-testid="vote-badge"
               aria-label="Vote: {voter.vote_type}"

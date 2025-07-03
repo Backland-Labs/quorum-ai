@@ -40,7 +40,7 @@
 
   function getVoteBadgeClasses(voteType: VoteType): string {
     const baseClasses = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
-    
+
     switch (voteType) {
       case 'FOR':
         return `${baseClasses} bg-green-100 text-green-800`;
@@ -61,7 +61,7 @@
   let voterAriaLabel = $derived(`Voter ${voterRank} of ${totalVoters}`);
 </script>
 
-<div 
+<div
   class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
   data-testid="voter-item"
   role="listitem"
@@ -85,7 +85,7 @@
     </div>
   </div>
   <div class="flex items-center space-x-2">
-    <span 
+    <span
       class={voteBadgeClasses}
       data-testid="vote-badge"
       aria-label="Vote: {voter.vote_type}"

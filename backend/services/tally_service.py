@@ -111,7 +111,9 @@ class TallyService:
         }
         """
 
-    def _build_organizations_variables(self, limit: int, after_cursor: Optional[str]) -> Dict:
+    def _build_organizations_variables(
+        self, limit: int, after_cursor: Optional[str]
+    ) -> Dict:
         """Build variables for organizations query."""
         page_input: Dict[str, Any] = {"limit": limit}
         if after_cursor:
@@ -124,15 +126,15 @@ class TallyService:
             }
         }
 
-    def _process_organizations_response(self, result: Dict) -> tuple[List[Organization], Optional[str]]:
+    def _process_organizations_response(
+        self, result: Dict
+    ) -> tuple[List[Organization], Optional[str]]:
         """Process organizations API response into Organization objects."""
         org_data = result.get("data", {}).get("organizations", {})
         org_nodes = org_data.get("nodes", [])
 
         organizations = [
-            self._create_organization_from_node(org)
-            for org in org_nodes
-            if org
+            self._create_organization_from_node(org) for org in org_nodes if org
         ]
 
         last_cursor = org_data.get("pageInfo", {}).get("lastCursor")
@@ -483,7 +485,9 @@ class TallyService:
         await self._cache_proposal_result(cache_key, proposal_id, proposal)
         return proposal
 
-    async def _get_cached_proposal(self, cache_key: str, proposal_id: str) -> Optional[Proposal]:
+    async def _get_cached_proposal(
+        self, cache_key: str, proposal_id: str
+    ) -> Optional[Proposal]:
         """Attempt to retrieve proposal from cache."""
         if not self.cache_service or not self.cache_service.is_available:
             return None
@@ -499,9 +503,7 @@ class TallyService:
                 if isinstance(cached_data, dict):
                     return Proposal(**cached_data)
                 return cached_data
-            logfire.info(
-                "Cache miss for get_proposal_by_id", proposal_id=proposal_id
-            )
+            logfire.info("Cache miss for get_proposal_by_id", proposal_id=proposal_id)
         except Exception as e:
             logfire.warning(f"Cache error for get_proposal_by_id: {e}")
         return None
@@ -526,7 +528,9 @@ class TallyService:
             )
             raise
 
-    async def _cache_proposal_result(self, cache_key: str, proposal_id: str, proposal: Proposal) -> None:
+    async def _cache_proposal_result(
+        self, cache_key: str, proposal_id: str, proposal: Proposal
+    ) -> None:
         """Cache the proposal result with dynamic TTL."""
         if not self.cache_service or not self.cache_service.is_available:
             return

@@ -5,7 +5,7 @@ import inspect
 import logging
 from typing import Any, Callable, Optional, TypeVar
 
-from .cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
+from .cache_utils import generate_cache_key, serialize_for_cache
 from services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)

@@ -69,17 +69,29 @@ def log_function_call(
 
     def decorator(func: Callable) -> Callable:
         function_name = f"{func.__module__}.{func.__qualname__}"
-        
+
         if asyncio.iscoroutinefunction(func):
-            return _create_async_wrapper(func, function_name, log_args, log_result, log_timing, log_level)
+            return _create_async_wrapper(
+                func, function_name, log_args, log_result, log_timing, log_level
+            )
         else:
-            return _create_sync_wrapper(func, function_name, log_args, log_result, log_timing, log_level)
+            return _create_sync_wrapper(
+                func, function_name, log_args, log_result, log_timing, log_level
+            )
 
     return decorator
 
 
-def _create_async_wrapper(func: Callable, function_name: str, log_args: bool, log_result: bool, log_timing: bool, log_level: str):
+def _create_async_wrapper(
+    func: Callable,
+    function_name: str,
+    log_args: bool,
+    log_result: bool,
+    log_timing: bool,
+    log_level: str,
+):
     """Create async wrapper for function logging."""
+
     @functools.wraps(func)
     async def async_wrapper(*args, **kwargs):
         start_time = time.time()
@@ -87,7 +99,9 @@ def _create_async_wrapper(func: Callable, function_name: str, log_args: bool, lo
 
         try:
             result = await func(*args, **kwargs)
-            _log_function_success(function_name, result, start_time, log_result, log_timing, log_level)
+            _log_function_success(
+                function_name, result, start_time, log_result, log_timing, log_level
+            )
             return result
         except Exception as e:
             _log_function_error(function_name, e, start_time)
@@ -96,8 +110,16 @@ def _create_async_wrapper(func: Callable, function_name: str, log_args: bool, lo
     return async_wrapper
 
 
-def _create_sync_wrapper(func: Callable, function_name: str, log_args: bool, log_result: bool, log_timing: bool, log_level: str):
+def _create_sync_wrapper(
+    func: Callable,
+    function_name: str,
+    log_args: bool,
+    log_result: bool,
+    log_timing: bool,
+    log_level: str,
+):
     """Create sync wrapper for function logging."""
+
     @functools.wraps(func)
     def sync_wrapper(*args, **kwargs):
         start_time = time.time()
@@ -105,7 +127,9 @@ def _create_sync_wrapper(func: Callable, function_name: str, log_args: bool, log
 
         try:
             result = func(*args, **kwargs)
-            _log_function_success(function_name, result, start_time, log_result, log_timing, log_level)
+            _log_function_success(
+                function_name, result, start_time, log_result, log_timing, log_level
+            )
             return result
         except Exception as e:
             _log_function_error(function_name, e, start_time)
@@ -114,7 +138,9 @@ def _create_sync_wrapper(func: Callable, function_name: str, log_args: bool, log
     return sync_wrapper
 
 
-def _log_function_start(function_name: str, args: tuple, kwargs: dict, log_args: bool, log_level: str):
+def _log_function_start(
+    function_name: str, args: tuple, kwargs: dict, log_args: bool, log_level: str
+):
     """Log function start with sanitized arguments."""
     log_data = {"function": function_name, "operation": "function_call_start"}
 
@@ -149,7 +175,14 @@ def _is_sensitive_key(key: str) -> bool:
     return any(sensitive in key_lower for sensitive in ["key", "token", "secret"])
 
 
-def _log_function_success(function_name: str, result, start_time: float, log_result: bool, log_timing: bool, log_level: str):
+def _log_function_success(
+    function_name: str,
+    result,
+    start_time: float,
+    log_result: bool,
+    log_timing: bool,
+    log_level: str,
+):
     """Log successful function completion."""
     execution_time = time.time() - start_time
     result_log_data = {
@@ -164,7 +197,9 @@ def _log_function_success(function_name: str, result, start_time: float, log_res
     if log_timing:
         _add_timing_info(result_log_data, execution_time)
 
-    getattr(StructuredLogger, log_level)(f"Completed {function_name}", **result_log_data)
+    getattr(StructuredLogger, log_level)(
+        f"Completed {function_name}", **result_log_data
+    )
 
 
 def _add_result_info(log_data: dict, result) -> None:
