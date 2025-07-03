@@ -14,11 +14,20 @@ from models import (
     Proposal,
     ProposalFilters,
     ProposalState,
+    ProposalVoter,
     SortCriteria,
     SortOrder,
+    VoteType,
 )
-from utils.cache_decorators import cache_result
 from utils.cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
+
+
+# Cache-related constants
+PROPOSAL_VOTES_CACHE_PATTERN = "*{proposal_id}*"
+
+# Proposal state categorization for cache TTL
+COMPLETED_PROPOSAL_STATES = [ProposalState.SUCCEEDED, ProposalState.EXECUTED, ProposalState.QUEUED]
+FAILED_PROPOSAL_STATES = [ProposalState.DEFEATED, ProposalState.EXPIRED, ProposalState.CANCELED]
 
 
 class TallyService:
@@ -338,12 +347,12 @@ class TallyService:
             "input": {"page": page_input, "sort": sort_input, "filters": filter_input}
         }
 
-    def _build_page_input(self, filters: ProposalFilters) -> Dict:
+    def _build_page_input(self, filters: ProposalFilters) -> Dict[str, Any]:
         """Build pagination input for proposals query."""
         assert filters, "Filters are required"
         assert filters.limit > 0, "Limit must be positive"
 
-        page_input = {"limit": filters.limit}
+        page_input: Dict[str, Any] = {"limit": filters.limit}
         if filters.after_cursor:
             page_input["afterCursor"] = filters.after_cursor
 
@@ -1147,3 +1156,218 @@ class TallyService:
             }
         }
         """
+
+    async def get_proposal_votes(self, proposal_id: str, limit: int = 10) -> List[ProposalVoter]:
+        """Fetch individual vote data from the Tally API for a specific proposal.
+        
+        Args:
+            proposal_id: The proposal ID to fetch votes for
+            limit: Maximum number of voters to return (default: 10)
+            
+        Returns:
+            List of ProposalVoter objects sorted by voting power
+        """
+        assert proposal_id, "Proposal ID cannot be empty"
+        assert limit > 0, "Limit must be positive"
+        
+        # Generate cache key
+        cache_key = generate_cache_key("proposal_votes", (proposal_id, limit), {})
+        
+        # Try to get from cache if cache service is available
+        if self.cache_service and self.cache_service.is_available:
+            try:
+                cached_result = await self.cache_service.get(cache_key)
+                if cached_result is not None:
+                    logfire.info("Cache hit for get_proposal_votes", proposal_id=proposal_id, limit=limit)
+                    cached_data = deserialize_from_cache(cached_result)
+                    # Reconstruct ProposalVoter objects from cached data
+                    reconstructed_voters = self._reconstruct_cached_voters(cached_data)
+                    return reconstructed_voters
+                logfire.info("Cache miss for get_proposal_votes", proposal_id=proposal_id, limit=limit)
+            except Exception as e:
+                logfire.warning(f"Cache error for get_proposal_votes: {e}")
+        
+        query = self._build_proposal_votes_query()
+        variables = self._build_proposal_votes_variables(proposal_id, limit)
+        
+        try:
+            result = await self._make_request(query, variables)
+            voters = self._process_proposal_votes_response(result)
+            
+            # Cache the result with dynamic TTL based on proposal state
+            if self.cache_service and self.cache_service.is_available and voters is not None:
+                try:
+                    proposal_state = await self._get_proposal_state(proposal_id)
+                    ttl = self._get_proposal_votes_cache_ttl(proposal_state)
+                    serialized_result = serialize_for_cache(voters)
+                    await self.cache_service.set(cache_key, serialized_result, expire_seconds=ttl)
+                    logfire.info("Cached get_proposal_votes result", proposal_id=proposal_id, limit=limit, ttl=ttl)
+                except Exception as e:
+                    logfire.warning(f"Failed to cache get_proposal_votes result: {e}")
+            
+            return voters
+        except Exception as e:
+            logfire.error(
+                "Failed to fetch proposal votes", 
+                proposal_id=proposal_id, 
+                limit=limit,
+                error=str(e)
+            )
+            # Return empty list on failure as per requirement
+            return []
+
+    def _build_proposal_votes_query(self) -> str:
+        """Build GraphQL query for fetching proposal votes."""
+        assert hasattr(self, 'base_url'), "TallyService must be properly initialized"
+        assert self.base_url, "Base URL must be configured"
+        
+        return """
+        query GetProposalVotes($input: VotesInput!) {
+            votes(input: $input) {
+                nodes {
+                    amount
+                    type
+                    voter {
+                        address
+                    }
+                }
+            }
+        }
+        """
+
+    def _build_proposal_votes_variables(self, proposal_id: str, limit: int) -> Dict:
+        """Build variables for proposal votes query."""
+        assert proposal_id, "Proposal ID is required"
+        assert limit > 0, "Limit must be positive"
+        
+        return {
+            "input": {
+                "proposalId": proposal_id,
+                "limit": limit
+            }
+        }
+
+    def _process_proposal_votes_response(self, result: Dict) -> List[ProposalVoter]:
+        """Process proposal votes API response into ProposalVoter objects."""
+        assert result, "API result cannot be empty"
+        assert "data" in result, "API result must contain data"
+        
+        votes_data = result.get("data", {}).get("votes", {})
+        vote_nodes = votes_data.get("nodes", [])
+        
+        voters = []
+        for vote in vote_nodes:
+            if not vote:
+                continue
+                
+            voter_info = vote.get("voter", {})
+            address = voter_info.get("address", "")
+            amount = vote.get("amount", "0")
+            vote_type_str = vote.get("type", "").upper()
+            
+            # Convert string to VoteType enum
+            try:
+                vote_type = VoteType(vote_type_str)
+            except ValueError:
+                # Skip invalid vote types
+                continue
+                
+            voters.append(ProposalVoter(
+                address=address,
+                amount=amount,
+                vote_type=vote_type
+            ))
+        
+        logfire.info("Processed proposal votes", count=len(voters))
+        return voters
+
+    async def _get_proposal_state(self, proposal_id: str) -> ProposalState:
+        """Get the current state of a proposal."""
+        assert proposal_id, "Proposal ID is required"
+        assert isinstance(proposal_id, str), "Proposal ID must be a string"
+        
+        try:
+            proposal = await self.get_proposal_by_id(proposal_id)
+            if proposal:
+                assert isinstance(proposal.state, ProposalState), "Proposal state must be ProposalState enum"
+                return proposal.state
+            # Default to ACTIVE if proposal not found
+            return ProposalState.ACTIVE
+        except Exception as e:
+            logfire.warning(f"Failed to get proposal state for {proposal_id}: {e}")
+            # Default to ACTIVE for safety (shorter cache TTL)
+            return ProposalState.ACTIVE
+
+    def _get_proposal_votes_cache_ttl(self, state: ProposalState) -> int:
+        """Get cache TTL for proposal votes based on proposal state."""
+        assert state, "Proposal state is required"
+        assert isinstance(state, ProposalState), "State must be ProposalState enum instance"
+        
+        # Active proposals: configurable TTL (default 15 minutes)
+        if state == ProposalState.ACTIVE:
+            ttl = settings.cache_ttl_proposal_votes_active
+        # Completed proposals: configurable TTL
+        elif state in COMPLETED_PROPOSAL_STATES:
+            ttl = settings.cache_ttl_proposal_votes_completed
+        # Failed/expired proposals: configurable TTL
+        elif state in FAILED_PROPOSAL_STATES:
+            ttl = settings.cache_ttl_proposal_votes_failed
+        # Default to completed proposal TTL for other states
+        else:
+            ttl = settings.cache_ttl_proposal_votes_completed
+            
+        assert ttl > 0, "Cache TTL must be positive"
+        return ttl
+
+    def _reconstruct_cached_voters(self, cached_data: Any) -> List[ProposalVoter]:
+        """Reconstruct ProposalVoter objects from cached data.
+        
+        Args:
+            cached_data: Data retrieved from cache
+            
+        Returns:
+            List of ProposalVoter objects
+        """
+        if not isinstance(cached_data, list):
+            return cached_data
+            
+        reconstructed_voters = []
+        for cached_item in cached_data:
+            if isinstance(cached_item, dict):
+                voter = ProposalVoter(**cached_item)
+            else:
+                voter = cached_item
+            reconstructed_voters.append(voter)
+        return reconstructed_voters
+
+    async def invalidate_proposal_votes_cache(self, proposal_id: str) -> int:
+        """Invalidate all cache entries related to proposal votes for a specific proposal.
+        
+        Args:
+            proposal_id: The proposal ID to invalidate votes cache for
+            
+        Returns:
+            Number of cache entries deleted
+        """
+        assert proposal_id, "Proposal ID cannot be empty"
+        assert isinstance(proposal_id, str), "Proposal ID must be a string"
+        
+        if not self.cache_service or not self.cache_service.is_available:
+            return 0
+            
+        try:
+            # Find all keys related to this proposal's votes
+            pattern = PROPOSAL_VOTES_CACHE_PATTERN.format(proposal_id=proposal_id)
+            keys = await self.cache_service.keys(pattern)
+            
+            if keys:
+                deleted_count = await self.cache_service.delete(*keys)
+                assert deleted_count >= 0, "Deleted count must be non-negative"
+                logfire.info(f"Invalidated {deleted_count} proposal votes cache keys for proposal: {proposal_id}")
+                return deleted_count
+            
+            return 0
+            
+        except Exception as e:
+            logfire.warning(f"Failed to invalidate proposal votes cache: {e}")
+            return 0

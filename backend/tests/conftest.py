@@ -316,3 +316,31 @@ def mock_organization_overview_response() -> dict:
             }
         }
     }
+
+
+@pytest.fixture
+def mock_proposal_votes_response() -> dict:
+    """Mock response data for proposal votes API call."""
+    return {
+        "data": {
+            "votes": {
+                "nodes": [
+                    {
+                        "amount": "1000000",
+                        "type": "FOR",
+                        "voter": {"address": "0x123...abc"}
+                    },
+                    {
+                        "amount": "750000",
+                        "type": "FOR", 
+                        "voter": {"address": "0x456...def"}
+                    },
+                    {
+                        "amount": "500000",
+                        "type": "AGAINST",
+                        "voter": {"address": "0x789...ghi"}
+                    }
+                ]
+            }
+        }
+    }

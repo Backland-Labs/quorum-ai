@@ -4,11 +4,10 @@ import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 import time
 import asyncio
-from datetime import datetime
 
 from services.ai_service import AIService
 from services.cache_service import CacheService
-from models import Proposal, ProposalState, ProposalSummary
+from models import Proposal, ProposalSummary
 
 
 class TestAIPerformance:
@@ -86,7 +85,7 @@ class TestAIPerformance:
                 # Assert - Performance improvement
                 performance_improvement = (first_call_time - second_call_time) / first_call_time * 100
                 
-                print(f"\\nPerformance Test Results:")
+                print("\\nPerformance Test Results:")
                 print(f"First call (cache miss): {first_call_time:.3f}s")
                 print(f"Second call (cache hit): {second_call_time:.3f}s")
                 print(f"Performance improvement: {performance_improvement:.1f}%")
@@ -161,7 +160,7 @@ class TestAIPerformance:
                 # (not 3x the processing time due to locking efficiency)
                 assert total_time < 0.2, f"Concurrent requests took too long: {total_time:.3f}s"
                 
-                print(f"\\nConcurrent Performance Test:")
+                print("\\nConcurrent Performance Test:")
                 print(f"3 concurrent requests completed in: {total_time:.3f}s")
                 print(f"Lock attempts: {len(lock_attempts)}")
 
@@ -230,9 +229,9 @@ class TestAIPerformance:
                 # Cache hits should be very fast (< 10ms)
                 assert cache_hit_time < 0.01, f"Cache hit took too long: {cache_hit_time:.3f}s"
                 
-                print(f"\\nCache Warming Test:")
+                print("\\nCache Warming Test:")
                 print(f"Pre-warmed cache response time: {cache_hit_time:.3f}s")
-                print(f"AI processing avoided: 100%")
+                print("AI processing avoided: 100%")
 
     @pytest.mark.asyncio
     async def test_memory_efficiency_with_caching(
@@ -290,7 +289,7 @@ class TestAIPerformance:
                 assert mock_summarize.call_count == 0  # No AI calls
                 assert avg_time_per_call < 0.001, f"Average cache hit time too slow: {avg_time_per_call:.4f}s"
                 
-                print(f"\\nMemory Efficiency Test:")
+                print("\\nMemory Efficiency Test:")
                 print(f"{num_calls} cache hits in: {total_time:.3f}s")
                 print(f"Average time per cache hit: {avg_time_per_call:.4f}s")
                 print("Memory efficiency: No AI processing overhead")
