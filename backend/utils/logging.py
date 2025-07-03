@@ -69,36 +69,49 @@ def log_function_call(
 
     def decorator(func: Callable) -> Callable:
         function_name = f"{func.__module__}.{func.__qualname__}"
-
-        @functools.wraps(func)
-        async def async_wrapper(*args, **kwargs):
-            start_time = time.time()
-            _log_function_start(function_name, args, kwargs, log_args, log_level)
-
-            try:
-                result = await func(*args, **kwargs)
-                _log_function_success(function_name, result, start_time, log_result, log_timing, log_level)
-                return result
-            except Exception as e:
-                _log_function_error(function_name, e, start_time)
-                raise
-
-        @functools.wraps(func)
-        def sync_wrapper(*args, **kwargs):
-            start_time = time.time()
-            _log_function_start(function_name, args, kwargs, log_args, log_level)
-
-            try:
-                result = func(*args, **kwargs)
-                _log_function_success(function_name, result, start_time, log_result, log_timing, log_level)
-                return result
-            except Exception as e:
-                _log_function_error(function_name, e, start_time)
-                raise
-
-        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+        
+        if asyncio.iscoroutinefunction(func):
+            return _create_async_wrapper(func, function_name, log_args, log_result, log_timing, log_level)
+        else:
+            return _create_sync_wrapper(func, function_name, log_args, log_result, log_timing, log_level)
 
     return decorator
+
+
+def _create_async_wrapper(func: Callable, function_name: str, log_args: bool, log_result: bool, log_timing: bool, log_level: str):
+    """Create async wrapper for function logging."""
+    @functools.wraps(func)
+    async def async_wrapper(*args, **kwargs):
+        start_time = time.time()
+        _log_function_start(function_name, args, kwargs, log_args, log_level)
+
+        try:
+            result = await func(*args, **kwargs)
+            _log_function_success(function_name, result, start_time, log_result, log_timing, log_level)
+            return result
+        except Exception as e:
+            _log_function_error(function_name, e, start_time)
+            raise
+
+    return async_wrapper
+
+
+def _create_sync_wrapper(func: Callable, function_name: str, log_args: bool, log_result: bool, log_timing: bool, log_level: str):
+    """Create sync wrapper for function logging."""
+    @functools.wraps(func)
+    def sync_wrapper(*args, **kwargs):
+        start_time = time.time()
+        _log_function_start(function_name, args, kwargs, log_args, log_level)
+
+        try:
+            result = func(*args, **kwargs)
+            _log_function_success(function_name, result, start_time, log_result, log_timing, log_level)
+            return result
+        except Exception as e:
+            _log_function_error(function_name, e, start_time)
+            raise
+
+    return sync_wrapper
 
 
 def _log_function_start(function_name: str, args: tuple, kwargs: dict, log_args: bool, log_level: str):
