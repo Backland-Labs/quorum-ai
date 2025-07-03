@@ -570,6 +570,46 @@ export interface components {
             confidence_score: number;
         };
         /**
+         * ProposalTopVoters
+         * @description Collection of top voters for a proposal.
+         *
+         *     Contains a list of the most influential voters for a specific proposal,
+         *     useful for displaying voting participation and influence distribution.
+         */
+        ProposalTopVoters: {
+            /**
+             * Proposal Id
+             * @description Unique proposal identifier
+             */
+            proposal_id: string;
+            /**
+             * Voters
+             * @description List of top voters by voting power
+             */
+            voters: components["schemas"]["ProposalVoter"][];
+        };
+        /**
+         * ProposalVoter
+         * @description Individual voter information for a proposal.
+         *
+         *     Represents a single voter's participation in a proposal vote,
+         *     including their address, voting power, and vote choice.
+         */
+        ProposalVoter: {
+            /**
+             * Address
+             * @description Voter's blockchain address
+             */
+            address: string;
+            /**
+             * Amount
+             * @description Voting power as string to handle large numbers
+             */
+            amount: string;
+            /** @description Vote choice */
+            vote_type: components["schemas"]["VoteType"];
+        };
+        /**
          * SortCriteria
          * @description Criteria for sorting proposals.
          * @enum {string}
@@ -650,6 +690,12 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /**
+         * VoteType
+         * @description Vote type enumeration.
+         * @enum {string}
+         */
+        VoteType: "FOR" | "AGAINST" | "ABSTAIN";
     };
     responses: never;
     parameters: never;
@@ -983,7 +1029,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ProposalTopVoters"];
                 };
             };
             /** @description Validation Error */

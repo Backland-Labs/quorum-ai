@@ -411,7 +411,7 @@ async def summarize_proposals(request: SummarizeRequest):
         )
 
 
-@app.get("/proposals/{proposal_id}/top-voters")
+@app.get("/proposals/{proposal_id}/top-voters", response_model=ProposalTopVoters)
 async def get_proposal_top_voters(
     proposal_id: str,
     limit: int = Query(
