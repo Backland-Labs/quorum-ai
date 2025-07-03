@@ -1,7 +1,9 @@
 """Configuration management following 12-factor app principles."""
 
-from typing import List, Optional
+import os
+from typing import Dict, List, Optional
 
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -13,8 +15,6 @@ class Settings(BaseSettings):
     # Application settings
     app_name: str = "Quorum AI"
     debug: bool = False
-    host: str = "0.0.0.0"
-    port: int = 8000
 
     # External API settings
     tally_api_base_url: str = "https://api.tally.xyz/query"
@@ -30,17 +30,7 @@ class Settings(BaseSettings):
     logfire_ignore_no_config: bool = False
 
     # Performance settings
-    max_proposals_per_request: int = 50
     request_timeout: int = 30
-
-    # Redis settings
-    redis_url: str = "redis://localhost:6379/0"
-    redis_password: Optional[str] = None
-    redis_max_connections: int = 50
-    redis_decode_responses: bool = True
-    redis_socket_connect_timeout: int = 10
-    redis_socket_keepalive: bool = True
-    redis_health_check_interval: int = 30
 
     # OpenRouter configuration
     openrouter_api_key: Optional[str] = None
@@ -48,17 +38,41 @@ class Settings(BaseSettings):
     # Top organizations configuration
     top_organizations_env: str = "compound,nounsdao,arbitrum"
 
-    # Cache TTL settings (in seconds)
-    cache_ttl_proposal_votes_active: int = 900  # 15 minutes for active proposals
-    cache_ttl_proposal_votes_completed: int = 21600  # 6 hours for completed proposals
-    cache_ttl_proposal_votes_failed: int = (
-        86400  # 24 hours for failed/expired proposals
-    )
-
     # Top voters endpoint settings
     default_top_voters_limit: int = 10
     max_top_voters_limit: int = 50
     min_top_voters_limit: int = 1
+
+    # Chain configuration
+    chain_name: str = "celo"
+    celo_rpc: str = Field(default="", alias="CELO_LEDGER_RPC", description="Set from CELO_LEDGER_RPC env var")
+
+    # Safe wallet configuration
+    safe_addresses: Dict[str, str] = Field(default_factory=dict, description="Parsed from SAFE_CONTRACT_ADDRESSES")
+    agent_address: Optional[str] = Field(default=None, description="The agent's EOA address")
+
+    @model_validator(mode="after")
+    def parse_env_settings(self):
+        """Parse environment-specific settings after model initialization."""
+        # Parse safe addresses from environment variable
+        safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
+        if safe_addresses_env:
+            addresses = {}
+            for pair in safe_addresses_env.split(","):
+                if ":" in pair:
+                    dao, address = pair.split(":", 1)
+                    dao = dao.strip()
+                    address = address.strip()
+                    if dao and address:
+                        addresses[dao] = address
+            self.safe_addresses = addresses
+        
+        # Parse agent address from environment variable
+        agent_address_env = os.getenv("AGENT_ADDRESS")
+        if agent_address_env:
+            self.agent_address = agent_address_env
+            
+        return self
 
     @property
     def top_organizations(self) -> List[str]:
@@ -66,30 +80,6 @@ class Settings(BaseSettings):
         return [
             org.strip() for org in self.top_organizations_env.split(",") if org.strip()
         ]
-
-    @property
-    def redis_connection_url(self) -> str:
-        """Build Redis connection URL with password if provided."""
-        if self.redis_password:
-            # Parse the URL and insert password
-            from urllib.parse import urlparse, urlunparse
-
-            parsed = urlparse(self.redis_url)
-            # Create new netloc with password
-            netloc = f":{self.redis_password}@{parsed.hostname}"
-            if parsed.port:
-                netloc += f":{parsed.port}"
-            return urlunparse(
-                (
-                    parsed.scheme,
-                    netloc,
-                    parsed.path,
-                    parsed.params,
-                    parsed.query,
-                    parsed.fragment,
-                )
-            )
-        return self.redis_url
 
 
 # Global settings instance
