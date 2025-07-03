@@ -86,8 +86,8 @@
     error = null;
 
     try {
-      // Use mock API for testing until backend has real data
-      const response = await fetch(`/api/mock-voters?proposalId=${proposalId}&limit=${limit}`);
+      // Use real backend API endpoint
+      const response = await fetch(`http://localhost:8000/proposals/${proposalId}/top-voters?limit=${limit}`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch top voters: ${response.status}`);
