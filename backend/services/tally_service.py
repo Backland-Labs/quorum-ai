@@ -347,12 +347,12 @@ class TallyService:
             "input": {"page": page_input, "sort": sort_input, "filters": filter_input}
         }
 
-    def _build_page_input(self, filters: ProposalFilters) -> Dict:
+    def _build_page_input(self, filters: ProposalFilters) -> Dict[str, Any]:
         """Build pagination input for proposals query."""
         assert filters, "Filters are required"
         assert filters.limit > 0, "Limit must be positive"
 
-        page_input = {"limit": filters.limit}
+        page_input: Dict[str, Any] = {"limit": filters.limit}
         if filters.after_cursor:
             page_input["afterCursor"] = filters.after_cursor
 
