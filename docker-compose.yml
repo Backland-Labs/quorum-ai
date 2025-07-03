@@ -52,7 +52,8 @@ services:
       dockerfile: Dockerfile
     container_name: quorum_frontend
     environment:
-      - PUBLIC_API_BASE_URL=http://backend:8000
+      - PUBLIC_API_BASE_URL=http://localhost:8000
+      - TOP_ORGANIZATIONS=compound,nounsdao,arbitrum
     ports:
       - "3000:3000"
     depends_on:
