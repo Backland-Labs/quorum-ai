@@ -79,4 +79,3 @@ dev = [
     "pytest-httpx>=0.35.0",
     "pytest-mock>=3.14.1",
 ]
-

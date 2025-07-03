@@ -1,5 +1,6 @@
 """Main FastAPI application for Quorum AI backend."""
 
+import hashlib
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -27,6 +28,7 @@ from models import (
     TopOrganizationsResponse,
     OrganizationListResponse,
     DAOListResponse,
+    ProposalTopVoters,
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
@@ -43,10 +45,10 @@ async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
     global tally_service, ai_service
-    
+
     # Initialize cache service first
     await cache_service.initialize()
-    
+
     # Initialize services with cache dependency
     tally_service = TallyService(cache_service=cache_service)
     ai_service = AIService()
@@ -106,9 +108,9 @@ async def health_check():
         "services": {
             "redis": {
                 "status": "healthy" if redis_healthy else "unhealthy",
-                "available": cache_service.is_available
+                "available": cache_service.is_available,
             }
-        }
+        },
     }
 
 
@@ -407,6 +409,84 @@ async def summarize_proposals(request: SummarizeRequest):
         raise HTTPException(
             status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
         )
+
+
+@app.get("/proposals/{proposal_id}/top-voters")
+async def get_proposal_top_voters(
+    proposal_id: str,
+    limit: int = Query(
+        default=settings.default_top_voters_limit,
+        ge=settings.min_top_voters_limit,
+        le=settings.max_top_voters_limit,
+    ),
+):
+    """Get top voters for a specific proposal by voting power."""
+    _validate_proposal_id(proposal_id)
+
+    try:
+        with logfire.span(
+            "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
+        ):
+            # Fetch data
+            voters = await tally_service.get_proposal_votes(proposal_id, limit)
+            proposal = await _validate_proposal_exists(proposal_id)
+
+            # Build response
+            response_data = ProposalTopVoters(proposal_id=proposal_id, voters=voters)
+            headers = _build_cache_headers(proposal, response_data)
+
+            # Log if no voters found
+            if not voters:
+                logfire.info("No voters found for proposal", proposal_id=proposal_id)
+
+            return JSONResponse(content=response_data.model_dump(), headers=headers)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logfire.error(
+            "Failed to fetch proposal top voters", proposal_id=proposal_id, error=str(e)
+        )
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"
+        )
+
+
+# Private helper functions for top voters endpoint
+def _validate_proposal_id(proposal_id: str) -> None:
+    """Validate proposal ID parameter."""
+    assert proposal_id, "Proposal ID cannot be empty"
+    assert isinstance(proposal_id, str), "Proposal ID must be a string"
+    assert proposal_id.strip(), "Proposal ID cannot be whitespace only"
+
+
+async def _validate_proposal_exists(proposal_id: str) -> Proposal:
+    """Validate that proposal exists and return it."""
+    proposal = await tally_service.get_proposal_by_id(proposal_id)
+    if not proposal:
+        raise HTTPException(
+            status_code=404, detail=f"Proposal with ID {proposal_id} not found"
+        )
+    return proposal
+
+
+def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -> dict:
+    """Build HTTP cache headers based on proposal state."""
+    headers = {}
+
+    if proposal.state == ProposalState.ACTIVE:
+        max_age = settings.cache_ttl_proposal_votes_active
+    else:
+        max_age = settings.cache_ttl_proposal_votes_completed
+
+    headers["Cache-Control"] = f"public, max-age={max_age}"
+
+    # Generate ETag based on response content
+    response_json = response_data.model_dump_json()
+    etag = hashlib.md5(response_json.encode()).hexdigest()
+    headers["ETag"] = f'"{etag}"'
+
+    return headers
 
 
 # Private helper functions

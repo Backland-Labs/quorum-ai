@@ -2,9 +2,9 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Literal
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class Organization(BaseModel):
@@ -85,14 +85,6 @@ class Proposal(BaseModel):
     dao_id: str = Field(..., description="DAO this proposal belongs to")
     dao_name: str = Field(..., description="Name of the DAO")
     url: Optional[str] = Field(None, description="URL to view proposal")
-
-
-class ProposalVoter(BaseModel):
-    """Individual voter information for a proposal."""
-
-    address: str = Field(..., description="Voter wallet address")
-    amount: str = Field(..., description="Amount of voting power used")
-    vote_type: VoteType = Field(..., description="Type of vote (FOR/AGAINST/ABSTAIN)")
 
 
 class ProposalSummary(BaseModel):
@@ -224,22 +216,56 @@ class OrganizationOverviewResponse(BaseModel):
 
 class ProposalVoter(BaseModel):
     """Individual voter information for a proposal.
-    
+
     Represents a single voter's participation in a proposal vote,
     including their address, voting power, and vote choice.
     """
 
     address: str = Field(..., min_length=1, description="Voter's blockchain address")
-    amount: str = Field(..., description="Voting power as string to handle large numbers")
+    amount: str = Field(
+        ..., description="Voting power as string to handle large numbers"
+    )
     vote_type: VoteType = Field(..., description="Vote choice")
+
+    @field_validator("address")
+    @classmethod
+    def validate_address(cls, v: str) -> str:
+        """Validate blockchain address format."""
+        if not v or not v.strip():
+            raise ValueError("Address cannot be empty")
+        return v.strip()
+
+    @field_validator("amount")
+    @classmethod
+    def validate_amount(cls, v: str) -> str:
+        """Validate voting amount is numeric and non-negative."""
+        try:
+            amount = float(v)
+            if amount < 0:
+                raise ValueError("Voting amount cannot be negative")
+        except ValueError as e:
+            raise ValueError(f"Amount must be a valid number: {e}")
+        return v
 
 
 class ProposalTopVoters(BaseModel):
     """Collection of top voters for a proposal.
-    
+
     Contains a list of the most influential voters for a specific proposal,
     useful for displaying voting participation and influence distribution.
     """
 
     proposal_id: str = Field(..., description="Unique proposal identifier")
-    voters: List[ProposalVoter] = Field(..., description="List of top voters by voting power")
+    voters: List[ProposalVoter] = Field(
+        ..., description="List of top voters by voting power"
+    )
+
+    @field_validator("voters")
+    @classmethod
+    def validate_voters_list(cls, v: List[ProposalVoter]) -> List[ProposalVoter]:
+        """Validate voters list constraints."""
+        if not isinstance(v, list):
+            raise ValueError("Voters must be a list")
+        if len(v) > 100:
+            raise ValueError("Voters list cannot exceed 100 entries")
+        return v

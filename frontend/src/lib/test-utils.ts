@@ -43,7 +43,7 @@ export const mockOrganizationsResponse = {
     },
     {
       organization: {
-        id: "2", 
+        id: "2",
         name: "Nouns DAO",
         slug: "nounsdao",
         chain_ids: ["eip155:1"],

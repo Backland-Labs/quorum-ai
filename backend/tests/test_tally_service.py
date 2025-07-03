@@ -7,7 +7,14 @@ import httpx
 from pytest_httpx import HTTPXMock
 
 from services.tally_service import TallyService
-from models import ProposalFilters, ProposalState, ProposalVoter, SortCriteria, SortOrder, VoteType
+from models import (
+    ProposalFilters,
+    ProposalState,
+    ProposalVoter,
+    SortCriteria,
+    SortOrder,
+    VoteType,
+)
 from config import settings
 
 
@@ -41,7 +48,9 @@ class TestTallyServiceGetDAOs:
             method="POST", url=settings.tally_api_base_url, json=mock_dao_response
         )
 
-        daos, next_cursor = await tally_service.get_daos(organization_id="org-1", limit=10)
+        daos, next_cursor = await tally_service.get_daos(
+            organization_id="org-1", limit=10
+        )
 
         assert len(daos) == 2
         assert next_cursor is None  # No cursor in mock response
@@ -192,18 +201,18 @@ class TestTallyServiceGetProposals:
     ) -> None:
         """Test proposals fetching with vote count sorting."""
         httpx_mock.add_response(
-            method="POST", 
-            url=settings.tally_api_base_url, 
-            json=mock_proposals_with_vote_counts_response
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=mock_proposals_with_vote_counts_response,
         )
 
         filters = ProposalFilters(
             organization_id="org-1",
             sort_by=SortCriteria.VOTE_COUNT,
             sort_order=SortOrder.DESC,
-            limit=3
+            limit=3,
         )
-        
+
         proposals, next_cursor = await tally_service.get_proposals(filters)
 
         assert len(proposals) == 3
@@ -276,7 +285,7 @@ class TestTallyServiceGetProposals:
                 }
             }
         }
-        
+
         httpx_mock.add_response(
             method="POST", url=settings.tally_api_base_url, json=response_without_votes
         )
@@ -307,8 +316,12 @@ class TestTallyServiceGetProposals:
         proposals, _ = await tally_service.get_proposals(filters)
 
         # Compare just the date/time parts (ignoring timezone)
-        assert proposals[0].created_at.replace(tzinfo=None) == datetime(2024, 1, 1, 0, 0, 0)
-        assert proposals[1].created_at.replace(tzinfo=None) == datetime(2024, 1, 2, 0, 0, 0)
+        assert proposals[0].created_at.replace(tzinfo=None) == datetime(
+            2024, 1, 1, 0, 0, 0
+        )
+        assert proposals[1].created_at.replace(tzinfo=None) == datetime(
+            2024, 1, 2, 0, 0, 0
+        )
 
 
 class TestTallyServiceGetProposalById:
@@ -493,15 +506,9 @@ class TestTallyServiceGetProposalVotes:
         httpx_mock.add_response(
             method="POST",
             url=settings.tally_api_base_url,
-            json={
-                "data": {
-                    "votes": {
-                        "nodes": []
-                    }
-                }
-            }
+            json={"data": {"votes": {"nodes": []}}},
         )
-        
+
         # Mock proposal lookup for caching
         httpx_mock.add_response(
             method="POST",
@@ -514,25 +521,25 @@ class TestTallyServiceGetProposalVotes:
                         "createdAt": "2024-01-01T00:00:00Z",
                         "metadata": {"title": "Test", "description": "Test"},
                         "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": []
+                        "voteStats": [],
                     }
                 }
-            }
+            },
         )
-        
+
         proposal_id = "prop-123"
         limit = 5
-        
+
         voters = await tally_service.get_proposal_votes(proposal_id, limit)
-        
+
         assert isinstance(voters, list)
         assert len(voters) <= limit
 
     async def test_get_proposal_votes_graphql_query_structure(
-        self, 
-        tally_service: TallyService, 
+        self,
+        tally_service: TallyService,
         mock_proposal_votes_response: dict,
-        httpx_mock: HTTPXMock
+        httpx_mock: HTTPXMock,
     ) -> None:
         """Test that get_proposal_votes uses correct GraphQL query structure."""
         proposal_id = "prop-123"
@@ -541,56 +548,59 @@ class TestTallyServiceGetProposalVotes:
         def check_graphql_query(request):
             """Verify the GraphQL query structure matches specification."""
             body = request.content.decode()
-            
+
             # Should contain the GetProposalVotes query
             assert "GetProposalVotes" in body
             assert "votes(input: $input)" in body
-            assert '"amount"' in body or 'amount' in body
-            assert '"type"' in body or 'type' in body  
-            assert '"voter"' in body or 'voter' in body
-            assert '"address"' in body or 'address' in body
-            
+            assert '"amount"' in body or "amount" in body
+            assert '"type"' in body or "type" in body
+            assert '"voter"' in body or "voter" in body
+            assert '"address"' in body or "address" in body
+
             # Should contain variables with proposal ID and limit
-            assert f'"proposalId":"{proposal_id}"' in body or f'"proposalId": "{proposal_id}"' in body
+            assert (
+                f'"proposalId":"{proposal_id}"' in body
+                or f'"proposalId": "{proposal_id}"' in body
+            )
             assert f'"limit":{limit}' in body or f'"limit": {limit}' in body
-            
+
             return httpx.Response(200, json=mock_proposal_votes_response)
 
         httpx_mock.add_callback(check_graphql_query)
-        
+
         await tally_service.get_proposal_votes(proposal_id, limit)
 
     async def test_get_proposal_votes_data_transformation(
         self,
         tally_service: TallyService,
         mock_proposal_votes_response: dict,
-        httpx_mock: HTTPXMock
+        httpx_mock: HTTPXMock,
     ) -> None:
         """Test that API response is correctly transformed to ProposalVoter objects."""
         httpx_mock.add_response(
             method="POST",
             url=settings.tally_api_base_url,
-            json=mock_proposal_votes_response
+            json=mock_proposal_votes_response,
         )
-        
+
         proposal_id = "prop-123"
         voters = await tally_service.get_proposal_votes(proposal_id, 10)
-        
+
         assert len(voters) == 3
-        
+
         # Check first voter (highest amount)
         voter1 = voters[0]
         assert isinstance(voter1, ProposalVoter)
         assert voter1.address == "0x123...abc"
         assert voter1.amount == "1000000"
         assert voter1.vote_type == VoteType.FOR
-        
+
         # Check second voter
         voter2 = voters[1]
         assert voter2.address == "0x456...def"
         assert voter2.amount == "750000"
         assert voter2.vote_type == VoteType.FOR
-        
+
         # Check third voter (different vote type)
         voter3 = voters[2]
         assert voter3.address == "0x789...ghi"
@@ -602,39 +612,35 @@ class TestTallyServiceGetProposalVotes:
     ) -> None:
         """Test caching for active proposals with 15-minute TTL."""
         from unittest.mock import AsyncMock
-        
+
         # Create a mock cache service
         mock_cache_service = AsyncMock()
         mock_cache_service.is_available = True
         mock_cache_service.get.return_value = None  # Cache miss
-        
+
         # Create service with cache
         tally_service = TallyService(cache_service=mock_cache_service)
-        
+
         # Mock the _get_proposal_state method to return ACTIVE
-        with patch.object(tally_service, '_get_proposal_state', return_value=ProposalState.ACTIVE):
+        with patch.object(
+            tally_service, "_get_proposal_state", return_value=ProposalState.ACTIVE
+        ):
             httpx_mock.add_response(
                 method="POST",
                 url=settings.tally_api_base_url,
-                json={
-                    "data": {
-                        "votes": {
-                            "nodes": []
-                        }
-                    }
-                }
+                json={"data": {"votes": {"nodes": []}}},
             )
-            
+
             proposal_id = "prop-123"
             limit = 10
             await tally_service.get_proposal_votes(proposal_id, limit)
-            
+
             # Verify cache was checked (cache key includes prefix and hash)
             mock_cache_service.get.assert_called_once()
             cache_key_call = mock_cache_service.get.call_args[0][0]
             assert cache_key_call.startswith("cache:proposal_votes:")
             assert f"{proposal_id}:{limit}" in cache_key_call
-            
+
             # Verify cache was set with 15-minute TTL (900 seconds) for active proposal
             mock_cache_service.set.assert_called_once()
             call_args = mock_cache_service.set.call_args
@@ -646,31 +652,27 @@ class TestTallyServiceGetProposalVotes:
     ) -> None:
         """Test caching for completed proposals with 6-hour TTL."""
         from unittest.mock import AsyncMock
-        
+
         mock_cache_service = AsyncMock()
         mock_cache_service.is_available = True
         mock_cache_service.get.return_value = None  # Cache miss
-        
+
         tally_service = TallyService(cache_service=mock_cache_service)
-        
+
         # Mock the _get_proposal_state method to return SUCCEEDED
-        with patch.object(tally_service, '_get_proposal_state', return_value=ProposalState.SUCCEEDED):
+        with patch.object(
+            tally_service, "_get_proposal_state", return_value=ProposalState.SUCCEEDED
+        ):
             httpx_mock.add_response(
                 method="POST",
                 url=settings.tally_api_base_url,
-                json={
-                    "data": {
-                        "votes": {
-                            "nodes": []
-                        }
-                    }
-                }
+                json={"data": {"votes": {"nodes": []}}},
             )
-            
+
             proposal_id = "prop-456"
             limit = 5
             await tally_service.get_proposal_votes(proposal_id, limit)
-            
+
             # Verify cache was set with 6-hour TTL (21600 seconds) for completed proposal
             mock_cache_service.set.assert_called_once()
             call_args = mock_cache_service.set.call_args
@@ -681,31 +683,27 @@ class TestTallyServiceGetProposalVotes:
     ) -> None:
         """Test caching for failed/expired proposals with 24-hour TTL."""
         from unittest.mock import AsyncMock
-        
+
         mock_cache_service = AsyncMock()
         mock_cache_service.is_available = True
         mock_cache_service.get.return_value = None  # Cache miss
-        
+
         tally_service = TallyService(cache_service=mock_cache_service)
-        
+
         # Mock the _get_proposal_state method to return DEFEATED
-        with patch.object(tally_service, '_get_proposal_state', return_value=ProposalState.DEFEATED):
+        with patch.object(
+            tally_service, "_get_proposal_state", return_value=ProposalState.DEFEATED
+        ):
             httpx_mock.add_response(
                 method="POST",
                 url=settings.tally_api_base_url,
-                json={
-                    "data": {
-                        "votes": {
-                            "nodes": []
-                        }
-                    }
-                }
+                json={"data": {"votes": {"nodes": []}}},
             )
-            
+
             proposal_id = "prop-789"
             limit = 20
             await tally_service.get_proposal_votes(proposal_id, limit)
-            
+
             # Verify cache was set with 24-hour TTL (86400 seconds) for failed proposal
             mock_cache_service.set.assert_called_once()
             call_args = mock_cache_service.set.call_args
@@ -716,10 +714,10 @@ class TestTallyServiceGetProposalVotes:
     ) -> None:
         """Test that network errors return empty list gracefully."""
         httpx_mock.add_exception(httpx.RequestError("Network error"))
-        
+
         proposal_id = "prop-123"
         voters = await tally_service.get_proposal_votes(proposal_id, 10)
-        
+
         # Should return empty list on network error as per requirement
         assert voters == []
 
@@ -728,10 +726,10 @@ class TestTallyServiceGetProposalVotes:
     ) -> None:
         """Test that HTTP errors return empty list gracefully."""
         httpx_mock.add_response(status_code=500)
-        
+
         proposal_id = "prop-123"
         voters = await tally_service.get_proposal_votes(proposal_id, 10)
-        
+
         # Should return empty list on HTTP error as per requirement
         assert voters == []
 
@@ -741,16 +739,14 @@ class TestTallyServiceGetProposalVotes:
         """Test handling of invalid API response format."""
         # Response missing required fields
         invalid_response = {"data": {"votes": {"invalid": "structure"}}}
-        
+
         httpx_mock.add_response(
-            method="POST",
-            url=settings.tally_api_base_url,
-            json=invalid_response
+            method="POST", url=settings.tally_api_base_url, json=invalid_response
         )
-        
+
         proposal_id = "prop-123"
         voters = await tally_service.get_proposal_votes(proposal_id, 10)
-        
+
         # Should handle gracefully and return empty list
         assert voters == []
 
@@ -765,51 +761,49 @@ class TestTallyServiceGetProposalVotes:
                         {
                             "amount": "1000000",
                             "type": "INVALID_TYPE",  # Invalid vote type
-                            "voter": {"address": "0x123...abc"}
+                            "voter": {"address": "0x123...abc"},
                         },
                         {
                             "amount": "750000",
                             "type": "FOR",  # Valid vote type
-                            "voter": {"address": "0x456...def"}
-                        }
+                            "voter": {"address": "0x456...def"},
+                        },
                     ]
                 }
             }
         }
-        
+
         httpx_mock.add_response(
             method="POST",
             url=settings.tally_api_base_url,
-            json=response_with_invalid_types
+            json=response_with_invalid_types,
         )
-        
+
         proposal_id = "prop-123"
         voters = await tally_service.get_proposal_votes(proposal_id, 10)
-        
+
         # Should skip invalid vote type and return only valid ones
         assert len(voters) == 1
         assert voters[0].vote_type == VoteType.FOR
         assert voters[0].address == "0x456...def"
 
-    async def test_invalidate_proposal_votes_cache(
-        self, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_invalidate_proposal_votes_cache(self, httpx_mock: HTTPXMock) -> None:
         """Test cache invalidation for proposal votes."""
         from unittest.mock import AsyncMock
-        
+
         mock_cache_service = AsyncMock()
         mock_cache_service.is_available = True
         mock_cache_service.keys.return_value = [
             "cache:proposal_votes:prop-123:10:hash1",
-            "cache:proposal_votes:prop-123:5:hash2"
+            "cache:proposal_votes:prop-123:5:hash2",
         ]
         mock_cache_service.delete.return_value = 2
-        
+
         tally_service = TallyService(cache_service=mock_cache_service)
-        
+
         proposal_id = "prop-123"
         deleted_count = await tally_service.invalidate_proposal_votes_cache(proposal_id)
-        
+
         # Should find keys matching the proposal and delete them
         mock_cache_service.keys.assert_called_once_with(f"*{proposal_id}*")
         mock_cache_service.delete.assert_called_once()

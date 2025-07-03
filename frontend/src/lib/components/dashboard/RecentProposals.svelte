@@ -1,33 +1,33 @@
 <script lang="ts">
   import type { OrganizationWithProposals } from '$lib/types/dashboard.js';
   import ProposalCard from './ProposalCard.svelte';
-  
+
   interface Props {
     organizationData: OrganizationWithProposals;
     onViewAllProposals: () => void;
   }
-  
+
   let { organizationData, onViewAllProposals }: Props = $props();
-  
+
   function validateProps(): void {
     console.assert(organizationData !== null, 'Organization data should not be null');
     console.assert(typeof organizationData === 'object', 'Organization data should be an object');
   }
-  
+
   function hasProposals(): boolean {
     console.assert(organizationData !== null, 'Organization data should not be null');
     console.assert(typeof organizationData === 'object', 'Organization data should be an object');
-    
+
     return organizationData.proposals && organizationData.proposals.length > 0;
   }
-  
+
   function getDisplayProposals() {
     console.assert(hasProposals(), 'Should have proposals when calling getDisplayProposals');
     console.assert(Array.isArray(organizationData.proposals), 'Proposals should be an array');
-    
+
     return organizationData.proposals.slice(0, 3);
   }
-  
+
   validateProps();
 </script>
 
@@ -37,13 +37,13 @@
       <h4 class="text-lg font-semibold text-secondary-900">Recent Proposals</h4>
       <span class="text-sm text-secondary-500">{organizationData.proposals.length} total</span>
     </div>
-    
+
     <div class="space-y-6">
       {#each getDisplayProposals() as proposal}
         <ProposalCard {proposal} variant="detailed" />
       {/each}
     </div>
-    
+
     <!-- View All Link -->
     <div class="mt-6 text-center">
       <button

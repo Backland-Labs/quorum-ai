@@ -2,24 +2,24 @@
   import { parseProposalSummary, cleanProposalTitle, calculateConfidencePercentage } from '$lib/utils/proposals.js';
   import VotingIndicator from './VotingIndicator.svelte';
   import type { components } from '$lib/api/client';
-  
+
   interface Props {
     proposal: any;
     fullProposal?: components['schemas']['Proposal'];
     variant?: 'compact' | 'detailed';
   }
-  
+
   let { proposal, fullProposal, variant = 'compact' }: Props = $props();
-  
+
   function validateProps(): void {
     console.assert(proposal !== null, 'Proposal should not be null');
     console.assert(proposal !== undefined, 'Proposal should not be undefined');
   }
-  
+
   function getRiskLevelClasses(riskLevel: string): string {
     console.assert(typeof riskLevel === 'string', 'Risk level must be a string');
     console.assert(riskLevel.length > 0, 'Risk level should not be empty');
-    
+
     const riskClasses: Record<string, string> = {
       'LOW': 'bg-green-50 text-green-700 border-green-200',
       'MEDIUM': 'bg-yellow-50 text-yellow-700 border-yellow-200',
@@ -27,27 +27,27 @@
     };
     return riskClasses[riskLevel] || riskClasses['MEDIUM'];
   }
-  
+
   function getRecommendationClasses(recommendation: string): string {
     console.assert(typeof recommendation === 'string', 'Recommendation must be a string');
     console.assert(recommendation.length > 0, 'Recommendation should not be empty');
-    
+
     const recClasses: Record<string, string> = {
       'APPROVE': 'bg-green-100 text-green-800',
       'REJECT': 'bg-red-100 text-red-800'
     };
     return recClasses[recommendation] || 'bg-gray-100 text-gray-800';
   }
-  
+
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
     });
   }
-  
+
   const parsedProposal = parseProposalSummary(proposal);
   validateProps();
 </script>
@@ -128,9 +128,9 @@
           {calculateConfidencePercentage(parsedProposal.confidence_score)}% confidence
         </div>
         {#if fullProposal?.url}
-          <a 
-            href={fullProposal.url} 
-            target="_blank" 
+          <a
+            href={fullProposal.url}
+            target="_blank"
             rel="noopener noreferrer"
             class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
           >

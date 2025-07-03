@@ -71,12 +71,12 @@
           {/if}
         </div>
       </div>
-      
+
       <div class="mt-3 flex items-baseline">
         <p class="text-2xl font-semibold text-secondary-900" class:bg-secondary-200={loading} class:text-transparent={loading}>
           {value}
         </p>
-        
+
         {#if trend && trendValue}
           <div class="ml-2 flex items-center text-sm {getTrendColor(trend)}" data-testid="trend-indicator">
             <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

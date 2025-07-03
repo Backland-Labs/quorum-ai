@@ -31,39 +31,39 @@
   function initializeDashboard(): void {
     console.assert(typeof dashboardStore.loadOrganizations === 'function', 'Dashboard store should have loadOrganizations method');
     console.assert(!mounted, 'Dashboard should only initialize once');
-    
+
     dashboardStore.loadOrganizations();
   }
 
   function handleTabChange(tabId: TabType): void {
     console.assert(typeof tabId === 'string', 'Tab ID must be a string');
     console.assert(['overview', 'proposals', 'activity'].includes(tabId), 'Tab ID must be valid');
-    
+
     dashboardStore.changeTab(tabId);
   }
 
   function handleOrganizationChange(organization: any): void {
     console.assert(organization !== null, 'Organization should not be null');
     console.assert(typeof organization === 'object', 'Organization should be an object');
-    
+
     dashboardStore.changeOrganization(organization);
   }
 
   function handleOrganizationClick(orgId: string): void {
     console.assert(typeof orgId === 'string', 'Organization ID must be a string');
     console.assert(orgId.length > 0, 'Organization ID should not be empty');
-    
+
     goto(`/organizations/${orgId}`);
   }
 
   function handleViewAllProposals(): void {
     console.assert(typeof dashboardStore.changeTab === 'function', 'Dashboard store should have changeTab method');
-    
+
     dashboardStore.changeTab('proposals');
   }
 
   // Derived values from store
-  const currentOrgData = $derived($dashboardState.selectedOrganization 
+  const currentOrgData = $derived($dashboardState.selectedOrganization
     ? $dashboardState.organizationsWithProposals.find(org => org.organization.id === $dashboardState.selectedOrganization?.id) || null
     : null);
 
@@ -76,7 +76,7 @@
 </svelte:head>
 
 <div class="space-y-6">
-  <DashboardHeader 
+  <DashboardHeader
     {organizations}
     selectedOrganization={$dashboardState.selectedOrganization}
     loading={$dashboardState.loading}
@@ -88,7 +88,7 @@
   {:else if $dashboardState.error}
     <ErrorState error={$dashboardState.error} />
   {:else}
-    <TabNavigation 
+    <TabNavigation
       {tabs}
       activeTab={$dashboardState.activeTab}
       onTabChange={handleTabChange}
@@ -96,7 +96,7 @@
 
     <div class="mt-6">
       {#if $dashboardState.activeTab === 'overview'}
-        <OverviewTab 
+        <OverviewTab
           {currentOrgData}
           onOrganizationClick={handleOrganizationClick}
           onViewAllProposals={handleViewAllProposals}

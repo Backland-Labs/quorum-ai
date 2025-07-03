@@ -12,12 +12,12 @@ describe('VotingIndicator', () => {
         state: 'ACTIVE'
       }
     });
-    
+
     const stateSpan = container.querySelector('span.bg-emerald-500');
     expect(stateSpan).toBeTruthy();
     expect(stateSpan?.textContent).toBe('Active');
   });
-  
+
   it('calculates vote percentages correctly', () => {
     const { container } = render(VotingIndicator, {
       props: {
@@ -27,13 +27,13 @@ describe('VotingIndicator', () => {
         state: 'ACTIVE'
       }
     });
-    
+
     const percentages = container.querySelectorAll('.text-gray-700');
     expect(percentages[1]?.textContent).toBe('60%');
     expect(percentages[2]?.textContent).toBe('30%');
     expect(percentages[3]?.textContent).toBe('10%');
   });
-  
+
   it('shows no votes message when totalVotes is zero', () => {
     const { container } = render(VotingIndicator, {
       props: {
@@ -43,12 +43,12 @@ describe('VotingIndicator', () => {
         state: 'ACTIVE'
       }
     });
-    
+
     const noVotesMessage = container.querySelector('p.text-gray-500');
     expect(noVotesMessage).toBeTruthy();
     expect(noVotesMessage?.textContent).toBe('No votes cast yet');
   });
-  
+
   it('renders different state badges correctly', () => {
     const states = [
       { state: 'SUCCEEDED', class: 'bg-green-500', label: 'Succeeded' },
@@ -59,7 +59,7 @@ describe('VotingIndicator', () => {
       { state: 'EXPIRED', class: 'bg-orange-500', label: 'Expired' },
       { state: 'PENDING', class: 'bg-indigo-500', label: 'Pending' }
     ];
-    
+
     states.forEach(({ state, class: className, label }) => {
       const { container } = render(VotingIndicator, {
         props: {
@@ -69,13 +69,13 @@ describe('VotingIndicator', () => {
           state
         }
       });
-      
+
       const stateSpan = container.querySelector(`span.${className}`);
       expect(stateSpan).toBeTruthy();
       expect(stateSpan?.textContent).toBe(label);
     });
   });
-  
+
   it('hides abstain bar when no abstain votes', () => {
     const { container } = render(VotingIndicator, {
       props: {
@@ -85,13 +85,13 @@ describe('VotingIndicator', () => {
         state: 'ACTIVE'
       }
     });
-    
-    const abstainText = Array.from(container.querySelectorAll('span')).find(el => 
+
+    const abstainText = Array.from(container.querySelectorAll('span')).find(el =>
       el.textContent === 'Abstain'
     );
     expect(abstainText).toBeFalsy();
   });
-  
+
   it('formats large vote numbers correctly', () => {
     const { container } = render(VotingIndicator, {
       props: {
@@ -101,7 +101,7 @@ describe('VotingIndicator', () => {
         state: 'ACTIVE'
       }
     });
-    
+
     const totalVotesSpan = container.querySelector('.font-medium');
     expect(totalVotesSpan?.textContent).toBe('8');
   });

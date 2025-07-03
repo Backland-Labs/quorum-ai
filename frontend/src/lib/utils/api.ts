@@ -8,7 +8,7 @@ import type { OrganizationWithProposals } from '$lib/types/dashboard.js';
 export function extractApiErrorMessage(apiError: unknown): string {
   console.assert(apiError !== null, 'API error should not be null');
   console.assert(apiError !== undefined, 'API error should not be undefined');
-  
+
   if (apiError && typeof apiError === 'object' && 'message' in apiError) {
     return String((apiError as any).message);
   }
@@ -25,7 +25,7 @@ export function selectDefaultOrganization(
 ): OrganizationWithProposals['organization'] | null {
   console.assert(Array.isArray(organizations), 'Organizations must be an array');
   console.assert(organizations !== null, 'Organizations cannot be null');
-  
+
   if (organizations.length > 0) {
     return organizations[0].organization;
   }

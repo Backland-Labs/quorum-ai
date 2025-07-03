@@ -17,7 +17,7 @@ from .cache_decorators import (
 __all__ = [
     # Cache utilities
     "generate_cache_key",
-    "serialize_for_cache", 
+    "serialize_for_cache",
     "deserialize_from_cache",
     "invalidate_cache_pattern",
     "invalidate_dao_cache",

@@ -53,8 +53,8 @@
       });
 
       if (apiError) {
-        error = apiError && typeof apiError === 'object' && 'message' in apiError 
-          ? String((apiError as any).message) 
+        error = apiError && typeof apiError === 'object' && 'message' in apiError
+          ? String((apiError as any).message)
           : "Failed to fetch organization data";
       } else if (data) {
         overviewData = data;
@@ -88,7 +88,7 @@
         <LoadingSkeleton height="h-8" width="w-64" rounded={true} />
         <LoadingSkeleton height="h-4" width="w-96" rounded={true} />
       </div>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {#each Array(6) as _}
           <LoadingSkeleton height="h-32" rounded={true} />

@@ -73,28 +73,30 @@ class TestTallyServiceTopOrganizationsCaching:
         # Arrange - Cache miss scenario
         mock_cache_service.get.return_value = None
         mock_cache_service.set.return_value = True
-        
+
         # Mock the internal API calls
         with patch.object(
-            tally_service_with_cache, '_get_organizations_data'
+            tally_service_with_cache, "_get_organizations_data"
         ) as mock_get_data:
             mock_get_data.return_value = mock_organizations_data
-            
+
             # Act
-            result = await tally_service_with_cache.get_top_organizations_with_proposals()
-            
+            result = (
+                await tally_service_with_cache.get_top_organizations_with_proposals()
+            )
+
             # Assert - API was called
             mock_get_data.assert_called_once()
-            
+
             # Assert - Cache was checked
             expected_cache_key = "cache:get_top_organizations_with_proposals:noargs:*"
             mock_cache_service.get.assert_called_once()
-            
+
             # Assert - Result was cached with 2-hour TTL (7200 seconds)
             mock_cache_service.set.assert_called_once()
             cache_call_args = mock_cache_service.set.call_args
-            assert cache_call_args[1]['expire_seconds'] == 7200  # 2 hours
-            
+            assert cache_call_args[1]["expire_seconds"] == 7200  # 2 hours
+
             # Assert - Correct result returned
             assert result == mock_organizations_data
 
@@ -107,29 +109,33 @@ class TestTallyServiceTopOrganizationsCaching:
         """Test that on cache hit, cached data is returned without API call."""
         # Arrange - Cache hit scenario - need to serialize for cache
         from utils.cache_utils import serialize_for_cache
+
         serialized_data = serialize_for_cache(mock_organizations_data)
         mock_cache_service.get.return_value = serialized_data
-        
+
         # Mock the internal API calls to ensure they're not called
         with patch.object(
-            tally_service_with_cache, '_get_organizations_data'
+            tally_service_with_cache, "_get_organizations_data"
         ) as mock_get_data:
-            
             # Act
-            result = await tally_service_with_cache.get_top_organizations_with_proposals()
-            
+            result = (
+                await tally_service_with_cache.get_top_organizations_with_proposals()
+            )
+
             # Assert - API was NOT called
             mock_get_data.assert_not_called()
-            
+
             # Assert - Cache was checked
             mock_cache_service.get.assert_called_once()
-            
+
             # Assert - Result was NOT cached again (no set call)
             mock_cache_service.set.assert_not_called()
-            
+
             # Assert - Cached result returned (Proposal objects become dicts after serialization)
             assert len(result) == len(mock_organizations_data)
-            assert result[0]["organization"] == mock_organizations_data[0]["organization"]
+            assert (
+                result[0]["organization"] == mock_organizations_data[0]["organization"]
+            )
             # Check that proposals are returned as dicts (serialized)
             assert len(result[0]["proposals"]) == 1
             assert result[0]["proposals"][0]["id"] == "prop-1"
@@ -143,25 +149,27 @@ class TestTallyServiceTopOrganizationsCaching:
         """Test that when cache is unavailable, API is called directly."""
         # Arrange - Cache unavailable
         mock_cache_service.is_available = False
-        
+
         # Mock the internal API calls
         with patch.object(
-            tally_service_with_cache, '_get_organizations_data'
+            tally_service_with_cache, "_get_organizations_data"
         ) as mock_get_data:
             mock_get_data.return_value = mock_organizations_data
-            
+
             # Act
-            result = await tally_service_with_cache.get_top_organizations_with_proposals()
-            
+            result = (
+                await tally_service_with_cache.get_top_organizations_with_proposals()
+            )
+
             # Assert - API was called
             mock_get_data.assert_called_once()
-            
+
             # Assert - Cache was NOT checked
             mock_cache_service.get.assert_not_called()
-            
+
             # Assert - Result was NOT cached
             mock_cache_service.set.assert_not_called()
-            
+
             # Assert - Correct result returned
             assert result == mock_organizations_data
 
@@ -174,19 +182,21 @@ class TestTallyServiceTopOrganizationsCaching:
         """Test that cache errors result in fallback to API call."""
         # Arrange - Cache get raises exception
         mock_cache_service.get.side_effect = Exception("Redis connection error")
-        
+
         # Mock the internal API calls
         with patch.object(
-            tally_service_with_cache, '_get_organizations_data'
+            tally_service_with_cache, "_get_organizations_data"
         ) as mock_get_data:
             mock_get_data.return_value = mock_organizations_data
-            
+
             # Act
-            result = await tally_service_with_cache.get_top_organizations_with_proposals()
-            
+            result = (
+                await tally_service_with_cache.get_top_organizations_with_proposals()
+            )
+
             # Assert - API was called
             mock_get_data.assert_called_once()
-            
+
             # Assert - Correct result returned despite cache error
             assert result == mock_organizations_data
 
@@ -197,31 +207,31 @@ class TestTallyServiceTopOrganizationsCaching:
         mock_organizations_data: List[Dict[str, Any]],
     ) -> None:
         """Test that cache hit/miss events are properly logged."""
-        with patch('services.tally_service.logfire') as mock_logfire:
+        with patch("services.tally_service.logfire") as mock_logfire:
             # Test cache miss scenario
             mock_cache_service.get.return_value = None
             mock_cache_service.set.return_value = True
-            
+
             with patch.object(
-                tally_service_with_cache, '_get_organizations_data'
+                tally_service_with_cache, "_get_organizations_data"
             ) as mock_get_data:
                 mock_get_data.return_value = mock_organizations_data
-                
+
                 # Act - Cache miss
                 await tally_service_with_cache.get_top_organizations_with_proposals()
-                
+
                 # Assert - Cache miss logged
                 mock_logfire.info.assert_any_call(
                     "Cache miss for get_top_organizations_with_proposals"
                 )
-                
+
             # Reset mocks for cache hit test
             mock_logfire.reset_mock()
             mock_cache_service.get.return_value = mock_organizations_data
-            
+
             # Act - Cache hit
             await tally_service_with_cache.get_top_organizations_with_proposals()
-            
+
             # Assert - Cache hit logged
             mock_logfire.info.assert_any_call(
                 "Cache hit for get_top_organizations_with_proposals"
@@ -271,34 +281,34 @@ class TestTallyServiceOrganizationOverviewCaching:
         org_id = "test-dao"
         mock_cache_service.get.return_value = None
         mock_cache_service.set.return_value = True
-        
+
         # Mock the internal API calls
         with patch.object(
-            tally_service_with_cache, '_fetch_organization_data'
+            tally_service_with_cache, "_fetch_organization_data"
         ) as mock_fetch_data, patch.object(
-            tally_service_with_cache, '_build_organization_overview_response'
+            tally_service_with_cache, "_build_organization_overview_response"
         ) as mock_build_response:
             mock_fetch_data.return_value = {"id": "org-123", "name": "Test DAO"}
             mock_build_response.return_value = mock_overview_data
-            
+
             # Act
             result = await tally_service_with_cache.get_organization_overview(org_id)
-            
+
             # Assert - API was called
             mock_fetch_data.assert_called_once_with(org_id)
             mock_build_response.assert_called_once()
-            
+
             # Assert - Cache was checked with correct key
             mock_cache_service.get.assert_called_once()
             cache_get_key = mock_cache_service.get.call_args[0][0]
             assert "get_organization_overview" in cache_get_key
             assert org_id in cache_get_key
-            
+
             # Assert - Result was cached with 2-hour TTL (7200 seconds)
             mock_cache_service.set.assert_called_once()
             cache_call_args = mock_cache_service.set.call_args
-            assert cache_call_args[1]['expire_seconds'] == 7200  # 2 hours
-            
+            assert cache_call_args[1]["expire_seconds"] == 7200  # 2 hours
+
             # Assert - Correct result returned
             assert result == mock_overview_data
 
@@ -312,26 +322,26 @@ class TestTallyServiceOrganizationOverviewCaching:
         # Arrange - Cache hit scenario - need to serialize for cache
         org_id = "test-dao"
         from utils.cache_utils import serialize_for_cache
+
         serialized_data = serialize_for_cache(mock_overview_data)
         mock_cache_service.get.return_value = serialized_data
-        
+
         # Mock the internal API calls to ensure they're not called
         with patch.object(
-            tally_service_with_cache, '_fetch_organization_data'
+            tally_service_with_cache, "_fetch_organization_data"
         ) as mock_fetch_data:
-            
             # Act
             result = await tally_service_with_cache.get_organization_overview(org_id)
-            
+
             # Assert - API was NOT called
             mock_fetch_data.assert_not_called()
-            
+
             # Assert - Cache was checked
             mock_cache_service.get.assert_called_once()
-            
+
             # Assert - Result was NOT cached again (no set call)
             mock_cache_service.set.assert_not_called()
-            
+
             # Assert - Cached result returned
             assert result == mock_overview_data
 
@@ -399,30 +409,30 @@ class TestTallyServiceProposalByIdCaching:
         proposal_id = "prop-active-123"
         mock_cache_service.get.return_value = None
         mock_cache_service.set.return_value = True
-        
+
         # Mock the internal API calls
         with patch.object(
-            tally_service_with_cache, '_make_request'
+            tally_service_with_cache, "_make_request"
         ) as mock_make_request, patch.object(
-            tally_service_with_cache, '_create_proposal_from_api_data'
+            tally_service_with_cache, "_create_proposal_from_api_data"
         ) as mock_create_proposal:
             mock_make_request.return_value = {"data": {"proposal": {"id": "test"}}}
             mock_create_proposal.return_value = active_proposal
-            
+
             # Act
             result = await tally_service_with_cache.get_proposal_by_id(proposal_id)
-            
+
             # Assert - API was called
             mock_make_request.assert_called_once()
-            
+
             # Assert - Cache was checked
             mock_cache_service.get.assert_called_once()
-            
+
             # Assert - Result was cached with 30-minute TTL (1800 seconds)
             mock_cache_service.set.assert_called_once()
             cache_call_args = mock_cache_service.set.call_args
-            assert cache_call_args[1]['expire_seconds'] == 1800  # 30 minutes
-            
+            assert cache_call_args[1]["expire_seconds"] == 1800  # 30 minutes
+
             # Assert - Correct result returned
             assert result == active_proposal
 
@@ -437,30 +447,30 @@ class TestTallyServiceProposalByIdCaching:
         proposal_id = "prop-completed-456"
         mock_cache_service.get.return_value = None
         mock_cache_service.set.return_value = True
-        
+
         # Mock the internal API calls
         with patch.object(
-            tally_service_with_cache, '_make_request'
+            tally_service_with_cache, "_make_request"
         ) as mock_make_request, patch.object(
-            tally_service_with_cache, '_create_proposal_from_api_data'
+            tally_service_with_cache, "_create_proposal_from_api_data"
         ) as mock_create_proposal:
             mock_make_request.return_value = {"data": {"proposal": {"id": "test"}}}
             mock_create_proposal.return_value = completed_proposal
-            
+
             # Act
             result = await tally_service_with_cache.get_proposal_by_id(proposal_id)
-            
+
             # Assert - API was called
             mock_make_request.assert_called_once()
-            
+
             # Assert - Cache was checked
             mock_cache_service.get.assert_called_once()
-            
+
             # Assert - Result was cached with 6-hour TTL (21600 seconds)
             mock_cache_service.set.assert_called_once()
             cache_call_args = mock_cache_service.set.call_args
-            assert cache_call_args[1]['expire_seconds'] == 21600  # 6 hours
-            
+            assert cache_call_args[1]["expire_seconds"] == 21600  # 6 hours
+
             # Assert - Correct result returned
             assert result == completed_proposal
 
@@ -474,26 +484,26 @@ class TestTallyServiceProposalByIdCaching:
         # Arrange - Cache hit scenario - need to serialize for cache
         proposal_id = "prop-active-123"
         from utils.cache_utils import serialize_for_cache
+
         serialized_data = serialize_for_cache(active_proposal)
         mock_cache_service.get.return_value = serialized_data
-        
+
         # Mock the internal API calls to ensure they're not called
         with patch.object(
-            tally_service_with_cache, '_make_request'
+            tally_service_with_cache, "_make_request"
         ) as mock_make_request:
-            
             # Act
             result = await tally_service_with_cache.get_proposal_by_id(proposal_id)
-            
+
             # Assert - API was NOT called
             mock_make_request.assert_not_called()
-            
+
             # Assert - Cache was checked
             mock_cache_service.get.assert_called_once()
-            
+
             # Assert - Result was NOT cached again (no set call)
             mock_cache_service.set.assert_not_called()
-            
+
             # Assert - Cached result returned
             assert result == active_proposal
 
@@ -522,6 +532,7 @@ class TestTallyServiceCacheInvalidation:
         """Test that invalidating organization cache clears all related entries."""
         # Arrange
         org_id = "test-org-123"
+
         # Mock keys to return different results for different patterns
         def keys_side_effect(pattern):
             if "test-org-123" in pattern:
@@ -529,13 +540,15 @@ class TestTallyServiceCacheInvalidation:
             elif "get_top_organizations_with_proposals" in pattern:
                 return ["cache:get_top_organizations_with_proposals:noargs:xyz9876"]
             return []
-        
+
         mock_cache_service.keys.side_effect = keys_side_effect
         mock_cache_service.delete.return_value = 1  # Each call deletes 1 key
-        
+
         # Act
-        deleted_count = await tally_service_with_cache.invalidate_organization_cache(org_id)
-        
+        deleted_count = await tally_service_with_cache.invalidate_organization_cache(
+            org_id
+        )
+
         # Assert - Cache service was called to find and delete related keys
         mock_cache_service.keys.assert_called()
         mock_cache_service.delete.assert_called()
@@ -553,10 +566,12 @@ class TestTallyServiceCacheInvalidation:
             "cache:get_proposal_by_id:prop-456:xyz789",
         ]
         mock_cache_service.delete.return_value = 1
-        
+
         # Act
-        deleted_count = await tally_service_with_cache.invalidate_proposal_cache(proposal_id)
-        
+        deleted_count = await tally_service_with_cache.invalidate_proposal_cache(
+            proposal_id
+        )
+
         # Assert - Cache service was called to find and delete related keys
         mock_cache_service.keys.assert_called()
         mock_cache_service.delete.assert_called()
@@ -575,10 +590,10 @@ class TestTallyServiceCacheInvalidation:
             "cache:get_top_organizations_with_proposals:noargs:hash789",
         ]
         mock_cache_service.delete.return_value = 3
-        
+
         # Act
         deleted_count = await tally_service_with_cache.invalidate_all_cache()
-        
+
         # Assert - All Tally cache entries were deleted
         mock_cache_service.keys.assert_called_with("cache:*")
         mock_cache_service.delete.assert_called()
@@ -592,10 +607,12 @@ class TestTallyServiceCacheInvalidation:
         """Test that cache invalidation handles unavailable cache service gracefully."""
         # Arrange
         mock_cache_service.is_available = False
-        
+
         # Act
-        deleted_count = await tally_service_with_cache.invalidate_organization_cache("org-123")
-        
+        deleted_count = await tally_service_with_cache.invalidate_organization_cache(
+            "org-123"
+        )
+
         # Assert - No operations performed, zero returned
         mock_cache_service.keys.assert_not_called()
         mock_cache_service.delete.assert_not_called()
@@ -609,10 +626,12 @@ class TestTallyServiceCacheInvalidation:
         """Test that cache invalidation handles Redis errors gracefully."""
         # Arrange
         mock_cache_service.keys.side_effect = Exception("Redis connection error")
-        
+
         # Act
-        deleted_count = await tally_service_with_cache.invalidate_organization_cache("org-123")
-        
+        deleted_count = await tally_service_with_cache.invalidate_organization_cache(
+            "org-123"
+        )
+
         # Assert - Error handled gracefully, zero returned
         assert deleted_count == 0
 
@@ -642,24 +661,26 @@ class TestTallyServiceCacheWarming:
         # Arrange
         mock_cache_service.exists.return_value = False  # Cache not warmed yet
         mock_cache_service.set.return_value = True
-        
+
         # Mock the data fetching method
         with patch.object(
-            tally_service_with_cache, '_get_organizations_data'
+            tally_service_with_cache, "_get_organizations_data"
         ) as mock_get_data:
-            mock_get_data.return_value = [{"organization": {"id": "org-1"}, "proposals": []}]
-            
+            mock_get_data.return_value = [
+                {"organization": {"id": "org-1"}, "proposals": []}
+            ]
+
             # Act
             result = await tally_service_with_cache.warm_top_organizations_cache()
-            
+
             # Assert - Data was fetched and cached
             mock_get_data.assert_called_once()
             mock_cache_service.set.assert_called_once()
-            
+
             # Assert - TTL was set to 2 hours
             cache_call_args = mock_cache_service.set.call_args
-            assert cache_call_args[1]['expire_seconds'] == 7200  # 2 hours
-            
+            assert cache_call_args[1]["expire_seconds"] == 7200  # 2 hours
+
             assert result is True
 
     async def test_warm_top_organizations_cache_skips_if_already_cached(
@@ -670,19 +691,18 @@ class TestTallyServiceCacheWarming:
         """Test that cache warming skips if data is already cached."""
         # Arrange
         mock_cache_service.exists.return_value = True  # Cache already warmed
-        
+
         # Mock the data fetching method
         with patch.object(
-            tally_service_with_cache, '_get_organizations_data'
+            tally_service_with_cache, "_get_organizations_data"
         ) as mock_get_data:
-            
             # Act
             result = await tally_service_with_cache.warm_top_organizations_cache()
-            
+
             # Assert - No data fetching or caching occurred
             mock_get_data.assert_not_called()
             mock_cache_service.set.assert_not_called()
-            
+
             assert result is True
 
     async def test_warm_organization_overview_cache_preloads_top_3_orgs(
@@ -693,28 +713,30 @@ class TestTallyServiceCacheWarming:
         """Test that cache warming preloads overview data for top 3 organizations."""
         # Arrange
         top_orgs = ["dao1", "dao2", "dao3"]
-        
-        with patch('config.settings') as mock_settings:
+
+        with patch("config.settings") as mock_settings:
             mock_settings.top_organizations = top_orgs
             mock_cache_service.exists.return_value = False  # Cache not warmed
             mock_cache_service.set.return_value = True
-            
+
             # Mock the overview fetching
             with patch.object(
-                tally_service_with_cache, '_fetch_organization_data'
+                tally_service_with_cache, "_fetch_organization_data"
             ) as mock_fetch_data, patch.object(
-                tally_service_with_cache, '_build_organization_overview_response'
+                tally_service_with_cache, "_build_organization_overview_response"
             ) as mock_build_response:
                 mock_fetch_data.return_value = {"id": "org-1", "name": "Test DAO"}
                 mock_build_response.return_value = {"organization_id": "org-1"}
-                
+
                 # Act
-                result = await tally_service_with_cache.warm_organization_overview_cache()
-                
+                result = (
+                    await tally_service_with_cache.warm_organization_overview_cache()
+                )
+
                 # Assert - Called for each of the 3 organizations
                 assert mock_fetch_data.call_count == 3
                 assert mock_cache_service.set.call_count == 3
-                
+
                 assert result is True
 
     async def test_cache_warming_handles_cache_service_unavailable(
@@ -725,10 +747,10 @@ class TestTallyServiceCacheWarming:
         """Test that cache warming handles unavailable cache service gracefully."""
         # Arrange
         mock_cache_service.is_available = False
-        
+
         # Act
         result = await tally_service_with_cache.warm_top_organizations_cache()
-        
+
         # Assert - No operations performed, False returned
         mock_cache_service.exists.assert_not_called()
         mock_cache_service.set.assert_not_called()
@@ -742,9 +764,9 @@ class TestTallyServiceCacheWarming:
         """Test that cache warming handles errors gracefully."""
         # Arrange
         mock_cache_service.exists.side_effect = Exception("Redis connection error")
-        
+
         # Act
         result = await tally_service_with_cache.warm_top_organizations_cache()
-        
+
         # Assert - Error handled gracefully, False returned
         assert result is False
