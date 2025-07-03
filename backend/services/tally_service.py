@@ -1209,8 +1209,6 @@ class TallyService:
                     id
                     status
                     createdAt
-                    startBlock
-                    endBlock
                     metadata {
                         title
                         description
