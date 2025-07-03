@@ -1,5 +1,5 @@
 # Use Node.js 20 LTS as base image
-FROM node:20-alpine
+FROM node:24-alpine
 
 # Set working directory
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY package*.json ./
 
 # Install all dependencies (including dev dependencies for build)
 # Temporarily set NODE_ENV to development for installation
-RUN NODE_ENV=development npm install --legacy-peer-deps && npm cache clean --force
+RUN NODE_ENV=development npm install && npm cache clean --force
 
 # Set environment variables for runtime
 ENV NODE_ENV=production

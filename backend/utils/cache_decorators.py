@@ -5,7 +5,7 @@ import inspect
 import logging
 from typing import Any, Callable, Optional, TypeVar
 
-from .cache_utils import generate_cache_key, serialize_for_cache, deserialize_from_cache
+from .cache_utils import generate_cache_key, serialize_for_cache
 from services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
                 cached_result = await cache_service.get(cache_key)
                 if cached_result is not None:
                     logger.debug(f"Cache hit for {func.__name__} with key {cache_key}")
-                    return deserialize_from_cache(cached_result)
+                    return cached_result
 
                 # Cache miss - call the function
                 logger.debug(f"Cache miss for {func.__name__} with key {cache_key}")

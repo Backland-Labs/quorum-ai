@@ -74,7 +74,19 @@ class TallyService:
         self, limit: int = 100, after_cursor: Optional[str] = None
     ) -> tuple[List[Organization], Optional[str]]:
         """Fetch a list of organizations."""
-        query = """
+        query = self._build_organizations_query()
+        variables = self._build_organizations_variables(limit, after_cursor)
+
+        try:
+            result = await self._make_request(query, variables)
+            return self._process_organizations_response(result)
+        except Exception as e:
+            logfire.error("Failed to fetch organizations", error=str(e))
+            raise
+
+    def _build_organizations_query(self) -> str:
+        """Build GraphQL query for fetching organizations."""
+        return """
         query GetOrganizations($input: OrganizationsInput) {
             organizations(input: $input) {
                 nodes {
@@ -99,48 +111,51 @@ class TallyService:
         }
         """
 
+    def _build_organizations_variables(
+        self, limit: int, after_cursor: Optional[str]
+    ) -> Dict:
+        """Build variables for organizations query."""
         page_input: Dict[str, Any] = {"limit": limit}
         if after_cursor:
             page_input["afterCursor"] = after_cursor
 
-        variables = {
+        return {
             "input": {
                 "page": page_input,
                 "sort": {"sortBy": "explore", "isDescending": True},
             }
         }
 
-        try:
-            result = await self._make_request(query, variables)
-            org_data = result.get("data", {}).get("organizations", {})
-            org_nodes = org_data.get("nodes", [])
+    def _process_organizations_response(
+        self, result: Dict
+    ) -> tuple[List[Organization], Optional[str]]:
+        """Process organizations API response into Organization objects."""
+        org_data = result.get("data", {}).get("organizations", {})
+        org_nodes = org_data.get("nodes", [])
 
-            organizations = [
-                Organization(
-                    id=org["id"],
-                    name=org["name"],
-                    slug=org["slug"],
-                    chain_ids=org.get("chainIds", []),
-                    token_ids=org.get("tokenIds", []),
-                    governor_ids=org.get("governorIds", []),
-                    has_active_proposals=org.get("hasActiveProposals", False),
-                    proposals_count=org.get("proposalsCount", 0),
-                    delegates_count=org.get("delegatesCount", 0),
-                    delegates_votes_count=str(org.get("delegatesVotesCount", "0")),
-                    token_owners_count=org.get("tokenOwnersCount", 0),
-                )
-                for org in org_nodes
-                if org
-            ]
+        organizations = [
+            self._create_organization_from_node(org) for org in org_nodes if org
+        ]
 
-            last_cursor = org_data.get("pageInfo", {}).get("lastCursor")
+        last_cursor = org_data.get("pageInfo", {}).get("lastCursor")
+        logfire.info("Fetched organizations", count=len(organizations))
+        return organizations, last_cursor
 
-            logfire.info("Fetched organizations", count=len(organizations))
-            return organizations, last_cursor
-
-        except Exception as e:
-            logfire.error("Failed to fetch organizations", error=str(e))
-            raise
+    def _create_organization_from_node(self, org: Dict) -> Organization:
+        """Create Organization object from API node data."""
+        return Organization(
+            id=org["id"],
+            name=org["name"],
+            slug=org["slug"],
+            chain_ids=org.get("chainIds", []),
+            token_ids=org.get("tokenIds", []),
+            governor_ids=org.get("governorIds", []),
+            has_active_proposals=org.get("hasActiveProposals", False),
+            proposals_count=org.get("proposalsCount", 0),
+            delegates_count=org.get("delegatesCount", 0),
+            delegates_votes_count=str(org.get("delegatesVotesCount", "0")),
+            token_owners_count=org.get("tokenOwnersCount", 0),
+        )
 
     async def get_daos(
         self,
@@ -413,33 +428,33 @@ class TallyService:
         last_cursor = proposals_data.get("pageInfo", {}).get("lastCursor")
 
         proposals = [
-            self._create_proposal_from_node(node) for node in proposal_nodes if node
+            self._create_proposal_from_data(node) for node in proposal_nodes if node
         ]
 
         logfire.info("Fetched proposals", count=len(proposals))
         return proposals, last_cursor
 
-    def _create_proposal_from_node(self, node: Dict) -> Proposal:
-        """Create Proposal object from API node data."""
-        assert node, "Node data is required"
-        assert "id" in node, "Node must contain id"
+    def _create_proposal_from_data(self, data: Dict) -> Proposal:
+        """Create Proposal object from API data with common logic."""
+        assert data, "Data is required"
+        assert "id" in data, "Data must contain id"
 
-        governor_info = node.get("governor", {})
-        metadata = node.get("metadata", {})
-        status = node["status"].upper()
+        governor_info = data.get("governor", {})
+        metadata = data.get("metadata", {})
+        status = data["status"].upper()
 
         # Parse vote statistics using helper method
-        vote_stats = node.get("voteStats", [])
+        vote_stats = data.get("voteStats", [])
         votes_for, votes_against, votes_abstain = self._parse_vote_statistics(
             vote_stats
         )
 
         return Proposal(
-            id=node["id"],
+            id=data["id"],
             title=metadata.get("title", ""),
             description=metadata.get("description", ""),
             state=ProposalState(status),
-            created_at=datetime.fromisoformat(node["createdAt"].replace("Z", "+00:00")),
+            created_at=datetime.fromisoformat(data["createdAt"].replace("Z", "+00:00")),
             start_block=0,  # Will be populated later if needed
             end_block=0,  # Will be populated later if needed
             votes_for=votes_for,
@@ -447,7 +462,7 @@ class TallyService:
             votes_abstain=votes_abstain,
             dao_id=governor_info.get("id", ""),
             dao_name=governor_info.get("name", ""),
-            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{node['id']}",
+            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{data['id']}",
         )
 
     async def get_proposal_by_id(self, proposal_id: str) -> Optional[Proposal]:
@@ -455,30 +470,48 @@ class TallyService:
         assert proposal_id, "Proposal ID cannot be empty"
         assert isinstance(proposal_id, str), "Proposal ID must be a string"
 
-        # Generate cache key
+        # Try to get from cache first
         cache_key = generate_cache_key("get_proposal_by_id", (proposal_id,), {})
+        cached_proposal = await self._get_cached_proposal(cache_key, proposal_id)
+        if cached_proposal is not None:
+            return cached_proposal
 
-        # Try to get from cache if cache service is available
-        if self.cache_service and self.cache_service.is_available:
-            try:
-                cached_result = await self.cache_service.get(cache_key)
-                if cached_result is not None:
-                    logfire.info(
-                        "Cache hit for get_proposal_by_id", proposal_id=proposal_id
-                    )
-                    cached_data = deserialize_from_cache(cached_result)
-                    # Reconstruct Proposal object from cached data
-                    if isinstance(cached_data, dict):
-                        return Proposal(**cached_data)
-                    return cached_data
+        # Fetch from API
+        proposal = await self._fetch_proposal_from_api(proposal_id)
+        if proposal is None:
+            return None
+
+        # Cache the result
+        await self._cache_proposal_result(cache_key, proposal_id, proposal)
+        return proposal
+
+    async def _get_cached_proposal(
+        self, cache_key: str, proposal_id: str
+    ) -> Optional[Proposal]:
+        """Attempt to retrieve proposal from cache."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return None
+
+        try:
+            cached_result = await self.cache_service.get(cache_key)
+            if cached_result is not None:
                 logfire.info(
-                    "Cache miss for get_proposal_by_id", proposal_id=proposal_id
+                    "Cache hit for get_proposal_by_id", proposal_id=proposal_id
                 )
-            except Exception as e:
-                logfire.warning(f"Cache error for get_proposal_by_id: {e}")
+                cached_data = cached_result
+                # Reconstruct Proposal object from cached data
+                if isinstance(cached_data, dict):
+                    return Proposal(**cached_data)
+                return cached_data
+            logfire.info("Cache miss for get_proposal_by_id", proposal_id=proposal_id)
+        except Exception as e:
+            logfire.warning(f"Cache error for get_proposal_by_id: {e}")
+        return None
 
+    async def _fetch_proposal_from_api(self, proposal_id: str) -> Optional[Proposal]:
+        """Fetch proposal from API."""
         query = self._build_single_proposal_query()
-        variables = {"id": proposal_id}
+        variables = {"input": {"id": proposal_id}}
 
         try:
             result = await self._make_request(query, variables)
@@ -487,31 +520,34 @@ class TallyService:
             if not prop_data:
                 return None
 
-            proposal = self._create_proposal_from_api_data(prop_data)
-
-            # Cache the result with dynamic TTL based on proposal status
-            if self.cache_service and self.cache_service.is_available and proposal:
-                try:
-                    ttl = self._get_proposal_cache_ttl(proposal.state)
-                    serialized_result = serialize_for_cache(proposal)
-                    await self.cache_service.set(
-                        cache_key, serialized_result, expire_seconds=ttl
-                    )
-                    logfire.info(
-                        "Cached get_proposal_by_id result",
-                        proposal_id=proposal_id,
-                        ttl=ttl,
-                    )
-                except Exception as e:
-                    logfire.warning(f"Failed to cache get_proposal_by_id result: {e}")
-
-            return proposal
+            return self._create_proposal_from_api_data(prop_data)
 
         except Exception as e:
             logfire.error(
                 "Failed to fetch proposal", proposal_id=proposal_id, error=str(e)
             )
             raise
+
+    async def _cache_proposal_result(
+        self, cache_key: str, proposal_id: str, proposal: Proposal
+    ) -> None:
+        """Cache the proposal result with dynamic TTL."""
+        if not self.cache_service or not self.cache_service.is_available:
+            return
+
+        try:
+            ttl = self._get_proposal_cache_ttl(proposal.state)
+            serialized_result = serialize_for_cache(proposal)
+            await self.cache_service.set(
+                cache_key, serialized_result, expire_seconds=ttl
+            )
+            logfire.info(
+                "Cached get_proposal_by_id result",
+                proposal_id=proposal_id,
+                ttl=ttl,
+            )
+        except Exception as e:
+            logfire.warning(f"Failed to cache get_proposal_by_id result: {e}")
 
     def _get_proposal_cache_ttl(self, state: ProposalState) -> int:
         """Get cache TTL based on proposal state."""
@@ -524,35 +560,7 @@ class TallyService:
 
     def _create_proposal_from_api_data(self, prop_data: Dict) -> Proposal:
         """Create Proposal object from API data."""
-        governor_info = prop_data.get("governor", {})
-        metadata = prop_data.get("metadata", {})
-
-        # Convert API status to our enum format
-        status = prop_data["status"].upper()
-
-        # Parse vote statistics using helper method
-        vote_stats = prop_data.get("voteStats", [])
-        votes_for, votes_against, votes_abstain = self._parse_vote_statistics(
-            vote_stats
-        )
-
-        return Proposal(
-            id=prop_data["id"],
-            title=metadata.get("title", ""),
-            description=metadata.get("description", ""),
-            state=ProposalState(status),
-            created_at=datetime.fromisoformat(
-                prop_data["createdAt"].replace("Z", "+00:00")
-            ),
-            start_block=0,  # Will be populated later if needed
-            end_block=0,  # Will be populated later if needed
-            votes_for=votes_for,
-            votes_against=votes_against,
-            votes_abstain=votes_abstain,
-            dao_id=governor_info.get("id", ""),
-            dao_name=governor_info.get("name", ""),
-            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop_data['id']}",
-        )
+        return self._create_proposal_from_data(prop_data)
 
     # Cache invalidation methods
     async def invalidate_organization_cache(self, org_id: str) -> int:
@@ -941,32 +949,7 @@ class TallyService:
         """Create Proposal object from active proposals API node data."""
         assert prop, "Proposal node data cannot be empty"
         assert "id" in prop, "Proposal node must contain id"
-
-        governor_info = prop.get("governor", {})
-        metadata = prop.get("metadata", {})
-        status = prop["status"].upper()
-
-        # Parse vote statistics using helper method
-        vote_stats = prop.get("voteStats", [])
-        votes_for, votes_against, votes_abstain = self._parse_vote_statistics(
-            vote_stats
-        )
-
-        return Proposal(
-            id=prop["id"],
-            title=metadata.get("title", ""),
-            description=metadata.get("description", ""),
-            state=ProposalState(status),
-            created_at=datetime.fromisoformat(prop["createdAt"].replace("Z", "+00:00")),
-            start_block=0,
-            end_block=0,
-            votes_for=votes_for,
-            votes_against=votes_against,
-            votes_abstain=votes_abstain,
-            dao_id=governor_info.get("id", ""),
-            dao_name=governor_info.get("name", ""),
-            url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{prop['id']}",
-        )
+        return self._create_proposal_from_data(prop)
 
     def _select_top_proposals(
         self,
@@ -1203,8 +1186,8 @@ class TallyService:
     def _build_single_proposal_query(self) -> str:
         """Build GraphQL query for fetching a single proposal by ID."""
         return """
-        query GetProposal($id: ID!) {
-            proposal(id: $id) {
+        query GetProposal($input: ProposalInput!) {
+            proposal(input: $input) {
                 ... on Proposal {
                     id
                     status
@@ -1220,6 +1203,11 @@ class TallyService:
                     voteStats {
                         type
                         votesCount
+                    }
+                    organization {
+                        id
+                        name
+                        slug
                     }
                 }
             }
@@ -1277,7 +1265,7 @@ class TallyService:
                     proposal_id=proposal_id,
                     limit=limit,
                 )
-                cached_data = deserialize_from_cache(cached_result)
+                cached_data = cached_result
                 return self._reconstruct_cached_voters(cached_data)
 
             logfire.info(
@@ -1337,7 +1325,7 @@ class TallyService:
 
     def _is_cache_available(self) -> bool:
         """Check if cache service is available."""
-        return self.cache_service and self.cache_service.is_available
+        return bool(self.cache_service and self.cache_service.is_available)
 
     def _build_proposal_votes_query(self) -> str:
         """Build GraphQL query for fetching proposal votes."""

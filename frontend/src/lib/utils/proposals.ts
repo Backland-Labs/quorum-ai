@@ -80,11 +80,11 @@ function createFallbackProposal(proposal: any) {
   console.assert(typeof proposal === 'object', 'Proposal should be an object');
 
   return {
-    summary: proposal.summary,
+    summary: proposal.summary || proposal.description || 'No summary available',
     key_points: proposal.key_points || [],
-    risk_level: proposal.risk_level,
-    recommendation: proposal.recommendation,
-    confidence_score: proposal.confidence_score
+    risk_level: proposal.risk_level || 'MEDIUM',
+    recommendation: proposal.recommendation || 'ANALYZE',
+    confidence_score: proposal.confidence_score || 0.5
   };
 }
 

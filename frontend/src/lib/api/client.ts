@@ -204,6 +204,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/proposals/{proposal_id}/top-voters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Proposal Top Voters
+         * @description Get top voters for a specific proposal by voting power.
+         */
+        get: operations["get_proposal_top_voters_proposals__proposal_id__top_voters_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -550,6 +570,46 @@ export interface components {
             confidence_score: number;
         };
         /**
+         * ProposalTopVoters
+         * @description Collection of top voters for a proposal.
+         *
+         *     Contains a list of the most influential voters for a specific proposal,
+         *     useful for displaying voting participation and influence distribution.
+         */
+        ProposalTopVoters: {
+            /**
+             * Proposal Id
+             * @description Unique proposal identifier
+             */
+            proposal_id: string;
+            /**
+             * Voters
+             * @description List of top voters by voting power
+             */
+            voters: components["schemas"]["ProposalVoter"][];
+        };
+        /**
+         * ProposalVoter
+         * @description Individual voter information for a proposal.
+         *
+         *     Represents a single voter's participation in a proposal vote,
+         *     including their address, voting power, and vote choice.
+         */
+        ProposalVoter: {
+            /**
+             * Address
+             * @description Voter's blockchain address
+             */
+            address: string;
+            /**
+             * Amount
+             * @description Voting power as string to handle large numbers
+             */
+            amount: string;
+            /** @description Vote choice */
+            vote_type: components["schemas"]["VoteType"];
+        };
+        /**
          * SortCriteria
          * @description Criteria for sorting proposals.
          * @enum {string}
@@ -630,6 +690,12 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /**
+         * VoteType
+         * @description Vote type enumeration.
+         * @enum {string}
+         */
+        VoteType: "FOR" | "AGAINST" | "ABSTAIN";
     };
     responses: never;
     parameters: never;
@@ -931,6 +997,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SummarizeResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_proposal_top_voters_proposals__proposal_id__top_voters_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalTopVoters"];
                 };
             };
             /** @description Validation Error */

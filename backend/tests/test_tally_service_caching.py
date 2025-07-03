@@ -89,7 +89,6 @@ class TestTallyServiceTopOrganizationsCaching:
             mock_get_data.assert_called_once()
 
             # Assert - Cache was checked
-            expected_cache_key = "cache:get_top_organizations_with_proposals:noargs:*"
             mock_cache_service.get.assert_called_once()
 
             # Assert - Result was cached with 2-hour TTL (7200 seconds)

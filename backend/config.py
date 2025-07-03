@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     tally_api_key: Optional[str] = None
 
     # AI settings
-    openai_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
     ai_model: str = "openai:gpt-4o-mini"
 
