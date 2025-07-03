@@ -127,9 +127,9 @@
           </svg>
           {calculateConfidencePercentage(parsedProposal.confidence_score)}% confidence
         </div>
-        {#if fullProposal?.id}
+        {#if fullProposal?.id || proposal?.proposal_id}
           <a
-            href="/proposals/{fullProposal.id}"
+            href="/proposals/{fullProposal?.id || proposal?.proposal_id}"
             class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
           >
             View Details

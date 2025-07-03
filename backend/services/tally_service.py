@@ -478,7 +478,7 @@ class TallyService:
                 logfire.warning(f"Cache error for get_proposal_by_id: {e}")
 
         query = self._build_single_proposal_query()
-        variables = {"id": proposal_id}
+        variables = {"input": {"id": proposal_id}}
 
         try:
             result = await self._make_request(query, variables)
@@ -1203,12 +1203,14 @@ class TallyService:
     def _build_single_proposal_query(self) -> str:
         """Build GraphQL query for fetching a single proposal by ID."""
         return """
-        query GetProposal($id: ID!) {
-            proposal(id: $id) {
+        query GetProposal($input: ProposalInput!) {
+            proposal(input: $input) {
                 ... on Proposal {
                     id
                     status
                     createdAt
+                    startBlock
+                    endBlock
                     metadata {
                         title
                         description
@@ -1220,6 +1222,11 @@ class TallyService:
                     voteStats {
                         type
                         votesCount
+                    }
+                    organization {
+                        id
+                        name
+                        slug
                     }
                 }
             }
