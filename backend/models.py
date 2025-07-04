@@ -7,6 +7,92 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field, field_validator
 
 
+# Constants for VoteDecision model
+DEFAULT_RISK_ASSESSMENT = "MEDIUM"
+DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
+CONFIDENCE_DECIMAL_PLACES = 3
+
+# Constants for AgentState model
+DEFAULT_FSM_ROUND = "IdleRound"
+
+# Risk assessment levels
+class RiskLevel(str, Enum):
+    """Risk assessment levels for proposals."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+
+# FSM round types
+class FSMRoundType(str, Enum):
+    """Finite State Machine round types for agent monitoring."""
+    IDLE = "IdleRound"
+    VOTING = "VotingRound"
+    EXECUTION = "ExecutionRound"
+    HEALTH_CHECK = "HealthCheckRound"
+
+
+class ModelValidationHelper:
+    """Centralized validation helper for model business rules."""
+    
+    @staticmethod
+    def validate_blockchain_address(address: str) -> str:
+        """Validate blockchain address format."""
+        assert isinstance(address, str), f"Address must be string, got {type(address)}"
+        assert address.strip(), "Address cannot be empty or whitespace"
+        
+        cleaned_address = address.strip()
+        
+        # Basic format checks
+        assert len(cleaned_address) >= 10, f"Address too short: {cleaned_address}"
+        assert not cleaned_address.isspace(), "Address cannot be only whitespace"
+        
+        return cleaned_address
+    
+    @staticmethod
+    def validate_positive_amount(amount: str, field_name: str = "amount") -> str:
+        """Validate that a string amount represents a positive number."""
+        assert isinstance(amount, str), f"{field_name} must be string, got {type(amount)}"
+        assert amount.strip(), f"{field_name} cannot be empty"
+        
+        try:
+            numeric_value = float(amount)
+            assert numeric_value >= 0, f"{field_name} cannot be negative: {numeric_value}"
+        except (ValueError, TypeError) as e:
+            raise ValueError(f"{field_name} must be a valid number: {e}")
+        
+        return amount
+    
+    @staticmethod
+    def validate_meaningful_text(text: str, min_length: int = 10, field_name: str = "text") -> str:
+        """Validate that text has meaningful content."""
+        assert isinstance(text, str), f"{field_name} must be string, got {type(text)}"
+        assert text.strip(), f"{field_name} cannot be empty or whitespace"
+        
+        cleaned_text = text.strip()
+        assert len(cleaned_text) >= min_length, f"{field_name} too short, must be at least {min_length} chars: {len(cleaned_text)}"
+        
+        return cleaned_text
+    
+    @staticmethod
+    def validate_staking_consistency(is_staked: bool, stake_amount: float, rewards_earned: float) -> List[str]:
+        """Validate staking state consistency and return list of warnings."""
+        warnings = []
+        
+        # Type validation (these are still critical errors)
+        assert isinstance(is_staked, bool), f"is_staked must be bool, got {type(is_staked)}"
+        assert isinstance(stake_amount, (int, float)), f"stake_amount must be numeric, got {type(stake_amount)}"
+        assert isinstance(rewards_earned, (int, float)), f"rewards_earned must be numeric, got {type(rewards_earned)}"
+        
+        # Business rule validation (converted to warnings)
+        if is_staked and stake_amount <= 0:
+            warnings.append(f"Agent marked as staked but has zero/negative stake amount: {stake_amount}")
+        
+        if rewards_earned < 0:
+            warnings.append(f"Negative staking rewards detected: {rewards_earned}")
+            
+        return warnings
+
+
 class Organization(BaseModel):
     """Represents a DAO organization."""
 
@@ -231,21 +317,13 @@ class ProposalVoter(BaseModel):
     @classmethod
     def validate_address(cls, v: str) -> str:
         """Validate blockchain address format."""
-        if not v or not v.strip():
-            raise ValueError("Address cannot be empty")
-        return v.strip()
+        return ModelValidationHelper.validate_blockchain_address(v)
 
     @field_validator("amount")
     @classmethod
     def validate_amount(cls, v: str) -> str:
         """Validate voting amount is numeric and non-negative."""
-        try:
-            amount = float(v)
-            if amount < 0:
-                raise ValueError("Voting amount cannot be negative")
-        except ValueError as e:
-            raise ValueError(f"Amount must be a valid number: {e}")
-        return v
+        return ModelValidationHelper.validate_positive_amount(v, "voting amount")
 
 
 class ProposalTopVoters(BaseModel):
@@ -269,3 +347,159 @@ class ProposalTopVoters(BaseModel):
         if len(v) > 100:
             raise ValueError("Voters list cannot exceed 100 entries")
         return v
+
+
+class VoteDecision(BaseModel):
+    """AI-generated voting decision for a proposal."""
+
+    proposal_id: str = Field(..., description="The proposal ID being voted on")
+    vote: VoteType = Field(
+        ..., description="The voting decision: FOR, AGAINST, or ABSTAIN"
+    )
+    confidence: float = Field(
+        ..., ge=0.0, le=1.0, description="Confidence score in the decision (0.0 to 1.0)"
+    )
+    reasoning: str = Field(..., description="AI-generated explanation for the vote")
+    risk_assessment: RiskLevel = Field(
+        default=RiskLevel.MEDIUM, description="Risk level: LOW, MEDIUM, or HIGH"
+    )
+    estimated_gas_cost: float = Field(
+        default=DEFAULT_ESTIMATED_GAS_COST, description="Estimated transaction cost in CELO"
+    )
+
+    @field_validator("proposal_id")
+    @classmethod
+    def validate_proposal_id(cls, v: str) -> str:
+        """Validate proposal ID format and content."""
+        # Runtime assertion: proposal_id must be meaningful
+        assert isinstance(v, str), f"Proposal ID must be string, got {type(v)}"
+        assert v.strip(), "Proposal ID cannot be empty or whitespace"
+        assert len(v.strip()) >= 3, f"Proposal ID too short: {v}"
+        
+        return v.strip()
+
+    @field_validator("reasoning")
+    @classmethod
+    def validate_reasoning(cls, v: str) -> str:
+        """Validate reasoning has sufficient content."""
+        return ModelValidationHelper.validate_meaningful_text(v, min_length=10, field_name="reasoning")
+
+    @field_validator("estimated_gas_cost")
+    @classmethod
+    def validate_gas_cost(cls, v: float) -> float:
+        """Validate gas cost is reasonable."""
+        # Runtime assertion: gas cost must be valid
+        assert isinstance(v, (int, float)), f"Gas cost must be numeric, got {type(v)}"
+        assert v >= 0.0, f"Gas cost cannot be negative: {v}"
+        assert v <= 1000.0, f"Gas cost seems unreasonably high: {v}"
+        
+        return v
+
+    @field_validator("confidence")
+    @classmethod
+    def validate_confidence(cls, v: float) -> float:
+        """Ensure confidence is within valid range and precision."""
+        # Runtime assertion: confidence must be a valid number
+        assert isinstance(v, (int, float)), f"Confidence must be numeric, got {type(v)}"
+        assert not (v != v), "Confidence cannot be NaN"  # NaN check
+        assert v != float('inf') and v != float('-inf'), "Confidence cannot be infinite"
+        
+        return cls._round_confidence_to_precision(v)
+    
+    @staticmethod
+    def _round_confidence_to_precision(confidence: float) -> float:
+        """Round confidence value to the specified decimal places."""
+        # Runtime assertion: validate input assumptions
+        assert isinstance(confidence, (int, float)), f"Expected numeric confidence, got {type(confidence)}"
+        assert 0.0 <= confidence <= 1.0, f"Confidence must be between 0.0 and 1.0, got {confidence}"
+        
+        rounded_value = round(confidence, CONFIDENCE_DECIMAL_PLACES)
+        
+        # Runtime assertion: validate output assumptions
+        assert 0.0 <= rounded_value <= 1.0, f"Rounded confidence out of range: {rounded_value}"
+        
+        return rounded_value
+
+
+class AgentState(BaseModel):
+    """Current state of the autonomous agent."""
+
+    last_activity: datetime = Field(
+        ..., description="Timestamp of last on-chain transaction"
+    )
+    votes_cast_today: int = Field(
+        default=0, ge=0, description="Number of votes cast in current 24h period"
+    )
+    last_activity_tx_hash: Optional[str] = Field(
+        None, description="Transaction hash of last activity"
+    )
+
+    is_staked: bool = Field(
+        default=False, description="Whether agent is currently staked"
+    )
+    staking_rewards_earned: float = Field(
+        default=0.0, ge=0.0, description="Total OLAS rewards earned"
+    )
+    stake_amount: float = Field(
+        default=0.0, ge=0.0, description="Amount of OLAS staked"
+    )
+
+    current_round: FSMRoundType = Field(
+        default=FSMRoundType.IDLE, description="Current FSM round for health monitoring"
+    )
+    rounds_completed: int = Field(
+        default=0, ge=0, description="Total FSM rounds completed"
+    )
+
+    is_healthy: bool = Field(default=True, description="Overall agent health status")
+
+    @field_validator("last_activity")
+    @classmethod
+    def validate_last_activity(cls, v: datetime) -> datetime:
+        """Validate last activity timestamp is reasonable."""
+        # Runtime assertion: timestamp must be valid
+        assert isinstance(v, datetime), f"Last activity must be datetime, got {type(v)}"
+        assert v <= datetime.now(), f"Last activity cannot be in the future: {v}"
+        
+        return v
+    
+    def get_staking_summary(self) -> Dict[str, Any]:
+        """Get a summary of staking-related information with data consistency warnings."""
+        # Validate staking state consistency and collect warnings
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            self.is_staked, self.stake_amount, self.staking_rewards_earned
+        )
+        
+        return {
+            "is_staked": self.is_staked,
+            "stake_amount": self.stake_amount,
+            "rewards_earned": self.staking_rewards_earned,
+            "data_consistency_warnings": warnings,
+            "is_data_consistent": len(warnings) == 0,
+        }
+    
+    def get_activity_summary(self) -> Dict[str, Any]:
+        """Get a summary of activity-related information."""
+        # Runtime assertion: validate activity data consistency
+        assert isinstance(self.votes_cast_today, int), f"votes_cast_today must be int, got {type(self.votes_cast_today)}"
+        assert self.votes_cast_today >= 0, f"votes_cast_today cannot be negative: {self.votes_cast_today}"
+        assert self.votes_cast_today <= 1000, f"votes_cast_today seems unreasonably high: {self.votes_cast_today}"
+        
+        return {
+            "last_activity": self.last_activity,
+            "votes_cast_today": self.votes_cast_today,
+            "last_tx_hash": self.last_activity_tx_hash,
+        }
+    
+    def get_fsm_summary(self) -> Dict[str, Any]:
+        """Get a summary of FSM-related information."""
+        # Runtime assertion: validate FSM state consistency
+        assert isinstance(self.current_round, FSMRoundType), f"current_round must be FSMRoundType, got {type(self.current_round)}"
+        assert isinstance(self.rounds_completed, int), f"rounds_completed must be int, got {type(self.rounds_completed)}"
+        assert self.rounds_completed >= 0, f"rounds_completed cannot be negative: {self.rounds_completed}"
+        
+        return {
+            "current_round": self.current_round,
+            "rounds_completed": self.rounds_completed,
+            "is_healthy": self.is_healthy,
+        }
