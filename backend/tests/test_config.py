@@ -285,3 +285,109 @@ class TestOlasStakingConfiguration:
         
         # Should be able to create settings without any staking config
         assert isinstance(settings, Settings)
+
+
+class TestPropertyMethods:
+    """Test new property methods for agent configuration."""
+
+    def test_monitored_daos_list_property_with_env_var(self):
+        """Test that monitored_daos_list property parses from environment variable."""
+        # Test the property logic directly by mocking os.getenv for specific calls
+        test_daos = "test1.eth,test2.eth,test3.eth"
+        settings = Settings(_env_file=None)
+        
+        def mock_getenv(key, default=""):
+            if key == "MONITORED_DAOS":
+                return test_daos
+            return os.getenv(key, default)
+        
+        with patch('config.os.getenv', side_effect=mock_getenv):
+            expected = ["test1.eth", "test2.eth", "test3.eth"]
+            result = settings.monitored_daos_list
+            assert result == expected
+
+    def test_monitored_daos_list_property_with_default(self):
+        """Test that monitored_daos_list property returns default when no env var."""
+        # Test without MONITORED_DAOS in environment
+        env_backup = os.environ.get("MONITORED_DAOS")
+        if "MONITORED_DAOS" in os.environ:
+            del os.environ["MONITORED_DAOS"]
+        try:
+            settings = Settings(_env_file=None)
+            expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
+            assert settings.monitored_daos_list == expected
+        finally:
+            if env_backup is not None:
+                os.environ["MONITORED_DAOS"] = env_backup
+
+    def test_monitored_daos_list_property_with_spaces_and_empty(self):
+        """Test that monitored_daos_list property handles spaces and empty values."""
+        test_daos = " compound.eth , , nouns.eth , arbitrum.eth "
+        settings = Settings(_env_file=None)
+        
+        def mock_getenv(key, default=""):
+            if key == "MONITORED_DAOS":
+                return test_daos
+            return os.getenv(key, default)
+        
+        with patch('config.os.getenv', side_effect=mock_getenv):
+            expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
+            result = settings.monitored_daos_list
+            assert result == expected
+
+    def test_safe_addresses_dict_property_with_env_var(self):
+        """Test that safe_addresses_dict property parses from environment variable."""
+        test_addresses = "compound:0x123,nouns:0x456"
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+            settings = Settings(_env_file=None)
+            expected = {"compound": "0x123", "nouns": "0x456"}
+            assert settings.safe_addresses_dict == expected
+
+    def test_safe_addresses_dict_property_with_default(self):
+        """Test that safe_addresses_dict property returns empty dict when no env var."""
+        # Test without SAFE_CONTRACT_ADDRESSES in environment
+        env_backup = os.environ.get("SAFE_CONTRACT_ADDRESSES")
+        if "SAFE_CONTRACT_ADDRESSES" in os.environ:
+            del os.environ["SAFE_CONTRACT_ADDRESSES"]
+        try:
+            settings = Settings(_env_file=None)
+            expected = {}
+            assert settings.safe_addresses_dict == expected
+        finally:
+            if env_backup is not None:
+                os.environ["SAFE_CONTRACT_ADDRESSES"] = env_backup
+
+    def test_safe_addresses_dict_property_with_malformed_data(self):
+        """Test that safe_addresses_dict property handles malformed data gracefully."""
+        test_addresses = "compound:0x123,invalid,nouns:0x456,also_invalid"
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+            settings = Settings(_env_file=None)
+            expected = {"compound": "0x123", "nouns": "0x456"}
+            assert settings.safe_addresses_dict == expected
+
+    def test_property_methods_return_types(self):
+        """Test that property methods return correct types."""
+        settings = Settings(_env_file=None)
+        
+        # Test return types
+        assert isinstance(settings.monitored_daos_list, list)
+        assert isinstance(settings.safe_addresses_dict, dict)
+        
+        # Test that all items in list are strings
+        for dao in settings.monitored_daos_list:
+            assert isinstance(dao, str)
+        
+        # Test that all dict keys and values are strings
+        for key, value in settings.safe_addresses_dict.items():
+            assert isinstance(key, str)
+            assert isinstance(value, str)
+
+    def test_monitored_daos_list_property_with_empty_string(self):
+        """Test that monitored_daos_list property handles empty string."""
+        with patch('config.os.getenv') as mock_getenv:
+            mock_getenv.return_value = ""
+            settings = Settings(_env_file=None)
+            # When empty, should fall back to default
+            expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
+            result = settings.monitored_daos_list
+            assert result == expected

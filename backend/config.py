@@ -142,6 +142,32 @@ class Settings(BaseSettings):
             org.strip() for org in self.top_organizations_env.split(",") if org.strip()
         ]
 
+    @property
+    def monitored_daos_list(self) -> List[str]:
+        """Parse comma-separated DAO list from environment."""
+        daos_env = os.getenv("MONITORED_DAOS", "")
+        if not daos_env.strip():
+            # Fall back to default when empty
+            daos_env = "compound.eth,nouns.eth,arbitrum.eth"
+        return [dao.strip() for dao in daos_env.split(",") if dao.strip()]
+
+    @property
+    def safe_addresses_dict(self) -> Dict[str, str]:
+        """Parse safe addresses from environment variable."""
+        safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
+        if not safe_addresses_env:
+            return {}
+        
+        addresses = {}
+        for pair in safe_addresses_env.split(","):
+            if ":" in pair:
+                dao, address = pair.split(":", 1)
+                dao = dao.strip()
+                address = address.strip()
+                if dao and address:
+                    addresses[dao] = address
+        return addresses
+
 
 # Global settings instance
 settings = Settings()
