@@ -22,7 +22,54 @@ from models import (
     ProposalTopVoters,
     VoteDecision,
     AgentState,
+    RiskLevel,
+    FSMRoundType,
+    ModelValidationHelper,
 )
+
+# Test constants
+TEST_GAS_COSTS = [0.001, 0.005, 0.01, 0.1]
+TEST_FSM_ROUNDS = [
+    FSMRoundType.IDLE,
+    FSMRoundType.VOTING,
+    FSMRoundType.EXECUTION,
+    FSMRoundType.HEALTH_CHECK,
+]
+
+# Test helper functions
+def create_test_data_with_boundary_values(base_data: dict, field_name: str, 
+                                        invalid_low: float, invalid_high: float,
+                                        valid_low: float, valid_high: float) -> None:
+    """Helper function to test boundary validation for numeric fields."""
+    # Test invalid values
+    test_data = base_data.copy()
+    test_data[field_name] = invalid_high
+    with pytest.raises(ValidationError):
+        yield test_data, "high"
+    
+    test_data[field_name] = invalid_low
+    with pytest.raises(ValidationError):
+        yield test_data, "low"
+    
+    # Test valid boundary values
+    test_data[field_name] = valid_low
+    yield test_data, "valid_low"
+    
+    test_data[field_name] = valid_high
+    yield test_data, "valid_high"
+
+def assert_non_negative_field_validation(model_class, base_data: dict, field_name: str) -> None:
+    """Helper function to validate non-negative numeric fields."""
+    # Test negative value
+    test_data = base_data.copy()
+    test_data[field_name] = -1
+    with pytest.raises(ValidationError):
+        model_class(**test_data)
+    
+    # Test valid boundary values
+    test_data[field_name] = 0
+    instance = model_class(**test_data)
+    assert getattr(instance, field_name) == 0
 
 
 class TestProposalState:
@@ -528,7 +575,7 @@ class TestProposalVoter:
     def test_proposal_voter_creation_with_against_vote(self) -> None:
         """Test ProposalVoter creation with AGAINST vote."""
         voter = ProposalVoter(
-            address="0x123abc", amount="500000000000000000", vote_type=VoteType.AGAINST
+            address="0x123abc456def789012345678901234567890abcd", amount="500000000000000000", vote_type=VoteType.AGAINST
         )
 
         assert voter.vote_type == VoteType.AGAINST
@@ -536,7 +583,7 @@ class TestProposalVoter:
     def test_proposal_voter_creation_with_abstain_vote(self) -> None:
         """Test ProposalVoter creation with ABSTAIN vote."""
         voter = ProposalVoter(
-            address="0xdef456", amount="250000000000000000", vote_type=VoteType.ABSTAIN
+            address="0xdef456789abc012345678901234567890abcdef", amount="250000000000000000", vote_type=VoteType.ABSTAIN
         )
 
         assert voter.vote_type == VoteType.ABSTAIN
@@ -545,7 +592,7 @@ class TestProposalVoter:
         """Test ProposalVoter creation fails with invalid vote type."""
         with pytest.raises(ValidationError):
             ProposalVoter(
-                address="0x123abc",
+                address="0x123abc456def789012345678901234567890abcd",
                 amount="1000000000000000000",
                 vote_type="INVALID",  # type: ignore
             )
@@ -553,7 +600,7 @@ class TestProposalVoter:
     def test_proposal_voter_creation_with_missing_fields_fails(self) -> None:
         """Test ProposalVoter creation fails when required fields are missing."""
         with pytest.raises(ValidationError):
-            ProposalVoter(address="0x123abc")  # type: ignore
+            ProposalVoter(address="0x123abc456def789012345678901234567890abcd")  # type: ignore
 
 
 class TestProposalTopVoters:
@@ -568,7 +615,7 @@ class TestProposalTopVoters:
                 vote_type=VoteType.FOR,
             ),
             ProposalVoter(
-                address="0x123abc456def789",
+                address="0x123abc456def789012345678901234567890abcd",
                 amount="500000000000000000",
                 vote_type=VoteType.AGAINST,
             ),
@@ -663,19 +710,19 @@ class TestVoteDecision:
         assert decision.vote == VoteType.FOR
         assert decision.confidence == 0.85
         assert decision.reasoning == "The proposal aligns with our governance strategy"
-        assert decision.risk_assessment == "MEDIUM"  # default value
+        assert decision.risk_assessment == RiskLevel.MEDIUM  # default value
         assert decision.estimated_gas_cost == 0.005  # default value
 
     def test_vote_decision_creation_with_all_fields(self) -> None:
         """Test VoteDecision creation with all fields."""
         decision_data = self._create_valid_vote_decision_data()
         decision_data.update({
-            "risk_assessment": "HIGH",
+            "risk_assessment": RiskLevel.HIGH,
             "estimated_gas_cost": 0.012,
         })
 
         decision = VoteDecision(**decision_data)
-        assert decision.risk_assessment == "HIGH"
+        assert decision.risk_assessment == RiskLevel.HIGH
         assert decision.estimated_gas_cost == 0.012
 
     def test_vote_decision_with_against_vote(self) -> None:
@@ -745,7 +792,7 @@ class TestVoteDecision:
         """Test VoteDecision with different risk assessment values."""
         decision_data = self._create_valid_vote_decision_data()
         
-        for risk_level in ["LOW", "MEDIUM", "HIGH"]:
+        for risk_level in [RiskLevel.LOW, RiskLevel.MEDIUM, RiskLevel.HIGH]:
             decision_data["risk_assessment"] = risk_level
             decision = VoteDecision(**decision_data)
             assert decision.risk_assessment == risk_level
@@ -755,10 +802,57 @@ class TestVoteDecision:
         decision_data = self._create_valid_vote_decision_data()
         
         # Test different gas costs
-        for gas_cost in [0.001, 0.005, 0.01, 0.1]:
+        for gas_cost in TEST_GAS_COSTS:
             decision_data["estimated_gas_cost"] = gas_cost
             decision = VoteDecision(**decision_data)
             assert decision.estimated_gas_cost == gas_cost
+
+    def test_vote_decision_proposal_id_validation_with_assertions(self) -> None:
+        """Test VoteDecision proposal_id validation with runtime assertions."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test empty proposal_id
+        decision_data["proposal_id"] = ""
+        with pytest.raises(ValidationError, match="Proposal ID cannot be empty"):
+            VoteDecision(**decision_data)
+        
+        # Test whitespace-only proposal_id
+        decision_data["proposal_id"] = "   "
+        with pytest.raises(ValidationError, match="Proposal ID cannot be empty"):
+            VoteDecision(**decision_data)
+        
+        # Test too short proposal_id
+        decision_data["proposal_id"] = "ab"
+        with pytest.raises(ValidationError, match="Proposal ID too short"):
+            VoteDecision(**decision_data)
+
+    def test_vote_decision_reasoning_validation_with_assertions(self) -> None:
+        """Test VoteDecision reasoning validation with runtime assertions."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test empty reasoning
+        decision_data["reasoning"] = ""
+        with pytest.raises(ValidationError, match="reasoning cannot be empty"):
+            VoteDecision(**decision_data)
+        
+        # Test too short reasoning
+        decision_data["reasoning"] = "short"
+        with pytest.raises(ValidationError, match="reasoning too short"):
+            VoteDecision(**decision_data)
+
+    def test_vote_decision_gas_cost_validation_with_assertions(self) -> None:
+        """Test VoteDecision gas cost validation with runtime assertions."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test negative gas cost
+        decision_data["estimated_gas_cost"] = -0.1
+        with pytest.raises(ValidationError, match="Gas cost cannot be negative"):
+            VoteDecision(**decision_data)
+        
+        # Test unreasonably high gas cost
+        decision_data["estimated_gas_cost"] = 1001.0
+        with pytest.raises(ValidationError, match="Gas cost seems unreasonably high"):
+            VoteDecision(**decision_data)
 
 
 class TestAgentState:
@@ -781,7 +875,7 @@ class TestAgentState:
         assert state.is_staked is False  # default value
         assert state.staking_rewards_earned == 0.0  # default value
         assert state.stake_amount == 0.0  # default value
-        assert state.current_round == "IdleRound"  # default value
+        assert state.current_round == FSMRoundType.IDLE  # default value
         assert state.rounds_completed == 0  # default value
         assert state.is_healthy is True  # default value
 
@@ -794,7 +888,7 @@ class TestAgentState:
             "is_staked": True,
             "staking_rewards_earned": 12.5,
             "stake_amount": 1000.0,
-            "current_round": "VotingRound",
+            "current_round": FSMRoundType.VOTING,
             "rounds_completed": 100,
             "is_healthy": False,
         })
@@ -805,24 +899,16 @@ class TestAgentState:
         assert state.is_staked is True
         assert state.staking_rewards_earned == 12.5
         assert state.stake_amount == 1000.0
-        assert state.current_round == "VotingRound"
+        assert state.current_round == FSMRoundType.VOTING
         assert state.rounds_completed == 100
         assert state.is_healthy is False
 
     def test_agent_state_votes_cast_today_validation(self) -> None:
         """Test that votes_cast_today is validated to be non-negative."""
         state_data = self._create_valid_agent_state_data()
+        assert_non_negative_field_validation(AgentState, state_data, "votes_cast_today")
         
-        # Test negative votes_cast_today
-        state_data["votes_cast_today"] = -1
-        with pytest.raises(ValidationError):
-            AgentState(**state_data)
-
-        # Test valid boundary values
-        state_data["votes_cast_today"] = 0
-        state = AgentState(**state_data)
-        assert state.votes_cast_today == 0
-
+        # Test additional valid value
         state_data["votes_cast_today"] = 10
         state = AgentState(**state_data)
         assert state.votes_cast_today == 10
@@ -830,17 +916,9 @@ class TestAgentState:
     def test_agent_state_staking_rewards_validation(self) -> None:
         """Test that staking_rewards_earned is validated to be non-negative."""
         state_data = self._create_valid_agent_state_data()
+        assert_non_negative_field_validation(AgentState, state_data, "staking_rewards_earned")
         
-        # Test negative staking_rewards_earned
-        state_data["staking_rewards_earned"] = -5.0
-        with pytest.raises(ValidationError):
-            AgentState(**state_data)
-
-        # Test valid boundary values
-        state_data["staking_rewards_earned"] = 0.0
-        state = AgentState(**state_data)
-        assert state.staking_rewards_earned == 0.0
-
+        # Test additional valid value
         state_data["staking_rewards_earned"] = 100.5
         state = AgentState(**state_data)
         assert state.staking_rewards_earned == 100.5
@@ -848,17 +926,9 @@ class TestAgentState:
     def test_agent_state_stake_amount_validation(self) -> None:
         """Test that stake_amount is validated to be non-negative."""
         state_data = self._create_valid_agent_state_data()
+        assert_non_negative_field_validation(AgentState, state_data, "stake_amount")
         
-        # Test negative stake_amount
-        state_data["stake_amount"] = -10.0
-        with pytest.raises(ValidationError):
-            AgentState(**state_data)
-
-        # Test valid boundary values
-        state_data["stake_amount"] = 0.0
-        state = AgentState(**state_data)
-        assert state.stake_amount == 0.0
-
+        # Test additional valid value
         state_data["stake_amount"] = 5000.0
         state = AgentState(**state_data)
         assert state.stake_amount == 5000.0
@@ -866,17 +936,9 @@ class TestAgentState:
     def test_agent_state_rounds_completed_validation(self) -> None:
         """Test that rounds_completed is validated to be non-negative."""
         state_data = self._create_valid_agent_state_data()
+        assert_non_negative_field_validation(AgentState, state_data, "rounds_completed")
         
-        # Test negative rounds_completed
-        state_data["rounds_completed"] = -1
-        with pytest.raises(ValidationError):
-            AgentState(**state_data)
-
-        # Test valid boundary values
-        state_data["rounds_completed"] = 0
-        state = AgentState(**state_data)
-        assert state.rounds_completed == 0
-
+        # Test additional valid value
         state_data["rounds_completed"] = 1000
         state = AgentState(**state_data)
         assert state.rounds_completed == 1000
@@ -890,7 +952,7 @@ class TestAgentState:
         """Test AgentState with different FSM round types."""
         state_data = self._create_valid_agent_state_data()
         
-        for round_type in ["IdleRound", "VotingRound", "ExecutionRound", "HealthCheckRound"]:
+        for round_type in TEST_FSM_ROUNDS:
             state_data["current_round"] = round_type
             state = AgentState(**state_data)
             assert state.current_round == round_type
@@ -933,3 +995,229 @@ class TestAgentState:
         assert state.is_staked is True
         assert state.stake_amount == 1000.0
         assert state.staking_rewards_earned == 25.75
+
+    def test_agent_state_summary_methods(self) -> None:
+        """Test AgentState summary methods return correct information."""
+        state_data = self._create_valid_agent_state_data()
+        state_data.update({
+            "votes_cast_today": 5,
+            "last_activity_tx_hash": "0x123abc",
+            "is_staked": True,
+            "staking_rewards_earned": 12.5,
+            "stake_amount": 1000.0,
+            "current_round": FSMRoundType.VOTING,
+            "rounds_completed": 100,
+            "is_healthy": False,
+        })
+        
+        state = AgentState(**state_data)
+        
+        # Test staking summary
+        staking_summary = state.get_staking_summary()
+        expected_staking = {
+            "is_staked": True,
+            "stake_amount": 1000.0,
+            "rewards_earned": 12.5,
+        }
+        assert staking_summary == expected_staking
+        
+        # Test activity summary
+        activity_summary = state.get_activity_summary()
+        expected_activity = {
+            "last_activity": state.last_activity,
+            "votes_cast_today": 5,
+            "last_tx_hash": "0x123abc",
+        }
+        assert activity_summary == expected_activity
+        
+        # Test FSM summary
+        fsm_summary = state.get_fsm_summary()
+        expected_fsm = {
+            "current_round": FSMRoundType.VOTING,
+            "rounds_completed": 100,
+            "is_healthy": False,
+        }
+        assert fsm_summary == expected_fsm
+
+    def test_agent_state_last_activity_validation_with_assertions(self) -> None:
+        """Test AgentState last_activity validation with runtime assertions."""
+        from datetime import datetime, timedelta
+        
+        # Test future timestamp
+        future_time = datetime.now() + timedelta(hours=1)
+        with pytest.raises(ValidationError, match="Last activity cannot be in the future"):
+            AgentState(last_activity=future_time)
+
+    def test_agent_state_staking_summary_assertions(self) -> None:
+        """Test AgentState staking summary runtime assertions."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test inconsistent staking state (staked but zero stake amount)
+        state_data.update({
+            "is_staked": True,
+            "stake_amount": 0.0,
+            "staking_rewards_earned": 0.0,
+        })
+        
+        state = AgentState(**state_data)
+        with pytest.raises(AssertionError, match="If staked, stake_amount must be positive"):
+            state.get_staking_summary()
+
+    def test_agent_state_activity_summary_assertions(self) -> None:
+        """Test AgentState activity summary runtime assertions."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test unreasonably high votes cast today
+        state_data["votes_cast_today"] = 1001
+        state = AgentState(**state_data)
+        with pytest.raises(AssertionError, match="votes_cast_today seems unreasonably high"):
+            state.get_activity_summary()
+
+    def test_agent_state_fsm_summary_assertions(self) -> None:
+        """Test AgentState FSM summary runtime assertions."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test negative rounds completed (should be prevented by field validation)
+        state_data["rounds_completed"] = -1
+        with pytest.raises(ValidationError):
+            AgentState(**state_data)
+
+    def test_agent_state_staking_consistency_validation(self) -> None:
+        """Test AgentState staking consistency validation."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test valid staked state
+        state_data.update({
+            "is_staked": True,
+            "stake_amount": 1000.0,
+            "staking_rewards_earned": 25.0,
+        })
+        
+        state = AgentState(**state_data)
+        summary = state.get_staking_summary()  # Should not raise
+        assert summary["is_staked"] is True
+        assert summary["stake_amount"] == 1000.0
+        
+        # Test valid non-staked state
+        state_data.update({
+            "is_staked": False,
+            "stake_amount": 0.0,
+            "staking_rewards_earned": 0.0,
+        })
+        
+        state = AgentState(**state_data)
+        summary = state.get_staking_summary()  # Should not raise
+        assert summary["is_staked"] is False
+
+
+class TestModelValidationHelper:
+    """Test cases for ModelValidationHelper class."""
+
+    def test_validate_blockchain_address_with_valid_addresses(self) -> None:
+        """Test validate_blockchain_address with valid addresses."""
+        valid_addresses = [
+            "0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            "0x123abc456def789012345678901234567890abcd",
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+            "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        ]
+        
+        for address in valid_addresses:
+            result = ModelValidationHelper.validate_blockchain_address(address)
+            assert result == address
+
+    def test_validate_blockchain_address_with_invalid_addresses(self) -> None:
+        """Test validate_blockchain_address with invalid addresses."""
+        # Test empty address
+        with pytest.raises(AssertionError, match="Address cannot be empty"):
+            ModelValidationHelper.validate_blockchain_address("")
+        
+        # Test whitespace-only address
+        with pytest.raises(AssertionError, match="Address cannot be empty"):
+            ModelValidationHelper.validate_blockchain_address("   ")
+        
+        # Test too short address
+        with pytest.raises(AssertionError, match="Address too short"):
+            ModelValidationHelper.validate_blockchain_address("0x123")
+        
+        # Test non-string address
+        with pytest.raises(AssertionError, match="Address must be string"):
+            ModelValidationHelper.validate_blockchain_address(123)  # type: ignore
+
+    def test_validate_positive_amount_with_valid_amounts(self) -> None:
+        """Test validate_positive_amount with valid amounts."""
+        valid_amounts = ["0", "1000", "1000.5", "999999999999999999999999"]
+        
+        for amount in valid_amounts:
+            result = ModelValidationHelper.validate_positive_amount(amount)
+            assert result == amount
+
+    def test_validate_positive_amount_with_invalid_amounts(self) -> None:
+        """Test validate_positive_amount with invalid amounts."""
+        # Test negative amount
+        with pytest.raises(AssertionError, match="amount cannot be negative"):
+            ModelValidationHelper.validate_positive_amount("-1")
+        
+        # Test empty amount
+        with pytest.raises(AssertionError, match="amount cannot be empty"):
+            ModelValidationHelper.validate_positive_amount("")
+        
+        # Test non-numeric amount
+        with pytest.raises(ValueError, match="amount must be a valid number"):
+            ModelValidationHelper.validate_positive_amount("not_a_number")
+        
+        # Test non-string amount
+        with pytest.raises(AssertionError, match="amount must be string"):
+            ModelValidationHelper.validate_positive_amount(123)  # type: ignore
+
+    def test_validate_meaningful_text_with_valid_text(self) -> None:
+        """Test validate_meaningful_text with valid text."""
+        valid_text = "This is a meaningful text with sufficient length"
+        result = ModelValidationHelper.validate_meaningful_text(valid_text)
+        assert result == valid_text
+
+    def test_validate_meaningful_text_with_invalid_text(self) -> None:
+        """Test validate_meaningful_text with invalid text."""
+        # Test empty text
+        with pytest.raises(AssertionError, match="text cannot be empty"):
+            ModelValidationHelper.validate_meaningful_text("")
+        
+        # Test too short text
+        with pytest.raises(AssertionError, match="text too short"):
+            ModelValidationHelper.validate_meaningful_text("short")
+        
+        # Test custom field name and min length
+        with pytest.raises(AssertionError, match="description too short"):
+            ModelValidationHelper.validate_meaningful_text("short", min_length=20, field_name="description")
+
+    def test_validate_staking_consistency_with_valid_states(self) -> None:
+        """Test validate_staking_consistency with valid staking states."""
+        # Test valid staked state
+        ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=1000.0, rewards_earned=25.0
+        )
+        
+        # Test valid non-staked state
+        ModelValidationHelper.validate_staking_consistency(
+            is_staked=False, stake_amount=0.0, rewards_earned=0.0
+        )
+
+    def test_validate_staking_consistency_with_invalid_states(self) -> None:
+        """Test validate_staking_consistency with invalid staking states."""
+        # Test staked but zero stake amount
+        with pytest.raises(AssertionError, match="If staked, stake_amount must be positive"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked=True, stake_amount=0.0, rewards_earned=0.0
+            )
+        
+        # Test negative rewards
+        with pytest.raises(AssertionError, match="Rewards earned cannot be negative"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked=False, stake_amount=0.0, rewards_earned=-5.0
+            )
+        
+        # Test invalid types
+        with pytest.raises(AssertionError, match="is_staked must be bool"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked="true", stake_amount=0.0, rewards_earned=0.0  # type: ignore
+            )
