@@ -85,7 +85,14 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def parse_env_settings(self):
         """Parse environment-specific settings after model initialization."""
-        # Parse safe addresses from environment variable
+        self._parse_safe_addresses()
+        self._parse_agent_address()
+        self._parse_vote_threshold()
+        self._parse_intervals()
+        return self
+
+    def _parse_safe_addresses(self):
+        """Parse safe addresses from SAFE_CONTRACT_ADDRESSES environment variable."""
         safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
         if safe_addresses_env:
             addresses = {}
@@ -97,43 +104,54 @@ class Settings(BaseSettings):
                     if dao and address:
                         addresses[dao] = address
             self.safe_addresses = addresses
-        
-        # Parse agent address from environment variable
+
+    def _parse_agent_address(self):
+        """Parse agent address from AGENT_ADDRESS environment variable."""
         agent_address_env = os.getenv("AGENT_ADDRESS")
         if agent_address_env:
             self.agent_address = agent_address_env
-        
-        # Parse vote confidence threshold from environment variable
+
+    def _parse_vote_threshold(self):
+        """Parse vote confidence threshold from VOTE_CONFIDENCE_THRESHOLD environment variable."""
         vote_threshold_env = os.getenv("VOTE_CONFIDENCE_THRESHOLD")
         if vote_threshold_env:
             threshold = float(vote_threshold_env)
             if not (0.0 <= threshold <= 1.0):
                 raise ValueError(f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}")
             self.vote_confidence_threshold = threshold
-        
-        # Parse activity intervals from environment variables
+
+    def _parse_intervals(self):
+        """Parse interval settings from environment variables."""
+        self._parse_activity_interval()
+        self._parse_proposal_interval()
+        self._parse_deadline_time()
+
+    def _parse_activity_interval(self):
+        """Parse activity check interval from ACTIVITY_CHECK_INTERVAL environment variable."""
         activity_interval_env = os.getenv("ACTIVITY_CHECK_INTERVAL")
         if activity_interval_env:
             interval = int(activity_interval_env)
             if interval <= 0:
                 raise ValueError(f"activity_check_interval must be positive, got {interval}")
             self.activity_check_interval = interval
-        
+
+    def _parse_proposal_interval(self):
+        """Parse proposal check interval from PROPOSAL_CHECK_INTERVAL environment variable."""
         proposal_interval_env = os.getenv("PROPOSAL_CHECK_INTERVAL")
         if proposal_interval_env:
             interval = int(proposal_interval_env)
             if interval <= 0:
                 raise ValueError(f"proposal_check_interval must be positive, got {interval}")
             self.proposal_check_interval = interval
-        
+
+    def _parse_deadline_time(self):
+        """Parse minimum time before deadline from MIN_TIME_BEFORE_DEADLINE environment variable."""
         deadline_time_env = os.getenv("MIN_TIME_BEFORE_DEADLINE")
         if deadline_time_env:
             time_val = int(deadline_time_env)
             if time_val <= 0:
                 raise ValueError(f"min_time_before_deadline must be positive, got {time_val}")
             self.min_time_before_deadline = time_val
-            
-        return self
 
     @property
     def top_organizations(self) -> List[str]:
