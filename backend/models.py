@@ -269,3 +269,48 @@ class ProposalTopVoters(BaseModel):
         if len(v) > 100:
             raise ValueError("Voters list cannot exceed 100 entries")
         return v
+
+
+class VoteDecision(BaseModel):
+    """AI-generated voting decision for a proposal."""
+    
+    proposal_id: str = Field(..., description="The proposal ID being voted on")
+    vote: VoteType = Field(..., description="The voting decision: FOR, AGAINST, or ABSTAIN")
+    confidence: float = Field(
+        ..., 
+        ge=0.0, 
+        le=1.0, 
+        description="Confidence score in the decision (0.0 to 1.0)"
+    )
+    reasoning: str = Field(..., description="AI-generated explanation for the vote")
+    risk_assessment: str = Field(
+        default="MEDIUM", 
+        description="Risk level: LOW, MEDIUM, or HIGH"
+    )
+    estimated_gas_cost: float = Field(
+        default=0.005, 
+        description="Estimated transaction cost in CELO"
+    )
+    
+    @field_validator('confidence')
+    @classmethod
+    def validate_confidence(cls, v: float) -> float:
+        """Ensure confidence is within valid range."""
+        return round(v, 3)
+
+
+class AgentState(BaseModel):
+    """Current state of the autonomous agent."""
+    
+    last_activity: datetime = Field(..., description="Timestamp of last on-chain transaction")
+    votes_cast_today: int = Field(default=0, ge=0, description="Number of votes cast in current 24h period")
+    last_activity_tx_hash: Optional[str] = Field(None, description="Transaction hash of last activity")
+    
+    is_staked: bool = Field(default=False, description="Whether agent is currently staked")
+    staking_rewards_earned: float = Field(default=0.0, ge=0.0, description="Total OLAS rewards earned")
+    stake_amount: float = Field(default=0.0, ge=0.0, description="Amount of OLAS staked")
+    
+    current_round: str = Field(default="IdleRound", description="Current FSM round for health monitoring")
+    rounds_completed: int = Field(default=0, ge=0, description="Total FSM rounds completed")
+    
+    is_healthy: bool = Field(default=True, description="Overall agent health status")

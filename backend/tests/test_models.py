@@ -20,6 +20,8 @@ from models import (
     SortOrder,
     ProposalVoter,
     ProposalTopVoters,
+    VoteDecision,
+    AgentState,
 )
 
 
@@ -638,3 +640,296 @@ class TestProposalTopVoters:
 
         assert len(top_voters.voters) == 1
         assert top_voters.voters[0] == voter
+
+
+class TestVoteDecision:
+    """Test cases for VoteDecision model."""
+
+    def _create_valid_vote_decision_data(self) -> dict:
+        """Create valid vote decision data for testing."""
+        return {
+            "proposal_id": "prop-123",
+            "vote": VoteType.FOR,
+            "confidence": 0.85,
+            "reasoning": "The proposal aligns with our governance strategy",
+        }
+
+    def test_vote_decision_creation_with_required_fields(self) -> None:
+        """Test VoteDecision creation with required fields."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision = VoteDecision(**decision_data)
+
+        assert decision.proposal_id == "prop-123"
+        assert decision.vote == VoteType.FOR
+        assert decision.confidence == 0.85
+        assert decision.reasoning == "The proposal aligns with our governance strategy"
+        assert decision.risk_assessment == "MEDIUM"  # default value
+        assert decision.estimated_gas_cost == 0.005  # default value
+
+    def test_vote_decision_creation_with_all_fields(self) -> None:
+        """Test VoteDecision creation with all fields."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data.update({
+            "risk_assessment": "HIGH",
+            "estimated_gas_cost": 0.012,
+        })
+
+        decision = VoteDecision(**decision_data)
+        assert decision.risk_assessment == "HIGH"
+        assert decision.estimated_gas_cost == 0.012
+
+    def test_vote_decision_with_against_vote(self) -> None:
+        """Test VoteDecision creation with AGAINST vote."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["vote"] = VoteType.AGAINST
+        decision_data["reasoning"] = "The proposal has significant risks"
+
+        decision = VoteDecision(**decision_data)
+        assert decision.vote == VoteType.AGAINST
+        assert decision.reasoning == "The proposal has significant risks"
+
+    def test_vote_decision_with_abstain_vote(self) -> None:
+        """Test VoteDecision creation with ABSTAIN vote."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["vote"] = VoteType.ABSTAIN
+        decision_data["reasoning"] = "Insufficient information to make a decision"
+
+        decision = VoteDecision(**decision_data)
+        assert decision.vote == VoteType.ABSTAIN
+
+    def test_vote_decision_confidence_validation(self) -> None:
+        """Test that confidence is validated to be between 0 and 1."""
+        decision_data = self._create_valid_vote_decision_data()
+
+        # Test invalid confidence > 1
+        decision_data["confidence"] = 1.5
+        with pytest.raises(ValidationError):
+            VoteDecision(**decision_data)
+
+        # Test invalid confidence < 0
+        decision_data["confidence"] = -0.1
+        with pytest.raises(ValidationError):
+            VoteDecision(**decision_data)
+
+        # Test valid boundary values
+        decision_data["confidence"] = 0.0
+        decision = VoteDecision(**decision_data)
+        assert decision.confidence == 0.0
+
+        decision_data["confidence"] = 1.0
+        decision = VoteDecision(**decision_data)
+        assert decision.confidence == 1.0
+
+    def test_vote_decision_confidence_rounding(self) -> None:
+        """Test that confidence is rounded to 3 decimal places."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["confidence"] = 0.123456789
+
+        decision = VoteDecision(**decision_data)
+        assert decision.confidence == 0.123
+
+    def test_vote_decision_creation_with_invalid_vote_type_fails(self) -> None:
+        """Test VoteDecision creation fails with invalid vote type."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["vote"] = "INVALID"
+
+        with pytest.raises(ValidationError):
+            VoteDecision(**decision_data)
+
+    def test_vote_decision_creation_fails_with_missing_required_fields(self) -> None:
+        """Test that VoteDecision creation fails when required fields are missing."""
+        with pytest.raises(ValidationError):
+            VoteDecision(proposal_id="prop-123")  # Missing other required fields
+
+    def test_vote_decision_with_different_risk_assessments(self) -> None:
+        """Test VoteDecision with different risk assessment values."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        for risk_level in ["LOW", "MEDIUM", "HIGH"]:
+            decision_data["risk_assessment"] = risk_level
+            decision = VoteDecision(**decision_data)
+            assert decision.risk_assessment == risk_level
+
+    def test_vote_decision_with_various_gas_costs(self) -> None:
+        """Test VoteDecision with various gas cost values."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test different gas costs
+        for gas_cost in [0.001, 0.005, 0.01, 0.1]:
+            decision_data["estimated_gas_cost"] = gas_cost
+            decision = VoteDecision(**decision_data)
+            assert decision.estimated_gas_cost == gas_cost
+
+
+class TestAgentState:
+    """Test cases for AgentState model."""
+
+    def _create_valid_agent_state_data(self) -> dict:
+        """Create valid agent state data for testing."""
+        return {
+            "last_activity": datetime.now(),
+        }
+
+    def test_agent_state_creation_with_required_fields(self) -> None:
+        """Test AgentState creation with required fields."""
+        state_data = self._create_valid_agent_state_data()
+        state = AgentState(**state_data)
+
+        assert isinstance(state.last_activity, datetime)
+        assert state.votes_cast_today == 0  # default value
+        assert state.last_activity_tx_hash is None  # default value
+        assert state.is_staked is False  # default value
+        assert state.staking_rewards_earned == 0.0  # default value
+        assert state.stake_amount == 0.0  # default value
+        assert state.current_round == "IdleRound"  # default value
+        assert state.rounds_completed == 0  # default value
+        assert state.is_healthy is True  # default value
+
+    def test_agent_state_creation_with_all_fields(self) -> None:
+        """Test AgentState creation with all fields."""
+        state_data = self._create_valid_agent_state_data()
+        state_data.update({
+            "votes_cast_today": 5,
+            "last_activity_tx_hash": "0x123abc456def789",
+            "is_staked": True,
+            "staking_rewards_earned": 12.5,
+            "stake_amount": 1000.0,
+            "current_round": "VotingRound",
+            "rounds_completed": 100,
+            "is_healthy": False,
+        })
+
+        state = AgentState(**state_data)
+        assert state.votes_cast_today == 5
+        assert state.last_activity_tx_hash == "0x123abc456def789"
+        assert state.is_staked is True
+        assert state.staking_rewards_earned == 12.5
+        assert state.stake_amount == 1000.0
+        assert state.current_round == "VotingRound"
+        assert state.rounds_completed == 100
+        assert state.is_healthy is False
+
+    def test_agent_state_votes_cast_today_validation(self) -> None:
+        """Test that votes_cast_today is validated to be non-negative."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test negative votes_cast_today
+        state_data["votes_cast_today"] = -1
+        with pytest.raises(ValidationError):
+            AgentState(**state_data)
+
+        # Test valid boundary values
+        state_data["votes_cast_today"] = 0
+        state = AgentState(**state_data)
+        assert state.votes_cast_today == 0
+
+        state_data["votes_cast_today"] = 10
+        state = AgentState(**state_data)
+        assert state.votes_cast_today == 10
+
+    def test_agent_state_staking_rewards_validation(self) -> None:
+        """Test that staking_rewards_earned is validated to be non-negative."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test negative staking_rewards_earned
+        state_data["staking_rewards_earned"] = -5.0
+        with pytest.raises(ValidationError):
+            AgentState(**state_data)
+
+        # Test valid boundary values
+        state_data["staking_rewards_earned"] = 0.0
+        state = AgentState(**state_data)
+        assert state.staking_rewards_earned == 0.0
+
+        state_data["staking_rewards_earned"] = 100.5
+        state = AgentState(**state_data)
+        assert state.staking_rewards_earned == 100.5
+
+    def test_agent_state_stake_amount_validation(self) -> None:
+        """Test that stake_amount is validated to be non-negative."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test negative stake_amount
+        state_data["stake_amount"] = -10.0
+        with pytest.raises(ValidationError):
+            AgentState(**state_data)
+
+        # Test valid boundary values
+        state_data["stake_amount"] = 0.0
+        state = AgentState(**state_data)
+        assert state.stake_amount == 0.0
+
+        state_data["stake_amount"] = 5000.0
+        state = AgentState(**state_data)
+        assert state.stake_amount == 5000.0
+
+    def test_agent_state_rounds_completed_validation(self) -> None:
+        """Test that rounds_completed is validated to be non-negative."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test negative rounds_completed
+        state_data["rounds_completed"] = -1
+        with pytest.raises(ValidationError):
+            AgentState(**state_data)
+
+        # Test valid boundary values
+        state_data["rounds_completed"] = 0
+        state = AgentState(**state_data)
+        assert state.rounds_completed == 0
+
+        state_data["rounds_completed"] = 1000
+        state = AgentState(**state_data)
+        assert state.rounds_completed == 1000
+
+    def test_agent_state_creation_fails_with_missing_required_fields(self) -> None:
+        """Test that AgentState creation fails when required fields are missing."""
+        with pytest.raises(ValidationError):
+            AgentState()  # Missing required last_activity field
+
+    def test_agent_state_with_different_round_types(self) -> None:
+        """Test AgentState with different FSM round types."""
+        state_data = self._create_valid_agent_state_data()
+        
+        for round_type in ["IdleRound", "VotingRound", "ExecutionRound", "HealthCheckRound"]:
+            state_data["current_round"] = round_type
+            state = AgentState(**state_data)
+            assert state.current_round == round_type
+
+    def test_agent_state_with_optional_tx_hash(self) -> None:
+        """Test AgentState with and without transaction hash."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test with None (default)
+        state = AgentState(**state_data)
+        assert state.last_activity_tx_hash is None
+
+        # Test with actual tx hash
+        state_data["last_activity_tx_hash"] = "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        state = AgentState(**state_data)
+        assert state.last_activity_tx_hash == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+
+    def test_agent_state_staking_status_combinations(self) -> None:
+        """Test different combinations of staking-related fields."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test not staked scenario
+        state_data.update({
+            "is_staked": False,
+            "stake_amount": 0.0,
+            "staking_rewards_earned": 0.0,
+        })
+        state = AgentState(**state_data)
+        assert state.is_staked is False
+        assert state.stake_amount == 0.0
+        assert state.staking_rewards_earned == 0.0
+
+        # Test staked scenario
+        state_data.update({
+            "is_staked": True,
+            "stake_amount": 1000.0,
+            "staking_rewards_earned": 25.75,
+        })
+        state = AgentState(**state_data)
+        assert state.is_staked is True
+        assert state.stake_amount == 1000.0
+        assert state.staking_rewards_earned == 25.75
