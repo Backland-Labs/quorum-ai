@@ -570,6 +570,76 @@ class TestTallyServiceGetProposalVotes:
 
         await tally_service.get_proposal_votes(proposal_id, limit)
 
+
+class TestTallyServiceHasVoted:
+    """Test TallyService has_voted method."""
+
+    async def test_has_voted_returns_true_when_vote_exists(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test has_voted returns True when voter has cast a vote on proposal."""
+        mock_response = {
+            "data": {
+                "votes": {
+                    "nodes": [
+                        {
+                            "id": "vote-123"
+                        }
+                    ],
+                    "pageInfo": {
+                        "count": 1
+                    }
+                }
+            }
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=mock_response,
+        )
+
+        result = await tally_service.has_voted("prop-123", "0x1234567890abcdef")
+
+        assert result is True
+
+    async def test_has_voted_returns_false_when_no_vote_exists(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test has_voted returns False when voter has not cast a vote on proposal."""
+        mock_response = {
+            "data": {
+                "votes": {
+                    "nodes": [],
+                    "pageInfo": {
+                        "count": 0
+                    }
+                }
+            }
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=mock_response,
+        )
+
+        result = await tally_service.has_voted("prop-123", "0x1234567890abcdef")
+
+        assert result is False
+
+    async def test_has_voted_handles_api_errors_gracefully(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test has_voted handles GraphQL API errors gracefully and returns False."""
+        # Mock a network error
+        httpx_mock.add_exception(httpx.RequestError("Network error"))
+
+        # Should return False and not raise exception
+        result = await tally_service.has_voted("prop-123", "0x1234567890abcdef")
+
+        assert result is False
+
     async def test_get_proposal_votes_data_transformation(
         self,
         tally_service: TallyService,
