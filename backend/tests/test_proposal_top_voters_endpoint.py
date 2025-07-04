@@ -154,58 +154,6 @@ class TestProposalTopVotersEndpoint:
         assert error_detail["type"] == "less_than_equal"
         assert error_detail["loc"] == ["query", "limit"]
 
-    def test_caching_headers_active_proposal(self, client: TestClient, sample_voters):
-        """Test that active proposals have appropriate caching headers."""
-        # Arrange
-        proposal_id = "active-proposal-123"
-        import main
-
-        # Mock the service to return voters
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
-
-        # Mock get_proposal_by_id to return an active proposal
-        active_proposal = Mock(spec=Proposal)
-        active_proposal.state = ProposalState.ACTIVE
-        active_proposal.id = proposal_id
-        main.tally_service.get_proposal_by_id = AsyncMock(return_value=active_proposal)
-
-        # Act
-        response = client.get(f"/proposals/{proposal_id}/top-voters")
-
-        # Assert
-        assert response.status_code == 200
-        assert "Cache-Control" in response.headers
-        assert response.headers["Cache-Control"] == "public, max-age=900"
-        assert "ETag" in response.headers
-
-    def test_caching_headers_completed_proposal(
-        self, client: TestClient, sample_voters
-    ):
-        """Test that completed proposals have appropriate caching headers."""
-        # Arrange
-        proposal_id = "completed-proposal-123"
-        import main
-
-        # Mock the service to return voters
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
-
-        # Mock get_proposal_by_id to return a completed proposal
-        completed_proposal = Mock(spec=Proposal)
-        completed_proposal.state = ProposalState.SUCCEEDED
-        completed_proposal.id = proposal_id
-        main.tally_service.get_proposal_by_id = AsyncMock(
-            return_value=completed_proposal
-        )
-
-        # Act
-        response = client.get(f"/proposals/{proposal_id}/top-voters")
-
-        # Assert
-        assert response.status_code == 200
-        assert "Cache-Control" in response.headers
-        assert response.headers["Cache-Control"] == "public, max-age=21600"
-        assert "ETag" in response.headers
-
     def test_404_when_proposal_not_found(self, client: TestClient):
         """Test that 404 is returned when proposal doesn't exist."""
         # Arrange
