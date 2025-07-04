@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = {
-        "env_file": ".env", 
+        "env_file": ".env",
         "extra": "ignore",
         "env_parse_none_str": "None",
         "env_nested_delimiter": "__",
@@ -50,25 +50,59 @@ class Settings(BaseSettings):
 
     # Chain configuration
     chain_name: str = "celo"
-    celo_rpc: str = Field(default="", alias="CELO_LEDGER_RPC", description="Set from CELO_LEDGER_RPC env var")
+    celo_rpc: str = Field(
+        default="",
+        alias="CELO_LEDGER_RPC",
+        description="Set from CELO_LEDGER_RPC env var",
+    )
 
     # Safe wallet configuration
-    safe_addresses: Dict[str, str] = Field(default_factory=dict, description="Parsed from SAFE_CONTRACT_ADDRESSES")
-    agent_address: Optional[str] = Field(default=None, description="The agent's EOA address")
+    # the safe_addresses come from the pearl runtime env
+    # the agent_address comes from The private key is stored in a file called ethereum_private_key.txt in the agent's working directory
+    safe_addresses: Dict[str, str] = Field(
+        default_factory=dict, description="Parsed from SAFE_CONTRACT_ADDRESSES"
+    )
+    agent_address: Optional[str] = Field(
+        default=None, description="The agent's EOA address"
+    )
 
     # DAO monitoring
-    monitored_daos: List[str] = Field(default_factory=list, alias="MONITORED_DAOS", description="From MONITORED_DAOS env var")
-    vote_confidence_threshold: float = Field(default=0.6, ge=0.0, le=1.0, description="Vote confidence threshold")
+    monitored_daos: List[str] = Field(
+        default_factory=list,
+        alias="MONITORED_DAOS",
+        description="From MONITORED_DAOS env var",
+    )
+    vote_confidence_threshold: float = Field(
+        default=0.6, ge=0.0, le=1.0, description="Vote confidence threshold"
+    )
 
     # Activity tracking
-    activity_check_interval: int = Field(default=3600, gt=0, description="Check every hour")
-    proposal_check_interval: int = Field(default=300, gt=0, description="Check every 5 minutes")
-    min_time_before_deadline: int = Field(default=1800, gt=0, description="30 minutes before 24h deadline")
+    activity_check_interval: int = Field(
+        default=3600, gt=0, description="Check every hour"
+    )
+    proposal_check_interval: int = Field(
+        default=300, gt=0, description="Check every 5 minutes"
+    )
+    min_time_before_deadline: int = Field(
+        default=1800, gt=0, description="30 minutes before 24h deadline"
+    )
 
     # Staking contracts (from Olas env vars)
-    staking_token_contract_address: Optional[str] = Field(default=None, alias="STAKING_TOKEN_CONTRACT_ADDRESS", description="Olas staking token contract")
-    activity_checker_contract_address: Optional[str] = Field(default=None, alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS", description="Olas activity checker contract")
-    service_registry_token_utility_contract: Optional[str] = Field(default=None, alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT", description="Olas service registry contract")
+    staking_token_contract_address: Optional[str] = Field(
+        default=None,
+        alias="STAKING_TOKEN_CONTRACT_ADDRESS",
+        description="Olas staking token contract",
+    )
+    activity_checker_contract_address: Optional[str] = Field(
+        default=None,
+        alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
+        description="Olas activity checker contract",
+    )
+    service_registry_token_utility_contract: Optional[str] = Field(
+        default=None,
+        alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
+        description="Olas service registry contract",
+    )
 
     @field_validator("monitored_daos", mode="before")
     @classmethod
@@ -117,7 +151,9 @@ class Settings(BaseSettings):
         if vote_threshold_env:
             threshold = float(vote_threshold_env)
             if not (0.0 <= threshold <= 1.0):
-                raise ValueError(f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}")
+                raise ValueError(
+                    f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
+                )
             self.vote_confidence_threshold = threshold
 
     def _parse_intervals(self):
@@ -132,7 +168,9 @@ class Settings(BaseSettings):
         if activity_interval_env:
             interval = int(activity_interval_env)
             if interval <= 0:
-                raise ValueError(f"activity_check_interval must be positive, got {interval}")
+                raise ValueError(
+                    f"activity_check_interval must be positive, got {interval}"
+                )
             self.activity_check_interval = interval
 
     def _parse_proposal_interval(self):
@@ -141,7 +179,9 @@ class Settings(BaseSettings):
         if proposal_interval_env:
             interval = int(proposal_interval_env)
             if interval <= 0:
-                raise ValueError(f"proposal_check_interval must be positive, got {interval}")
+                raise ValueError(
+                    f"proposal_check_interval must be positive, got {interval}"
+                )
             self.proposal_check_interval = interval
 
     def _parse_deadline_time(self):
@@ -150,7 +190,9 @@ class Settings(BaseSettings):
         if deadline_time_env:
             time_val = int(deadline_time_env)
             if time_val <= 0:
-                raise ValueError(f"min_time_before_deadline must be positive, got {time_val}")
+                raise ValueError(
+                    f"min_time_before_deadline must be positive, got {time_val}"
+                )
             self.min_time_before_deadline = time_val
 
     @property
@@ -175,7 +217,7 @@ class Settings(BaseSettings):
         safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
         if not safe_addresses_env:
             return {}
-        
+
         addresses = {}
         for pair in safe_addresses_env.split(","):
             if ":" in pair:
