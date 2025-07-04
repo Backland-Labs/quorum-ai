@@ -452,7 +452,6 @@ class TallyService:
         proposal = await self._fetch_proposal_from_api(proposal_id)
         return proposal
 
-
     async def _fetch_proposal_from_api(self, proposal_id: str) -> Optional[Proposal]:
         """Fetch proposal from API."""
         query = self._build_single_proposal_query()
@@ -473,16 +472,9 @@ class TallyService:
             )
             raise
 
-
-
     def _create_proposal_from_api_data(self, prop_data: Dict) -> Proposal:
         """Create Proposal object from API data."""
         return self._create_proposal_from_data(prop_data)
-
-
-
-
-
 
     async def get_multiple_proposals(self, proposal_ids: List[str]) -> List[Proposal]:
         """Fetch multiple proposals by their IDs."""
@@ -949,7 +941,6 @@ class TallyService:
         assert limit > 0, "Limit must be positive"
         assert isinstance(limit, int), "Limit must be an integer"
 
-
     async def _fetch_proposal_votes_from_api(
         self, proposal_id: str, limit: int
     ) -> List[ProposalVoter]:
@@ -968,8 +959,6 @@ class TallyService:
                 error=str(e),
             )
             return []
-
-
 
     def _build_proposal_votes_query(self) -> str:
         """Build GraphQL query for fetching proposal votes."""
@@ -1032,7 +1021,3 @@ class TallyService:
 
         logfire.info("Processed proposal votes", count=len(voters))
         return voters
-
-
-
-
