@@ -1018,6 +1018,8 @@ class TestAgentState:
             "is_staked": True,
             "stake_amount": 1000.0,
             "rewards_earned": 12.5,
+            "data_consistency_warnings": [],
+            "is_data_consistent": True,
         }
         assert staking_summary == expected_staking
         
@@ -1048,8 +1050,8 @@ class TestAgentState:
         with pytest.raises(ValidationError, match="Last activity cannot be in the future"):
             AgentState(last_activity=future_time)
 
-    def test_agent_state_staking_summary_assertions(self) -> None:
-        """Test AgentState staking summary runtime assertions."""
+    def test_agent_state_staking_summary_with_warnings(self) -> None:
+        """Test AgentState staking summary with data consistency warnings."""
         state_data = self._create_valid_agent_state_data()
         
         # Test inconsistent staking state (staked but zero stake amount)
@@ -1060,8 +1062,50 @@ class TestAgentState:
         })
         
         state = AgentState(**state_data)
-        with pytest.raises(AssertionError, match="If staked, stake_amount must be positive"):
-            state.get_staking_summary()
+        summary = state.get_staking_summary()
+        
+        # Should return warnings instead of crashing
+        assert summary["is_staked"] is True
+        assert summary["stake_amount"] == 0.0
+        assert summary["rewards_earned"] == 0.0
+        assert summary["is_data_consistent"] is False
+        assert len(summary["data_consistency_warnings"]) == 1
+        assert "zero/negative stake amount" in summary["data_consistency_warnings"][0]
+
+    def test_agent_state_staking_summary_with_negative_rewards(self) -> None:
+        """Test AgentState staking summary with negative rewards warning."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test negative rewards (should be caught at Pydantic level, but test helper directly)
+        from models import ModelValidationHelper
+        
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            False, 0.0, -5.0
+        )
+        
+        assert len(warnings) == 1
+        assert "Negative staking rewards detected" in warnings[0]
+
+    def test_agent_state_staking_summary_consistent_data(self) -> None:
+        """Test AgentState staking summary with consistent data."""
+        state_data = self._create_valid_agent_state_data()
+        
+        # Test consistent staking state
+        state_data.update({
+            "is_staked": True,
+            "stake_amount": 1000.0,
+            "staking_rewards_earned": 25.0,
+        })
+        
+        state = AgentState(**state_data)
+        summary = state.get_staking_summary()
+        
+        # Should have no warnings
+        assert summary["is_staked"] is True
+        assert summary["stake_amount"] == 1000.0
+        assert summary["rewards_earned"] == 25.0
+        assert summary["is_data_consistent"] is True
+        assert len(summary["data_consistency_warnings"]) == 0
 
     def test_agent_state_activity_summary_assertions(self) -> None:
         """Test AgentState activity summary runtime assertions."""
@@ -1112,6 +1156,66 @@ class TestAgentState:
 
 class TestModelValidationHelper:
     """Test cases for ModelValidationHelper class."""
+    
+    def test_validate_staking_consistency_with_consistent_data(self) -> None:
+        """Test staking consistency validation with valid data."""
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=1000.0, rewards_earned=50.0
+        )
+        assert len(warnings) == 0
+        
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=False, stake_amount=0.0, rewards_earned=0.0
+        )
+        assert len(warnings) == 0
+
+    def test_validate_staking_consistency_with_inconsistent_staking(self) -> None:
+        """Test staking consistency validation with inconsistent staking state."""
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=0.0, rewards_earned=0.0
+        )
+        assert len(warnings) == 1
+        assert "zero/negative stake amount" in warnings[0]
+        
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=-100.0, rewards_earned=0.0
+        )
+        assert len(warnings) == 1
+        assert "zero/negative stake amount" in warnings[0]
+
+    def test_validate_staking_consistency_with_negative_rewards(self) -> None:
+        """Test staking consistency validation with negative rewards."""
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=False, stake_amount=0.0, rewards_earned=-10.0
+        )
+        assert len(warnings) == 1
+        assert "Negative staking rewards detected" in warnings[0]
+
+    def test_validate_staking_consistency_with_multiple_issues(self) -> None:
+        """Test staking consistency validation with multiple issues."""
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=0.0, rewards_earned=-5.0
+        )
+        assert len(warnings) == 2
+        assert any("zero/negative stake amount" in w for w in warnings)
+        assert any("Negative staking rewards detected" in w for w in warnings)
+
+    def test_validate_staking_consistency_type_assertions_still_work(self) -> None:
+        """Test that type validation still throws assertions for invalid types."""
+        with pytest.raises(AssertionError, match="is_staked must be bool"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked="true", stake_amount=100.0, rewards_earned=0.0  # type: ignore
+            )
+        
+        with pytest.raises(AssertionError, match="stake_amount must be numeric"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked=True, stake_amount="100", rewards_earned=0.0  # type: ignore
+            )
+        
+        with pytest.raises(AssertionError, match="rewards_earned must be numeric"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked=True, stake_amount=100.0, rewards_earned="0"  # type: ignore
+            )
 
     def test_validate_blockchain_address_with_valid_addresses(self) -> None:
         """Test validate_blockchain_address with valid addresses."""
@@ -1203,20 +1307,22 @@ class TestModelValidationHelper:
         )
 
     def test_validate_staking_consistency_with_invalid_states(self) -> None:
-        """Test validate_staking_consistency with invalid staking states."""
-        # Test staked but zero stake amount
-        with pytest.raises(AssertionError, match="If staked, stake_amount must be positive"):
-            ModelValidationHelper.validate_staking_consistency(
-                is_staked=True, stake_amount=0.0, rewards_earned=0.0
-            )
+        """Test validate_staking_consistency with invalid staking states returns warnings."""
+        # Test staked but zero stake amount (should return warning, not throw)
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=0.0, rewards_earned=0.0
+        )
+        assert len(warnings) == 1
+        assert "zero/negative stake amount" in warnings[0]
         
-        # Test negative rewards
-        with pytest.raises(AssertionError, match="Rewards earned cannot be negative"):
-            ModelValidationHelper.validate_staking_consistency(
-                is_staked=False, stake_amount=0.0, rewards_earned=-5.0
-            )
+        # Test negative rewards (should return warning, not throw)
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=False, stake_amount=0.0, rewards_earned=-5.0
+        )
+        assert len(warnings) == 1
+        assert "Negative staking rewards detected" in warnings[0]
         
-        # Test invalid types
+        # Test invalid types (these should still throw assertions)
         with pytest.raises(AssertionError, match="is_staked must be bool"):
             ModelValidationHelper.validate_staking_consistency(
                 is_staked="true", stake_amount=0.0, rewards_earned=0.0  # type: ignore

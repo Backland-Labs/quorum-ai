@@ -74,18 +74,23 @@ class ModelValidationHelper:
         return cleaned_text
     
     @staticmethod
-    def validate_staking_consistency(is_staked: bool, stake_amount: float, rewards_earned: float) -> None:
-        """Validate staking state consistency."""
+    def validate_staking_consistency(is_staked: bool, stake_amount: float, rewards_earned: float) -> List[str]:
+        """Validate staking state consistency and return list of warnings."""
+        warnings = []
+        
+        # Type validation (these are still critical errors)
         assert isinstance(is_staked, bool), f"is_staked must be bool, got {type(is_staked)}"
         assert isinstance(stake_amount, (int, float)), f"stake_amount must be numeric, got {type(stake_amount)}"
         assert isinstance(rewards_earned, (int, float)), f"rewards_earned must be numeric, got {type(rewards_earned)}"
         
-        # Business rule: if staked, stake amount should be positive
-        if is_staked:
-            assert stake_amount > 0, f"If staked, stake_amount must be positive, got {stake_amount}"
+        # Business rule validation (converted to warnings)
+        if is_staked and stake_amount <= 0:
+            warnings.append(f"Agent marked as staked but has zero/negative stake amount: {stake_amount}")
         
-        # Business rule: rewards should be non-negative
-        assert rewards_earned >= 0, f"Rewards earned cannot be negative: {rewards_earned}"
+        if rewards_earned < 0:
+            warnings.append(f"Negative staking rewards detected: {rewards_earned}")
+            
+        return warnings
 
 
 class Organization(BaseModel):
@@ -459,9 +464,9 @@ class AgentState(BaseModel):
         return v
     
     def get_staking_summary(self) -> Dict[str, Any]:
-        """Get a summary of staking-related information."""
-        # Runtime assertion: validate staking state consistency using helper
-        ModelValidationHelper.validate_staking_consistency(
+        """Get a summary of staking-related information with data consistency warnings."""
+        # Validate staking state consistency and collect warnings
+        warnings = ModelValidationHelper.validate_staking_consistency(
             self.is_staked, self.stake_amount, self.staking_rewards_earned
         )
         
@@ -469,6 +474,8 @@ class AgentState(BaseModel):
             "is_staked": self.is_staked,
             "stake_amount": self.stake_amount,
             "rewards_earned": self.staking_rewards_earned,
+            "data_consistency_warnings": warnings,
+            "is_data_consistent": len(warnings) == 0,
         }
     
     def get_activity_summary(self) -> Dict[str, Any]:
