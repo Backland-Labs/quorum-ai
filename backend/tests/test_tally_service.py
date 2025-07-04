@@ -640,6 +640,61 @@ class TestTallyServiceHasVoted:
 
         assert result is False
 
+    async def test_has_voted_handles_both_vote_types(
+        self, tally_service: TallyService, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test has_voted correctly handles both OnchainVote and VetoVote types."""
+        # Test with OnchainVote
+        onchain_response = {
+            "data": {
+                "votes": {
+                    "nodes": [
+                        {
+                            "id": "onchain-vote-123"
+                        }
+                    ],
+                    "pageInfo": {
+                        "count": 1
+                    }
+                }
+            }
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=onchain_response,
+        )
+
+        result = await tally_service.has_voted("prop-123", "0x1234567890abcdef")
+        assert result is True
+
+        # Test with VetoVote
+        veto_response = {
+            "data": {
+                "votes": {
+                    "nodes": [
+                        {
+                            "id": "veto-vote-456"
+                        }
+                    ],
+                    "pageInfo": {
+                        "count": 1
+                    }
+                }
+            }
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url=settings.tally_api_base_url,
+            json=veto_response,
+        )
+
+        result = await tally_service.has_voted("prop-456", "0x1234567890abcdef")
+        assert result is True
+
+
     async def test_get_proposal_votes_data_transformation(
         self,
         tally_service: TallyService,
