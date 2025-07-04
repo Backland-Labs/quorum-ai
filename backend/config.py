@@ -65,6 +65,11 @@ class Settings(BaseSettings):
     proposal_check_interval: int = Field(default=300, gt=0, description="Check every 5 minutes")
     min_time_before_deadline: int = Field(default=1800, gt=0, description="30 minutes before 24h deadline")
 
+    # Staking contracts (from Olas env vars)
+    staking_token_contract_address: Optional[str] = Field(default=None, alias="STAKING_TOKEN_CONTRACT_ADDRESS", description="Olas staking token contract")
+    activity_checker_contract_address: Optional[str] = Field(default=None, alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS", description="Olas activity checker contract")
+    service_registry_token_utility_contract: Optional[str] = Field(default=None, alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT", description="Olas service registry contract")
+
     @field_validator("monitored_daos", mode="before")
     @classmethod
     def parse_monitored_daos(cls, v):

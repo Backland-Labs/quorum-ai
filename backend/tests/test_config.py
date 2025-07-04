@@ -209,3 +209,79 @@ class TestAgentSpecificSettings:
         test_list = ["compound.eth", "nouns.eth"]
         result = Settings.parse_monitored_daos(test_list)
         assert result == test_list
+
+
+class TestOlasStakingConfiguration:
+    """Test Olas staking configuration settings."""
+
+    def test_staking_token_contract_address_defaults_to_none(self):
+        """Test that staking_token_contract_address defaults to None."""
+        settings = Settings()
+        assert settings.staking_token_contract_address is None
+
+    def test_staking_token_contract_address_loaded_from_env(self):
+        """Test that staking_token_contract_address is loaded from environment variable."""
+        test_address = "0x123456789abcdef"
+        with patch.dict(os.environ, {"STAKING_TOKEN_CONTRACT_ADDRESS": test_address}):
+            settings = Settings()
+            assert settings.staking_token_contract_address == test_address
+
+    def test_activity_checker_contract_address_defaults_to_none(self):
+        """Test that activity_checker_contract_address defaults to None."""
+        settings = Settings()
+        assert settings.activity_checker_contract_address is None
+
+    def test_activity_checker_contract_address_loaded_from_env(self):
+        """Test that activity_checker_contract_address is loaded from environment variable."""
+        test_address = "0x987654321fedcba"
+        with patch.dict(os.environ, {"ACTIVITY_CHECKER_CONTRACT_ADDRESS": test_address}):
+            settings = Settings()
+            assert settings.activity_checker_contract_address == test_address
+
+    def test_service_registry_token_utility_contract_defaults_to_none(self):
+        """Test that service_registry_token_utility_contract defaults to None."""
+        settings = Settings()
+        assert settings.service_registry_token_utility_contract is None
+
+    def test_service_registry_token_utility_contract_loaded_from_env(self):
+        """Test that service_registry_token_utility_contract is loaded from environment variable."""
+        test_address = "0xabcdef123456789"
+        with patch.dict(os.environ, {"SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_address}):
+            settings = Settings()
+            assert settings.service_registry_token_utility_contract == test_address
+
+    def test_all_staking_contracts_loaded_together(self):
+        """Test that all staking contract addresses can be loaded together."""
+        test_staking = "0x111111111111111"
+        test_activity = "0x222222222222222"
+        test_registry = "0x333333333333333"
+        
+        env_vars = {
+            "STAKING_TOKEN_CONTRACT_ADDRESS": test_staking,
+            "ACTIVITY_CHECKER_CONTRACT_ADDRESS": test_activity,
+            "SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_registry,
+        }
+        
+        with patch.dict(os.environ, env_vars):
+            settings = Settings()
+            assert settings.staking_token_contract_address == test_staking
+            assert settings.activity_checker_contract_address == test_activity
+            assert settings.service_registry_token_utility_contract == test_registry
+
+    def test_staking_contract_addresses_validation(self):
+        """Test that contract addresses can be empty strings."""
+        with patch.dict(os.environ, {"STAKING_TOKEN_CONTRACT_ADDRESS": ""}):
+            settings = Settings()
+            assert settings.staking_token_contract_address == ""
+
+    def test_staking_contract_addresses_are_optional(self):
+        """Test that all staking contract addresses are optional."""
+        settings = Settings()
+        
+        # All should be None by default
+        assert settings.staking_token_contract_address is None
+        assert settings.activity_checker_contract_address is None
+        assert settings.service_registry_token_utility_contract is None
+        
+        # Should be able to create settings without any staking config
+        assert isinstance(settings, Settings)
