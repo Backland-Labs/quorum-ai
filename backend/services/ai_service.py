@@ -11,7 +11,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
-from models import Proposal, ProposalSummary
+from models import Proposal, ProposalSummary, VoteDecision, VoteType, VotingStrategy, RiskLevel
 from services.cache_service import CacheService
 
 
@@ -22,7 +22,7 @@ class AIService:
         """Initialize the AI service with configured model."""
         self.model = self._create_model()
         self.agent = self._create_agent()
-        self.cache_service = cache_service
+        self.cache_service = None  # Cache service removed
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
@@ -96,6 +96,66 @@ class AIService:
         Always be objective, factual, and consider both benefits and potential drawbacks.
         Use clear, non-technical language that any community member can understand.
         """
+
+    async def decide_vote(
+        self,
+        proposal: Proposal,
+        strategy: VotingStrategy,
+    ) -> VoteDecision:
+        """Make a voting decision for a proposal using the specified strategy."""
+        try:
+            with logfire.span("ai_vote_decision", proposal_id=proposal.id, strategy=strategy.value):
+                logfire.info(
+                    "Starting vote decision making",
+                    proposal_id=proposal.id,
+                    proposal_title=proposal.title,
+                    strategy=strategy.value,
+                    model_type=str(type(self.model)),
+                )
+
+                decision_data = await self._generate_vote_decision(proposal, strategy)
+
+                logfire.info(
+                    "Successfully generated vote decision",
+                    proposal_id=proposal.id,
+                    vote=decision_data.get("vote"),
+                    confidence=decision_data.get("confidence"),
+                    risk_level=decision_data.get("risk_level"),
+                )
+
+                return VoteDecision(
+                    proposal_id=proposal.id,
+                    vote=VoteType(decision_data["vote"]),
+                    confidence=decision_data["confidence"],
+                    reasoning=decision_data["reasoning"],
+                    risk_assessment=RiskLevel(decision_data["risk_level"]),
+                    strategy_used=strategy,
+                )
+
+        except Exception as e:
+            logfire.error(
+                "Failed to make vote decision",
+                proposal_id=proposal.id,
+                proposal_title=proposal.title,
+                strategy=strategy.value,
+                error=str(e),
+                error_type=type(e).__name__,
+            )
+            raise e
+
+    async def _generate_vote_decision(
+        self,
+        proposal: Proposal,
+        strategy: VotingStrategy,
+    ) -> Dict[str, Any]:
+        """Generate voting decision for a proposal using the specified strategy."""
+        # Placeholder implementation - will be enhanced in later cycles
+        return {
+            "vote": "FOR",
+            "confidence": 0.8,
+            "reasoning": f"Decision made using {strategy.value} strategy for proposal: {proposal.title}",
+            "risk_level": "MEDIUM"
+        }
 
     async def summarize_proposal(
         self,
