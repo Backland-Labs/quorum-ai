@@ -190,6 +190,14 @@ class AIService:
         ai_response = await self._call_ai_model_for_vote_decision(prompt)
         return self._parse_and_validate_vote_response(ai_response)
 
+    async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
+        """Legacy method name for backward compatibility with tests."""
+        return await self._call_ai_model_for_vote_decision(prompt)
+
+    def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+        """Legacy method name for backward compatibility with tests."""
+        return self._parse_and_validate_vote_response(ai_response)
+
     def _build_vote_decision_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
         """Build the complete prompt for vote decision including strategy-specific instructions."""
         strategy_prompt = self._get_strategy_prompt(strategy)
