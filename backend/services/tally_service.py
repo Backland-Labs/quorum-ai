@@ -20,6 +20,13 @@ from models import (
     VoteType,
 )
 
+# Constants for better code clarity
+DEFAULT_VOTE_COUNT = "0"
+SINGLE_GOVERNOR_THRESHOLD = 1
+VOTE_COUNT_MULTIPLIER = 3
+MAX_API_LIMIT = 100
+ESTIMATED_ACTIVE_PROPOSALS = 3
+
 
 class TallyService:
     """Service for interacting with the Tally API."""
@@ -279,9 +286,9 @@ class TallyService:
         original_limit = filters.limit
         if filters.sort_by == SortCriteria.VOTE_COUNT:
             # Fetch more proposals to ensure we have enough for sorting
-            # Use 3x the requested limit to get a good selection for sorting
+            # Use multiplier for the requested limit to get a good selection for sorting
             fetch_filters = filters.model_copy()
-            fetch_filters.limit = min(original_limit * 3, 100)  # Cap at API limit
+            fetch_filters.limit = min(original_limit * VOTE_COUNT_MULTIPLIER, MAX_API_LIMIT)
             fetch_filters.sort_by = SortCriteria.CREATED_DATE  # Use default API sorting
             variables = self._build_proposals_variables(fetch_filters)
         else:
@@ -805,7 +812,7 @@ class TallyService:
 
         if has_active_proposals:
             # Estimate active proposals based on available data
-            proposal_counts["ACTIVE"] = min(total_proposals, 3)
+            proposal_counts["ACTIVE"] = min(total_proposals, ESTIMATED_ACTIVE_PROPOSALS)
 
         return proposal_counts
 
@@ -835,9 +842,9 @@ class TallyService:
         assert isinstance(vote_stats_data, list), "Vote stats data must be a list"
         assert vote_stats_data is not None, "Vote stats data cannot be None"
 
-        votes_for = "0"
-        votes_against = "0"
-        votes_abstain = "0"
+        votes_for = DEFAULT_VOTE_COUNT
+        votes_against = DEFAULT_VOTE_COUNT
+        votes_abstain = DEFAULT_VOTE_COUNT
 
         for vote_stat in vote_stats_data:
             vote_type = vote_stat.get("type", "").upper()
@@ -862,14 +869,14 @@ class TallyService:
         def get_total_votes(proposal: Proposal) -> int:
             """Get total vote count for a proposal."""
             try:
-                votes_for = int(proposal.votes_for) if proposal.votes_for else 0
-                votes_against = (
+                votes_for_count = int(proposal.votes_for) if proposal.votes_for else 0
+                votes_against_count = (
                     int(proposal.votes_against) if proposal.votes_against else 0
                 )
-                votes_abstain = (
+                votes_abstain_count = (
                     int(proposal.votes_abstain) if proposal.votes_abstain else 0
                 )
-                return votes_for + votes_against + votes_abstain
+                return votes_for_count + votes_against_count + votes_abstain_count
             except ValueError:
                 # If vote counts are not valid numbers, treat as 0
                 return 0
@@ -1088,57 +1095,142 @@ class TallyService:
     ) -> List[Proposal]:
         """Fetch proposals for specific governor IDs.
         
+        This method coordinates proposal fetching by delegating to focused helper methods
+        based on the number of governor IDs provided.
+        
         Args:
             governor_ids: List of governor IDs to fetch proposals from
             limit: Maximum number of proposals to fetch per governor
             active_only: If True, only fetch proposals in ACTIVE state
         """
+        self._validate_governor_ids_params(governor_ids, limit)
+
+        if len(governor_ids) == SINGLE_GOVERNOR_THRESHOLD:
+            return await self._handle_single_governor_request(
+                governor_ids[0], limit, active_only
+            )
+        else:
+            return await self._handle_multiple_governors_request(
+                governor_ids, limit, active_only
+            )
+
+    def _validate_governor_ids_params(self, governor_ids: List[str], limit: int) -> None:
+        """Validate parameters for get_proposals_by_governor_ids method.
+        
+        Args:
+            governor_ids: List of governor IDs to validate
+            limit: Limit parameter to validate
+            
+        Raises:
+            AssertionError: If any validation fails
+        """
         assert governor_ids, "Governor IDs list cannot be empty"
         assert all(isinstance(gid, str) for gid in governor_ids), "All governor IDs must be strings"
         assert limit > 0, "Limit must be positive"
 
-        if len(governor_ids) == 1:
-            # Single governor ID case - use existing get_proposals method
-            filters = ProposalFilters(
-                dao_id=governor_ids[0], 
-                limit=limit,
-                state=ProposalState.ACTIVE if active_only else None
-            )
-            proposals, _ = await self.get_proposals(filters)
-            return proposals
+    async def _handle_single_governor_request(
+        self, governor_id: str, limit: int, active_only: bool
+    ) -> List[Proposal]:
+        """Handle proposal fetching for a single governor ID.
+        
+        Args:
+            governor_id: The governor ID to fetch proposals from
+            limit: Maximum number of proposals to fetch
+            active_only: If True, only fetch proposals in ACTIVE state
+            
+        Returns:
+            List of proposals from the single governor
+        """
+        proposal_filters = self._create_proposal_filters(
+            dao_id=governor_id, 
+            limit=limit,
+            state_filter=self._get_state_filter(active_only)
+        )
+        proposals, _ = await self.get_proposals(proposal_filters)
+        return proposals
 
-        # Multiple governor IDs case - make parallel API calls
+    async def _handle_multiple_governors_request(
+        self, governor_ids: List[str], limit: int, active_only: bool
+    ) -> List[Proposal]:
+        """Handle proposal fetching for multiple governor IDs using parallel requests.
+        
+        Args:
+            governor_ids: List of governor IDs to fetch proposals from
+            limit: Maximum number of proposals to fetch per governor
+            active_only: If True, only fetch proposals in ACTIVE state
+            
+        Returns:
+            Deduplicated list of proposals from all governors
+        """
         try:
             # Create tasks for parallel API calls
-            tasks = []
-            for governor_id in governor_ids:
-                filters = ProposalFilters(
-                    dao_id=governor_id, 
-                    limit=limit,
-                    state=ProposalState.ACTIVE if active_only else None
-                )
-                task = self.get_proposals(filters)
-                tasks.append(task)
+            proposal_fetch_tasks = self._create_parallel_fetch_tasks(governor_ids, limit, active_only)
 
             # Execute all requests in parallel
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+            fetch_results = await asyncio.gather(*proposal_fetch_tasks, return_exceptions=True)
             
-            # Combine results from all successful requests
-            all_proposals = []
-            for result in results:
-                if isinstance(result, tuple):
-                    proposals, _ = result
-                    all_proposals.extend(proposals)
-                else:
-                    # Log error but continue with other results
-                    logfire.error("Failed to fetch proposals for governor", error=str(result))
-
-            # Deduplicate proposals by ID
-            return self._deduplicate_proposals(all_proposals)
+            # Process parallel results and return deduplicated proposals
+            return self._process_parallel_results(fetch_results)
         except Exception as e:
             logfire.error("Failed to fetch proposals by governor IDs", 
                          governor_ids=governor_ids, error=str(e))
             raise
+
+    def _create_parallel_fetch_tasks(
+        self, governor_ids: List[str], limit: int, active_only: bool
+    ) -> List:
+        """Create parallel fetch tasks for multiple governor IDs.
+        
+        Args:
+            governor_ids: List of governor IDs to create tasks for
+            limit: Maximum number of proposals to fetch per governor
+            active_only: If True, only fetch proposals in ACTIVE state
+            
+        Returns:
+            List of async tasks for fetching proposals
+        """
+        proposal_fetch_tasks = []
+        for governor_id in governor_ids:
+            proposal_filters = self._create_proposal_filters(
+                dao_id=governor_id, 
+                limit=limit,
+                state_filter=self._get_state_filter(active_only)
+            )
+            fetch_task = self.get_proposals(proposal_filters)
+            proposal_fetch_tasks.append(fetch_task)
+        return proposal_fetch_tasks
+
+    def _process_parallel_results(self, fetch_results: List) -> List[Proposal]:
+        """Process results from parallel governor proposal requests.
+        
+        Args:
+            fetch_results: List of results from asyncio.gather, may contain tuples or exceptions
+            
+        Returns:
+            Deduplicated list of proposals from all successful requests
+        """
+        all_proposals = self._extract_proposals_from_results(fetch_results)
+        # Deduplicate proposals by ID
+        return self._deduplicate_proposals(all_proposals)
+
+    def _extract_proposals_from_results(self, fetch_results: List) -> List[Proposal]:
+        """Extract proposals from parallel fetch results, handling errors gracefully.
+        
+        Args:
+            fetch_results: List of results from asyncio.gather, may contain tuples or exceptions
+            
+        Returns:
+            List of proposals from all successful requests
+        """
+        all_proposals = []
+        for fetch_result in fetch_results:
+            if isinstance(fetch_result, tuple):
+                proposals, _ = fetch_result
+                all_proposals.extend(proposals)
+            else:
+                # Log error but continue with other results
+                logfire.error("Failed to fetch proposals for governor", error=str(fetch_result))
+        return all_proposals
 
     def _deduplicate_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
         """Deduplicate proposals by ID, keeping the first occurrence."""
@@ -1158,6 +1250,42 @@ class TallyService:
         
         return deduplicated
 
+    def _create_proposal_filters(
+        self, 
+        dao_id: Optional[str] = None, 
+        organization_id: Optional[str] = None, 
+        limit: int = 50, 
+        state_filter: Optional[ProposalState] = None
+    ) -> ProposalFilters:
+        """Create ProposalFilters object to eliminate duplication.
+        
+        Args:
+            dao_id: DAO ID filter
+            organization_id: Organization ID filter
+            limit: Maximum number of proposals to fetch
+            state_filter: Proposal state filter
+            
+        Returns:
+            Configured ProposalFilters instance
+        """
+        return ProposalFilters(
+            dao_id=dao_id,
+            organization_id=organization_id,
+            limit=limit,
+            state=state_filter
+        )
+
+    def _get_state_filter(self, active_only: bool) -> Optional[ProposalState]:
+        """Get state filter based on active_only flag for clearer logic.
+        
+        Args:
+            active_only: If True, return ACTIVE state filter
+            
+        Returns:
+            ProposalState.ACTIVE if active_only is True, None otherwise
+        """
+        return ProposalState.ACTIVE if active_only else None
+
     async def get_proposals_by_organization_governors(
         self, organization_id: str, limit: int = 50, active_only: bool = False
     ) -> List[Proposal]:
@@ -1174,12 +1302,12 @@ class TallyService:
 
         try:
             # Use existing get_proposals method with organization filter
-            filters = ProposalFilters(
+            proposal_filters = self._create_proposal_filters(
                 organization_id=organization_id, 
                 limit=limit,
-                state=ProposalState.ACTIVE if active_only else None
+                state_filter=self._get_state_filter(active_only)
             )
-            proposals, _ = await self.get_proposals(filters)
+            proposals, _ = await self.get_proposals(proposal_filters)
             return proposals
         except Exception as e:
             logfire.error("Failed to fetch proposals by organization governors", 
