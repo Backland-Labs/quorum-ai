@@ -730,6 +730,63 @@ class TestTallyServiceGetProposalsByGovernorIds:
         # Ensure no duplicates
         assert len(set(proposal_ids)) == 3
 
+    async def test_get_proposals_by_governor_ids_partial_failures(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test graceful handling when some governor requests fail."""
+        # Mock successful response for first governor
+        success_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-success",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Success Proposal", "description": "Test"},
+                            "governor": {"id": "gov-success", "name": "Success DAO"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        # First request succeeds
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=success_response
+        )
+        
+        # Second request fails with network error
+        httpx_mock.add_exception(httpx.RequestError("Network timeout"))
+
+        governor_ids = ["gov-success", "gov-failure"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        # Should return proposals from successful request only
+        assert len(proposals) == 1
+        assert proposals[0].id == "prop-success"
+        assert proposals[0].dao_id == "gov-success"
+
+    async def test_get_proposals_by_governor_ids_all_failures(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test handling when all governor requests fail."""
+        # Both requests fail
+        httpx_mock.add_exception(httpx.RequestError("Network timeout"))
+        httpx_mock.add_response(status_code=500)
+
+        governor_ids = ["gov-fail-1", "gov-fail-2"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        # Should return empty list when all requests fail
+        assert len(proposals) == 0
+
 
 class TestTallyServiceHasVoted:
     """Test TallyService has_voted method."""
