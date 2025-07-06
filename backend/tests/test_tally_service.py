@@ -788,6 +788,51 @@ class TestTallyServiceGetProposalsByGovernorIds:
         assert len(proposals) == 0
 
 
+class TestTallyServiceGetProposalsByOrganizationGovernors:
+    """Test TallyService get_proposals_by_organization_governors method."""
+
+    async def test_get_proposals_by_organization_governors_success(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test successful proposals fetching by organization ID."""
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
+        )
+
+        organization_id = "org-123"
+        proposals = await tally_service.get_proposals_by_organization_governors(organization_id)
+
+        assert len(proposals) == 2
+        assert proposals[0].id == "prop-1"
+        assert proposals[1].id == "prop-2"
+
+    async def test_get_proposals_by_organization_governors_with_limit(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching by organization ID with custom limit."""
+        def check_limit(request):
+            body = request.content.decode()
+            # Should contain the custom limit
+            assert '"limit":10' in body or '"limit": 10' in body
+            return httpx.Response(200, json=mock_proposals_response)
+
+        httpx_mock.add_callback(check_limit)
+
+        organization_id = "org-123"
+        limit = 10
+        proposals = await tally_service.get_proposals_by_organization_governors(
+            organization_id, limit=limit
+        )
+
+        assert len(proposals) == 2
+
+
 class TestTallyServiceHasVoted:
     """Test TallyService has_voted method."""
 

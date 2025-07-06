@@ -1140,3 +1140,21 @@ class TallyService:
                     deduplicated_count=len(deduplicated))
         
         return deduplicated
+
+    async def get_proposals_by_organization_governors(
+        self, organization_id: str, limit: int = 50
+    ) -> List[Proposal]:
+        """Fetch proposals for all governors in an organization."""
+        assert organization_id, "Organization ID cannot be empty"
+        assert isinstance(organization_id, str), "Organization ID must be a string"
+        assert limit > 0, "Limit must be positive"
+
+        try:
+            # Use existing get_proposals method with organization filter
+            filters = ProposalFilters(organization_id=organization_id, limit=limit)
+            proposals, _ = await self.get_proposals(filters)
+            return proposals
+        except Exception as e:
+            logfire.error("Failed to fetch proposals by organization governors", 
+                         organization_id=organization_id, error=str(e))
+            raise
