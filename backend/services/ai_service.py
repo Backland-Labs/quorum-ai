@@ -15,6 +15,14 @@ from models import Proposal, ProposalSummary, VoteDecision, VoteType, VotingStra
 from services.cache_service import CacheService
 
 
+# Constants for AI response parsing
+DEFAULT_VOTE_FALLBACK = "ABSTAIN"
+DEFAULT_CONFIDENCE_FALLBACK = 0.5
+DEFAULT_REASONING_FALLBACK = "No reasoning provided"
+DEFAULT_RISK_LEVEL_FALLBACK = "MEDIUM"
+VALID_VOTE_TYPES = ["FOR", "AGAINST", "ABSTAIN"]
+VALID_RISK_LEVELS = ["LOW", "MEDIUM", "HIGH"]
+
 # Strategy-specific prompts for voting decisions
 STRATEGY_PROMPTS = {
     VotingStrategy.CONSERVATIVE: """
@@ -179,8 +187,8 @@ class AIService:
     ) -> Dict[str, Any]:
         """Generate voting decision for a proposal using the specified strategy."""
         prompt = self._build_vote_decision_prompt(proposal, strategy)
-        ai_response = await self._call_ai_model(prompt)
-        return self._parse_vote_response(ai_response)
+        ai_response = await self._call_ai_model_for_vote_decision(prompt)
+        return self._parse_and_validate_vote_response(ai_response)
 
     def _build_vote_decision_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
         """Build the complete prompt for vote decision including strategy-specific instructions."""
@@ -213,7 +221,7 @@ class AIService:
         """
         return base_prompt
 
-    async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
+    async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
         try:
             logfire.info("Calling AI model for vote decision", prompt_length=len(prompt))
@@ -227,54 +235,71 @@ class AIService:
                         return json.loads(result.output)
                     except json.JSONDecodeError:
                         # Fallback for non-JSON responses
-                        return {
-                            "vote": "ABSTAIN",
-                            "confidence": 0.5,
-                            "reasoning": result.output,
-                            "risk_level": "MEDIUM"
-                        }
+                        fallback_response = self._create_fallback_response(result.output)
+                        return fallback_response
                 return result.output
             else:
-                # Fallback response
-                return {
-                    "vote": "ABSTAIN",
-                    "confidence": 0.5,
-                    "reasoning": str(result),
-                    "risk_level": "MEDIUM"
-                }
+                # Fallback response when output format is unexpected
+                fallback_response = self._create_fallback_response(str(result))
+                return fallback_response
         except Exception as e:
             logfire.error("AI model call failed", error=str(e))
             raise
 
-    def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+    def _parse_and_validate_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
         """Parse and validate AI vote response."""
         # Parse confidence with error handling for non-numeric values
-        confidence_raw = ai_response.get("confidence", 0.5)
-        try:
-            confidence = float(confidence_raw)
-        except (ValueError, TypeError):
-            confidence = 0.5  # Default fallback for non-numeric values
+        confidence_raw = ai_response.get("confidence", DEFAULT_CONFIDENCE_FALLBACK)
+        parsed_confidence = self._parse_confidence_value(confidence_raw)
         
         parsed = {
-            "vote": ai_response.get("vote", "ABSTAIN"),
-            "confidence": confidence,
-            "reasoning": ai_response.get("reasoning", "No reasoning provided"),
-            "risk_level": ai_response.get("risk_level", "MEDIUM"),
+            "vote": ai_response.get("vote", DEFAULT_VOTE_FALLBACK),
+            "confidence": parsed_confidence,
+            "reasoning": ai_response.get("reasoning", DEFAULT_REASONING_FALLBACK),
+            "risk_level": ai_response.get("risk_level", DEFAULT_RISK_LEVEL_FALLBACK),
         }
         
-        # Validate vote value
-        valid_votes = ["FOR", "AGAINST", "ABSTAIN"]
-        if parsed["vote"] not in valid_votes:
-            parsed["vote"] = "ABSTAIN"
+        # Validate and sanitize vote value
+        validated_vote = self._validate_vote_type(parsed["vote"])
+        parsed["vote"] = validated_vote
         
-        # Validate and clamp confidence
-        parsed["confidence"] = max(0.0, min(1.0, parsed["confidence"]))
+        # Validate and clamp confidence to valid range
+        clamped_confidence = max(0.0, min(1.0, parsed["confidence"]))
+        parsed["confidence"] = clamped_confidence
         
-        # Validate risk level
-        valid_risk_levels = ["LOW", "MEDIUM", "HIGH"]
-        if parsed["risk_level"] not in valid_risk_levels:
-            parsed["risk_level"] = "MEDIUM"
+        # Validate and sanitize risk level
+        validated_risk_level = self._validate_risk_level(parsed["risk_level"])
+        parsed["risk_level"] = validated_risk_level
             
         return parsed
+
+    def _parse_confidence_value(self, confidence_raw: Any) -> float:
+        """Parse confidence value from AI response with error handling."""
+        try:
+            parsed_confidence = float(confidence_raw)
+            return parsed_confidence
+        except (ValueError, TypeError):
+            return DEFAULT_CONFIDENCE_FALLBACK
+
+    def _validate_vote_type(self, vote: str) -> str:
+        """Validate and sanitize vote type value."""
+        if vote in VALID_VOTE_TYPES:
+            return vote
+        return DEFAULT_VOTE_FALLBACK
+
+    def _validate_risk_level(self, risk_level: str) -> str:
+        """Validate and sanitize risk level value."""
+        if risk_level in VALID_RISK_LEVELS:
+            return risk_level
+        return DEFAULT_RISK_LEVEL_FALLBACK
+
+    def _create_fallback_response(self, reasoning: str) -> Dict[str, Any]:
+        """Create a fallback response when AI output cannot be parsed."""
+        return {
+            "vote": DEFAULT_VOTE_FALLBACK,
+            "confidence": DEFAULT_CONFIDENCE_FALLBACK,
+            "reasoning": reasoning,
+            "risk_level": DEFAULT_RISK_LEVEL_FALLBACK
+        }
 
 

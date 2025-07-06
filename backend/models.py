@@ -15,6 +15,15 @@ CONFIDENCE_DECIMAL_PLACES = 3
 # Constants for AgentState model
 DEFAULT_FSM_ROUND = "IdleRound"
 
+# Validation thresholds
+MIN_PROPOSAL_ID_LENGTH = 3
+MIN_REASONING_LENGTH = 10
+MIN_MEANINGFUL_TEXT_LENGTH = 10
+MIN_BLOCKCHAIN_ADDRESS_LENGTH = 10
+MAX_REASONABLE_GAS_COST = 1000.0
+MAX_REASONABLE_VOTES_PER_DAY = 1000
+MAX_VOTERS_LIST_SIZE = 100
+
 # Risk assessment levels
 class RiskLevel(str, Enum):
     """Risk assessment levels for proposals."""
@@ -50,7 +59,7 @@ class ModelValidationHelper:
         cleaned_address = address.strip()
         
         # Basic format checks
-        assert len(cleaned_address) >= 10, f"Address too short: {cleaned_address}"
+        assert len(cleaned_address) >= MIN_BLOCKCHAIN_ADDRESS_LENGTH, f"Address too short: {cleaned_address}"
         assert not cleaned_address.isspace(), "Address cannot be only whitespace"
         
         return cleaned_address
@@ -70,7 +79,7 @@ class ModelValidationHelper:
         return amount
     
     @staticmethod
-    def validate_meaningful_text(text: str, min_length: int = 10, field_name: str = "text") -> str:
+    def validate_meaningful_text(text: str, min_length: int = MIN_MEANINGFUL_TEXT_LENGTH, field_name: str = "text") -> str:
         """Validate that text has meaningful content."""
         assert isinstance(text, str), f"{field_name} must be string, got {type(text)}"
         assert text.strip(), f"{field_name} cannot be empty or whitespace"
@@ -351,8 +360,8 @@ class ProposalTopVoters(BaseModel):
         """Validate voters list constraints."""
         if not isinstance(v, list):
             raise ValueError("Voters must be a list")
-        if len(v) > 100:
-            raise ValueError("Voters list cannot exceed 100 entries")
+        if len(v) > MAX_VOTERS_LIST_SIZE:
+            raise ValueError(f"Voters list cannot exceed {MAX_VOTERS_LIST_SIZE} entries")
         return v
 
 
@@ -384,7 +393,7 @@ class VoteDecision(BaseModel):
         # Runtime assertion: proposal_id must be meaningful
         assert isinstance(v, str), f"Proposal ID must be string, got {type(v)}"
         assert v.strip(), "Proposal ID cannot be empty or whitespace"
-        assert len(v.strip()) >= 3, f"Proposal ID too short: {v}"
+        assert len(v.strip()) >= MIN_PROPOSAL_ID_LENGTH, f"Proposal ID too short: {v}"
         
         return v.strip()
 
@@ -392,7 +401,7 @@ class VoteDecision(BaseModel):
     @classmethod
     def validate_reasoning(cls, v: str) -> str:
         """Validate reasoning has sufficient content."""
-        return ModelValidationHelper.validate_meaningful_text(v, min_length=10, field_name="reasoning")
+        return ModelValidationHelper.validate_meaningful_text(v, min_length=MIN_REASONING_LENGTH, field_name="reasoning")
 
     @field_validator("estimated_gas_cost")
     @classmethod
@@ -401,7 +410,7 @@ class VoteDecision(BaseModel):
         # Runtime assertion: gas cost must be valid
         assert isinstance(v, (int, float)), f"Gas cost must be numeric, got {type(v)}"
         assert v >= 0.0, f"Gas cost cannot be negative: {v}"
-        assert v <= 1000.0, f"Gas cost seems unreasonably high: {v}"
+        assert v <= MAX_REASONABLE_GAS_COST, f"Gas cost seems unreasonably high: {v}"
         
         return v
 
@@ -503,7 +512,7 @@ class AgentState(BaseModel):
         # Runtime assertion: validate activity data consistency
         assert isinstance(self.votes_cast_today, int), f"votes_cast_today must be int, got {type(self.votes_cast_today)}"
         assert self.votes_cast_today >= 0, f"votes_cast_today cannot be negative: {self.votes_cast_today}"
-        assert self.votes_cast_today <= 1000, f"votes_cast_today seems unreasonably high: {self.votes_cast_today}"
+        assert self.votes_cast_today <= MAX_REASONABLE_VOTES_PER_DAY, f"votes_cast_today seems unreasonably high: {self.votes_cast_today}"
         
         return {
             "last_activity": self.last_activity,
