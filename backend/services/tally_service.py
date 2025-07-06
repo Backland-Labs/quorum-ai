@@ -1021,3 +1021,61 @@ class TallyService:
 
         logfire.info("Processed proposal votes", count=len(voters))
         return voters
+
+    async def has_voted(self, proposal_id: str, voter_address: str) -> bool:
+        """Check if a specific address has already voted on a proposal.
+
+        Args:
+            proposal_id: The proposal ID to check
+            voter_address: The voter's blockchain address
+
+        Returns:
+            True if the voter has voted on the proposal, False otherwise
+        """
+        query = """
+        query CheckVote($proposalId: IntID!, $voterAddress: Address!) {
+            votes(
+                input: {
+                    filters: {
+                        proposalId: $proposalId
+                        voter: $voterAddress
+                    }
+                    page: {
+                        limit: 1
+                    }
+                }
+            ) {
+                nodes {
+                    ... on OnchainVote {
+                        id
+                    }
+                    ... on VetoVote {
+                        id
+                    }
+                }
+                pageInfo {
+                    count
+                }
+            }
+        }
+        """
+
+        variables = {"proposalId": proposal_id, "voterAddress": voter_address}
+
+        try:
+            result = await self._make_request(query, variables)
+            votes_data = result.get("data", {}).get("votes", {})
+
+            # Check if any vote nodes exist or if count > 0
+            nodes = votes_data.get("nodes", [])
+            count = votes_data.get("pageInfo", {}).get("count", 0)
+
+            return len(nodes) > 0 or count > 0
+        except Exception as e:
+            logfire.error(
+                "Failed to check if user has voted",
+                proposal_id=proposal_id,
+                voter_address=voter_address,
+                error=str(e),
+            )
+            return False
