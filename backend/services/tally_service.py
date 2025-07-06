@@ -391,7 +391,10 @@ class TallyService:
         elif filters.dao_id:
             filter_input["governorId"] = filters.dao_id
 
-        # Note: API doesn't support state filtering in current version
+        # Add state filter if provided
+        if filters.state:
+            filter_input["state"] = filters.state.value
+
         return filter_input
 
     def _process_proposals_response(
@@ -1081,16 +1084,26 @@ class TallyService:
             return False
 
     async def get_proposals_by_governor_ids(
-        self, governor_ids: List[str], limit: int = 50
+        self, governor_ids: List[str], limit: int = 50, active_only: bool = False
     ) -> List[Proposal]:
-        """Fetch proposals for specific governor IDs."""
+        """Fetch proposals for specific governor IDs.
+        
+        Args:
+            governor_ids: List of governor IDs to fetch proposals from
+            limit: Maximum number of proposals to fetch per governor
+            active_only: If True, only fetch proposals in ACTIVE state
+        """
         assert governor_ids, "Governor IDs list cannot be empty"
         assert all(isinstance(gid, str) for gid in governor_ids), "All governor IDs must be strings"
         assert limit > 0, "Limit must be positive"
 
         if len(governor_ids) == 1:
             # Single governor ID case - use existing get_proposals method
-            filters = ProposalFilters(dao_id=governor_ids[0], limit=limit)
+            filters = ProposalFilters(
+                dao_id=governor_ids[0], 
+                limit=limit,
+                state=ProposalState.ACTIVE if active_only else None
+            )
             proposals, _ = await self.get_proposals(filters)
             return proposals
 
@@ -1099,7 +1112,11 @@ class TallyService:
             # Create tasks for parallel API calls
             tasks = []
             for governor_id in governor_ids:
-                filters = ProposalFilters(dao_id=governor_id, limit=limit)
+                filters = ProposalFilters(
+                    dao_id=governor_id, 
+                    limit=limit,
+                    state=ProposalState.ACTIVE if active_only else None
+                )
                 task = self.get_proposals(filters)
                 tasks.append(task)
 

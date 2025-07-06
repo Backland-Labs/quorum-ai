@@ -787,6 +787,56 @@ class TestTallyServiceGetProposalsByGovernorIds:
         # Should return empty list when all requests fail
         assert len(proposals) == 0
 
+    async def test_get_proposals_by_governor_ids_active_only_filter(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test active-only filtering in governor proposals fetching."""
+        # Mock response with mixed proposal states
+        mixed_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-active",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Active Proposal", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        },
+                        {
+                            "id": "prop-succeeded",
+                            "status": "SUCCEEDED",
+                            "createdAt": "2024-01-02T00:00:00Z",
+                            "metadata": {"title": "Succeeded Proposal", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        def check_active_filter(request):
+            body = request.content.decode()
+            # Should contain ACTIVE state filter
+            assert '"state":"ACTIVE"' in body or '"state": "ACTIVE"' in body
+            return httpx.Response(200, json=mixed_response)
+
+        httpx_mock.add_callback(check_active_filter)
+
+        governor_ids = ["gov-1"]
+        proposals = await tally_service.get_proposals_by_governor_ids(
+            governor_ids, active_only=True
+        )
+
+        # Should only return active proposals
+        assert len(proposals) == 2  # Both proposals in response since we filtered at API level
+        # But in real scenario, API would only return ACTIVE proposals
+
 
 class TestTallyServiceGetProposalsByOrganizationGovernors:
     """Test TallyService get_proposals_by_organization_governors method."""
