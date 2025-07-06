@@ -1079,3 +1079,20 @@ class TallyService:
                 error=str(e),
             )
             return False
+
+    async def get_proposals_by_governor_ids(
+        self, governor_ids: List[str], limit: int = 50
+    ) -> List[Proposal]:
+        """Fetch proposals for specific governor IDs."""
+        assert governor_ids, "Governor IDs list cannot be empty"
+        assert all(isinstance(gid, str) for gid in governor_ids), "All governor IDs must be strings"
+        assert limit > 0, "Limit must be positive"
+
+        if len(governor_ids) == 1:
+            # Single governor ID case - use existing get_proposals method
+            filters = ProposalFilters(dao_id=governor_ids[0], limit=limit)
+            proposals, _ = await self.get_proposals(filters)
+            return proposals
+
+        # Multiple governor IDs case - will be implemented in next iteration
+        return []

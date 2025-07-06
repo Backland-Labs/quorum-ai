@@ -571,6 +571,86 @@ class TestTallyServiceGetProposalVotes:
         await tally_service.get_proposal_votes(proposal_id, limit)
 
 
+class TestTallyServiceGetProposalsByGovernorIds:
+    """Test TallyService get_proposals_by_governor_ids method."""
+
+    async def test_get_proposals_by_governor_ids_single_governor(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching with single governor ID."""
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
+        )
+
+        governor_ids = ["gov-1"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        assert len(proposals) == 2
+        assert proposals[0].id == "prop-1"
+        assert proposals[1].id == "prop-2"
+
+    async def test_get_proposals_by_governor_ids_multiple_governors(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching with multiple governor IDs."""
+        # Mock response for first governor
+        first_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-1",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Proposal 1", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+        
+        # Mock response for second governor
+        second_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-2",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-02T00:00:00Z",
+                            "metadata": {"title": "Proposal 2", "description": "Test"},
+                            "governor": {"id": "gov-2", "name": "DAO 2"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=first_response
+        )
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=second_response
+        )
+
+        governor_ids = ["gov-1", "gov-2"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        assert len(proposals) == 2
+        assert proposals[0].id == "prop-1"
+        assert proposals[1].id == "prop-2"
+
+
 class TestTallyServiceHasVoted:
     """Test TallyService has_voted method."""
 
