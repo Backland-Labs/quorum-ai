@@ -262,7 +262,7 @@ class CacheService:
 
         import asyncio
 
-        wait_interval = 0.1  # 100ms
+        WAIT_INTERVAL_SECONDS = 0.1  # 100ms
         total_waited = 0
 
         while total_waited < max_wait_seconds:
@@ -271,8 +271,8 @@ class CacheService:
                 if not exists:
                     return True  # Lock is gone, we can proceed
 
-                await asyncio.sleep(wait_interval)
-                total_waited += wait_interval
+                await asyncio.sleep(WAIT_INTERVAL_SECONDS)
+                total_waited += WAIT_INTERVAL_SECONDS
             except Exception as e:
                 self._handle_redis_error("wait_for_lock", lock_key, e)
                 return False
