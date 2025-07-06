@@ -1116,8 +1116,27 @@ class TallyService:
                     # Log error but continue with other results
                     logfire.error("Failed to fetch proposals for governor", error=str(result))
 
-            return all_proposals
+            # Deduplicate proposals by ID
+            return self._deduplicate_proposals(all_proposals)
         except Exception as e:
             logfire.error("Failed to fetch proposals by governor IDs", 
                          governor_ids=governor_ids, error=str(e))
             raise
+
+    def _deduplicate_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
+        """Deduplicate proposals by ID, keeping the first occurrence."""
+        assert proposals is not None, "Proposals list cannot be None"
+        
+        seen_ids = set()
+        deduplicated = []
+        
+        for proposal in proposals:
+            if proposal.id not in seen_ids:
+                seen_ids.add(proposal.id)
+                deduplicated.append(proposal)
+        
+        logfire.info("Deduplicated proposals", 
+                    original_count=len(proposals), 
+                    deduplicated_count=len(deduplicated))
+        
+        return deduplicated

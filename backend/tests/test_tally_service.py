@@ -650,6 +650,86 @@ class TestTallyServiceGetProposalsByGovernorIds:
         assert proposals[0].id == "prop-1"
         assert proposals[1].id == "prop-2"
 
+    async def test_get_proposals_by_governor_ids_deduplication(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposal deduplication when same proposal appears in multiple governors."""
+        # Mock response for first governor with duplicate proposal
+        first_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-duplicate",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Duplicate Proposal", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        },
+                        {
+                            "id": "prop-unique-1",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-02T00:00:00Z",
+                            "metadata": {"title": "Unique Proposal 1", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+        
+        # Mock response for second governor with same duplicate proposal
+        second_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-duplicate",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Duplicate Proposal", "description": "Test"},
+                            "governor": {"id": "gov-2", "name": "DAO 2"},
+                            "voteStats": [],
+                        },
+                        {
+                            "id": "prop-unique-2",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-03T00:00:00Z",
+                            "metadata": {"title": "Unique Proposal 2", "description": "Test"},
+                            "governor": {"id": "gov-2", "name": "DAO 2"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=first_response
+        )
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=second_response
+        )
+
+        governor_ids = ["gov-1", "gov-2"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        # Should have 3 unique proposals (prop-duplicate, prop-unique-1, prop-unique-2)
+        assert len(proposals) == 3
+        proposal_ids = [p.id for p in proposals]
+        assert "prop-duplicate" in proposal_ids
+        assert "prop-unique-1" in proposal_ids
+        assert "prop-unique-2" in proposal_ids
+        
+        # Ensure no duplicates
+        assert len(set(proposal_ids)) == 3
+
 
 class TestTallyServiceHasVoted:
     """Test TallyService has_voted method."""
