@@ -1159,16 +1159,26 @@ class TallyService:
         return deduplicated
 
     async def get_proposals_by_organization_governors(
-        self, organization_id: str, limit: int = 50
+        self, organization_id: str, limit: int = 50, active_only: bool = False
     ) -> List[Proposal]:
-        """Fetch proposals for all governors in an organization."""
+        """Fetch proposals for all governors in an organization.
+        
+        Args:
+            organization_id: Organization ID to fetch proposals from
+            limit: Maximum number of proposals to fetch
+            active_only: If True, only fetch proposals in ACTIVE state
+        """
         assert organization_id, "Organization ID cannot be empty"
         assert isinstance(organization_id, str), "Organization ID must be a string"
         assert limit > 0, "Limit must be positive"
 
         try:
             # Use existing get_proposals method with organization filter
-            filters = ProposalFilters(organization_id=organization_id, limit=limit)
+            filters = ProposalFilters(
+                organization_id=organization_id, 
+                limit=limit,
+                state=ProposalState.ACTIVE if active_only else None
+            )
             proposals, _ = await self.get_proposals(filters)
             return proposals
         except Exception as e:

@@ -882,6 +882,47 @@ class TestTallyServiceGetProposalsByOrganizationGovernors:
 
         assert len(proposals) == 2
 
+    async def test_get_proposals_by_organization_governors_active_only(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test active-only filtering in organization governors fetching."""
+        active_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-active-org",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Active Org Proposal", "description": "Test"},
+                            "governor": {"id": "gov-org", "name": "Org DAO"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        def check_organization_active_filter(request):
+            body = request.content.decode()
+            # Should contain both organization filter and ACTIVE state filter
+            assert '"organizationId":"org-123"' in body or '"organizationId": "org-123"' in body
+            assert '"state":"ACTIVE"' in body or '"state": "ACTIVE"' in body
+            return httpx.Response(200, json=active_response)
+
+        httpx_mock.add_callback(check_organization_active_filter)
+
+        organization_id = "org-123"
+        proposals = await tally_service.get_proposals_by_organization_governors(
+            organization_id, active_only=True
+        )
+
+        assert len(proposals) == 1
+        assert proposals[0].id == "prop-active-org"
+
 
 class TestTallyServiceHasVoted:
     """Test TallyService has_voted method."""
