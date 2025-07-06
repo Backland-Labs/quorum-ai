@@ -373,6 +373,9 @@ class VoteDecision(BaseModel):
     estimated_gas_cost: float = Field(
         default=DEFAULT_ESTIMATED_GAS_COST, description="Estimated transaction cost in CELO"
     )
+    strategy_used: VotingStrategy = Field(
+        ..., description="The voting strategy used to make this decision"
+    )
 
     @field_validator("proposal_id")
     @classmethod
