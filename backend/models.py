@@ -364,7 +364,7 @@ class VoteDecision(BaseModel):
         ..., description="The voting decision: FOR, AGAINST, or ABSTAIN"
     )
     confidence: float = Field(
-        ..., ge=0.0, le=1.0, description="Confidence score in the decision (0.0 to 1.0)"
+        ..., description="Confidence score in the decision (0.0 to 1.0)"
     )
     reasoning: str = Field(..., description="AI-generated explanation for the vote")
     risk_assessment: RiskLevel = Field(
@@ -411,8 +411,18 @@ class VoteDecision(BaseModel):
         """Ensure confidence is within valid range and precision."""
         # Runtime assertion: confidence must be a valid number
         assert isinstance(v, (int, float)), f"Confidence must be numeric, got {type(v)}"
-        assert not (v != v), "Confidence cannot be NaN"  # NaN check
-        assert v != float('inf') and v != float('-inf'), "Confidence cannot be infinite"
+        
+        # Check for NaN
+        if v != v:  # NaN check
+            raise ValueError("Confidence cannot be NaN")
+        
+        # Check for infinite values
+        if v == float('inf') or v == float('-inf'):
+            raise ValueError("Confidence cannot be infinite")
+        
+        # Check range constraints
+        if v < 0.0 or v > 1.0:
+            raise ValueError(f"Confidence must be between 0.0 and 1.0, got {v}")
         
         return cls._round_confidence_to_precision(v)
     

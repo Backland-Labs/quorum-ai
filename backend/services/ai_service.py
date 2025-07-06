@@ -248,9 +248,16 @@ class AIService:
 
     def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
         """Parse and validate AI vote response."""
+        # Parse confidence with error handling for non-numeric values
+        confidence_raw = ai_response.get("confidence", 0.5)
+        try:
+            confidence = float(confidence_raw)
+        except (ValueError, TypeError):
+            confidence = 0.5  # Default fallback for non-numeric values
+        
         parsed = {
             "vote": ai_response.get("vote", "ABSTAIN"),
-            "confidence": float(ai_response.get("confidence", 0.5)),
+            "confidence": confidence,
             "reasoning": ai_response.get("reasoning", "No reasoning provided"),
             "risk_level": ai_response.get("risk_level", "MEDIUM"),
         }
