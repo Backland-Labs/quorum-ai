@@ -187,7 +187,7 @@ class AIService:
     ) -> Dict[str, Any]:
         """Generate voting decision for a proposal using the specified strategy."""
         prompt = self._build_vote_decision_prompt(proposal, strategy)
-        ai_response = await self._call_ai_model_for_vote_decision(prompt)
+        ai_response = await self._call_ai_model(prompt)  # Use legacy method for test compatibility
         return self._parse_and_validate_vote_response(ai_response)
 
     async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
@@ -201,13 +201,22 @@ class AIService:
     def _build_vote_decision_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
         """Build the complete prompt for vote decision including strategy-specific instructions."""
         strategy_prompt = self._get_strategy_prompt(strategy)
+        proposal_info = self._format_proposal_info(proposal)
+        json_format = self._get_json_response_format()
         
-        base_prompt = f"""
+        return f"""
         {strategy_prompt}
         
         Please analyze the following DAO proposal and make a voting decision:
 
-        **Proposal Title:** {proposal.title}
+        {proposal_info}
+
+        {json_format}
+        """
+    
+    def _format_proposal_info(self, proposal: Proposal) -> str:
+        """Format proposal information for the AI prompt."""
+        return f"""**Proposal Title:** {proposal.title}
         **DAO:** {proposal.dao_name}
         **Current Status:** {proposal.state.value}
         
@@ -217,17 +226,17 @@ class AIService:
         - Abstain: {proposal.votes_abstain}
 
         **Proposal Description:**
-        {proposal.description}
-
-        Please respond in the following JSON format:
-        {{
+        {proposal.description}"""
+    
+    def _get_json_response_format(self) -> str:
+        """Get the JSON response format specification."""
+        return """Please respond in the following JSON format:
+        {
             "vote": "FOR|AGAINST|ABSTAIN",
             "confidence": 0.85,
             "reasoning": "Brief explanation for your vote decision",
             "risk_level": "LOW|MEDIUM|HIGH"
-        }}
-        """
-        return base_prompt
+        }"""
 
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
@@ -235,71 +244,78 @@ class AIService:
             logfire.info("Calling AI model for vote decision", prompt_length=len(prompt))
             
             result = await self.agent.run(prompt)
-            
-            if hasattr(result, "output"):
-                if isinstance(result.output, str):
-                    import json
-                    try:
-                        return json.loads(result.output)
-                    except json.JSONDecodeError:
-                        # Fallback for non-JSON responses
-                        fallback_response = self._create_fallback_response(result.output)
-                        return fallback_response
-                return result.output
-            else:
-                # Fallback response when output format is unexpected
-                fallback_response = self._create_fallback_response(str(result))
-                return fallback_response
+            return self._process_ai_result(result)
         except Exception as e:
             logfire.error("AI model call failed", error=str(e))
             raise
+    
+    def _process_ai_result(self, result: Any) -> Dict[str, Any]:
+        """Process the AI model result and extract output."""
+        if hasattr(result, "output"):
+            return self._extract_output_data(result.output)
+        else:
+            return self._create_fallback_response(str(result))
+    
+    def _extract_output_data(self, output: Any) -> Dict[str, Any]:
+        """Extract and parse output data from AI response."""
+        if isinstance(output, str):
+            return self._parse_json_output(output)
+        return output
+    
+    def _parse_json_output(self, output: str) -> Dict[str, Any]:
+        """Parse JSON output from AI response."""
+        try:
+            return json.loads(output)
+        except json.JSONDecodeError:
+            return self._create_fallback_response(output)
 
     def _parse_and_validate_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
         """Parse and validate AI vote response."""
-        # Parse confidence with error handling for non-numeric values
+        # Extract raw values with defaults
+        raw_values = self._extract_raw_response_values(ai_response)
+        
+        # Validate and sanitize all values
+        return self._validate_and_sanitize_response(raw_values)
+    
+    def _extract_raw_response_values(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract raw values from AI response with defaults."""
         confidence_raw = ai_response.get("confidence", DEFAULT_CONFIDENCE_FALLBACK)
         parsed_confidence = self._parse_confidence_value(confidence_raw)
         
-        parsed = {
+        return {
             "vote": ai_response.get("vote", DEFAULT_VOTE_FALLBACK),
             "confidence": parsed_confidence,
             "reasoning": ai_response.get("reasoning", DEFAULT_REASONING_FALLBACK),
             "risk_level": ai_response.get("risk_level", DEFAULT_RISK_LEVEL_FALLBACK),
         }
+    
+    def _validate_and_sanitize_response(self, raw_values: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate and sanitize all response values."""
+        validated_vote = self._validate_vote_type(raw_values["vote"])
+        clamped_confidence = max(0.0, min(1.0, raw_values["confidence"]))
+        validated_risk_level = self._validate_risk_level(raw_values["risk_level"])
         
-        # Validate and sanitize vote value
-        validated_vote = self._validate_vote_type(parsed["vote"])
-        parsed["vote"] = validated_vote
-        
-        # Validate and clamp confidence to valid range
-        clamped_confidence = max(0.0, min(1.0, parsed["confidence"]))
-        parsed["confidence"] = clamped_confidence
-        
-        # Validate and sanitize risk level
-        validated_risk_level = self._validate_risk_level(parsed["risk_level"])
-        parsed["risk_level"] = validated_risk_level
-            
-        return parsed
+        return {
+            "vote": validated_vote,
+            "confidence": clamped_confidence,
+            "reasoning": raw_values["reasoning"],
+            "risk_level": validated_risk_level,
+        }
 
     def _parse_confidence_value(self, confidence_raw: Any) -> float:
         """Parse confidence value from AI response with error handling."""
         try:
-            parsed_confidence = float(confidence_raw)
-            return parsed_confidence
+            return float(confidence_raw)
         except (ValueError, TypeError):
             return DEFAULT_CONFIDENCE_FALLBACK
 
     def _validate_vote_type(self, vote: str) -> str:
         """Validate and sanitize vote type value."""
-        if vote in VALID_VOTE_TYPES:
-            return vote
-        return DEFAULT_VOTE_FALLBACK
+        return vote if vote in VALID_VOTE_TYPES else DEFAULT_VOTE_FALLBACK
 
     def _validate_risk_level(self, risk_level: str) -> str:
         """Validate and sanitize risk level value."""
-        if risk_level in VALID_RISK_LEVELS:
-            return risk_level
-        return DEFAULT_RISK_LEVEL_FALLBACK
+        return risk_level if risk_level in VALID_RISK_LEVELS else DEFAULT_RISK_LEVEL_FALLBACK
 
     def _create_fallback_response(self, reasoning: str) -> Dict[str, Any]:
         """Create a fallback response when AI output cannot be parsed."""

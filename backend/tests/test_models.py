@@ -25,6 +25,7 @@ from models import (
     RiskLevel,
     FSMRoundType,
     ModelValidationHelper,
+    VotingStrategy,
 )
 
 # Test constants
@@ -699,6 +700,7 @@ class TestVoteDecision:
             "vote": VoteType.FOR,
             "confidence": 0.85,
             "reasoning": "The proposal aligns with our governance strategy",
+            "strategy_used": VotingStrategy.BALANCED,
         }
 
     def test_vote_decision_creation_with_required_fields(self) -> None:
