@@ -15,6 +15,31 @@ from models import Proposal, ProposalSummary, VoteDecision, VoteType, VotingStra
 from services.cache_service import CacheService
 
 
+# Strategy-specific prompts for voting decisions
+STRATEGY_PROMPTS = {
+    VotingStrategy.CONSERVATIVE: """
+    You are a conservative DAO voter. Prioritize:
+    - Treasury protection
+    - Minimal risk
+    - Proven track records
+    Vote AGAINST proposals with high risk or unproven teams.
+    """,
+    VotingStrategy.BALANCED: """
+    You are a balanced DAO voter. Consider:
+    - Risk vs reward tradeoffs
+    - Community benefit
+    - Long-term sustainability
+    """,
+    VotingStrategy.AGGRESSIVE: """
+    You are a growth-oriented DAO voter. Favor:
+    - Innovation and experimentation
+    - Growth opportunities
+    - New initiatives
+    Vote FOR proposals that could drive growth.
+    """
+}
+
+
 class AIService:
     """Service for AI-powered proposal analysis and summarization."""
 
@@ -97,6 +122,10 @@ class AIService:
         Use clear, non-technical language that any community member can understand.
         """
 
+    def _get_strategy_prompt(self, strategy: VotingStrategy) -> str:
+        """Get the strategy-specific prompt for the given voting strategy."""
+        return STRATEGY_PROMPTS.get(strategy, STRATEGY_PROMPTS[VotingStrategy.BALANCED])
+
     async def decide_vote(
         self,
         proposal: Proposal,
@@ -149,12 +178,96 @@ class AIService:
         strategy: VotingStrategy,
     ) -> Dict[str, Any]:
         """Generate voting decision for a proposal using the specified strategy."""
-        # Placeholder implementation - will be enhanced in later cycles
-        return {
-            "vote": "FOR",
-            "confidence": 0.8,
-            "reasoning": f"Decision made using {strategy.value} strategy for proposal: {proposal.title}",
-            "risk_level": "MEDIUM"
+        prompt = self._build_vote_decision_prompt(proposal, strategy)
+        ai_response = await self._call_ai_model(prompt)
+        return self._parse_vote_response(ai_response)
+
+    def _build_vote_decision_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
+        """Build the complete prompt for vote decision including strategy-specific instructions."""
+        strategy_prompt = self._get_strategy_prompt(strategy)
+        
+        base_prompt = f"""
+        {strategy_prompt}
+        
+        Please analyze the following DAO proposal and make a voting decision:
+
+        **Proposal Title:** {proposal.title}
+        **DAO:** {proposal.dao_name}
+        **Current Status:** {proposal.state.value}
+        
+        **Voting Results:**
+        - Votes For: {proposal.votes_for}
+        - Votes Against: {proposal.votes_against}
+        - Abstain: {proposal.votes_abstain}
+
+        **Proposal Description:**
+        {proposal.description}
+
+        Please respond in the following JSON format:
+        {{
+            "vote": "FOR|AGAINST|ABSTAIN",
+            "confidence": 0.85,
+            "reasoning": "Brief explanation for your vote decision",
+            "risk_level": "LOW|MEDIUM|HIGH"
+        }}
+        """
+        return base_prompt
+
+    async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
+        """Call the AI model with the given prompt."""
+        try:
+            logfire.info("Calling AI model for vote decision", prompt_length=len(prompt))
+            
+            result = await self.agent.run(prompt)
+            
+            if hasattr(result, "output"):
+                if isinstance(result.output, str):
+                    import json
+                    try:
+                        return json.loads(result.output)
+                    except json.JSONDecodeError:
+                        # Fallback for non-JSON responses
+                        return {
+                            "vote": "ABSTAIN",
+                            "confidence": 0.5,
+                            "reasoning": result.output,
+                            "risk_level": "MEDIUM"
+                        }
+                return result.output
+            else:
+                # Fallback response
+                return {
+                    "vote": "ABSTAIN",
+                    "confidence": 0.5,
+                    "reasoning": str(result),
+                    "risk_level": "MEDIUM"
+                }
+        except Exception as e:
+            logfire.error("AI model call failed", error=str(e))
+            raise
+
+    def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+        """Parse and validate AI vote response."""
+        parsed = {
+            "vote": ai_response.get("vote", "ABSTAIN"),
+            "confidence": float(ai_response.get("confidence", 0.5)),
+            "reasoning": ai_response.get("reasoning", "No reasoning provided"),
+            "risk_level": ai_response.get("risk_level", "MEDIUM"),
         }
+        
+        # Validate vote value
+        valid_votes = ["FOR", "AGAINST", "ABSTAIN"]
+        if parsed["vote"] not in valid_votes:
+            parsed["vote"] = "ABSTAIN"
+        
+        # Validate and clamp confidence
+        parsed["confidence"] = max(0.0, min(1.0, parsed["confidence"]))
+        
+        # Validate risk level
+        valid_risk_levels = ["LOW", "MEDIUM", "HIGH"]
+        if parsed["risk_level"] not in valid_risk_levels:
+            parsed["risk_level"] = "MEDIUM"
+            
+        return parsed
 
 
