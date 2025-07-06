@@ -30,6 +30,13 @@ class FSMRoundType(str, Enum):
     EXECUTION = "ExecutionRound"
     HEALTH_CHECK = "HealthCheckRound"
 
+# Voting strategy types
+class VotingStrategy(str, Enum):
+    """Voting strategies for autonomous agent decision making."""
+    CONSERVATIVE = "conservative"
+    BALANCED = "balanced"
+    AGGRESSIVE = "aggressive"
+
 
 class ModelValidationHelper:
     """Centralized validation helper for model business rules."""
