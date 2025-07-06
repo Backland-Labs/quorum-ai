@@ -1094,5 +1094,30 @@ class TallyService:
             proposals, _ = await self.get_proposals(filters)
             return proposals
 
-        # Multiple governor IDs case - will be implemented in next iteration
-        return []
+        # Multiple governor IDs case - make parallel API calls
+        try:
+            # Create tasks for parallel API calls
+            tasks = []
+            for governor_id in governor_ids:
+                filters = ProposalFilters(dao_id=governor_id, limit=limit)
+                task = self.get_proposals(filters)
+                tasks.append(task)
+
+            # Execute all requests in parallel
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            # Combine results from all successful requests
+            all_proposals = []
+            for result in results:
+                if isinstance(result, tuple):
+                    proposals, _ = result
+                    all_proposals.extend(proposals)
+                else:
+                    # Log error but continue with other results
+                    logfire.error("Failed to fetch proposals for governor", error=str(result))
+
+            return all_proposals
+        except Exception as e:
+            logfire.error("Failed to fetch proposals by governor IDs", 
+                         governor_ids=governor_ids, error=str(e))
+            raise
