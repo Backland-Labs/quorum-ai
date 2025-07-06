@@ -10,6 +10,7 @@ from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
+from backend.utils.logging import log_function_call, logger as structured_logger, DataFlowLogger # Import the logger and DataFlowLogger
 from config import settings
 from models import Proposal, ProposalSummary
 from services.cache_service import CacheService
@@ -46,8 +47,8 @@ class AIService:
             except Exception as e:
                 logfire.error(
                     "Failed to create OpenRouter model",
-                    error=str(e),
                     error_type=type(e).__name__,
+                    exc_info=e
                 )
                 raise
         else:
@@ -75,9 +76,9 @@ class AIService:
         except Exception as e:
             logfire.error(
                 "Failed to create Pydantic AI agent",
-                error=str(e),
                 error_type=type(e).__name__,
                 model_type=str(type(self.model)),
+                exc_info=e
             )
             raise
 
@@ -97,6 +98,7 @@ class AIService:
         Use clear, non-technical language that any community member can understand.
         """
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def summarize_proposal(
         self,
         proposal: Proposal,
@@ -143,13 +145,14 @@ class AIService:
                 "Failed to summarize proposal",
                 proposal_id=proposal.id,
                 proposal_title=proposal.title,
-                error=str(e),
                 error_type=type(e).__name__,
                 model_type=str(type(self.model)),
                 has_openrouter_key=bool(settings.openrouter_api_key),
+                exc_info=e
             )
-            raise e
+            raise
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def summarize_multiple_proposals(
         self,
         proposals: List[Proposal],
@@ -158,25 +161,37 @@ class AIService:
     ) -> List[ProposalSummary]:
         """Summarize multiple proposals concurrently with caching and distributed locking."""
         if not proposals:
+            structured_logger.info("summarize_multiple_proposals: No proposals provided, returning empty list.")
             return []
 
         # Check cache for existing results
+        structured_logger.debug("summarize_multiple_proposals: Checking cache for summaries.", proposal_count=len(proposals))
         cache_result = await self._check_cache_for_summaries(
             proposals, include_risk_assessment, include_recommendations
         )
         if cache_result:
+            structured_logger.info("summarize_multiple_proposals: Cache hit, returning cached summaries.", proposal_count=len(proposals))
             return cache_result
+        structured_logger.debug("summarize_multiple_proposals: Cache miss.", proposal_count=len(proposals))
 
         # Acquire processing lock and handle concurrency
+        structured_logger.debug("summarize_multiple_proposals: Attempting to acquire processing lock.", proposal_count=len(proposals))
         lock_result = await self._acquire_processing_lock(
             proposals, include_risk_assessment, include_recommendations
         )
 
         # If we got a cached result while waiting for lock, return it
         if isinstance(lock_result, list):  # Cached summaries
+            structured_logger.info("summarize_multiple_proposals: Found cached result while waiting for lock.", proposal_count=len(proposals))
             return lock_result
 
         cache_key, lock_key, lock_acquired = lock_result
+        structured_logger.debug(
+            "summarize_multiple_proposals: Lock acquisition attempt completed.",
+            cache_key=cache_key,
+            lock_key=lock_key,
+            lock_acquired=lock_acquired
+        )
 
         try:
             # Process proposals and cache results
@@ -186,6 +201,7 @@ class AIService:
         finally:
             await self._release_processing_lock(lock_key, lock_acquired)
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True, log_level="debug")
     async def _check_cache_for_summaries(
         self,
         proposals: List[Proposal],
@@ -207,6 +223,7 @@ class AIService:
 
         return None
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True, log_level="debug")
     async def _acquire_processing_lock(
         self,
         proposals: List[Proposal],
@@ -237,6 +254,7 @@ class AIService:
 
         return cache_key, lock_key, lock_acquired
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True, log_level="debug")
     async def _wait_for_concurrent_processing(
         self, cache_key: str, lock_key: str
     ) -> Optional[List[ProposalSummary]]:
@@ -299,13 +317,14 @@ class AIService:
                 logfire.error(
                     "Failed to summarize proposal in batch",
                     proposal_id=proposals[i].id,
-                    error=str(result),
+                    exc_info=result # result is the exception object here
                 )
                 continue
             summaries.append(result)
 
         return summaries
 
+    @log_function_call(log_args=True, log_result=False, log_timing=True, log_level="debug")
     async def _cache_summaries(
         self, summaries: List[ProposalSummary], cache_key: Optional[str]
     ) -> None:
@@ -317,6 +336,7 @@ class AIService:
                 "Cache set for AI summary", cache_key=cache_key, count=len(summaries)
             )
 
+    @log_function_call(log_args=True, log_result=False, log_timing=True, log_level="debug")
     async def _release_processing_lock(
         self, lock_key: Optional[str], lock_acquired: bool
     ) -> None:
@@ -452,9 +472,12 @@ class AIService:
         }
         """
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True, log_level="debug")
     async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
         try:
+            # This specific logfire.info can be removed if @log_function_call with log_args=True is sufficient
+            # For now, keep it as it might have specific fields model_type, agent_type that decorator doesn't add by default
             logfire.info(
                 "Calling AI model",
                 model_type=str(type(self.model)),
@@ -511,16 +534,27 @@ class AIService:
         except Exception as e:
             logfire.error(
                 "AI model call failed",
-                error=str(e),
                 error_type=type(e).__name__,
                 model_type=str(type(self.model)),
                 agent_type=str(type(self.agent)),
                 prompt_preview=prompt[:200] if prompt else "None",
+                exc_info=e
             )
             raise
 
     def _parse_ai_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
         """Parse and validate AI response."""
+        # Log the raw input structure for data flow analysis
+        DataFlowLogger.log_data_transformation(
+            stage="ai_response_parsing_input",
+            input_count=1,
+            output_count=0, # Marking as input stage
+            transformation_type="ai_model_raw_output",
+            input_keys=list(ai_response.keys()),
+            # Potentially log snippets of values if small and safe, or just types
+            # Example: first_key_value_preview=str(next(iter(ai_response.values())))[:50] if ai_response else None
+        )
+
         parsed = {
             "summary": ai_response.get("summary", "Summary not available"),
             "key_points": ai_response.get("key_points", []),
@@ -541,6 +575,21 @@ class AIService:
         # Validate risk level
         valid_risk_levels = ["LOW", "MEDIUM", "HIGH", "NOT_ASSESSED"]
         if parsed["risk_level"] not in valid_risk_levels:
+            structured_logger.warning(
+                "Invalid risk_level in AI response, defaulting to NOT_ASSESSED",
+                original_risk_level=parsed["risk_level"],
+                ai_response_keys=list(ai_response.keys()) # context from original response
+            )
             parsed["risk_level"] = "NOT_ASSESSED"
 
+        # Log the structured output for data flow analysis
+        DataFlowLogger.log_data_transformation(
+            stage="ai_response_parsing_output",
+            input_count=0, # Marking as output stage from the previous input
+            output_count=1,
+            transformation_type="parsed_ai_summary",
+            output_keys=list(parsed.keys()),
+            parsed_confidence=parsed.get("confidence_score"),
+            parsed_risk_level=parsed.get("risk_level")
+        )
         return parsed

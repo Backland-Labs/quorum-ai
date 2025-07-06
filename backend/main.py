@@ -2,15 +2,17 @@
 
 import hashlib
 import time
+import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import List, Optional
 
 import logfire
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from backend.utils.logging import StructuredLogger, ConfigLogger
 from config import settings
 from models import (
     DAO,
@@ -59,7 +61,18 @@ async def lifespan(app: FastAPI):
             token=settings.logfire_token, project_name=settings.logfire_project
         )
 
-    logfire.info("Application started", version="0.1.0")
+    # Log application startup configuration
+    ConfigLogger.log_startup_config(
+        app_name=settings.app_name,
+        debug_mode=settings.debug,
+        logfire_project=settings.logfire_project,
+        # Pass a selection of non-sensitive settings or the whole dict if redaction is robust
+        # For now, passing a few key ones. Full settings are in ConfigLogger if needed.
+        # Alternatively, pass settings.model_dump() and rely on ConfigLogger's redaction
+        config_summary=f"App: {settings.app_name}, Debug: {settings.debug}, Logfire Project: {settings.logfire_project}"
+    )
+    StructuredLogger.info("Application started successfully", version="0.1.0")
+
 
     yield
 
@@ -86,11 +99,72 @@ app.add_middleware(
 )
 
 
+# Middleware for Request ID and initial logging
+@app.middleware("http")
+async def request_id_logging_middleware(request: Request, call_next):
+    """
+    Generates/retrieves a request ID, sets it for logging context,
+    and logs initial request information.
+    """
+    # Try to get request ID from headers, otherwise generate a new one
+    request_id = request.headers.get("X-Request-ID")
+    if not request_id:
+        request_id = request.headers.get("X-Correlation-ID")
+    if not request_id:
+        request_id = str(uuid.uuid4())
+    StructuredLogger.set_request_id(request_id)
+
+    # Attempt to get User ID and Session ID from headers
+    user_id = request.headers.get("X-User-ID")
+    session_id = request.headers.get("X-Session-ID")
+
+    # As a fallback for session_id, check for Authorization header (presence or a part of it)
+    # This is a simplistic approach; real session token extraction might be more complex.
+    if not session_id:
+        auth_header = request.headers.get("Authorization")
+        if auth_header:
+            # Use a placeholder or a part of the token if it's too long or sensitive
+            # For example, if it's "Bearer <token>", just log "Bearer" or "TokenPresent"
+            parts = auth_header.split()
+            if len(parts) > 0:
+                session_id = f"{parts[0]}_Present" # e.g., "Bearer_Present"
+            else:
+                session_id = "AuthHeader_Present"
+
+
+    if user_id:
+        StructuredLogger.set_user_id(user_id)
+    if session_id:
+        StructuredLogger.set_session_id(session_id)
+
+    # Log basic request info
+    log_details = {
+        "method": request.method,
+        "path": request.url.path,
+        "client_host": request.client.host if request.client else "unknown",
+        "user_agent": request.headers.get("User-Agent", "unknown"),
+    }
+    # The request_id, user_id, session_id will be automatically added by StructuredLogger._add_context if set
+    StructuredLogger.info(f"Request started: {request.method} {request.url.path}", **log_details)
+
+    try:
+        response = await call_next(request)
+    finally:
+        # Clear context variables after request is done to prevent leakage if not using task-local context correctly
+        # For FastAPI with ContextVar, this should ideally be handled per request context automatically.
+        # However, explicit clearing can be a safeguard.
+        StructuredLogger.set_request_id(None)
+        if user_id: StructuredLogger.set_user_id(None)
+        if session_id: StructuredLogger.set_session_id(None)
+
+    return response
+
+
 # Exception handlers
 @app.exception_handler(Exception)
-async def general_exception_handler(request, exc):
+async def general_exception_handler(request: Request, exc: Exception):
     """Handle general exceptions."""
-    logfire.error("Unhandled exception", error=str(exc), path=str(request.url))
+    StructuredLogger.error("Unhandled exception", exc_info=exc, path=str(request.url))
     return JSONResponse(
         status_code=500, content={"error": "Internal server error", "message": str(exc)}
     )
@@ -100,18 +174,39 @@ async def general_exception_handler(request, exc):
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
+    StructuredLogger.info("Health check endpoint called.")
+
+    # Perform individual health checks
     redis_healthy = await cache_service.health_check()
-    return {
-        "status": "healthy",
+    # Add other service checks here if needed, e.g., Tally API, AI Service model
+    # For now, only Redis is explicitly checked.
+
+    # Log individual check results
+    StructuredLogger.info("Redis health check performed.", is_healthy=redis_healthy, is_available=cache_service.is_available)
+
+    # Determine overall status
+    # For now, overall health depends only on Redis. This can be expanded.
+    overall_status = "healthy" if redis_healthy else "unhealthy"
+
+    response_data = {
+        "status": overall_status,
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "0.1.0",
+        "version": "0.1.0", # settings.app_version would be better if available
         "services": {
             "redis": {
                 "status": "healthy" if redis_healthy else "unhealthy",
                 "available": cache_service.is_available,
             }
+            # Add other services' status here
         },
     }
+
+    if overall_status == "healthy":
+        StructuredLogger.info("Health check successful.", **response_data)
+    else:
+        StructuredLogger.warning("Health check indicates issues.", **response_data)
+
+    return response_data
 
 
 # Organization endpoints
@@ -126,6 +221,7 @@ async def get_organizations():
             org_data = await tally_service.get_top_organizations_with_proposals()
 
             if not org_data:
+                StructuredLogger.info("No organization data found for top organizations endpoint, returning empty response.")
                 return TopOrganizationsResponse(
                     organizations=[],
                     processing_time=time.time() - start_time,
@@ -178,7 +274,7 @@ async def get_organizations():
             )
 
     except Exception as e:
-        logfire.error("Failed to fetch top organizations with proposals", error=str(e))
+        StructuredLogger.error("Failed to fetch top organizations with proposals", exc_info=e)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to fetch top organizations with proposals: {str(e)}",
@@ -201,7 +297,7 @@ async def get_organizations_list(
             )
 
     except Exception as e:
-        logfire.error("Failed to fetch organizations", error=str(e))
+        StructuredLogger.error("Failed to fetch organizations", exc_info=e)
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch organizations: {str(e)}"
         )
@@ -229,8 +325,8 @@ async def get_organization_overview(org_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error(
-            "Failed to fetch organization overview", org_id=org_id, error=str(e)
+        StructuredLogger.error(
+            "Failed to fetch organization overview", org_id=org_id, exc_info=e
         )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch organization overview: {str(e)}"
@@ -253,7 +349,7 @@ async def get_daos(
             return DAOListResponse(daos=daos, next_cursor=next_cursor)
 
     except Exception as e:
-        logfire.error("Failed to fetch DAOs", error=str(e))
+        StructuredLogger.error("Failed to fetch DAOs", organization_id=organization_id, exc_info=e)
         raise HTTPException(status_code=500, detail=f"Failed to fetch DAOs: {str(e)}")
 
 
@@ -289,8 +385,8 @@ async def get_organization_proposals(
             )
 
     except Exception as e:
-        logfire.error(
-            "Failed to fetch organization proposals", org_id=org_id, error=str(e)
+        StructuredLogger.error(
+            "Failed to fetch organization proposals", org_id=org_id, exc_info=e
         )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch organization proposals: {str(e)}"
@@ -314,7 +410,7 @@ async def get_dao_by_id(dao_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error("Failed to fetch DAO", dao_id=dao_id, error=str(e))
+        StructuredLogger.error("Failed to fetch DAO", dao_id=dao_id, exc_info=e)
         raise HTTPException(status_code=500, detail=f"Failed to fetch DAO: {str(e)}")
 
 
@@ -344,7 +440,7 @@ async def get_proposals(
             )
 
     except Exception as e:
-        logfire.error("Failed to fetch proposals", error=str(e))
+        StructuredLogger.error("Failed to fetch proposals", filters=filters.dict(), exc_info=e)
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposals: {str(e)}"
         )
@@ -367,7 +463,7 @@ async def get_proposal_by_id(proposal_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error("Failed to fetch proposal", proposal_id=proposal_id, error=str(e))
+        StructuredLogger.error("Failed to fetch proposal", proposal_id=proposal_id, exc_info=e)
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal: {str(e)}"
         )
@@ -405,7 +501,7 @@ async def summarize_proposals(request: SummarizeRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error("Failed to summarize proposals", error=str(e))
+        StructuredLogger.error("Failed to summarize proposals", proposal_ids=request.proposal_ids, exc_info=e)
         raise HTTPException(
             status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
         )
@@ -437,15 +533,15 @@ async def get_proposal_top_voters(
 
             # Log if no voters found
             if not voters:
-                logfire.info("No voters found for proposal", proposal_id=proposal_id)
+                StructuredLogger.info("No voters found for proposal", proposal_id=proposal_id)
 
             return JSONResponse(content=response_data.model_dump(), headers=headers)
 
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error(
-            "Failed to fetch proposal top voters", proposal_id=proposal_id, error=str(e)
+        StructuredLogger.error(
+            "Failed to fetch proposal top voters", proposal_id=proposal_id, exc_info=e
         )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"

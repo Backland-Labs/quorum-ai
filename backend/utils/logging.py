@@ -9,8 +9,10 @@ from contextvars import ContextVar
 
 import logfire
 
-# Context variable to track request ID across async operations
-request_id_var: ContextVar[str] = ContextVar("request_id", default="")
+# Context variables to track IDs across async operations
+request_id_var: ContextVar[Optional[str]] = ContextVar("request_id", default=None)
+user_id_var: ContextVar[Optional[str]] = ContextVar("user_id", default=None)
+session_id_var: ContextVar[Optional[str]] = ContextVar("session_id", default=None)
 
 
 class StructuredLogger:
@@ -30,11 +32,40 @@ class StructuredLogger:
         return request_id_var.get()
 
     @staticmethod
+    def set_user_id(user_id: Optional[str] = None) -> None:
+        """Set user ID for current context."""
+        user_id_var.set(user_id)
+
+    @staticmethod
+    def get_user_id() -> Optional[str]:
+        """Get current user ID."""
+        return user_id_var.get()
+
+    @staticmethod
+    def set_session_id(session_id: Optional[str] = None) -> None:
+        """Set session ID for current context."""
+        session_id_var.set(session_id)
+
+    @staticmethod
+    def get_session_id() -> Optional[str]:
+        """Get current session ID."""
+        return session_id_var.get()
+
+    @staticmethod
     def _add_context(data: Dict[str, Any]) -> Dict[str, Any]:
         """Add standard context fields to log data."""
         request_id = request_id_var.get()
         if request_id:
             data["request_id"] = request_id
+
+        user_id = user_id_var.get()
+        if user_id:
+            data["user_id"] = user_id
+
+        session_id = session_id_var.get()
+        if session_id:
+            data["session_id"] = session_id
+
         data["timestamp"] = time.time()
         return data
 
@@ -230,7 +261,7 @@ def _log_function_error(function_name: str, error: Exception, start_time: float)
         "error_args": getattr(error, "args", []),
     }
 
-    StructuredLogger.error(f"Failed {function_name}", **error_log_data)
+    StructuredLogger.error(f"Failed {function_name}", exc_info=error, **error_log_data)
 
 
 class APICallLogger:
@@ -283,6 +314,7 @@ class APICallLogger:
             endpoint=endpoint,
             error_type=type(error).__name__,
             error_message=str(error),
+            exc_info=error, # Add the exception info here
             **kwargs,
         )
 

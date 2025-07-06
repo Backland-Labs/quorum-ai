@@ -2,13 +2,14 @@
 
 import functools
 import inspect
-import logging
+# import logging # Removed
 from typing import Any, Callable, Optional, TypeVar
 
 from .cache_utils import generate_cache_key, serialize_for_cache
 from services.cache_service import cache_service
+from backend.utils.logging import logger as structured_logger # Use StructuredLogger
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__) # Removed
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -37,12 +38,17 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
             try:
                 # Try to get from cache (Note: this won't work in sync context with async cache)
                 # For now, just call the function directly for sync functions
-                logger.warning(
-                    f"Sync function {func.__name__} using cache decorator - cache disabled"
+                structured_logger.warning(
+                    f"Sync function {func.__name__} using cache decorator - cache disabled",
+                    func_name=func.__name__
                 )
                 return func(*args, **kwargs)
             except Exception as e:
-                logger.error(f"Cache error for {func.__name__}: {e}")
+                structured_logger.error(
+                    f"Cache error for sync function {func.__name__}",
+                    func_name=func.__name__,
+                    exc_info=e
+                )
                 return func(*args, **kwargs)
 
         @functools.wraps(func)
@@ -54,37 +60,47 @@ def cache_result(ttl: Optional[int] = 300) -> Callable[[F], F]:
             try:
                 # Check if cache service is available
                 if not cache_service.is_available:
-                    logger.warning(
-                        f"Cache service unavailable for {func.__name__}, calling function directly"
+                    structured_logger.warning(
+                        f"Cache service unavailable for {func.__name__}, calling function directly",
+                        func_name=func.__name__,
+                        cache_key=cache_key
                     )
                     return await func(*args, **kwargs)
 
                 # Try to get from cache
                 cached_result = await cache_service.get(cache_key)
                 if cached_result is not None:
-                    logger.debug(f"Cache hit for {func.__name__} with key {cache_key}")
+                    structured_logger.debug(f"Cache hit for {func.__name__}", func_name=func.__name__, cache_key=cache_key)
                     return cached_result
 
                 # Cache miss - call the function
-                logger.debug(f"Cache miss for {func.__name__} with key {cache_key}")
+                structured_logger.debug(f"Cache miss for {func.__name__}", func_name=func.__name__, cache_key=cache_key)
                 result = await func(*args, **kwargs)
 
                 # Store result in cache
                 try:
                     serialized_result = serialize_for_cache(result)
                     await cache_service.set(cache_key, serialized_result, ttl)
-                    logger.debug(
-                        f"Cached result for {func.__name__} with key {cache_key}"
+                    structured_logger.debug(
+                        f"Cached result for {func.__name__}", func_name=func.__name__, cache_key=cache_key, ttl=ttl
                     )
                 except Exception as cache_error:
-                    logger.warning(
-                        f"Failed to cache result for {func.__name__}: {cache_error}"
+                    structured_logger.warning(
+                        f"Failed to cache result for {func.__name__}",
+                        func_name=func.__name__,
+                        cache_key=cache_key,
+                        exc_info=cache_error # Use exc_info for the exception
                     )
 
                 return result
 
             except Exception as e:
-                logger.error(f"Cache error for {func.__name__}: {e}")
+                structured_logger.error(
+                    f"Cache error for async function {func.__name__}",
+                    func_name=func.__name__,
+                    cache_key=cache_key,
+                    exc_info=e
+                )
                 # Fallback to calling the function directly
                 return await func(*args, **kwargs)
 

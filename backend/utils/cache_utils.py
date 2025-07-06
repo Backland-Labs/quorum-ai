@@ -2,11 +2,13 @@
 
 import hashlib
 import json
-import logging
+# import logging # Removed
 from typing import Any, Dict, List, Tuple
 from pydantic import BaseModel
 
-logger = logging.getLogger(__name__)
+from backend.utils.logging import logger as structured_logger, log_function_call # Use StructuredLogger and decorator
+
+# logger = logging.getLogger(__name__) # Removed
 
 
 def generate_cache_key(
@@ -148,6 +150,7 @@ def deserialize_from_cache(serialized_data: str) -> Any:
 # Cache invalidation utilities
 
 
+@log_function_call(log_args=True, log_result=True, log_timing=True, log_level="info")
 async def invalidate_cache_pattern(pattern: str) -> int:
     """Invalidate all cache keys matching a pattern.
 
@@ -160,33 +163,37 @@ async def invalidate_cache_pattern(pattern: str) -> int:
     from services.cache_service import cache_service
 
     if not cache_service.is_available:
-        logger.warning(f"Cache service unavailable for pattern invalidation: {pattern}")
+        structured_logger.warning(f"Cache service unavailable for pattern invalidation: {pattern}", cache_pattern=pattern)
         return 0
 
     try:
         # Find all keys matching the pattern
-        if cache_service._redis_client is None:
+        if cache_service._redis_client is None: # Should not happen if is_available is true, but defensive
+            structured_logger.warning("Cache service redis_client is None during pattern invalidation", cache_pattern=pattern)
             return 0
         keys = await cache_service._redis_client.keys(pattern)
 
         if not keys:
-            logger.debug(f"No keys found for pattern: {pattern}")
+            structured_logger.debug(f"No keys found for pattern: {pattern}", cache_pattern=pattern)
             return 0
 
         # Delete all matching keys
-        if cache_service._redis_client is not None:
+        if cache_service._redis_client is not None: # Redundant check, but keep for safety
             deleted_count = await cache_service._redis_client.delete(*keys)
-            logger.info(
-                f"Invalidated {deleted_count} cache keys for pattern: {pattern}"
+            structured_logger.info(
+                f"Invalidated {deleted_count} cache keys for pattern: {pattern}",
+                deleted_count=deleted_count,
+                cache_pattern=pattern
             )
             return int(deleted_count)
-        return 0
+        return 0 # Should ideally not be reached if client was available
 
     except Exception as e:
-        logger.error(f"Failed to invalidate cache pattern {pattern}: {e}")
+        structured_logger.error(f"Failed to invalidate cache pattern {pattern}", cache_pattern=pattern, exc_info=e)
         return 0
 
 
+@log_function_call(log_args=True, log_result=True, log_timing=True, log_level="info")
 async def invalidate_dao_cache(dao_id: str) -> int:
     """Invalidate all cache entries related to a specific DAO.
 
@@ -205,13 +212,14 @@ async def invalidate_dao_cache(dao_id: str) -> int:
 
     total_deleted = 0
     for pattern in patterns:
-        deleted = await invalidate_cache_pattern(pattern)
+        deleted = await invalidate_cache_pattern(pattern) # This function already logs its details
         total_deleted += deleted
 
-    logger.info(f"Invalidated total {total_deleted} cache keys for DAO: {dao_id}")
+    structured_logger.info(f"Invalidated total {total_deleted} cache keys for DAO: {dao_id}", dao_id=dao_id, total_deleted=total_deleted)
     return total_deleted
 
 
+@log_function_call(log_args=True, log_result=True, log_timing=True, log_level="info")
 async def invalidate_proposal_cache(proposal_id: str) -> int:
     """Invalidate all cache entries related to a specific proposal.
 
@@ -230,15 +238,18 @@ async def invalidate_proposal_cache(proposal_id: str) -> int:
 
     total_deleted = 0
     for pattern in patterns:
-        deleted = await invalidate_cache_pattern(pattern)
+        deleted = await invalidate_cache_pattern(pattern) # This function already logs its details
         total_deleted += deleted
 
-    logger.info(
-        f"Invalidated total {total_deleted} cache keys for proposal: {proposal_id}"
+    structured_logger.info(
+        f"Invalidated total {total_deleted} cache keys for proposal: {proposal_id}",
+        proposal_id=proposal_id,
+        total_deleted=total_deleted
     )
     return total_deleted
 
 
+@log_function_call(log_args=True, log_result=True, log_timing=True, log_level="info")
 async def bulk_invalidate_cache(patterns: List[str]) -> int:
     """Invalidate cache keys for multiple patterns in bulk.
 
@@ -251,10 +262,12 @@ async def bulk_invalidate_cache(patterns: List[str]) -> int:
     total_deleted = 0
 
     for pattern in patterns:
-        deleted = await invalidate_cache_pattern(pattern)
+        deleted = await invalidate_cache_pattern(pattern) # This function already logs its details
         total_deleted += deleted
 
-    logger.info(
-        f"Bulk invalidation completed: {total_deleted} keys deleted for {len(patterns)} patterns"
+    structured_logger.info(
+        f"Bulk invalidation completed: {total_deleted} keys deleted for {len(patterns)} patterns",
+        total_deleted=total_deleted,
+        pattern_count=len(patterns)
     )
     return total_deleted

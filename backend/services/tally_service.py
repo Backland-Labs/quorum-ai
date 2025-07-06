@@ -1,12 +1,14 @@
 """Service for interacting with the Tally API."""
 
 import asyncio
+import time # For timing API calls
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import httpx
 import logfire
 
+from backend.utils.logging import APICallLogger, log_function_call, logger, DataFlowLogger
 from config import settings
 from models import (
     DAO,
@@ -40,14 +42,69 @@ class TallyService:
 
         payload = {"query": query, "variables": variables or {}}
 
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            with logfire.span("tally_api_request", query=query):
+        # Attempt to get a more specific endpoint name from the GraphQL query
+        query_lines = query.strip().splitlines()
+        first_line = query_lines[0].strip() if query_lines else ""
+        endpoint_name = "GraphQL Query" # Default
+        if first_line.startswith("query ") and len(first_line.split()) > 1:
+            name_part = first_line.split()[1]
+            if "(" in name_part: # Handles queries like "query GetOrganizations($input: OrganizationsInput)"
+                endpoint_name = name_part.split("(", 1)[0]
+            else:
+                endpoint_name = name_part
+        elif first_line.startswith("mutation ") and len(first_line.split()) > 1:
+            endpoint_name = first_line.split()[1].split("(", 1)[0]
+
+
+        APICallLogger.log_request(
+            service="Tally",
+            endpoint=endpoint_name,
+            method="POST",
+            # Log only variable keys for brevity and to avoid exposing too much data by default
+            # The full query string can be very long.
+            graphql_variables=list(variables.keys()) if variables else None,
+            graphql_query_preview=f"{query[:100]}..." if len(query) > 100 else query
+        )
+
+        start_time = time.time()
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
                     self.base_url, json=payload, headers=headers
                 )
-                response.raise_for_status()
-                return response.json()
+            execution_time_ms = (time.time() - start_time) * 1000
+            response.raise_for_status() # Raise HTTPStatusError for 4xx/5xx responses
 
+            APICallLogger.log_response(
+                service="Tally",
+                endpoint=endpoint_name,
+                status_code=response.status_code,
+                response_size=len(response.content),
+                execution_time_ms=execution_time_ms
+            )
+            return response.json()
+        except httpx.HTTPStatusError as e:
+            execution_time_ms = (time.time() - start_time) * 1000
+            APICallLogger.log_error(
+                service="Tally",
+                endpoint=endpoint_name,
+                error=e,
+                status_code=e.response.status_code,
+                response_text=e.response.text[:200], # Log snippet of error response
+                execution_time_ms=execution_time_ms
+            )
+            raise # Re-raise the exception to be handled by the caller
+        except Exception as e:
+            execution_time_ms = (time.time() - start_time) * 1000
+            APICallLogger.log_error(
+                service="Tally",
+                endpoint=endpoint_name,
+                error=e,
+                execution_time_ms=execution_time_ms
+            )
+            raise # Re-raise the exception
+
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_organizations(
         self, limit: int = 100, after_cursor: Optional[str] = None
     ) -> tuple[List[Organization], Optional[str]]:
@@ -59,7 +116,7 @@ class TallyService:
             result = await self._make_request(query, variables)
             return self._process_organizations_response(result)
         except Exception as e:
-            logfire.error("Failed to fetch organizations", error=str(e))
+            logfire.error("Failed to fetch organizations", exc_info=e)
             raise
 
     def _build_organizations_query(self) -> str:
@@ -111,12 +168,26 @@ class TallyService:
         org_data = result.get("data", {}).get("organizations", {})
         org_nodes = org_data.get("nodes", [])
 
+        DataFlowLogger.log_data_transformation(
+            stage="_process_organizations_response_input",
+            input_count=len(org_nodes),
+            output_count=0, # Input stage
+            transformation_type="raw_tally_organization_nodes"
+        )
+
         organizations = [
             self._create_organization_from_node(org) for org in org_nodes if org
         ]
 
         last_cursor = org_data.get("pageInfo", {}).get("lastCursor")
-        logfire.info("Fetched organizations", count=len(organizations))
+        logfire.info("Processed and fetched organizations", count=len(organizations)) # Message updated slightly
+
+        DataFlowLogger.log_data_transformation(
+            stage="_process_organizations_response_output",
+            input_count=len(org_nodes), # Can repeat input_count for context
+            output_count=len(organizations),
+            transformation_type="pydantic_organization_models"
+        )
         return organizations, last_cursor
 
     def _create_organization_from_node(self, org: Dict) -> Organization:
@@ -135,6 +206,7 @@ class TallyService:
             token_owners_count=org.get("tokenOwnersCount", 0),
         )
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_daos(
         self,
         organization_id: str,
@@ -213,9 +285,10 @@ class TallyService:
             return daos, last_cursor
 
         except Exception as e:
-            logfire.error("Failed to fetch DAOs", error=str(e))
+            logfire.error("Failed to fetch DAOs", organization_id=organization_id, exc_info=e)
             raise
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_dao_by_id(self, dao_id: str) -> Optional[DAO]:
         """Fetch a specific DAO by ID."""
         query = """
@@ -260,9 +333,10 @@ class TallyService:
             )
 
         except Exception as e:
-            logfire.error("Failed to fetch DAO", dao_id=dao_id, error=str(e))
+            logfire.error("Failed to fetch DAO", dao_id=dao_id, exc_info=e)
             raise
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_proposals(
         self, filters: ProposalFilters
     ) -> tuple[List[Proposal], Optional[str]]:
@@ -278,11 +352,17 @@ class TallyService:
         # since Tally API doesn't support sorting by vote count
         original_limit = filters.limit
         if filters.sort_by == SortCriteria.VOTE_COUNT:
+            logger.debug(
+                "get_proposals: Vote count sort requested. Modifying fetch strategy.",
+                original_limit=original_limit,
+                requested_sort_by=filters.sort_by.value
+            )
             # Fetch more proposals to ensure we have enough for sorting
             # Use 3x the requested limit to get a good selection for sorting
             fetch_filters = filters.model_copy()
             fetch_filters.limit = min(original_limit * 3, 100)  # Cap at API limit
             fetch_filters.sort_by = SortCriteria.CREATED_DATE  # Use default API sorting
+            logger.debug("get_proposals: Fetching with modified filters for vote count sort.", fetch_limit=fetch_filters.limit, fetch_sort_by=fetch_filters.sort_by.value)
             variables = self._build_proposals_variables(fetch_filters)
         else:
             variables = self._build_proposals_variables(filters)
@@ -293,20 +373,28 @@ class TallyService:
 
             # Apply client-side sorting if needed
             if filters.sort_by == SortCriteria.VOTE_COUNT and proposals:
+                logger.debug("get_proposals: Performing client-side sorting by vote count.", proposal_count_before_sort=len(proposals), sort_order=filters.sort_order.value)
                 proposals = self._sort_proposals_by_vote_count(
                     proposals, filters.sort_order
                 )
+                proposals_after_sort_count = len(proposals)
                 # Limit to requested amount after sorting
                 proposals = proposals[:original_limit]
+                logger.debug(
+                    "get_proposals: Client-side sort completed.",
+                    proposal_count_after_sort=proposals_after_sort_count,
+                    proposal_count_after_limit=len(proposals)
+                )
                 # Note: next_cursor may not be accurate for vote sorting
                 # since we're doing client-side sorting
                 if len(proposals) == original_limit:
+                    logger.debug("get_proposals: Resetting next_cursor due to client-side sort and limit.")
                     next_cursor = None  # Don't provide cursor for vote sorting
 
             return proposals, next_cursor
         except Exception as e:
             logfire.error(
-                "Failed to fetch proposals", filters=filters.dict(), error=str(e)
+                "Failed to fetch proposals", filters=filters.dict(), exc_info=e
             )
             raise
 
@@ -405,11 +493,25 @@ class TallyService:
         proposal_nodes = proposals_data.get("nodes", [])
         last_cursor = proposals_data.get("pageInfo", {}).get("lastCursor")
 
+        DataFlowLogger.log_data_transformation(
+            stage="_process_proposals_response_input",
+            input_count=len(proposal_nodes),
+            output_count=0, # Input stage
+            transformation_type="raw_tally_proposal_nodes"
+        )
+
         proposals = [
             self._create_proposal_from_data(node) for node in proposal_nodes if node
         ]
 
-        logfire.info("Fetched proposals", count=len(proposals))
+        logfire.info("Processed and fetched proposals", count=len(proposals)) # Message updated
+
+        DataFlowLogger.log_data_transformation(
+            stage="_process_proposals_response_output",
+            input_count=len(proposal_nodes),
+            output_count=len(proposals),
+            transformation_type="pydantic_proposal_models"
+        )
         return proposals, last_cursor
 
     def _create_proposal_from_data(self, data: Dict) -> Proposal:
@@ -443,6 +545,7 @@ class TallyService:
             url=f"https://www.tally.xyz/gov/{governor_info.get('id', '')}/proposal/{data['id']}",
         )
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_proposal_by_id(self, proposal_id: str) -> Optional[Proposal]:
         """Fetch a specific proposal by ID."""
         assert proposal_id, "Proposal ID cannot be empty"
@@ -468,7 +571,7 @@ class TallyService:
 
         except Exception as e:
             logfire.error(
-                "Failed to fetch proposal", proposal_id=proposal_id, error=str(e)
+                "Failed to fetch proposal", proposal_id=proposal_id, exc_info=e
             )
             raise
 
@@ -476,6 +579,7 @@ class TallyService:
         """Create Proposal object from API data."""
         return self._create_proposal_from_data(prop_data)
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_multiple_proposals(self, proposal_ids: List[str]) -> List[Proposal]:
         """Fetch multiple proposals by their IDs."""
         # Use asyncio.gather to fetch proposals concurrently
@@ -486,9 +590,9 @@ class TallyService:
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logfire.error(
-                    "Failed to fetch proposal",
+                    "Failed to fetch proposal in batch", # Differentiate message
                     proposal_id=proposal_ids[i],
-                    error=str(result),
+                    exc_info=result, # result is the exception object
                 )
                 continue
             if result is not None:
@@ -496,6 +600,7 @@ class TallyService:
 
         return proposals
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_top_organizations_with_proposals(self) -> List[Dict]:
         """Fetch the top organizations with their 3 most active proposals each."""
         # Fetch data from API
@@ -547,8 +652,9 @@ class TallyService:
             except Exception as e:
                 logfire.error(
                     f"Failed to fetch data for organization {org_slug}",
-                    error=str(e),
+                    org_slug=org_slug,
                     error_type=type(e).__name__,
+                    exc_info=e
                 )
                 continue
 
@@ -586,7 +692,7 @@ class TallyService:
             return None
 
         except Exception as e:
-            logfire.error(f"Failed to fetch organization by slug: {slug}", error=str(e))
+            logfire.error(f"Failed to fetch organization by slug: {slug}", slug=slug, exc_info=e)
             return None
 
     async def _get_most_active_proposals_for_org(
@@ -605,7 +711,7 @@ class TallyService:
 
         except Exception as e:
             logfire.error(
-                f"Failed to fetch proposals for organization {org_id}", error=str(e)
+                f"Failed to fetch proposals for organization {org_id}", org_id=org_id, exc_info=e
             )
             return []
 
@@ -660,6 +766,13 @@ class TallyService:
         proposals_data = result.get("data", {}).get("proposals", {})
         proposal_nodes = proposals_data.get("nodes", [])
 
+        DataFlowLogger.log_data_transformation(
+            stage="_process_active_proposals_response_input",
+            input_count=len(proposal_nodes),
+            output_count=0, # Input stage
+            transformation_type="raw_tally_proposal_nodes_for_active_selection"
+        )
+
         active_proposals = []
         other_proposals = []
 
@@ -675,7 +788,21 @@ class TallyService:
             else:
                 other_proposals.append(proposal)
 
-        return self._select_top_proposals(active_proposals, other_proposals, limit)
+        logger.debug(
+            "_process_active_proposals_response: Categorized proposals.",
+            active_count=len(active_proposals),
+            other_count=len(other_proposals)
+        )
+
+        selected_proposals = self._select_top_proposals(active_proposals, other_proposals, limit)
+
+        DataFlowLogger.log_data_transformation(
+            stage="_process_active_proposals_response_output",
+            input_count=len(proposal_nodes),
+            output_count=len(selected_proposals),
+            transformation_type="selected_pydantic_proposal_models"
+        )
+        return selected_proposals
 
     def _create_proposal_from_active_node(self, prop: Dict) -> Proposal:
         """Create Proposal object from active proposals API node data."""
@@ -693,13 +820,28 @@ class TallyService:
         assert isinstance(active_proposals, list), "Active proposals must be a list"
         assert isinstance(other_proposals, list), "Other proposals must be a list"
 
+        logger.debug(
+            "_select_top_proposals: Selecting proposals.",
+            active_available=len(active_proposals),
+            other_available=len(other_proposals),
+            requested_limit=limit
+        )
+
         # Return active proposals first, then others, up to limit
         result_proposals = active_proposals[:limit]
         if len(result_proposals) < limit:
-            result_proposals.extend(other_proposals[: limit - len(result_proposals)])
+            needed_from_others = limit - len(result_proposals)
+            logger.debug(
+                "_select_top_proposals: Filling with other proposals.",
+                filled_from_active=len(result_proposals),
+                needed_from_others=needed_from_others
+            )
+            result_proposals.extend(other_proposals[:needed_from_others])
 
+        logger.debug("_select_top_proposals: Selection complete.", final_count=len(result_proposals))
         return result_proposals[:limit]
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_organization_overview(self, org_id: str) -> Optional[Dict]:
         """Get comprehensive overview data for a specific organization."""
         assert org_id, "Organization ID cannot be empty"
@@ -725,7 +867,7 @@ class TallyService:
             return result.get("data", {}).get("organization")
         except Exception as e:
             logfire.error(
-                "Failed to fetch organization overview", org_id=org_id, error=str(e)
+                "Failed to fetch organization overview", org_id=org_id, exc_info=e
             )
             raise
 
@@ -916,6 +1058,7 @@ class TallyService:
         }
         """
 
+    @log_function_call(log_args=True, log_result=True, log_timing=True)
     async def get_proposal_votes(
         self, proposal_id: str, limit: int = 10
     ) -> List[ProposalVoter]:
@@ -956,7 +1099,7 @@ class TallyService:
                 "Failed to fetch proposal votes",
                 proposal_id=proposal_id,
                 limit=limit,
-                error=str(e),
+                exc_info=e
             )
             return []
 
@@ -998,7 +1141,15 @@ class TallyService:
         votes_data = result.get("data", {}).get("votes", {})
         vote_nodes = votes_data.get("nodes", [])
 
+        DataFlowLogger.log_data_transformation(
+            stage="_process_proposal_votes_response_input",
+            input_count=len(vote_nodes),
+            output_count=0, # Input stage
+            transformation_type="raw_tally_vote_nodes"
+        )
+
         voters = []
+        invalid_vote_type_count = 0
         for vote in vote_nodes:
             if not vote:
                 continue
@@ -1013,11 +1164,27 @@ class TallyService:
                 vote_type = VoteType(vote_type_str)
             except ValueError:
                 # Skip invalid vote types
+                invalid_vote_type_count += 1
                 continue
 
             voters.append(
                 ProposalVoter(address=address, amount=amount, vote_type=vote_type)
             )
 
-        logfire.info("Processed proposal votes", count=len(voters))
+        if invalid_vote_type_count > 0:
+            logger.warning(
+                "_process_proposal_votes_response: Skipped entries due to invalid vote type.",
+                skipped_count=invalid_vote_type_count,
+                total_nodes=len(vote_nodes)
+            )
+
+        logfire.info("Processed proposal votes", count=len(voters)) # Keep this high-level info
+
+        DataFlowLogger.log_data_transformation(
+            stage="_process_proposal_votes_response_output",
+            input_count=len(vote_nodes),
+            output_count=len(voters),
+            transformation_type="pydantic_proposal_voter_models",
+            skipped_invalid_type=invalid_vote_type_count
+        )
         return voters
