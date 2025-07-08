@@ -2,6 +2,7 @@
 
 import pytest
 from datetime import datetime
+from unittest.mock import patch
 
 from models import (
     Proposal,
@@ -15,7 +16,9 @@ from services.tally_service import TallyService
 @pytest.fixture
 def ai_service() -> AIService:
     """Create an AIService instance for testing."""
-    return AIService()
+    with patch("services.ai_service.settings") as mock_settings:
+        mock_settings.openrouter_api_key = "test-api-key"
+        return AIService()
 
 
 @pytest.fixture

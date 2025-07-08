@@ -1,9 +1,8 @@
-"""AI service for proposal summarization using Pydantic AI."""
+"""AI service for proposal analysis with dual functionality: summarization and autonomous voting."""
 
 import asyncio
-import hashlib
 import json
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Any, Optional
 
 import logfire
 from pydantic_ai import Agent
@@ -151,7 +150,13 @@ STRATEGY_PROMPTS = {
 
 
 class AIService:
-    """Service for AI-powered proposal analysis and summarization."""
+    """Service for AI-powered proposal analysis with dual functionality:
+    
+    1. Proposal summarization for human users
+    2. Autonomous voting decisions for AI agents
+    
+    Supports multiple voting strategies and provides comprehensive proposal analysis.
+    """
 
     def __init__(self, cache_service: Optional[CacheService] = None) -> None:
         """Initialize the AI service with configured model."""
@@ -161,7 +166,7 @@ class AIService:
         
         self.model = self._create_model()
         self.agent = self._create_agent()
-        self.cache_service = None  # Cache service removed
+        # Cache service removed for autonomous voting focus
         self.response_processor = AIResponseProcessor()
         
         # Runtime assertion: validate successful initialization
@@ -243,17 +248,20 @@ class AIService:
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI agent."""
         return """
-        You are an expert DAO governance analyst. Your job is to analyze blockchain governance
-        proposals and provide clear, concise summaries in plain English.
+        You are an expert DAO governance analyst with dual capabilities:
 
-        For each proposal, you should:
-        1. Summarize the main purpose and changes proposed
-        2. Extract key points that voters should know
-        3. Assess risks if requested
-        4. Provide recommendations if requested
+        1. PROPOSAL SUMMARIZATION: Analyze proposals and provide clear, concise summaries 
+           in plain English for human users. Extract key points, assess risks, and provide 
+           recommendations to help community members make informed decisions.
 
-        Always be objective, factual, and consider both benefits and potential drawbacks.
-        Use clear, non-technical language that any community member can understand.
+        2. AUTONOMOUS VOTING: Make voting decisions on behalf of autonomous agents using 
+           specified strategies (conservative, balanced, or aggressive). Consider proposal 
+           content, risk factors, and strategic alignment when deciding.
+
+        For both functions:
+        - Be objective, factual, and consider both benefits and potential drawbacks
+        - Use clear, non-technical language that any community member can understand
+        - Provide well-reasoned analysis based on the proposal content and context
         """
 
     def _get_strategy_prompt(self, strategy: VotingStrategy) -> str:
@@ -393,5 +401,167 @@ class AIService:
     def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
         """Legacy method - delegates to response processor."""
         return self.response_processor.parse_and_validate_vote_response(ai_response)
+
+    async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
+        """Generate a summary for a single proposal."""
+        # Runtime assertion: validate input parameters
+        assert proposal is not None, "Proposal cannot be None"
+        assert isinstance(proposal, Proposal), f"Expected Proposal object, got {type(proposal)}"
+        
+        try:
+            with logfire.span("ai_proposal_summary", proposal_id=proposal.id):
+                logfire.info(
+                    "Starting proposal summarization",
+                    proposal_id=proposal.id,
+                    proposal_title=proposal.title,
+                    model_type=str(type(self.model)),
+                )
+
+                summary_data = await self._generate_proposal_summary(proposal)
+
+                logfire.info(
+                    "Successfully generated proposal summary",
+                    proposal_id=proposal.id,
+                    summary_length=len(summary_data.get("summary", "")),
+                    key_points_count=len(summary_data.get("key_points", [])),
+                )
+
+                proposal_summary = ProposalSummary(
+                    proposal_id=proposal.id,
+                    title=proposal.title,
+                    summary=summary_data["summary"],
+                    key_points=summary_data["key_points"],
+                    risk_level=summary_data["risk_level"],
+                    recommendation=summary_data.get("recommendation", ""),
+                    confidence_score=0.85,  # Default confidence score
+                )
+                
+                # Runtime assertion: validate output
+                assert proposal_summary is not None, "ProposalSummary creation returned None"
+                assert proposal_summary.proposal_id == proposal.id, "ProposalSummary proposal_id mismatch"
+                
+                return proposal_summary
+
+        except Exception as e:
+            logfire.error(
+                "Failed to summarize proposal",
+                proposal_id=proposal.id,
+                proposal_title=proposal.title,
+                error=str(e),
+                error_type=type(e).__name__,
+            )
+            raise e
+
+    async def summarize_multiple_proposals(self, proposals: List[Proposal]) -> List[ProposalSummary]:
+        """Generate summaries for multiple proposals concurrently."""
+        # Runtime assertion: validate input parameters
+        assert proposals is not None, "Proposals list cannot be None"
+        assert isinstance(proposals, list), f"Expected list of Proposals, got {type(proposals)}"
+        assert len(proposals) > 0, "Proposals list cannot be empty"
+        
+        try:
+            with logfire.span("ai_multiple_proposal_summaries", proposal_count=len(proposals)):
+                logfire.info(
+                    "Starting multiple proposal summarization",
+                    proposal_count=len(proposals),
+                    model_type=str(type(self.model)),
+                )
+
+                # Create tasks for concurrent processing
+                tasks = [self.summarize_proposal(proposal) for proposal in proposals]
+                summaries = await asyncio.gather(*tasks)
+
+                logfire.info(
+                    "Successfully generated multiple proposal summaries",
+                    proposal_count=len(proposals),
+                    summary_count=len(summaries),
+                )
+                
+                # Runtime assertion: validate output
+                assert len(summaries) == len(proposals), "Summary count must match proposal count"
+                
+                return summaries
+
+        except Exception as e:
+            logfire.error(
+                "Failed to summarize multiple proposals",
+                proposal_count=len(proposals),
+                error=str(e),
+                error_type=type(e).__name__,
+            )
+            raise e
+
+    async def _generate_proposal_summary(self, proposal: Proposal) -> Dict[str, Any]:
+        """Generate summary data for a proposal."""
+        prompt = self._build_summary_prompt(proposal)
+        ai_response = await self._call_ai_model_for_summary(prompt)
+        return self._parse_and_validate_summary_response(ai_response)
+
+    async def _call_ai_model_for_summary(self, prompt: str) -> Dict[str, Any]:
+        """Call the AI model with the given prompt for summarization."""
+        try:
+            logfire.info("Calling AI model for summarization", prompt_length=len(prompt))
+            
+            result = await self.agent.run(prompt)
+            return self.response_processor.process_ai_result(result)
+        except Exception as e:
+            logfire.error("AI model call failed for summarization", error=str(e))
+            raise
+
+    def _build_summary_prompt(self, proposal: Proposal) -> str:
+        """Build the complete prompt for proposal summarization."""
+        proposal_info = self._format_proposal_info(proposal)
+        json_format = self._get_summary_json_format()
+        
+        return f"""
+        Please analyze the following DAO proposal and provide a comprehensive summary:
+
+        {proposal_info}
+
+        {json_format}
+        """
+
+    def _get_summary_json_format(self) -> str:
+        """Get the JSON response format specification for summarization."""
+        return """Please respond in the following JSON format:
+        {
+            "summary": "A comprehensive summary of the proposal in 2-3 sentences",
+            "key_points": ["Key point 1", "Key point 2", "Key point 3"],
+            "risk_level": "LOW|MEDIUM|HIGH",
+            "recommendation": "Optional recommendation for voters"
+        }"""
+
+    def _parse_and_validate_summary_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+        """Parse and validate AI summary response."""
+        # Runtime assertion: validate input parameters
+        assert ai_response is not None, "AI response cannot be None"
+        assert isinstance(ai_response, dict), f"Expected dict response, got {type(ai_response)}"
+        
+        # Extract raw values with defaults
+        summary = ai_response.get("summary", "No summary provided")
+        key_points = ai_response.get("key_points", [])
+        risk_level = ai_response.get("risk_level", DEFAULT_RISK_LEVEL_FALLBACK)
+        recommendation = ai_response.get("recommendation", "")
+        
+        # Validate risk level
+        validated_risk_level = self.response_processor._validate_risk_level(risk_level)
+        
+        # Ensure key_points is a list
+        if not isinstance(key_points, list):
+            key_points = [str(key_points)] if key_points else []
+        
+        validated_response = {
+            "summary": summary,
+            "key_points": key_points,
+            "risk_level": validated_risk_level,
+            "recommendation": recommendation,
+        }
+        
+        # Runtime assertion: validate output structure
+        assert isinstance(validated_response, dict), "Validated response must be dict"
+        assert "summary" in validated_response, "Validated response must contain 'summary' key"
+        assert "key_points" in validated_response, "Validated response must contain 'key_points' key"
+        
+        return validated_response
 
 

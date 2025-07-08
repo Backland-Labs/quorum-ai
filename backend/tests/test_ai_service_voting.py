@@ -147,19 +147,14 @@ class TestAIServiceInitializationWithoutCache:
 
 
 
-class TestAIServiceRemovedMethods:
-    """Test that old summarization methods are removed."""
+class TestAIServiceDualFunctionality:
+    """Test that AIService supports both voting and summarization."""
 
-    def test_summarize_proposal_method_removed(self) -> None:
-        """Test that summarize_proposal method is removed."""
+    def test_ai_service_has_both_voting_and_summarization_methods(self) -> None:
+        """Test that AIService has both decide_vote and summarize_proposal methods."""
         with patch("services.ai_service.settings") as mock_settings:
             mock_settings.openrouter_api_key = "test-key"
             service = AIService()
-            assert not hasattr(service, 'summarize_proposal')
-
-    def test_summarize_multiple_proposals_method_removed(self) -> None:
-        """Test that summarize_multiple_proposals method is removed."""
-        with patch("services.ai_service.settings") as mock_settings:
-            mock_settings.openrouter_api_key = "test-key"
-            service = AIService()
-            assert not hasattr(service, 'summarize_multiple_proposals')
+            assert hasattr(service, 'decide_vote')
+            assert hasattr(service, 'summarize_proposal')
+            assert hasattr(service, 'summarize_multiple_proposals')

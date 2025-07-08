@@ -156,11 +156,7 @@ async def get_organizations():
                 # Summarize proposals if any exist
                 summarized_proposals = []
                 if proposals:
-                    summaries = await ai_service.summarize_multiple_proposals(
-                        proposals,
-                        include_risk_assessment=True,
-                        include_recommendations=True,
-                    )
+                    summaries = await ai_service.summarize_multiple_proposals(proposals)
                     summarized_proposals = summaries
 
                 organizations_with_proposals.append(
@@ -524,11 +520,7 @@ async def _generate_proposal_summaries(
 ) -> List:
     """Generate AI summaries for proposals."""
     with logfire.span("generate_proposal_summaries"):
-        summaries = await ai_service.summarize_multiple_proposals(
-            proposals,
-            include_risk_assessment=request.include_risk_assessment,
-            include_recommendations=request.include_recommendations,
-        )
+        summaries = await ai_service.summarize_multiple_proposals(proposals)
 
         logfire.info("Generated proposal summaries", count=len(summaries))
         return summaries
