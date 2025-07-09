@@ -106,7 +106,7 @@ class TestAIServiceDecideVote:
     ) -> None:
         """Test that decide_vote does not use caching (cache service removed)."""
         # The service should not have cache service initialized
-        assert mock_ai_service.cache_service is None
+        assert not hasattr(mock_ai_service, 'cache_service')
         
         with patch.object(mock_ai_service, "_generate_vote_decision") as mock_generate:
             mock_generate.return_value = {
@@ -143,7 +143,7 @@ class TestAIServiceInitializationWithoutCache:
         with patch("services.ai_service.settings") as mock_settings:
             mock_settings.openrouter_api_key = "test-key"
             service = AIService()
-            assert service.cache_service is None
+            assert not hasattr(service, 'cache_service')
 
 
 

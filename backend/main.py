@@ -32,7 +32,6 @@ from models import (
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
-from services.cache_service import cache_service
 
 
 # Global service instances
@@ -46,10 +45,7 @@ async def lifespan(app: FastAPI):
     # Startup
     global tally_service, ai_service
 
-    # Initialize cache service first
-    await cache_service.initialize()
-
-    # Initialize services with cache dependency
+    # Initialize services
     tally_service = TallyService()
     ai_service = AIService()
 
@@ -64,7 +60,6 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown
-    await cache_service.close()
     logfire.info("Application shutdown")
 
 
@@ -100,17 +95,10 @@ async def general_exception_handler(request, exc):
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    redis_healthy = await cache_service.health_check()
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "version": "0.1.0",
-        "services": {
-            "redis": {
-                "status": "healthy" if redis_healthy else "unhealthy",
-                "available": cache_service.is_available,
-            }
-        },
     }
 
 
