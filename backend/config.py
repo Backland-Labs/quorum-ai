@@ -1,7 +1,7 @@
 """Configuration management following 12-factor app principles."""
 
 import os
-from typing import Dict, List, Optional
+from typing import ClassVar, Dict, List, Optional
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings
@@ -41,12 +41,16 @@ class Settings(BaseSettings):
     openrouter_api_key: Optional[str] = None
 
     # Top organizations configuration
-    top_organizations_env: str = "compound,nounsdao,arbitrum"
+    DEFAULT_TOP_ORGANIZATIONS: ClassVar[str] = "compound,nounsdao,arbitrum"
+    top_organizations_env: str = DEFAULT_TOP_ORGANIZATIONS
 
     # Top voters endpoint settings
-    default_top_voters_limit: int = 10
-    max_top_voters_limit: int = 50
-    min_top_voters_limit: int = 1
+    DEFAULT_TOP_VOTERS_LIMIT: ClassVar[int] = 10
+    MAX_TOP_VOTERS_LIMIT: ClassVar[int] = 50
+    MIN_TOP_VOTERS_LIMIT: ClassVar[int] = 1
+    default_top_voters_limit: int = DEFAULT_TOP_VOTERS_LIMIT
+    max_top_voters_limit: int = MAX_TOP_VOTERS_LIMIT
+    min_top_voters_limit: int = MIN_TOP_VOTERS_LIMIT
 
     # Chain configuration
     chain_name: str = "celo"
@@ -77,14 +81,18 @@ class Settings(BaseSettings):
     )
 
     # Activity tracking
+    DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS: ClassVar[int] = 3600  # 1 hour
+    DEFAULT_PROPOSAL_CHECK_INTERVAL_SECONDS: ClassVar[int] = 300   # 5 minutes
+    DEFAULT_MIN_TIME_BEFORE_DEADLINE_SECONDS: ClassVar[int] = 1800 # 30 minutes
+    
     activity_check_interval: int = Field(
-        default=3600, gt=0, description="Check every hour"
+        default=DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS, gt=0, description="Check every hour"
     )
     proposal_check_interval: int = Field(
-        default=300, gt=0, description="Check every 5 minutes"
+        default=DEFAULT_PROPOSAL_CHECK_INTERVAL_SECONDS, gt=0, description="Check every 5 minutes"
     )
     min_time_before_deadline: int = Field(
-        default=1800, gt=0, description="30 minutes before 24h deadline"
+        default=DEFAULT_MIN_TIME_BEFORE_DEADLINE_SECONDS, gt=0, description="30 minutes before 24h deadline"
     )
 
     # Staking contracts (from Olas env vars)
@@ -206,9 +214,10 @@ class Settings(BaseSettings):
     def monitored_daos_list(self) -> List[str]:
         """Parse comma-separated DAO list from environment."""
         daos_env = os.getenv("MONITORED_DAOS", "")
+        default_monitored_daos = "compound.eth,nouns.eth,arbitrum.eth"
         if not daos_env.strip():
             # Fall back to default when empty
-            daos_env = "compound.eth,nouns.eth,arbitrum.eth"
+            daos_env = default_monitored_daos
         return [dao.strip() for dao in daos_env.split(",") if dao.strip()]
 
     @property
