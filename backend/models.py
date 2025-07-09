@@ -8,12 +8,8 @@ from pydantic import BaseModel, Field, field_validator
 
 
 # Constants for VoteDecision model
-DEFAULT_RISK_ASSESSMENT = "MEDIUM"
 DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
 CONFIDENCE_DECIMAL_PLACES = 3
-
-# Constants for AgentState model
-DEFAULT_FSM_ROUND = "IdleRound"
 
 # Validation thresholds
 MIN_PROPOSAL_ID_LENGTH = 3
@@ -194,20 +190,15 @@ class Organization(BaseModel):
     delegates_count: int = 0
     delegates_votes_count: str = "0"
     token_owners_count: int = 0
-    endorsement_service: Optional[Dict[str, Any]] = None
 
 
 class ProposalState(str, Enum):
     """Proposal state enumeration."""
 
     ACTIVE = "ACTIVE"
-    CANCELED = "CANCELED"
-    CROSSCHAINEXECUTED = "CROSSCHAINEXECUTED"
     DEFEATED = "DEFEATED"
     EXECUTED = "EXECUTED"
-    EXPIRED = "EXPIRED"
     PENDING = "PENDING"
-    QUEUED = "QUEUED"
     SUCCEEDED = "SUCCEEDED"
 
 
