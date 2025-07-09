@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
     await cache_service.initialize()
 
     # Initialize services with cache dependency
-    tally_service = TallyService(cache_service=cache_service)
+    tally_service = TallyService()
     ai_service = AIService()
 
     # Configure Logfire if credentials are available
@@ -388,7 +388,7 @@ async def summarize_proposals(request: SummarizeRequest):
                 )
 
             # Generate summaries
-            summaries = await _generate_proposal_summaries(request, proposals)
+            summaries = await _generate_proposal_summaries(request)
 
             processing_time = time.time() - start_time
 
@@ -516,7 +516,7 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
 
 
 async def _generate_proposal_summaries(
-    request: SummarizeRequest, proposals: List[Proposal]
+    proposals: List[Proposal]
 ) -> List:
     """Generate AI summaries for proposals."""
     with logfire.span("generate_proposal_summaries"):

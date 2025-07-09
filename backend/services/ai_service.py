@@ -181,7 +181,7 @@ class AIService:
     Supports multiple voting strategies and provides comprehensive proposal analysis.
     """
 
-    def __init__(self, cache_service: Optional[CacheService] = None) -> None:
+    def __init__(self) -> None:
         """Initialize the AI service with configured model."""
         # Runtime assertion: validate initialization state
         assert (
