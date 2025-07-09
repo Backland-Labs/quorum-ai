@@ -9,6 +9,10 @@ import json
 from datetime import datetime, timedelta
 from typing import List
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from models import Proposal, ProposalState, VotingStrategy
 from services.ai_service import AIService
 from config import settings
