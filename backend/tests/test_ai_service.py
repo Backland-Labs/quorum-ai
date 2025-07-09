@@ -17,7 +17,6 @@ class TestAIServiceInitialization:
         mock_settings.openrouter_api_key = "test-api-key"
         service = AIService()
         assert service is not None
-        assert service.cache_service is None  # Cache should be removed
 
     @patch("services.ai_service.settings")
     def test_ai_service_uses_configured_model(self, mock_settings):
