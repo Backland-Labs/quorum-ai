@@ -515,9 +515,7 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
         return proposals
 
 
-async def _generate_proposal_summaries(
-    proposals: List[Proposal]
-) -> List:
+async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
     """Generate AI summaries for proposals."""
     with logfire.span("generate_proposal_summaries"):
         summaries = await ai_service.summarize_multiple_proposals(proposals)

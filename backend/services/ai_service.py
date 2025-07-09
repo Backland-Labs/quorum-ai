@@ -2,7 +2,7 @@
 
 import asyncio
 import json
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 
 import logfire
 from pydantic_ai import Agent
@@ -18,7 +18,6 @@ from models import (
     VotingStrategy,
     RiskLevel,
 )
-from services.cache_service import CacheService
 
 
 # Constants for AI response parsing
