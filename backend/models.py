@@ -8,12 +8,8 @@ from pydantic import BaseModel, Field, field_validator
 
 
 # Constants for VoteDecision model
-DEFAULT_RISK_ASSESSMENT = "MEDIUM"
 DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
 CONFIDENCE_DECIMAL_PLACES = 3
-
-# Constants for AgentState model
-DEFAULT_FSM_ROUND = "IdleRound"
 
 # Validation thresholds
 MIN_PROPOSAL_ID_LENGTH = 3
@@ -23,6 +19,14 @@ MIN_BLOCKCHAIN_ADDRESS_LENGTH = 10
 MAX_REASONABLE_GAS_COST = 1000.0
 MAX_REASONABLE_VOTES_PER_DAY = 1000
 MAX_VOTERS_LIST_SIZE = 100
+
+# Constants for VoteDecision model
+DEFAULT_RISK_ASSESSMENT = "MEDIUM"
+DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
+CONFIDENCE_DECIMAL_PLACES = 3
+
+# Constants for AgentState model
+DEFAULT_FSM_ROUND = "IdleRound"
 
 
 # Risk assessment levels
@@ -194,20 +198,15 @@ class Organization(BaseModel):
     delegates_count: int = 0
     delegates_votes_count: str = "0"
     token_owners_count: int = 0
-    endorsement_service: Optional[Dict[str, Any]] = None
 
 
 class ProposalState(str, Enum):
     """Proposal state enumeration."""
 
     ACTIVE = "ACTIVE"
-    CANCELED = "CANCELED"
-    CROSSCHAINEXECUTED = "CROSSCHAINEXECUTED"
     DEFEATED = "DEFEATED"
     EXECUTED = "EXECUTED"
-    EXPIRED = "EXPIRED"
     PENDING = "PENDING"
-    QUEUED = "QUEUED"
     SUCCEEDED = "SUCCEEDED"
 
 

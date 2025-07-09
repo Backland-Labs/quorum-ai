@@ -16,7 +16,6 @@ dependencies = [
     "python-multipart>=0.0.12",
     "python-dotenv>=1.0.0",
     "pre-commit>=4.1.0",
-    "redis>=6.2.0",
 ]
 
 [project.optional-dependencies]

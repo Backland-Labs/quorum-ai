@@ -80,13 +80,9 @@ class TestProposalState:
         """Test that all proposal state values are correctly defined."""
         expected_states = {
             "ACTIVE",
-            "CANCELED",
-            "CROSSCHAINEXECUTED",
             "DEFEATED",
             "EXECUTED",
-            "EXPIRED",
             "PENDING",
-            "QUEUED",
             "SUCCEEDED",
         }
         actual_states = {state.value for state in ProposalState}
