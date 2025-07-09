@@ -571,6 +571,359 @@ class TestTallyServiceGetProposalVotes:
         await tally_service.get_proposal_votes(proposal_id, limit)
 
 
+class TestTallyServiceGetProposalsByGovernorIds:
+    """Test TallyService get_proposals_by_governor_ids method."""
+
+    async def test_get_proposals_by_governor_ids_single_governor(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching with single governor ID."""
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
+        )
+
+        governor_ids = ["gov-1"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        assert len(proposals) == 2
+        assert proposals[0].id == "prop-1"
+        assert proposals[1].id == "prop-2"
+
+    async def test_get_proposals_by_governor_ids_multiple_governors(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching with multiple governor IDs."""
+        # Mock response for first governor
+        first_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-1",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Proposal 1", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+        
+        # Mock response for second governor
+        second_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-2",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-02T00:00:00Z",
+                            "metadata": {"title": "Proposal 2", "description": "Test"},
+                            "governor": {"id": "gov-2", "name": "DAO 2"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=first_response
+        )
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=second_response
+        )
+
+        governor_ids = ["gov-1", "gov-2"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        assert len(proposals) == 2
+        assert proposals[0].id == "prop-1"
+        assert proposals[1].id == "prop-2"
+
+    async def test_get_proposals_by_governor_ids_deduplication(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposal deduplication when same proposal appears in multiple governors."""
+        # Mock response for first governor with duplicate proposal
+        first_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-duplicate",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Duplicate Proposal", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        },
+                        {
+                            "id": "prop-unique-1",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-02T00:00:00Z",
+                            "metadata": {"title": "Unique Proposal 1", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+        
+        # Mock response for second governor with same duplicate proposal
+        second_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-duplicate",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Duplicate Proposal", "description": "Test"},
+                            "governor": {"id": "gov-2", "name": "DAO 2"},
+                            "voteStats": [],
+                        },
+                        {
+                            "id": "prop-unique-2",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-03T00:00:00Z",
+                            "metadata": {"title": "Unique Proposal 2", "description": "Test"},
+                            "governor": {"id": "gov-2", "name": "DAO 2"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=first_response
+        )
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=second_response
+        )
+
+        governor_ids = ["gov-1", "gov-2"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        # Should have 3 unique proposals (prop-duplicate, prop-unique-1, prop-unique-2)
+        assert len(proposals) == 3
+        proposal_ids = [p.id for p in proposals]
+        assert "prop-duplicate" in proposal_ids
+        assert "prop-unique-1" in proposal_ids
+        assert "prop-unique-2" in proposal_ids
+        
+        # Ensure no duplicates
+        assert len(set(proposal_ids)) == 3
+
+    async def test_get_proposals_by_governor_ids_partial_failures(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test graceful handling when some governor requests fail."""
+        # Mock successful response for first governor
+        success_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-success",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Success Proposal", "description": "Test"},
+                            "governor": {"id": "gov-success", "name": "Success DAO"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        # First request succeeds
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=success_response
+        )
+        
+        # Second request fails with network error
+        httpx_mock.add_exception(httpx.RequestError("Network timeout"))
+
+        governor_ids = ["gov-success", "gov-failure"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        # Should return proposals from successful request only
+        assert len(proposals) == 1
+        assert proposals[0].id == "prop-success"
+        assert proposals[0].dao_id == "gov-success"
+
+    async def test_get_proposals_by_governor_ids_all_failures(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test handling when all governor requests fail."""
+        # Both requests fail
+        httpx_mock.add_exception(httpx.RequestError("Network timeout"))
+        httpx_mock.add_response(status_code=500)
+
+        governor_ids = ["gov-fail-1", "gov-fail-2"]
+        proposals = await tally_service.get_proposals_by_governor_ids(governor_ids)
+
+        # Should return empty list when all requests fail
+        assert len(proposals) == 0
+
+    async def test_get_proposals_by_governor_ids_active_only_filter(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test active-only filtering in governor proposals fetching."""
+        # Mock response with mixed proposal states
+        mixed_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-active",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Active Proposal", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        },
+                        {
+                            "id": "prop-succeeded",
+                            "status": "SUCCEEDED",
+                            "createdAt": "2024-01-02T00:00:00Z",
+                            "metadata": {"title": "Succeeded Proposal", "description": "Test"},
+                            "governor": {"id": "gov-1", "name": "DAO 1"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        def check_active_filter(request):
+            body = request.content.decode()
+            # Should contain ACTIVE state filter
+            assert '"state":"ACTIVE"' in body or '"state": "ACTIVE"' in body
+            return httpx.Response(200, json=mixed_response)
+
+        httpx_mock.add_callback(check_active_filter)
+
+        governor_ids = ["gov-1"]
+        proposals = await tally_service.get_proposals_by_governor_ids(
+            governor_ids, active_only=True
+        )
+
+        # Should only return active proposals
+        assert len(proposals) == 2  # Both proposals in response since we filtered at API level
+        # But in real scenario, API would only return ACTIVE proposals
+
+
+class TestTallyServiceGetProposalsByOrganizationGovernors:
+    """Test TallyService get_proposals_by_organization_governors method."""
+
+    async def test_get_proposals_by_organization_governors_success(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test successful proposals fetching by organization ID."""
+        httpx_mock.add_response(
+            method="POST", url=settings.tally_api_base_url, json=mock_proposals_response
+        )
+
+        organization_id = "org-123"
+        proposals = await tally_service.get_proposals_by_organization_governors(organization_id)
+
+        assert len(proposals) == 2
+        assert proposals[0].id == "prop-1"
+        assert proposals[1].id == "prop-2"
+
+    async def test_get_proposals_by_organization_governors_with_limit(
+        self,
+        tally_service: TallyService,
+        mock_proposals_response: dict,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test proposals fetching by organization ID with custom limit."""
+        def check_limit(request):
+            body = request.content.decode()
+            # Should contain the custom limit
+            assert '"limit":10' in body or '"limit": 10' in body
+            return httpx.Response(200, json=mock_proposals_response)
+
+        httpx_mock.add_callback(check_limit)
+
+        organization_id = "org-123"
+        limit = 10
+        proposals = await tally_service.get_proposals_by_organization_governors(
+            organization_id, limit=limit
+        )
+
+        assert len(proposals) == 2
+
+    async def test_get_proposals_by_organization_governors_active_only(
+        self,
+        tally_service: TallyService,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        """Test active-only filtering in organization governors fetching."""
+        active_response = {
+            "data": {
+                "proposals": {
+                    "nodes": [
+                        {
+                            "id": "prop-active-org",
+                            "status": "ACTIVE",
+                            "createdAt": "2024-01-01T00:00:00Z",
+                            "metadata": {"title": "Active Org Proposal", "description": "Test"},
+                            "governor": {"id": "gov-org", "name": "Org DAO"},
+                            "voteStats": [],
+                        }
+                    ],
+                    "pageInfo": {"lastCursor": None},
+                }
+            }
+        }
+
+        def check_organization_active_filter(request):
+            body = request.content.decode()
+            # Should contain both organization filter and ACTIVE state filter
+            assert '"organizationId":"org-123"' in body or '"organizationId": "org-123"' in body
+            assert '"state":"ACTIVE"' in body or '"state": "ACTIVE"' in body
+            return httpx.Response(200, json=active_response)
+
+        httpx_mock.add_callback(check_organization_active_filter)
+
+        organization_id = "org-123"
+        proposals = await tally_service.get_proposals_by_organization_governors(
+            organization_id, active_only=True
+        )
+
+        assert len(proposals) == 1
+        assert proposals[0].id == "prop-active-org"
+
+
 class TestTallyServiceHasVoted:
     """Test TallyService has_voted method."""
 
