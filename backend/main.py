@@ -458,10 +458,13 @@ def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -
     """Build HTTP cache headers based on proposal state."""
     headers = {}
 
+    # Set appropriate cache TTL based on proposal state
     if proposal.state == ProposalState.ACTIVE:
-        max_age = settings.cache_ttl_proposal_votes_active
+        # Active proposals change frequently, shorter cache time (5 minutes)
+        max_age = 300
     else:
-        max_age = settings.cache_ttl_proposal_votes_completed
+        # Completed proposals don't change, longer cache time (1 hour)
+        max_age = 3600
 
     headers["Cache-Control"] = f"public, max-age={max_age}"
 

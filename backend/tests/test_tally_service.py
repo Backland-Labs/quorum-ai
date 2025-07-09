@@ -509,24 +509,6 @@ class TestTallyServiceGetProposalVotes:
             json={"data": {"votes": {"nodes": []}}},
         )
 
-        # Mock proposal lookup for caching
-        httpx_mock.add_response(
-            method="POST",
-            url=settings.tally_api_base_url,
-            json={
-                "data": {
-                    "proposal": {
-                        "id": "prop-123",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-01T00:00:00Z",
-                        "metadata": {"title": "Test", "description": "Test"},
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [],
-                    }
-                }
-            },
-        )
-
         proposal_id = "prop-123"
         limit = 5
 
