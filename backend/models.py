@@ -20,6 +20,14 @@ MAX_REASONABLE_GAS_COST = 1000.0
 MAX_REASONABLE_VOTES_PER_DAY = 1000
 MAX_VOTERS_LIST_SIZE = 100
 
+# Constants for VoteDecision model
+DEFAULT_RISK_ASSESSMENT = "MEDIUM"
+DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
+CONFIDENCE_DECIMAL_PLACES = 3
+
+# Constants for AgentState model
+DEFAULT_FSM_ROUND = "IdleRound"
+
 
 # Risk assessment levels
 class RiskLevel(str, Enum):
