@@ -43,12 +43,17 @@ class TallyService:
         # Performance safeguard for parallel requests
         self._semaphore = asyncio.Semaphore(DEFAULT_SEMAPHORE_LIMIT)
 
-    async def _make_request(self, query: str, variables: Optional[Dict] = None, governor_id: Optional[str] = None) -> Dict:
+    async def _make_request(
+        self,
+        query: str,
+        variables: Optional[Dict] = None,
+        governor_id: Optional[str] = None,
+    ) -> Dict:
         """Make a GraphQL request to the Tally API with performance safeguards."""
         # Runtime assertions for critical method
         assert query, "GraphQL query cannot be empty"
         assert isinstance(query, str), "GraphQL query must be a string"
-        
+
         headers = {
             "Content-Type": "application/json",
         }
@@ -61,7 +66,9 @@ class TallyService:
         # Use semaphore to limit concurrent requests
         async with self._semaphore:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                with logfire.span("tally_api_request", query=query, governor_id=governor_id):
+                with logfire.span(
+                    "tally_api_request", query=query, governor_id=governor_id
+                ):
                     try:
                         response = await client.post(
                             self.base_url, json=payload, headers=headers
@@ -86,7 +93,7 @@ class TallyService:
         assert isinstance(limit, int), "Limit must be an integer"
         if after_cursor is not None:
             assert isinstance(after_cursor, str), "After cursor must be a string"
-        
+
         query = self._build_organizations_query()
         variables = self._build_organizations_variables(limit, after_cursor)
 
@@ -147,10 +154,10 @@ class TallyService:
         assert result, "API result cannot be empty"
         assert isinstance(result, dict), "API result must be a dictionary"
         assert "data" in result, "API result must contain data field"
-        
+
         org_data = result.get("data", {}).get("organizations", {})
         org_nodes = org_data.get("nodes", [])
-        
+
         # Type validation for org_nodes
         assert isinstance(org_nodes, list), "Organization nodes must be a list"
 
@@ -273,7 +280,7 @@ class TallyService:
         # Runtime assertions for critical method
         assert dao_id, "DAO ID cannot be empty"
         assert isinstance(dao_id, str), "DAO ID must be a string"
-        
+
         query = """
         query GetGovernor($input: GovernorInput!) {
             governor(input: $input) {
@@ -301,7 +308,7 @@ class TallyService:
             # Type validation for API response
             assert isinstance(result, dict), "API result must be a dictionary"
             assert "data" in result, "API result must contain data field"
-            
+
             dao_data = result.get("data", {}).get("governor")
 
             if not dao_data:
@@ -341,7 +348,9 @@ class TallyService:
             # Fetch more proposals to ensure we have enough for sorting
             # Use multiplier for the requested limit to get a good selection for sorting
             fetch_filters = filters.model_copy()
-            fetch_filters.limit = min(original_limit * VOTE_COUNT_MULTIPLIER, MAX_API_LIMIT)
+            fetch_filters.limit = min(
+                original_limit * VOTE_COUNT_MULTIPLIER, MAX_API_LIMIT
+            )
             fetch_filters.sort_by = SortCriteria.CREATED_DATE  # Use default API sorting
             variables = self._build_proposals_variables(fetch_filters)
         else:
@@ -1102,7 +1111,7 @@ class TallyService:
         assert voter_address, "Voter address cannot be empty"
         assert isinstance(voter_address, str), "Voter address must be a string"
         assert voter_address.strip(), "Voter address cannot be only whitespace"
-        
+
         query = """
         query CheckVote($proposalId: IntID!, $voterAddress: Address!) {
             votes(
@@ -1138,14 +1147,14 @@ class TallyService:
             # Type validation for API response
             assert isinstance(result, dict), "API result must be a dictionary"
             assert "data" in result, "API result must contain data field"
-            
+
             votes_data = result.get("data", {}).get("votes", {})
             assert isinstance(votes_data, dict), "Votes data must be a dictionary"
 
             # Check if any vote nodes exist or if count > 0
             nodes = votes_data.get("nodes", [])
             count = votes_data.get("pageInfo", {}).get("count", 0)
-            
+
             assert isinstance(nodes, list), "Vote nodes must be a list"
             assert isinstance(count, int), "Vote count must be an integer"
 
@@ -1163,10 +1172,10 @@ class TallyService:
         self, governor_ids: List[str], limit: int = 50, active_only: bool = False
     ) -> List[Proposal]:
         """Fetch proposals for specific governor IDs.
-        
+
         This method coordinates proposal fetching by delegating to focused helper methods
         based on the number of governor IDs provided.
-        
+
         Args:
             governor_ids: List of governor IDs to fetch proposals from
             limit: Maximum number of proposals to fetch per governor
@@ -1183,23 +1192,31 @@ class TallyService:
                 governor_ids, limit, active_only
             )
 
-    def _validate_governor_ids_params(self, governor_ids: List[str], limit: int) -> None:
+    def _validate_governor_ids_params(
+        self, governor_ids: List[str], limit: int
+    ) -> None:
         """Validate parameters for get_proposals_by_governor_ids method.
-        
+
         Args:
             governor_ids: List of governor IDs to validate
             limit: Limit parameter to validate
-            
+
         Raises:
             AssertionError: If any validation fails
         """
         # Runtime assertions for critical method
         assert governor_ids, "Governor IDs list cannot be empty"
         assert isinstance(governor_ids, list), "Governor IDs must be a list"
-        assert all(isinstance(gid, str) for gid in governor_ids), "All governor IDs must be strings"
-        assert all(gid.strip() for gid in governor_ids), "All governor IDs must be non-empty strings"
+        assert all(
+            isinstance(gid, str) for gid in governor_ids
+        ), "All governor IDs must be strings"
+        assert all(
+            gid.strip() for gid in governor_ids
+        ), "All governor IDs must be non-empty strings"
         # Add maximum limit for governor IDs to prevent performance issues
-        assert len(governor_ids) <= MAX_GOVERNOR_IDS_LIMIT, f"Cannot process more than {MAX_GOVERNOR_IDS_LIMIT} governor IDs at once"
+        assert (
+            len(governor_ids) <= MAX_GOVERNOR_IDS_LIMIT
+        ), f"Cannot process more than {MAX_GOVERNOR_IDS_LIMIT} governor IDs at once"
         assert limit > 0, "Limit must be positive"
         assert isinstance(limit, int), "Limit must be an integer"
 
@@ -1207,19 +1224,19 @@ class TallyService:
         self, governor_id: str, limit: int, active_only: bool
     ) -> List[Proposal]:
         """Handle proposal fetching for a single governor ID.
-        
+
         Args:
             governor_id: The governor ID to fetch proposals from
             limit: Maximum number of proposals to fetch
             active_only: If True, only fetch proposals in ACTIVE state
-            
+
         Returns:
             List of proposals from the single governor
         """
         proposal_filters = self._create_proposal_filters(
-            dao_id=governor_id, 
+            dao_id=governor_id,
             limit=limit,
-            state_filter=self._get_state_filter(active_only)
+            state_filter=self._get_state_filter(active_only),
         )
         proposals, _ = await self.get_proposals(proposal_filters)
         return proposals
@@ -1228,12 +1245,12 @@ class TallyService:
         self, governor_ids: List[str], limit: int, active_only: bool
     ) -> List[Proposal]:
         """Handle proposal fetching for multiple governor IDs using parallel requests.
-        
+
         Args:
             governor_ids: List of governor IDs to fetch proposals from
             limit: Maximum number of proposals to fetch per governor
             active_only: If True, only fetch proposals in ACTIVE state
-            
+
         Returns:
             Deduplicated list of proposals from all governors
         """
@@ -1242,52 +1259,61 @@ class TallyService:
         assert isinstance(governor_ids, list), "Governor IDs must be a list"
         assert limit > 0, "Limit must be positive"
         assert isinstance(active_only, bool), "Active only flag must be a boolean"
-        
+
         try:
             # Create tasks for parallel API calls
-            proposal_fetch_tasks = self._create_parallel_fetch_tasks(governor_ids, limit, active_only)
+            proposal_fetch_tasks = self._create_parallel_fetch_tasks(
+                governor_ids, limit, active_only
+            )
 
             # Execute all requests in parallel with proper error handling
-            fetch_results = await asyncio.gather(*proposal_fetch_tasks, return_exceptions=True)
-            
+            fetch_results = await asyncio.gather(
+                *proposal_fetch_tasks, return_exceptions=True
+            )
+
             # Process parallel results and return deduplicated proposals
             return self._process_parallel_results(fetch_results, governor_ids)
         except Exception as e:
-            logfire.error("Failed to fetch proposals by governor IDs", 
-                         governor_ids=governor_ids, error=str(e))
+            logfire.error(
+                "Failed to fetch proposals by governor IDs",
+                governor_ids=governor_ids,
+                error=str(e),
+            )
             raise
 
     def _create_parallel_fetch_tasks(
         self, governor_ids: List[str], limit: int, active_only: bool
     ) -> List:
         """Create parallel fetch tasks for multiple governor IDs.
-        
+
         Args:
             governor_ids: List of governor IDs to create tasks for
             limit: Maximum number of proposals to fetch per governor
             active_only: If True, only fetch proposals in ACTIVE state
-            
+
         Returns:
             List of async tasks for fetching proposals
         """
         proposal_fetch_tasks = []
         for governor_id in governor_ids:
             proposal_filters = self._create_proposal_filters(
-                dao_id=governor_id, 
+                dao_id=governor_id,
                 limit=limit,
-                state_filter=self._get_state_filter(active_only)
+                state_filter=self._get_state_filter(active_only),
             )
             fetch_task = self.get_proposals(proposal_filters)
             proposal_fetch_tasks.append(fetch_task)
         return proposal_fetch_tasks
 
-    def _process_parallel_results(self, fetch_results: List, governor_ids: List[str]) -> List[Proposal]:
+    def _process_parallel_results(
+        self, fetch_results: List, governor_ids: List[str]
+    ) -> List[Proposal]:
         """Process results from parallel governor proposal requests.
-        
+
         Args:
             fetch_results: List of results from asyncio.gather, may contain tuples or exceptions
             governor_ids: List of governor IDs corresponding to the fetch results
-            
+
         Returns:
             Deduplicated list of proposals from all successful requests
         """
@@ -1296,19 +1322,25 @@ class TallyService:
         assert isinstance(fetch_results, list), "Fetch results must be a list"
         assert governor_ids is not None, "Governor IDs cannot be None"
         assert isinstance(governor_ids, list), "Governor IDs must be a list"
-        assert len(fetch_results) == len(governor_ids), "Fetch results and governor IDs must have same length"
-        
-        all_proposals = self._extract_proposals_from_results(fetch_results, governor_ids)
+        assert len(fetch_results) == len(
+            governor_ids
+        ), "Fetch results and governor IDs must have same length"
+
+        all_proposals = self._extract_proposals_from_results(
+            fetch_results, governor_ids
+        )
         # Deduplicate proposals by ID
         return self._deduplicate_proposals(all_proposals)
 
-    def _extract_proposals_from_results(self, fetch_results: List, governor_ids: List[str]) -> List[Proposal]:
+    def _extract_proposals_from_results(
+        self, fetch_results: List, governor_ids: List[str]
+    ) -> List[Proposal]:
         """Extract proposals from parallel fetch results, handling errors gracefully.
-        
+
         Args:
             fetch_results: List of results from asyncio.gather, may contain tuples or exceptions
             governor_ids: List of governor IDs corresponding to the fetch results
-            
+
         Returns:
             List of proposals from all successful requests
         """
@@ -1317,57 +1349,63 @@ class TallyService:
         assert isinstance(fetch_results, list), "Fetch results must be a list"
         assert governor_ids is not None, "Governor IDs cannot be None"
         assert isinstance(governor_ids, list), "Governor IDs must be a list"
-        
+
         all_proposals = []
         for i, fetch_result in enumerate(fetch_results):
             governor_id = governor_ids[i] if i < len(governor_ids) else "unknown"
-            
+
             if isinstance(fetch_result, tuple):
                 proposals, _ = fetch_result
                 if proposals:
-                    assert isinstance(proposals, list), f"Proposals for governor {governor_id} must be a list"
+                    assert isinstance(
+                        proposals, list
+                    ), f"Proposals for governor {governor_id} must be a list"
                     all_proposals.extend(proposals)
             else:
                 # Enhanced error handling with governor ID context
-                logfire.error("Failed to fetch proposals for governor", 
-                            governor_id=governor_id, 
-                            error=str(fetch_result),
-                            error_type=type(fetch_result).__name__)
+                logfire.error(
+                    "Failed to fetch proposals for governor",
+                    governor_id=governor_id,
+                    error=str(fetch_result),
+                    error_type=type(fetch_result).__name__,
+                )
         return all_proposals
 
     def _deduplicate_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
         """Deduplicate proposals by ID, keeping the first occurrence."""
         assert proposals is not None, "Proposals list cannot be None"
-        
+
         seen_ids = set()
         deduplicated = []
-        
+
         for proposal in proposals:
             if proposal.id not in seen_ids:
                 seen_ids.add(proposal.id)
                 deduplicated.append(proposal)
-        
-        logfire.info("Deduplicated proposals", 
-                    original_count=len(proposals), 
-                    deduplicated_count=len(deduplicated))
-        
+
+        logfire.info(
+            "Deduplicated proposals",
+            original_count=len(proposals),
+            deduplicated_count=len(deduplicated),
+        )
+
         return deduplicated
 
     def _create_proposal_filters(
-        self, 
-        dao_id: Optional[str] = None, 
-        organization_id: Optional[str] = None, 
-        limit: int = 50, 
-        state_filter: Optional[ProposalState] = None
+        self,
+        dao_id: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        limit: int = 50,
+        state_filter: Optional[ProposalState] = None,
     ) -> ProposalFilters:
         """Create ProposalFilters object to eliminate duplication.
-        
+
         Args:
             dao_id: DAO ID filter
             organization_id: Organization ID filter
             limit: Maximum number of proposals to fetch
             state_filter: Proposal state filter
-            
+
         Returns:
             Configured ProposalFilters instance
         """
@@ -1375,15 +1413,15 @@ class TallyService:
             dao_id=dao_id,
             organization_id=organization_id,
             limit=limit,
-            state=state_filter
+            state=state_filter,
         )
 
     def _get_state_filter(self, active_only: bool) -> Optional[ProposalState]:
         """Get state filter based on active_only flag for clearer logic.
-        
+
         Args:
             active_only: If True, return ACTIVE state filter
-            
+
         Returns:
             ProposalState.ACTIVE if active_only is True, None otherwise
         """
@@ -1393,7 +1431,7 @@ class TallyService:
         self, organization_id: str, limit: int = 50, active_only: bool = False
     ) -> List[Proposal]:
         """Fetch proposals for all governors in an organization.
-        
+
         Args:
             organization_id: Organization ID to fetch proposals from
             limit: Maximum number of proposals to fetch
@@ -1410,15 +1448,18 @@ class TallyService:
         try:
             # Use existing get_proposals method with organization filter
             proposal_filters = self._create_proposal_filters(
-                organization_id=organization_id, 
+                organization_id=organization_id,
                 limit=limit,
-                state_filter=self._get_state_filter(active_only)
+                state_filter=self._get_state_filter(active_only),
             )
             proposals, _ = await self.get_proposals(proposal_filters)
             # Type validation for returned proposals
             assert isinstance(proposals, list), "Proposals must be a list"
             return proposals
         except Exception as e:
-            logfire.error("Failed to fetch proposals by organization governors", 
-                         organization_id=organization_id, error=str(e))
+            logfire.error(
+                "Failed to fetch proposals by organization governors",
+                organization_id=organization_id,
+                error=str(e),
+            )
             raise

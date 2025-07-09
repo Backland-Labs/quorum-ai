@@ -82,17 +82,23 @@ class Settings(BaseSettings):
 
     # Activity tracking
     DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS: ClassVar[int] = 3600  # 1 hour
-    DEFAULT_PROPOSAL_CHECK_INTERVAL_SECONDS: ClassVar[int] = 300   # 5 minutes
-    DEFAULT_MIN_TIME_BEFORE_DEADLINE_SECONDS: ClassVar[int] = 1800 # 30 minutes
-    
+    DEFAULT_PROPOSAL_CHECK_INTERVAL_SECONDS: ClassVar[int] = 300  # 5 minutes
+    DEFAULT_MIN_TIME_BEFORE_DEADLINE_SECONDS: ClassVar[int] = 1800  # 30 minutes
+
     activity_check_interval: int = Field(
-        default=DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS, gt=0, description="Check every hour"
+        default=DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS,
+        gt=0,
+        description="Check every hour",
     )
     proposal_check_interval: int = Field(
-        default=DEFAULT_PROPOSAL_CHECK_INTERVAL_SECONDS, gt=0, description="Check every 5 minutes"
+        default=DEFAULT_PROPOSAL_CHECK_INTERVAL_SECONDS,
+        gt=0,
+        description="Check every 5 minutes",
     )
     min_time_before_deadline: int = Field(
-        default=DEFAULT_MIN_TIME_BEFORE_DEADLINE_SECONDS, gt=0, description="30 minutes before 24h deadline"
+        default=DEFAULT_MIN_TIME_BEFORE_DEADLINE_SECONDS,
+        gt=0,
+        description="30 minutes before 24h deadline",
     )
 
     # Staking contracts (from Olas env vars)
