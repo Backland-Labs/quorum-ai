@@ -695,3 +695,93 @@ class ABILoadError(Exception):
     def __init__(self, message: str, cause: Optional[Exception] = None):
         super().__init__(message)
         self.__cause__ = cause
+
+
+# Vote Encoding Models
+class VoteEncodingResult(BaseModel):
+    """Result of encoding a single vote."""
+    
+    proposal_id: int = Field(..., description="The proposal ID that was encoded")
+    support: VoteType = Field(..., description="The vote support (FOR/AGAINST/ABSTAIN)")
+    encoded_data: str = Field(..., description="Hex-encoded function call data")
+    function_name: str = Field(..., description="Name of the function that was encoded")
+    governor_type: GovernorContractType = Field(..., description="Type of governor contract")
+    encoding_timestamp: datetime = Field(..., description="When the encoding was performed")
+    from_cache: bool = Field(default=False, description="Whether result came from cache")
+    reason: Optional[str] = Field(None, description="Vote reason if provided")
+    
+    @field_validator("encoded_data")
+    @classmethod
+    def validate_encoded_data(cls, v: str) -> str:
+        """Validate encoded data is valid hex string."""
+        if not v.startswith("0x"):
+            raise ValueError("Encoded data must be valid hex string")
+        try:
+            bytes.fromhex(v[2:])
+        except ValueError:
+            raise ValueError("Encoded data must be valid hex string")
+        return v
+
+
+class VoteEncodingError(Exception):
+    """Exception raised when vote encoding fails."""
+    
+    def __init__(
+        self,
+        message: str,
+        proposal_id: Optional[int] = None,
+        support: Optional[VoteType] = None,
+        governor_type: Optional[GovernorContractType] = None,
+        original_error: Optional[Exception] = None
+    ):
+        super().__init__(message)
+        self.proposal_id = proposal_id
+        self.support = support
+        self.governor_type = governor_type
+        self.original_error = original_error
+
+
+class BatchVoteEncodingResult(BaseModel):
+    """Result of encoding multiple votes in batch."""
+    
+    vote_encodings: List[VoteEncodingResult] = Field(..., description="Successfully encoded votes")
+    successful_count: int = Field(..., description="Number of successful encodings")
+    failed_count: int = Field(..., description="Number of failed encodings")
+    total_count: int = Field(..., description="Total number of vote requests")
+    errors: List[str] = Field(default_factory=list, description="Error messages for failed encodings")
+    processing_time_ms: float = Field(..., description="Total processing time in milliseconds")
+    average_encoding_time_ms: float = Field(..., description="Average encoding time per vote")
+    cache_hit_count: int = Field(default=0, description="Number of cache hits")
+    cache_miss_count: int = Field(default=0, description="Number of cache misses")
+    batch_timestamp: datetime = Field(..., description="When batch processing started")
+    
+    @field_validator("total_count")
+    @classmethod
+    def validate_count_consistency(cls, v: int, info) -> int:
+        """Validate that counts are consistent."""
+        # This will be called before other fields are set, so we can't validate consistency here
+        # We'll check in model_validate instead
+        return v
+    
+    def model_post_init(self, __context) -> None:
+        """Validate count consistency after model creation."""
+        if self.successful_count + self.failed_count != self.total_count:
+            raise ValueError("Count fields are inconsistent")
+
+
+class BatchVoteEncodingError(Exception):
+    """Exception raised when batch vote encoding fails."""
+    
+    def __init__(
+        self,
+        message: str,
+        total_requests: Optional[int] = None,
+        successful_count: Optional[int] = None,
+        failed_count: Optional[int] = None,
+        individual_errors: Optional[List[VoteEncodingError]] = None
+    ):
+        super().__init__(message)
+        self.total_requests = total_requests
+        self.successful_count = successful_count
+        self.failed_count = failed_count
+        self.individual_errors = individual_errors or []
