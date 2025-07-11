@@ -67,6 +67,8 @@ class TallyService:
 
         payload = {"query": query, "variables": variables or {}}
 
+        logfire.info("Making Tally API request", query=query, governor_id=governor_id)
+
         # Use semaphore to limit concurrent requests
         async with self._semaphore:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -77,6 +79,7 @@ class TallyService:
                         response = await client.post(
                             self.base_url, json=payload, headers=headers
                         )
+                        logfire.info("Tally API response", response=response.text)
                         response.raise_for_status()
                         return response.json()
                     except Exception as e:

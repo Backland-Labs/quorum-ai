@@ -84,7 +84,7 @@ curl "http://localhost:8000/proposals/{compound_proposal_id}/governor-info"
 curl -X POST "http://localhost:8000/proposals/{compound_proposal_id}/ai-vote-recommendation?voter_address=0x1234...5678"
 
 # Test vote encoding
-curl -X POST "http://localhost:8000/proposals/{compound_proposal_id}/vote/encode" \
+curl -X POST "http://localhost:8000/proposals/2339807097140545431/vote/encode" \
   -H "Content-Type: application/json" \
   -d '{
     "vote_type": "FOR", 
