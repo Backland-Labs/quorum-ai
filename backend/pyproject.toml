@@ -16,6 +16,8 @@ dependencies = [
     "python-multipart>=0.0.12",
     "python-dotenv>=1.0.0",
     "pre-commit>=4.1.0",
+    "web3>=6.0.0",
+    "eth-abi>=4.0.0",
 ]
 
 [project.optional-dependencies]

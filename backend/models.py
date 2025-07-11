@@ -645,3 +645,53 @@ class AgentState(BaseModel):
             "rounds_completed": self.rounds_completed,
             "is_healthy": self.is_healthy,
         }
+
+
+# Governor ABI Models
+class GovernorContractType(str, Enum):
+    """Types of governor contract implementations."""
+    
+    COMPOUND = "COMPOUND"
+    GOVERNOR_BRAVO = "GOVERNOR_BRAVO"
+    AAVE = "AAVE"
+    UNISWAP = "UNISWAP"
+    GENERIC = "GENERIC"
+
+
+class GovernorFunction(BaseModel):
+    """Represents a governor contract function from ABI."""
+    
+    name: str = Field(..., description="Function name")
+    type: str = Field(..., description="Function type (usually 'function')")
+    inputs: List[Dict[str, str]] = Field(..., description="Function input parameters")
+    
+    def __init__(self, **data):
+        """Initialize and validate function data."""
+        if "name" not in data or not data["name"]:
+            raise ValueError("Function name is required")
+        super().__init__(**data)
+    
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        """Validate function name is provided."""
+        if not v or not v.strip():
+            raise ValueError("Function name is required")
+        return v.strip()
+    
+    @field_validator("inputs")
+    @classmethod
+    def validate_inputs(cls, v: List[Dict[str, str]]) -> List[Dict[str, str]]:
+        """Validate input parameters have required fields."""
+        for param in v:
+            if "name" not in param or "type" not in param:
+                raise ValueError("Input parameter missing required fields: name, type")
+        return v
+
+
+class ABILoadError(Exception):
+    """Exception raised when ABI loading fails."""
+    
+    def __init__(self, message: str, cause: Optional[Exception] = None):
+        super().__init__(message)
+        self.__cause__ = cause
