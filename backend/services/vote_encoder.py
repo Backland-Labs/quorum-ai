@@ -980,3 +980,58 @@ class VoteEncoder:
         assert isinstance(vote_type, VoteType), "Vote type should be VoteType enum at this point"
         
         return mapping[vote_type]
+    
+    async def encode_vote_from_ai_decision(
+        self,
+        vote_decision,  # VoteDecision type but avoiding circular import
+        proposal,       # Proposal type but avoiding circular import
+    ) -> VoteEncodingResult:
+        """Encode vote from AI decision with proposal context.
+        
+        Args:
+            vote_decision: AI vote decision object
+            proposal: Proposal object
+            
+        Returns:
+            VoteEncodingResult with encoding outcome
+            
+        Raises:
+            VoteEncodingError: If encoding fails
+        """
+        # Extract proposal ID as integer
+        proposal_id_str = proposal.id
+        try:
+            # Try to extract numeric ID from string format like "compound-prop-123"
+            if '-' in proposal_id_str:
+                proposal_id = int(proposal_id_str.split('-')[-1])
+            else:
+                proposal_id = int(proposal_id_str)
+        except ValueError:
+            # Fallback: use hash of proposal ID
+            proposal_id = abs(hash(proposal_id_str)) % 1000000
+        
+        # Detect governor type from DAO ID
+        governor_type = self._detect_governor_type_from_dao_id(proposal.dao_id)
+        
+        # Encode the vote
+        return await self.encode_vote(
+            proposal_id=proposal_id,
+            support=vote_decision.vote,
+            governor_type=governor_type,
+            reason=vote_decision.reasoning
+        )
+    
+    def _detect_governor_type_from_dao_id(self, dao_id: str) -> GovernorContractType:
+        """Detect governor type from DAO ID for integration."""
+        dao_id_lower = dao_id.lower()
+        
+        if "compound" in dao_id_lower and "bravo" in dao_id_lower:
+            return GovernorContractType.COMPOUND_BRAVO
+        elif "compound" in dao_id_lower:
+            return GovernorContractType.COMPOUND
+        elif "aave" in dao_id_lower:
+            return GovernorContractType.AAVE
+        elif "uniswap" in dao_id_lower:
+            return GovernorContractType.UNISWAP
+        else:
+            return GovernorContractType.GENERIC

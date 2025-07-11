@@ -841,3 +841,81 @@ class CompoundDelegateInfo(BaseModel):
     voting_power: str = Field(..., description="Voting power delegated")
     delegation_block: int = Field(..., description="Block number of delegation")
     is_self_delegated: bool = Field(default=False, description="Whether self-delegated")
+
+
+# Integration Models for Governor System
+class GovernorVoteRequest(BaseModel):
+    """Request model for governor vote encoding."""
+    
+    vote_type: VoteType = Field(..., description="Vote choice (FOR/AGAINST/ABSTAIN)")
+    voter_address: str = Field(..., description="Voter's blockchain address")
+    reason: Optional[str] = Field(None, description="Optional reason for the vote")
+    
+    @field_validator("voter_address")
+    @classmethod
+    def validate_voter_address(cls, v: str) -> str:
+        """Validate voter address format."""
+        return ModelValidationHelper.validate_blockchain_address(v)
+
+
+class GovernorVoteResponse(BaseModel):
+    """Response model for governor vote encoding."""
+    
+    success: bool = Field(..., description="Whether encoding was successful")
+    encoded_data: Optional[str] = Field(None, description="Hex-encoded transaction data")
+    gas_estimate: Optional[int] = Field(None, description="Estimated gas for transaction")
+    function_signature: Optional[str] = Field(None, description="Function signature called")
+    error_message: Optional[str] = Field(None, description="Error message if failed")
+    governor_type: Optional[GovernorContractType] = Field(None, description="Type of governor")
+
+
+class BatchVoteRequest(BaseModel):
+    """Request model for batch vote encoding."""
+    
+    votes: List[Dict[str, Any]] = Field(..., description="List of vote requests")
+    
+    @field_validator("votes")
+    @classmethod
+    def validate_votes(cls, v: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Validate votes list."""
+        if not v:
+            raise ValueError("Votes list cannot be empty")
+        if len(v) > 50:  # Reasonable limit
+            raise ValueError("Cannot process more than 50 votes in batch")
+        
+        for vote in v:
+            required_fields = ["proposal_id", "vote_type", "voter_address"]
+            for field in required_fields:
+                if field not in vote:
+                    raise ValueError(f"Vote missing required field: {field}")
+        
+        return v
+
+
+class GovernorInfo(BaseModel):
+    """Governor contract information."""
+    
+    governor_id: str = Field(..., description="Governor identifier")
+    contract_address: str = Field(..., description="Governor contract address")
+    governor_type: GovernorContractType = Field(..., description="Type of governor")
+    blockchain_network: str = Field(..., description="Blockchain network")
+    abi_version: str = Field(..., description="ABI version")
+    contract_metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+
+
+class AIVoteRecommendation(BaseModel):
+    """AI-enhanced vote recommendation with governor context."""
+    
+    proposal_id: str = Field(..., description="Proposal ID")
+    vote: VoteType = Field(..., description="Recommended vote")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence in recommendation")
+    reasoning: str = Field(..., description="AI reasoning for the vote")
+    risk_level: RiskLevel = Field(..., description="Risk assessment")
+    governor_context: Dict[str, Any] = Field(default_factory=dict, description="Governor-specific context")
+    vote_encoding_recommendation: Optional[Dict[str, Any]] = Field(None, description="Encoding parameters")
+    
+    @field_validator("reasoning")
+    @classmethod
+    def validate_reasoning(cls, v: str) -> str:
+        """Validate reasoning has sufficient content."""
+        return ModelValidationHelper.validate_meaningful_text(v, min_length=10, field_name="reasoning")

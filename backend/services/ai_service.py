@@ -17,6 +17,8 @@ from models import (
     VoteType,
     VotingStrategy,
     RiskLevel,
+    GovernorContractType,
+    AIVoteRecommendation,
 )
 
 
@@ -37,6 +39,9 @@ class AIResponseProcessor:
         # Runtime assertion: validate constants are properly configured
         assert VALID_VOTE_TYPES, "Valid vote types must be configured"
         assert VALID_RISK_LEVELS, "Valid risk levels must be configured"
+        
+        # Validate configuration on initialization
+        self._validate_processor_configuration()
 
     def process_ai_result(self, result: Any) -> Dict[str, Any]:
         """Process the AI model result and extract output."""
@@ -144,6 +149,14 @@ class AIResponseProcessor:
             "reasoning": reasoning,
             "risk_level": DEFAULT_RISK_LEVEL_FALLBACK,
         }
+    
+    def _validate_processor_configuration(self) -> None:
+        """Validate processor configuration and constants."""
+        # Runtime assertions for proper configuration
+        assert len(VALID_VOTE_TYPES) > 0, "At least one valid vote type must be configured"
+        assert len(VALID_RISK_LEVELS) > 0, "At least one valid risk level must be configured"
+        assert DEFAULT_VOTE_FALLBACK in VALID_VOTE_TYPES, "Default vote fallback must be valid"
+        assert DEFAULT_RISK_LEVEL_FALLBACK in VALID_RISK_LEVELS, "Default risk level fallback must be valid"
 
 
 # Strategy-specific prompts for voting decisions
@@ -182,6 +195,12 @@ class AIService:
 
     def __init__(self) -> None:
         """Initialize the AI service with configured model."""
+        self._validate_initialization_prerequisites()
+        self._initialize_ai_components()
+        self._validate_successful_initialization()
+    
+    def _validate_initialization_prerequisites(self) -> None:
+        """Validate prerequisites for AI service initialization."""
         # Runtime assertion: validate initialization state
         assert (
             settings.openrouter_api_key is not None
@@ -189,94 +208,126 @@ class AIService:
         assert (
             len(settings.openrouter_api_key.strip()) > 0
         ), "OpenRouter API key cannot be empty"
-
+        assert isinstance(
+            settings.openrouter_api_key, str
+        ), "OpenRouter API key must be a string"
+    
+    def _initialize_ai_components(self) -> None:
+        """Initialize AI model, agent, and response processor."""
         self.model = self._create_model()
         self.agent = self._create_agent()
         # Cache service removed for autonomous voting focus
         self.response_processor = AIResponseProcessor()
-
+    
+    def _validate_successful_initialization(self) -> None:
+        """Validate that all components were successfully initialized."""
         # Runtime assertion: validate successful initialization
         assert self.model is not None, "AI model must be successfully initialized"
         assert self.agent is not None, "AI agent must be successfully initialized"
+        assert self.response_processor is not None, "Response processor must be initialized"
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
-        logfire.info(
-            "Creating AI model",
-        )
-
+        logfire.info("Creating AI model")
+        self._validate_model_prerequisites()
+        
+        if settings.openrouter_api_key:
+            return self._create_openrouter_model()
+        else:
+            return self._create_fallback_model()
+    
+    def _validate_model_prerequisites(self) -> None:
+        """Validate prerequisites for model creation."""
         # Runtime assertion: validate API key configuration
         assert settings.openrouter_api_key, "OpenRouter API key is not configured"
         assert isinstance(
             settings.openrouter_api_key, str
         ), f"API key must be string, got {type(settings.openrouter_api_key)}"
+    
+    def _create_openrouter_model(self) -> Any:
+        """Create OpenRouter model with configured API key."""
+        logfire.info("Using OpenRouter with Claude 3.5 Sonnet")
+        try:
+            model = OpenAIModel(
+                "openrouter/auto",
+                provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
+            )
+            logfire.info(
+                "Successfully created OpenRouter model", model_type=str(type(model))
+            )
 
-        if settings.openrouter_api_key:
-            logfire.info("Using OpenRouter with Claude 3.5 Sonnet")
-            try:
-                model = OpenAIModel(
-                    "openrouter/auto",
-                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
-                )
-                logfire.info(
-                    "Successfully created OpenRouter model", model_type=str(type(model))
-                )
-
-                # Runtime assertion: validate model creation
-                assert model is not None, "OpenRouter model creation returned None"
-
-                return model
-            except Exception as e:
-                logfire.error(
-                    "Failed to create OpenRouter model",
-                    error=str(e),
-                    error_type=type(e).__name__,
-                )
-                raise
-        else:
-            logfire.warning("No AI API keys configured, using default model")
-            return "openai:gpt-4o-mini"  # TODO: need to fix how this is handled
+            # Runtime assertion: validate model creation
+            assert model is not None, "OpenRouter model creation returned None"
+            return model
+        except Exception as e:
+            logfire.error(
+                "Failed to create OpenRouter model",
+                error=str(e),
+                error_type=type(e).__name__,
+            )
+            raise
+    
+    def _create_fallback_model(self) -> str:
+        """Create fallback model when no API key is configured."""
+        logfire.warning("No AI API keys configured, using default model")
+        return "openai:gpt-4o-mini"  # TODO: need to fix how this is handled
 
     def _create_agent(self) -> Agent:
         """Create and configure the Pydantic AI agent."""
+        self._validate_agent_prerequisites()
+        
+        try:
+            return self._initialize_pydantic_agent()
+        except Exception as e:
+            self._handle_agent_creation_error(e)
+            raise
+    
+    def _validate_agent_prerequisites(self) -> None:
+        """Validate prerequisites for agent creation."""
         # Runtime assertion: validate preconditions
         assert self.model is not None, "Model must be initialized before creating agent"
         assert hasattr(
             self, "model"
         ), "Model attribute must exist before agent creation"
+    
+    def _initialize_pydantic_agent(self) -> Agent:
+        """Initialize the Pydantic AI agent with model and system prompt."""
+        logfire.info(
+            "Creating Pydantic AI agent",
+            model_type=str(type(self.model)),
+            model_value=str(self.model),
+        )
 
-        try:
-            logfire.info(
-                "Creating Pydantic AI agent",
-                model_type=str(type(self.model)),
-                model_value=str(self.model),
-            )
+        agent = Agent(
+            model=self.model,
+            system_prompt=self._get_system_prompt(),
+        )
 
-            agent = Agent(
-                model=self.model,
-                system_prompt=self._get_system_prompt(),
-            )
+        logfire.info(
+            "Successfully created Pydantic AI agent", agent_type=str(type(agent))
+        )
 
-            logfire.info(
-                "Successfully created Pydantic AI agent", agent_type=str(type(agent))
-            )
+        # Runtime assertion: validate agent creation
+        assert agent is not None, "Agent creation returned None"
+        assert hasattr(agent, "run"), "Agent must have run method for API calls"
 
-            # Runtime assertion: validate agent creation
-            assert agent is not None, "Agent creation returned None"
-            assert hasattr(agent, "run"), "Agent must have run method for API calls"
-
-            return agent
-        except Exception as e:
-            logfire.error(
-                "Failed to create Pydantic AI agent",
-                error=str(e),
-                error_type=type(e).__name__,
-                model_type=str(type(self.model)),
-            )
-            raise
+        return agent
+    
+    def _handle_agent_creation_error(self, error: Exception) -> None:
+        """Handle errors during agent creation."""
+        logfire.error(
+            "Failed to create Pydantic AI agent",
+            error=str(error),
+            error_type=type(error).__name__,
+            model_type=str(type(self.model)),
+        )
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI agent."""
+        return self._build_comprehensive_system_prompt()
+    
+    def _build_comprehensive_system_prompt(self) -> str:
+        """Build comprehensive system prompt for DAO governance analysis."""
         return """
         You are an expert DAO governance analyst with dual capabilities:
 
@@ -632,3 +683,229 @@ class AIService:
         ), "Validated response must contain 'key_points' key"
 
         return validated_response
+
+    # Governor Integration Methods
+    
+    async def decide_vote_with_governor_context(
+        self,
+        proposal: Proposal,
+        strategy: VotingStrategy,
+        governor_type: GovernorContractType,
+        contract_address: str,
+    ) -> VoteDecision:
+        """Make a voting decision with governor-specific context."""
+        # Runtime assertions for governor context
+        assert proposal is not None, "Proposal cannot be None"
+        assert isinstance(proposal, Proposal), f"Expected Proposal, got {type(proposal)}"
+        assert strategy is not None, "Strategy cannot be None"
+        assert isinstance(strategy, VotingStrategy), f"Expected VotingStrategy, got {type(strategy)}"
+        assert governor_type is not None, "Governor type cannot be None"
+        assert isinstance(governor_type, GovernorContractType), f"Expected GovernorContractType, got {type(governor_type)}"
+        assert contract_address is not None, "Contract address cannot be None"
+        assert isinstance(contract_address, str), f"Expected string address, got {type(contract_address)}"
+
+        try:
+            with logfire.span("ai_vote_decision_with_governor", 
+                            proposal_id=proposal.id, 
+                            strategy=strategy.value,
+                            governor_type=governor_type.value):
+                
+                logfire.info("Starting governor-aware vote decision",
+                           proposal_id=proposal.id,
+                           governor_type=governor_type.value,
+                           contract_address=contract_address)
+
+                # Generate enhanced vote decision with governor context
+                decision_data = await self._generate_governor_aware_vote_decision(
+                    proposal, strategy, governor_type, contract_address
+                )
+
+                vote_decision = VoteDecision(
+                    proposal_id=proposal.id,
+                    vote=VoteType(decision_data["vote"]),
+                    confidence=decision_data["confidence"],
+                    reasoning=decision_data["reasoning"],
+                    risk_assessment=RiskLevel(decision_data["risk_level"]),
+                    strategy_used=strategy,
+                )
+
+                # Runtime assertion: validate output
+                assert vote_decision is not None, "VoteDecision creation returned None"
+                assert vote_decision.proposal_id == proposal.id, "VoteDecision proposal_id mismatch"
+
+                return vote_decision
+
+        except Exception as e:
+            logfire.error("Failed to make governor-aware vote decision",
+                        proposal_id=proposal.id,
+                        governor_type=governor_type.value,
+                        error=str(e))
+            raise
+
+    async def recommend_vote_encoding(
+        self,
+        proposal: Proposal,
+        governor_type: GovernorContractType,
+        voter_address: str,
+    ) -> AIVoteRecommendation:
+        """Recommend vote encoding parameters with AI analysis."""
+        # Runtime assertions
+        assert proposal is not None, "Proposal cannot be None"
+        assert governor_type is not None, "Governor type cannot be None"
+        assert voter_address is not None, "Voter address cannot be None"
+        assert isinstance(voter_address, str), "Voter address must be string"
+
+        try:
+            with logfire.span("ai_vote_encoding_recommendation",
+                            proposal_id=proposal.id,
+                            governor_type=governor_type.value):
+                
+                # Generate AI recommendation with encoding parameters
+                recommendation_data = await self._generate_vote_encoding_recommendation(
+                    proposal, governor_type, voter_address
+                )
+
+                return AIVoteRecommendation(
+                    proposal_id=proposal.id,
+                    vote=VoteType(recommendation_data["vote"]),
+                    confidence=recommendation_data["confidence"],
+                    reasoning=recommendation_data["reasoning"],
+                    risk_level=RiskLevel(recommendation_data["risk_level"]),
+                    governor_context=recommendation_data.get("governor_context", {}),
+                    vote_encoding_recommendation=recommendation_data.get("vote_encoding_recommendation"),
+                )
+
+        except Exception as e:
+            logfire.error("Failed to generate vote encoding recommendation",
+                        proposal_id=proposal.id,
+                        error=str(e))
+            raise
+
+    async def _generate_governor_aware_vote_decision(
+        self,
+        proposal: Proposal,
+        strategy: VotingStrategy,
+        governor_type: GovernorContractType,
+        contract_address: str,
+    ) -> Dict[str, Any]:
+        """Generate voting decision enhanced with governor context."""
+        prompt = self._build_governor_aware_prompt(proposal, strategy, governor_type, contract_address)
+        ai_response = await self._call_ai_model(prompt)
+        return self.response_processor.parse_and_validate_vote_response(ai_response)
+
+    async def _generate_vote_encoding_recommendation(
+        self,
+        proposal: Proposal,
+        governor_type: GovernorContractType,
+        voter_address: str,
+    ) -> Dict[str, Any]:
+        """Generate vote encoding recommendation."""
+        prompt = self._build_vote_encoding_recommendation_prompt(proposal, governor_type, voter_address)
+        ai_response = await self._call_ai_model(prompt)
+        return self._parse_vote_encoding_recommendation(ai_response)
+
+    def _build_governor_aware_prompt(
+        self,
+        proposal: Proposal,
+        strategy: VotingStrategy,
+        governor_type: GovernorContractType,
+        contract_address: str,
+    ) -> str:
+        """Build prompt with governor-specific context."""
+        strategy_prompt = self._get_strategy_prompt(strategy)
+        proposal_info = self._format_proposal_info(proposal)
+        governor_context = self._format_governor_context(governor_type, contract_address)
+        json_format = self._get_json_response_format()
+
+        return f"""
+        {strategy_prompt}
+
+        You are analyzing a DAO proposal with specific governor contract context:
+
+        {governor_context}
+
+        Please analyze the following proposal and make a voting decision:
+
+        {proposal_info}
+
+        Consider the governor-specific implications, including:
+        - Contract implementation differences
+        - Governance mechanisms specific to this governor type
+        - Risk factors related to this specific governance system
+
+        {json_format}
+        """
+
+    def _build_vote_encoding_recommendation_prompt(
+        self,
+        proposal: Proposal,
+        governor_type: GovernorContractType,
+        voter_address: str,
+    ) -> str:
+        """Build prompt for vote encoding recommendations."""
+        proposal_info = self._format_proposal_info(proposal)
+        governor_context = self._format_governor_context(governor_type, "")
+
+        return f"""
+        You are providing vote encoding recommendations for a DAO proposal.
+
+        {governor_context}
+
+        Proposal Information:
+        {proposal_info}
+
+        Voter Address: {voter_address}
+
+        Please provide a vote recommendation with specific encoding parameters.
+
+        Respond in JSON format:
+        {{
+            "vote": "FOR|AGAINST|ABSTAIN",
+            "confidence": 0.85,
+            "reasoning": "Brief explanation for your vote decision",
+            "risk_level": "LOW|MEDIUM|HIGH",
+            "governor_context": {{
+                "proposal_type": "...",
+                "financial_impact": "...",
+                "technical_complexity": "...",
+                "governance_implications": "..."
+            }},
+            "vote_encoding_recommendation": {{
+                "support": 1,
+                "reason": "AI reasoning for vote",
+                "voter_address": "{voter_address}"
+            }}
+        }}
+        """
+
+    def _format_governor_context(self, governor_type: GovernorContractType, contract_address: str) -> str:
+        """Format governor context for AI prompts."""
+        governor_descriptions = {
+            GovernorContractType.COMPOUND_BRAVO: "Compound Governor Bravo - Advanced governance with proposal queuing and execution delays",
+            GovernorContractType.COMPOUND: "Compound Governor - Standard token-weighted voting governance",
+            GovernorContractType.AAVE: "Aave Governance - DeFi protocol governance with specialized voting mechanisms",
+            GovernorContractType.UNISWAP: "Uniswap Governance - DEX protocol governance with liquidity considerations",
+            GovernorContractType.GENERIC: "Generic Governor - Standard OpenZeppelin governor implementation",
+        }
+
+        description = governor_descriptions.get(governor_type, "Unknown governor type")
+        
+        context = f"""**Governor Contract Information:**
+        - Type: {governor_type.value}
+        - Description: {description}"""
+        
+        if contract_address:
+            context += f"\n        - Contract Address: {contract_address}"
+            
+        return context
+
+    def _parse_vote_encoding_recommendation(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+        """Parse AI response for vote encoding recommendations."""
+        # Use existing parser and add encoding-specific fields
+        parsed = self.response_processor.parse_and_validate_vote_response(ai_response)
+        
+        # Add governor context and encoding recommendation if present
+        parsed["governor_context"] = ai_response.get("governor_context", {})
+        parsed["vote_encoding_recommendation"] = ai_response.get("vote_encoding_recommendation")
+        
+        return parsed

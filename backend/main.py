@@ -29,25 +29,41 @@ from models import (
     OrganizationListResponse,
     DAOListResponse,
     ProposalTopVoters,
+    GovernorVoteRequest,
+    GovernorVoteResponse,
+    BatchVoteRequest,
+    GovernorInfo,
+    AIVoteRecommendation,
+    VotingStrategy,
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
+from services.cache_service import CacheService
+from services.governor_integration_service import GovernorIntegrationService
 
 
 # Global service instances
 tally_service: TallyService
 ai_service: AIService
+cache_service: CacheService
+governor_integration_service: GovernorIntegrationService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
-    global tally_service, ai_service
+    global tally_service, ai_service, cache_service, governor_integration_service
 
     # Initialize services
     tally_service = TallyService()
     ai_service = AIService()
+    cache_service = CacheService()
+    governor_integration_service = GovernorIntegrationService(
+        ai_service=ai_service,
+        tally_service=tally_service,
+        cache_service=cache_service
+    )
 
     # Configure Logfire if credentials are available
     if settings.logfire_token:
@@ -515,14 +531,175 @@ async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
         return summaries
 
 
+# Governor Vote Encoding Endpoints
+
+@app.post("/proposals/{proposal_id}/vote/encode", response_model=GovernorVoteResponse)
+async def encode_proposal_vote(proposal_id: str, request: GovernorVoteRequest):
+    """Encode a single vote for a proposal."""
+    try:
+        with logfire.span("encode_proposal_vote", proposal_id=proposal_id):
+            # Validate that governor voting is enabled
+            if not settings.governor_voting_enabled:
+                raise HTTPException(
+                    status_code=403, 
+                    detail="Governor voting is currently disabled"
+                )
+            
+            # Encode the vote using the integration service
+            encoding_result = await governor_integration_service.encode_vote_with_ai_decision(
+                proposal_id=proposal_id,
+                vote_type=request.vote_type,
+                voter_address=request.voter_address,
+                reason=request.reason
+            )
+            
+            return GovernorVoteResponse(
+                success=encoding_result.success,
+                encoded_data=encoding_result.encoded_data,
+                gas_estimate=150000,  # Default estimate
+                function_signature=encoding_result.function_name,
+                governor_type=encoding_result.governor_type
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logfire.error("Failed to encode proposal vote", 
+                    proposal_id=proposal_id, 
+                    error=str(e))
+        return GovernorVoteResponse(
+            success=False,
+            error_message=str(e)
+        )
+
+
+@app.post("/proposals/vote/encode-batch")
+async def encode_batch_votes(request: BatchVoteRequest):
+    """Encode multiple votes in batch."""
+    try:
+        with logfire.span("encode_batch_votes", vote_count=len(request.votes)):
+            # Validate that batch encoding is enabled
+            if not settings.batch_encoding_enabled:
+                raise HTTPException(
+                    status_code=403, 
+                    detail="Batch encoding is currently disabled"
+                )
+            
+            # Validate batch size
+            if len(request.votes) > settings.max_batch_size:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Batch size cannot exceed {settings.max_batch_size}"
+                )
+            
+            # Extract unique voter addresses
+            voter_addresses = list(set(vote.get("voter_address") for vote in request.votes))
+            
+            # Process batch using integration service
+            # For simplicity, process first proposal with first voter
+            if request.votes:
+                first_vote = request.votes[0]
+                proposal_ids = [vote.get("proposal_id") for vote in request.votes]
+                
+                batch_result = await governor_integration_service.process_proposals_batch(
+                    proposal_ids=proposal_ids,
+                    voter_address=first_vote.get("voter_address"),
+                    voting_strategy=VotingStrategy.BALANCED
+                )
+                
+                return {
+                    "success": True,
+                    "total_votes": len(request.votes),
+                    "successful_count": batch_result.successful_count,
+                    "failed_count": batch_result.failed_count,
+                    "processing_time_ms": batch_result.processing_time_ms,
+                    "errors": batch_result.errors
+                }
+            else:
+                return {
+                    "success": True,
+                    "total_votes": 0,
+                    "successful_count": 0,
+                    "failed_count": 0,
+                    "processing_time_ms": 0,
+                    "errors": []
+                }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logfire.error("Failed to encode batch votes", error=str(e))
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Failed to encode batch votes: {str(e)}"
+        )
+
+
+@app.get("/proposals/{proposal_id}/governor-info", response_model=GovernorInfo)
+async def get_proposal_governor_info(proposal_id: str):
+    """Get governor information for a proposal."""
+    try:
+        with logfire.span("get_proposal_governor_info", proposal_id=proposal_id):
+            # Get proposal to extract DAO ID
+            proposal = await tally_service.get_proposal_by_id(proposal_id)
+            if not proposal:
+                raise HTTPException(
+                    status_code=404, 
+                    detail=f"Proposal with ID {proposal_id} not found"
+                )
+            
+            # Get governor info
+            governor_info = await tally_service.detect_governor_type(proposal_id, proposal.dao_id)
+            
+            return governor_info
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logfire.error("Failed to get governor info", proposal_id=proposal_id, error=str(e))
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Failed to get governor info: {str(e)}"
+        )
+
+
+@app.post("/proposals/{proposal_id}/ai-vote-recommendation", response_model=AIVoteRecommendation)
+async def get_ai_vote_recommendation(proposal_id: str, voter_address: str = Query(...)):
+    """Get AI-enhanced vote recommendation with encoding parameters."""
+    try:
+        with logfire.span("get_ai_vote_recommendation", 
+                         proposal_id=proposal_id, 
+                         voter_address=voter_address):
+            
+            # Get AI recommendation with encoding
+            recommendation = await governor_integration_service.get_ai_vote_recommendation_with_encoding(
+                proposal_id=proposal_id,
+                voter_address=voter_address
+            )
+            
+            return recommendation
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logfire.error("Failed to get AI vote recommendation", 
+                    proposal_id=proposal_id, 
+                    voter_address=voter_address, 
+                    error=str(e))
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Failed to get AI vote recommendation: {str(e)}"
+        )
+
+
 # Development server
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
         "main:app",
-        host=settings.host,
-        port=settings.port,
+        host="0.0.0.0",
+        port=8000,
         reload=settings.debug,
         log_level="info" if not settings.debug else "debug",
     )
