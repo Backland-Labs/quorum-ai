@@ -785,3 +785,59 @@ class BatchVoteEncodingError(Exception):
         self.successful_count = successful_count
         self.failed_count = failed_count
         self.individual_errors = individual_errors or []
+
+
+# Compound Bravo Governor Models
+class CompoundProposalState(int, Enum):
+    """Compound proposal state enumeration with integer values."""
+    
+    PENDING = 0
+    ACTIVE = 1
+    DEFEATED = 2
+    SUCCEEDED = 3
+    QUEUED = 4
+    EXECUTED = 5
+    CANCELLED = 6
+
+
+class CompoundVoteType(int, Enum):
+    """Compound vote type enumeration with integer values."""
+    
+    AGAINST = 0
+    FOR = 1
+    ABSTAIN = 2
+
+
+class CompoundProposalInfo(BaseModel):
+    """Compound proposal information."""
+    
+    proposal_id: int = Field(..., description="Proposal ID")
+    proposer: str = Field(..., description="Proposer address")
+    start_block: int = Field(..., description="Start block number")
+    end_block: int = Field(..., description="End block number")
+    eta: int = Field(default=0, description="Execution ETA")
+    for_votes: str = Field(default="0", description="For votes")
+    against_votes: str = Field(default="0", description="Against votes")
+    abstain_votes: str = Field(default="0", description="Abstain votes")
+    canceled: bool = Field(default=False, description="Whether proposal is canceled")
+    executed: bool = Field(default=False, description="Whether proposal is executed")
+
+
+class CompoundVoteRecord(BaseModel):
+    """Compound vote record information."""
+    
+    voter: str = Field(..., description="Voter address")
+    proposal_id: int = Field(..., description="Proposal ID")
+    support: CompoundVoteType = Field(..., description="Vote type")
+    votes: str = Field(..., description="Number of votes")
+    reason: Optional[str] = Field(None, description="Vote reason if provided")
+
+
+class CompoundDelegateInfo(BaseModel):
+    """Compound delegate information."""
+    
+    delegate: str = Field(..., description="Delegate address")
+    delegator: str = Field(..., description="Delegator address")
+    voting_power: str = Field(..., description="Voting power delegated")
+    delegation_block: int = Field(..., description="Block number of delegation")
+    is_self_delegated: bool = Field(default=False, description="Whether self-delegated")
