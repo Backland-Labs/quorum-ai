@@ -117,11 +117,15 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     # Snapshot Hub API endpoint
     url = "https://testnet.hub.snapshot.org/api/msg"
     
-    # Prepare request body
+    # Prepare request body with correct envelope format
     request_body = {
-        "address": account.address,  # EOA address (signer)
-        "msg": json.dumps(snapshot_message, separators=(',', ':'), sort_keys=True),  # Canonical JSON
-        "sig": signature
+        "address": GNOSIS_SAFE_ADDRESS,  # Voting address (Safe)
+        "sig": signature,
+        "data": {
+            "domain": snapshot_message["domain"],
+            "types": snapshot_message["types"],
+            "message": snapshot_message["message"]
+        }
     }
     
     # Send POST request
