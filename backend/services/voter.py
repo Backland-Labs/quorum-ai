@@ -150,14 +150,9 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     # Send POST request
     headers = {"Content-Type": "application/json"}
     
-    print(f"Sending payload to {url}:")
-    print(f"Request body: {json.dumps(request_body, indent=2)}")
-    
     response = None
     try:
         response = requests.post(url, json=request_body, headers=headers)
-        print(f"Response status: {response.status_code}")
-        print(f"Response text: {response.text}")
         response.raise_for_status()
         return {"success": True, "response": response.json()}
     except requests.exceptions.RequestException as e:
@@ -166,80 +161,6 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
             response_text = response.text
         return {"success": False, "error": str(e), "response_text": response_text}
 
-
-def verify_snapshot_schema():
-    """Query Snapshot GraphQL to see real vote structures."""
-    query = '''
-    {
-      votes(
-        where: {
-          space: "spectradao.eth"
-          proposal: "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
-        }
-        first: 5
-      ) {
-        id
-        voter
-        choice
-        metadata
-        created
-      }
-    }
-    '''
-    
-    response = requests.post(
-        'https://hub.snapshot.org/graphql',
-        json={'query': query}
-    )
-    
-    if response.status_code == 200:
-        data = response.json()
-        print("=== Real Vote Structures from Snapshot GraphQL ===")
-        for vote in data.get('data', {}).get('votes', []):
-            print(f"Vote ID: {vote['id']}")
-            print(f"Voter: {vote['voter']}")
-            print(f"Choice: {vote['choice']} (type: {type(vote['choice'])})")
-            print(f"Metadata: {vote['metadata']}")
-            print(f"Created: {vote['created']}")
-            print("---")
-    else:
-        print(f"GraphQL query failed: {response.status_code}")
-        print(response.text)
-    
-    return response.json() if response.status_code == 200 else None
-
-
-def debug_signature_validation():
-    """Debug function to check signature validation locally."""
-    print("=== Debug Signature Validation ===\n")
-    
-    # Test parameters
-    space = "spectradao.eth"
-    proposal = "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
-    choice = 1
-    
-    # Create and sign message
-    vote_message = create_snapshot_vote_message(space, proposal, choice)
-    signature = sign_snapshot_message(vote_message)
-    
-    # Verify signature locally
-    signable_message = encode_typed_data(full_message=vote_message)
-    
-    print(f"Original message hash: {signable_message.body.hex()}")
-    print(f"Signature: {signature}")
-    print(f"From address: {vote_message['message']['from']}")
-    print(f"Account address: {account.address}")
-    print(f"Checksummed address: {Web3.to_checksum_address(account.address)}")
-    
-    # Try to recover the address from signature
-    try:
-        recovered_address = w3.eth.account.recover_message(signable_message, signature=signature)
-        print(f"Recovered address: {recovered_address}")
-        print(f"Addresses match: {recovered_address.lower() == account.address.lower()}")
-    except Exception as e:
-        print(f"Recovery failed: {e}")
-    
-    return vote_message, signature
 
 
 def test_snapshot_voting():
@@ -256,34 +177,21 @@ def test_snapshot_voting():
     print(f"  Proposal: {proposal}")
     print(f"  Choice: {choice} (For)")
     print(f"  EOA Address: {account.address}")
-    print(f"  Checksummed Address: {Web3.to_checksum_address(account.address)}")
     print(f"  Gnosis Safe: {GNOSIS_SAFE_ADDRESS}\n")
-    
-    # First, check real vote structures
-    print("Checking real vote structures from Snapshot...")
-    verify_snapshot_schema()
-    print()
-    
-    # Debug signature first
-    print("Running signature validation debug...")
-    debug_signature_validation()
-    print()
     
     # Create vote message
     print("Creating vote message...")
     vote_message = create_snapshot_vote_message(space, proposal, choice)
     print(f"  Timestamp: {vote_message['message']['timestamp']}")
-    print(f"  From address: {vote_message['message']['from']}")
     
     # Sign message
-    print("\nSigning message with EOA...")
+    print("Signing message with EOA...")
     signature = sign_snapshot_message(vote_message)
     print(f"  Signature: {signature[:20]}...{signature[-20:]}")
     
     # Send vote to Snapshot
-    print("\nSending vote to Snapshot Hub...")
+    print("Sending vote to Snapshot Hub...")
     result = send_vote_to_snapshot(vote_message, signature)
-    print(result)
     
     if result["success"]:
         print("✅ Vote submitted successfully!")
