@@ -1,7 +1,7 @@
 """Tests for AI service strategy-specific voting behavior."""
 
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from services.ai_service import AIService
 from models import Proposal, VoteType, VotingStrategy, RiskLevel

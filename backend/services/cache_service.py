@@ -1,6 +1,5 @@
 """Cache service for governor data and vote encoding operations."""
 
-import asyncio
 import json
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional

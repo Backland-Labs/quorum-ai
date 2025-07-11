@@ -284,7 +284,7 @@ async def test_voting_strategies(demo_mode: bool = False):
                                                "nft" in proposal.title.lower()) else VoteType.FOR
                         confidence = random.uniform(0.6, 0.85)
                         risk = RiskLevel.MEDIUM
-                        reasoning = f"Aggressive growth strategy: Supporting innovation and expansion opportunities"
+                        reasoning = "Aggressive growth strategy: Supporting innovation and expansion opportunities"
                     else:  # BALANCED
                         vote = VoteType.FOR if int(proposal.votes_for) > int(proposal.votes_against) else VoteType.AGAINST
                         confidence = random.uniform(0.65, 0.85)
@@ -345,7 +345,7 @@ async def test_voting_strategies(demo_mode: bool = False):
                 print(f"  {result['strategy'].upper():12} -> {result['vote']:7} (conf: {result['confidence']:.2f}, risk: {result['risk_level']})")
     
     # Strategy analysis
-    print(f"\n📈 STRATEGY ANALYSIS")
+    print("\n📈 STRATEGY ANALYSIS")
     print("-" * 30)
     
     for strategy in strategies:
@@ -368,7 +368,7 @@ async def test_voting_strategies(demo_mode: bool = False):
             "results": results
         }, f, indent=2)
     
-    print(f"\n💾 Results exported to ai_voting_test_results.json")
+    print("\n💾 Results exported to ai_voting_test_results.json")
     print("🎉 Integration test complete!")
 
 

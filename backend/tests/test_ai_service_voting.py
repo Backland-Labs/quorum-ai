@@ -1,10 +1,10 @@
 """Tests for AI service voting decision functionality."""
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
+from unittest.mock import patch
 
 from services.ai_service import AIService
-from models import Proposal, ProposalState, VoteDecision, VoteType, VotingStrategy, RiskLevel
+from models import Proposal, VoteDecision, VoteType, VotingStrategy, RiskLevel
 
 
 @pytest.fixture

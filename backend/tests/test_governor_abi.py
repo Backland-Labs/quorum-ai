@@ -2,9 +2,8 @@
 
 import pytest
 import json
-from pathlib import Path
 from unittest.mock import patch, MagicMock, mock_open
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 # These imports will fail initially as the classes don't exist yet
 # This is intentional for TDD RED phase

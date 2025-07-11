@@ -12,12 +12,10 @@ import json
 import os
 import threading
 import time
-import re
 import weakref
 import gc
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set
-from pathlib import Path
 from collections import defaultdict
 
 import httpx
@@ -26,8 +24,6 @@ from config import Settings
 from models import (
     GovernorRegistryEntry,
     OrganizationGovernorMapping,
-    GovernorRegistryConfig,
-    NetworkGovernorConfig,
     DuplicateGovernorError,
     ConfigurationValidationError,
     ConfigurationSchemaError,

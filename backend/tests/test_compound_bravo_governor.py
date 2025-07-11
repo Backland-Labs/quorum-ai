@@ -15,13 +15,7 @@ The Compound Governor Bravo implementation is designed to:
 """
 
 import pytest
-import json
-import asyncio
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-from unittest.mock import patch, MagicMock, mock_open, AsyncMock
-from web3 import Web3
+from unittest.mock import patch
 
 # These imports will fail initially as the classes don't exist yet
 # This is intentional for TDD RED phase
@@ -1192,7 +1186,6 @@ class TestCompoundBravoGovernorEdgeCases:
         compound_address = "0xc0Da02939E1441F497fd74F78cE7Decb17B66529"
         governor = CompoundBravoGovernor(contract_address=compound_address)
         
-        import threading
         import concurrent.futures
         
         def encode_vote_concurrent(proposal_id: int) -> VoteEncodingResult:
@@ -1210,7 +1203,7 @@ class TestCompoundBravoGovernorEdgeCases:
                 try:
                     result = future.result(timeout=5)
                     results.append(result)
-                except Exception as e:
+                except Exception:
                     # Some may fail due to mocking, but should not crash
                     pass
         

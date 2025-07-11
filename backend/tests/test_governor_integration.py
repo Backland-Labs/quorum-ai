@@ -10,27 +10,21 @@ integration functionality is implemented.
 
 import pytest
 import asyncio
-import json
 from datetime import datetime
-from typing import Dict, List, Any, Optional
-from unittest.mock import AsyncMock, MagicMock, patch, Mock
+from typing import Optional
+from unittest.mock import patch, Mock
 
 from models import (
     Proposal,
     ProposalState,
-    VoteDecision,
     VoteType,
     VotingStrategy,
-    RiskLevel,
     GovernorContractType,
     VoteEncodingResult,
-    BatchVoteEncodingResult,
-    ProposalFilters,
 )
 from services.ai_service import AIService
 from services.tally_service import TallyService
 from services.vote_encoder import VoteEncoder
-from services.compound_bravo_governor import CompoundBravoGovernor
 from config import settings
 
 

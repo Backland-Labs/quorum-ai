@@ -1,7 +1,6 @@
 """Tests for VoteDecision model."""
 
 import pytest
-from datetime import datetime
 
 from models import VoteDecision, VoteType, RiskLevel, VotingStrategy
 from pydantic import ValidationError

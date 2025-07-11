@@ -1,7 +1,7 @@
 """Tests for AI service vote decision validation."""
 
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from services.ai_service import AIService
 from models import Proposal, VoteDecision, VoteType, VotingStrategy, RiskLevel

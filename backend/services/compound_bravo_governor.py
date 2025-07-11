@@ -6,13 +6,12 @@ operations specific to Compound's governance system.
 """
 
 # Standard library imports
-import asyncio
 import json
 import logging
 import re
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 from unittest.mock import MagicMock
 
 # Local model imports
@@ -21,10 +20,7 @@ from models import (
     VoteType,
     ProposalState,
     VoteEncodingResult,
-    CompoundProposalState,
-    CompoundVoteType,
     CompoundProposalInfo,
-    CompoundVoteRecord,
     CompoundDelegateInfo,
     BatchVoteEncodingResult,
 )
@@ -33,7 +29,6 @@ from models import (
 from services.governor_abi import GovernorABI
 from services.base_governor import (
     BaseGovernorInterface,
-    BaseGovernorValidator,
     BaseGovernorMetrics,
     BaseGovernorUtils,
 )
@@ -340,8 +335,6 @@ class CompoundBravoABI(GovernorABI):
         # Runtime assertions for method state
         assert isinstance(self, CompoundBravoABI), "Method must be called on CompoundBravoABI instance"
         
-        import tempfile
-        import os
         
         logger.debug("Creating Compound Governor Bravo ABI file")
         

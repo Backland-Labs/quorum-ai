@@ -8,15 +8,12 @@ from typing import Any, Dict, List, Optional
 import logfire
 
 from models import (
-    Proposal,
-    VoteDecision,
     VotingStrategy,
     VoteType,
     GovernorContractType,
     VoteEncodingResult,
     BatchVoteEncodingResult,
     AIVoteRecommendation,
-    GovernorInfo,
 )
 from services.ai_service import AIService
 from services.tally_service import TallyService

@@ -11,7 +11,7 @@ import re
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import httpx
 
@@ -621,7 +621,7 @@ class VoteEncoder:
                 raise VoteEncodingError(f"Unknown function name: {function_name}")
                 
         except Exception as e:
-            error_msg = f"Failed to encode vote"
+            error_msg = "Failed to encode vote"
             logger.error(f"Failed to encode {function_name} for proposal {proposal_id}: {str(e)}")
             raise VoteEncodingError(error_msg) from e
     

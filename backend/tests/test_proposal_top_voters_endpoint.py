@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from main import app
 from services.tally_service import TallyService
 from services.ai_service import AIService
-from models import ProposalVoter, VoteType, Proposal, ProposalState
+from models import ProposalVoter, VoteType
 
 
 @pytest.fixture

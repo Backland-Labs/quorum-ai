@@ -1,11 +1,10 @@
 """Tests for AI service."""
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from datetime import datetime
+from unittest.mock import patch
 
 from services.ai_service import AIService
-from models import Proposal, ProposalState, ProposalSummary, RiskLevel
+from models import Proposal, ProposalSummary
 
 
 class TestAIServiceInitialization:

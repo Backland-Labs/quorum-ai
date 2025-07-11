@@ -19,9 +19,8 @@ import pytest
 import asyncio
 import json
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional
-from unittest.mock import patch, MagicMock, mock_open, AsyncMock
+from typing import Dict, Any
+from unittest.mock import patch, MagicMock, mock_open
 
 # These imports will fail initially as the classes don't exist yet
 # This is intentional for TDD RED phase
@@ -1047,7 +1046,6 @@ class TestVoteEncoderPerformanceOptimizations:
         """Test that VoteEncoder handles concurrent encoding requests safely."""
         encoder = VoteEncoder(governor_type=GovernorContractType.COMPOUND)
         
-        import threading
         import concurrent.futures
         
         def encode_vote(proposal_id: int) -> VoteEncodingResult:
@@ -1117,7 +1115,6 @@ class TestVoteEncoderEdgeCases:
 
     def test_vote_encoder_handles_network_timeouts_gracefully(self) -> None:
         """Test that VoteEncoder handles network timeouts when loading ABIs."""
-        import asyncio
         
         @pytest.mark.asyncio
         async def test_timeout():
