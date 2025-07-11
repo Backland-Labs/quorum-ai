@@ -1432,6 +1432,7 @@ name = "quorum-ai"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "eth-account" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "logfire" },
@@ -1469,6 +1470,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "eth-account", specifier = ">=0.13.7" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "httpx", specifier = ">=0.28.0" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28.0" },

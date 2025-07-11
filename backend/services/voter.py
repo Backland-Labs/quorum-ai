@@ -59,6 +59,10 @@ def create_snapshot_vote_message(
             "version": "0.1.4"
         },
         "types": {
+            "EIP712Domain": [
+                {"name": "name", "type": "string"},
+                {"name": "version", "type": "string"}
+            ],
             "Vote": [
                 {"name": "from", "type": "address"},
                 {"name": "space", "type": "string"},
@@ -114,12 +118,12 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     Returns:
         API response dictionary
     """
-    # Snapshot Hub API endpoint
+    # Snapshot Hub API endpoint for testnet
     url = "https://testnet.hub.snapshot.org/api/msg"
     
     # Prepare request body with correct envelope format
     request_body = {
-        "address": GNOSIS_SAFE_ADDRESS,  # Voting address (Safe)
+        "address": account.address,  # Must match the 'from' field in message
         "sig": signature,
         "data": {
             "domain": snapshot_message["domain"],
@@ -145,8 +149,8 @@ def test_snapshot_voting():
     print("=== Testing Snapshot Voting ===\n")
     
     # Test parameters
-    space = "aave.eth"
-    proposal = "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+    space = "1a35e1.eth"
+    proposal = "0x873ed1ff2206afefe9592fa94a042e27934d58c78cafd28e519f4fca7d7313d1"
     choice = 1  # 1 = For
     
     print(f"Test Parameters:")
