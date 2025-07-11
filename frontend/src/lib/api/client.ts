@@ -224,10 +224,142 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/proposals/{proposal_id}/vote/encode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Encode Proposal Vote
+         * @description Encode a single vote for a proposal.
+         */
+        post: operations["encode_proposal_vote_proposals__proposal_id__vote_encode_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/proposals/vote/encode-batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Encode Batch Votes
+         * @description Encode multiple votes in batch.
+         */
+        post: operations["encode_batch_votes_proposals_vote_encode_batch_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/proposals/{proposal_id}/governor-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Proposal Governor Info
+         * @description Get governor information for a proposal.
+         */
+        get: operations["get_proposal_governor_info_proposals__proposal_id__governor_info_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/proposals/{proposal_id}/ai-vote-recommendation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Get Ai Vote Recommendation
+         * @description Get AI-enhanced vote recommendation with encoding parameters.
+         */
+        post: operations["get_ai_vote_recommendation_proposals__proposal_id__ai_vote_recommendation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AIVoteRecommendation
+         * @description AI-enhanced vote recommendation with governor context.
+         */
+        AIVoteRecommendation: {
+            /**
+             * Proposal Id
+             * @description Proposal ID
+             */
+            proposal_id: string;
+            /** @description Recommended vote */
+            vote: components["schemas"]["VoteType"];
+            /**
+             * Confidence
+             * @description Confidence in recommendation
+             */
+            confidence: number;
+            /**
+             * Reasoning
+             * @description AI reasoning for the vote
+             */
+            reasoning: string;
+            /** @description Risk assessment */
+            risk_level: components["schemas"]["RiskLevel"];
+            /**
+             * Governor Context
+             * @description Governor-specific context
+             */
+            governor_context?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Vote Encoding Recommendation
+             * @description Encoding parameters
+             */
+            vote_encoding_recommendation?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * BatchVoteRequest
+         * @description Request model for batch vote encoding.
+         */
+        BatchVoteRequest: {
+            /**
+             * Votes
+             * @description List of vote requests
+             */
+            votes: {
+                [key: string]: unknown;
+            }[];
+        };
         /**
          * DAO
          * @description DAO (Decentralized Autonomous Organization) model.
@@ -287,6 +419,98 @@ export interface components {
              */
             next_cursor?: string | null;
         };
+        /**
+         * GovernorContractType
+         * @description Types of governor contract implementations.
+         * @enum {string}
+         */
+        GovernorContractType: "COMPOUND" | "GOVERNOR_BRAVO" | "AAVE" | "UNISWAP" | "GENERIC";
+        /**
+         * GovernorInfo
+         * @description Governor contract information.
+         */
+        GovernorInfo: {
+            /**
+             * Governor Id
+             * @description Governor identifier
+             */
+            governor_id: string;
+            /**
+             * Contract Address
+             * @description Governor contract address
+             */
+            contract_address: string;
+            /** @description Type of governor */
+            governor_type: components["schemas"]["GovernorContractType"];
+            /**
+             * Blockchain Network
+             * @description Blockchain network
+             */
+            blockchain_network: string;
+            /**
+             * Abi Version
+             * @description ABI version
+             */
+            abi_version: string;
+            /**
+             * Contract Metadata
+             * @description Additional metadata
+             */
+            contract_metadata?: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * GovernorVoteRequest
+         * @description Request model for governor vote encoding.
+         */
+        GovernorVoteRequest: {
+            /** @description Vote choice (FOR/AGAINST/ABSTAIN) */
+            vote_type: components["schemas"]["VoteType"];
+            /**
+             * Voter Address
+             * @description Voter's blockchain address
+             */
+            voter_address: string;
+            /**
+             * Reason
+             * @description Optional reason for the vote
+             */
+            reason?: string | null;
+        };
+        /**
+         * GovernorVoteResponse
+         * @description Response model for governor vote encoding.
+         */
+        GovernorVoteResponse: {
+            /**
+             * Success
+             * @description Whether encoding was successful
+             */
+            success: boolean;
+            /**
+             * Encoded Data
+             * @description Hex-encoded transaction data
+             */
+            encoded_data?: string | null;
+            /**
+             * Gas Estimate
+             * @description Estimated gas for transaction
+             */
+            gas_estimate?: number | null;
+            /**
+             * Function Signature
+             * @description Function signature called
+             */
+            function_signature?: string | null;
+            /**
+             * Error Message
+             * @description Error message if failed
+             */
+            error_message?: string | null;
+            /** @description Type of governor */
+            governor_type?: components["schemas"]["GovernorContractType"] | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -342,10 +566,6 @@ export interface components {
              * @default 0
              */
             token_owners_count: number;
-            /** Endorsement Service */
-            endorsement_service?: {
-                [key: string]: unknown;
-            } | null;
         };
         /**
          * OrganizationListResponse
@@ -527,7 +747,7 @@ export interface components {
          * @description Proposal state enumeration.
          * @enum {string}
          */
-        ProposalState: "ACTIVE" | "CANCELED" | "CROSSCHAINEXECUTED" | "DEFEATED" | "EXECUTED" | "EXPIRED" | "PENDING" | "QUEUED" | "SUCCEEDED";
+        ProposalState: "ACTIVE" | "DEFEATED" | "EXECUTED" | "PENDING" | "SUCCEEDED";
         /**
          * ProposalSummary
          * @description AI-generated proposal summary.
@@ -609,6 +829,12 @@ export interface components {
             /** @description Vote choice */
             vote_type: components["schemas"]["VoteType"];
         };
+        /**
+         * RiskLevel
+         * @description Risk assessment levels for proposals.
+         * @enum {string}
+         */
+        RiskLevel: "LOW" | "MEDIUM" | "HIGH";
         /**
          * SortCriteria
          * @description Criteria for sorting proposals.
@@ -1030,6 +1256,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProposalTopVoters"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    encode_proposal_vote_proposals__proposal_id__vote_encode_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GovernorVoteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GovernorVoteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    encode_batch_votes_proposals_vote_encode_batch_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchVoteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_proposal_governor_info_proposals__proposal_id__governor_info_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GovernorInfo"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ai_vote_recommendation_proposals__proposal_id__ai_vote_recommendation_post: {
+        parameters: {
+            query: {
+                voter_address: string;
+            };
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIVoteRecommendation"];
                 };
             };
             /** @description Validation Error */

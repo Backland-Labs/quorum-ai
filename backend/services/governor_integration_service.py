@@ -37,7 +37,7 @@ class GovernorIntegrationService:
         self.ai_service = ai_service
         self.tally_service = tally_service
         self.cache_service = cache_service or CacheService()
-        self.vote_encoder = VoteEncoder()
+        self.vote_encoder = VoteEncoder(governor_type=GovernorContractType.COMPOUND)
         
         # Performance tracking
         self._request_count = 0
