@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get environment variables
-GNOSIS_PRIVATE_KEY = os.getenv("GNOSIS_PRIVATE_KEY")
+GNOSIS_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
 GNOSIS_SAFE_ADDRESS = os.getenv("GNOSIS_SAFE_ADDRESS")
-ETHEREUM_RPC_URL=f"https://sepolia.infura.io/v3/{os.getenv('INFURA_API_KEY')}"
+ETHEREUM_RPC_URL=f"https://base-mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}"
 
 # Initialize Web3
 w3 = Web3(Web3.HTTPProvider(ETHEREUM_RPC_URL))
@@ -53,6 +53,12 @@ def create_snapshot_vote_message(
     if timestamp is None:
         timestamp = int(time.time())
     
+    # Use checksummed address and ensure proper formatting
+    from_address = Web3.to_checksum_address(account.address)
+    
+    # Check if proposal is a bytes32 hash (starts with 0x and is 66 chars)
+    proposal_is_bytes32 = proposal.startswith("0x") and len(proposal) == 66
+    
     snapshot_message = {
         "domain": {
             "name": "snapshot",
@@ -64,21 +70,25 @@ def create_snapshot_vote_message(
                 {"name": "version", "type": "string"}
             ],
             "Vote": [
-                {"name": "from", "type": "address"},
+                {"name": "from", "type": "string"},
                 {"name": "space", "type": "string"},
                 {"name": "timestamp", "type": "uint64"},
-                {"name": "proposal", "type": "string"},
+                {"name": "proposal", "type": "bytes32" if proposal_is_bytes32 else "string"},
                 {"name": "choice", "type": "uint32"},
+                {"name": "reason", "type": "string"},
+                {"name": "app", "type": "string"},
                 {"name": "metadata", "type": "string"}
             ]
         },
         "primaryType": "Vote",
         "message": {
-            "from": account.address,
+            "from": from_address,
             "space": space,
             "timestamp": timestamp,
             "proposal": proposal,
             "choice": choice,
+            "reason": "",
+            "app": "",
             "metadata": "{}"
         }
     }
@@ -118,13 +128,18 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     Returns:
         API response dictionary
     """
-    # Snapshot Hub API endpoint for testnet
-    url = "https://testnet.hub.snapshot.org/api/msg"
+    # Snapshot Hub API endpoint  
+    url = "https://seq.snapshot.org/"
+    
+    # Ensure checksummed address and properly formatted signature
+    from_address = Web3.to_checksum_address(account.address)
+    # Try with 0x prefix
+    clean_signature = signature if signature.startswith("0x") else f"0x{signature}"
     
     # Prepare request body with correct envelope format
     request_body = {
-        "address": account.address,  # Must match the 'from' field in message
-        "sig": signature,
+        "address": from_address,  # This must be the EOA address that signed the message
+        "sig": clean_signature,   # Remove 0x prefix if present
         "data": {
             "domain": snapshot_message["domain"],
             "types": snapshot_message["types"],
@@ -135,13 +150,96 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     # Send POST request
     headers = {"Content-Type": "application/json"}
     
+    print(f"Sending payload to {url}:")
+    print(f"Request body: {json.dumps(request_body, indent=2)}")
+    
+    response = None
     try:
         response = requests.post(url, json=request_body, headers=headers)
-        print(response.text)
+        print(f"Response status: {response.status_code}")
+        print(f"Response text: {response.text}")
         response.raise_for_status()
         return {"success": True, "response": response.json()}
     except requests.exceptions.RequestException as e:
-        return {"success": False, "error": str(e)}
+        response_text = None
+        if response is not None:
+            response_text = response.text
+        return {"success": False, "error": str(e), "response_text": response_text}
+
+
+def verify_snapshot_schema():
+    """Query Snapshot GraphQL to see real vote structures."""
+    query = '''
+    {
+      votes(
+        where: {
+          space: "spectradao.eth"
+          proposal: "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
+        }
+        first: 5
+      ) {
+        id
+        voter
+        choice
+        metadata
+        created
+      }
+    }
+    '''
+    
+    response = requests.post(
+        'https://hub.snapshot.org/graphql',
+        json={'query': query}
+    )
+    
+    if response.status_code == 200:
+        data = response.json()
+        print("=== Real Vote Structures from Snapshot GraphQL ===")
+        for vote in data.get('data', {}).get('votes', []):
+            print(f"Vote ID: {vote['id']}")
+            print(f"Voter: {vote['voter']}")
+            print(f"Choice: {vote['choice']} (type: {type(vote['choice'])})")
+            print(f"Metadata: {vote['metadata']}")
+            print(f"Created: {vote['created']}")
+            print("---")
+    else:
+        print(f"GraphQL query failed: {response.status_code}")
+        print(response.text)
+    
+    return response.json() if response.status_code == 200 else None
+
+
+def debug_signature_validation():
+    """Debug function to check signature validation locally."""
+    print("=== Debug Signature Validation ===\n")
+    
+    # Test parameters
+    space = "spectradao.eth"
+    proposal = "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
+    choice = 1
+    
+    # Create and sign message
+    vote_message = create_snapshot_vote_message(space, proposal, choice)
+    signature = sign_snapshot_message(vote_message)
+    
+    # Verify signature locally
+    signable_message = encode_typed_data(full_message=vote_message)
+    
+    print(f"Original message hash: {signable_message.body.hex()}")
+    print(f"Signature: {signature}")
+    print(f"From address: {vote_message['message']['from']}")
+    print(f"Account address: {account.address}")
+    print(f"Checksummed address: {Web3.to_checksum_address(account.address)}")
+    
+    # Try to recover the address from signature
+    try:
+        recovered_address = w3.eth.account.recover_message(signable_message, signature=signature)
+        print(f"Recovered address: {recovered_address}")
+        print(f"Addresses match: {recovered_address.lower() == account.address.lower()}")
+    except Exception as e:
+        print(f"Recovery failed: {e}")
+    
+    return vote_message, signature
 
 
 def test_snapshot_voting():
@@ -149,8 +247,8 @@ def test_snapshot_voting():
     print("=== Testing Snapshot Voting ===\n")
     
     # Test parameters
-    space = "1a35e1.eth"
-    proposal = "0x873ed1ff2206afefe9592fa94a042e27934d58c78cafd28e519f4fca7d7313d1"
+    space = "spectradao.eth"
+    proposal = "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
     choice = 1  # 1 = For
     
     print(f"Test Parameters:")
@@ -158,32 +256,29 @@ def test_snapshot_voting():
     print(f"  Proposal: {proposal}")
     print(f"  Choice: {choice} (For)")
     print(f"  EOA Address: {account.address}")
+    print(f"  Checksummed Address: {Web3.to_checksum_address(account.address)}")
     print(f"  Gnosis Safe: {GNOSIS_SAFE_ADDRESS}\n")
+    
+    # First, check real vote structures
+    print("Checking real vote structures from Snapshot...")
+    verify_snapshot_schema()
+    print()
+    
+    # Debug signature first
+    print("Running signature validation debug...")
+    debug_signature_validation()
+    print()
     
     # Create vote message
     print("Creating vote message...")
     vote_message = create_snapshot_vote_message(space, proposal, choice)
     print(f"  Timestamp: {vote_message['message']['timestamp']}")
+    print(f"  From address: {vote_message['message']['from']}")
     
     # Sign message
     print("\nSigning message with EOA...")
     signature = sign_snapshot_message(vote_message)
     print(f"  Signature: {signature[:20]}...{signature[-20:]}")
-    
-    # Prepare complete payload
-    vote_payload = {
-        "address": GNOSIS_SAFE_ADDRESS,
-        "sig": signature,
-        "data": {
-            "domain": vote_message["domain"],
-            "types": vote_message["types"],
-            "message": vote_message["message"]
-        }
-    }
-    
-    print("\n✅ Vote payload ready for Snapshot API")
-    print(f"  Voting address (Safe): {vote_payload['address']}")
-    print(f"  Signer (EOA): {account.address}")
     
     # Send vote to Snapshot
     print("\nSending vote to Snapshot Hub...")
@@ -196,8 +291,10 @@ def test_snapshot_voting():
     else:
         print("❌ Vote submission failed!")
         print(f"  Error: {result['error']}")
+        if result.get("response_text"):
+            print(f"  Response text: {result['response_text']}")
     
-    return vote_payload
+    return vote_message
 
 
 if __name__ == "__main__":
