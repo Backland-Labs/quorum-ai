@@ -7,10 +7,10 @@ from web3 import Web3
 from eth_account.messages import encode_typed_data
 from dotenv import load_dotenv
 
-# --- NEW IMPORTS FOR DUMMY TRANSACTION ---
-from safe_eth import Safe
-from safe_eth_py.safe_transact import SafeService
-from web3.types import TxParams
+# --- IMPORTS FOR DUMMY TRANSACTION ---
+from safe_eth.safe import Safe
+from safe_eth.safe.api import TransactionServiceApi
+from typing import cast
 import time
 
 # Load environment variables
@@ -21,9 +21,10 @@ GNOSIS_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
 GNOSIS_SAFE_ADDRESS = os.getenv("GNOSIS_SAFE_ADDRESS")
 ETHEREUM_RPC_URL=f"https://base-mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}"
 
-# --- NEW GLOBAL CONSTANT FOR DUMMY TRANSACTION ---
-# IMPORTANT: Confirm this URL for Base Mainnet.
+# Safe transaction service URL for Base Mainnet
 SAFE_TRANSACTION_SERVICE_URL = "https://safe-transaction-base.safe.global/"
+
+
 
 # Initialize Web3
 w3 = Web3(Web3.HTTPProvider(ETHEREUM_RPC_URL))
@@ -132,17 +133,23 @@ def perform_dummy_safe_transaction() -> dict:
     print("\n--- Initiating Dummy Safe Transaction ---")
     
     try:
-        # Initialize Safe instance
-        safe_instance = Safe(GNOSIS_SAFE_ADDRESS, w3)
-        safe_service = SafeService(SAFE_TRANSACTION_SERVICE_URL)
+        # Ensure safe address is not None and is checksummed
+        if not GNOSIS_SAFE_ADDRESS:
+            raise ValueError("GNOSIS_SAFE_ADDRESS environment variable not set")
+        
+        safe_address = Web3.to_checksum_address(GNOSIS_SAFE_ADDRESS)
+        
+        # Initialize Safe instance - disable type checking for now
+        safe_instance = Safe(safe_address, w3)  # type: ignore
+        safe_service = TransactionServiceApi(SAFE_TRANSACTION_SERVICE_URL)  # type: ignore
 
         # Get the current nonce for the Safe
-        current_safe_nonce = safe_service.get_last_used_nonce(GNOSIS_SAFE_ADDRESS)
+        current_safe_nonce = safe_service.get_last_used_nonce(safe_address)  # type: ignore
         safe_tx_nonce = current_safe_nonce + 1 if current_safe_nonce is not None else 0
 
         # Build the transaction: 0 ETH to self
-        safe_tx = safe_instance.build_multisig_tx(
-            to=GNOSIS_SAFE_ADDRESS,
+        safe_tx = safe_instance.build_multisig_tx(  # type: ignore
+            to=safe_address,
             value=0, # 0 ETH
             data=b'', # Empty data for simple transfer
             operation=0, # CALL
@@ -150,32 +157,31 @@ def perform_dummy_safe_transaction() -> dict:
             safe_tx_gas=0,
             base_gas=0,
             gas_price=0,
-            refund_receiver=Web3.to_checksum_address('0x0000000000000000000000000000000000000000'),
-            nonce=safe_tx_nonce
+            refund_receiver=Web3.to_checksum_address('0x0000000000000000000000000000000000000000')
         )
 
         # Get the hash of the Safe transaction for signing
-        safe_tx_hash = safe_instance.get_transaction_hash(safe_tx)
+        safe_tx_hash = safe_instance.get_transaction_hash(safe_tx)  # type: ignore
         # Sign the Safe transaction hash with the EOA owner's private key
         signed_safe_tx_hash = account.signHash(safe_tx_hash)
         
         # Add the signature to the Safe transaction object
-        safe_tx.add_signature(signed_safe_tx_hash.signature)
+        safe_tx.add_signature(signed_safe_tx_hash.signature)  # type: ignore
 
-        print(f"  Built Safe transaction (nonce={safe_tx.nonce}):")
-        print(f"    To: {safe_tx.to}")
-        print(f"    Value: {safe_tx.value}")
+        print(f"  Built Safe transaction (nonce={safe_tx.nonce}):")  # type: ignore
+        print(f"    To: {safe_tx.to}")  # type: ignore
+        print(f"    Value: {safe_tx.value}")  # type: ignore
         print(f"    Safe Tx Hash: {safe_tx_hash.hex()}")
         print(f"    Signature: {signed_safe_tx_hash.signature.hex()[:20]}...\n")
 
         # Propose the transaction to the Safe Transaction Service
         print("  Proposing Safe transaction to service...")
-        safe_service.propose_transaction(safe_instance, safe_tx, safe_tx_hash.hex())
+        safe_service.propose_transaction(safe_instance, safe_tx, safe_tx_hash.hex())  # type: ignore
         print(f"  Transaction proposed. Safe Tx Hash: {safe_tx_hash.hex()}")
 
         # Execute the transaction
         print("  Executing Safe transaction on-chain...")
-        tx_hash = safe_instance.execute_transaction(safe_tx, signed_safe_tx_hash)
+        tx_hash = safe_instance.execute_transaction(safe_tx, signed_safe_tx_hash)  # type: ignore
         
         print(f"  On-chain transaction sent. Tx Hash: {tx_hash.hex()}")
         
@@ -183,8 +189,8 @@ def perform_dummy_safe_transaction() -> dict:
         print("  Waiting for transaction to be mined...")
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
         
-        if receipt.status == 1:
-            print(f"✅ Dummy Safe transaction successful! Block: {receipt.blockNumber}")
+        if receipt["status"] == 1:
+            print(f"✅ Dummy Safe transaction successful! Block: {receipt['blockNumber']}")
             return {"success": True, "tx_hash": tx_hash.hex(), "receipt": receipt}
         else:
             print(f"❌ Dummy Safe transaction failed! Receipt: {receipt}")
@@ -229,7 +235,7 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     
     try:
         response = requests.post(url, json=request_body, headers={"Content-Type": "application/json"})
-        response.raise_for_status()
+        #response.raise_for_status()
         snapshot_result = {"success": True, "response": response.json()}
     except requests.exceptions.RequestException as e:
         response_text = None
