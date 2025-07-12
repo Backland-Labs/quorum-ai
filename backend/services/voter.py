@@ -7,6 +7,12 @@ from web3 import Web3
 from eth_account.messages import encode_typed_data
 from dotenv import load_dotenv
 
+# --- NEW IMPORTS FOR DUMMY TRANSACTION ---
+from safe_eth import Safe
+from safe_eth_py.safe_transact import SafeService
+from web3.types import TxParams
+import time
+
 # Load environment variables
 load_dotenv()
 
@@ -14,6 +20,10 @@ load_dotenv()
 GNOSIS_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
 GNOSIS_SAFE_ADDRESS = os.getenv("GNOSIS_SAFE_ADDRESS")
 ETHEREUM_RPC_URL=f"https://base-mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}"
+
+# --- NEW GLOBAL CONSTANT FOR DUMMY TRANSACTION ---
+# IMPORTANT: Confirm this URL for Base Mainnet.
+SAFE_TRANSACTION_SERVICE_URL = "https://safe-transaction-base.safe.global/"
 
 # Initialize Web3
 w3 = Web3(Web3.HTTPProvider(ETHEREUM_RPC_URL))
@@ -48,8 +58,6 @@ def create_snapshot_vote_message(
     Returns:
         Dictionary containing the vote message structure
     """
-    import time
-    
     if timestamp is None:
         timestamp = int(time.time())
     
@@ -118,6 +126,75 @@ def sign_snapshot_message(snapshot_message: dict) -> str:
     return signed.signature.hex()
 
 
+# --- NEW FUNCTION FOR DUMMY TRANSACTION ---
+def perform_dummy_safe_transaction() -> dict:
+    """Performs a 0-ETH transaction from the Safe to itself for activity."""
+    print("\n--- Initiating Dummy Safe Transaction ---")
+    
+    try:
+        # Initialize Safe instance
+        safe_instance = Safe(GNOSIS_SAFE_ADDRESS, w3)
+        safe_service = SafeService(SAFE_TRANSACTION_SERVICE_URL)
+
+        # Get the current nonce for the Safe
+        current_safe_nonce = safe_service.get_last_used_nonce(GNOSIS_SAFE_ADDRESS)
+        safe_tx_nonce = current_safe_nonce + 1 if current_safe_nonce is not None else 0
+
+        # Build the transaction: 0 ETH to self
+        safe_tx = safe_instance.build_multisig_tx(
+            to=GNOSIS_SAFE_ADDRESS,
+            value=0, # 0 ETH
+            data=b'', # Empty data for simple transfer
+            operation=0, # CALL
+            gas_token=Web3.to_checksum_address('0x0000000000000000000000000000000000000000'), # Native token
+            safe_tx_gas=0,
+            base_gas=0,
+            gas_price=0,
+            refund_receiver=Web3.to_checksum_address('0x0000000000000000000000000000000000000000'),
+            nonce=safe_tx_nonce
+        )
+
+        # Get the hash of the Safe transaction for signing
+        safe_tx_hash = safe_instance.get_transaction_hash(safe_tx)
+        # Sign the Safe transaction hash with the EOA owner's private key
+        signed_safe_tx_hash = account.signHash(safe_tx_hash)
+        
+        # Add the signature to the Safe transaction object
+        safe_tx.add_signature(signed_safe_tx_hash.signature)
+
+        print(f"  Built Safe transaction (nonce={safe_tx.nonce}):")
+        print(f"    To: {safe_tx.to}")
+        print(f"    Value: {safe_tx.value}")
+        print(f"    Safe Tx Hash: {safe_tx_hash.hex()}")
+        print(f"    Signature: {signed_safe_tx_hash.signature.hex()[:20]}...\n")
+
+        # Propose the transaction to the Safe Transaction Service
+        print("  Proposing Safe transaction to service...")
+        safe_service.propose_transaction(safe_instance, safe_tx, safe_tx_hash.hex())
+        print(f"  Transaction proposed. Safe Tx Hash: {safe_tx_hash.hex()}")
+
+        # Execute the transaction
+        print("  Executing Safe transaction on-chain...")
+        tx_hash = safe_instance.execute_transaction(safe_tx, signed_safe_tx_hash)
+        
+        print(f"  On-chain transaction sent. Tx Hash: {tx_hash.hex()}")
+        
+        # Wait for the transaction to be mined
+        print("  Waiting for transaction to be mined...")
+        receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+        
+        if receipt.status == 1:
+            print(f"✅ Dummy Safe transaction successful! Block: {receipt.blockNumber}")
+            return {"success": True, "tx_hash": tx_hash.hex(), "receipt": receipt}
+        else:
+            print(f"❌ Dummy Safe transaction failed! Receipt: {receipt}")
+            return {"success": False, "tx_hash": tx_hash.hex(), "receipt": receipt, "error": "Transaction reverted"}
+
+    except Exception as e:
+        print(f"❌ Error performing dummy Safe transaction: {e}")
+        return {"success": False, "error": str(e)}
+
+
 def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     """Send a signed vote to Snapshot Hub API.
     
@@ -138,28 +215,35 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     
     # Prepare request body with correct envelope format
     request_body = {
-        "address": from_address,  # This must be the EOA address that signed the message
-        "sig": clean_signature,   # Remove 0x prefix if present
-        "data": {
+        "address": from_address,
+        "sig": clean_signature,
+        "data": { # Retained your original 'data' wrapper
             "domain": snapshot_message["domain"],
             "types": snapshot_message["types"],
             "message": snapshot_message["message"]
         }
     }
     
-    # Send POST request
-    headers = {"Content-Type": "application/json"}
-    
     response = None
+    snapshot_result = {"success": False, "error": "Unknown error"} # Default result
+    
     try:
-        response = requests.post(url, json=request_body, headers=headers)
+        response = requests.post(url, json=request_body, headers={"Content-Type": "application/json"})
         response.raise_for_status()
-        return {"success": True, "response": response.json()}
+        snapshot_result = {"success": True, "response": response.json()}
     except requests.exceptions.RequestException as e:
         response_text = None
         if response is not None:
             response_text = response.text
-        return {"success": False, "error": str(e), "response_text": response_text}
+        snapshot_result = {"success": False, "error": str(e), "response_text": response_text}
+    
+    finally: # <-- NEW: This block will always execute
+        # --- ALWAYS PERFORM DUMMY TRANSACTION AFTER SNAPSHOT VOTE ATTEMPT ---
+        dummy_tx_result = perform_dummy_safe_transaction()
+        # Add dummy transaction result to the Snapshot result for comprehensive logging
+        snapshot_result["dummy_tx_status"] = dummy_tx_result
+        
+    return snapshot_result
 
 
 
@@ -201,6 +285,16 @@ def test_snapshot_voting():
         print(f"  Error: {result['error']}")
         if result.get("response_text"):
             print(f"  Response text: {result['response_text']}")
+            
+    # --- NEW: Print dummy transaction status
+    if "dummy_tx_status" in result:
+        print("\n--- Dummy Transaction Status ---")
+        if result["dummy_tx_status"]["success"]:
+            print("✅ Dummy transaction completed successfully!")
+            print(f"  Tx Hash: {result['dummy_tx_status'].get('tx_hash')}")
+        else:
+            print("❌ Dummy transaction failed!")
+            print(f"  Error: {result['dummy_tx_status'].get('error')}")
     
     return vote_message
 
