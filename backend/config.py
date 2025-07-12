@@ -117,6 +117,40 @@ class Settings(BaseSettings):
         alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
         description="Olas service registry contract",
     )
+    
+    # OLAS configuration for new services
+    safe_contract_addresses: str = Field(
+        default="{}",
+        alias="SAFE_CONTRACT_ADDRESSES",
+        description="JSON string of Safe addresses by chain",
+    )
+    store_path: Optional[str] = Field(
+        default=None,
+        alias="STORE_PATH",
+        description="Path for persistent data storage",
+    )
+    
+    # RPC endpoints for multiple chains
+    ethereum_ledger_rpc: Optional[str] = Field(
+        default=None,
+        alias="ETHEREUM_LEDGER_RPC",
+        description="Ethereum RPC endpoint",
+    )
+    gnosis_ledger_rpc: Optional[str] = Field(
+        default=None,
+        alias="GNOSIS_LEDGER_RPC", 
+        description="Gnosis chain RPC endpoint",
+    )
+    base_ledger_rpc: Optional[str] = Field(
+        default=None,
+        alias="BASE_LEDGER_RPC",
+        description="Base chain RPC endpoint",
+    )
+    mode_ledger_rpc: Optional[str] = Field(
+        default=None,
+        alias="MODE_LEDGER_RPC",
+        description="Mode chain RPC endpoint",
+    )
 
     @field_validator("monitored_daos", mode="before")
     @classmethod
