@@ -16,7 +16,6 @@ SAFE_SERVICE_URLS = {
     "ethereum": "https://safe-transaction-mainnet.safe.global/",
     "gnosis": "https://safe-transaction-gnosis-chain.safe.global/",
     "base": "https://safe-transaction-base.safe.global/",
-    "celo": "https://safe-transaction-celo.safe.global/",
     "mode": "https://safe-transaction-mode.safe.global/",
 }
 
@@ -31,7 +30,6 @@ class SafeService:
             "ethereum": settings.ethereum_ledger_rpc,
             "gnosis": settings.gnosis_ledger_rpc,
             "base": settings.base_ledger_rpc,
-            "celo": settings.celo_ledger_rpc,
             "mode": settings.mode_ledger_rpc,
         }
         
@@ -131,10 +129,10 @@ class SafeService:
                 
                 # Get Web3 and Ethereum client
                 w3 = self.get_web3_connection(chain)
-                eth_client = EthereumClient(self.rpc_endpoints[chain])
+                eth_client = EthereumClient(self.rpc_endpoints[chain]) # type: ignore
                 
                 # Initialize Safe instance
-                safe_instance = Safe(safe_address, eth_client)
+                safe_instance = Safe(safe_address, eth_client) # type: ignore
                 
                 # Get Safe service for this chain
                 safe_service_url = SAFE_SERVICE_URLS.get(chain)
@@ -142,7 +140,7 @@ class SafeService:
                     raise ValueError(f"No Safe service URL configured for chain: {chain}")
                 
                 safe_service = TransactionServiceApi(
-                    network=chain, 
+                    network=chain, # type: ignore
                     base_url=safe_service_url
                 )
 
@@ -189,7 +187,7 @@ class SafeService:
                 logfire.info(f"On-chain transaction sent: {tx_hash.hex()}")
                 
                 # Wait for confirmation
-                receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+                receipt = w3.eth.wait_for_transaction_receipt(tx_hash) # type: ignore
                 
                 if receipt["status"] == 1:
                     logfire.info(
@@ -228,9 +226,9 @@ class SafeService:
             
         Returns:
             Current Safe nonce
-        """
-        eth_client = EthereumClient(self.rpc_endpoints[chain])
-        safe_instance = Safe(Web3.to_checksum_address(safe_address), eth_client)
+        """ 
+        eth_client = EthereumClient(self.rpc_endpoints[chain]) # type: ignore
+        safe_instance = Safe(Web3.to_checksum_address(safe_address), eth_client) # type: ignore
         return safe_instance.retrieve_nonce()
     
     async def build_safe_transaction(
@@ -258,8 +256,8 @@ class SafeService:
             raise ValueError(f"No Safe address configured for chain: {chain}")
         
         safe_address = Web3.to_checksum_address(safe_address)
-        eth_client = EthereumClient(self.rpc_endpoints[chain])
-        safe_instance = Safe(safe_address, eth_client)
+        eth_client = EthereumClient(self.rpc_endpoints[chain]) # type: ignore
+        safe_instance = Safe(safe_address, eth_client) # type: ignore
         
         safe_tx = safe_instance.build_multisig_tx(
             to=to,

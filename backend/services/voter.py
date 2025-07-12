@@ -36,7 +36,7 @@ if not w3.is_connected():
     raise ConnectionError("Failed to connect to Ethereum network")
 
 # Create EthereumClient for Safe operations
-eth_client = EthereumClient(ETHEREUM_RPC_URL)
+eth_client = EthereumClient(ETHEREUM_RPC_URL) # type: ignore
 
 # Create account using web3's eth.account
 account = w3.eth.account.from_key(GNOSIS_PRIVATE_KEY)
