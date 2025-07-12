@@ -180,7 +180,20 @@ def perform_dummy_safe_transaction() -> dict:
 
         # Execute the transaction
         print("  Executing Safe transaction on-chain...")
-        tx_hash = safe_instance.execute_transaction(safe_tx, signed_safe_tx_hash)  # type: ignore
+        ethereum_tx_sent = safe_instance.send_multisig_tx(
+            to=safe_tx.to,
+            value=safe_tx.value,
+            data=safe_tx.data,
+            operation=safe_tx.operation,
+            safe_tx_gas=safe_tx.safe_tx_gas,
+            base_gas=safe_tx.base_gas,
+            gas_price=safe_tx.gas_price,
+            gas_token=safe_tx.gas_token,
+            refund_receiver=safe_tx.refund_receiver,
+            signatures=safe_tx.signatures,
+            tx_sender_private_key=GNOSIS_PRIVATE_KEY
+        )
+        tx_hash = ethereum_tx_sent.tx_hash 
         
         print(f"  On-chain transaction sent. Tx Hash: {tx_hash.hex()}")
         
