@@ -19,6 +19,7 @@ load_dotenv()
 
 # Get environment variables
 GNOSIS_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
+EOA_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
 GNOSIS_SAFE_ADDRESS = os.getenv("GNOSIS_SAFE_ADDRESS")
 ETHEREUM_RPC_URL=f"https://base-mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}"
 
@@ -147,10 +148,6 @@ def perform_dummy_safe_transaction() -> dict:
         safe_instance = Safe(safe_address, eth_client)  # type: ignore
         safe_service = TransactionServiceApi(network="base", base_url=SAFE_TRANSACTION_SERVICE_URL)  # type: ignore
 
-        # Get the current nonce for the Safe
-        current_safe_nonce = safe_service.get_last_used_nonce(safe_address)  # type: ignore
-        safe_tx_nonce = current_safe_nonce + 1 if current_safe_nonce is not None else 0
-
         # Build the transaction: 0 ETH to self
         safe_tx = safe_instance.build_multisig_tx(  # type: ignore
             to=safe_address,
@@ -161,27 +158,25 @@ def perform_dummy_safe_transaction() -> dict:
             safe_tx_gas=0,
             base_gas=0,
             gas_price=0,
-            refund_receiver=Web3.to_checksum_address('0x0000000000000000000000000000000000000000')
+            refund_receiver=Web3.to_checksum_address('0x0000000000000000000000000000000000000000'),
         )
 
-        # Get the hash of the Safe transaction for signing
-        safe_tx_hash = safe_instance.get_transaction_hash(safe_tx)  # type: ignore
         # Sign the Safe transaction hash with the EOA owner's private key
-        signed_safe_tx_hash = account.signHash(safe_tx_hash)
+        signed_safe_tx_hash = account.unsafe_sign_hash(safe_tx.safe_tx_hash)
         
-        # Add the signature to the Safe transaction object
-        safe_tx.add_signature(signed_safe_tx_hash.signature)  # type: ignore
-
-        print(f"  Built Safe transaction (nonce={safe_tx.nonce}):")  # type: ignore
+        # Add the signature to the Safe transaction
+        safe_tx.signatures = signed_safe_tx_hash.signature  # type: ignore
+        print(f"  Built Safe transaction (nonce={safe_tx.safe_nonce}):")  # type: ignore
         print(f"    To: {safe_tx.to}")  # type: ignore
         print(f"    Value: {safe_tx.value}")  # type: ignore
-        print(f"    Safe Tx Hash: {safe_tx_hash.hex()}")
+        print(f"    Safe Tx Hash: {safe_tx.safe_tx_hash.hex()}")
         print(f"    Signature: {signed_safe_tx_hash.signature.hex()[:20]}...\n")
 
         # Propose the transaction to the Safe Transaction Service
         print("  Proposing Safe transaction to service...")
-        safe_service.propose_transaction(safe_instance, safe_tx, safe_tx_hash.hex())  # type: ignore
-        print(f"  Transaction proposed. Safe Tx Hash: {safe_tx_hash.hex()}")
+
+        safe_service.post_transaction(safe_tx)  # type: ignore
+        print(f"  Transaction proposed. Safe Tx Hash: {safe_tx.safe_tx_hash.hex()}")
 
         # Execute the transaction
         print("  Executing Safe transaction on-chain...")
