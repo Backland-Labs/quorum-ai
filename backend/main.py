@@ -32,22 +32,31 @@ from models import (
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
+from services.safe_service import SafeService
+from services.activity_service import ActivityService  
+from services.voting_service import VotingService
 
 
 # Global service instances
 tally_service: TallyService
 ai_service: AIService
+safe_service: SafeService
+activity_service: ActivityService
+voting_service: VotingService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
-    global tally_service, ai_service
+    global tally_service, ai_service, safe_service, activity_service, voting_service
 
     # Initialize services
     tally_service = TallyService()
     ai_service = AIService()
+    safe_service = SafeService()
+    activity_service = ActivityService()
+    voting_service = VotingService()
 
     # Configure Logfire if credentials are available
     if settings.logfire_token:
