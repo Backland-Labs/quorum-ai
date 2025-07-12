@@ -180,7 +180,7 @@ class SafeService:
                     gas_token=safe_tx.gas_token,
                     refund_receiver=safe_tx.refund_receiver,
                     signatures=safe_tx.signatures,
-                    tx_sender_private_key=self.account.key.hex()
+                    tx_sender_private_key=self.account.address
                 )
                 
                 tx_hash = ethereum_tx_sent.tx_hash
