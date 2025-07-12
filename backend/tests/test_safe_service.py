@@ -21,7 +21,6 @@ class TestSafeServiceInitialization:
         mock_settings.ethereum_ledger_rpc = "https://eth.example.com"
         mock_settings.gnosis_ledger_rpc = "https://gnosis.example.com"
         mock_settings.base_ledger_rpc = "https://base.example.com"
-        mock_settings.celo_ledger_rpc = "https://celo.example.com"
         mock_settings.mode_ledger_rpc = "https://mode.example.com"
         
         mock_json_loads.return_value = {"gnosis": "0x123", "ethereum": "0x456"}
@@ -42,7 +41,7 @@ class TestSafeServiceWebConnection:
     @patch("services.safe_service.json.loads")
     @patch("services.safe_service.settings")
     @patch("services.safe_service.Web3")
-    def test_get_web3_connection_success(self, mock_web3_class, mock_settings, mock_json_loads, mock_file):
+    def test_get_web3_connection_success(self, mock_web3_class, mock_settings, mock_json_loads):
         """Test successful Web3 connection creation."""
         mock_settings.safe_contract_addresses = '{"gnosis": "0x123"}'
         mock_settings.gnosis_ledger_rpc = "https://gnosis.example.com"
