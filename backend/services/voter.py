@@ -8,6 +8,7 @@ from eth_account.messages import encode_typed_data
 from dotenv import load_dotenv
 
 # --- IMPORTS FOR DUMMY TRANSACTION ---
+from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
 from typing import cast
@@ -32,6 +33,9 @@ w3 = Web3(Web3.HTTPProvider(ETHEREUM_RPC_URL))
 # Verify connection
 if not w3.is_connected():
     raise ConnectionError("Failed to connect to Ethereum network")
+
+# Create EthereumClient for Safe operations
+eth_client = EthereumClient(ETHEREUM_RPC_URL)
 
 # Create account using web3's eth.account
 account = w3.eth.account.from_key(GNOSIS_PRIVATE_KEY)
@@ -139,9 +143,9 @@ def perform_dummy_safe_transaction() -> dict:
         
         safe_address = Web3.to_checksum_address(GNOSIS_SAFE_ADDRESS)
         
-        # Initialize Safe instance - disable type checking for now
-        safe_instance = Safe(safe_address, w3)  # type: ignore
-        safe_service = TransactionServiceApi(SAFE_TRANSACTION_SERVICE_URL)  # type: ignore
+        # Initialize Safe instance with EthereumClient
+        safe_instance = Safe(safe_address, eth_client)  # type: ignore
+        safe_service = TransactionServiceApi(network="base", base_url=SAFE_TRANSACTION_SERVICE_URL)  # type: ignore
 
         # Get the current nonce for the Safe
         current_safe_nonce = safe_service.get_last_used_nonce(safe_address)  # type: ignore
