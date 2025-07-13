@@ -36,13 +36,6 @@ class SnapshotService:
 
     def __init__(self) -> None:
         """Initialize SnapshotService with required configuration and validation."""
-        # Runtime assertions for critical method validation
-        assert hasattr(settings, 'request_timeout'), (
-            "Settings object must have a 'request_timeout' attribute"
-        )
-        assert settings.request_timeout > 0, (
-            f"Request timeout must be positive, got {settings.request_timeout}"
-        )
         
         self.base_url = SNAPSHOT_GRAPHQL_ENDPOINT
         self.timeout = settings.request_timeout
@@ -122,7 +115,6 @@ class SnapshotService:
     def _validate_query_inputs(self, query: str, variables: Optional[Dict[str, Any]]) -> None:
         """Validate query inputs with comprehensive runtime assertions."""
         assert query and query.strip(), "GraphQL query cannot be empty or whitespace"
-        assert isinstance(query, str), f"Query must be a string, got {type(query)}"
         assert self.client is not None, "HTTP client must be initialized"
         if variables is not None:
             assert isinstance(variables, dict), f"Variables must be dict or None, got {type(variables)}"
