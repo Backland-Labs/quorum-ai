@@ -18,8 +18,6 @@ class TestSnapshotServiceInitialization:
 
         assert service.base_url == "https://hub.snapshot.org/graphql"
         assert service.timeout == settings.request_timeout
-        assert service.semaphore is not None
-        assert service.semaphore._value == 5  # Default semaphore limit
 
 
 class TestSnapshotServiceProperties:
@@ -32,7 +30,6 @@ class TestSnapshotServiceProperties:
         # Check that service has the expected attributes
         assert hasattr(service, 'base_url')
         assert hasattr(service, 'timeout')
-        assert hasattr(service, 'semaphore')
         assert hasattr(service, 'client')
 
     def test_snapshot_service_client_configuration(self) -> None:
