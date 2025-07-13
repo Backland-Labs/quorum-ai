@@ -1,6 +1,7 @@
 """Service for interacting with the Snapshot API."""
 
 import asyncio
+from typing import Dict, Optional
 
 import httpx
 
@@ -49,3 +50,27 @@ class SnapshotService:
         """Close the HTTP client and release resources."""
         if self.client:
             await self.client.aclose()
+
+    async def execute_query(self, query: str, variables: Optional[Dict] = None) -> Dict:
+        """Execute a GraphQL query against the Snapshot API.
+        
+        Args:
+            query: GraphQL query string
+            variables: Optional dictionary of query variables
+            
+        Returns:
+            Dictionary containing the response data
+        """
+        # Runtime assertions for critical method validation
+        assert query and query.strip(), "GraphQL query cannot be empty or whitespace"
+        assert isinstance(query, str), f"Query must be a string, got {type(query)}"
+        
+        payload = {"query": query}
+        if variables:
+            payload["variables"] = variables
+            
+        response = await self.client.post(self.base_url, json=payload)
+        response.raise_for_status()
+        
+        response_data = response.json()
+        return response_data.get("data", {})
