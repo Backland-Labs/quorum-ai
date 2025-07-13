@@ -63,6 +63,46 @@ class SnapshotService:
         if self.client:
             await self.client.aclose()
 
+    def _parse_graphql_errors(self, error_details: list) -> str:
+        """Parse GraphQL errors and return formatted error message."""
+        error_messages = []
+        
+        for error in error_details:
+            msg = error.get("message", "Unknown GraphQL error")
+            location = error.get("locations", [])
+            path = error.get("path", [])
+            
+            error_context = []
+            if location:
+                error_context.append(f"at line {location[0].get('line', '?')}")
+            if path:
+                error_context.append(f"in path {'.'.join(map(str, path))}")
+            
+            full_msg = msg
+            if error_context:
+                full_msg += f" ({', '.join(error_context)})"
+            error_messages.append(full_msg)
+        
+        return f"Snapshot API returned GraphQL errors: {'; '.join(error_messages)}"
+
+    def _log_and_raise_network_error(self, error_type: str, exception: Exception, **context) -> None:
+        """Log network error and raise NetworkError with context."""
+        logfire.error(f"Network error: {error_type}", 
+                     endpoint=self.base_url,
+                     error=str(exception),
+                     **context)
+        
+        if isinstance(exception, httpx.TimeoutException):
+            raise NetworkError(f"Network timeout connecting to Snapshot API ({self.base_url}): {str(exception)}") from exception
+        elif isinstance(exception, httpx.ConnectError):
+            raise NetworkError(f"Cannot connect to Snapshot API ({self.base_url}): {str(exception)}") from exception
+        elif isinstance(exception, httpx.HTTPStatusError):
+            response_text = getattr(exception.response, 'text', 'No response text available')
+            raise NetworkError(f"Snapshot API HTTP {exception.response.status_code} error: {str(exception)}. Response: {response_text[:200]}") from exception
+        else:
+            # Fallback for any other httpx exception types
+            raise NetworkError(f"Network error during Snapshot API call: {str(exception)}") from exception
+
     async def execute_query(self, query: str, variables: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Execute a GraphQL query against the Snapshot API.
         
@@ -119,25 +159,7 @@ class SnapshotService:
                 # Check for GraphQL errors returned by Snapshot API
                 if "errors" in response_data and response_data["errors"]:
                     error_details = response_data["errors"]
-                    error_messages = []
-                    
-                    for error in error_details:
-                        msg = error.get("message", "Unknown GraphQL error")
-                        location = error.get("locations", [])
-                        path = error.get("path", [])
-                        
-                        error_context = []
-                        if location:
-                            error_context.append(f"at line {location[0].get('line', '?')}")
-                        if path:
-                            error_context.append(f"in path {'.'.join(map(str, path))}")
-                        
-                        full_msg = msg
-                        if error_context:
-                            full_msg += f" ({', '.join(error_context)})"
-                        error_messages.append(full_msg)
-                    
-                    error_msg = f"Snapshot API returned GraphQL errors: {'; '.join(error_messages)}"
+                    error_msg = self._parse_graphql_errors(error_details)
                     logfire.error("GraphQL query failed at Snapshot API", 
                                  graphql_errors=error_details,
                                  error_count=len(error_details))
@@ -156,31 +178,18 @@ class SnapshotService:
                 
                 return data_result
                 
-            except GraphQLError:
-                # Re-raise GraphQL errors without wrapping
-                raise
-            except httpx.TimeoutException as e:
-                logfire.error("Network timeout connecting to Snapshot API", 
-                             endpoint=self.base_url,
-                             timeout_seconds=self.timeout,
-                             error=str(e))
-                raise NetworkError(f"Network timeout connecting to Snapshot API ({self.base_url}): {str(e)}") from e
-            except httpx.ConnectError as e:
-                logfire.error("Failed to establish connection to Snapshot API", 
-                             endpoint=self.base_url,
-                             error=str(e))
-                raise NetworkError(f"Cannot connect to Snapshot API ({self.base_url}): {str(e)}") from e
-            except httpx.HTTPStatusError as e:
-                response_text = getattr(e.response, 'text', 'No response text available')
-                logfire.error("Snapshot API returned HTTP error", 
-                             status_code=e.response.status_code,
-                             endpoint=self.base_url,
-                             response_text=response_text[:500],
-                             error=str(e))
-                raise NetworkError(f"Snapshot API HTTP {e.response.status_code} error: {str(e)}. Response: {response_text[:200]}") from e
-            except SnapshotServiceError:
+            except (GraphQLError, SnapshotServiceError):
                 # Re-raise our custom errors without wrapping
                 raise
+            except httpx.TimeoutException as e:
+                self._log_and_raise_network_error("timeout", e, timeout_seconds=self.timeout)
+            except httpx.ConnectError as e:
+                self._log_and_raise_network_error("connection", e)
+            except httpx.HTTPStatusError as e:
+                response_text = getattr(e.response, 'text', 'No response text available')
+                self._log_and_raise_network_error("HTTP error", e, 
+                                                 status_code=e.response.status_code,
+                                                 response_text=response_text[:500])
             except Exception as e:
                 logfire.error("Unexpected error during Snapshot API interaction", 
                              endpoint=self.base_url,
