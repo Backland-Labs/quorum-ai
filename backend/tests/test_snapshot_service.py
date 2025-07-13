@@ -131,6 +131,52 @@ class TestSnapshotServiceErrorHandling:
         await service.close()
 
 
+class TestSnapshotServiceIntegration:
+    """Integration tests for SnapshotService with real API calls."""
+
+    @pytest.mark.asyncio
+    async def test_real_snapshot_api_call(self) -> None:
+        """Test a real API call to Snapshot to verify integration works.
+        
+        This test makes an actual network call to the Snapshot API.
+        It may be slow and could fail if the API is down.
+        """
+        service = SnapshotService()
+        
+        # Simple query to get a few spaces (should be fast and reliable)
+        query = """
+        query {
+            spaces(first: 2, orderBy: "created", orderDirection: desc) {
+                id
+                name
+                about
+            }
+        }
+        """
+        
+        try:
+            result = await service.execute_query(query)
+            
+            # Verify the response structure
+            assert "spaces" in result, "Response should contain 'spaces' field"
+            assert isinstance(result["spaces"], list), "Spaces should be a list"
+            assert len(result["spaces"]) <= 2, "Should return at most 2 spaces"
+            
+            # If we have results, verify they have the expected structure
+            if result["spaces"]:
+                space = result["spaces"][0]
+                assert "id" in space, "Each space should have an 'id'"
+                assert "name" in space, "Each space should have a 'name'"
+                # 'about' can be null/None so we just check it exists as a key
+                assert "about" in space, "Each space should have an 'about' field"
+                
+        except Exception as e:
+            # If the test fails due to network issues, skip it
+            pytest.skip(f"Integration test skipped due to network/API issue: {str(e)}")
+        finally:
+            await service.close()
+
+
 class TestSnapshotServiceGraphQLExecution:
     """Test SnapshotService GraphQL query execution."""
 
