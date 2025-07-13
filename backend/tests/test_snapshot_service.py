@@ -49,3 +49,20 @@ class TestSnapshotServiceProperties:
 
         assert service.timeout == 30.0
         assert service.client.timeout.read == 30.0
+
+    def test_snapshot_service_has_default_headers(self) -> None:
+        """Test that SnapshotService client has proper default headers."""
+        service = SnapshotService()
+        
+        # This test will fail because default headers are not yet implemented
+        expected_headers = {
+            'Content-Type': 'application/json',
+            'User-Agent': f'QuorumAI/{settings.app_name}',
+            'Accept': 'application/json'
+        }
+        
+        # Check that client has the expected default headers
+        for key, value in expected_headers.items():
+            assert key in service.client.headers
+            assert service.client.headers[key] == value
+
