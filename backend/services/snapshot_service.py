@@ -1,11 +1,24 @@
 """Service for interacting with the Snapshot API."""
 
 import asyncio
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import httpx
 
 from config import settings
+
+# Custom exceptions for better error handling
+class SnapshotServiceError(Exception):
+    """Base exception for SnapshotService errors."""
+    pass
+
+class NetworkError(SnapshotServiceError):
+    """Raised when network operations fail."""
+    pass
+
+class GraphQLError(SnapshotServiceError):
+    """Raised when GraphQL operations fail."""
+    pass
 
 # Constants for better code clarity and maintainability
 DEFAULT_SEMAPHORE_LIMIT = 5  # Default semaphore limit for parallel requests
@@ -51,7 +64,7 @@ class SnapshotService:
         if self.client:
             await self.client.aclose()
 
-    async def execute_query(self, query: str, variables: Optional[Dict] = None) -> Dict:
+    async def execute_query(self, query: str, variables: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Execute a GraphQL query against the Snapshot API.
         
         Args:
@@ -60,17 +73,30 @@ class SnapshotService:
             
         Returns:
             Dictionary containing the response data
+            
+        Raises:
+            NetworkError: When network operations fail
+            GraphQLError: When GraphQL operations fail
         """
         # Runtime assertions for critical method validation
         assert query and query.strip(), "GraphQL query cannot be empty or whitespace"
         assert isinstance(query, str), f"Query must be a string, got {type(query)}"
         
-        payload = {"query": query}
+        payload: Dict[str, Any] = {"query": query}
         if variables:
             payload["variables"] = variables
             
-        response = await self.client.post(self.base_url, json=payload)
-        response.raise_for_status()
-        
-        response_data = response.json()
-        return response_data.get("data", {})
+        try:
+            response = await self.client.post(self.base_url, json=payload)
+            response.raise_for_status()
+            
+            response_data = response.json()
+            return response_data.get("data", {})
+        except httpx.TimeoutException as e:
+            raise NetworkError(f"Request timeout occurred: {str(e)}") from e
+        except httpx.ConnectError as e:
+            raise NetworkError(f"Failed to connect to Snapshot API: {str(e)}") from e
+        except httpx.HTTPStatusError as e:
+            raise NetworkError(f"HTTP error {e.response.status_code}: {str(e)}") from e
+        except Exception as e:
+            raise SnapshotServiceError(f"Unexpected error during query execution: {str(e)}") from e

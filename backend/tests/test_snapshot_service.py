@@ -68,6 +68,32 @@ class TestSnapshotServiceProperties:
             assert service.client.headers[key] == value
 
 
+class TestSnapshotServiceErrorHandling:
+    """Test SnapshotService error handling functionality."""
+
+    @pytest.mark.asyncio
+    async def test_execute_query_handles_network_timeout(self, httpx_mock: HTTPXMock) -> None:
+        """Test that execute_query properly handles network timeout errors."""
+        import httpx
+        
+        service = SnapshotService()
+        query = "query { spaces { id } }"
+        
+        # Mock a timeout error
+        httpx_mock.add_exception(httpx.TimeoutException("Request timed out"))
+        
+        # This test will fail because custom error handling is not implemented
+        with pytest.raises(Exception) as exc_info:
+            await service.execute_query(query)
+        
+        # Should have custom exception handling
+        from services.snapshot_service import SnapshotServiceError
+        assert isinstance(exc_info.value, SnapshotServiceError), f"Should raise SnapshotServiceError, got {type(exc_info.value)}"
+        assert "timeout" in str(exc_info.value).lower(), "Error message should mention timeout"
+        
+        await service.close()
+
+
 class TestSnapshotServiceGraphQLExecution:
     """Test SnapshotService GraphQL query execution."""
 
