@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, HttpUrl
 
 
 # Constants for VoteDecision model
@@ -645,3 +645,179 @@ class AgentState(BaseModel):
             "rounds_completed": self.rounds_completed,
             "is_healthy": self.is_healthy,
         }
+
+
+class Space(BaseModel):
+    """Snapshot Space model representing a DAO governance space."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    # Required fields
+    id: str = Field(..., description="Unique space identifier")
+    name: str = Field(..., description="Display name of the space")
+    network: str = Field(..., description="Blockchain network identifier")
+    symbol: str = Field(..., description="Token symbol for the space")
+    strategies: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Array of voting strategies"
+    )
+    admins: List[str] = Field(
+        default_factory=list, description="Array of admin addresses"
+    )
+    moderators: List[str] = Field(
+        default_factory=list, description="Array of moderator addresses"
+    )
+    members: List[str] = Field(
+        default_factory=list, description="Array of member addresses"
+    )
+    private: bool = Field(default=False, description="Whether space is private")
+    verified: bool = Field(default=False, description="Verification status")
+    created: int = Field(..., ge=0, description="Creation timestamp")
+    proposalsCount: int = Field(
+        default=0, ge=0, description="Total proposal count"
+    )
+    followersCount: int = Field(
+        default=0, ge=0, description="Follower count"
+    )
+    votesCount: int = Field(
+        default=0, ge=0, description="Total vote count"
+    )
+
+    # Optional fields
+    about: Optional[str] = Field(None, description="Description of the space")
+    avatar: Optional[str] = Field(None, description="Avatar image URL")
+    cover: Optional[str] = Field(None, description="Cover image URL")
+    website: Optional[str] = Field(None, description="Website URL")
+    twitter: Optional[str] = Field(None, description="Twitter handle")
+    github: Optional[str] = Field(None, description="GitHub username")
+
+    @staticmethod
+    def _validate_space_string_field(value: str, field_name: str) -> str:
+        """Validate string fields with space-specific assertions."""
+        # Runtime assertion: value must be valid string type
+        assert isinstance(value, str), f"{field_name} must be string, got {type(value)}"
+        assert value.strip(), f"{field_name} cannot be empty or whitespace"
+        
+        cleaned_value = value.strip()
+        
+        # Runtime assertion: cleaned value must have meaningful content
+        assert len(cleaned_value) > 0, f"{field_name} must contain meaningful content"
+        assert cleaned_value != value or not value.startswith(" ") and not value.endswith(" "), f"{field_name} should not have leading/trailing whitespace"
+        
+        return cleaned_value
+
+    @staticmethod
+    def _validate_optional_url(url: Optional[str], field_name: str) -> Optional[str]:
+        """Validate optional URL fields with consistent error handling."""
+        if url is None:
+            return url
+            
+        # Runtime assertion: URL must be string if provided
+        assert isinstance(url, str), f"{field_name} must be string if provided, got {type(url)}"
+        assert url.strip(), f"{field_name} cannot be empty string if provided"
+        
+        cleaned_url = url.strip()
+        
+        try:
+            # Use HttpUrl for validation then return as string
+            HttpUrl(cleaned_url)
+            # Runtime assertion: URL validation succeeded
+            assert "://" in cleaned_url, f"{field_name} must contain protocol scheme"
+            return cleaned_url
+        except Exception as e:
+            raise ValueError(f"Invalid {field_name} URL format: {cleaned_url}. Error: {str(e)}")
+
+    @staticmethod
+    def _validate_boolean_field(value, field_name: str) -> bool:
+        """Validate boolean fields with runtime assertions."""
+        # Runtime assertion: value must be boolean type
+        assert isinstance(value, bool), f"{field_name} must be boolean type, got {type(value)}"
+        assert value is True or value is False, f"{field_name} must be exactly True or False, got {value}"
+        
+        return value
+
+    @staticmethod
+    def _validate_integer_field(value, field_name: str) -> int:
+        """Validate integer fields with runtime assertions."""
+        # Runtime assertion: value must be integer type
+        assert isinstance(value, int), f"{field_name} must be integer type, got {type(value)}"
+        assert not isinstance(value, bool), f"{field_name} cannot be boolean disguised as int"
+        
+        return value
+
+    @field_validator("id")
+    @classmethod
+    def validate_id(cls, v: str) -> str:
+        """Validate space ID is non-empty string."""
+        return cls._validate_space_string_field(v, "id")
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        """Validate space name is non-empty string."""
+        return cls._validate_space_string_field(v, "name")
+
+    @field_validator("network")
+    @classmethod
+    def validate_network(cls, v: str) -> str:
+        """Validate network is non-empty string."""
+        return cls._validate_space_string_field(v, "network")
+
+    @field_validator("symbol")
+    @classmethod
+    def validate_symbol(cls, v: str) -> str:
+        """Validate symbol is non-empty string."""
+        return cls._validate_space_string_field(v, "symbol")
+
+    @field_validator("avatar")
+    @classmethod
+    def validate_avatar_url(cls, v: Optional[str]) -> Optional[str]:
+        """Validate avatar URL format if provided."""
+        return cls._validate_optional_url(v, "avatar")
+
+    @field_validator("cover")
+    @classmethod
+    def validate_cover_url(cls, v: Optional[str]) -> Optional[str]:
+        """Validate cover URL format if provided."""
+        return cls._validate_optional_url(v, "cover")
+
+    @field_validator("website")
+    @classmethod
+    def validate_website_url(cls, v: Optional[str]) -> Optional[str]:
+        """Validate website URL format if provided."""
+        return cls._validate_optional_url(v, "website")
+
+    @field_validator("private", mode="before")
+    @classmethod
+    def validate_private_type(cls, v) -> bool:
+        """Validate private field is boolean type."""
+        return cls._validate_boolean_field(v, "private")
+
+    @field_validator("verified", mode="before")
+    @classmethod
+    def validate_verified_type(cls, v) -> bool:
+        """Validate verified field is boolean type."""
+        return cls._validate_boolean_field(v, "verified")
+
+    @field_validator("created", mode="before")
+    @classmethod
+    def validate_created_type(cls, v) -> int:
+        """Validate created field is integer type."""
+        return cls._validate_integer_field(v, "created")
+
+    @field_validator("proposalsCount", mode="before")
+    @classmethod
+    def validate_proposals_count_type(cls, v) -> int:
+        """Validate proposalsCount field is integer type."""
+        return cls._validate_integer_field(v, "proposalsCount")
+
+    @field_validator("followersCount", mode="before")
+    @classmethod
+    def validate_followers_count_type(cls, v) -> int:
+        """Validate followersCount field is integer type."""
+        return cls._validate_integer_field(v, "followersCount")
+
+    @field_validator("votesCount", mode="before")
+    @classmethod
+    def validate_votes_count_type(cls, v) -> int:
+        """Validate votesCount field is integer type."""
+        return cls._validate_integer_field(v, "votesCount")
