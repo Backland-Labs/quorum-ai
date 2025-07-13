@@ -93,6 +93,43 @@ class TestSnapshotServiceErrorHandling:
         
         await service.close()
 
+    @pytest.mark.asyncio
+    async def test_execute_query_handles_graphql_errors(self, httpx_mock: HTTPXMock) -> None:
+        """Test that execute_query properly handles GraphQL errors in response."""
+        service = SnapshotService()
+        
+        query = "query { spaces { id } }"
+        
+        # Mock a GraphQL error response
+        mock_response_data = {
+            "errors": [
+                {
+                    "message": "Field 'invalidField' doesn't exist on type 'Space'",
+                    "locations": [{"line": 1, "column": 10}],
+                    "path": ["spaces"]
+                }
+            ],
+            "data": None
+        }
+        
+        httpx_mock.add_response(
+            method="POST",
+            url="https://hub.snapshot.org/graphql",
+            json=mock_response_data,
+            status_code=200
+        )
+        
+        # This test will fail because GraphQL error handling is not implemented
+        with pytest.raises(Exception) as exc_info:
+            await service.execute_query(query)
+        
+        # Should raise GraphQLError for GraphQL errors
+        from services.snapshot_service import GraphQLError
+        assert isinstance(exc_info.value, GraphQLError), f"Should raise GraphQLError, got {type(exc_info.value)}"
+        assert "Field 'invalidField' doesn't exist" in str(exc_info.value), "Error message should contain GraphQL error details"
+        
+        await service.close()
+
 
 class TestSnapshotServiceGraphQLExecution:
     """Test SnapshotService GraphQL query execution."""
