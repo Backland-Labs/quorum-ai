@@ -219,12 +219,129 @@ class VoteType(str, Enum):
 
 
 class Vote(BaseModel):
-    """Individual vote on a proposal."""
+    """Snapshot-based individual vote on a proposal."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
-    voter: str = Field(..., description="Address of the voter")
-    support: VoteType = Field(..., description="Vote direction")
-    weight: str = Field(..., description="Voting weight")
-    reason: Optional[str] = Field(None, description="Reason for vote if provided")
+    # Required fields
+    id: str = Field(..., description="Unique vote identifier")
+    voter: str = Field(..., description="Voter's wallet address")
+    choice: Any = Field(..., description="Vote choice (supports multiple types: int, List[int], Dict[str, float], str)")
+    created: int = Field(..., ge=0, description="Timestamp when vote was cast")
+    vp: float = Field(..., ge=0.0, description="Total voting power")
+    vp_by_strategy: List[float] = Field(..., description="Voting power breakdown by strategy")
+
+    # Optional fields
+    vp_state: Optional[str] = Field(None, description="Voting power calculation state")
+    space: Optional[Dict[str, Any]] = Field(None, description="Associated space object")
+    proposal: Optional[Dict[str, Any]] = Field(None, description="Associated proposal object")
+    reason: Optional[str] = Field(None, description="Vote reasoning/comment")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    ipfs: Optional[str] = Field(None, description="IPFS hash")
+    app: Optional[str] = Field(None, description="App used to vote")
+
+    @staticmethod
+    def _validate_vote_string_field(value: str, field_name: str) -> str:
+        """Validate string fields with vote-specific assertions."""
+        # Runtime assertion: value must be valid string type
+        assert isinstance(value, str), f"{field_name} must be string, got {type(value)}"
+        assert value.strip(), f"{field_name} cannot be empty or whitespace"
+        
+        cleaned_value = value.strip()
+        
+        # Runtime assertion: cleaned value must have meaningful content
+        assert len(cleaned_value) > 0, f"{field_name} must contain meaningful content"
+        assert cleaned_value != value or not value.startswith(" ") and not value.endswith(" "), f"{field_name} should not have leading/trailing whitespace"
+        
+        return cleaned_value
+
+    @staticmethod
+    def _validate_non_negative_integer(value: int, field_name: str) -> int:
+        """Validate non-negative integer fields."""
+        # Runtime assertion: value must be integer type
+        assert isinstance(value, int), f"{field_name} must be integer, got {type(value)}"
+        assert not isinstance(value, bool), f"{field_name} cannot be boolean disguised as int"
+        
+        # Runtime assertion: value must be non-negative
+        assert value >= 0, f"{field_name} cannot be negative: {value}"
+        
+        return value
+
+    @staticmethod
+    def _validate_non_negative_float(value: float, field_name: str) -> float:
+        """Validate non-negative float fields."""
+        # Runtime assertion: value must be numeric type
+        assert isinstance(value, (int, float)), f"{field_name} must be numeric, got {type(value)}"
+        assert value >= 0.0, f"{field_name} cannot be negative: {value}"
+        
+        # Runtime assertion: value must be valid number
+        assert value == value, f"{field_name} cannot be NaN"  # NaN check
+        assert value != float('inf'), f"{field_name} cannot be infinite"
+        
+        return float(value)
+
+    @staticmethod
+    def _validate_vp_by_strategy_list(vp_by_strategy: List[float]) -> List[float]:
+        """Validate vp_by_strategy list with individual value validation."""
+        # Runtime assertion: value must be list
+        assert isinstance(vp_by_strategy, list), f"vp_by_strategy must be list, got {type(vp_by_strategy)}"
+        assert len(vp_by_strategy) > 0, "vp_by_strategy cannot be empty list"
+        
+        # Validate each value is non-negative
+        validated_values = []
+        for i, value in enumerate(vp_by_strategy):
+            validated_value = Vote._validate_non_negative_float(value, f"vp_by_strategy[{i}]")
+            validated_values.append(validated_value)
+        
+        return validated_values
+
+    @field_validator("id")
+    @classmethod
+    def validate_id(cls, v: str) -> str:
+        """Validate vote ID is non-empty string."""
+        return cls._validate_vote_string_field(v, "id")
+
+    @field_validator("voter")
+    @classmethod
+    def validate_voter(cls, v: str) -> str:
+        """Validate voter address is valid blockchain address."""
+        return ModelValidationHelper.validate_blockchain_address(v)
+
+    @field_validator("created")
+    @classmethod
+    def validate_created(cls, v: int) -> int:
+        """Validate created timestamp is non-negative integer."""
+        return cls._validate_non_negative_integer(v, "created")
+
+    @field_validator("vp")
+    @classmethod
+    def validate_vp(cls, v: float) -> float:
+        """Validate voting power is non-negative float."""
+        return cls._validate_non_negative_float(v, "vp")
+
+    @field_validator("vp_by_strategy")
+    @classmethod
+    def validate_vp_by_strategy(cls, v: List[float]) -> List[float]:
+        """Validate vp_by_strategy is non-empty list of non-negative floats."""
+        return cls._validate_vp_by_strategy_list(v)
+
+    @field_validator("choice")
+    @classmethod
+    def validate_choice(cls, v: Any) -> Any:
+        """Validate choice field supports multiple types."""
+        # Runtime assertion: choice cannot be None
+        assert v is not None, "choice field is required and cannot be None"
+        
+        # Runtime assertion: choice cannot be boolean (probably invalid)
+        if isinstance(v, bool):
+            raise ValueError("choice field cannot be boolean type")
+        
+        # Allow int, list, dict, str types (common Snapshot choice types)
+        valid_types = (int, list, dict, str)
+        if not isinstance(v, valid_types):
+            raise ValueError(f"choice must be one of {valid_types}, got {type(v)}")
+        
+        return v
 
 
 class DAO(BaseModel):
