@@ -218,21 +218,28 @@ class VoteType(str, Enum):
 
 class Vote(BaseModel):
     """Snapshot-based individual vote on a proposal."""
-    
+
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
     # Required fields
     id: str = Field(..., description="Unique vote identifier")
     voter: str = Field(..., description="Voter's wallet address")
-    choice: Any = Field(..., description="Vote choice (supports multiple types: int, List[int], Dict[str, float], str)")
+    choice: Any = Field(
+        ...,
+        description="Vote choice (supports multiple types: int, List[int], Dict[str, float], str)",
+    )
     created: int = Field(..., ge=0, description="Timestamp when vote was cast")
     vp: float = Field(..., ge=0.0, description="Total voting power")
-    vp_by_strategy: List[float] = Field(..., description="Voting power breakdown by strategy")
+    vp_by_strategy: List[float] = Field(
+        ..., description="Voting power breakdown by strategy"
+    )
 
     # Optional fields
     vp_state: Optional[str] = Field(None, description="Voting power calculation state")
     space: Optional[Dict[str, Any]] = Field(None, description="Associated space object")
-    proposal: Optional[Dict[str, Any]] = Field(None, description="Associated proposal object")
+    proposal: Optional[Dict[str, Any]] = Field(
+        None, description="Associated proposal object"
+    )
     reason: Optional[str] = Field(None, description="Vote reasoning/comment")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
     ipfs: Optional[str] = Field(None, description="IPFS hash")
@@ -244,53 +251,67 @@ class Vote(BaseModel):
         # Runtime assertion: value must be valid string type
         assert isinstance(value, str), f"{field_name} must be string, got {type(value)}"
         assert value.strip(), f"{field_name} cannot be empty or whitespace"
-        
+
         cleaned_value = value.strip()
-        
+
         # Runtime assertion: cleaned value must have meaningful content
         assert len(cleaned_value) > 0, f"{field_name} must contain meaningful content"
-        assert cleaned_value != value or not value.startswith(" ") and not value.endswith(" "), f"{field_name} should not have leading/trailing whitespace"
-        
+        assert (
+            cleaned_value != value
+            or not value.startswith(" ")
+            and not value.endswith(" ")
+        ), f"{field_name} should not have leading/trailing whitespace"
+
         return cleaned_value
 
     @staticmethod
     def _validate_non_negative_integer(value: int, field_name: str) -> int:
         """Validate non-negative integer fields."""
         # Runtime assertion: value must be integer type
-        assert isinstance(value, int), f"{field_name} must be integer, got {type(value)}"
-        assert not isinstance(value, bool), f"{field_name} cannot be boolean disguised as int"
-        
+        assert isinstance(
+            value, int
+        ), f"{field_name} must be integer, got {type(value)}"
+        assert not isinstance(
+            value, bool
+        ), f"{field_name} cannot be boolean disguised as int"
+
         # Runtime assertion: value must be non-negative
         assert value >= 0, f"{field_name} cannot be negative: {value}"
-        
+
         return value
 
     @staticmethod
     def _validate_non_negative_float(value: float, field_name: str) -> float:
         """Validate non-negative float fields."""
         # Runtime assertion: value must be numeric type
-        assert isinstance(value, (int, float)), f"{field_name} must be numeric, got {type(value)}"
+        assert isinstance(
+            value, (int, float)
+        ), f"{field_name} must be numeric, got {type(value)}"
         assert value >= 0.0, f"{field_name} cannot be negative: {value}"
-        
+
         # Runtime assertion: value must be valid number
         assert value == value, f"{field_name} cannot be NaN"  # NaN check
-        assert value != float('inf'), f"{field_name} cannot be infinite"
-        
+        assert value != float("inf"), f"{field_name} cannot be infinite"
+
         return float(value)
 
     @staticmethod
     def _validate_vp_by_strategy_list(vp_by_strategy: List[float]) -> List[float]:
         """Validate vp_by_strategy list with individual value validation."""
         # Runtime assertion: value must be list
-        assert isinstance(vp_by_strategy, list), f"vp_by_strategy must be list, got {type(vp_by_strategy)}"
+        assert isinstance(
+            vp_by_strategy, list
+        ), f"vp_by_strategy must be list, got {type(vp_by_strategy)}"
         assert len(vp_by_strategy) > 0, "vp_by_strategy cannot be empty list"
-        
+
         # Validate each value is non-negative
         validated_values = []
         for i, value in enumerate(vp_by_strategy):
-            validated_value = Vote._validate_non_negative_float(value, f"vp_by_strategy[{i}]")
+            validated_value = Vote._validate_non_negative_float(
+                value, f"vp_by_strategy[{i}]"
+            )
             validated_values.append(validated_value)
-        
+
         return validated_values
 
     @field_validator("id")
@@ -329,16 +350,16 @@ class Vote(BaseModel):
         """Validate choice field supports multiple types."""
         # Runtime assertion: choice cannot be None
         assert v is not None, "choice field is required and cannot be None"
-        
+
         # Runtime assertion: choice cannot be boolean (probably invalid)
         if isinstance(v, bool):
             raise ValueError("choice field cannot be boolean type")
-        
+
         # Allow int, list, dict, str types (common Snapshot choice types)
         valid_types = (int, list, dict, str)
         if not isinstance(v, valid_types):
             raise ValueError(f"choice must be one of {valid_types}, got {type(v)}")
-        
+
         return v
 
 
@@ -356,7 +377,7 @@ class DAO(BaseModel):
 
 class Proposal(BaseModel):
     """Snapshot-based DAO proposal model."""
-    
+
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
     # Required fields
@@ -379,10 +400,14 @@ class Proposal(BaseModel):
     body: Optional[str] = Field(None, description="Proposal description/content")
     snapshot: Optional[int] = Field(None, ge=0, description="Block number snapshot")
     space: Optional[Dict[str, Any]] = Field(None, description="Associated space object")
-    scores_by_strategy: Optional[Dict[str, Any]] = Field(None, description="Breakdown by strategy")
+    scores_by_strategy: Optional[Dict[str, Any]] = Field(
+        None, description="Breakdown by strategy"
+    )
     updated: Optional[int] = Field(None, ge=0, description="Last update timestamp")
     type: Optional[str] = Field(None, description="Proposal type")
-    strategies: List[Dict[str, Any]] = Field(default_factory=list, description="Voting strategies used")
+    strategies: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Voting strategies used"
+    )
     plugins: Optional[Dict[str, Any]] = Field(None, description="Additional plugins")
     ipfs: Optional[str] = Field(None, description="IPFS hash")
     discussion: Optional[str] = Field(None, description="Discussion link")
@@ -394,38 +419,48 @@ class Proposal(BaseModel):
         # Runtime assertion: value must be valid string type
         assert isinstance(value, str), f"{field_name} must be string, got {type(value)}"
         assert value.strip(), f"{field_name} cannot be empty or whitespace"
-        
+
         cleaned_value = value.strip()
-        
+
         # Runtime assertion: cleaned value must have meaningful content
         assert len(cleaned_value) > 0, f"{field_name} must contain meaningful content"
-        assert cleaned_value != value or not value.startswith(" ") and not value.endswith(" "), f"{field_name} should not have leading/trailing whitespace"
-        
+        assert (
+            cleaned_value != value
+            or not value.startswith(" ")
+            and not value.endswith(" ")
+        ), f"{field_name} should not have leading/trailing whitespace"
+
         return cleaned_value
 
     @staticmethod
     def _validate_non_negative_integer(value: int, field_name: str) -> int:
         """Validate non-negative integer fields."""
         # Runtime assertion: value must be integer type
-        assert isinstance(value, int), f"{field_name} must be integer, got {type(value)}"
-        assert not isinstance(value, bool), f"{field_name} cannot be boolean disguised as int"
-        
+        assert isinstance(
+            value, int
+        ), f"{field_name} must be integer, got {type(value)}"
+        assert not isinstance(
+            value, bool
+        ), f"{field_name} cannot be boolean disguised as int"
+
         # Runtime assertion: value must be non-negative
         assert value >= 0, f"{field_name} cannot be negative: {value}"
-        
+
         return value
 
     @staticmethod
     def _validate_non_negative_float(value: float, field_name: str) -> float:
         """Validate non-negative float fields."""
         # Runtime assertion: value must be numeric type
-        assert isinstance(value, (int, float)), f"{field_name} must be numeric, got {type(value)}"
+        assert isinstance(
+            value, (int, float)
+        ), f"{field_name} must be numeric, got {type(value)}"
         assert value >= 0.0, f"{field_name} cannot be negative: {value}"
-        
+
         # Runtime assertion: value must be valid number
         assert value == value, f"{field_name} cannot be NaN"  # NaN check
-        assert value != float('inf'), f"{field_name} cannot be infinite"
-        
+        assert value != float("inf"), f"{field_name} cannot be infinite"
+
         return float(value)
 
     @staticmethod
@@ -434,21 +469,23 @@ class Proposal(BaseModel):
         # Runtime assertion: value must be list type
         assert isinstance(value, list), f"{field_name} must be list, got {type(value)}"
         assert len(value) > 0, f"{field_name} cannot be empty list"
-        
+
         return value
-    
+
     @staticmethod
     def _validate_optional_url(url: Optional[str], field_name: str) -> Optional[str]:
         """Validate optional URL fields with consistent error handling."""
         if url is None:
             return url
-            
+
         # Runtime assertion: URL must be string if provided
-        assert isinstance(url, str), f"{field_name} must be string if provided, got {type(url)}"
+        assert isinstance(
+            url, str
+        ), f"{field_name} must be string if provided, got {type(url)}"
         assert url.strip(), f"{field_name} cannot be empty string if provided"
-        
+
         cleaned_url = url.strip()
-        
+
         try:
             # Use HttpUrl for validation then return as string
             HttpUrl(cleaned_url)
@@ -456,24 +493,30 @@ class Proposal(BaseModel):
             assert "://" in cleaned_url, f"{field_name} must contain protocol scheme"
             return cleaned_url
         except Exception as e:
-            raise ValueError(f"Invalid {field_name} URL format: {cleaned_url}. Error: {str(e)}")
+            raise ValueError(
+                f"Invalid {field_name} URL format: {cleaned_url}. Error: {str(e)}"
+            )
 
     @staticmethod
     def _validate_scores_list(scores: List[float]) -> List[float]:
         """Validate scores list with individual score validation."""
         # Runtime assertion: value must be list
         assert isinstance(scores, list), f"scores must be list, got {type(scores)}"
-        
+
         # Validate each score is non-negative
         validated_scores = []
         for i, score in enumerate(scores):
-            validated_score = Proposal._validate_non_negative_float(score, f"scores[{i}]")
+            validated_score = Proposal._validate_non_negative_float(
+                score, f"scores[{i}]"
+            )
             validated_scores.append(validated_score)
-        
+
         return validated_scores
 
     @staticmethod
-    def _validate_optional_integer(value: Optional[int], field_name: str) -> Optional[int]:
+    def _validate_optional_integer(
+        value: Optional[int], field_name: str
+    ) -> Optional[int]:
         """Validate optional integer fields."""
         if value is not None:
             return Proposal._validate_non_negative_integer(value, field_name)
@@ -582,18 +625,22 @@ class Proposal(BaseModel):
         return cls._validate_optional_url(v, "discussion")
 
     @staticmethod
-    def _validate_scores_choices_consistency(scores: List[float], choices: List[str]) -> None:
+    def _validate_scores_choices_consistency(
+        scores: List[float], choices: List[str]
+    ) -> None:
         """Validate scores and choices array consistency."""
         # Runtime assertion: arrays must have matching lengths
-        assert len(scores) == len(choices), f"scores array length ({len(scores)}) must match choices array length ({len(choices)})"
+        assert (
+            len(scores) == len(choices)
+        ), f"scores array length ({len(scores)}) must match choices array length ({len(choices)})"
         assert len(scores) > 0, "Both scores and choices arrays must be non-empty"
-    
-    @model_validator(mode='after')
-    def validate_proposal_consistency(self) -> 'Proposal':
+
+    @model_validator(mode="after")
+    def validate_proposal_consistency(self) -> "Proposal":
         """Validate cross-field consistency."""
         # Validate scores and choices arrays have consistent lengths
         self._validate_scores_choices_consistency(self.scores, self.choices)
-        
+
         return self
 
 
@@ -989,7 +1036,7 @@ class AgentState(BaseModel):
 
 class Space(BaseModel):
     """Snapshot Space model representing a DAO governance space."""
-    
+
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
     # Required fields
@@ -1012,15 +1059,9 @@ class Space(BaseModel):
     private: bool = Field(default=False, description="Whether space is private")
     verified: bool = Field(default=False, description="Verification status")
     created: int = Field(..., ge=0, description="Creation timestamp")
-    proposalsCount: int = Field(
-        default=0, ge=0, description="Total proposal count"
-    )
-    followersCount: int = Field(
-        default=0, ge=0, description="Follower count"
-    )
-    votesCount: int = Field(
-        default=0, ge=0, description="Total vote count"
-    )
+    proposalsCount: int = Field(default=0, ge=0, description="Total proposal count")
+    followersCount: int = Field(default=0, ge=0, description="Follower count")
+    votesCount: int = Field(default=0, ge=0, description="Total vote count")
 
     # Optional fields
     about: Optional[str] = Field(None, description="Description of the space")
@@ -1036,13 +1077,17 @@ class Space(BaseModel):
         # Runtime assertion: value must be valid string type
         assert isinstance(value, str), f"{field_name} must be string, got {type(value)}"
         assert value.strip(), f"{field_name} cannot be empty or whitespace"
-        
+
         cleaned_value = value.strip()
-        
+
         # Runtime assertion: cleaned value must have meaningful content
         assert len(cleaned_value) > 0, f"{field_name} must contain meaningful content"
-        assert cleaned_value != value or not value.startswith(" ") and not value.endswith(" "), f"{field_name} should not have leading/trailing whitespace"
-        
+        assert (
+            cleaned_value != value
+            or not value.startswith(" ")
+            and not value.endswith(" ")
+        ), f"{field_name} should not have leading/trailing whitespace"
+
         return cleaned_value
 
     @staticmethod
@@ -1050,13 +1095,15 @@ class Space(BaseModel):
         """Validate optional URL fields with consistent error handling."""
         if url is None:
             return url
-            
+
         # Runtime assertion: URL must be string if provided
-        assert isinstance(url, str), f"{field_name} must be string if provided, got {type(url)}"
+        assert isinstance(
+            url, str
+        ), f"{field_name} must be string if provided, got {type(url)}"
         assert url.strip(), f"{field_name} cannot be empty string if provided"
-        
+
         cleaned_url = url.strip()
-        
+
         try:
             # Use HttpUrl for validation then return as string
             HttpUrl(cleaned_url)
@@ -1064,24 +1111,34 @@ class Space(BaseModel):
             assert "://" in cleaned_url, f"{field_name} must contain protocol scheme"
             return cleaned_url
         except Exception as e:
-            raise ValueError(f"Invalid {field_name} URL format: {cleaned_url}. Error: {str(e)}")
+            raise ValueError(
+                f"Invalid {field_name} URL format: {cleaned_url}. Error: {str(e)}"
+            )
 
     @staticmethod
     def _validate_boolean_field(value, field_name: str) -> bool:
         """Validate boolean fields with runtime assertions."""
         # Runtime assertion: value must be boolean type
-        assert isinstance(value, bool), f"{field_name} must be boolean type, got {type(value)}"
-        assert value is True or value is False, f"{field_name} must be exactly True or False, got {value}"
-        
+        assert isinstance(
+            value, bool
+        ), f"{field_name} must be boolean type, got {type(value)}"
+        assert (
+            value is True or value is False
+        ), f"{field_name} must be exactly True or False, got {value}"
+
         return value
 
     @staticmethod
     def _validate_integer_field(value, field_name: str) -> int:
         """Validate integer fields with runtime assertions."""
         # Runtime assertion: value must be integer type
-        assert isinstance(value, int), f"{field_name} must be integer type, got {type(value)}"
-        assert not isinstance(value, bool), f"{field_name} cannot be boolean disguised as int"
-        
+        assert isinstance(
+            value, int
+        ), f"{field_name} must be integer type, got {type(value)}"
+        assert not isinstance(
+            value, bool
+        ), f"{field_name} cannot be boolean disguised as int"
+
         return value
 
     @field_validator("id")
