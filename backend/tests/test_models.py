@@ -79,18 +79,16 @@ class TestProposalState:
     def test_proposal_state_values_are_valid(self) -> None:
         """Test that all proposal state values are correctly defined."""
         expected_states = {
-            "ACTIVE",
-            "DEFEATED",
-            "EXECUTED",
-            "PENDING",
-            "SUCCEEDED",
+            "pending",
+            "active", 
+            "closed",
         }
         actual_states = {state.value for state in ProposalState}
         assert actual_states == expected_states
 
     def test_proposal_state_can_be_created_from_string(self) -> None:
         """Test that ProposalState can be created from string values."""
-        state = ProposalState("ACTIVE")
+        state = ProposalState("active")
         assert state == ProposalState.ACTIVE
 
 
@@ -115,22 +113,45 @@ class TestVote:
     def test_vote_creation_with_all_fields(self) -> None:
         """Test successful Vote creation with all fields."""
         vote = Vote(
-            voter="0x123", support=VoteType.FOR, weight="1000", reason="Good proposal"
+            id="vote-123",
+            voter="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            choice=1,
+            created=1698768000,
+            vp=1000.0,
+            vp_by_strategy=[1000.0],
+            reason="Good proposal"
         )
-        assert vote.voter == "0x123"
-        assert vote.support == VoteType.FOR
-        assert vote.weight == "1000"
+        assert vote.id == "vote-123"
+        assert vote.voter == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        assert vote.choice == 1
+        assert vote.created == 1698768000
+        assert vote.vp == 1000.0
+        assert vote.vp_by_strategy == [1000.0]
         assert vote.reason == "Good proposal"
 
     def test_vote_creation_without_reason(self) -> None:
         """Test Vote creation without optional reason field."""
-        vote = Vote(voter="0x123", support=VoteType.AGAINST, weight="500")
+        vote = Vote(
+            id="vote-456",
+            voter="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            choice=2,
+            created=1698768000,
+            vp=500.0,
+            vp_by_strategy=[500.0]
+        )
         assert vote.reason is None
 
     def test_vote_creation_with_invalid_support_type(self) -> None:
-        """Test that Vote creation fails with invalid support type."""
+        """Test that Vote creation fails with invalid choice type."""
         with pytest.raises(ValidationError):
-            Vote(voter="0x123", support="INVALID", weight="1000")  # type: ignore
+            Vote(
+                id="vote-invalid",
+                voter="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+                choice=True,  # Boolean is not a valid choice type
+                created=1698768000,
+                vp=500.0,
+                vp_by_strategy=[500.0]
+            )  # type: ignore
 
 
 class TestDAO:
@@ -184,17 +205,22 @@ class TestProposal:
     """Test cases for Proposal model."""
 
     def _create_valid_proposal_data(self) -> dict:
-        """Create valid proposal data for testing."""
+        """Create valid proposal data for testing (Snapshot structure)."""
         return {
             "id": "prop-123",
             "title": "Test Proposal",
-            "description": "A test proposal description",
-            "state": ProposalState.ACTIVE,
-            "created_at": datetime.now(),
-            "start_block": 1000,
-            "end_block": 2000,
-            "dao_id": "dao-123",
-            "dao_name": "Test DAO",
+            "choices": ["For", "Against"],
+            "start": 1698768000,
+            "end": 1699372800,
+            "state": "active",
+            "author": "0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            "network": "1",
+            "symbol": "TEST",
+            "scores": [1000.0, 500.0],
+            "scores_total": 1500.0,
+            "votes": 25,
+            "created": 1698681600,
+            "quorum": 100.0,
         }
 
     def test_proposal_creation_with_required_fields(self) -> None:
@@ -204,31 +230,36 @@ class TestProposal:
 
         assert proposal.id == "prop-123"
         assert proposal.title == "Test Proposal"
-        assert proposal.state == ProposalState.ACTIVE
-        assert proposal.votes_for == "0"
-        assert proposal.votes_against == "0"
-        assert proposal.votes_abstain == "0"
-        assert proposal.url is None
+        assert proposal.state == "active"
+        assert proposal.choices == ["For", "Against"]
+        assert proposal.scores == [1000.0, 500.0]
+        assert proposal.scores_total == 1500.0
+        assert proposal.votes == 25
+        assert proposal.author == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
 
     def test_proposal_creation_with_vote_counts(self) -> None:
         """Test Proposal creation with vote counts."""
         proposal_data = self._create_valid_proposal_data()
-        proposal_data.update(
-            {"votes_for": "1000", "votes_against": "500", "votes_abstain": "100"}
-        )
+        proposal_data.update({
+            "scores": [1000.0, 500.0, 100.0],
+            "choices": ["For", "Against", "Abstain"],
+            "votes": 50,
+            "scores_total": 1600.0
+        })
 
         proposal = Proposal(**proposal_data)
-        assert proposal.votes_for == "1000"
-        assert proposal.votes_against == "500"
-        assert proposal.votes_abstain == "100"
+        assert proposal.scores == [1000.0, 500.0, 100.0]
+        assert proposal.choices == ["For", "Against", "Abstain"]
+        assert proposal.votes == 50
+        assert proposal.scores_total == 1600.0
 
     def test_proposal_creation_with_url(self) -> None:
-        """Test Proposal creation with URL."""
+        """Test Proposal creation with discussion URL."""
         proposal_data = self._create_valid_proposal_data()
-        proposal_data["url"] = "https://tally.xyz/proposal/123"
+        proposal_data["discussion"] = "https://forum.example.com/proposal/123"
 
         proposal = Proposal(**proposal_data)
-        assert proposal.url == "https://tally.xyz/proposal/123"
+        assert proposal.discussion == "https://forum.example.com/proposal/123"
 
 
 class TestProposalSummary:
@@ -389,13 +420,18 @@ class TestProposalListResponse:
             Proposal(
                 id="prop-1",
                 title="Test 1",
-                description="Desc 1",
-                state=ProposalState.ACTIVE,
-                created_at=datetime.now(),
-                start_block=1000,
-                end_block=2000,
-                dao_id="dao-1",
-                dao_name="DAO 1",
+                choices=["For", "Against"],
+                start=1698768000,
+                end=1699372800,
+                state="active",
+                author="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+                network="1",
+                symbol="TEST",
+                scores=[100.0, 50.0],
+                scores_total=150.0,
+                votes=10,
+                created=1698681600,
+                quorum=50.0,
             )
         ]
 

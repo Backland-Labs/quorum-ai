@@ -33,7 +33,19 @@ def sample_proposal() -> Proposal:
     return Proposal(
         id="prop-123",
         title="Increase Treasury Allocation for Development",
-        description="""
+        choices=["For", "Against"],
+        start=1698768000,
+        end=1699372800,
+        state="active",
+        author="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+        network="1",
+        symbol="TEST",
+        scores=[1000.0, 500.0],
+        scores_total=1500.0,
+        votes=25,
+        created=1698681600,
+        quorum=100.0,
+        body="""
         This proposal suggests increasing the treasury allocation for development
         activities from 10% to 15% of total funds. The additional 5% will be used
         to hire more developers and accelerate the roadmap implementation.
@@ -46,16 +58,7 @@ def sample_proposal() -> Proposal:
         Risks:
         - Reduced funds for other activities
         - Potential for scope creep
-        """,
-        state=ProposalState.ACTIVE,
-        created_at=datetime.now(),
-        start_block=1000,
-        end_block=2000,
-        votes_for="1000000",
-        votes_against="250000",
-        votes_abstain="50000",
-        dao_id="dao-123",
-        dao_name="Test DAO",
+        """
     )
 
 
@@ -65,7 +68,19 @@ def complex_proposal() -> Proposal:
     return Proposal(
         id="prop-456",
         title="Multi-Phase Protocol Upgrade with Governance Changes",
-        description="""
+        choices=["For", "Against", "Abstain"],
+        start=1698768000,
+        end=1699372800,
+        state="active",
+        author="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+        network="1",
+        symbol="COMPLEX",
+        scores=[5000.0, 1200.0, 300.0],
+        scores_total=6500.0,
+        votes=150,
+        created=1698681600,
+        quorum=1000.0,
+        body="""
         This comprehensive proposal outlines a multi-phase protocol upgrade that includes:
 
         Phase 1: Smart Contract Upgrades
@@ -97,16 +112,7 @@ def complex_proposal() -> Proposal:
         - Potential for smart contract vulnerabilities
         - Community resistance to governance changes
         - Market volatility impact on budget
-        """,
-        state=ProposalState.ACTIVE,
-        created_at=datetime.now(),
-        start_block=2000,
-        end_block=3000,
-        votes_for="5000000",
-        votes_against="1200000",
-        votes_abstain="300000",
-        dao_id="dao-456",
-        dao_name="Complex DAO",
+        """
     )
 
 

@@ -13,7 +13,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from models import Proposal, ProposalState, VotingStrategy
+from models import Proposal, VotingStrategy
 from services.ai_service import AIService
 from config import settings
 
@@ -24,7 +24,7 @@ def generate_fake_proposals() -> List[Proposal]:
         Proposal(
             id="prop-001",
             title="Increase Development Funding by 500,000 USDC",
-            description="""
+            body="""
             This proposal requests an allocation of 500,000 USDC from the treasury to fund critical 
             development initiatives for Q2 2024. The funds will be used for:
             
@@ -41,22 +41,25 @@ def generate_fake_proposals() -> List[Proposal]:
             Expected ROI: 15-25% increase in TVL
             Risk Level: Medium - funds are well-allocated across proven initiatives
             """,
-            state=ProposalState.ACTIVE,
-            created_at=datetime.now() - timedelta(days=2),
-            start_block=18500000,
-            end_block=18520000,
-            votes_for="2500000000000000000000000",  # 2.5M tokens
-            votes_against="800000000000000000000000",  # 800K tokens
-            votes_abstain="200000000000000000000000",   # 200K tokens
-            dao_id="dao-compound",
-            dao_name="Compound Finance",
-            url="https://compound.finance/governance/proposals/001"
+            choices=["For", "Against", "Abstain"],
+            start=int((datetime.now() - timedelta(days=2)).timestamp()),
+            end=int((datetime.now() + timedelta(days=5)).timestamp()),
+            state="active",
+            author="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            network="1",
+            symbol="COMP",
+            scores=[2500.0, 800.0, 200.0],  # Simplified vote counts
+            scores_total=3500.0,
+            votes=350,  # Number of voters
+            created=int((datetime.now() - timedelta(days=3)).timestamp()),
+            quorum=1000.0,
+            discussion="https://compound.finance/governance/proposals/001"
         ),
         
         Proposal(
             id="prop-002", 
             title="Emergency Protocol Pause Mechanism",
-            description="""
+            body="""
             This proposal introduces an emergency pause mechanism that allows the core team to 
             immediately halt protocol operations in case of critical vulnerabilities or exploits.
             
@@ -76,22 +79,25 @@ def generate_fake_proposals() -> List[Proposal]:
             
             Security considerations: The pause mechanism itself has been audited by Trail of Bits.
             """,
-            state=ProposalState.ACTIVE,
-            created_at=datetime.now() - timedelta(days=1),
-            start_block=18510000,
-            end_block=18530000,
-            votes_for="1200000000000000000000000",   # 1.2M tokens
-            votes_against="2100000000000000000000000", # 2.1M tokens  
-            votes_abstain="300000000000000000000000",  # 300K tokens
-            dao_id="dao-aave",
-            dao_name="Aave Protocol",
-            url="https://aave.com/governance/proposals/002"
+            choices=["For", "Against", "Abstain"],
+            start=int((datetime.now() - timedelta(days=1)).timestamp()),
+            end=int((datetime.now() + timedelta(days=6)).timestamp()),
+            state="active",
+            author="0x123abc456def789012345678901234567890abcd",
+            network="1",
+            symbol="AAVE",
+            scores=[1200.0, 2100.0, 300.0],  # Simplified vote counts
+            scores_total=3600.0,
+            votes=450,  # Number of voters
+            created=int((datetime.now() - timedelta(days=2)).timestamp()),
+            quorum=1500.0,
+            discussion="https://aave.com/governance/proposals/002"
         ),
         
         Proposal(
             id="prop-003",
             title="Launch Experimental NFT Marketplace Integration", 
-            description="""
+            body="""
             This proposal seeks approval to integrate our DeFi protocol with the emerging NFT 
             marketplace ecosystem. The integration would allow users to:
             
@@ -115,22 +121,25 @@ def generate_fake_proposals() -> List[Proposal]:
             Timeline: 4 months for MVP, 8 months for full launch
             Success metrics: $10M+ in NFT-backed TVL within 12 months
             """,
-            state=ProposalState.ACTIVE,
-            created_at=datetime.now() - timedelta(hours=12),
-            start_block=18520000,
-            end_block=18540000,
-            votes_for="900000000000000000000000",    # 900K tokens
-            votes_against="1800000000000000000000000", # 1.8M tokens
-            votes_abstain="100000000000000000000000",  # 100K tokens
-            dao_id="dao-uniswap",
-            dao_name="Uniswap Protocol", 
-            url="https://uniswap.org/governance/proposals/003"
+            choices=["For", "Against", "Abstain"],
+            start=int((datetime.now() - timedelta(hours=12)).timestamp()),
+            end=int((datetime.now() + timedelta(days=7)).timestamp()),
+            state="active",
+            author="0xdef456789abc012345678901234567890abcdef",
+            network="1",
+            symbol="UNI",
+            scores=[900.0, 1800.0, 100.0],  # Simplified vote counts
+            scores_total=2800.0,
+            votes=280,  # Number of voters
+            created=int((datetime.now() - timedelta(days=1)).timestamp()),
+            quorum=1200.0,
+            discussion="https://uniswap.org/governance/proposals/003"
         ),
         
         Proposal(
             id="prop-004",
             title="Reduce Gas Costs Through L2 Migration",
-            description="""
+            body="""
             This proposal outlines a comprehensive plan to migrate 80% of protocol operations 
             to Arbitrum One to reduce gas costs for users by an estimated 90%.
             
@@ -158,22 +167,25 @@ def generate_fake_proposals() -> List[Proposal]:
             
             Expected user adoption: 70% within 6 months based on similar migrations
             """,
-            state=ProposalState.ACTIVE,
-            created_at=datetime.now() - timedelta(hours=6),
-            start_block=18525000, 
-            end_block=18545000,
-            votes_for="3200000000000000000000000",   # 3.2M tokens
-            votes_against="400000000000000000000000",  # 400K tokens
-            votes_abstain="150000000000000000000000",  # 150K tokens
-            dao_id="dao-makerdao",
-            dao_name="MakerDAO",
-            url="https://makerdao.com/governance/proposals/004"
+            choices=["For", "Against", "Abstain"],
+            start=int((datetime.now() - timedelta(hours=6)).timestamp()),
+            end=int((datetime.now() + timedelta(days=8)).timestamp()),
+            state="active",
+            author="0x456789abcdef012345678901234567890abcdef4",
+            network="1",
+            symbol="MKR",
+            scores=[3200.0, 400.0, 150.0],  # Simplified vote counts
+            scores_total=3750.0,
+            votes=375,  # Number of voters
+            created=int((datetime.now() - timedelta(hours=12)).timestamp()),
+            quorum=1800.0,
+            discussion="https://makerdao.com/governance/proposals/004"
         ),
         
         Proposal(
             id="prop-005",
             title="Controversial: Allocate 50% Treasury to Bitcoin",
-            description="""
+            body="""
             This proposal suggests allocating 50% of our 10M USDC treasury to Bitcoin as a hedge 
             against inflation and to diversify our holdings beyond stablecoins.
             
@@ -200,16 +212,19 @@ def generate_fake_proposals() -> List[Proposal]:
             
             Vote carefully - this decision shapes our financial future for years.
             """,
-            state=ProposalState.ACTIVE,
-            created_at=datetime.now() - timedelta(minutes=30),
-            start_block=18530000,
-            end_block=18550000, 
-            votes_for="800000000000000000000000",    # 800K tokens
-            votes_against="2800000000000000000000000", # 2.8M tokens
-            votes_abstain="600000000000000000000000",  # 600K tokens
-            dao_id="dao-yearn",
-            dao_name="Yearn Finance",
-            url="https://yearn.finance/governance/proposals/005"
+            choices=["For", "Against", "Abstain"],
+            start=int((datetime.now() - timedelta(minutes=30)).timestamp()),
+            end=int((datetime.now() + timedelta(days=9)).timestamp()),
+            state="active",
+            author="0x789abcdef0123456789012345678901234567890",
+            network="1",
+            symbol="YFI",
+            scores=[800.0, 2800.0, 600.0],  # Simplified vote counts
+            scores_total=4200.0,
+            votes=420,  # Number of voters
+            created=int((datetime.now() - timedelta(hours=1)).timestamp()),
+            quorum=2000.0,
+            discussion="https://yearn.finance/governance/proposals/005"
         )
     ]
     
@@ -259,8 +274,8 @@ async def test_voting_strategies(demo_mode: bool = False):
     
     for i, proposal in enumerate(proposals, 1):
         print(f"\n📋 Testing Proposal {i}: {proposal.title}")
-        print(f"DAO: {proposal.dao_name}")
-        print(f"Current votes: FOR {int(proposal.votes_for)/1e18:.1f}K, AGAINST {int(proposal.votes_against)/1e18:.1f}K")
+        print(f"Symbol: {proposal.symbol}")
+        print(f"Current votes: {proposal.scores[0]:.1f}, {proposal.scores[1]:.1f}, {proposal.scores[2]:.1f} (For/Against/Abstain)")
         
         for strategy in strategies:
             try:
