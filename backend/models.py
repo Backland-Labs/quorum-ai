@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator, HttpUrl
+from pydantic import BaseModel, Field, field_validator, model_validator, HttpUrl
 
 
 # Constants for VoteDecision model
@@ -240,21 +240,256 @@ class DAO(BaseModel):
 
 
 class Proposal(BaseModel):
-    """DAO proposal model."""
+    """Snapshot-based DAO proposal model."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
+    # Required fields
     id: str = Field(..., description="Unique proposal identifier")
     title: str = Field(..., description="Proposal title")
-    description: str = Field(..., description="Proposal description")
-    state: ProposalState = Field(..., description="Current proposal state")
-    created_at: datetime = Field(..., description="Creation timestamp")
-    start_block: int = Field(..., description="Block number when voting starts")
-    end_block: int = Field(..., description="Block number when voting ends")
-    votes_for: str = Field("0", description="Total votes in favor")
-    votes_against: str = Field("0", description="Total votes against")
-    votes_abstain: str = Field("0", description="Total abstain votes")
-    dao_id: str = Field(..., description="DAO this proposal belongs to")
-    dao_name: str = Field(..., description="Name of the DAO")
-    url: Optional[str] = Field(None, description="URL to view proposal")
+    choices: List[str] = Field(..., description="Array of voting options")
+    start: int = Field(..., ge=0, description="Start timestamp")
+    end: int = Field(..., ge=0, description="End timestamp")
+    state: str = Field(..., description="Proposal state")
+    author: str = Field(..., description="Author's wallet address")
+    network: str = Field(..., description="Blockchain network")
+    symbol: str = Field(..., description="Token symbol")
+    scores: List[float] = Field(..., description="Vote scores per choice")
+    scores_total: float = Field(..., ge=0.0, description="Total voting power")
+    votes: int = Field(..., ge=0, description="Number of votes cast")
+    created: int = Field(..., ge=0, description="Creation timestamp")
+    quorum: float = Field(..., ge=0.0, description="Quorum threshold")
+
+    # Optional fields
+    body: Optional[str] = Field(None, description="Proposal description/content")
+    snapshot: Optional[int] = Field(None, ge=0, description="Block number snapshot")
+    space: Optional[Dict[str, Any]] = Field(None, description="Associated space object")
+    scores_by_strategy: Optional[Dict[str, Any]] = Field(None, description="Breakdown by strategy")
+    updated: Optional[int] = Field(None, ge=0, description="Last update timestamp")
+    type: Optional[str] = Field(None, description="Proposal type")
+    strategies: List[Dict[str, Any]] = Field(default_factory=list, description="Voting strategies used")
+    plugins: Optional[Dict[str, Any]] = Field(None, description="Additional plugins")
+    ipfs: Optional[str] = Field(None, description="IPFS hash")
+    discussion: Optional[str] = Field(None, description="Discussion link")
+    privacy: Optional[str] = Field(None, description="Privacy setting")
+
+    @staticmethod
+    def _validate_proposal_string_field(value: str, field_name: str) -> str:
+        """Validate string fields with proposal-specific assertions."""
+        # Runtime assertion: value must be valid string type
+        assert isinstance(value, str), f"{field_name} must be string, got {type(value)}"
+        assert value.strip(), f"{field_name} cannot be empty or whitespace"
+        
+        cleaned_value = value.strip()
+        
+        # Runtime assertion: cleaned value must have meaningful content
+        assert len(cleaned_value) > 0, f"{field_name} must contain meaningful content"
+        assert cleaned_value != value or not value.startswith(" ") and not value.endswith(" "), f"{field_name} should not have leading/trailing whitespace"
+        
+        return cleaned_value
+
+    @staticmethod
+    def _validate_non_negative_integer(value: int, field_name: str) -> int:
+        """Validate non-negative integer fields."""
+        # Runtime assertion: value must be integer type
+        assert isinstance(value, int), f"{field_name} must be integer, got {type(value)}"
+        assert not isinstance(value, bool), f"{field_name} cannot be boolean disguised as int"
+        
+        # Runtime assertion: value must be non-negative
+        assert value >= 0, f"{field_name} cannot be negative: {value}"
+        
+        return value
+
+    @staticmethod
+    def _validate_non_negative_float(value: float, field_name: str) -> float:
+        """Validate non-negative float fields."""
+        # Runtime assertion: value must be numeric type
+        assert isinstance(value, (int, float)), f"{field_name} must be numeric, got {type(value)}"
+        assert value >= 0.0, f"{field_name} cannot be negative: {value}"
+        
+        # Runtime assertion: value must be valid number
+        assert value == value, f"{field_name} cannot be NaN"  # NaN check
+        assert value != float('inf'), f"{field_name} cannot be infinite"
+        
+        return float(value)
+
+    @staticmethod
+    def _validate_non_empty_list(value: List[Any], field_name: str) -> List[Any]:
+        """Validate non-empty list fields."""
+        # Runtime assertion: value must be list type
+        assert isinstance(value, list), f"{field_name} must be list, got {type(value)}"
+        assert len(value) > 0, f"{field_name} cannot be empty list"
+        
+        return value
+    
+    @staticmethod
+    def _validate_optional_url(url: Optional[str], field_name: str) -> Optional[str]:
+        """Validate optional URL fields with consistent error handling."""
+        if url is None:
+            return url
+            
+        # Runtime assertion: URL must be string if provided
+        assert isinstance(url, str), f"{field_name} must be string if provided, got {type(url)}"
+        assert url.strip(), f"{field_name} cannot be empty string if provided"
+        
+        cleaned_url = url.strip()
+        
+        try:
+            # Use HttpUrl for validation then return as string
+            HttpUrl(cleaned_url)
+            # Runtime assertion: URL validation succeeded
+            assert "://" in cleaned_url, f"{field_name} must contain protocol scheme"
+            return cleaned_url
+        except Exception as e:
+            raise ValueError(f"Invalid {field_name} URL format: {cleaned_url}. Error: {str(e)}")
+
+    @staticmethod
+    def _validate_scores_list(scores: List[float]) -> List[float]:
+        """Validate scores list with individual score validation."""
+        # Runtime assertion: value must be list
+        assert isinstance(scores, list), f"scores must be list, got {type(scores)}"
+        
+        # Validate each score is non-negative
+        validated_scores = []
+        for i, score in enumerate(scores):
+            validated_score = Proposal._validate_non_negative_float(score, f"scores[{i}]")
+            validated_scores.append(validated_score)
+        
+        return validated_scores
+
+    @staticmethod
+    def _validate_optional_integer(value: Optional[int], field_name: str) -> Optional[int]:
+        """Validate optional integer fields."""
+        if value is not None:
+            return Proposal._validate_non_negative_integer(value, field_name)
+        return value
+
+    @field_validator("id")
+    @classmethod
+    def validate_id(cls, v: str) -> str:
+        """Validate proposal ID is non-empty string."""
+        return cls._validate_proposal_string_field(v, "id")
+
+    @field_validator("title")
+    @classmethod
+    def validate_title(cls, v: str) -> str:
+        """Validate proposal title is non-empty string."""
+        return cls._validate_proposal_string_field(v, "title")
+
+    @field_validator("state")
+    @classmethod
+    def validate_state(cls, v: str) -> str:
+        """Validate proposal state is non-empty string."""
+        return cls._validate_proposal_string_field(v, "state")
+
+    @field_validator("author")
+    @classmethod
+    def validate_author(cls, v: str) -> str:
+        """Validate author address is non-empty string."""
+        return cls._validate_proposal_string_field(v, "author")
+
+    @field_validator("network")
+    @classmethod
+    def validate_network(cls, v: str) -> str:
+        """Validate network is non-empty string."""
+        return cls._validate_proposal_string_field(v, "network")
+
+    @field_validator("symbol")
+    @classmethod
+    def validate_symbol(cls, v: str) -> str:
+        """Validate symbol is non-empty string."""
+        return cls._validate_proposal_string_field(v, "symbol")
+
+    @field_validator("choices")
+    @classmethod
+    def validate_choices(cls, v: List[str]) -> List[str]:
+        """Validate choices is non-empty list."""
+        return cls._validate_non_empty_list(v, "choices")
+
+    @field_validator("scores")
+    @classmethod
+    def validate_scores(cls, v: List[float]) -> List[float]:
+        """Validate scores are non-negative floats."""
+        return cls._validate_scores_list(v)
+
+    @field_validator("scores_total")
+    @classmethod
+    def validate_scores_total(cls, v: float) -> float:
+        """Validate scores_total is non-negative float."""
+        return cls._validate_non_negative_float(v, "scores_total")
+
+    @field_validator("votes")
+    @classmethod
+    def validate_votes(cls, v: int) -> int:
+        """Validate votes is non-negative integer."""
+        return cls._validate_non_negative_integer(v, "votes")
+
+    @field_validator("created")
+    @classmethod
+    def validate_created(cls, v: int) -> int:
+        """Validate created timestamp is non-negative integer."""
+        return cls._validate_non_negative_integer(v, "created")
+
+    @field_validator("quorum")
+    @classmethod
+    def validate_quorum(cls, v: float) -> float:
+        """Validate quorum is non-negative float."""
+        return cls._validate_non_negative_float(v, "quorum")
+
+    @field_validator("start")
+    @classmethod
+    def validate_start(cls, v: int) -> int:
+        """Validate start timestamp is non-negative integer."""
+        return cls._validate_non_negative_integer(v, "start")
+
+    @field_validator("end")
+    @classmethod
+    def validate_end(cls, v: int) -> int:
+        """Validate end timestamp is non-negative integer."""
+        return cls._validate_non_negative_integer(v, "end")
+
+    @field_validator("snapshot")
+    @classmethod
+    def validate_snapshot(cls, v: Optional[int]) -> Optional[int]:
+        """Validate snapshot block number is non-negative if provided."""
+        return cls._validate_optional_integer(v, "snapshot")
+
+    @field_validator("updated")
+    @classmethod
+    def validate_updated(cls, v: Optional[int]) -> Optional[int]:
+        """Validate updated timestamp is non-negative if provided."""
+        return cls._validate_optional_integer(v, "updated")
+
+    @field_validator("discussion")
+    @classmethod
+    def validate_discussion_url(cls, v: Optional[str]) -> Optional[str]:
+        """Validate discussion URL format if provided."""
+        return cls._validate_optional_url(v, "discussion")
+
+    @staticmethod
+    def _validate_scores_choices_consistency(scores: List[float], choices: List[str]) -> None:
+        """Validate scores and choices array consistency."""
+        # Runtime assertion: arrays must have matching lengths
+        assert len(scores) == len(choices), f"scores array length ({len(scores)}) must match choices array length ({len(choices)})"
+        assert len(scores) > 0, "Both scores and choices arrays must be non-empty"
+    
+    @staticmethod
+    def _validate_timestamp_consistency(start: int, end: int, created: int) -> None:
+        """Validate logical order of timestamps."""
+        # Runtime assertion: timestamps must be in logical order
+        assert end >= start, f"end timestamp ({end}) cannot be before start timestamp ({start})"
+        assert start >= created, f"start timestamp ({start}) cannot be before created timestamp ({created})"
+
+    @model_validator(mode='after')
+    def validate_proposal_consistency(self) -> 'Proposal':
+        """Validate cross-field consistency."""
+        # Validate scores and choices arrays have consistent lengths
+        self._validate_scores_choices_consistency(self.scores, self.choices)
+        
+        # Validate logical order of timestamps
+        self._validate_timestamp_consistency(self.start, self.end, self.created)
+        
+        return self
 
 
 class ProposalSummary(BaseModel):
