@@ -1,7 +1,7 @@
 """Service for interacting with the Snapshot API."""
 
 import asyncio
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import httpx
 import logfire
@@ -29,6 +29,13 @@ DEFAULT_ACCEPT_TYPE = 'application/json'
 MAX_LOG_QUERY_LENGTH = 100
 MAX_LOG_RESPONSE_LENGTH = 500
 QUERY_TRUNCATION_SUFFIX = "..."
+
+# Pagination and default values
+DEFAULT_PROPOSALS_LIMIT = 20
+DEFAULT_VOTES_LIMIT = 100
+DEFAULT_PAGINATION_SKIP = 0
+DEFAULT_VOTING_POWER = 0.0
+NO_RESPONSE_TEXT_FALLBACK = "No response text available"
 
 
 class SnapshotService:
@@ -94,6 +101,12 @@ class SnapshotService:
             return query[:MAX_LOG_QUERY_LENGTH] + QUERY_TRUNCATION_SUFFIX
         return query
 
+    def _extract_response_text(self, response: Optional[httpx.Response]) -> str:
+        """Extract response text safely with fallback."""
+        if response is None:
+            return "No response available"
+        return getattr(response, 'text', NO_RESPONSE_TEXT_FALLBACK)
+
     def _log_and_raise_network_error(self, error_type: str, exception: Exception, **context) -> None:
         """Log network error and raise NetworkError with context."""
         logfire.error(f"Network error: {error_type}", 
@@ -106,7 +119,7 @@ class SnapshotService:
         elif isinstance(exception, httpx.ConnectError):
             raise NetworkError(f"Cannot connect to Snapshot API ({self.base_url}): {str(exception)}") from exception
         elif isinstance(exception, httpx.HTTPStatusError):
-            response_text = getattr(exception.response, 'text', 'No response text available')
+            response_text = self._extract_response_text(exception.response)
             raise NetworkError(f"Snapshot API HTTP {exception.response.status_code} error: {str(exception)}. Response: {response_text[:200]}") from exception
         else:
             # Fallback for any other httpx exception types
@@ -171,8 +184,9 @@ class SnapshotService:
             raise SnapshotServiceError("Snapshot API response missing 'data' field")
         
         data_result = response_data.get("data", {})
+        data_keys_for_logging = list(data_result.keys()) if isinstance(data_result, dict) else "non-dict-data"
         logfire.info("Snapshot GraphQL query completed successfully", 
-                    data_keys=list(data_result.keys()) if isinstance(data_result, dict) else "non-dict-data",
+                    data_keys=data_keys_for_logging,
                     response_size=len(str(data_result)))
         
         return data_result
@@ -213,7 +227,7 @@ class SnapshotService:
             except httpx.ConnectError as e:
                 self._log_and_raise_network_error("connection", e)
             except httpx.HTTPStatusError as e:
-                response_text = getattr(e.response, 'text', 'No response text available')
+                response_text = self._extract_response_text(e.response)
                 self._log_and_raise_network_error("HTTP error", e, 
                                                  status_code=e.response.status_code,
                                                  response_text=response_text[:MAX_LOG_RESPONSE_LENGTH])
@@ -223,3 +237,262 @@ class SnapshotService:
                              error=str(e), 
                              error_type=type(e).__name__)
                 raise SnapshotServiceError(f"Unexpected error during Snapshot API query execution: {str(e)}") from e
+
+    # GraphQL Query Constants - Based on live API testing
+    GET_SPACE_QUERY = """
+    query GetSpace($id: String!) {
+        space(id: $id) {
+            id
+            name
+            about
+            network
+            symbol
+            strategies {
+                name
+                params
+            }
+            admins
+            moderators
+            members
+            private
+            verified
+            created
+            proposalsCount
+            followersCount
+            votesCount
+        }
+    }
+    """
+
+    GET_SPACES_QUERY = """
+    query GetSpaces($ids: [String!]!) {
+        spaces(where: {id_in: $ids}) {
+            id
+            name
+            about
+            network
+            symbol
+            strategies {
+                name
+                params
+            }
+            admins
+            moderators
+            members
+            private
+            verified
+            created
+            proposalsCount
+            followersCount
+            votesCount
+        }
+    }
+    """
+
+    GET_PROPOSAL_QUERY = """
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+            body
+            choices
+            start
+            end
+            state
+            scores
+            scores_total
+            votes
+            created
+            quorum
+            author
+            network
+            symbol
+        }
+    }
+    """
+
+    GET_PROPOSALS_QUERY = """
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        proposals(where: {space_in: $spaces, state: $state}, first: $first, skip: $skip, orderBy: "created", orderDirection: desc) {
+            id
+            title
+            body
+            choices
+            start
+            end
+            state
+            scores
+            scores_total
+            votes
+            created
+            quorum
+            author
+            network
+            symbol
+        }
+    }
+    """
+
+    GET_VOTES_QUERY = """
+    query GetVotes($proposal: String!, $first: Int, $skip: Int) {
+        votes(where: {proposal: $proposal}, first: $first, skip: $skip, orderBy: "vp", orderDirection: desc) {
+            id
+            voter
+            choice
+            vp
+            vp_by_strategy
+            created
+            reason
+        }
+    }
+    """
+
+    GET_VOTING_POWER_QUERY = """
+    query GetVotingPower($voter: String!, $space: String!) {
+        vp(voter: $voter, space: $space) {
+            vp
+            vp_by_strategy
+        }
+    }
+    """
+
+    # Space Methods
+    async def get_space(self, space_id: str) -> Optional['Space']:
+        """Get a single space by ID.
+        
+        Args:
+            space_id: The space identifier
+            
+        Returns:
+            Space object if found, None otherwise
+        """
+        variables = {"id": space_id}
+        
+        with logfire.span("get_space", space_id=space_id):
+            result = await self.execute_query(self.GET_SPACE_QUERY, variables)
+            
+            if result.get("space") is None:
+                return None
+                
+            from models import Space
+            return Space(**result["space"])
+
+    async def get_spaces(self, space_ids: List[str]) -> List['Space']:
+        """Get multiple spaces by IDs.
+        
+        Args:
+            space_ids: List of space identifiers
+            
+        Returns:
+            List of Space objects
+        """
+        variables = {"ids": space_ids}
+        
+        with logfire.span("get_spaces", space_ids=space_ids, count=len(space_ids)):
+            result = await self.execute_query(self.GET_SPACES_QUERY, variables)
+            
+            from models import Space
+            return [Space(**space_data) for space_data in result.get("spaces", [])]
+
+    # Proposal Methods
+    async def get_proposal(self, proposal_id: str) -> Optional['Proposal']:
+        """Get a single proposal by ID.
+        
+        Args:
+            proposal_id: The proposal identifier
+            
+        Returns:
+            Proposal object if found, None otherwise
+        """
+        variables = {"id": proposal_id}
+        
+        with logfire.span("get_proposal", proposal_id=proposal_id):
+            result = await self.execute_query(self.GET_PROPOSAL_QUERY, variables)
+            
+            if result.get("proposal") is None:
+                return None
+                
+            from models import Proposal
+            return Proposal(**result["proposal"])
+
+    async def get_proposals(self, space_ids: List[str], state: Optional[str] = None, first: int = DEFAULT_PROPOSALS_LIMIT, skip: int = DEFAULT_PAGINATION_SKIP) -> List['Proposal']:
+        """Get proposals for given spaces with optional filtering and pagination.
+        
+        Args:
+            space_ids: List of space identifiers
+            state: Optional state filter (e.g., "active", "closed", "pending")
+            first: Number of proposals to fetch (default: 20)
+            skip: Number of proposals to skip for pagination (default: 0)
+            
+        Returns:
+            List of Proposal objects
+        """
+        base_variables = {
+            "spaces": space_ids,
+            "first": first,
+            "skip": skip
+        }
+        
+        query_variables = base_variables.copy()
+        if state is not None:
+            query_variables["state"] = state
+        
+        with logfire.span("get_proposals", 
+                         space_ids=space_ids, 
+                         state=state, 
+                         first=first, 
+                         skip=skip):
+            result = await self.execute_query(self.GET_PROPOSALS_QUERY, query_variables)
+            
+            from models import Proposal
+            return [Proposal(**proposal_data) for proposal_data in result.get("proposals", [])]
+
+    # Vote Methods
+    async def get_votes(self, proposal_id: str, first: int = DEFAULT_VOTES_LIMIT, skip: int = DEFAULT_PAGINATION_SKIP) -> List['Vote']:
+        """Get votes for a proposal with pagination.
+        
+        Args:
+            proposal_id: The proposal identifier
+            first: Number of votes to fetch (default: 100)
+            skip: Number of votes to skip for pagination (default: 0)
+            
+        Returns:
+            List of Vote objects ordered by voting power (descending)
+        """
+        variables = {
+            "proposal": proposal_id,
+            "first": first,
+            "skip": skip
+        }
+        
+        with logfire.span("get_votes", 
+                         proposal_id=proposal_id, 
+                         first=first, 
+                         skip=skip):
+            result = await self.execute_query(self.GET_VOTES_QUERY, variables)
+            
+            from models import Vote
+            return [Vote(**vote_data) for vote_data in result.get("votes", [])]
+
+    async def get_voting_power(self, space_id: str, voter_address: str) -> float:
+        """Get voting power for a voter in a specific space.
+        
+        Args:
+            space_id: The space identifier
+            voter_address: The voter's wallet address
+            
+        Returns:
+            Voting power as float
+        """
+        variables = {
+            "space": space_id,
+            "voter": voter_address
+        }
+        
+        with logfire.span("get_voting_power", 
+                         space_id=space_id, 
+                         voter_address=voter_address):
+            result = await self.execute_query(self.GET_VOTING_POWER_QUERY, variables)
+            
+            voting_power_result = result.get("vp", {})
+            return voting_power_result.get("vp", DEFAULT_VOTING_POWER)
