@@ -201,13 +201,11 @@ class Organization(BaseModel):
 
 
 class ProposalState(str, Enum):
-    """Proposal state enumeration."""
+    """Snapshot proposal state enumeration."""
 
-    ACTIVE = "ACTIVE"
-    DEFEATED = "DEFEATED"
-    EXECUTED = "EXECUTED"
-    PENDING = "PENDING"
-    SUCCEEDED = "SUCCEEDED"
+    PENDING = "pending"
+    ACTIVE = "active"
+    CLOSED = "closed"
 
 
 class VoteType(str, Enum):
