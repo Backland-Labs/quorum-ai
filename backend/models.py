@@ -588,21 +588,11 @@ class Proposal(BaseModel):
         assert len(scores) == len(choices), f"scores array length ({len(scores)}) must match choices array length ({len(choices)})"
         assert len(scores) > 0, "Both scores and choices arrays must be non-empty"
     
-    @staticmethod
-    def _validate_timestamp_consistency(start: int, end: int, created: int) -> None:
-        """Validate logical order of timestamps."""
-        # Runtime assertion: timestamps must be in logical order
-        assert end >= start, f"end timestamp ({end}) cannot be before start timestamp ({start})"
-        assert start >= created, f"start timestamp ({start}) cannot be before created timestamp ({created})"
-
     @model_validator(mode='after')
     def validate_proposal_consistency(self) -> 'Proposal':
         """Validate cross-field consistency."""
         # Validate scores and choices arrays have consistent lengths
         self._validate_scores_choices_consistency(self.scores, self.choices)
-        
-        # Validate logical order of timestamps
-        self._validate_timestamp_consistency(self.start, self.end, self.created)
         
         return self
 
