@@ -33,7 +33,7 @@ from models import (
 from services.tally_service import TallyService
 from services.ai_service import AIService
 from services.safe_service import SafeService
-from services.activity_service import ActivityService  
+from services.activity_service import ActivityService
 from services.voting_service import VotingService
 
 

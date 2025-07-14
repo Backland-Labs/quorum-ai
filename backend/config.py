@@ -117,7 +117,7 @@ class Settings(BaseSettings):
         alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
         description="Olas service registry contract",
     )
-    
+
     # OLAS configuration for new services
     safe_contract_addresses: str = Field(
         default="{}",
@@ -129,7 +129,7 @@ class Settings(BaseSettings):
         alias="STORE_PATH",
         description="Path for persistent data storage",
     )
-    
+
     # RPC endpoints for multiple chains
     ethereum_ledger_rpc: Optional[str] = Field(
         default=None,
@@ -138,7 +138,7 @@ class Settings(BaseSettings):
     )
     gnosis_ledger_rpc: Optional[str] = Field(
         default=None,
-        alias="GNOSIS_LEDGER_RPC", 
+        alias="GNOSIS_LEDGER_RPC",
         description="Gnosis chain RPC endpoint",
     )
     base_ledger_rpc: Optional[str] = Field(
