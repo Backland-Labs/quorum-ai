@@ -6,6 +6,7 @@ import httpx
 import logfire
 
 from config import settings
+from models import Space, Proposal, Vote
 
 
 # Custom exceptions for better error handling
@@ -418,7 +419,7 @@ class SnapshotService:
     """
 
     # Space Methods
-    async def get_space(self, space_id: str) -> Optional["Space"]:
+    async def get_space(self, space_id: str) -> Optional[Space]:
         """Get a single space by ID.
 
         Args:
@@ -435,11 +436,9 @@ class SnapshotService:
             if result.get("space") is None:
                 return None
 
-            from models import Space
-
             return Space(**result["space"])
 
-    async def get_spaces(self, space_ids: List[str]) -> List["Space"]:
+    async def get_spaces(self, space_ids: List[str]) -> List[Space]:
         """Get multiple spaces by IDs.
 
         Args:
@@ -453,12 +452,10 @@ class SnapshotService:
         with logfire.span("get_spaces", space_ids=space_ids, count=len(space_ids)):
             result = await self.execute_query(self.GET_SPACES_QUERY, variables)
 
-            from models import Space
-
             return [Space(**space_data) for space_data in result.get("spaces", [])]
 
     # Proposal Methods
-    async def get_proposal(self, proposal_id: str) -> Optional["Proposal"]:
+    async def get_proposal(self, proposal_id: str) -> Optional[Proposal]:
         """Get a single proposal by ID.
 
         Args:
@@ -475,8 +472,6 @@ class SnapshotService:
             if result.get("proposal") is None:
                 return None
 
-            from models import Proposal
-
             return Proposal(**result["proposal"])
 
     async def get_proposals(
@@ -485,7 +480,7 @@ class SnapshotService:
         state: Optional[str] = None,
         first: int = DEFAULT_PROPOSALS_LIMIT,
         skip: int = DEFAULT_PAGINATION_SKIP,
-    ) -> List["Proposal"]:
+    ) -> List[Proposal]:
         """Get proposals for given spaces with optional filtering and pagination.
 
         Args:
@@ -508,8 +503,6 @@ class SnapshotService:
         ):
             result = await self.execute_query(self.GET_PROPOSALS_QUERY, query_variables)
 
-            from models import Proposal
-
             return [
                 Proposal(**proposal_data)
                 for proposal_data in result.get("proposals", [])
@@ -521,7 +514,7 @@ class SnapshotService:
         proposal_id: str,
         first: int = DEFAULT_VOTES_LIMIT,
         skip: int = DEFAULT_PAGINATION_SKIP,
-    ) -> List["Vote"]:
+    ) -> List[Vote]:
         """Get votes for a proposal with pagination.
 
         Args:
@@ -536,8 +529,6 @@ class SnapshotService:
 
         with logfire.span("get_votes", proposal_id=proposal_id, first=first, skip=skip):
             result = await self.execute_query(self.GET_VOTES_QUERY, variables)
-
-            from models import Vote
 
             return [Vote(**vote_data) for vote_data in result.get("votes", [])]
 
