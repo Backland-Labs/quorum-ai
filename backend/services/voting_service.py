@@ -9,6 +9,24 @@ import httpx
 import logfire
 
 
+# Constants for vote choices and API configuration
+VOTE_CHOICE_FOR = 1
+VOTE_CHOICE_AGAINST = 2
+VOTE_CHOICE_ABSTAIN = 3
+VALID_VOTE_CHOICES = [VOTE_CHOICE_FOR, VOTE_CHOICE_AGAINST, VOTE_CHOICE_ABSTAIN]
+
+SNAPSHOT_HUB_URL = "https://seq.snapshot.org/"
+VOTE_CHOICE_DESCRIPTIONS = {
+    VOTE_CHOICE_FOR: "For",
+    VOTE_CHOICE_AGAINST: "Against", 
+    VOTE_CHOICE_ABSTAIN: "Abstain"
+}
+
+# Snapshot vote message configuration
+SNAPSHOT_DOMAIN_NAME = "snapshot"
+SNAPSHOT_DOMAIN_VERSION = "0.1.4"
+
+
 class VotingService:
     """Service for handling Snapshot DAO voting operations."""
 
@@ -42,8 +60,33 @@ class VotingService:
         from_address = Web3.to_checksum_address(self.account.address)
         proposal_is_bytes32 = proposal.startswith("0x") and len(proposal) == 66
 
-        snapshot_message = {
-            "domain": {"name": "snapshot", "version": "0.1.4"},
+        snapshot_message = self._build_snapshot_message_structure(
+            from_address, space, timestamp, proposal, choice, proposal_is_bytes32
+        )
+
+        logfire.info(
+            "Snapshot vote message created",
+            space=space,
+            proposal=proposal,
+            choice=choice,
+            timestamp=timestamp,
+            from_address=from_address,
+        )
+
+        return snapshot_message
+
+    def _build_snapshot_message_structure(
+        self, 
+        from_address: str, 
+        space: str, 
+        timestamp: int, 
+        proposal: str, 
+        choice: int, 
+        proposal_is_bytes32: bool
+    ) -> Dict[str, Any]:
+        """Build the complete Snapshot message structure."""
+        return {
+            "domain": {"name": SNAPSHOT_DOMAIN_NAME, "version": SNAPSHOT_DOMAIN_VERSION},
             "types": {
                 "EIP712Domain": [
                     {"name": "name", "type": "string"},
@@ -75,17 +118,6 @@ class VotingService:
                 "metadata": "{}",
             },
         }
-
-        logfire.info(
-            "Snapshot vote message created",
-            space=space,
-            proposal=proposal,
-            choice=choice,
-            timestamp=timestamp,
-            from_address=from_address,
-        )
-
-        return snapshot_message
 
     def sign_snapshot_message(self, snapshot_message: Dict[str, Any]) -> str:
         """Sign a Snapshot vote message with the EOA private key.
@@ -124,7 +156,7 @@ class VotingService:
             logfire.info("Submitting Snapshot vote")
 
             # Snapshot Hub API endpoint
-            url = "https://seq.snapshot.org/"
+            url = SNAPSHOT_HUB_URL
 
             # Prepare Snapshot vote request
             from_address = Web3.to_checksum_address(self.account.address)
@@ -236,7 +268,7 @@ class VotingService:
         Returns:
             True if choice is valid (1, 2, or 3)
         """
-        return choice in [1, 2, 3]
+        return choice in VALID_VOTE_CHOICES
 
     def get_vote_choice_description(self, choice: int) -> str:
         """Get human-readable description of vote choice.
@@ -247,8 +279,7 @@ class VotingService:
         Returns:
             String description of the choice
         """
-        choice_map = {1: "For", 2: "Against", 3: "Abstain"}
-        return choice_map.get(choice, "Unknown")
+        return VOTE_CHOICE_DESCRIPTIONS.get(choice, "Unknown")
 
     async def test_snapshot_voting(
         self,

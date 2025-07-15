@@ -289,24 +289,8 @@ def _transform_snapshot_votes_to_voters(votes: List[Vote]) -> List[ProposalVoter
     """Transform Snapshot Vote objects to ProposalVoter objects."""
     voters = []
     for vote in votes:
-        # Map Snapshot choice to VoteType
-        # In Snapshot: 1=For, 2=Against, 3=Abstain (typical convention)
-        vote_type_map = {
-            1: VoteType.FOR,
-            2: VoteType.AGAINST, 
-            3: VoteType.ABSTAIN
-        }
-        
-        # Handle choice - could be int, str, or other types
-        choice = vote.choice
-        if isinstance(choice, int):
-            vote_type = vote_type_map.get(choice, VoteType.FOR)  # Default to FOR if unknown
-        else:
-            # If choice is not an int, default to FOR
-            vote_type = VoteType.FOR
-        
-        # Convert voting power from float to string with 18 decimal places (Wei format)
-        amount_wei = str(int(vote.vp * 10**18))
+        vote_type = _map_snapshot_choice_to_vote_type(vote.choice)
+        amount_wei = _convert_voting_power_to_wei(vote.vp)
         
         voter = ProposalVoter(
             address=vote.voter,
@@ -316,6 +300,29 @@ def _transform_snapshot_votes_to_voters(votes: List[Vote]) -> List[ProposalVoter
         voters.append(voter)
     
     return voters
+
+
+def _map_snapshot_choice_to_vote_type(choice: Any) -> VoteType:
+    """Map Snapshot choice to VoteType with proper type handling."""
+    # Snapshot choice mapping: 1=For, 2=Against, 3=Abstain (typical convention)
+    SNAPSHOT_CHOICE_MAP = {
+        1: VoteType.FOR,
+        2: VoteType.AGAINST, 
+        3: VoteType.ABSTAIN
+    }
+    DEFAULT_VOTE_TYPE = VoteType.FOR
+    
+    if isinstance(choice, int):
+        return SNAPSHOT_CHOICE_MAP.get(choice, DEFAULT_VOTE_TYPE)
+    else:
+        # If choice is not an int, default to FOR
+        return DEFAULT_VOTE_TYPE
+
+
+def _convert_voting_power_to_wei(voting_power: float) -> str:
+    """Convert voting power from float to Wei format string."""
+    WEI_DECIMAL_PLACES = 18
+    return str(int(voting_power * 10**WEI_DECIMAL_PLACES))
 
 
 # Private helper functions

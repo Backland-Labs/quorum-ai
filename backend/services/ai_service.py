@@ -400,23 +400,37 @@ class AIService:
 
     def _format_proposal_info(self, proposal: Proposal) -> str:
         """Format proposal information for the AI prompt."""
-        # Calculate individual vote counts from scores array
-        votes_for = proposal.scores[0] if len(proposal.scores) > 0 else 0
-        votes_against = proposal.scores[1] if len(proposal.scores) > 1 else 0
-        votes_abstain = proposal.scores[2] if len(proposal.scores) > 2 else 0
+        vote_breakdown = self._extract_vote_breakdown(proposal)
+        proposal_description = self._get_proposal_description(proposal)
         
         return f"""**Proposal Title:** {proposal.title}
         **Network:** {proposal.network} ({proposal.symbol})
         **Current Status:** {proposal.state}
 
         **Voting Results:**
-        - Votes For: {votes_for:,.0f}
-        - Votes Against: {votes_against:,.0f}
-        - Abstain: {votes_abstain:,.0f}
+        - Votes For: {vote_breakdown['for']:,.0f}
+        - Votes Against: {vote_breakdown['against']:,.0f}
+        - Abstain: {vote_breakdown['abstain']:,.0f}
         - Total Votes: {proposal.votes}
 
         **Proposal Description:**
-        {getattr(proposal, 'body', 'No description available')}"""
+        {proposal_description}"""
+
+    def _extract_vote_breakdown(self, proposal: Proposal) -> Dict[str, float]:
+        """Extract individual vote counts from proposal scores array."""
+        votes_for = proposal.scores[0] if len(proposal.scores) > 0 else 0
+        votes_against = proposal.scores[1] if len(proposal.scores) > 1 else 0
+        votes_abstain = proposal.scores[2] if len(proposal.scores) > 2 else 0
+        
+        return {
+            'for': votes_for,
+            'against': votes_against,
+            'abstain': votes_abstain
+        }
+
+    def _get_proposal_description(self, proposal: Proposal) -> str:
+        """Get proposal description with fallback."""
+        return getattr(proposal, 'body', 'No description available')
 
     def _get_json_response_format(self) -> str:
         """Get the JSON response format specification."""
