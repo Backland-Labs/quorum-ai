@@ -29,6 +29,9 @@ from models import (
     OrganizationListResponse,
     DAOListResponse,
     ProposalTopVoters,
+    ProposalVoter,
+    Vote,
+    VoteType,
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
@@ -423,9 +426,12 @@ async def get_proposal_top_voters(
         with logfire.span(
             "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
         ):
-            # Fetch data
-            voters = await tally_service.get_proposal_votes(proposal_id, limit)
+            # Fetch data using Snapshot
+            votes = await snapshot_service.get_votes(proposal_id, first=limit)
             proposal = await _validate_proposal_exists(proposal_id)
+            
+            # Transform Snapshot votes to ProposalVoter format
+            voters = _transform_snapshot_votes_to_voters(votes)
 
             # Build response
             response_data = ProposalTopVoters(proposal_id=proposal_id, voters=voters)
@@ -458,7 +464,7 @@ def _validate_proposal_id(proposal_id: str) -> None:
 
 async def _validate_proposal_exists(proposal_id: str) -> Proposal:
     """Validate that proposal exists and return it."""
-    proposal = await tally_service.get_proposal_by_id(proposal_id)
+    proposal = await snapshot_service.get_proposal(proposal_id)
     if not proposal:
         raise HTTPException(
             status_code=404, detail=f"Proposal with ID {proposal_id} not found"
@@ -486,6 +492,39 @@ def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -
     headers["ETag"] = f'"{etag}"'
 
     return headers
+
+
+def _transform_snapshot_votes_to_voters(votes: List[Vote]) -> List[ProposalVoter]:
+    """Transform Snapshot Vote objects to ProposalVoter objects."""
+    voters = []
+    for vote in votes:
+        # Map Snapshot choice to VoteType
+        # In Snapshot: 1=For, 2=Against, 3=Abstain (typical convention)
+        vote_type_map = {
+            1: VoteType.FOR,
+            2: VoteType.AGAINST, 
+            3: VoteType.ABSTAIN
+        }
+        
+        # Handle choice - could be int, str, or other types
+        choice = vote.choice
+        if isinstance(choice, int):
+            vote_type = vote_type_map.get(choice, VoteType.FOR)  # Default to FOR if unknown
+        else:
+            # If choice is not an int, default to FOR
+            vote_type = VoteType.FOR
+        
+        # Convert voting power from float to string with 18 decimal places (Wei format)
+        amount_wei = str(int(vote.vp * 10**18))
+        
+        voter = ProposalVoter(
+            address=vote.voter,
+            amount=amount_wei,
+            vote_type=vote_type
+        )
+        voters.append(voter)
+    
+    return voters
 
 
 # Private helper functions
