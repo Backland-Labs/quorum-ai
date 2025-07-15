@@ -13,10 +13,6 @@ from fastapi.responses import JSONResponse
 
 from config import settings
 from models import (
-    DAO,
-    Organization,
-    OrganizationWithProposals,
-    OrganizationOverviewResponse,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -25,15 +21,11 @@ from models import (
     SortOrder,
     SummarizeRequest,
     SummarizeResponse,
-    TopOrganizationsResponse,
-    OrganizationListResponse,
-    DAOListResponse,
     ProposalTopVoters,
     ProposalVoter,
     Vote,
     VoteType,
 )
-from services.tally_service import TallyService
 from services.ai_service import AIService
 from services.safe_service import SafeService
 from services.activity_service import ActivityService
@@ -42,7 +34,6 @@ from services.snapshot_service import SnapshotService
 
 
 # Global service instances
-tally_service: TallyService
 ai_service: AIService
 safe_service: SafeService
 activity_service: ActivityService
@@ -54,10 +45,9 @@ snapshot_service: SnapshotService
 async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
-    global tally_service, ai_service, safe_service, activity_service, voting_service, snapshot_service
+    global ai_service, safe_service, activity_service, voting_service, snapshot_service
 
     # Initialize services
-    tally_service = TallyService()
     ai_service = AIService()
     safe_service = SafeService()
     activity_service = ActivityService()
@@ -117,243 +107,30 @@ async def health_check():
     }
 
 
-# Organization endpoints
-@app.get("/organizations", response_model=TopOrganizationsResponse)
-async def get_organizations():
-    """Get top 3 organizations with their 3 most active proposals, summarized with AI."""
-    start_time = time.time()
-
-    try:
-        with logfire.span("get_top_organizations_with_proposals"):
-            # Fetch top organizations with their proposals
-            org_data = await tally_service.get_top_organizations_with_proposals()
-
-            if not org_data:
-                return TopOrganizationsResponse(
-                    organizations=[],
-                    processing_time=time.time() - start_time,
-                    model_used=settings.ai_model,
-                )
-
-            organizations_with_proposals = []
-
-            for org_info in org_data:
-                org_dict = org_info["organization"]
-                proposals = org_info["proposals"]
-
-                # Create Organization object
-                organization = Organization(
-                    id=org_dict["id"],
-                    name=org_dict["name"],
-                    slug=org_dict["slug"],
-                    chain_ids=org_dict["chain_ids"],
-                    token_ids=org_dict["token_ids"],
-                    governor_ids=org_dict["governor_ids"],
-                    has_active_proposals=org_dict["has_active_proposals"],
-                    proposals_count=org_dict["proposals_count"],
-                    delegates_count=org_dict["delegates_count"],
-                    delegates_votes_count=org_dict["delegates_votes_count"],
-                    token_owners_count=org_dict["token_owners_count"],
-                )
-
-                # Summarize proposals if any exist
-                summarized_proposals = []
-                if proposals:
-                    summaries = await ai_service.summarize_multiple_proposals(proposals)
-                    summarized_proposals = summaries
-
-                organizations_with_proposals.append(
-                    OrganizationWithProposals(
-                        organization=organization, proposals=summarized_proposals
-                    )
-                )
-
-            processing_time = time.time() - start_time
-
-            return TopOrganizationsResponse(
-                organizations=organizations_with_proposals,
-                processing_time=processing_time,
-                model_used=settings.ai_model,
-            )
-
-    except Exception as e:
-        logfire.error("Failed to fetch top organizations with proposals", error=str(e))
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch top organizations with proposals: {str(e)}",
-        )
-
-
-@app.get("/organizations/list", response_model=OrganizationListResponse)
-async def get_organizations_list(
-    limit: int = Query(default=100, ge=1, le=200),
-    after_cursor: Optional[str] = Query(default=None),
-):
-    """Get list of available organizations, sorted alphabetically."""
-    try:
-        with logfire.span("get_organizations", limit=limit, after_cursor=after_cursor):
-            organizations, next_cursor = await tally_service.get_organizations(
-                limit=limit, after_cursor=after_cursor
-            )
-            return OrganizationListResponse(
-                organizations=organizations, next_cursor=next_cursor
-            )
-
-    except Exception as e:
-        logfire.error("Failed to fetch organizations", error=str(e))
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch organizations: {str(e)}"
-        )
-
-
-@app.get(
-    "/organizations/{org_id}/overview", response_model=OrganizationOverviewResponse
-)
-async def get_organization_overview(org_id: str):
-    """Get comprehensive overview data for a specific organization."""
-    assert org_id, "Organization ID cannot be empty"
-    assert isinstance(org_id, str), "Organization ID must be a string"
-
-    try:
-        with logfire.span("get_organization_overview", org_id=org_id):
-            overview_data = await tally_service.get_organization_overview(org_id)
-
-            if not overview_data:
-                raise HTTPException(
-                    status_code=404, detail=f"Organization with ID {org_id} not found"
-                )
-
-            return OrganizationOverviewResponse(**overview_data)
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logfire.error(
-            "Failed to fetch organization overview", org_id=org_id, error=str(e)
-        )
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch organization overview: {str(e)}"
-        )
-
-
-# DAO endpoints
-@app.get("/daos", response_model=DAOListResponse)
-async def get_daos(
-    organization_id: str,
-    limit: int = Query(default=50, ge=1, le=100),
-    after_cursor: Optional[str] = Query(default=None),
-):
-    """Get list of available DAOs."""
-    try:
-        with logfire.span("get_daos", limit=limit, after_cursor=after_cursor):
-            daos, next_cursor = await tally_service.get_daos(
-                organization_id=organization_id, limit=limit, after_cursor=after_cursor
-            )
-            return DAOListResponse(daos=daos, next_cursor=next_cursor)
-
-    except Exception as e:
-        logfire.error("Failed to fetch DAOs", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to fetch DAOs: {str(e)}")
-
-
-@app.get("/organizations/{org_id}/proposals", response_model=ProposalListResponse)
-async def get_organization_proposals(
-    org_id: str,
-    state: Optional[ProposalState] = Query(default=None),
-    limit: int = Query(default=20, ge=1, le=100),
-    after_cursor: Optional[str] = Query(default=None),
-    sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
-    sort_order: SortOrder = Query(default=SortOrder.DESC),
-):
-    """Get list of proposals for a specific organization."""
-    try:
-        filters = _build_proposal_filters(
-            dao_id=None,
-            organization_id=org_id,
-            state=state,
-            limit=limit,
-            after_cursor=after_cursor,
-            sort_by=sort_by,
-            sort_order=sort_order,
-        )
-
-        with logfire.span(
-            "get_organization_proposals", org_id=org_id, filters=filters.dict()
-        ):
-            proposals, next_cursor = await tally_service.get_proposals(filters)
-
-            return ProposalListResponse(
-                proposals=proposals,
-                next_cursor=next_cursor,
-            )
-
-    except Exception as e:
-        logfire.error(
-            "Failed to fetch organization proposals", org_id=org_id, error=str(e)
-        )
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch organization proposals: {str(e)}"
-        )
-
-
-@app.get("/daos/{dao_id}", response_model=DAO)
-async def get_dao_by_id(dao_id: str):
-    """Get a specific DAO by ID."""
-    try:
-        with logfire.span("get_dao_by_id", dao_id=dao_id):
-            dao = await tally_service.get_dao_by_id(dao_id)
-
-            if not dao:
-                raise HTTPException(
-                    status_code=404, detail=f"DAO with ID {dao_id} not found"
-                )
-
-            return dao
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logfire.error("Failed to fetch DAO", dao_id=dao_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to fetch DAO: {str(e)}")
-
-
 # Proposal endpoints
 @app.get("/proposals", response_model=ProposalListResponse)
 async def get_proposals(
-    dao_id: Optional[str] = Query(default=None),
-    organization_id: Optional[str] = Query(default=None),
-    space_id: Optional[str] = Query(default=None),
+    space_id: str = Query(..., description="Snapshot space ID to fetch proposals from"),
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
-    after_cursor: Optional[str] = Query(default=None),
-    sort_by: SortCriteria = Query(default=SortCriteria.CREATED_DATE),
-    sort_order: SortOrder = Query(default=SortOrder.DESC),
+    skip: int = Query(default=0, ge=0, description="Number of proposals to skip"),
 ):
-    """Get list of proposals with optional filtering and sorting."""
+    """Get list of proposals from a Snapshot space with optional filtering."""
     try:
         with logfire.span("get_proposals", space_id=space_id, state=state, limit=limit):
-            # Determine which service to use based on parameters
-            if space_id:
-                # Use Snapshot service for space-based queries
-                space_ids = [space_id]
-                snapshot_state = state.value.lower() if state else None
-                proposals = await snapshot_service.get_proposals(
-                    space_ids=space_ids, 
-                    state=snapshot_state, 
-                    first=limit,
-                    skip=0  # Snapshot uses skip instead of cursor
-                )
-                next_cursor = None  # Snapshot doesn't use cursors, use skip/pagination instead
-            else:
-                # Fall back to Tally service for backward compatibility
-                filters = _build_proposal_filters(
-                    dao_id, organization_id, state, limit, after_cursor, sort_by, sort_order
-                )
-                proposals, next_cursor = await tally_service.get_proposals(filters)
+            # Use Snapshot service
+            space_ids = [space_id]
+            snapshot_state = state.value.lower() if state else None
+            proposals = await snapshot_service.get_proposals(
+                space_ids=space_ids, 
+                state=snapshot_state, 
+                first=limit,
+                skip=skip
+            )
 
             return ProposalListResponse(
                 proposals=proposals,
-                next_cursor=next_cursor,
+                next_cursor=None,  # Use skip-based pagination instead
             )
 
     except Exception as e:

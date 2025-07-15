@@ -5,7 +5,6 @@ from unittest.mock import Mock, AsyncMock
 from fastapi.testclient import TestClient
 
 from main import app
-from services.tally_service import TallyService
 from services.ai_service import AIService
 from services.snapshot_service import SnapshotService
 from models import ProposalVoter, VoteType, Proposal, ProposalState, Vote
@@ -17,7 +16,6 @@ def client():
     # Initialize global services for testing
     import main
 
-    main.tally_service = Mock(spec=TallyService)
     main.ai_service = Mock(spec=AIService)
     main.snapshot_service = Mock(spec=SnapshotService)
     return TestClient(app)
