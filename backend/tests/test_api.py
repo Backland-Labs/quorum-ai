@@ -71,7 +71,7 @@ def sample_proposal():
         votes_abstain="50000",
         dao_id="dao-123",
         dao_name="Test DAO",
-        url="https://tally.xyz/proposal/123",
+        url="https://snapshot.org/#/proposal/123",
     )
 
 
@@ -369,7 +369,7 @@ class TestProposalEndpoints:
                 votes_abstain="500000",
                 dao_id="dao-123",
                 dao_name="Test DAO",
-                url="https://tally.xyz/proposal/1",
+                url="https://snapshot.org/#/proposal/1",
             )
 
             medium_vote_proposal = Proposal(
@@ -385,7 +385,7 @@ class TestProposalEndpoints:
                 votes_abstain="250000",
                 dao_id="dao-123",
                 dao_name="Test DAO",
-                url="https://tally.xyz/proposal/2",
+                url="https://snapshot.org/#/proposal/2",
             )
 
             low_vote_proposal = Proposal(
@@ -401,7 +401,7 @@ class TestProposalEndpoints:
                 votes_abstain="50000",
                 dao_id="dao-123",
                 dao_name="Test DAO",
-                url="https://tally.xyz/proposal/3",
+                url="https://snapshot.org/#/proposal/3",
             )
 
             mock_get_proposals.return_value = (

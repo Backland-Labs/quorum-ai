@@ -64,7 +64,7 @@ class TestProposalTopVotersEndpoint:
         proposal_id = "test-proposal-123"
         import main
 
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -95,7 +95,7 @@ class TestProposalTopVotersEndpoint:
         proposal_id = "test-proposal-123"
         import main
 
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -103,7 +103,7 @@ class TestProposalTopVotersEndpoint:
         # Assert
         assert response.status_code == 200
         # Verify the service was called with default limit
-        main.tally_service.get_proposal_votes.assert_called_once_with(proposal_id, 10)
+        main.snapshot_service.get_votes.assert_called_once_with(proposal_id, first=10)
 
     def test_limit_parameter_custom(self, client: TestClient, sample_voters):
         """Test that custom limit parameter is passed correctly."""
@@ -112,7 +112,7 @@ class TestProposalTopVotersEndpoint:
         custom_limit = 25
         import main
 
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
 
         # Act
         response = client.get(
@@ -122,8 +122,8 @@ class TestProposalTopVotersEndpoint:
         # Assert
         assert response.status_code == 200
         # Verify the service was called with custom limit
-        main.tally_service.get_proposal_votes.assert_called_once_with(
-            proposal_id, custom_limit
+        main.snapshot_service.get_votes.assert_called_once_with(
+            proposal_id, first=custom_limit
         )
 
     def test_limit_parameter_validation_too_low(self, client: TestClient):
@@ -160,9 +160,9 @@ class TestProposalTopVotersEndpoint:
         proposal_id = "non-existent-proposal"
         import main
 
-        # Mock get_proposal_by_id to return None (not found)
-        main.tally_service.get_proposal_by_id = AsyncMock(return_value=None)
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=[])
+        # Mock get_proposal to return None (not found)
+        main.snapshot_service.get_proposal = AsyncMock(return_value=None)
+        main.snapshot_service.get_votes = AsyncMock(return_value=[])
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -178,7 +178,7 @@ class TestProposalTopVotersEndpoint:
         import main
 
         # Mock the service to raise an exception
-        main.tally_service.get_proposal_votes = AsyncMock(
+        main.snapshot_service.get_votes = AsyncMock(
             side_effect=Exception("Service unavailable")
         )
 
