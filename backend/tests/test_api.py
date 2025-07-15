@@ -610,6 +610,52 @@ class TestSummarizeEndpoints:
         data = response.json()
         assert "detail" in data
 
+    @patch("main.ai_service.summarize_multiple_proposals")
+    @patch("main.snapshot_service.get_proposal")
+    def test_summarize_proposals_with_snapshot_data(
+        self,
+        mock_get_proposal: Mock,
+        mock_summarize: Mock,
+        client: TestClient,
+        sample_snapshot_proposal: Proposal,
+    ) -> None:
+        """Test proposal summarization using Snapshot data - RED phase."""
+        proposal_id = "0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671"
+        
+        # Mock the service to return Snapshot proposal
+        mock_get_proposal.return_value = sample_snapshot_proposal
+        
+        # Create a summary with the correct Snapshot proposal ID
+        snapshot_summary = ProposalSummary(
+            proposal_id=proposal_id,
+            title="[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway",
+            summary="This is a snapshot proposal summary",
+            key_points=["Point 1", "Point 2", "Point 3"],
+            risk_level="MEDIUM",
+            recommendation="APPROVE with monitoring",
+            confidence_score=0.85,
+        )
+        mock_summarize.return_value = [snapshot_summary]
+
+        request_data = {
+            "proposal_ids": [proposal_id],
+            "include_risk_assessment": True,
+            "include_recommendations": True,
+        }
+
+        response = client.post("/proposals/summarize", json=request_data)
+
+        assert response.status_code == 200
+        data = response.json()
+
+        assert len(data["summaries"]) == 1
+        assert data["summaries"][0]["proposal_id"] == proposal_id
+        assert "processing_time" in data
+        assert "model_used" in data
+
+        # Verify we called snapshot service instead of tally
+        mock_get_proposal.assert_called_once_with(proposal_id)
+
 
 class TestAsyncEndpoints:
     """Test async endpoint functionality."""

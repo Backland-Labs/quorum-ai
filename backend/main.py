@@ -405,7 +405,7 @@ async def summarize_proposals(request: SummarizeRequest):
                 )
 
             # Generate summaries
-            summaries = await _generate_proposal_summaries(request)
+            summaries = await _generate_proposal_summaries(proposals)
 
             processing_time = time.time() - start_time
 
@@ -564,9 +564,18 @@ def _build_proposal_filters(
 
 
 async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:
-    """Fetch proposals for summarization."""
+    """Fetch proposals for summarization using Snapshot."""
     with logfire.span("fetch_proposals_for_summarization"):
-        proposals = await tally_service.get_multiple_proposals(proposal_ids)
+        proposals = []
+        
+        for proposal_id in proposal_ids:
+            try:
+                proposal = await snapshot_service.get_proposal(proposal_id)
+                if proposal:
+                    proposals.append(proposal)
+            except Exception:
+                pass  # Skip if Snapshot fails
+        
         logfire.info("Fetched proposals for summarization", count=len(proposals))
         return proposals
 
