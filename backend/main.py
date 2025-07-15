@@ -322,6 +322,7 @@ async def get_dao_by_id(dao_id: str):
 async def get_proposals(
     dao_id: Optional[str] = Query(default=None),
     organization_id: Optional[str] = Query(default=None),
+    space_id: Optional[str] = Query(default=None),
     state: Optional[ProposalState] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     after_cursor: Optional[str] = Query(default=None),
@@ -330,12 +331,25 @@ async def get_proposals(
 ):
     """Get list of proposals with optional filtering and sorting."""
     try:
-        filters = _build_proposal_filters(
-            dao_id, organization_id, state, limit, after_cursor, sort_by, sort_order
-        )
-
-        with logfire.span("get_proposals", filters=filters.dict()):
-            proposals, next_cursor = await tally_service.get_proposals(filters)
+        with logfire.span("get_proposals", space_id=space_id, state=state, limit=limit):
+            # Determine which service to use based on parameters
+            if space_id:
+                # Use Snapshot service for space-based queries
+                space_ids = [space_id]
+                snapshot_state = state.value.lower() if state else None
+                proposals = await snapshot_service.get_proposals(
+                    space_ids=space_ids, 
+                    state=snapshot_state, 
+                    first=limit,
+                    skip=0  # Snapshot uses skip instead of cursor
+                )
+                next_cursor = None  # Snapshot doesn't use cursors, use skip/pagination instead
+            else:
+                # Fall back to Tally service for backward compatibility
+                filters = _build_proposal_filters(
+                    dao_id, organization_id, state, limit, after_cursor, sort_by, sort_order
+                )
+                proposals, next_cursor = await tally_service.get_proposals(filters)
 
             return ProposalListResponse(
                 proposals=proposals,

@@ -503,6 +503,23 @@ class TestProposalEndpoints:
         assert data["network"] == "42161"
         assert data["symbol"] == "ARB"
 
+    @patch("main.snapshot_service.get_proposals")
+    def test_get_proposals_with_snapshot_data(
+        self, mock_get_proposals: Mock, client: TestClient, sample_snapshot_proposal: Proposal
+    ) -> None:
+        """Test proposals listing using Snapshot data - RED phase."""
+        mock_get_proposals.return_value = [sample_snapshot_proposal]
+
+        # Test with space_id parameter (replacing organization_id)
+        response = client.get("/proposals?space_id=arbitrumfoundation.eth&limit=10")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "proposals" in data
+        assert len(data["proposals"]) == 1
+        assert data["proposals"][0]["id"] == "0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671"
+        assert data["proposals"][0]["title"] == "[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway"
+
 
 class TestSummarizeEndpoints:
     """Test proposal summarization endpoints."""
