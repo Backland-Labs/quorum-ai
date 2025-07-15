@@ -35,6 +35,7 @@ from services.ai_service import AIService
 from services.safe_service import SafeService
 from services.activity_service import ActivityService
 from services.voting_service import VotingService
+from services.snapshot_service import SnapshotService
 
 
 # Global service instances
@@ -43,13 +44,14 @@ ai_service: AIService
 safe_service: SafeService
 activity_service: ActivityService
 voting_service: VotingService
+snapshot_service: SnapshotService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
-    global tally_service, ai_service, safe_service, activity_service, voting_service
+    global tally_service, ai_service, safe_service, activity_service, voting_service, snapshot_service
 
     # Initialize services
     tally_service = TallyService()
@@ -57,6 +59,7 @@ async def lifespan(app: FastAPI):
     safe_service = SafeService()
     activity_service = ActivityService()
     voting_service = VotingService()
+    snapshot_service = SnapshotService()
 
     # Configure Logfire if credentials are available
     if settings.logfire_token:
@@ -348,7 +351,7 @@ async def get_proposal_by_id(proposal_id: str):
     """Get a specific proposal by ID."""
     try:
         with logfire.span("get_proposal_by_id", proposal_id=proposal_id):
-            proposal = await tally_service.get_proposal_by_id(proposal_id)
+            proposal = await snapshot_service.get_proposal(proposal_id)
 
             if not proposal:
                 raise HTTPException(

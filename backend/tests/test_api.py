@@ -17,6 +17,7 @@ from models import (
 )
 from services.tally_service import TallyService
 from services.ai_service import AIService
+from services.snapshot_service import SnapshotService
 
 
 @pytest.fixture
@@ -27,6 +28,7 @@ def client():
 
     main.tally_service = Mock(spec=TallyService)
     main.ai_service = Mock(spec=AIService)
+    main.snapshot_service = Mock(spec=SnapshotService)
     return TestClient(app)
 
 
@@ -483,6 +485,23 @@ class TestProposalEndpoints:
         response = client.get("/proposals/nonexistent")
 
         assert response.status_code == 404
+
+    @patch("main.snapshot_service.get_proposal")
+    def test_get_proposal_by_id_with_snapshot_data(
+        self, mock_get_proposal: Mock, client: TestClient, sample_snapshot_proposal: Proposal
+    ) -> None:
+        """Test proposal retrieval by ID using Snapshot data - RED phase."""
+        mock_get_proposal.return_value = sample_snapshot_proposal
+
+        response = client.get("/proposals/0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["id"] == "0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671"
+        assert data["title"] == "[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway"
+        assert data["state"] == "active"
+        assert data["network"] == "42161"
+        assert data["symbol"] == "ARB"
 
 
 class TestSummarizeEndpoints:

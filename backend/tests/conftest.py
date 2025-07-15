@@ -8,9 +8,12 @@ from models import (
     Proposal,
     ProposalState,
     DAO,
+    Space,
+    Vote,
 )
 from services.ai_service import AIService
 from services.tally_service import TallyService
+from services.snapshot_service import SnapshotService
 
 
 @pytest.fixture
@@ -352,4 +355,175 @@ def mock_proposal_votes_response() -> dict:
                 ]
             }
         }
+    }
+
+
+# Snapshot-specific fixtures
+@pytest.fixture
+def snapshot_service() -> SnapshotService:
+    """Create a SnapshotService instance for testing."""
+    return SnapshotService()
+
+
+@pytest.fixture
+def sample_snapshot_space() -> Space:
+    """Create a sample Snapshot space for testing."""
+    return Space(
+        id="arbitrumfoundation.eth",
+        name="Arbitrum DAO",
+        about="The official snapshot space for the Arbitrum DAO",
+        network="42161",
+        symbol="ARB",
+        strategies=[
+            {
+                "name": "erc20-votes",
+                "params": {
+                    "symbol": "ARB",
+                    "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+                    "decimals": 18
+                }
+            }
+        ],
+        admins=[],
+        moderators=[],
+        members=[],
+        private=False,
+        verified=True,
+        created=1679581634,
+        proposalsCount=381,
+        followersCount=322117,
+        votesCount=5617324
+    )
+
+
+@pytest.fixture
+def sample_snapshot_proposal() -> Proposal:
+    """Create a sample Snapshot proposal for testing."""
+    return Proposal(
+        id="0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671",
+        title="[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway",
+        body="# Disclaimer from L2BEAT\n\nThis proposal is one of several similar maintenance proposals...",
+        choices=["For", "Against", "Abstain"],
+        start=1752181200,
+        end=1752786000,
+        state="active",
+        author="0x1B686eE8E31c5959D9F5BBd8122a58682788eeaD",
+        network="42161",
+        symbol="ARB",
+        scores=[25177522.19316251, 3378.620131354955, 1851.3438606284724],
+        scores_total=25182752.15715449,
+        votes=2211,
+        created=1752179470,
+        quorum=0.0
+    )
+
+
+@pytest.fixture
+def sample_snapshot_votes() -> list[Vote]:
+    """Create sample Snapshot votes for testing."""
+    return [
+        Vote(
+            id="0x9b92e0e63479e3fd32674c326399ef81ea61b738af665f917f1d87410b26fc89",
+            voter="0xB933AEe47C438f22DE0747D57fc239FE37878Dd1",
+            choice=1,
+            vp=13301332.647183005,
+            vp_by_strategy=[13301332.647183005],
+            created=1752229989,
+            reason=""
+        ),
+        Vote(
+            id="0xcd3e06ff1d54411fbacd9673b8c12c6134a4dbc23fec04a6e55f8c037d80377c",
+            voter="0xb5B069370Ef24BC67F114e185D185063CE3479f8",
+            choice=1,
+            vp=7174084.70601726,
+            vp_by_strategy=[7174084.70601726],
+            created=1752187945,
+            reason=""
+        )
+    ]
+
+
+@pytest.fixture
+def mock_snapshot_space_response() -> dict:
+    """Mock Snapshot API response for space query."""
+    return {
+        "space": {
+            "id": "arbitrumfoundation.eth",
+            "name": "Arbitrum DAO",
+            "about": "The official snapshot space for the Arbitrum DAO",
+            "network": "42161",
+            "symbol": "ARB",
+            "strategies": [
+                {
+                    "name": "erc20-votes",
+                    "params": {
+                        "symbol": "ARB",
+                        "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+                        "decimals": 18
+                    }
+                }
+            ],
+            "admins": [],
+            "moderators": [],
+            "members": [],
+            "private": False,
+            "verified": True,
+            "created": 1679581634,
+            "proposalsCount": 381,
+            "followersCount": 322117,
+            "votesCount": 5617324
+        }
+    }
+
+
+@pytest.fixture
+def mock_snapshot_proposals_response() -> dict:
+    """Mock Snapshot API response for proposals query."""
+    return {
+        "proposals": [
+            {
+                "id": "0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671",
+                "title": "[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway",
+                "body": "# Disclaimer from L2BEAT\n\nThis proposal is one of several similar maintenance proposals...",
+                "choices": ["For", "Against", "Abstain"],
+                "start": 1752181200,
+                "end": 1752786000,
+                "state": "active",
+                "scores": [25177522.19316251, 3378.620131354955, 1851.3438606284724],
+                "scores_total": 25182752.15715449,
+                "votes": 2211,
+                "created": 1752179470,
+                "quorum": 0,
+                "author": "0x1B686eE8E31c5959D9F5BBd8122a58682788eeaD",
+                "network": "42161",
+                "symbol": "ARB"
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def mock_snapshot_votes_response() -> dict:
+    """Mock Snapshot API response for votes query."""
+    return {
+        "votes": [
+            {
+                "id": "0x9b92e0e63479e3fd32674c326399ef81ea61b738af665f917f1d87410b26fc89",
+                "voter": "0xB933AEe47C438f22DE0747D57fc239FE37878Dd1",
+                "choice": 1,
+                "vp": 13301332.647183005,
+                "vp_by_strategy": [13301332.647183005],
+                "created": 1752229989,
+                "reason": ""
+            },
+            {
+                "id": "0xcd3e06ff1d54411fbacd9673b8c12c6134a4dbc23fec04a6e55f8c037d80377c",
+                "voter": "0xb5B069370Ef24BC67F114e185D185063CE3479f8",
+                "choice": 1,
+                "vp": 7174084.70601726,
+                "vp_by_strategy": [7174084.70601726],
+                "created": 1752187945,
+                "reason": ""
+            }
+        ]
     }
