@@ -1,10 +1,7 @@
 """Tests for updated Snapshot-based Vote model.
 
-These tests are designed to validate the new Vote model structure that will replace
-the current Tally-based Vote model. The tests are written to fail initially since
-the Vote model has not been updated yet.
-
-The new Vote model should support Snapshot's data structure with fields like:
+These tests are designed to validate the new Vote model structure based on Snapshot's 
+data structure. The new Vote model supports Snapshot's fields like:
 - id, voter, choice, created, vp, vp_by_strategy, etc.
 """
 
@@ -465,7 +462,7 @@ class TestUpdatedVoteModelOptionalFieldHandling:
         assert vote.app is None
         
         # Test with app name
-        app_names = ["snapshot", "snapshot-web", "boardroom", "tally"]
+        app_names = ["snapshot", "snapshot-web", "boardroom"]
         
         for app_name in app_names:
             vote_data["app"] = app_name

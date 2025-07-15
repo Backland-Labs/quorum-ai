@@ -79,17 +79,17 @@ class TestProposalStateEnum:
         assert actual_states == expected_snapshot_states
         assert len(actual_states) == 3
 
-    def test_proposal_state_no_tally_states_present(self):
-        """Test ProposalState does not contain old Tally states."""
+    def test_proposal_state_no_legacy_states_present(self):
+        """Test ProposalState does not contain old legacy states."""
         # Arrange
-        old_tally_states = {"ACTIVE", "DEFEATED", "EXECUTED", "PENDING", "SUCCEEDED"}
+        old_legacy_states = {"ACTIVE", "DEFEATED", "EXECUTED", "PENDING", "SUCCEEDED"}
         
         # Act
         actual_states = {state.value for state in ProposalState}
         
         # Assert
-        # None of the old Tally states should be present
-        assert not any(tally_state in actual_states for tally_state in old_tally_states)
+        # None of the old legacy states should be present
+        assert not any(legacy_state in actual_states for legacy_state in old_legacy_states)
 
     def test_proposal_state_string_representation(self):
         """Test ProposalState string representation and value access."""
