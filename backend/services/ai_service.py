@@ -400,17 +400,23 @@ class AIService:
 
     def _format_proposal_info(self, proposal: Proposal) -> str:
         """Format proposal information for the AI prompt."""
+        # Calculate individual vote counts from scores array
+        votes_for = proposal.scores[0] if len(proposal.scores) > 0 else 0
+        votes_against = proposal.scores[1] if len(proposal.scores) > 1 else 0
+        votes_abstain = proposal.scores[2] if len(proposal.scores) > 2 else 0
+        
         return f"""**Proposal Title:** {proposal.title}
-        **DAO:** {proposal.dao_name}
-        **Current Status:** {proposal.state.value}
+        **Network:** {proposal.network} ({proposal.symbol})
+        **Current Status:** {proposal.state}
 
         **Voting Results:**
-        - Votes For: {proposal.votes_for}
-        - Votes Against: {proposal.votes_against}
-        - Abstain: {proposal.votes_abstain}
+        - Votes For: {votes_for:,.0f}
+        - Votes Against: {votes_against:,.0f}
+        - Abstain: {votes_abstain:,.0f}
+        - Total Votes: {proposal.votes}
 
         **Proposal Description:**
-        {proposal.description}"""
+        {getattr(proposal, 'body', 'No description available')}"""
 
     def _get_json_response_format(self) -> str:
         """Get the JSON response format specification."""
