@@ -331,30 +331,7 @@ Allocate $5M treasury funds for celebrity endorsement marketing campaign.
             decision = await self.ai_service.decide_vote(scenario['proposal'], strategy)
             
             
-            # Evaluate reasoning quality
-            reasoning_quality = self.evaluate_reasoning_quality(
-                decision.reasoning, 
-                scenario['proposal'], 
-                decision.vote.value
-            )
-            
-            print(f"\n🔍 REASONING ANALYSIS:")
-            for criterion, score in reasoning_quality.items():
-                print(f"   {criterion}: {score}/5")
-            
-            return {
-                "scenario": scenario['name'],
-                "strategy": strategy.value,
-                "ai_vote": decision.vote.value,
-                "expected_vote": scenario['expected_vote'],
-                "vote_correct": vote_matches_expectation,
-                "confidence": decision.confidence,
-                "risk_level": decision.risk_assessment.value,
-                "reasoning": decision.reasoning,
-                "reasoning_quality": reasoning_quality,
-                "status": "SUCCESS"
-            }
-            
+            return decision
         except Exception as e:
             print(f"❌ FAILED: {str(e)}")
             return {
@@ -363,48 +340,6 @@ Allocate $5M treasury funds for celebrity endorsement marketing campaign.
                 "status": "FAILED",
                 "error": str(e)
             }
-    
-    def evaluate_reasoning_quality(self, reasoning: str, proposal: Proposal, vote: str) -> Dict[str, int]:
-        """Evaluate the quality of AI reasoning (simple heuristic-based scoring)."""
-        
-        scores = {}
-        
-        # 1. Length and detail (1-5 points)
-        if len(reasoning) < 50:
-            scores["Detail Level"] = 1
-        elif len(reasoning) < 100:
-            scores["Detail Level"] = 2
-        elif len(reasoning) < 200:
-            scores["Detail Level"] = 3
-        elif len(reasoning) < 300:
-            scores["Detail Level"] = 4
-        else:
-            scores["Detail Level"] = 5
-            
-        # 2. Mentions specific proposal content (1-5 points)
-        content_mentions = 0
-        key_terms = [proposal.title.lower(), "treasury", "risk", "security", "cost", "benefit"]
-        for term in key_terms:
-            if term in reasoning.lower():
-                content_mentions += 1
-        scores["Content Relevance"] = min(5, max(1, content_mentions))
-        
-        # 3. Risk awareness (1-5 points)
-        risk_terms = ["risk", "danger", "concern", "issue", "problem", "vulnerability", "threat"]
-        risk_mentions = sum(1 for term in risk_terms if term in reasoning.lower())
-        scores["Risk Awareness"] = min(5, max(1, risk_mentions))
-        
-        # 4. Considers trade-offs (1-5 points)
-        tradeoff_terms = ["however", "but", "although", "trade", "balance", "weigh", "consider", "versus"]
-        tradeoff_mentions = sum(1 for term in tradeoff_terms if term in reasoning.lower())
-        scores["Considers Trade-offs"] = min(5, max(1, tradeoff_mentions * 2))
-        
-        # 5. Vote justification (1-5 points)
-        vote_terms = [vote.lower(), "support", "oppose", "approve", "reject"]
-        justification_mentions = sum(1 for term in vote_terms if term in reasoning.lower())
-        scores["Vote Justification"] = min(5, max(1, justification_mentions * 2))
-        
-        return scores
     
     def print_test_summary(self, results: List[Dict[str, Any]]) -> None:
         """Print comprehensive test summary."""
