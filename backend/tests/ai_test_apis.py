@@ -6,8 +6,7 @@ Run this to verify all backend APIs work correctly with real Snapshot data.
 
 import requests
 import time
-import json
-from typing import Dict, Any, Optional
+from typing import Optional
 
 # Configuration
 BASE_URL = "http://localhost:8000"

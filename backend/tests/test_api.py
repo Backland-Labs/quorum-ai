@@ -1,15 +1,13 @@
 """Tests for FastAPI endpoints."""
 
 import pytest
-from datetime import datetime
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from main import app
 from models import (
     Proposal,
-    ProposalState,
     ProposalSummary,
 )
 from services.ai_service import AIService
