@@ -5,9 +5,10 @@ import json
 from typing import Dict, List, Any
 
 import logfire
-from pydantic_ai import Agent
+from pydantic_ai import Agent, NativeOutput
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
+from pydantic import BaseModel, Field
 
 from config import settings
 from models import (
@@ -17,7 +18,12 @@ from models import (
     VoteType,
     VotingStrategy,
     RiskLevel,
+    VoteDecision
 )
+
+class AIVoteResponse(BaseModel):
+    vote: str = Field(description="Vote decision: FOR, AGAINST, or ABSTAIN")
+    reasoning: str = Field(description="Reasoning for the vote decision")
 
 
 # Constants for AI response parsing
@@ -44,6 +50,7 @@ class AIResponseProcessor:
         assert result is not None, "AI result cannot be None"
 
         if hasattr(result, "output"):
+            print(result)
             return self._extract_output_data(result.output)
         else:
             return self._create_fallback_response(str(result))
@@ -58,8 +65,8 @@ class AIResponseProcessor:
         """Parse JSON output from AI response."""
         try:
             return json.loads(output)
-        except json.JSONDecodeError:
-            return self._create_fallback_response(output)
+        except Exception as e:
+            raise e
 
     def parse_and_validate_vote_response(
         self, ai_response: Dict[str, Any]
@@ -195,10 +202,6 @@ class AIService:
         # Cache service removed for autonomous voting focus
         self.response_processor = AIResponseProcessor()
 
-        # Runtime assertion: validate successful initialization
-        assert self.model is not None, "AI model must be successfully initialized"
-        assert self.agent is not None, "AI agent must be successfully initialized"
-
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
         logfire.info(
@@ -212,12 +215,12 @@ class AIService:
         ), f"API key must be string, got {type(settings.openrouter_api_key)}"
 
         if settings.openrouter_api_key:
-            logfire.info("Using OpenRouter with Claude 3.5 Sonnet")
+            logfire.info("Using OpenRouter")
             try:
                 model = OpenAIModel(
-                    "openrouter/auto",
-                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
-                )
+                    "google/gemini-2.0-flash-001",
+                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key)
+    )
                 logfire.info(
                     "Successfully created OpenRouter model", model_type=str(type(model))
                 )
@@ -237,7 +240,7 @@ class AIService:
             logfire.warning("No AI API keys configured, using default model")
             return "openai:gpt-4o-mini"  # TODO: need to fix how this is handled
 
-    def _create_agent(self) -> Agent:
+    def _create_agent(self) -> Any:
         """Create and configure the Pydantic AI agent."""
         # Runtime assertion: validate preconditions
         assert self.model is not None, "Model must be initialized before creating agent"
@@ -255,15 +258,11 @@ class AIService:
             agent = Agent(
                 model=self.model,
                 system_prompt=self._get_system_prompt(),
+                output_type=NativeOutput(AIVoteResponse, strict=False)
             )
-
             logfire.info(
                 "Successfully created Pydantic AI agent", agent_type=str(type(agent))
             )
-
-            # Runtime assertion: validate agent creation
-            assert agent is not None, "Agent creation returned None"
-            assert hasattr(agent, "run"), "Agent must have run method for API calls"
 
             return agent
         except Exception as e:
@@ -386,7 +385,6 @@ class AIService:
         """Build the complete prompt for vote decision including strategy-specific instructions."""
         strategy_prompt = self._get_strategy_prompt(strategy)
         proposal_info = self._format_proposal_info(proposal)
-        json_format = self._get_json_response_format()
 
         return f"""
         {strategy_prompt}
@@ -394,8 +392,6 @@ class AIService:
         Please analyze the following DAO proposal and make a voting decision:
 
         {proposal_info}
-
-        {json_format}
         """
 
     def _format_proposal_info(self, proposal: Proposal) -> str:
@@ -431,16 +427,6 @@ class AIService:
     def _get_proposal_description(self, proposal: Proposal) -> str:
         """Get proposal description with fallback."""
         return getattr(proposal, 'body', 'No description available')
-
-    def _get_json_response_format(self) -> str:
-        """Get the JSON response format specification."""
-        return """Please respond in the following JSON format:
-        {
-            "vote": "FOR|AGAINST|ABSTAIN",
-            "confidence": 0.85,
-            "reasoning": "Brief explanation for your vote decision",
-            "risk_level": "LOW|MEDIUM|HIGH"
-        }"""
 
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
