@@ -915,6 +915,9 @@ class VoteDecision(BaseModel):
 
         return rounded_value
 
+class AiVoteResponse(BaseModel):
+    vote: str = Field(description="Vote decision: FOR, AGAINST, or ABSTAIN")
+    reasoning: str = Field(description="Reasoning for the vote decision")
 
 class AgentState(BaseModel):
     """Current state of the autonomous agent."""

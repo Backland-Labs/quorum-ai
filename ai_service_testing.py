@@ -330,18 +330,6 @@ Allocate $5M treasury funds for celebrity endorsement marketing campaign.
             # Get AI vote decision
             decision = await self.ai_service.decide_vote(scenario['proposal'], strategy)
             
-            # Analyze decision quality
-            vote_matches_expectation = decision.vote.value == scenario['expected_vote']
-            
-            # Display results
-            print(f"\n📊 AI DECISION RESULTS:")
-            print(f"   🗳️  Vote: {decision.vote.value}")
-            print(f"   🎯 Confidence: {decision.confidence:.3f}")
-            print(f"   ⚠️  Risk Level: {decision.risk_assessment.value}")
-            print(f"   ✅ Matches Expected: {'YES' if vote_matches_expectation else 'NO'}")
-            
-            print(f"\n💭 AI REASONING:")
-            print(f"   {decision.reasoning}")
             
             # Evaluate reasoning quality
             reasoning_quality = self.evaluate_reasoning_quality(

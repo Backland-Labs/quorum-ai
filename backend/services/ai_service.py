@@ -8,7 +8,6 @@ import logfire
 from pydantic_ai import Agent, NativeOutput
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
-from pydantic import BaseModel, Field
 
 from config import settings
 from models import (
@@ -18,13 +17,8 @@ from models import (
     VoteType,
     VotingStrategy,
     RiskLevel,
-    VoteDecision
+    AiVoteResponse
 )
-
-class AIVoteResponse(BaseModel):
-    vote: str = Field(description="Vote decision: FOR, AGAINST, or ABSTAIN")
-    reasoning: str = Field(description="Reasoning for the vote decision")
-
 
 # Constants for AI response parsing
 DEFAULT_VOTE_FALLBACK = "ABSTAIN"
@@ -258,7 +252,7 @@ class AIService:
             agent = Agent(
                 model=self.model,
                 system_prompt=self._get_system_prompt(),
-                output_type=NativeOutput(AIVoteResponse, strict=False)
+                output_type=NativeOutput(AiVoteResponse, strict=False)
             )
             logfire.info(
                 "Successfully created Pydantic AI agent", agent_type=str(type(agent))
@@ -373,9 +367,12 @@ class AIService:
         ai_response = await self._call_ai_model(
             prompt
         )  # Use legacy method for test compatibility
+
+        ai_response = {"vote_decision": ai_response.vote, "reasoning": ai_response.reasoning} 
+
         return self.response_processor.parse_and_validate_vote_response(ai_response)
 
-    async def _call_ai_model(self, prompt: str) -> Dict[str, Any]:
+    async def _call_ai_model(self, prompt: str) -> Any:
         """Legacy method name for backward compatibility with tests."""
         return await self._call_ai_model_for_vote_decision(prompt)
 
@@ -440,18 +437,6 @@ class AIService:
         except Exception as e:
             logfire.error("AI model call failed", error=str(e))
             raise
-
-    # Legacy method for backward compatibility with tests
-    def _parse_and_validate_vote_response(
-        self, ai_response: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """Legacy method - delegates to response processor."""
-        return self.response_processor.parse_and_validate_vote_response(ai_response)
-
-    # Legacy method for backward compatibility with tests
-    def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
-        """Legacy method - delegates to response processor."""
-        return self.response_processor.parse_and_validate_vote_response(ai_response)
 
     async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
         """Generate a summary for a single proposal."""
