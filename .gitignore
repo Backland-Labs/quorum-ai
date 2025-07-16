@@ -208,3 +208,4 @@ cython_debug/
 .fridayrules
 .cursor/
 .claude/
+ethereum_private_key.txt

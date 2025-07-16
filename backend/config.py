@@ -20,10 +20,9 @@ class Settings(BaseSettings):
     # Application settings
     app_name: str = "Quorum AI"
     debug: bool = False
+    host: str = "0.0.0.0"
+    port: int = 8000
 
-    # External API settings
-    tally_api_base_url: str = "https://api.tally.xyz/query"
-    tally_api_key: Optional[str] = None
 
     # AI settings
     anthropic_api_key: Optional[str] = None
@@ -40,9 +39,6 @@ class Settings(BaseSettings):
     # OpenRouter configuration
     openrouter_api_key: Optional[str] = None
 
-    # Top organizations configuration
-    DEFAULT_TOP_ORGANIZATIONS: ClassVar[str] = "compound,nounsdao,arbitrum"
-    top_organizations_env: str = DEFAULT_TOP_ORGANIZATIONS
 
     # Top voters endpoint settings
     DEFAULT_TOP_VOTERS_LIMIT: ClassVar[int] = 10
@@ -243,12 +239,6 @@ class Settings(BaseSettings):
                 )
             self.min_time_before_deadline = time_val
 
-    @property
-    def top_organizations(self) -> List[str]:
-        """Parse comma-separated string to list."""
-        return [
-            org.strip() for org in self.top_organizations_env.split(",") if org.strip()
-        ]
 
     @property
     def monitored_daos_list(self) -> List[str]:

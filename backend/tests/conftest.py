@@ -7,10 +7,11 @@ from unittest.mock import patch
 from models import (
     Proposal,
     ProposalState,
-    DAO,
+    Space,
+    Vote,
 )
 from services.ai_service import AIService
-from services.tally_service import TallyService
+from services.snapshot_service import SnapshotService
 
 
 @pytest.fixture
@@ -21,10 +22,6 @@ def ai_service() -> AIService:
         return AIService()
 
 
-@pytest.fixture
-def tally_service() -> TallyService:
-    """Create a TallyService instance for testing."""
-    return TallyService()
 
 
 @pytest.fixture
@@ -116,240 +113,172 @@ def complex_proposal() -> Proposal:
     )
 
 
+# Snapshot-specific fixtures
 @pytest.fixture
-def sample_dao() -> DAO:
-    """Create a sample DAO for testing."""
-    return DAO(
-        id="dao-123",
-        name="Test DAO",
-        slug="test-dao",
-        description="A test DAO for unit testing",
-        organization_id="org-123",
-        active_proposals_count=3,
-        total_proposals_count=10,
+def snapshot_service() -> SnapshotService:
+    """Create a SnapshotService instance for testing."""
+    return SnapshotService()
+
+
+@pytest.fixture
+def sample_snapshot_space() -> Space:
+    """Create a sample Snapshot space for testing."""
+    return Space(
+        id="arbitrumfoundation.eth",
+        name="Arbitrum DAO",
+        about="The official snapshot space for the Arbitrum DAO",
+        network="42161",
+        symbol="ARB",
+        strategies=[
+            {
+                "name": "erc20-votes",
+                "params": {
+                    "symbol": "ARB",
+                    "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+                    "decimals": 18
+                }
+            }
+        ],
+        admins=[],
+        moderators=[],
+        members=[],
+        private=False,
+        verified=True,
+        created=1679581634,
+        proposalsCount=381,
+        followersCount=322117,
+        votesCount=5617324
     )
 
 
 @pytest.fixture
-def mock_dao_response() -> dict:
-    """Mock response data for DAO API calls."""
+def sample_snapshot_proposal() -> Proposal:
+    """Create a sample Snapshot proposal for testing."""
+    return Proposal(
+        id="0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671",
+        title="[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway",
+        body="# Disclaimer from L2BEAT\n\nThis proposal is one of several similar maintenance proposals...",
+        choices=["For", "Against", "Abstain"],
+        start=1752181200,
+        end=1752786000,
+        state="active",
+        author="0x1B686eE8E31c5959D9F5BBd8122a58682788eeaD",
+        network="42161",
+        symbol="ARB",
+        scores=[25177522.19316251, 3378.620131354955, 1851.3438606284724],
+        scores_total=25182752.15715449,
+        votes=2211,
+        created=1752179470,
+        quorum=0.0
+    )
+
+
+@pytest.fixture
+def sample_snapshot_votes() -> list[Vote]:
+    """Create sample Snapshot votes for testing."""
+    return [
+        Vote(
+            id="0x9b92e0e63479e3fd32674c326399ef81ea61b738af665f917f1d87410b26fc89",
+            voter="0xB933AEe47C438f22DE0747D57fc239FE37878Dd1",
+            choice=1,
+            vp=13301332.647183005,
+            vp_by_strategy=[13301332.647183005],
+            created=1752229989,
+            reason=""
+        ),
+        Vote(
+            id="0xcd3e06ff1d54411fbacd9673b8c12c6134a4dbc23fec04a6e55f8c037d80377c",
+            voter="0xb5B069370Ef24BC67F114e185D185063CE3479f8",
+            choice=1,
+            vp=7174084.70601726,
+            vp_by_strategy=[7174084.70601726],
+            created=1752187945,
+            reason=""
+        )
+    ]
+
+
+@pytest.fixture
+def mock_snapshot_space_response() -> dict:
+    """Mock Snapshot API response for space query."""
     return {
-        "data": {
-            "governors": {
-                "nodes": [
-                    {
-                        "id": "dao-1",
-                        "name": "Test DAO 1",
-                        "slug": "test-dao-1",
-                        "metadata": {"description": "A test DAO"},
-                        "organization": {"id": "org-1"},
-                        "proposalStats": {"total": 10, "active": 3},
-                    },
-                    {
-                        "id": "dao-2",
-                        "name": "Test DAO 2",
-                        "slug": "test-dao-2",
-                        "metadata": {"description": None},
-                        "organization": {"id": "org-2"},
-                        "proposalStats": {"total": 5, "active": 1},
-                    },
-                ],
-                "pageInfo": {"lastCursor": None},
-            }
+        "space": {
+            "id": "arbitrumfoundation.eth",
+            "name": "Arbitrum DAO",
+            "about": "The official snapshot space for the Arbitrum DAO",
+            "network": "42161",
+            "symbol": "ARB",
+            "strategies": [
+                {
+                    "name": "erc20-votes",
+                    "params": {
+                        "symbol": "ARB",
+                        "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+                        "decimals": 18
+                    }
+                }
+            ],
+            "admins": [],
+            "moderators": [],
+            "members": [],
+            "private": False,
+            "verified": True,
+            "created": 1679581634,
+            "proposalsCount": 381,
+            "followersCount": 322117,
+            "votesCount": 5617324
         }
     }
 
 
 @pytest.fixture
-def mock_single_dao_response() -> dict:
-    """Mock response data for single DAO API call."""
+def mock_snapshot_proposals_response() -> dict:
+    """Mock Snapshot API response for proposals query."""
     return {
-        "data": {
-            "governor": {
-                "id": "dao-1",
-                "name": "Test DAO",
-                "slug": "test-dao",
-                "metadata": {"description": "A test DAO"},
-                "organization": {"id": "org-1"},
-                "proposalStats": {"total": 10, "active": 3},
+        "proposals": [
+            {
+                "id": "0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671",
+                "title": "[CONSTITUTIONAL] Register $BORING in the Arbitrum generic-custom gateway",
+                "body": "# Disclaimer from L2BEAT\n\nThis proposal is one of several similar maintenance proposals...",
+                "choices": ["For", "Against", "Abstain"],
+                "start": 1752181200,
+                "end": 1752786000,
+                "state": "active",
+                "scores": [25177522.19316251, 3378.620131354955, 1851.3438606284724],
+                "scores_total": 25182752.15715449,
+                "votes": 2211,
+                "created": 1752179470,
+                "quorum": 0,
+                "author": "0x1B686eE8E31c5959D9F5BBd8122a58682788eeaD",
+                "network": "42161",
+                "symbol": "ARB"
             }
-        }
+        ]
     }
 
 
 @pytest.fixture
-def mock_proposals_response() -> dict:
-    """Mock response data for proposals API calls."""
+def mock_snapshot_votes_response() -> dict:
+    """Mock Snapshot API response for votes query."""
     return {
-        "data": {
-            "proposals": {
-                "nodes": [
-                    {
-                        "id": "prop-1",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-01T00:00:00Z",
-                        "metadata": {
-                            "title": "Test Proposal 1",
-                            "description": "Test description 1",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "1000000"},
-                            {"type": "AGAINST", "votesCount": "250000"},
-                            {"type": "ABSTAIN", "votesCount": "50000"},
-                        ],
-                    },
-                    {
-                        "id": "prop-2",
-                        "status": "SUCCEEDED",
-                        "createdAt": "2024-01-02T00:00:00Z",
-                        "metadata": {
-                            "title": "Test Proposal 2",
-                            "description": "Test description 2",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "2000000"},
-                            {"type": "AGAINST", "votesCount": "100000"},
-                            {"type": "ABSTAIN", "votesCount": "25000"},
-                        ],
-                    },
-                ],
-                "pageInfo": {"lastCursor": None},
+        "votes": [
+            {
+                "id": "0x9b92e0e63479e3fd32674c326399ef81ea61b738af665f917f1d87410b26fc89",
+                "voter": "0xB933AEe47C438f22DE0747D57fc239FE37878Dd1",
+                "choice": 1,
+                "vp": 13301332.647183005,
+                "vp_by_strategy": [13301332.647183005],
+                "created": 1752229989,
+                "reason": ""
+            },
+            {
+                "id": "0xcd3e06ff1d54411fbacd9673b8c12c6134a4dbc23fec04a6e55f8c037d80377c",
+                "voter": "0xb5B069370Ef24BC67F114e185D185063CE3479f8",
+                "choice": 1,
+                "vp": 7174084.70601726,
+                "vp_by_strategy": [7174084.70601726],
+                "created": 1752187945,
+                "reason": ""
             }
-        }
-    }
-
-
-@pytest.fixture
-def mock_single_proposal_response() -> dict:
-    """Mock response data for single proposal API call."""
-    return {
-        "data": {
-            "proposal": {
-                "id": "prop-1",
-                "status": "ACTIVE",
-                "createdAt": "2024-01-01T00:00:00Z",
-                "metadata": {
-                    "title": "Test Proposal",
-                    "description": "Test description",
-                },
-                "governor": {"id": "dao-1", "name": "Test DAO"},
-                "voteStats": [
-                    {"type": "FOR", "votesCount": "1000000"},
-                    {"type": "AGAINST", "votesCount": "250000"},
-                    {"type": "ABSTAIN", "votesCount": "50000"},
-                ],
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_proposals_with_vote_counts_response() -> dict:
-    """Mock response for proposals sorted by vote count."""
-    return {
-        "data": {
-            "proposals": {
-                "nodes": [
-                    {
-                        "id": "prop-high-votes",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-01T00:00:00Z",
-                        "metadata": {
-                            "title": "High Vote Proposal",
-                            "description": "This proposal has the most votes",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "5000000"},
-                            {"type": "AGAINST", "votesCount": "500000"},
-                            {"type": "ABSTAIN", "votesCount": "100000"},
-                        ],
-                    },
-                    {
-                        "id": "prop-medium-votes",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-02T00:00:00Z",
-                        "metadata": {
-                            "title": "Medium Vote Proposal",
-                            "description": "This proposal has medium votes",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "2000000"},
-                            {"type": "AGAINST", "votesCount": "300000"},
-                            {"type": "ABSTAIN", "votesCount": "50000"},
-                        ],
-                    },
-                    {
-                        "id": "prop-low-votes",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-03T00:00:00Z",
-                        "metadata": {
-                            "title": "Low Vote Proposal",
-                            "description": "This proposal has the least votes",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "100000"},
-                            {"type": "AGAINST", "votesCount": "50000"},
-                            {"type": "ABSTAIN", "votesCount": "10000"},
-                        ],
-                    },
-                ],
-                "pageInfo": {"lastCursor": None},
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_organization_overview_response() -> dict:
-    """Mock response data for organization overview API call."""
-    return {
-        "data": {
-            "organization": {
-                "id": "org-123",
-                "name": "Test DAO",
-                "slug": "test-dao",
-                "metadata": {"description": "A test DAO organization"},
-                "delegatesCount": 150,
-                "tokenOwnersCount": 1000,
-                "proposalsCount": 50,
-                "hasActiveProposals": True,
-                "chainIds": ["1"],
-                "tokenIds": ["token-123"],
-                "governorIds": ["gov-123"],
-                "delegatesVotesCount": "1500000",
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_proposal_votes_response() -> dict:
-    """Mock response data for proposal votes API call."""
-    return {
-        "data": {
-            "votes": {
-                "nodes": [
-                    {
-                        "amount": "1000000",
-                        "type": "FOR",
-                        "voter": {"address": "0x123...abc"},
-                    },
-                    {
-                        "amount": "750000",
-                        "type": "FOR",
-                        "voter": {"address": "0x456...def"},
-                    },
-                    {
-                        "amount": "500000",
-                        "type": "AGAINST",
-                        "voter": {"address": "0x789...ghi"},
-                    },
-                ]
-            }
-        }
+        ]
     }

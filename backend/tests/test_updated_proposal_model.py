@@ -1,9 +1,7 @@
 """Tests for the updated Snapshot-based Proposal model.
 
 These tests are designed to validate the NEW Proposal model structure
-that should replace the current Tally-based model. These tests will
-initially FAIL until the Proposal model is updated to match Snapshot's
-data structure.
+based on Snapshot's data structure.
 """
 
 import pytest
@@ -11,7 +9,7 @@ from datetime import datetime
 from typing import List, Dict, Any
 from pydantic import ValidationError
 
-from models import Proposal  # This will use the current Tally-based model initially
+from models import Proposal
 
 
 class TestUpdatedSnapshotProposal:

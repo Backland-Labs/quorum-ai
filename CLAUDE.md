@@ -76,16 +76,14 @@ This is a full-stack DAO proposal summarization application with a Python FastAP
 ### Backend Architecture (`backend/`)
 - **FastAPI application** with async/await patterns for high performance
 - **Pydantic AI integration** with Claude 3.5 Sonnet via OpenRouter for AI-powered proposal summarization
-- **Tally GraphQL API integration** for fetching DAO and proposal data
-- **Redis caching** with custom decorators for performance optimization
+- **Snapshot GraphQL API integration** for fetching DAO proposal data from Snapshot spaces
 - **Service-oriented architecture**: 
-  - `tally_service.py`: Handles DAO/proposal data fetching with caching
+  - `snapshot_service.py`: Handles Snapshot space and proposal data fetching
   - `ai_service.py`: Manages AI summarization and risk assessment
-  - `cache_service.py`: Redis caching service with TTL management
+  - `voting_service.py`: Handles vote submission to Snapshot
 - **Pydantic models** for type-safe data validation (`models.py`)
 - **Configuration management** via environment variables (`config.py`)
 - **Logfire integration** for observability and distributed tracing
-- **Utils layer** with caching decorators and logging utilities
 
 ### Frontend Architecture (`frontend/`)
 - **SvelteKit** with TypeScript for type safety and Svelte 5 with runes
@@ -101,9 +99,8 @@ This is a full-stack DAO proposal summarization application with a Python FastAP
 - API documentation available at `/docs` when backend is running
 
 ### Key API Endpoints
-- `GET /organizations` - Top organizations with summarized proposals
-- `GET /organizations/list` - Complete organization listing  
-- `GET /proposals` - Proposal search and filtering
+- `GET /proposals` - Proposal search and filtering by Snapshot space
+- `GET /proposals/{id}` - Get specific proposal by ID
 - `POST /proposals/summarize` - AI summarization for specific proposals
 - `GET /proposals/{id}/top-voters` - Top voters for a proposal
 - `GET /health` - Health check endpoint
@@ -116,8 +113,6 @@ This is a full-stack DAO proposal summarization application with a Python FastAP
 OPENROUTER_API_KEY=your_openrouter_api_key  # For Claude 3.5 Sonnet via OpenRouter
 
 # Optional but recommended
-TOP_ORGANIZATIONS=compound,nounsdao,arbitrum  # Default organizations to fetch
-TALLY_API_KEY=your_tally_api_key  # For higher rate limits on Tally API
 LOGFIRE_TOKEN=your_logfire_token  # For observability
 DEBUG=false  # Enable debug mode
 HOST=0.0.0.0  # Server host

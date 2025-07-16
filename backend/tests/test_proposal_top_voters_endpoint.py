@@ -5,9 +5,9 @@ from unittest.mock import Mock, AsyncMock
 from fastapi.testclient import TestClient
 
 from main import app
-from services.tally_service import TallyService
 from services.ai_service import AIService
-from models import ProposalVoter, VoteType, Proposal, ProposalState
+from services.snapshot_service import SnapshotService
+from models import ProposalVoter, VoteType, Proposal, ProposalState, Vote
 
 
 @pytest.fixture
@@ -16,8 +16,8 @@ def client():
     # Initialize global services for testing
     import main
 
-    main.tally_service = Mock(spec=TallyService)
     main.ai_service = Mock(spec=AIService)
+    main.snapshot_service = Mock(spec=SnapshotService)
     return TestClient(app)
 
 
@@ -64,7 +64,7 @@ class TestProposalTopVotersEndpoint:
         proposal_id = "test-proposal-123"
         import main
 
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -95,7 +95,7 @@ class TestProposalTopVotersEndpoint:
         proposal_id = "test-proposal-123"
         import main
 
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -103,7 +103,7 @@ class TestProposalTopVotersEndpoint:
         # Assert
         assert response.status_code == 200
         # Verify the service was called with default limit
-        main.tally_service.get_proposal_votes.assert_called_once_with(proposal_id, 10)
+        main.snapshot_service.get_votes.assert_called_once_with(proposal_id, first=10)
 
     def test_limit_parameter_custom(self, client: TestClient, sample_voters):
         """Test that custom limit parameter is passed correctly."""
@@ -112,7 +112,7 @@ class TestProposalTopVotersEndpoint:
         custom_limit = 25
         import main
 
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
 
         # Act
         response = client.get(
@@ -122,8 +122,8 @@ class TestProposalTopVotersEndpoint:
         # Assert
         assert response.status_code == 200
         # Verify the service was called with custom limit
-        main.tally_service.get_proposal_votes.assert_called_once_with(
-            proposal_id, custom_limit
+        main.snapshot_service.get_votes.assert_called_once_with(
+            proposal_id, first=custom_limit
         )
 
     def test_limit_parameter_validation_too_low(self, client: TestClient):
@@ -160,9 +160,9 @@ class TestProposalTopVotersEndpoint:
         proposal_id = "non-existent-proposal"
         import main
 
-        # Mock get_proposal_by_id to return None (not found)
-        main.tally_service.get_proposal_by_id = AsyncMock(return_value=None)
-        main.tally_service.get_proposal_votes = AsyncMock(return_value=[])
+        # Mock get_proposal to return None (not found)
+        main.snapshot_service.get_proposal = AsyncMock(return_value=None)
+        main.snapshot_service.get_votes = AsyncMock(return_value=[])
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -178,7 +178,7 @@ class TestProposalTopVotersEndpoint:
         import main
 
         # Mock the service to raise an exception
-        main.tally_service.get_proposal_votes = AsyncMock(
+        main.snapshot_service.get_votes = AsyncMock(
             side_effect=Exception("Service unavailable")
         )
 
@@ -188,3 +188,31 @@ class TestProposalTopVotersEndpoint:
         # Assert
         assert response.status_code == 500
         assert "Failed to fetch proposal top voters" in response.json()["detail"]
+
+    def test_top_voters_with_snapshot_data(self, client: TestClient, sample_snapshot_votes):
+        """Test top voters endpoint using Snapshot data - RED phase."""
+        # Arrange
+        proposal_id = "0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671"
+        import main
+
+        # Mock snapshot_service.get_votes to return Snapshot votes
+        main.snapshot_service.get_votes = AsyncMock(return_value=sample_snapshot_votes)
+        # Mock the proposal exists check
+        main.snapshot_service.get_proposal = AsyncMock(return_value=Mock(state="active"))
+
+        # Act
+        response = client.get(f"/proposals/{proposal_id}/top-voters")
+
+        # Assert
+        assert response.status_code == 200
+        data = response.json()
+        
+        assert data["proposal_id"] == proposal_id
+        assert "voters" in data
+        assert len(data["voters"]) == 2
+        
+        # Verify first voter (highest voting power)
+        first_voter = data["voters"][0]
+        assert first_voter["address"] == "0xB933AEe47C438f22DE0747D57fc239FE37878Dd1"
+        assert first_voter["amount"].startswith("13301332647183")  # Check prefix due to floating point precision
+        assert first_voter["vote_type"] == "FOR"  # choice=1 maps to FOR
