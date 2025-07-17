@@ -1,7 +1,0 @@
-{
-  "voting_strategy": "balanced",
-  "confidence_threshold": 0.8,
-  "max_proposals_per_run": 3,
-  "blacklisted_proposers": [],
-  "whitelisted_proposers": []
-}
