@@ -393,8 +393,8 @@ class TestAgentRunServiceMakeVotingDecisions:
         assert result[0].confidence == 0.9
 
     @mock_all_services
-    async def test_make_voting_decisions_filters_blacklisted_proposers(self, mock_snapshot, mock_ai, mock_voting, mock_prefs):
-        """Test voting decisions filters blacklisted proposers."""
+    async def test_make_voting_decisions_processes_all_proposals(self, mock_snapshot, mock_ai, mock_voting, mock_prefs):
+        """Test voting decisions processes all proposals (filtering is done earlier)."""
         from services.agent_run_service import AgentRunService
         
         # Mock proposals
@@ -406,7 +406,7 @@ class TestAgentRunServiceMakeVotingDecisions:
                 start=1698768000,
                 end=1699372800,
                 state="active",
-                author="0x123",  # Not blacklisted
+                author="0x123",
                 network="1",
                 symbol="TEST",
                 scores=[100.0, 50.0],
@@ -422,7 +422,7 @@ class TestAgentRunServiceMakeVotingDecisions:
                 start=1698768000,
                 end=1699372800,
                 state="active",
-                author="0x456",  # Blacklisted
+                author="0x456",
                 network="1",
                 symbol="TEST",
                 scores=[200.0, 25.0],
@@ -436,30 +436,41 @@ class TestAgentRunServiceMakeVotingDecisions:
         preferences = UserPreferences(
             voting_strategy=VotingStrategy.BALANCED,
             confidence_threshold=0.7,
-            blacklisted_proposers=["0x456"]
+            blacklisted_proposers=["0x456"]  # This filtering is now done earlier
         )
         
-        # Mock vote decision for non-blacklisted proposal
-        mock_vote_decision = VoteDecision(
-            proposal_id="prop-1",
-            vote=VoteType.FOR,
-            confidence=0.8,
-            reasoning="Test reasoning",
-            risk_assessment=RiskLevel.LOW,
-            strategy_used=VotingStrategy.BALANCED
-        )
+        # Mock vote decisions for both proposals
+        mock_vote_decisions = [
+            VoteDecision(
+                proposal_id="prop-1",
+                vote=VoteType.FOR,
+                confidence=0.8,
+                reasoning="Test reasoning 1",
+                risk_assessment=RiskLevel.LOW,
+                strategy_used=VotingStrategy.BALANCED
+            ),
+            VoteDecision(
+                proposal_id="prop-2",
+                vote=VoteType.AGAINST,
+                confidence=0.8,
+                reasoning="Test reasoning 2",
+                risk_assessment=RiskLevel.LOW,
+                strategy_used=VotingStrategy.BALANCED
+            )
+        ]
         
-        mock_ai.return_value.decide_vote = AsyncMock(return_value=mock_vote_decision)
+        mock_ai.return_value.decide_vote = AsyncMock(side_effect=mock_vote_decisions)
         
         service = AgentRunService()
         result = await service._make_voting_decisions(proposals, preferences)
         
-        # Verify only non-blacklisted proposal is processed
-        assert len(result) == 1
+        # Verify both proposals are processed (filtering happens earlier in workflow)
+        assert len(result) == 2
         assert result[0].proposal_id == "prop-1"
+        assert result[1].proposal_id == "prop-2"
         
-        # Verify AI service was called only once (for non-blacklisted proposal)
-        mock_ai.return_value.decide_vote.assert_called_once()
+        # Verify AI service was called for both proposals
+        assert mock_ai.return_value.decide_vote.call_count == 2
 
     @mock_all_services
     async def test_make_voting_decisions_empty_proposals(self, mock_snapshot, mock_ai, mock_voting, mock_prefs):

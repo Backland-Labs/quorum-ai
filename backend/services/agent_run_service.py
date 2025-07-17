@@ -17,6 +17,7 @@ from services.snapshot_service import SnapshotService
 from services.ai_service import AIService
 from services.voting_service import VotingService
 from services.user_preferences_service import UserPreferencesService
+from services.proposal_filter import ProposalFilter
 
 
 # Custom exceptions for better error handling
@@ -133,17 +134,36 @@ class AgentRunService:
                     logfire.error("Proposal fetching failed", error=str(e))
                     proposals = []
 
-                # Step 3: Make voting decisions
-                vote_decisions = []
+                # Step 3: Filter and rank proposals
+                filtered_and_ranked_proposals = []
                 if proposals:
                     try:
-                        vote_decisions = await self._make_voting_decisions(
+                        filtered_and_ranked_proposals = await self._filter_and_rank_proposals(
                             proposals, user_preferences
+                        )
+                        logfire.info(
+                            "Proposals filtered and ranked",
+                            original_count=len(proposals),
+                            filtered_count=len(filtered_and_ranked_proposals),
+                        )
+                    except Exception as e:
+                        error_msg = f"Failed to filter and rank proposals: {str(e)}"
+                        errors.append(error_msg)
+                        logfire.error("Proposal filtering and ranking failed", error=str(e))
+                        # Fall back to original proposals if filtering fails
+                        filtered_and_ranked_proposals = proposals
+
+                # Step 4: Make voting decisions
+                vote_decisions = []
+                if filtered_and_ranked_proposals:
+                    try:
+                        vote_decisions = await self._make_voting_decisions(
+                            filtered_and_ranked_proposals, user_preferences
                         )
                         logfire.info(
                             "Voting decisions made",
                             decision_count=len(vote_decisions),
-                            proposals_analyzed=len(proposals),
+                            proposals_analyzed=len(filtered_and_ranked_proposals),
                         )
                     except Exception as e:
                         error_msg = f"Failed to make voting decisions: {str(e)}"
@@ -151,7 +171,7 @@ class AgentRunService:
                         logfire.error("Voting decision making failed", error=str(e))
                         vote_decisions = []
 
-                # Step 4: Execute votes
+                # Step 5: Execute votes
                 final_vote_decisions = []
                 if vote_decisions:
                     try:
@@ -175,7 +195,7 @@ class AgentRunService:
                 # Create response
                 response = AgentRunResponse(
                     space_id=request.space_id,
-                    proposals_analyzed=len(proposals),
+                    proposals_analyzed=len(filtered_and_ranked_proposals),
                     votes_cast=final_vote_decisions,
                     user_preferences_applied=user_preferences_applied,
                     execution_time=execution_time,
@@ -273,6 +293,109 @@ class AgentRunService:
                     f"Failed to fetch active proposals from {space_id}: {str(e)}"
                 ) from e
 
+    async def _filter_and_rank_proposals(
+        self, proposals: List[Proposal], preferences: UserPreferences
+    ) -> List[Proposal]:
+        """Filter and rank proposals based on user preferences and urgency.
+
+        Args:
+            proposals: List of Proposal objects to filter and rank
+            preferences: User preferences for filtering and ranking
+
+        Returns:
+            List of filtered and ranked Proposal objects
+
+        Raises:
+            AgentRunServiceError: When filtering or ranking proposals fails
+        """
+        # Runtime assertions for critical method validation
+        assert isinstance(
+            proposals, list
+        ), f"Proposals must be a list, got {type(proposals)}"
+        assert isinstance(
+            preferences, UserPreferences
+        ), f"Preferences must be UserPreferences, got {type(preferences)}"
+        assert all(
+            isinstance(p, Proposal) for p in proposals
+        ), "All proposals must be Proposal objects"
+
+        if not proposals:
+            return []
+
+        with logfire.span("filter_and_rank_proposals", proposal_count=len(proposals)):
+            try:
+                logfire.info(
+                    "Starting proposal filtering and ranking",
+                    proposal_count=len(proposals),
+                    blacklisted_count=len(preferences.blacklisted_proposers),
+                    whitelisted_count=len(preferences.whitelisted_proposers),
+                    max_proposals_per_run=preferences.max_proposals_per_run,
+                )
+
+                # Initialize proposal filter with user preferences
+                proposal_filter = ProposalFilter(preferences)
+
+                # Step 1: Filter proposals based on user preferences
+                filtered_proposals = proposal_filter.filter_proposals(proposals)
+
+                logfire.info(
+                    "Proposals filtered",
+                    original_count=len(proposals),
+                    filtered_count=len(filtered_proposals),
+                )
+
+                # Step 2: Rank filtered proposals by importance and urgency
+                ranked_proposals = proposal_filter.rank_proposals(filtered_proposals)
+
+                logfire.info(
+                    "Proposals ranked",
+                    ranked_count=len(ranked_proposals),
+                )
+
+                # Step 3: Limit to max_proposals_per_run if specified
+                if preferences.max_proposals_per_run > 0:
+                    final_proposals = ranked_proposals[:preferences.max_proposals_per_run]
+                    logfire.info(
+                        "Proposals limited to max per run",
+                        original_ranked_count=len(ranked_proposals),
+                        final_count=len(final_proposals),
+                        max_proposals_per_run=preferences.max_proposals_per_run,
+                    )
+                else:
+                    final_proposals = ranked_proposals
+
+                # Get filtering metrics for logging
+                filtering_metrics = proposal_filter.get_filtering_metrics(
+                    proposals, filtered_proposals
+                )
+
+                logfire.info(
+                    "Filtering and ranking completed",
+                    **filtering_metrics,
+                    final_proposal_count=len(final_proposals),
+                )
+
+                # Runtime assertion: validate output
+                assert isinstance(
+                    final_proposals, list
+                ), f"Expected list of proposals, got {type(final_proposals)}"
+                assert all(
+                    isinstance(p, Proposal) for p in final_proposals
+                ), "All filtered proposals must be Proposal objects"
+                assert len(final_proposals) <= len(proposals), "Filtered count cannot exceed original count"
+
+                return final_proposals
+
+            except Exception as e:
+                logfire.error(
+                    "Failed to filter and rank proposals",
+                    proposal_count=len(proposals),
+                    error=str(e),
+                )
+                raise AgentRunServiceError(
+                    f"Failed to filter and rank proposals: {str(e)}"
+                ) from e
+
     async def _make_voting_decisions(
         self, proposals: List[Proposal], preferences: UserPreferences
     ) -> List[VoteDecision]:
@@ -314,15 +437,6 @@ class AgentRunService:
                 vote_decisions = []
 
                 for proposal in proposals:
-                    # Skip blacklisted proposers
-                    if proposal.author in preferences.blacklisted_proposers:
-                        logfire.info(
-                            "Skipping blacklisted proposer",
-                            proposal_id=proposal.id,
-                            author=proposal.author,
-                        )
-                        continue
-
                     # Make voting decision using AI
                     decision = await self.ai_service.decide_vote(
                         proposal=proposal, strategy=preferences.voting_strategy
