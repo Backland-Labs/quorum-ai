@@ -347,7 +347,7 @@ Extend the configuration system to support agent run settings.
 ```python
 class AgentRunConfig:
     max_proposals_per_run: int = 3
-    default_confidence_threshold: float = 0.7
+    agent_confidence_threshold: float = 0.7
     proposal_fetch_timeout: int = 30
     vote_execution_timeout: int = 60
     max_retry_attempts: int = 3
@@ -368,7 +368,7 @@ class AgentRunConfig:
 - Proper field constraints and validation for all agent run settings
 - Environment variable parsing for all configuration values:
   - `MAX_PROPOSALS_PER_RUN` (1-10, default: 3)
-  - `DEFAULT_CONFIDENCE_THRESHOLD` (0.0-1.0, default: 0.7)
+  - `AGENT_CONFIDENCE_THRESHOLD` (0.0-1.0, default: 0.7)
   - `PROPOSAL_FETCH_TIMEOUT` (>0 seconds, default: 30)
   - `VOTE_EXECUTION_TIMEOUT` (>0 seconds, default: 60)
   - `MAX_RETRY_ATTEMPTS` (0-10, default: 3)

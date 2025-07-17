@@ -91,7 +91,7 @@ class TestAgentRunConfigurationExtensions:
         
         # Test the new agent run configuration fields
         assert test_settings.max_proposals_per_run == 3
-        assert test_settings.default_confidence_threshold == 0.7
+        assert test_settings.agent_confidence_threshold == 0.7
         assert test_settings.proposal_fetch_timeout == 30
         assert test_settings.vote_execution_timeout == 60
         assert test_settings.max_retry_attempts == 3
@@ -107,26 +107,26 @@ class TestAgentRunConfigurationExtensions:
         """Test that configuration supports hot reloading."""
         # Create a test settings instance
         test_settings = Settings()
-        original_threshold = test_settings.default_confidence_threshold
+        original_threshold = test_settings.agent_confidence_threshold
         original_max_proposals = test_settings.max_proposals_per_run
         
         # Test that we can reload configuration without restarting the application
         with patch.dict(os.environ, {
-            "DEFAULT_CONFIDENCE_THRESHOLD": "0.9",
+            "AGENT_CONFIDENCE_THRESHOLD": "0.9",
             "MAX_PROPOSALS_PER_RUN": "5"
         }):
             # Reload configuration
             test_settings.reload_config()
             
             # Verify that values were updated
-            assert test_settings.default_confidence_threshold == 0.9
+            assert test_settings.agent_confidence_threshold == 0.9
             assert test_settings.max_proposals_per_run == 5
             
         # Test get_agent_run_config method
         agent_config = test_settings.get_agent_run_config()
         assert isinstance(agent_config, dict)
         assert "max_proposals_per_run" in agent_config
-        assert "default_confidence_threshold" in agent_config
+        assert "agent_confidence_threshold" in agent_config
         assert "proposal_fetch_timeout" in agent_config
         assert "vote_execution_timeout" in agent_config
         assert "max_retry_attempts" in agent_config
@@ -141,7 +141,7 @@ class TestAgentRunConfigurationExtensions:
             "PROPOSAL_CHECK_INTERVAL": "450",   # 7.5 minutes
             "MIN_TIME_BEFORE_DEADLINE": "2700",  # 45 minutes
             "MAX_PROPOSALS_PER_RUN": "5",
-            "DEFAULT_CONFIDENCE_THRESHOLD": "0.8",
+            "AGENT_CONFIDENCE_THRESHOLD": "0.8",
             "PROPOSAL_FETCH_TIMEOUT": "45",
             "VOTE_EXECUTION_TIMEOUT": "90",
             "MAX_RETRY_ATTEMPTS": "5",
@@ -153,7 +153,7 @@ class TestAgentRunConfigurationExtensions:
             assert test_settings.proposal_check_interval == 450
             assert test_settings.min_time_before_deadline == 2700
             assert test_settings.max_proposals_per_run == 5
-            assert test_settings.default_confidence_threshold == 0.8
+            assert test_settings.agent_confidence_threshold == 0.8
             assert test_settings.proposal_fetch_timeout == 45
             assert test_settings.vote_execution_timeout == 90
             assert test_settings.max_retry_attempts == 5
@@ -199,7 +199,7 @@ class TestAgentRunConfigurationExtensions:
             with pytest.raises(ValueError):
                 Settings()
 
-        with patch.dict(os.environ, {"DEFAULT_CONFIDENCE_THRESHOLD": "invalid"}):
+        with patch.dict(os.environ, {"AGENT_CONFIDENCE_THRESHOLD": "invalid"}):
             with pytest.raises(ValueError):
                 Settings()
 
@@ -224,7 +224,7 @@ class TestAgentRunConfigurationExtensions:
             with pytest.raises(ValidationError):
                 Settings()
 
-        with patch.dict(os.environ, {"DEFAULT_CONFIDENCE_THRESHOLD": "1.5"}):
+        with patch.dict(os.environ, {"AGENT_CONFIDENCE_THRESHOLD": "1.5"}):
             with pytest.raises(ValidationError):
                 Settings()
 
@@ -253,7 +253,7 @@ class TestAgentRunConfigurationExtensions:
             "PROPOSAL_CHECK_INTERVAL": "1",
             "MIN_TIME_BEFORE_DEADLINE": "1",
             "MAX_PROPOSALS_PER_RUN": "1",
-            "DEFAULT_CONFIDENCE_THRESHOLD": "0.0",
+            "AGENT_CONFIDENCE_THRESHOLD": "0.0",
             "PROPOSAL_FETCH_TIMEOUT": "1",
             "VOTE_EXECUTION_TIMEOUT": "1",
             "MAX_RETRY_ATTEMPTS": "0",
@@ -265,7 +265,7 @@ class TestAgentRunConfigurationExtensions:
             assert test_settings.proposal_check_interval == 1
             assert test_settings.min_time_before_deadline == 1
             assert test_settings.max_proposals_per_run == 1
-            assert test_settings.default_confidence_threshold == 0.0
+            assert test_settings.agent_confidence_threshold == 0.0
             assert test_settings.proposal_fetch_timeout == 1
             assert test_settings.vote_execution_timeout == 1
             assert test_settings.max_retry_attempts == 0
@@ -278,7 +278,7 @@ class TestAgentRunConfigurationExtensions:
             "PROPOSAL_CHECK_INTERVAL": "3600",   # 1 hour
             "MIN_TIME_BEFORE_DEADLINE": "86400",  # 24 hours
             "MAX_PROPOSALS_PER_RUN": "10",
-            "DEFAULT_CONFIDENCE_THRESHOLD": "1.0",
+            "AGENT_CONFIDENCE_THRESHOLD": "1.0",
             "PROPOSAL_FETCH_TIMEOUT": "300",  # 5 minutes
             "VOTE_EXECUTION_TIMEOUT": "600",  # 10 minutes
             "MAX_RETRY_ATTEMPTS": "10",
@@ -290,7 +290,7 @@ class TestAgentRunConfigurationExtensions:
             assert test_settings.proposal_check_interval == 3600
             assert test_settings.min_time_before_deadline == 86400
             assert test_settings.max_proposals_per_run == 10
-            assert test_settings.default_confidence_threshold == 1.0
+            assert test_settings.agent_confidence_threshold == 1.0
             assert test_settings.proposal_fetch_timeout == 300
             assert test_settings.vote_execution_timeout == 600
             assert test_settings.max_retry_attempts == 10

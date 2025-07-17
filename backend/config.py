@@ -125,43 +125,36 @@ class Settings(BaseSettings):
     )
 
     # Agent run configuration
-    DEFAULT_MAX_PROPOSALS_PER_RUN: ClassVar[int] = 3
-    DEFAULT_DEFAULT_CONFIDENCE_THRESHOLD: ClassVar[float] = 0.7
-    DEFAULT_PROPOSAL_FETCH_TIMEOUT: ClassVar[int] = 30
-    DEFAULT_VOTE_EXECUTION_TIMEOUT: ClassVar[int] = 60
-    DEFAULT_MAX_RETRY_ATTEMPTS: ClassVar[int] = 3
-    DEFAULT_RETRY_DELAY_SECONDS: ClassVar[int] = 5
-
     max_proposals_per_run: int = Field(
-        default=DEFAULT_MAX_PROPOSALS_PER_RUN,
+        default=3,
         ge=1,
         le=10,
         description="Maximum proposals to process per agent run",
     )
-    default_confidence_threshold: float = Field(
-        default=DEFAULT_DEFAULT_CONFIDENCE_THRESHOLD,
+    agent_confidence_threshold: float = Field(
+        default=0.7,
         ge=0.0,
         le=1.0,
-        description="Default confidence threshold for voting decisions",
+        description="Default confidence threshold for agent voting decisions",
     )
     proposal_fetch_timeout: int = Field(
-        default=DEFAULT_PROPOSAL_FETCH_TIMEOUT,
+        default=30,
         gt=0,
         description="Timeout for proposal fetching in seconds",
     )
     vote_execution_timeout: int = Field(
-        default=DEFAULT_VOTE_EXECUTION_TIMEOUT,
+        default=60,
         gt=0,
         description="Timeout for vote execution in seconds",
     )
     max_retry_attempts: int = Field(
-        default=DEFAULT_MAX_RETRY_ATTEMPTS,
+        default=3,
         ge=0,
         le=10,
         description="Maximum retry attempts for failed operations",
     )
     retry_delay_seconds: int = Field(
-        default=DEFAULT_RETRY_DELAY_SECONDS,
+        default=5,
         gt=0,
         description="Delay between retry attempts in seconds",
     )
@@ -283,7 +276,7 @@ class Settings(BaseSettings):
     def _parse_agent_run_config(self):
         """Parse agent run configuration from environment variables."""
         self._parse_max_proposals_per_run()
-        self._parse_default_confidence_threshold()
+        self._parse_agent_confidence_threshold()
         self._parse_proposal_fetch_timeout()
         self._parse_vote_execution_timeout()
         self._parse_max_retry_attempts()
@@ -300,16 +293,16 @@ class Settings(BaseSettings):
                 )
             self.max_proposals_per_run = max_proposals
 
-    def _parse_default_confidence_threshold(self):
-        """Parse default confidence threshold from DEFAULT_CONFIDENCE_THRESHOLD environment variable."""
-        confidence_threshold_env = os.getenv("DEFAULT_CONFIDENCE_THRESHOLD")
+    def _parse_agent_confidence_threshold(self):
+        """Parse agent confidence threshold from AGENT_CONFIDENCE_THRESHOLD environment variable."""
+        confidence_threshold_env = os.getenv("AGENT_CONFIDENCE_THRESHOLD")
         if confidence_threshold_env:
             threshold = float(confidence_threshold_env)
             if not (0.0 <= threshold <= 1.0):
                 raise ValueError(
-                    f"default_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
+                    f"agent_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
                 )
-            self.default_confidence_threshold = threshold
+            self.agent_confidence_threshold = threshold
 
     def _parse_proposal_fetch_timeout(self):
         """Parse proposal fetch timeout from PROPOSAL_FETCH_TIMEOUT environment variable."""
@@ -401,7 +394,7 @@ class Settings(BaseSettings):
         """
         return {
             "max_proposals_per_run": self.max_proposals_per_run,
-            "default_confidence_threshold": self.default_confidence_threshold,
+            "agent_confidence_threshold": self.agent_confidence_threshold,
             "proposal_fetch_timeout": self.proposal_fetch_timeout,
             "vote_execution_timeout": self.vote_execution_timeout,
             "max_retry_attempts": self.max_retry_attempts,
