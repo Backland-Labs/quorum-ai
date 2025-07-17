@@ -18,6 +18,7 @@ from services.ai_service import AIService
 from services.voting_service import VotingService
 from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
+from services.agent_run_logger import AgentRunLogger
 
 
 # Custom exceptions for better error handling
@@ -66,6 +67,7 @@ class AgentRunService:
         self.ai_service = AIService()
         self.voting_service = VotingService()
         self.user_preferences_service = UserPreferencesService()
+        self.logger = AgentRunLogger()
 
         logfire.info("AgentRunService initialized with all dependencies")
 
@@ -91,12 +93,6 @@ class AgentRunService:
         with logfire.span(
             "agent_run_execution", space_id=request.space_id, dry_run=request.dry_run
         ):
-            logfire.info(
-                "Starting agent run execution",
-                space_id=request.space_id,
-                dry_run=request.dry_run,
-            )
-
             try:
                 # Step 1: Load user preferences
                 try:
@@ -104,52 +100,55 @@ class AgentRunService:
                         await self.user_preferences_service.load_preferences()
                     )
                     user_preferences_applied = True
-                    logfire.info(
-                        "User preferences loaded successfully",
-                        voting_strategy=user_preferences.voting_strategy.value,
-                        confidence_threshold=user_preferences.confidence_threshold,
-                        max_proposals_per_run=user_preferences.max_proposals_per_run,
-                    )
+
+                    # Log agent run start with preferences
+                    self.logger.log_agent_start(request, user_preferences)
+
                 except Exception as e:
                     error_msg = f"Failed to load user preferences: {str(e)}"
                     errors.append(error_msg)
-                    logfire.error("User preferences loading failed", error=str(e))
+                    self.logger.log_error(
+                        "load_preferences", e, space_id=request.space_id
+                    )
                     # Use default preferences
                     user_preferences = UserPreferences()
                     user_preferences_applied = False
+
+                    # Log agent run start with default preferences
+                    self.logger.log_agent_start(request, user_preferences)
 
                 # Step 2: Fetch active proposals
                 try:
                     proposals = await self._fetch_active_proposals(
                         request.space_id, user_preferences.max_proposals_per_run
                     )
-                    logfire.info(
-                        "Active proposals fetched",
-                        space_id=request.space_id,
-                        proposal_count=len(proposals),
-                    )
                 except Exception as e:
                     error_msg = f"Failed to fetch active proposals: {str(e)}"
                     errors.append(error_msg)
-                    logfire.error("Proposal fetching failed", error=str(e))
+                    self.logger.log_error(
+                        "fetch_proposals", e, space_id=request.space_id
+                    )
                     proposals = []
 
                 # Step 3: Filter and rank proposals
                 filtered_and_ranked_proposals = []
                 if proposals:
                     try:
-                        filtered_and_ranked_proposals = await self._filter_and_rank_proposals(
-                            proposals, user_preferences
+                        filtered_and_ranked_proposals = (
+                            await self._filter_and_rank_proposals(
+                                proposals, user_preferences
+                            )
                         )
-                        logfire.info(
-                            "Proposals filtered and ranked",
-                            original_count=len(proposals),
-                            filtered_count=len(filtered_and_ranked_proposals),
+                        # Log proposals fetched and filtered
+                        self.logger.log_proposals_fetched(
+                            proposals, len(filtered_and_ranked_proposals)
                         )
                     except Exception as e:
                         error_msg = f"Failed to filter and rank proposals: {str(e)}"
                         errors.append(error_msg)
-                        logfire.error("Proposal filtering and ranking failed", error=str(e))
+                        self.logger.log_error(
+                            "filter_proposals", e, space_id=request.space_id
+                        )
                         # Fall back to original proposals if filtering fails
                         filtered_and_ranked_proposals = proposals
 
@@ -160,15 +159,17 @@ class AgentRunService:
                         vote_decisions = await self._make_voting_decisions(
                             filtered_and_ranked_proposals, user_preferences
                         )
-                        logfire.info(
-                            "Voting decisions made",
-                            decision_count=len(vote_decisions),
-                            proposals_analyzed=len(filtered_and_ranked_proposals),
-                        )
+                        # Log individual proposal analysis
+                        for proposal, decision in zip(
+                            filtered_and_ranked_proposals, vote_decisions
+                        ):
+                            self.logger.log_proposal_analysis(proposal, decision)
                     except Exception as e:
                         error_msg = f"Failed to make voting decisions: {str(e)}"
                         errors.append(error_msg)
-                        logfire.error("Voting decision making failed", error=str(e))
+                        self.logger.log_error(
+                            "make_decisions", e, space_id=request.space_id
+                        )
                         vote_decisions = []
 
                 # Step 5: Execute votes
@@ -178,15 +179,12 @@ class AgentRunService:
                         final_vote_decisions = await self._execute_votes(
                             vote_decisions, request.dry_run
                         )
-                        logfire.info(
-                            "Votes executed",
-                            vote_count=len(final_vote_decisions),
-                            dry_run=request.dry_run,
-                        )
                     except Exception as e:
                         error_msg = f"Failed to execute votes: {str(e)}"
                         errors.append(error_msg)
-                        logfire.error("Vote execution failed", error=str(e))
+                        self.logger.log_error(
+                            "execute_votes", e, space_id=request.space_id
+                        )
                         final_vote_decisions = []
 
                 # Calculate execution time
@@ -203,14 +201,8 @@ class AgentRunService:
                     next_check_time=None,  # Could be implemented for scheduling
                 )
 
-                logfire.info(
-                    "Agent run execution completed",
-                    space_id=request.space_id,
-                    proposals_analyzed=response.proposals_analyzed,
-                    votes_cast=len(response.votes_cast),
-                    execution_time=response.execution_time,
-                    error_count=len(response.errors),
-                )
+                # Log completion summary
+                self.logger.log_agent_completion(response)
 
                 return response
 
@@ -354,7 +346,9 @@ class AgentRunService:
 
                 # Step 3: Limit to max_proposals_per_run if specified
                 if preferences.max_proposals_per_run > 0:
-                    final_proposals = ranked_proposals[:preferences.max_proposals_per_run]
+                    final_proposals = ranked_proposals[
+                        : preferences.max_proposals_per_run
+                    ]
                     logfire.info(
                         "Proposals limited to max per run",
                         original_ranked_count=len(ranked_proposals),
@@ -382,7 +376,9 @@ class AgentRunService:
                 assert all(
                     isinstance(p, Proposal) for p in final_proposals
                 ), "All filtered proposals must be Proposal objects"
-                assert len(final_proposals) <= len(proposals), "Filtered count cannot exceed original count"
+                assert len(final_proposals) <= len(
+                    proposals
+                ), "Filtered count cannot exceed original count"
 
                 return final_proposals
 
@@ -543,29 +539,14 @@ class AgentRunService:
 
                         if vote_result.get("success"):
                             executed_decisions.append(decision)
-                            logfire.info(
-                                "Vote executed successfully",
-                                proposal_id=decision.proposal_id,
-                                vote=decision.vote.value,
-                                transaction_hash=vote_result.get(
-                                    "submission_result", {}
-                                )
-                                .get("response", {})
-                                .get("id"),
-                            )
+                            self.logger.log_vote_execution(decision, True)
                         else:
-                            logfire.error(
-                                "Vote execution failed",
-                                proposal_id=decision.proposal_id,
-                                error=vote_result.get("error"),
+                            self.logger.log_vote_execution(
+                                decision, False, vote_result.get("error")
                             )
 
                     except Exception as e:
-                        logfire.error(
-                            "Individual vote execution failed",
-                            proposal_id=decision.proposal_id,
-                            error=str(e),
-                        )
+                        self.logger.log_vote_execution(decision, False, str(e))
                         # Continue with other votes
                         continue
 
