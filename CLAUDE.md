@@ -72,16 +72,18 @@ REDIS_PASSWORD=quorum        # Redis password
 
 ## Architecture Overview
 
-This is a full-stack DAO proposal summarization application with a Python FastAPI backend and SvelteKit frontend.
+This is a full-stack DAO proposal summarization and autonomous voting application with a Python FastAPI backend and SvelteKit frontend.
 
 ### Backend Architecture (`backend/`)
 - **FastAPI application** with async/await patterns for high performance
-- **Pydantic AI integration** with Claude 3.5 Sonnet via OpenRouter for AI-powered proposal summarization
+- **Pydantic AI integration** with Google Gemini 2.0 Flash via OpenRouter for AI-powered proposal summarization and autonomous voting
 - **Snapshot GraphQL API integration** for fetching DAO proposal data from Snapshot spaces
 - **Service-oriented architecture**:
   - `snapshot_service.py`: Handles Snapshot space and proposal data fetching
-  - `ai_service.py`: Manages AI summarization and risk assessment
+  - `ai_service.py`: Manages AI summarization, risk assessment, and autonomous voting decisions
   - `voting_service.py`: Handles vote submission to Snapshot
+  - `agent_run_service.py`: Orchestrates autonomous voting workflow
+  - `user_preferences_service.py`: Manages user voting preferences
 - **Pydantic models** for type-safe data validation (`models.py`)
 - **Configuration management** via environment variables (`config.py`)
 - **Logfire integration** for observability and distributed tracing
@@ -104,6 +106,7 @@ This is a full-stack DAO proposal summarization application with a Python FastAP
 - `GET /proposals/{id}` - Get specific proposal by ID
 - `POST /proposals/summarize` - AI summarization for specific proposals
 - `GET /proposals/{id}/top-voters` - Top voters for a proposal
+- `POST /agent-run` - Execute autonomous voting agent
 - `GET /health` - Health check endpoint
 
 ## Environment Setup
@@ -232,3 +235,14 @@ The AI service has been updated to work with Snapshot's data structure:
 - Handles Snapshot's voting choices format
 - Provides risk assessment based on Snapshot proposal data
 - Supports both single-choice and multiple-choice voting
+- Uses Google Gemini 2.0 Flash model via OpenRouter
+- Dual functionality: proposal summarization and autonomous voting decisions
+
+### Autonomous Voting Agent
+The application now includes a comprehensive autonomous voting system:
+- **Agent Run Service**: Orchestrates the complete voting workflow
+- **User Preferences**: Persistent configuration for voting strategies
+- **Proposal Filtering**: Intelligent filtering based on urgency and user preferences
+- **Voting Strategies**: Balanced, conservative, and aggressive approaches
+- **Dry Run Mode**: Test decisions without executing actual votes
+- **Comprehensive Logging**: Full audit trail with Logfire integration

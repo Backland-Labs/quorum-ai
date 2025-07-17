@@ -1,6 +1,6 @@
 # Quorum AI
 
-A full-stack DAO proposal summarization application with Python FastAPI backend and SvelteKit frontend, featuring AI-powered analysis using Claude 3.5 Sonnet via OpenRouter.
+A full-stack DAO proposal summarization and autonomous voting application with Python FastAPI backend and SvelteKit frontend, featuring AI-powered analysis using Google Gemini 2.0 Flash via OpenRouter and integration with Snapshot for decentralized governance.
 
 ## Quick Start
 
@@ -29,7 +29,6 @@ OPENROUTER_API_KEY=your_openrouter_api_key
 
 # Optional configuration
 TOP_ORGANIZATIONS=compound,nounsdao,arbitrum  # Default organizations
-TALLY_API_KEY=your_tally_api_key  # For higher rate limits
 LOGFIRE_TOKEN=your_logfire_token  # For observability
 ```
 
@@ -53,18 +52,21 @@ npm run dev
 ## Features
 
 ### 🎯 Core Functionality
-- **Top Organizations**: Automatically fetches top 3 DAO organizations
-- **Active Proposals**: Gets 3 most active proposals per organization
-- **AI Summarization**: Uses Claude 3.5 Sonnet via OpenRouter for proposal analysis
+- **Snapshot Integration**: Direct integration with Snapshot for DAO proposal data
+- **Active Proposals**: Fetches active proposals from Snapshot spaces
+- **AI Summarization**: Uses Google Gemini 2.0 Flash via OpenRouter for proposal analysis
 - **Risk Assessment**: AI-powered risk evaluation for each proposal
-- **Recommendations**: Smart voting recommendations based on proposal analysis
+- **Autonomous Voting**: Agent-based system for automated voting decisions
+- **User Preferences**: Configurable voting strategies and confidence thresholds
 
 ### 🔗 API Endpoints
 
-- `GET /organizations` - Top 3 organizations with summarized proposals
-- `GET /organizations/list` - Full organization listing
-- `GET /proposals` - Proposal search and filtering
+- `GET /proposals` - Proposal search and filtering by Snapshot space
+- `GET /proposals/{id}` - Get specific proposal by ID
 - `POST /proposals/summarize` - AI summarization for specific proposals
+- `GET /proposals/{id}/top-voters` - Top voters for a proposal
+- `POST /agent-run` - Execute autonomous voting agent
+- `GET /health` - Health check endpoint
 - `GET /docs` - Interactive API documentation
 
 ### 🏗️ Architecture
@@ -72,7 +74,7 @@ npm run dev
 **Backend (Python FastAPI)**
 - Async/await for high performance
 - Pydantic AI integration with OpenRouter
-- Tally GraphQL API integration
+- Snapshot GraphQL API integration
 - Service-oriented architecture
 - Comprehensive error handling and logging
 
@@ -82,6 +84,44 @@ npm run dev
 - Auto-generated API client
 - Responsive design
 - Real-time proposal updates
+
+## Autonomous Voting Agent
+
+The application includes an autonomous voting agent that can analyze proposals and make voting decisions based on user preferences.
+
+### Agent Features
+- **Automatic Proposal Analysis**: Fetches and analyzes active proposals from Snapshot spaces
+- **Configurable Voting Strategies**: Balanced, conservative, or aggressive approaches
+- **User Preference Management**: Persistent configuration via `user_preferences.txt`
+- **Proposal Filtering**: Whitelist/blacklist proposers, confidence thresholds
+- **Dry Run Mode**: Test voting decisions without executing actual votes
+- **Comprehensive Logging**: Full audit trail of all agent decisions
+
+### Using the Agent
+
+```bash
+# Execute agent run via API
+curl -X POST http://localhost:8000/agent-run \
+  -H "Content-Type: application/json" \
+  -d '{
+    "space_id": "yam.eth",
+    "dry_run": true
+  }'
+```
+
+### User Preferences Configuration
+
+Create a `user_preferences.txt` file in the backend directory:
+
+```json
+{
+  "voting_strategy": "BALANCED",
+  "confidence_threshold": 0.7,
+  "max_proposals_per_run": 3,
+  "blacklisted_proposers": [],
+  "whitelisted_proposers": []
+}
+```
 
 ## Development
 
@@ -103,6 +143,8 @@ npm run build              # Build for production
 npm run preview            # Preview production build
 npm run check              # Type checking
 npm run generate-api       # Generate API client
+npm run test               # Run tests
+npm run test:watch         # Run tests in watch mode
 ```
 
 ### Project Structure
@@ -115,7 +157,10 @@ quorum-ai/
 │   ├── models.py         # Pydantic data models
 │   └── services/
 │       ├── ai_service.py     # AI summarization
-│       └── tally_service.py  # DAO data fetching
+│       ├── snapshot_service.py  # Snapshot data fetching
+│       ├── voting_service.py    # Vote submission
+│       ├── agent_run_service.py # Autonomous agent
+│       └── user_preferences_service.py  # User config
 ├── frontend/
 │   ├── src/
 │   │   ├── routes/           # SvelteKit pages
@@ -133,7 +178,6 @@ quorum-ai/
 |----------|-------------|---------|----------|
 | `OPENROUTER_API_KEY` | OpenRouter API key for Claude 3.5 Sonnet | - | Yes |
 | `TOP_ORGANIZATIONS` | Comma-separated organization slugs | `compound,nounsdao,arbitrum` | No |
-| `TALLY_API_KEY` | Tally API key for higher rate limits | - | No |
 | `LOGFIRE_TOKEN` | Logfire token for observability | - | No |
 | `DEBUG` | Enable debug mode | `false` | No |
 | `HOST` | Server host | `0.0.0.0` | No |
@@ -141,7 +185,18 @@ quorum-ai/
 
 ### AI Model Configuration
 
-The application uses Claude 3.5 Sonnet via OpenRouter by default. You can modify the AI service configuration in `backend/services/ai_service.py` to use different models or providers.
+The application uses Google Gemini 2.0 Flash via OpenRouter by default. You can modify the AI service configuration in `backend/services/ai_service.py` to use different models or providers.
+
+### Agent Run Configuration
+
+The autonomous voting agent can be configured via environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MAX_PROPOSALS_PER_RUN` | Maximum proposals to analyze per run | `3` |
+| `AGENT_CONFIDENCE_THRESHOLD` | Minimum confidence for voting | `0.7` |
+| `PROPOSAL_FETCH_TIMEOUT` | Timeout for fetching proposals (seconds) | `30` |
+| `VOTE_EXECUTION_TIMEOUT` | Timeout for vote execution (seconds) | `60` |
 
 ## Deployment
 
@@ -150,6 +205,25 @@ The application uses Claude 3.5 Sonnet via OpenRouter by default. You can modify
 ```bash
 docker build -t quorum-ai .
 docker run -p 8000:8000 --env-file .env quorum-ai
+```
+
+### Docker Compose
+
+The application includes a complete Docker Compose setup with PostgreSQL and Redis:
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Start specific services
+docker-compose up -d postgres redis
+docker-compose up -d backend frontend
+
+# View logs
+docker-compose logs -f backend
+
+# Stop all services
+docker-compose down
 ```
 
 ### Production Considerations
