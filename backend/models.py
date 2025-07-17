@@ -22,8 +22,6 @@ MAX_VOTERS_LIST_SIZE = 100
 
 # Constants for VoteDecision model
 DEFAULT_RISK_ASSESSMENT = "MEDIUM"
-DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
-CONFIDENCE_DECIMAL_PLACES = 3
 
 # Constants for AgentState model
 DEFAULT_FSM_ROUND = "IdleRound"
