@@ -151,6 +151,8 @@ PORT=8000  # Server port
 
 ## Testing
 
+- When writing tests, write out the meaning and the importance of the test explaining what it's trying to do.
+
 ### Backend Testing
 - **Framework**: pytest with async support (`pytest-asyncio`)
 - **Coverage**: pytest-cov with HTML reporting (`--cov=. --cov-report=html`)
@@ -198,6 +200,34 @@ PORT=8000  # Server port
     Performance - Only optimize after the above are satisfied
 
 
-# Snapshot
-Here are the API docs: https://docs.snapshot.box/tools/api
-API Test endpoint: https://hub.snapshot.org/graphql
+## API Integration Changes (BAC-157)
+
+### Migration from Tally to Snapshot
+This application has been migrated from using Tally to Snapshot for DAO proposal data. Key changes include:
+
+- **Data Source**: All proposal data now comes from Snapshot GraphQL API instead of Tally
+- **Models**: Updated all Pydantic models to match Snapshot's data structures
+- **Service Architecture**: Replaced `tally_service.py` with `snapshot_service.py`
+- **GraphQL Queries**: Implemented Snapshot-specific queries for spaces, proposals, and votes
+- **Vote Submission**: Updated voting mechanism to work with Snapshot's EIP-712 signatures
+
+### Snapshot Integration Details
+- **API Documentation**: https://docs.snapshot.box/tools/api
+- **GraphQL Endpoint**: https://hub.snapshot.org/graphql
+- **Key Services**:
+  - `snapshot_service.py`: Fetches spaces, proposals, and votes from Snapshot
+  - `voting_service.py`: Handles EIP-712 signature creation for vote submission
+  - `ai_service.py`: Provides AI-powered summarization of Snapshot proposals
+
+### Important Snapshot Concepts
+- **Spaces**: DAO organizations on Snapshot (replaces Tally's governors)
+- **Proposals**: Voting items within a space
+- **Strategies**: Voting power calculation methods specific to each space
+- **IPFS**: Proposal content is stored on IPFS, requiring special handling
+
+### AI Service Updates
+The AI service has been updated to work with Snapshot's data structure:
+- Parses IPFS-stored proposal descriptions
+- Handles Snapshot's voting choices format
+- Provides risk assessment based on Snapshot proposal data
+- Supports both single-choice and multiple-choice voting
