@@ -1219,3 +1219,175 @@ class Space(BaseModel):
     def validate_votes_count_type(cls, v) -> int:
         """Validate votesCount field is integer type."""
         return cls._validate_integer_field(v, "votesCount")
+
+
+class AgentRunRequest(BaseModel):
+    """Request model for agent run execution."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+    
+    space_id: str = Field(..., description="Snapshot space ID to monitor")
+    dry_run: bool = Field(default=False, description="If true, simulate without voting")
+    
+    @field_validator("space_id")
+    @classmethod
+    def validate_space_id(cls, v: str) -> str:
+        """Validate space_id is non-empty string."""
+        # Runtime assertion: space_id must be meaningful
+        assert isinstance(v, str), f"Space ID must be string, got {type(v)}"
+        assert v.strip(), "Space ID cannot be empty or whitespace"
+        
+        cleaned_id = v.strip()
+        
+        # Runtime assertion: cleaned value must have meaningful content
+        assert len(cleaned_id) > 0, "Space ID must contain meaningful content"
+        
+        return cleaned_id
+    
+    @field_validator("dry_run", mode="before")
+    @classmethod
+    def validate_dry_run(cls, v) -> bool:
+        """Validate dry_run is boolean type."""
+        # Runtime assertion: value must be boolean type
+        assert isinstance(v, bool), f"Dry run must be boolean type, got {type(v)}"
+        assert v is True or v is False, f"Dry run must be exactly True or False, got {v}"
+        
+        return v
+
+
+class AgentRunResponse(BaseModel):
+    """Response model for agent run execution."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+    
+    space_id: str = Field(..., description="Snapshot space ID that was monitored")
+    proposals_analyzed: int = Field(..., ge=0, description="Number of proposals analyzed")
+    votes_cast: List[VoteDecision] = Field(..., description="List of vote decisions made")
+    user_preferences_applied: bool = Field(..., description="Whether user preferences were applied")
+    execution_time: float = Field(..., ge=0.0, description="Execution time in seconds")
+    errors: List[str] = Field(default_factory=list, description="List of errors encountered")
+    next_check_time: Optional[datetime] = Field(None, description="Next scheduled check time")
+    
+    @field_validator("space_id")
+    @classmethod
+    def validate_space_id(cls, v: str) -> str:
+        """Validate space_id is non-empty string."""
+        # Runtime assertion: space_id must be meaningful
+        assert isinstance(v, str), f"Space ID must be string, got {type(v)}"
+        assert v.strip(), "Space ID cannot be empty or whitespace"
+        
+        cleaned_id = v.strip()
+        
+        # Runtime assertion: cleaned value must have meaningful content
+        assert len(cleaned_id) > 0, "Space ID must contain meaningful content"
+        
+        return cleaned_id
+    
+    @field_validator("proposals_analyzed")
+    @classmethod
+    def validate_proposals_analyzed(cls, v: int) -> int:
+        """Validate proposals_analyzed is non-negative integer."""
+        # Runtime assertion: value must be integer type
+        assert isinstance(v, int), f"Proposals analyzed must be integer, got {type(v)}"
+        assert not isinstance(v, bool), "Proposals analyzed cannot be boolean disguised as int"
+        
+        # Runtime assertion: value must be non-negative
+        assert v >= 0, f"Proposals analyzed cannot be negative: {v}"
+        
+        return v
+    
+    @field_validator("execution_time")
+    @classmethod
+    def validate_execution_time(cls, v: float) -> float:
+        """Validate execution_time is non-negative float."""
+        # Runtime assertion: value must be numeric type
+        assert isinstance(v, (int, float)), f"Execution time must be numeric, got {type(v)}"
+        assert v >= 0.0, f"Execution time cannot be negative: {v}"
+        
+        # Runtime assertion: value must be valid number
+        assert v == v, "Execution time cannot be NaN"  # NaN check
+        assert v != float("inf"), "Execution time cannot be infinite"
+        
+        return float(v)
+
+
+class UserPreferences(BaseModel):
+    """User preferences model for agent run configuration."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+    
+    voting_strategy: VotingStrategy = Field(default=VotingStrategy.BALANCED, description="Voting strategy to use")
+    confidence_threshold: float = Field(default=0.7, ge=0.0, le=1.0, description="Minimum confidence threshold for voting")
+    max_proposals_per_run: int = Field(default=3, ge=1, le=10, description="Maximum proposals to analyze per run")
+    blacklisted_proposers: List[str] = Field(default_factory=list, description="List of proposer addresses to avoid")
+    whitelisted_proposers: List[str] = Field(default_factory=list, description="List of trusted proposer addresses")
+    
+    @field_validator("confidence_threshold")
+    @classmethod
+    def validate_confidence_threshold(cls, v: float) -> float:
+        """Validate confidence_threshold is between 0.0 and 1.0."""
+        # Runtime assertion: value must be numeric type
+        assert isinstance(v, (int, float)), f"Confidence threshold must be numeric, got {type(v)}"
+        
+        # Check for NaN
+        if v != v:  # NaN check
+            raise ValueError("Confidence threshold cannot be NaN")
+        
+        # Check for infinite values
+        if v == float("inf") or v == float("-inf"):
+            raise ValueError("Confidence threshold cannot be infinite")
+        
+        # Check range constraints
+        if v < 0.0 or v > 1.0:
+            raise ValueError(f"Confidence threshold must be between 0.0 and 1.0, got {v}")
+        
+        return float(v)
+    
+    @field_validator("max_proposals_per_run")
+    @classmethod
+    def validate_max_proposals_per_run(cls, v: int) -> int:
+        """Validate max_proposals_per_run is between 1 and 10."""
+        # Runtime assertion: value must be integer type
+        assert isinstance(v, int), f"Max proposals per run must be integer, got {type(v)}"
+        assert not isinstance(v, bool), "Max proposals per run cannot be boolean disguised as int"
+        
+        # Runtime assertion: value must be within valid range
+        assert 1 <= v <= 10, f"Max proposals per run must be between 1 and 10, got {v}"
+        
+        return v
+    
+    @field_validator("blacklisted_proposers")
+    @classmethod
+    def validate_blacklisted_proposers(cls, v: List[str]) -> List[str]:
+        """Validate blacklisted_proposers is list of non-empty strings."""
+        # Runtime assertion: value must be list
+        assert isinstance(v, list), f"Blacklisted proposers must be list, got {type(v)}"
+        
+        # Validate each address is non-empty
+        validated_addresses = []
+        for i, address in enumerate(v):
+            if not isinstance(address, str):
+                raise ValueError(f"Blacklisted proposer at index {i} must be string, got {type(address)}")
+            if not address.strip():
+                raise ValueError(f"Blacklisted proposer at index {i} cannot be empty or whitespace")
+            validated_addresses.append(address.strip())
+        
+        return validated_addresses
+    
+    @field_validator("whitelisted_proposers")
+    @classmethod
+    def validate_whitelisted_proposers(cls, v: List[str]) -> List[str]:
+        """Validate whitelisted_proposers is list of non-empty strings."""
+        # Runtime assertion: value must be list
+        assert isinstance(v, list), f"Whitelisted proposers must be list, got {type(v)}"
+        
+        # Validate each address is non-empty
+        validated_addresses = []
+        for i, address in enumerate(v):
+            if not isinstance(address, str):
+                raise ValueError(f"Whitelisted proposer at index {i} must be string, got {type(address)}")
+            if not address.strip():
+                raise ValueError(f"Whitelisted proposer at index {i} cannot be empty or whitespace")
+            validated_addresses.append(address.strip())
+        
+        return validated_addresses

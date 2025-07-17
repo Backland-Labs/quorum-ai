@@ -161,7 +161,7 @@ class TestAIServiceGenerateProposalSummary:
 
             # Verify prompt contains key information
             assert sample_proposal.title in prompt
-            assert sample_proposal.description in prompt
+            assert sample_proposal.body in prompt
             assert "summary" in prompt.lower()
 
 
