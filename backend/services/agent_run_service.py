@@ -1,7 +1,7 @@
 """Agent Run Service for executing autonomous voting decisions."""
 
 import time
-from typing import List
+from typing import List, Optional, Tuple
 
 import logfire
 
@@ -95,134 +95,229 @@ class AgentRunService:
         ):
             try:
                 # Step 1: Load user preferences
-                try:
-                    user_preferences = (
-                        await self.user_preferences_service.load_preferences()
-                    )
+                user_preferences, preferences_error = await self._load_user_preferences(
+                    request
+                )
+                if preferences_error:
+                    errors.append(preferences_error)
+                    user_preferences_applied = False
+                else:
                     user_preferences_applied = True
 
-                    # Log agent run start with preferences
-                    self.logger.log_agent_start(request, user_preferences)
-
-                except Exception as e:
-                    error_msg = f"Failed to load user preferences: {str(e)}"
-                    errors.append(error_msg)
-                    self.logger.log_error(
-                        "load_preferences", e, space_id=request.space_id
+                # Step 2: Fetch and process proposals
+                proposals, filtered_proposals, fetch_errors = (
+                    await self._fetch_and_process_proposals(
+                        request.space_id, user_preferences
                     )
-                    # Use default preferences
-                    user_preferences = UserPreferences()
-                    user_preferences_applied = False
+                )
+                errors.extend(fetch_errors)
 
-                    # Log agent run start with default preferences
-                    self.logger.log_agent_start(request, user_preferences)
-
-                # Step 2: Fetch active proposals
-                try:
-                    proposals = await self._fetch_active_proposals(
-                        request.space_id, user_preferences.max_proposals_per_run
+                # Step 3: Make and execute voting decisions
+                vote_decisions, final_decisions, voting_errors = (
+                    await self._process_voting_decisions(
+                        filtered_proposals, user_preferences, request.dry_run
                     )
-                except Exception as e:
-                    error_msg = f"Failed to fetch active proposals: {str(e)}"
-                    errors.append(error_msg)
-                    self.logger.log_error(
-                        "fetch_proposals", e, space_id=request.space_id
-                    )
-                    proposals = []
+                )
+                errors.extend(voting_errors)
 
-                # Step 3: Filter and rank proposals
-                filtered_and_ranked_proposals = []
-                if proposals:
-                    try:
-                        filtered_and_ranked_proposals = (
-                            await self._filter_and_rank_proposals(
-                                proposals, user_preferences
-                            )
-                        )
-                        # Log proposals fetched and filtered
-                        self.logger.log_proposals_fetched(
-                            proposals, len(filtered_and_ranked_proposals)
-                        )
-                    except Exception as e:
-                        error_msg = f"Failed to filter and rank proposals: {str(e)}"
-                        errors.append(error_msg)
-                        self.logger.log_error(
-                            "filter_proposals", e, space_id=request.space_id
-                        )
-                        # Fall back to original proposals if filtering fails
-                        filtered_and_ranked_proposals = proposals
-
-                # Step 4: Make voting decisions
-                vote_decisions = []
-                if filtered_and_ranked_proposals:
-                    try:
-                        vote_decisions = await self._make_voting_decisions(
-                            filtered_and_ranked_proposals, user_preferences
-                        )
-                        # Log individual proposal analysis
-                        for proposal, decision in zip(
-                            filtered_and_ranked_proposals, vote_decisions
-                        ):
-                            self.logger.log_proposal_analysis(proposal, decision)
-                    except Exception as e:
-                        error_msg = f"Failed to make voting decisions: {str(e)}"
-                        errors.append(error_msg)
-                        self.logger.log_error(
-                            "make_decisions", e, space_id=request.space_id
-                        )
-                        vote_decisions = []
-
-                # Step 5: Execute votes
-                final_vote_decisions = []
-                if vote_decisions:
-                    try:
-                        final_vote_decisions = await self._execute_votes(
-                            vote_decisions, request.dry_run
-                        )
-                    except Exception as e:
-                        error_msg = f"Failed to execute votes: {str(e)}"
-                        errors.append(error_msg)
-                        self.logger.log_error(
-                            "execute_votes", e, space_id=request.space_id
-                        )
-                        final_vote_decisions = []
-
-                # Calculate execution time
+                # Calculate execution time and create response
                 execution_time = time.time() - start_time
-
-                # Create response
-                response = AgentRunResponse(
-                    space_id=request.space_id,
-                    proposals_analyzed=len(filtered_and_ranked_proposals),
-                    votes_cast=final_vote_decisions,
-                    user_preferences_applied=user_preferences_applied,
-                    execution_time=execution_time,
-                    errors=errors,
-                    next_check_time=None,  # Could be implemented for scheduling
+                response = self._create_agent_response(
+                    request.space_id,
+                    filtered_proposals,
+                    final_decisions,
+                    user_preferences_applied,
+                    execution_time,
+                    errors,
                 )
 
                 # Log completion summary
                 self.logger.log_agent_completion(response)
-
                 return response
 
             except Exception as e:
                 # Catch-all for unexpected errors
-                error_msg = f"Unexpected error during agent run: {str(e)}"
-                errors.append(error_msg)
-                logfire.error("Unexpected agent run error", error=str(e))
-
-                execution_time = time.time() - start_time
-
-                return AgentRunResponse(
-                    space_id=request.space_id,
-                    proposals_analyzed=0,
-                    votes_cast=[],
-                    user_preferences_applied=user_preferences_applied,
-                    execution_time=execution_time,
-                    errors=errors,
-                    next_check_time=None,
+                return self._handle_unexpected_error(
+                    e, request.space_id, start_time, user_preferences_applied
                 )
+
+    async def _load_user_preferences(
+        self, request: AgentRunRequest
+    ) -> Tuple[UserPreferences, Optional[str]]:
+        """Load user preferences with error handling.
+
+        Args:
+            request: AgentRunRequest containing space_id
+
+        Returns:
+            Tuple of (UserPreferences, error_message or None)
+        """
+        try:
+            user_preferences = await self.user_preferences_service.load_preferences()
+            self.logger.log_agent_start(request, user_preferences)
+            return user_preferences, None
+        except Exception as e:
+            error_msg = f"Failed to load user preferences: {str(e)}"
+            self.logger.log_error("load_preferences", e, space_id=request.space_id)
+            # Use default preferences
+            user_preferences = UserPreferences()
+            self.logger.log_agent_start(request, user_preferences)
+            return user_preferences, error_msg
+
+    async def _fetch_and_process_proposals(
+        self, space_id: str, user_preferences: UserPreferences
+    ) -> Tuple[List[Proposal], List[Proposal], List[str]]:
+        """Fetch and process proposals with filtering and ranking.
+
+        Args:
+            space_id: The space ID to fetch proposals for
+            user_preferences: User preferences for filtering and ranking
+
+        Returns:
+            Tuple of (all_proposals, filtered_proposals, errors)
+        """
+        errors = []
+        proposals = []
+        filtered_proposals = []
+
+        # Fetch active proposals
+        try:
+            proposals = await self._fetch_active_proposals(
+                space_id, user_preferences.max_proposals_per_run
+            )
+        except Exception as e:
+            error_msg = f"Failed to fetch active proposals: {str(e)}"
+            errors.append(error_msg)
+            self.logger.log_error("fetch_proposals", e, space_id=space_id)
+            return proposals, filtered_proposals, errors
+
+        # Filter and rank proposals if any were fetched
+        if proposals:
+            try:
+                filtered_proposals = await self._filter_and_rank_proposals(
+                    proposals, user_preferences
+                )
+                self.logger.log_proposals_fetched(
+                    proposals, len(filtered_proposals)
+                )
+            except Exception as e:
+                error_msg = f"Failed to filter and rank proposals: {str(e)}"
+                errors.append(error_msg)
+                self.logger.log_error("filter_proposals", e, space_id=space_id)
+                # Fall back to original proposals if filtering fails
+                filtered_proposals = proposals
+
+        return proposals, filtered_proposals, errors
+
+    async def _process_voting_decisions(
+        self,
+        proposals: List[Proposal],
+        user_preferences: UserPreferences,
+        dry_run: bool,
+    ) -> Tuple[List[VoteDecision], List[VoteDecision], List[str]]:
+        """Make voting decisions and execute them.
+
+        Args:
+            proposals: Proposals to vote on
+            user_preferences: User preferences for voting
+            dry_run: Whether to actually execute votes
+
+        Returns:
+            Tuple of (vote_decisions, final_decisions, errors)
+        """
+        errors = []
+        vote_decisions = []
+        final_decisions = []
+
+        # Make voting decisions
+        if proposals:
+            try:
+                vote_decisions = await self._make_voting_decisions(
+                    proposals, user_preferences
+                )
+                # Log individual proposal analysis
+                for proposal, decision in zip(proposals, vote_decisions):
+                    self.logger.log_proposal_analysis(proposal, decision)
+            except Exception as e:
+                error_msg = f"Failed to make voting decisions: {str(e)}"
+                errors.append(error_msg)
+                self.logger.log_error("make_decisions", e)
+                return vote_decisions, final_decisions, errors
+
+        # Execute votes
+        if vote_decisions:
+            try:
+                final_decisions = await self._execute_votes(vote_decisions, dry_run)
+            except Exception as e:
+                error_msg = f"Failed to execute votes: {str(e)}"
+                errors.append(error_msg)
+                self.logger.log_error("execute_votes", e)
+
+        return vote_decisions, final_decisions, errors
+
+    def _create_agent_response(
+        self,
+        space_id: str,
+        filtered_proposals: List[Proposal],
+        vote_decisions: List[VoteDecision],
+        user_preferences_applied: bool,
+        execution_time: float,
+        errors: List[str],
+    ) -> AgentRunResponse:
+        """Create the agent run response.
+
+        Args:
+            space_id: The space ID
+            filtered_proposals: Proposals that were analyzed
+            vote_decisions: Voting decisions made
+            user_preferences_applied: Whether user preferences were applied
+            execution_time: Total execution time
+            errors: List of errors encountered
+
+        Returns:
+            AgentRunResponse with all results
+        """
+        return AgentRunResponse(
+            space_id=space_id,
+            proposals_analyzed=len(filtered_proposals),
+            votes_cast=vote_decisions,
+            user_preferences_applied=user_preferences_applied,
+            execution_time=execution_time,
+            errors=errors,
+            next_check_time=None,  # Could be implemented for scheduling
+        )
+
+    def _handle_unexpected_error(
+        self,
+        error: Exception,
+        space_id: str,
+        start_time: float,
+        user_preferences_applied: bool,
+    ) -> AgentRunResponse:
+        """Handle unexpected errors during agent run.
+
+        Args:
+            error: The exception that occurred
+            space_id: The space ID
+            start_time: When the agent run started
+            user_preferences_applied: Whether user preferences were applied
+
+        Returns:
+            AgentRunResponse with error information
+        """
+        error_msg = f"Unexpected error during agent run: {str(error)}"
+        logfire.error("Unexpected agent run error", error=str(error))
+        execution_time = time.time() - start_time
+
+        return AgentRunResponse(
+            space_id=space_id,
+            proposals_analyzed=0,
+            votes_cast=[],
+            user_preferences_applied=user_preferences_applied,
+            execution_time=execution_time,
+            errors=[error_msg],
+            next_check_time=None,
+        )
 
     async def _fetch_active_proposals(
         self, space_id: str, limit: int
