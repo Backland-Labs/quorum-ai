@@ -253,7 +253,7 @@ from pydantic import field_validator, Field
 class ProposalRequest(BaseAPIModel):
     space_id: str = Field(..., min_length=3, max_length=100)
     limit: int = Field(default=20, ge=1, le=100)
-    
+
     @field_validator('space_id')
     def validate_space_id(cls, v):
         if not v.replace('-', '').replace('.', '').isalnum():
@@ -278,7 +278,7 @@ class ProposalRequest(BaseAPIModel):
 ```python
 class Proposal(BaseModel):
     """Represents a governance proposal"""
-    
+
     id: str = Field(..., description="Unique proposal identifier")
     title: str = Field(..., description="Proposal title", example="Fund Development")
 ```

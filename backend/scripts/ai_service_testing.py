@@ -19,7 +19,7 @@ from datetime import datetime
 from typing import List, Dict, Any
 
 # Add backend to path so we can import modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 
 from services.ai_service import AIService
 from models import (
@@ -30,12 +30,12 @@ from models import (
 
 class VoteDecisionTester:
     """Test AI voting decision quality and reasoning."""
-    
+
     def __init__(self):
         """Initialize the tester."""
         self.ai_service = None
         self.test_scenarios = []
-        
+
     async def initialize(self):
         """Initialize the AI service."""
         try:
@@ -46,10 +46,10 @@ class VoteDecisionTester:
         except Exception as e:
             print(f"❌ Failed to initialize AI Service: {e}")
             return False
-    
+
     def create_test_scenarios(self) -> List[Dict[str, Any]]:
         """Create various proposal scenarios to test AI decision-making."""
-        
+
         scenarios = [
             {
                 "name": "CLEAR BENEFICIAL PROPOSAL",
@@ -93,12 +93,16 @@ Increase the annual security audit budget from $500K to $600K to hire additional
 - Treasury has sufficient reserves for this allocation
 - All proposed audit firms are well-established and reputable
                     """,
-                    strategies=[{"name": "erc20-balance-of", "params": {"address": "0x123", "symbol": "SAFE"}}]
-                )
+                    strategies=[
+                        {
+                            "name": "erc20-balance-of",
+                            "params": {"address": "0x123", "symbol": "SAFE"},
+                        }
+                    ],
+                ),
             },
-            
             {
-                "name": "CLEARLY HARMFUL PROPOSAL", 
+                "name": "CLEARLY HARMFUL PROPOSAL",
                 "description": "Obviously bad proposal that should get AGAINST votes",
                 "expected_vote": "AGAINST",
                 "proposal": Proposal(
@@ -109,7 +113,7 @@ Increase the annual security audit budget from $500K to $600K to hire additional
                     end=int(datetime.now().timestamp()) + 86400 * 2,
                     state="active",
                     author="0xSuspiciousActor987654321",
-                    network="1", 
+                    network="1",
                     symbol="RISK",
                     scores=[25000.0, 750000.0, 25000.0],  # Strong AGAINST majority
                     scores_total=800000.0,
@@ -140,13 +144,17 @@ Remove all security controls, multisig requirements, and liquidate 90% of treasu
 ## Risks
 - [No risk assessment provided]
                     """,
-                    strategies=[{"name": "erc20-balance-of", "params": {"address": "0x456", "symbol": "RISK"}}]
-                )
+                    strategies=[
+                        {
+                            "name": "erc20-balance-of",
+                            "params": {"address": "0x456", "symbol": "RISK"},
+                        }
+                    ],
+                ),
             },
-            
             {
                 "name": "COMPLEX TRADEOFF PROPOSAL",
-                "description": "Nuanced proposal requiring careful analysis", 
+                "description": "Nuanced proposal requiring careful analysis",
                 "expected_vote": "ABSTAIN",  # Could go either way
                 "proposal": Proposal(
                     id="complex-proposal",
@@ -190,7 +198,7 @@ Migrate the entire protocol to a new, more efficient blockchain requiring 6-mont
 
 ## Risks
 - HIGH: Extended downtime could kill project momentum
-- MEDIUM: Migration complexity may introduce vulnerabilities  
+- MEDIUM: Migration complexity may introduce vulnerabilities
 - LOW: New blockchain ecosystem is relatively stable
 
 ## Financial Impact
@@ -198,16 +206,20 @@ Migrate the entire protocol to a new, more efficient blockchain requiring 6-mont
 - Treasury can afford costs
 - Potential for 5x user growth post-migration
                     """,
-                    strategies=[{"name": "erc20-balance-of", "params": {"address": "0x789", "symbol": "COMPLEX"}}]
-                )
+                    strategies=[
+                        {
+                            "name": "erc20-balance-of",
+                            "params": {"address": "0x789", "symbol": "COMPLEX"},
+                        }
+                    ],
+                ),
             },
-            
             {
                 "name": "EMERGENCY TIME-SENSITIVE PROPOSAL",
                 "description": "Urgent proposal requiring quick decision",
                 "expected_vote": "FOR",  # Should recognize urgency
                 "proposal": Proposal(
-                    id="emergency-proposal", 
+                    id="emergency-proposal",
                     title="Emergency Security Patch Deployment",
                     choices=["For", "Against", "Abstain"],
                     start=int(datetime.now().timestamp()) - 3600,
@@ -253,21 +265,25 @@ Deploy pre-audited security patch within 24 hours to prevent:
 - WITH PATCH: LOW risk of minor disruption
 - Delay increases exploitation probability exponentially
                     """,
-                    strategies=[{"name": "erc20-balance-of", "params": {"address": "0xabc", "symbol": "URGENT"}}]
-                )
+                    strategies=[
+                        {
+                            "name": "erc20-balance-of",
+                            "params": {"address": "0xabc", "symbol": "URGENT"},
+                        }
+                    ],
+                ),
             },
-            
             {
                 "name": "QUESTIONABLE FUNDING PROPOSAL",
                 "description": "Proposal with unclear benefits and high costs",
                 "expected_vote": "AGAINST",
                 "proposal": Proposal(
                     id="questionable-proposal",
-                    title="$5M Marketing Campaign for Celebrity Endorsements", 
+                    title="$5M Marketing Campaign for Celebrity Endorsements",
                     choices=["For", "Against", "Abstain"],
                     start=int(datetime.now().timestamp()) - 36000,
                     end=int(datetime.now().timestamp()) + 86400 * 3,
-                    state="active", 
+                    state="active",
                     author="0xMarketingGuru123",
                     network="1",
                     symbol="SPEND",
@@ -279,18 +295,18 @@ Deploy pre-audited security patch within 24 hours to prevent:
                     body="""
 # Proposal: Celebrity Marketing Campaign
 
-## Summary  
+## Summary
 Allocate $5M treasury funds for celebrity endorsement marketing campaign.
 
 ## Proposed Activities
 - $3M for A-list celebrity spokesperson
 - $1M for Super Bowl commercial
-- $500K for influencer partnerships  
+- $500K for influencer partnerships
 - $500K for marketing agency fees
 
 ## Expected Outcomes
 - "Massive brand awareness"
-- "10x user growth" 
+- "10x user growth"
 - "Mainstream adoption"
 
 ## Details
@@ -309,123 +325,147 @@ Allocate $5M treasury funds for celebrity endorsement marketing campaign.
 - [No measurement plan provided]
 - [No fallback strategy if campaign fails]
                     """,
-                    strategies=[{"name": "erc20-balance-of", "params": {"address": "0xdef", "symbol": "SPEND"}}]
-                )
-            }
+                    strategies=[
+                        {
+                            "name": "erc20-balance-of",
+                            "params": {"address": "0xdef", "symbol": "SPEND"},
+                        }
+                    ],
+                ),
+            },
         ]
-        
+
         return scenarios
-    
-    async def test_vote_decision(self, scenario: Dict[str, Any], strategy: VotingStrategy) -> Dict[str, Any]:
+
+    async def test_vote_decision(
+        self, scenario: Dict[str, Any], strategy: VotingStrategy
+    ) -> Dict[str, Any]:
         """Test AI vote decision for a specific scenario and strategy."""
-        
+
         print(f"\n{'='*60}")
         print(f"🎯 TESTING: {scenario['name']}")
         print(f"📋 Description: {scenario['description']}")
         print(f"🔮 Expected Vote: {scenario['expected_vote']}")
         print(f"⚡ Strategy: {strategy.value.upper()}")
         print(f"{'='*60}")
-        
+
         try:
             # Get AI vote decision
-            decision = await self.ai_service.decide_vote(scenario['proposal'], strategy)
-            
-            
+            decision = await self.ai_service.decide_vote(scenario["proposal"], strategy)
+
             return decision
         except Exception as e:
             print(f"❌ FAILED: {str(e)}")
             return {
-                "scenario": scenario['name'],
+                "scenario": scenario["name"],
                 "strategy": strategy.value,
                 "status": "FAILED",
-                "error": str(e)
+                "error": str(e),
             }
-    
+
     def print_test_summary(self, results: List[Dict[str, Any]]) -> None:
         """Print comprehensive test summary."""
-        
+
         print(f"\n{'='*80}")
-        print(f"📊 AI VOTE DECISION QUALITY SUMMARY")
+        print("📊 AI VOTE DECISION QUALITY SUMMARY")
         print(f"{'='*80}")
-        
+
         successful_tests = [r for r in results if r["status"] == "SUCCESS"]
         failed_tests = [r for r in results if r["status"] == "FAILED"]
-        
-        print(f"\n🎯 OVERALL RESULTS:")
+
+        print("\n🎯 OVERALL RESULTS:")
         print(f"   Total Tests: {len(results)}")
         print(f"   ✅ Successful: {len(successful_tests)}")
         print(f"   ❌ Failed: {len(failed_tests)}")
-        
+
         if successful_tests:
             correct_votes = len([r for r in successful_tests if r["vote_correct"]])
             vote_accuracy = (correct_votes / len(successful_tests)) * 100
-            
-            print(f"\n🗳️  VOTE ACCURACY:")
+
+            print("\n🗳️  VOTE ACCURACY:")
             print(f"   Correct Votes: {correct_votes}/{len(successful_tests)}")
             print(f"   Accuracy Rate: {vote_accuracy:.1f}%")
-            
+
             # Show vote breakdown by scenario
-            print(f"\n📋 VOTE BREAKDOWN BY SCENARIO:")
+            print("\n📋 VOTE BREAKDOWN BY SCENARIO:")
             for result in successful_tests:
                 status = "✅" if result["vote_correct"] else "❌"
-                print(f"   {status} {result['scenario']}: {result['ai_vote']} (expected: {result['expected_vote']})")
-            
+                print(
+                    f"   {status} {result['scenario']}: {result['ai_vote']} (expected: {result['expected_vote']})"
+                )
+
             # Average confidence and reasoning quality
-            avg_confidence = sum(r["confidence"] for r in successful_tests) / len(successful_tests)
-            print(f"\n📈 CONFIDENCE ANALYSIS:")
+            avg_confidence = sum(r["confidence"] for r in successful_tests) / len(
+                successful_tests
+            )
+            print("\n📈 CONFIDENCE ANALYSIS:")
             print(f"   Average Confidence: {avg_confidence:.3f}")
-            
+
             # Reasoning quality analysis
             if successful_tests and "reasoning_quality" in successful_tests[0]:
-                print(f"\n💭 REASONING QUALITY ANALYSIS:")
+                print("\n💭 REASONING QUALITY ANALYSIS:")
                 quality_averages = {}
                 for criterion in successful_tests[0]["reasoning_quality"].keys():
-                    avg_score = sum(r["reasoning_quality"][criterion] for r in successful_tests) / len(successful_tests)
+                    avg_score = sum(
+                        r["reasoning_quality"][criterion] for r in successful_tests
+                    ) / len(successful_tests)
                     quality_averages[criterion] = avg_score
                     print(f"   {criterion}: {avg_score:.1f}/5.0")
-        
+
         # Strategy comparison
-        print(f"\n⚡ STRATEGY COMPARISON:")
+        print("\n⚡ STRATEGY COMPARISON:")
         strategies = ["conservative", "balanced", "aggressive"]
         for strategy in strategies:
-            strategy_results = [r for r in successful_tests if r["strategy"] == strategy]
+            strategy_results = [
+                r for r in successful_tests if r["strategy"] == strategy
+            ]
             if strategy_results:
                 correct = len([r for r in strategy_results if r["vote_correct"]])
                 accuracy = (correct / len(strategy_results)) * 100
-                print(f"   {strategy.upper()}: {correct}/{len(strategy_results)} correct ({accuracy:.1f}%)")
-        
+                print(
+                    f"   {strategy.upper()}: {correct}/{len(strategy_results)} correct ({accuracy:.1f}%)"
+                )
+
         if failed_tests:
-            print(f"\n❌ FAILED TESTS:")
+            print("\n❌ FAILED TESTS:")
             for result in failed_tests:
-                print(f"   - {result['scenario']} ({result['strategy']}): {result.get('error', 'Unknown error')}")
-    
+                print(
+                    f"   - {result['scenario']} ({result['strategy']}): {result.get('error', 'Unknown error')}"
+                )
+
     async def run_vote_decision_tests(self) -> None:
         """Run comprehensive vote decision testing."""
-        
+
         print("🗳️  AI VOTE DECISION QUALITY TEST SUITE")
-        print("="*60)
+        print("=" * 60)
         print("Testing AI's ability to make good voting decisions")
         print("based on proposal content and reasoning quality.\n")
-        
+
         # Initialize
         if not await self.initialize():
             return
-        
+
         # Create test scenarios
         scenarios = self.create_test_scenarios()
-        strategies = [VotingStrategy.CONSERVATIVE, VotingStrategy.BALANCED, VotingStrategy.AGGRESSIVE]
-        
-        print(f"📋 Testing {len(scenarios)} scenarios with {len(strategies)} strategies")
+        strategies = [
+            VotingStrategy.CONSERVATIVE,
+            VotingStrategy.BALANCED,
+            VotingStrategy.AGGRESSIVE,
+        ]
+
+        print(
+            f"📋 Testing {len(scenarios)} scenarios with {len(strategies)} strategies"
+        )
         print(f"📊 Total tests: {len(scenarios) * len(strategies)}\n")
-        
+
         # Run all tests
         all_results = []
-        
+
         for scenario in scenarios:
             for strategy in strategies:
                 result = await self.test_vote_decision(scenario, strategy)
                 all_results.append(result)
-        
+
         # Print comprehensive summary
         self.print_test_summary(all_results)
 
@@ -440,7 +480,7 @@ if __name__ == "__main__":
     print("🚀 Starting AI Vote Decision Quality Tests...")
     print("🎯 This tests whether the AI makes good voting decisions")
     print("⏳ Please wait while tests execute...\n")
-    
+
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
@@ -448,6 +488,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\n❌ Testing failed with error: {e}")
         import traceback
+
         traceback.print_exc()
     finally:
         print("\n👋 Vote decision tests complete!")

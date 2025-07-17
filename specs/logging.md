@@ -185,7 +185,7 @@ Maintain request context throughout operations:
 class RequestContext:
     request_id: str
     user_id: Optional[str]
-    
+
 # Include in all log calls within request
 logfire.info("Operation", request_id=context.request_id)
 ```

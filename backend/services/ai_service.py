@@ -17,7 +17,7 @@ from models import (
     VoteType,
     VotingStrategy,
     RiskLevel,
-    AiVoteResponse
+    AiVoteResponse,
 )
 
 # Constants for AI response parsing
@@ -213,8 +213,8 @@ class AIService:
             try:
                 model = OpenAIModel(
                     "google/gemini-2.0-flash-001",
-                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key)
-    )
+                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
+                )
                 logfire.info(
                     "Successfully created OpenRouter model", model_type=str(type(model))
                 )
@@ -252,7 +252,7 @@ class AIService:
             agent = Agent(
                 model=self.model,
                 system_prompt=self._get_system_prompt(),
-                output_type=NativeOutput(AiVoteResponse, strict=False)
+                output_type=NativeOutput(AiVoteResponse, strict=False),
             )
             logfire.info(
                 "Successfully created Pydantic AI agent", agent_type=str(type(agent))
@@ -368,7 +368,10 @@ class AIService:
             prompt
         )  # Use legacy method for test compatibility
 
-        ai_response = {"vote_decision": ai_response.vote, "reasoning": ai_response.reasoning} 
+        ai_response = {
+            "vote_decision": ai_response.vote,
+            "reasoning": ai_response.reasoning,
+        }
 
         return self.response_processor.parse_and_validate_vote_response(ai_response)
 
@@ -395,7 +398,7 @@ class AIService:
         """Format proposal information for the AI prompt."""
         vote_breakdown = self._extract_vote_breakdown(proposal)
         proposal_description = self._get_proposal_description(proposal)
-        
+
         return f"""**Proposal Title:** {proposal.title}
         **Network:** {proposal.network} ({proposal.symbol})
         **Current Status:** {proposal.state}
@@ -414,16 +417,12 @@ class AIService:
         votes_for = proposal.scores[0] if len(proposal.scores) > 0 else 0
         votes_against = proposal.scores[1] if len(proposal.scores) > 1 else 0
         votes_abstain = proposal.scores[2] if len(proposal.scores) > 2 else 0
-        
-        return {
-            'for': votes_for,
-            'against': votes_against,
-            'abstain': votes_abstain
-        }
+
+        return {"for": votes_for, "against": votes_against, "abstain": votes_abstain}
 
     def _get_proposal_description(self, proposal: Proposal) -> str:
         """Get proposal description with fallback."""
-        return getattr(proposal, 'body', 'No description available')
+        return getattr(proposal, "body", "No description available")
 
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""

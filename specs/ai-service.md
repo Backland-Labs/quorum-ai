@@ -46,7 +46,7 @@ class AIService:
         self.model = self._create_model()
         self.response_processor = AIResponseProcessor()
         self.agent = self._create_agent()
-        
+
         logfire.info(
             "AIService initialized",
             model_type=str(type(self.model))
@@ -111,17 +111,17 @@ async def summarize_proposal(
     include_recommendations: bool = True
 ) -> ProposalSummary:
     """Generate AI summary for a single proposal."""
-    
+
     # Runtime assertions
     assert proposal is not None
     assert isinstance(proposal, Proposal)
-    
+
     prompt = self._build_summarization_prompt(
         proposal,
         include_risk_assessment,
         include_recommendations
     )
-    
+
     with logfire.span("ai_proposal_summary", proposal_id=proposal.id):
         result = await self.agent.run(prompt)
         return self._process_summary_response(result, proposal.id)
@@ -159,14 +159,14 @@ async def decide_vote(
     strategy: VotingStrategy,
 ) -> VoteDecision:
     """Make autonomous voting decision."""
-    
+
     # Build strategy-specific prompt
     strategy_prompt = self._get_strategy_prompt(strategy)
     prompt = self._build_vote_decision_prompt(
-        proposal, 
+        proposal,
         strategy_prompt
     )
-    
+
     # Get AI decision
     with logfire.span(
         "ai_vote_decision",
@@ -213,7 +213,7 @@ class VoteDecision(BaseModel):
 ```python
 class AiVoteResponse(BaseModel):
     vote: str
-    confidence: float = Field(ge=0.0, le=1.0) 
+    confidence: float = Field(ge=0.0, le=1.0)
     reasoning: str
     risk_level: str
     key_factors: List[str]

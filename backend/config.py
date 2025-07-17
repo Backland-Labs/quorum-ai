@@ -23,7 +23,6 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-
     # AI settings
     anthropic_api_key: Optional[str] = None
     ai_model: str = "openai:gpt-4o-mini"
@@ -38,7 +37,6 @@ class Settings(BaseSettings):
 
     # OpenRouter configuration
     openrouter_api_key: Optional[str] = None
-
 
     # Top voters endpoint settings
     DEFAULT_TOP_VOTERS_LIMIT: ClassVar[int] = 10
@@ -238,7 +236,6 @@ class Settings(BaseSettings):
                     f"min_time_before_deadline must be positive, got {time_val}"
                 )
             self.min_time_before_deadline = time_val
-
 
     @property
     def monitored_daos_list(self) -> List[str]:

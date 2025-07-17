@@ -14,4 +14,3 @@ The Quorum AI agent operates as an autonomous system with:
 2. **Blockchain Authentication**: Ethereum private key for transaction signing
 3. **API Key Authentication**: Service-level authentication for external APIs
 4. **Agent-Based Design**: Designed for Olas Pearl App store deployment
-

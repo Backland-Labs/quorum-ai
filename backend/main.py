@@ -122,10 +122,7 @@ async def get_proposals(
             space_ids = [space_id]
             snapshot_state = state.value.lower() if state else None
             proposals = await snapshot_service.get_proposals(
-                space_ids=space_ids, 
-                state=snapshot_state, 
-                first=limit,
-                skip=skip
+                space_ids=space_ids, state=snapshot_state, first=limit, skip=skip
             )
 
             return ProposalListResponse(
@@ -220,7 +217,7 @@ async def get_proposal_top_voters(
             # Fetch data using Snapshot
             votes = await snapshot_service.get_votes(proposal_id, first=limit)
             proposal = await _validate_proposal_exists(proposal_id)
-            
+
             # Transform Snapshot votes to ProposalVoter format
             voters = _transform_snapshot_votes_to_voters(votes)
 
@@ -291,27 +288,21 @@ def _transform_snapshot_votes_to_voters(votes: List[Vote]) -> List[ProposalVoter
     for vote in votes:
         vote_type = _map_snapshot_choice_to_vote_type(vote.choice)
         amount_wei = _convert_voting_power_to_wei(vote.vp)
-        
+
         voter = ProposalVoter(
-            address=vote.voter,
-            amount=amount_wei,
-            vote_type=vote_type
+            address=vote.voter, amount=amount_wei, vote_type=vote_type
         )
         voters.append(voter)
-    
+
     return voters
 
 
 def _map_snapshot_choice_to_vote_type(choice: Any) -> VoteType:
     """Map Snapshot choice to VoteType with proper type handling."""
     # Snapshot choice mapping: 1=For, 2=Against, 3=Abstain (typical convention)
-    SNAPSHOT_CHOICE_MAP = {
-        1: VoteType.FOR,
-        2: VoteType.AGAINST, 
-        3: VoteType.ABSTAIN
-    }
+    SNAPSHOT_CHOICE_MAP = {1: VoteType.FOR, 2: VoteType.AGAINST, 3: VoteType.ABSTAIN}
     DEFAULT_VOTE_TYPE = VoteType.FOR
-    
+
     if isinstance(choice, int):
         return SNAPSHOT_CHOICE_MAP.get(choice, DEFAULT_VOTE_TYPE)
     else:
@@ -351,7 +342,7 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
     """Fetch proposals for summarization using Snapshot."""
     with logfire.span("fetch_proposals_for_summarization"):
         proposals = []
-        
+
         for proposal_id in proposal_ids:
             try:
                 proposal = await snapshot_service.get_proposal(proposal_id)
@@ -359,7 +350,7 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
                     proposals.append(proposal)
             except Exception:
                 pass  # Skip if Snapshot fails
-        
+
         logfire.info("Fetched proposals for summarization", count=len(proposals))
         return proposals
 

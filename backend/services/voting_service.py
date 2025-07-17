@@ -18,8 +18,8 @@ VALID_VOTE_CHOICES = [VOTE_CHOICE_FOR, VOTE_CHOICE_AGAINST, VOTE_CHOICE_ABSTAIN]
 SNAPSHOT_HUB_URL = "https://seq.snapshot.org/"
 VOTE_CHOICE_DESCRIPTIONS = {
     VOTE_CHOICE_FOR: "For",
-    VOTE_CHOICE_AGAINST: "Against", 
-    VOTE_CHOICE_ABSTAIN: "Abstain"
+    VOTE_CHOICE_AGAINST: "Against",
+    VOTE_CHOICE_ABSTAIN: "Abstain",
 }
 
 # Snapshot vote message configuration
@@ -76,17 +76,20 @@ class VotingService:
         return snapshot_message
 
     def _build_snapshot_message_structure(
-        self, 
-        from_address: str, 
-        space: str, 
-        timestamp: int, 
-        proposal: str, 
-        choice: int, 
-        proposal_is_bytes32: bool
+        self,
+        from_address: str,
+        space: str,
+        timestamp: int,
+        proposal: str,
+        choice: int,
+        proposal_is_bytes32: bool,
     ) -> Dict[str, Any]:
         """Build the complete Snapshot message structure."""
         return {
-            "domain": {"name": SNAPSHOT_DOMAIN_NAME, "version": SNAPSHOT_DOMAIN_VERSION},
+            "domain": {
+                "name": SNAPSHOT_DOMAIN_NAME,
+                "version": SNAPSHOT_DOMAIN_VERSION,
+            },
             "types": {
                 "EIP712Domain": [
                     {"name": "name", "type": "string"},

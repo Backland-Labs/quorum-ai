@@ -13,6 +13,7 @@ This application is an AI agent that will run on the Olas Pearl App store. Impor
 - **Run tests with coverage**: `uv run pytest --cov=. --cov-report=html`
 - **Run specific test**: `uv run pytest tests/test_models.py -v`
 - **Lint code**: `pre-commit run --all-files`
+- **Only run pre-commit against the files you're working on**
 
 ### Frontend (SvelteKit/TypeScript)
 - **Install dependencies**: `npm install` (in `frontend/` directory)
@@ -38,7 +39,7 @@ This application is an AI agent that will run on the Olas Pearl App store. Impor
 - **Rebuild services**: `docker-compose up -d --build`
 
 #### Service Configuration
-- **PostgreSQL**: 
+- **PostgreSQL**:
   - Port: 5432
   - Default credentials: `quorum/quorum`
   - Database: `quorum`
@@ -77,7 +78,7 @@ This is a full-stack DAO proposal summarization application with a Python FastAP
 - **FastAPI application** with async/await patterns for high performance
 - **Pydantic AI integration** with Claude 3.5 Sonnet via OpenRouter for AI-powered proposal summarization
 - **Snapshot GraphQL API integration** for fetching DAO proposal data from Snapshot spaces
-- **Service-oriented architecture**: 
+- **Service-oriented architecture**:
   - `snapshot_service.py`: Handles Snapshot space and proposal data fetching
   - `ai_service.py`: Manages AI summarization and risk assessment
   - `voting_service.py`: Handles vote submission to Snapshot
@@ -157,7 +158,7 @@ PORT=8000  # Server port
 - **Framework**: pytest with async support (`pytest-asyncio`)
 - **Coverage**: pytest-cov with HTML reporting (`--cov=. --cov-report=html`)
 - **Mocking**: pytest-mock and pytest-httpx for external API mocking
-- **Test Structure**: 
+- **Test Structure**:
   - Test files in `tests/` directory following pattern: `test_*.py`
   - Fixtures in `conftest.py` for common test data
   - Integration tests for services and APIs

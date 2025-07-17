@@ -68,14 +68,14 @@ def load_private_key():
     key_path = os.environ.get("PRIVATE_KEY_PATH", "ethereum_private_key.txt")
     if not os.path.exists(key_path):
         raise ValueError("Private key file not found")
-    
+
     with open(key_path, "r") as f:
         private_key = f.read().strip()
-    
+
     # Validate key format
     if not private_key.startswith("0x"):
         private_key = f"0x{private_key}"
-    
+
     return private_key
 ```
 
@@ -117,15 +117,15 @@ def save_state(self) -> None:
     try:
         # Ensure directory exists
         os.makedirs(os.path.dirname(self.persistent_file), exist_ok=True)
-        
+
         # Write to temporary file first
         temp_file = f"{self.persistent_file}.tmp"
         with open(temp_file, "w") as f:
             json.dump(data, f, indent=2)
-        
+
         # Atomic rename
         os.replace(temp_file, self.persistent_file)
-        
+
         logfire.info("State saved successfully")
     except Exception as e:
         logfire.error(f"Failed to save state: {e}")
