@@ -507,7 +507,7 @@ class TestAgentRunServiceExecuteVotes:
         ]
         
         service = AgentRunService()
-        result = await service._execute_votes(decisions, dry_run=True)
+        result = await service._execute_votes(decisions, space_id="test-space", dry_run=True)
         
         # Verify result is unchanged in dry run
         assert len(result) == 1
@@ -541,14 +541,18 @@ class TestAgentRunServiceExecuteVotes:
         })
         
         service = AgentRunService()
-        result = await service._execute_votes(decisions, dry_run=False)
+        result = await service._execute_votes(decisions, space_id="test-space", dry_run=False)
         
         # Verify result
         assert len(result) == 1
         assert result[0].proposal_id == "prop-1"
         
-        # Verify voting service was called
-        mock_voting.return_value.vote_on_proposal.assert_called_once()
+        # Verify voting service was called with correct parameters
+        mock_voting.return_value.vote_on_proposal.assert_called_once_with(
+            space="test-space",
+            proposal="prop-1",
+            choice=1  # FOR maps to choice 1
+        )
 
     @mock_all_services
     async def test_execute_votes_empty_decisions(self, mock_snapshot, mock_ai, mock_voting, mock_prefs):
@@ -556,7 +560,7 @@ class TestAgentRunServiceExecuteVotes:
         from services.agent_run_service import AgentRunService
         
         service = AgentRunService()
-        result = await service._execute_votes([], dry_run=False)
+        result = await service._execute_votes([], space_id="test-space", dry_run=False)
         
         assert result == []
         mock_voting.return_value.vote_on_proposal.assert_not_called()

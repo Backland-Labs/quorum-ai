@@ -115,7 +115,7 @@ class AgentRunService:
                 # Step 3: Make and execute voting decisions
                 vote_decisions, final_decisions, voting_errors = (
                     await self._process_voting_decisions(
-                        filtered_proposals, user_preferences, request.dry_run
+                        filtered_proposals, user_preferences, request.space_id, request.dry_run
                     )
                 )
                 errors.extend(voting_errors)
@@ -213,6 +213,7 @@ class AgentRunService:
         self,
         proposals: List[Proposal],
         user_preferences: UserPreferences,
+        space_id: str,
         dry_run: bool,
     ) -> Tuple[List[VoteDecision], List[VoteDecision], List[str]]:
         """Make voting decisions and execute them.
@@ -220,6 +221,7 @@ class AgentRunService:
         Args:
             proposals: Proposals to vote on
             user_preferences: User preferences for voting
+            space_id: The space ID for the proposals
             dry_run: Whether to actually execute votes
 
         Returns:
@@ -247,7 +249,7 @@ class AgentRunService:
         # Execute votes
         if vote_decisions:
             try:
-                final_decisions = await self._execute_votes(vote_decisions, dry_run)
+                final_decisions = await self._execute_votes(vote_decisions, space_id, dry_run)
             except Exception as e:
                 error_msg = f"Failed to execute votes: {str(e)}"
                 errors.append(error_msg)
@@ -577,12 +579,13 @@ class AgentRunService:
                 ) from e
 
     async def _execute_votes(
-        self, decisions: List[VoteDecision], dry_run: bool
+        self, decisions: List[VoteDecision], space_id: str, dry_run: bool
     ) -> List[VoteDecision]:
         """Execute votes for the given decisions.
 
         Args:
             decisions: List of VoteDecision objects to execute
+            space_id: The space ID where votes will be cast
             dry_run: If True, simulate voting without actual execution
 
         Returns:
@@ -596,6 +599,9 @@ class AgentRunService:
             decisions, list
         ), f"Decisions must be a list, got {type(decisions)}"
         assert isinstance(
+            space_id, str
+        ) and space_id.strip(), f"Space ID must be non-empty string, got {space_id}"
+        assert isinstance(
             dry_run, bool
         ), f"Dry run must be boolean, got {type(dry_run)}"
         assert all(
@@ -606,11 +612,11 @@ class AgentRunService:
             return []
 
         with logfire.span(
-            "execute_votes", decision_count=len(decisions), dry_run=dry_run
+            "execute_votes", space_id=space_id, decision_count=len(decisions), dry_run=dry_run
         ):
             try:
                 logfire.info(
-                    "Executing votes", decision_count=len(decisions), dry_run=dry_run
+                    "Executing votes", space_id=space_id, decision_count=len(decisions), dry_run=dry_run
                 )
 
                 if dry_run:
@@ -627,7 +633,7 @@ class AgentRunService:
 
                         # Execute vote through voting service
                         vote_result = await self.voting_service.vote_on_proposal(
-                            space="",  # Space ID would need to be passed through
+                            space=space_id,
                             proposal=decision.proposal_id,
                             choice=vote_choice,
                         )
