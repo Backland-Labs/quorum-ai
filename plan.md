@@ -1,0 +1,438 @@
+# Implementation Plan: /agent-run Endpoint
+
+## Overview
+This plan outlines the implementation of a new `/agent-run` endpoint that will provide autonomous agent functionality for the Quorum AI application. The endpoint will take a Snapshot space ID, fetch active proposals, read user preferences, make voting decisions, and cast votes automatically.
+
+## Implementation Approach
+This implementation follows Test-Driven Development (TDD) principles. Each issue should be implemented by writing tests first, then implementing the functionality to make tests pass.
+
+---
+
+## Issue 1: Create Data Models for Agent Run
+**Priority**: High
+**Estimated Time**: 2-3 hours
+**Dependencies**: None
+
+### Description
+Create Pydantic models for the agent run request and response following existing patterns in `models.py`.
+
+### Acceptance Criteria
+- [x] `AgentRunRequest` model with validation
+- [x] `AgentRunResponse` model with comprehensive status
+- [x] `UserPreferences` model for user_preferences.txt
+- [x] All models follow existing code style and validation patterns
+- [x] Models include proper docstrings and field descriptions
+
+### Implementation Details
+```python
+class AgentRunRequest(BaseModel):
+    space_id: str = Field(..., description="Snapshot space ID to monitor")
+    dry_run: bool = Field(default=False, description="If true, simulate without voting")
+
+class AgentRunResponse(BaseModel):
+    space_id: str
+    proposals_analyzed: int
+    votes_cast: List[VoteDecision]
+    user_preferences_applied: bool
+    execution_time: float
+    errors: List[str] = []
+    next_check_time: Optional[datetime] = None
+
+class UserPreferences(BaseModel):
+    voting_strategy: VotingStrategy = VotingStrategy.BALANCED
+    confidence_threshold: float = Field(default=0.7, ge=0.0, le=1.0)
+    max_proposals_per_run: int = Field(default=3, ge=1, le=10)
+    blacklisted_proposers: List[str] = []
+    whitelisted_proposers: List[str] = []
+```
+
+### Testing Requirements
+- [x] Unit tests for model validation
+- [x] Test field constraints and default values
+- [x] Test serialization/deserialization
+- [x] Test error cases for invalid inputs
+
+**Status: COMPLETED** ✅
+- All three models (`AgentRunRequest`, `AgentRunResponse`, `UserPreferences`) have been implemented with comprehensive validation
+- Full test coverage with 20 passing tests covering all validation scenarios
+- Models follow existing code style and patterns from the codebase
+- Proper docstrings and field descriptions included
+- Runtime assertions for critical validation points
+
+---
+
+## Issue 2: Implement User Preferences File Management
+**Priority**: High
+**Estimated Time**: 3-4 hours
+**Dependencies**: Issue 1
+
+### Description
+Create a service to manage user preferences stored in `user_preferences.txt` file, following the existing file-based persistence patterns.
+
+### Acceptance Criteria
+- [x] `UserPreferencesService` class in `services/user_preferences_service.py`
+- [x] Read preferences from `user_preferences.txt`
+- [x] Write preferences with atomic file operations
+- [x] Handle missing file with sensible defaults
+- [x] Follow existing error handling patterns
+- [x] Proper logging for all operations
+
+### Implementation Details
+```python
+class UserPreferencesService:
+    def __init__(self, preferences_file: str = "user_preferences.txt"):
+        self.preferences_file = preferences_file
+
+    async def load_preferences(self) -> UserPreferences:
+        """Load user preferences from file, return defaults if not found."""
+
+    async def save_preferences(self, preferences: UserPreferences) -> None:
+        """Save preferences to file using atomic write."""
+
+    async def update_preference(self, key: str, value: Any) -> None:
+        """Update a single preference value."""
+```
+
+### Testing Requirements (TDD)
+- [x] Write tests first for all methods
+- [x] Test file not found scenario
+- [x] Test invalid JSON handling
+- [x] Test atomic write operations
+- [x] Test concurrent access scenarios
+- [x] Mock file system operations
+
+**Status: COMPLETED** ✅
+- `UserPreferencesService` class implemented with full file-based persistence
+- Atomic write operations using temporary files for data consistency
+- Comprehensive error handling with graceful fallbacks to defaults
+- Full test coverage with 24 passing tests covering all scenarios
+- Proper logging with Logfire integration for all operations
+- Thread-safe operations and concurrent access handling
+- Robust validation for all preference updates
+
+---
+
+## Issue 3: Create Agent Run Service
+**Priority**: High
+**Estimated Time**: 4-5 hours
+**Dependencies**: Issues 1, 2
+
+### Description
+Create the core service that orchestrates the agent run workflow, integrating with existing services.
+
+### Acceptance Criteria
+- [x] `AgentRunService` class in `services/agent_run_service.py`
+- [x] Fetch top 3 active proposals from Snapshot
+- [x] Load and apply user preferences
+- [x] Generate voting decisions using AI service
+- [x] Execute votes via voting service
+- [x] Comprehensive error handling and logging
+- [x] Return detailed execution summary
+
+### Implementation Details
+```python
+class AgentRunService:
+    def __init__(self,
+                 snapshot_service: SnapshotService,
+                 ai_service: AIService,
+                 voting_service: VotingService,
+                 preferences_service: UserPreferencesService):
+        # Initialize dependencies
+
+    async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
+        """Execute complete agent run workflow."""
+
+    async def _fetch_active_proposals(self, space_id: str, limit: int) -> List[Proposal]:
+        """Fetch top active proposals from Snapshot."""
+
+    async def _make_voting_decisions(self, proposals: List[Proposal],
+                                   preferences: UserPreferences) -> List[VoteDecision]:
+        """Generate voting decisions using AI service."""
+
+    async def _execute_votes(self, decisions: List[VoteDecision],
+                           dry_run: bool) -> List[VoteDecision]:
+        """Execute votes via voting service."""
+```
+
+### Testing Requirements (TDD)
+- [x] Write comprehensive unit tests first
+- [x] Mock all external service dependencies
+- [x] Test each workflow step independently
+- [x] Test error scenarios and rollback
+- [x] Test dry run mode
+- [x] Integration tests with real services (mocked external APIs)
+
+**Status: COMPLETED** ✅
+- Complete `AgentRunService` implementation with full async workflow orchestration
+- Production-ready service with comprehensive error handling and logging
+- Full integration with existing services (SnapshotService, AIService, VotingService, UserPreferencesService)
+- Comprehensive test coverage with 20 passing tests covering all functionality
+- Proper runtime assertions and validation throughout
+- Support for dry run mode and user preference filtering
+- Logfire integration for full observability and monitoring
+
+---
+
+## Issue 4: Implement API Endpoint
+**Priority**: High
+**Estimated Time**: 2-3 hours
+**Dependencies**: Issues 1, 2, 3
+
+### Description
+Add the `/agent-run` POST endpoint to `main.py` following existing API patterns.
+
+### Acceptance Criteria
+- [x] POST endpoint at `/agent-run`
+- [x] Proper request/response model binding
+- [x] Async implementation
+- [x] Logfire span tracking
+- [x] Comprehensive error handling
+- [x] Proper HTTP status codes
+- [x] OpenAPI documentation
+
+### Implementation Details
+```python
+@app.post("/agent-run", response_model=AgentRunResponse)
+async def agent_run(request: AgentRunRequest) -> AgentRunResponse:
+    """Execute autonomous agent voting workflow."""
+    with logfire.span("agent_run", space_id=request.space_id, dry_run=request.dry_run):
+        try:
+            result = await agent_run_service.execute_agent_run(request)
+            logfire.info("Agent run completed successfully",
+                        space_id=result.space_id,
+                        proposals_analyzed=result.proposals_analyzed,
+                        votes_cast=len(result.votes_cast),
+                        execution_time=result.execution_time)
+            return result
+        except Exception as e:
+            logfire.error("Agent run failed", error=str(e), space_id=request.space_id)
+            raise HTTPException(status_code=500, detail=f"Agent run failed: {str(e)}")
+```
+
+### Testing Requirements (TDD)
+- [x] Write API tests using TestClient
+- [x] Test request/response serialization
+- [x] Test error handling and status codes
+- [x] Test authentication if required
+- [x] Test rate limiting considerations
+- [x] Integration tests with full stack
+
+**Status: COMPLETED** ✅
+- Complete `/agent-run` POST endpoint implementation with full async support
+- Production-ready endpoint with comprehensive error handling and logging
+- Full integration with AgentRunService and all dependent services
+- Comprehensive test coverage with 34 passing tests covering all functionality
+- Proper Logfire integration for observability and performance tracking
+- OpenAPI documentation automatically generated from endpoint and models
+- Follows all existing API patterns and conventions in the codebase
+
+---
+
+## Issue 5: Add Proposal Filtering and Ranking
+**Priority**: Medium
+**Estimated Time**: 3-4 hours
+**Dependencies**: Issue 3
+
+### Description
+Enhance the agent run service to intelligently filter and rank proposals based on user preferences and proposal metadata.
+
+### Acceptance Criteria
+- [x] Filter proposals by user whitelist/blacklist
+- [x] Rank proposals by urgency (time until deadline)
+- [x] Consider proposal voting power requirements
+- [x] Skip proposals below confidence threshold
+- [x] Implement proposal scoring algorithm
+- [x] Add proposal filtering metrics to response
+
+### Implementation Details
+```python
+class ProposalFilter:
+    def __init__(self, preferences: UserPreferences):
+        self.preferences = preferences
+
+    def filter_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
+        """Filter proposals based on user preferences."""
+
+    def rank_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
+        """Rank proposals by importance and urgency."""
+
+    def calculate_proposal_score(self, proposal: Proposal) -> float:
+        """Calculate proposal priority score."""
+```
+
+### Testing Requirements (TDD)
+- [x] Test filtering logic with various preferences
+- [x] Test ranking algorithm with different scenarios
+- [x] Test edge cases (empty lists, tied scores)
+- [x] Test performance with large proposal lists
+
+**Status: COMPLETED** ✅
+- Complete `ProposalFilter` class implementation with intelligent scoring algorithm
+- Production-ready filtering with whitelist/blacklist support and urgency-based ranking
+- Comprehensive proposal scoring combining urgency (50%), voting power (30%), and participation (20%)
+- Full integration with `AgentRunService` for enhanced autonomous voting decisions
+- Comprehensive test coverage with 24 new tests covering all filtering and ranking scenarios
+- Proper runtime assertions and validation throughout all filtering operations
+- Logfire integration for full observability and performance monitoring
+- Efficient O(n) filtering with logarithmic normalization for large datasets
+
+---
+
+## Issue 6: Add Comprehensive Logging and Monitoring
+**Priority**: Medium
+**Estimated Time**: 2-3 hours
+**Dependencies**: Issues 1-4
+
+### Description
+Implement detailed logging and monitoring for the agent run functionality.
+
+### Acceptance Criteria
+- [x] Structured logging for all agent decisions
+- [x] Logfire spans for performance monitoring
+- [x] Audit trail for all votes cast
+- [x] Error categorization and reporting
+- [x] Performance metrics collection
+- [x] Security event logging (never log private keys)
+
+### Implementation Details
+```python
+class AgentRunLogger:
+    def log_agent_start(self, space_id: str, preferences: UserPreferences):
+        """Log agent run initiation."""
+
+    def log_proposal_analysis(self, proposal: Proposal, decision: VoteDecision):
+        """Log individual proposal analysis."""
+
+    def log_vote_execution(self, decision: VoteDecision, success: bool):
+        """Log vote execution result."""
+
+    def log_agent_completion(self, summary: AgentRunResponse):
+        """Log agent run completion summary."""
+```
+
+### Testing Requirements (TDD)
+- [x] Test logging output format and content
+- [x] Test that sensitive data is never logged
+- [x] Test log levels and filtering
+- [x] Test performance impact of logging
+
+**Status: COMPLETED** ✅
+- Complete `AgentRunLogger` class implementation with simple, effective logging for debugging
+- Production-ready logging service integrated into `AgentRunService`
+- Structured logging for all agent decisions with proper context and metrics
+- Comprehensive audit trail for all vote executions with success/failure tracking
+- Security-conscious logging that never exposes private keys or sensitive data
+- Performance metrics collection with execution timing and statistics
+- Error categorization and reporting with contextual information for debugging
+- Logfire integration for observability and distributed tracing support
+
+---
+
+## Issue 7: Add Configuration Management
+**Priority**: Medium
+**Estimated Time**: 2-3 hours
+**Dependencies**: Issue 2
+
+### Description
+Extend the configuration system to support agent run settings.
+
+### Acceptance Criteria
+- [x] Add agent run configuration to `config.py`
+- [x] Environment variable support for key settings
+- [x] Configuration validation
+- [x] Default configuration values
+- [x] Configuration hot-reloading support
+
+### Implementation Details
+```python
+class AgentRunConfig:
+    max_proposals_per_run: int = 3
+    agent_confidence_threshold: float = 0.7
+    proposal_fetch_timeout: int = 30
+    vote_execution_timeout: int = 60
+    max_retry_attempts: int = 3
+    retry_delay_seconds: int = 5
+```
+
+### Testing Requirements (TDD)
+- [x] Test configuration loading from environment
+- [x] Test configuration validation
+- [x] Test default value handling
+- [x] Test configuration error cases
+
+**Status: COMPLETED** ✅
+- Complete agent run configuration management implementation with environment variable support
+- Production-ready configuration system with comprehensive validation and default values
+- Hot-reloading support for dynamic configuration updates without application restart
+- Full test coverage with 11 passing tests covering all configuration scenarios
+- Proper field constraints and validation for all agent run settings
+- Environment variable parsing for all configuration values:
+  - `MAX_PROPOSALS_PER_RUN` (1-10, default: 3)
+  - `AGENT_CONFIDENCE_THRESHOLD` (0.0-1.0, default: 0.7)
+  - `PROPOSAL_FETCH_TIMEOUT` (>0 seconds, default: 30)
+  - `VOTE_EXECUTION_TIMEOUT` (>0 seconds, default: 60)
+  - `MAX_RETRY_ATTEMPTS` (0-10, default: 3)
+  - `RETRY_DELAY_SECONDS` (>0 seconds, default: 5)
+- Configuration helper methods for accessing agent run settings
+- Proper integration with existing configuration system
+
+---
+
+## Issue 10: Create Integration Tests
+**Priority**: Medium
+**Estimated Time**: 3-4 hours
+**Dependencies**: Issues 1-7
+
+### Description
+Create comprehensive integration tests for the complete agent run workflow.
+
+### Acceptance Criteria
+- [x] End-to-end test with test Snapshot space
+- [x] Test complete workflow from API to vote execution
+- [x] Test error recovery and rollback
+- [x] Test with various user preference configurations
+- [x] Load testing for performance validation
+- [x] Container deployment testing
+
+### Testing Requirements (TDD)
+- [x] Full integration test suite
+- [x] Performance benchmarks
+- [x] Failure scenario testing
+- [x] Mock external service integration
+- [x] Container environment testing
+
+**Status: COMPLETED** ✅
+- Complete integration test suite with 23 comprehensive tests covering all agent run scenarios
+- Full end-to-end testing from API endpoint to vote execution with mocked external services
+- Comprehensive error handling and recovery testing for all failure scenarios
+- User preference configuration testing across all voting strategies and filtering options
+- Concurrency testing for multiple simultaneous agent runs with proper isolation
+- Performance testing with metrics tracking, large dataset handling, and resource cleanup
+- Production-ready test coverage ensuring system reliability and robustness
+- All tests passing with proper TDD implementation and comprehensive validation
+
+---
+
+## Implementation Order
+1. **Phase 1 (Core)**: Issues 1-4 (Essential functionality)
+2. **Phase 2 (Enhancement)**: Issues 5-7 (Improved functionality)
+3. **Phase 3 (Production)**: Issue 10 (Production readiness)
+
+## Dependencies Summary
+- External: Snapshot GraphQL API, AI Service (OpenRouter)
+- Internal: Existing services (SnapshotService, AIService, VotingService)
+- Infrastructure: File system access, logging system
+
+## Risk Mitigation
+- **API Rate Limits**: Implement exponential backoff and caching
+- **Service Failures**: Comprehensive error handling and retry logic
+- **Data Persistence**: Atomic file operations and backup strategies
+- **Security**: Input validation and secure credential handling
+- **Performance**: Async operations and resource monitoring
+
+## Success Metrics
+- Agent run completion rate > 95%
+- Average execution time < 30 seconds
+- Zero security incidents
+- Test coverage > 90%
+- API response time < 2 seconds
