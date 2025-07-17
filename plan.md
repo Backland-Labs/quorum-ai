@@ -237,12 +237,12 @@ async def agent_run(request: AgentRunRequest) -> AgentRunResponse:
 Enhance the agent run service to intelligently filter and rank proposals based on user preferences and proposal metadata.
 
 ### Acceptance Criteria
-- [ ] Filter proposals by user whitelist/blacklist
-- [ ] Rank proposals by urgency (time until deadline)
-- [ ] Consider proposal voting power requirements
-- [ ] Skip proposals below confidence threshold
-- [ ] Implement proposal scoring algorithm
-- [ ] Add proposal filtering metrics to response
+- [x] Filter proposals by user whitelist/blacklist
+- [x] Rank proposals by urgency (time until deadline)
+- [x] Consider proposal voting power requirements
+- [x] Skip proposals below confidence threshold
+- [x] Implement proposal scoring algorithm
+- [x] Add proposal filtering metrics to response
 
 ### Implementation Details
 ```python
@@ -261,10 +261,20 @@ class ProposalFilter:
 ```
 
 ### Testing Requirements (TDD)
-- Test filtering logic with various preferences
-- Test ranking algorithm with different scenarios
-- Test edge cases (empty lists, tied scores)
-- Test performance with large proposal lists
+- [x] Test filtering logic with various preferences
+- [x] Test ranking algorithm with different scenarios
+- [x] Test edge cases (empty lists, tied scores)
+- [x] Test performance with large proposal lists
+
+**Status: COMPLETED** ✅
+- Complete `ProposalFilter` class implementation with intelligent scoring algorithm
+- Production-ready filtering with whitelist/blacklist support and urgency-based ranking
+- Comprehensive proposal scoring combining urgency (50%), voting power (30%), and participation (20%)
+- Full integration with `AgentRunService` for enhanced autonomous voting decisions
+- Comprehensive test coverage with 24 new tests covering all filtering and ranking scenarios
+- Proper runtime assertions and validation throughout all filtering operations
+- Logfire integration for full observability and performance monitoring
+- Efficient O(n) filtering with logarithmic normalization for large datasets
 
 ---
 
