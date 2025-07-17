@@ -13,6 +13,8 @@ from fastapi.responses import JSONResponse
 
 from config import settings
 from models import (
+    AgentRunRequest,
+    AgentRunResponse,
     Proposal,
     ProposalFilters,
     ProposalListResponse,
@@ -27,30 +29,43 @@ from models import (
     VoteType,
 )
 from services.ai_service import AIService
+from services.agent_run_service import AgentRunService
 from services.safe_service import SafeService
 from services.activity_service import ActivityService
+from services.user_preferences_service import UserPreferencesService
 from services.voting_service import VotingService
 from services.snapshot_service import SnapshotService
 
 
 # Global service instances
 ai_service: AIService
+agent_run_service: AgentRunService
 safe_service: SafeService
 activity_service: ActivityService
+user_preferences_service: UserPreferencesService
 voting_service: VotingService
 snapshot_service: SnapshotService
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     """Application lifespan context manager."""
     # Startup
-    global ai_service, safe_service, activity_service, voting_service, snapshot_service
+    global \
+        ai_service, \
+        agent_run_service, \
+        safe_service, \
+        activity_service, \
+        user_preferences_service, \
+        voting_service, \
+        snapshot_service
 
     # Initialize services
     ai_service = AIService()
+    agent_run_service = AgentRunService()
     safe_service = SafeService()
     activity_service = ActivityService()
+    user_preferences_service = UserPreferencesService()
     voting_service = VotingService()
     snapshot_service = SnapshotService()
 
@@ -239,6 +254,54 @@ async def get_proposal_top_voters(
         )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"
+        )
+
+
+# Agent Run endpoint
+@app.post("/agent-run", response_model=AgentRunResponse)
+async def agent_run(request: AgentRunRequest):
+    """Execute an autonomous agent run for a given Snapshot space.
+
+    This endpoint orchestrates the complete agent run workflow:
+    1. Fetches active proposals from the specified Snapshot space
+    2. Loads user preferences to guide voting decisions
+    3. Uses AI to analyze proposals and make voting decisions
+    4. Executes votes (or simulates them in dry run mode)
+
+    Args:
+        request: AgentRunRequest containing space_id and dry_run flag
+
+    Returns:
+        AgentRunResponse with execution results and vote decisions
+
+    Raises:
+        HTTPException: If space_id is invalid or execution fails
+    """
+    try:
+        with logfire.span(
+            "agent_run", space_id=request.space_id, dry_run=request.dry_run
+        ):
+            # Execute the agent run using the service
+            response = await agent_run_service.execute_agent_run(request)
+
+            logfire.info(
+                "Agent run completed",
+                space_id=request.space_id,
+                proposals_analyzed=response.proposals_analyzed,
+                votes_cast=len(response.votes_cast),
+                execution_time=response.execution_time,
+                errors=response.errors,
+                dry_run=request.dry_run,
+            )
+
+            return response
+
+    except Exception as e:
+        logfire.error(
+            "Failed to execute agent run", space_id=request.space_id, error=str(e)
+        )
+        raise HTTPException(
+            status_code=500, detail=f"Failed to execute agent run: {str(e)}"
         )
 
 

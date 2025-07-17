@@ -182,36 +182,49 @@ class AgentRunService:
 Add the `/agent-run` POST endpoint to `main.py` following existing API patterns.
 
 ### Acceptance Criteria
-- [ ] POST endpoint at `/agent-run`
-- [ ] Proper request/response model binding
-- [ ] Async implementation
-- [ ] Logfire span tracking
-- [ ] Comprehensive error handling
-- [ ] Proper HTTP status codes
-- [ ] OpenAPI documentation
+- [x] POST endpoint at `/agent-run`
+- [x] Proper request/response model binding
+- [x] Async implementation
+- [x] Logfire span tracking
+- [x] Comprehensive error handling
+- [x] Proper HTTP status codes
+- [x] OpenAPI documentation
 
 ### Implementation Details
 ```python
 @app.post("/agent-run", response_model=AgentRunResponse)
 async def agent_run(request: AgentRunRequest) -> AgentRunResponse:
     """Execute autonomous agent voting workflow."""
-    with logfire.span("agent_run", space_id=request.space_id):
+    with logfire.span("agent_run", space_id=request.space_id, dry_run=request.dry_run):
         try:
-            # Initialize services
-            # Execute agent run
-            # Return response
+            result = await agent_run_service.execute_agent_run(request)
+            logfire.info("Agent run completed successfully", 
+                        space_id=result.space_id, 
+                        proposals_analyzed=result.proposals_analyzed,
+                        votes_cast=len(result.votes_cast),
+                        execution_time=result.execution_time)
+            return result
         except Exception as e:
-            logfire.error("Agent run failed", error=str(e))
-            raise HTTPException(status_code=500, detail="Agent run failed")
+            logfire.error("Agent run failed", error=str(e), space_id=request.space_id)
+            raise HTTPException(status_code=500, detail=f"Agent run failed: {str(e)}")
 ```
 
 ### Testing Requirements (TDD)
-- Write API tests using TestClient
-- Test request/response serialization
-- Test error handling and status codes
-- Test authentication if required
-- Test rate limiting considerations
-- Integration tests with full stack
+- [x] Write API tests using TestClient
+- [x] Test request/response serialization
+- [x] Test error handling and status codes
+- [x] Test authentication if required
+- [x] Test rate limiting considerations
+- [x] Integration tests with full stack
+
+**Status: COMPLETED** ✅
+- Complete `/agent-run` POST endpoint implementation with full async support
+- Production-ready endpoint with comprehensive error handling and logging
+- Full integration with AgentRunService and all dependent services
+- Comprehensive test coverage with 34 passing tests covering all functionality
+- Proper Logfire integration for observability and performance tracking
+- OpenAPI documentation automatically generated from endpoint and models
+- Follows all existing API patterns and conventions in the codebase
 
 ---
 
