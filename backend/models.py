@@ -639,7 +639,24 @@ class Proposal(BaseModel):
         # Validate scores and choices arrays have consistent lengths
         self._validate_scores_choices_consistency(self.scores, self.choices)
 
+        # Validate logical timestamp relationships
+        self._validate_timestamp_logic()
+
         return self
+
+    def _validate_timestamp_logic(self) -> None:
+        """Validate logical relationships between timestamps."""
+        # Runtime assertion: end must be after start
+        if self.end <= self.start:
+            raise ValueError(
+                f"Proposal end timestamp ({self.end}) must be after start timestamp ({self.start})"
+            )
+
+        # Runtime assertion: created must be before or equal to start
+        if self.created > self.start:
+            raise ValueError(
+                f"Proposal created timestamp ({self.created}) must be before or equal to start timestamp ({self.start})"
+            )
 
 
 class ProposalSummary(BaseModel):

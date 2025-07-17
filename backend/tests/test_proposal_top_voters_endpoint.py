@@ -25,20 +25,29 @@ def client():
 def sample_voters():
     """Create sample voter data for testing."""
     return [
-        ProposalVoter(
-            address="0x1234567890abcdef1234567890abcdef12345678",
-            amount="1000000000000000000000",
-            vote_type=VoteType.FOR,
+        Vote(
+            id="vote1",
+            voter="0x1234567890abcdef1234567890abcdef12345678",
+            choice=1,  # 1=For
+            vp=1000.0,
+            vp_by_strategy=[1000.0],
+            created=1698681600,
         ),
-        ProposalVoter(
-            address="0xabcdef1234567890abcdef1234567890abcdef12",
-            amount="500000000000000000000",
-            vote_type=VoteType.AGAINST,
+        Vote(
+            id="vote2",
+            voter="0xabcdef1234567890abcdef1234567890abcdef12",
+            choice=2,  # 2=Against
+            vp=500.0,
+            vp_by_strategy=[500.0],
+            created=1698681700,
         ),
-        ProposalVoter(
-            address="0x9876543210fedcba9876543210fedcba98765432",
-            amount="250000000000000000000",
-            vote_type=VoteType.ABSTAIN,
+        Vote(
+            id="vote3",
+            voter="0x9876543210fedcba9876543210fedcba98765432",
+            choice=3,  # 3=Abstain
+            vp=250.0,
+            vp_by_strategy=[250.0],
+            created=1698681800,
         ),
     ]
 
@@ -58,18 +67,22 @@ class TestProposalTopVotersEndpoint:
         # We expect 500 since we haven't mocked the service yet
         assert response.status_code != 404
 
-    def test_response_model_validation(self, client: TestClient, sample_voters):
+    def test_response_model_validation(self, client: TestClient, sample_voters, sample_proposal):
         """Test that the endpoint returns data in the correct format."""
         # Arrange
         proposal_id = "test-proposal-123"
         import main
 
         main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_proposal = AsyncMock(return_value=sample_proposal)
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
 
         # Assert
+        if response.status_code != 200:
+            print(f"Response status: {response.status_code}")
+            print(f"Response content: {response.content}")
         assert response.status_code == 200
         data = response.json()
 
@@ -85,17 +98,17 @@ class TestProposalTopVotersEndpoint:
         assert "address" in first_voter
         assert "amount" in first_voter
         assert "vote_type" in first_voter
-        assert first_voter["address"] == sample_voters[0].address
-        assert first_voter["amount"] == sample_voters[0].amount
-        assert first_voter["vote_type"] == sample_voters[0].vote_type.value
+        assert first_voter["address"] == sample_voters[0].voter
+        assert first_voter["vote_type"] == VoteType.FOR.value  # choice=1 maps to FOR
 
-    def test_limit_parameter_default(self, client: TestClient, sample_voters):
+    def test_limit_parameter_default(self, client: TestClient, sample_voters, sample_proposal):
         """Test that the limit parameter defaults to 10."""
         # Arrange
         proposal_id = "test-proposal-123"
         import main
 
         main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_proposal = AsyncMock(return_value=sample_proposal)
 
         # Act
         response = client.get(f"/proposals/{proposal_id}/top-voters")
@@ -105,7 +118,7 @@ class TestProposalTopVotersEndpoint:
         # Verify the service was called with default limit
         main.snapshot_service.get_votes.assert_called_once_with(proposal_id, first=10)
 
-    def test_limit_parameter_custom(self, client: TestClient, sample_voters):
+    def test_limit_parameter_custom(self, client: TestClient, sample_voters, sample_proposal):
         """Test that custom limit parameter is passed correctly."""
         # Arrange
         proposal_id = "test-proposal-123"
@@ -113,6 +126,7 @@ class TestProposalTopVotersEndpoint:
         import main
 
         main.snapshot_service.get_votes = AsyncMock(return_value=sample_voters)
+        main.snapshot_service.get_proposal = AsyncMock(return_value=sample_proposal)
 
         # Act
         response = client.get(

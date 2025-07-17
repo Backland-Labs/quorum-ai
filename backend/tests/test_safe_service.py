@@ -41,7 +41,7 @@ class TestSafeServiceWebConnection:
     @patch("services.safe_service.json.loads")
     @patch("services.safe_service.settings")
     @patch("services.safe_service.Web3")
-    def test_get_web3_connection_success(self, mock_web3_class, mock_settings, mock_json_loads):
+    def test_get_web3_connection_success(self, mock_web3_class, mock_settings, mock_json_loads, mock_file):
         """Test successful Web3 connection creation."""
         mock_settings.safe_contract_addresses = '{"gnosis": "0x123"}'
         mock_settings.gnosis_ledger_rpc = "https://gnosis.example.com"

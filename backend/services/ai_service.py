@@ -368,11 +368,33 @@ class AIService:
             prompt
         )  # Use legacy method for test compatibility
 
-        ai_response = {
-            "vote_decision": ai_response.vote,
-            "reasoning": ai_response.reasoning,
-        }
+        # Handle both dict and object responses for compatibility
+        if isinstance(ai_response, dict):
+            # Already a dict, use as-is but rename 'vote' to 'vote_decision' for consistency
+            formatted_response = {
+                "vote": ai_response.get("vote", "ABSTAIN"),
+                "reasoning": ai_response.get("reasoning", "No reasoning provided"),
+                "confidence": ai_response.get("confidence", 0.5),
+                "risk_level": ai_response.get("risk_level", "MEDIUM"),
+            }
+        else:
+            # Object response, convert to dict
+            formatted_response = {
+                "vote": getattr(ai_response, "vote", "ABSTAIN"),
+                "reasoning": getattr(ai_response, "reasoning", "No reasoning provided"),
+                "confidence": getattr(ai_response, "confidence", 0.5),
+                "risk_level": getattr(ai_response, "risk_level", "MEDIUM"),
+            }
 
+        return self.response_processor.parse_and_validate_vote_response(
+            formatted_response
+        )
+
+    def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
+        """Parse and validate AI vote response.
+
+        This method is a wrapper around the response processor for backwards compatibility.
+        """
         return self.response_processor.parse_and_validate_vote_response(ai_response)
 
     async def _call_ai_model(self, prompt: str) -> Any:

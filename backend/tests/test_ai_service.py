@@ -175,10 +175,9 @@ class TestAIServiceSummaryPromptConstruction:
         prompt = ai_service._build_summary_prompt(sample_proposal)
 
         assert sample_proposal.title in prompt
-        assert sample_proposal.description in prompt
-        assert sample_proposal.dao_name in prompt
-        assert sample_proposal.state.value in prompt
-        assert str(sample_proposal.votes_for) in prompt
+        assert sample_proposal.body in prompt
+        assert sample_proposal.state in prompt
+        assert str(sample_proposal.votes) in prompt
 
     def test_get_summary_json_format(self, ai_service: AIService) -> None:
         """Test summary JSON format specification."""

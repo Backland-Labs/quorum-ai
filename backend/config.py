@@ -124,6 +124,48 @@ class Settings(BaseSettings):
         description="Path for persistent data storage",
     )
 
+    # Agent run configuration
+    DEFAULT_MAX_PROPOSALS_PER_RUN: ClassVar[int] = 3
+    DEFAULT_DEFAULT_CONFIDENCE_THRESHOLD: ClassVar[float] = 0.7
+    DEFAULT_PROPOSAL_FETCH_TIMEOUT: ClassVar[int] = 30
+    DEFAULT_VOTE_EXECUTION_TIMEOUT: ClassVar[int] = 60
+    DEFAULT_MAX_RETRY_ATTEMPTS: ClassVar[int] = 3
+    DEFAULT_RETRY_DELAY_SECONDS: ClassVar[int] = 5
+
+    max_proposals_per_run: int = Field(
+        default=DEFAULT_MAX_PROPOSALS_PER_RUN,
+        ge=1,
+        le=10,
+        description="Maximum proposals to process per agent run",
+    )
+    default_confidence_threshold: float = Field(
+        default=DEFAULT_DEFAULT_CONFIDENCE_THRESHOLD,
+        ge=0.0,
+        le=1.0,
+        description="Default confidence threshold for voting decisions",
+    )
+    proposal_fetch_timeout: int = Field(
+        default=DEFAULT_PROPOSAL_FETCH_TIMEOUT,
+        gt=0,
+        description="Timeout for proposal fetching in seconds",
+    )
+    vote_execution_timeout: int = Field(
+        default=DEFAULT_VOTE_EXECUTION_TIMEOUT,
+        gt=0,
+        description="Timeout for vote execution in seconds",
+    )
+    max_retry_attempts: int = Field(
+        default=DEFAULT_MAX_RETRY_ATTEMPTS,
+        ge=0,
+        le=10,
+        description="Maximum retry attempts for failed operations",
+    )
+    retry_delay_seconds: int = Field(
+        default=DEFAULT_RETRY_DELAY_SECONDS,
+        gt=0,
+        description="Delay between retry attempts in seconds",
+    )
+
     # RPC endpoints for multiple chains
     ethereum_ledger_rpc: Optional[str] = Field(
         default=None,
@@ -165,6 +207,7 @@ class Settings(BaseSettings):
         self._parse_agent_address()
         self._parse_vote_threshold()
         self._parse_intervals()
+        self._parse_agent_run_config()
         return self
 
     def _parse_safe_addresses(self):
@@ -237,6 +280,79 @@ class Settings(BaseSettings):
                 )
             self.min_time_before_deadline = time_val
 
+    def _parse_agent_run_config(self):
+        """Parse agent run configuration from environment variables."""
+        self._parse_max_proposals_per_run()
+        self._parse_default_confidence_threshold()
+        self._parse_proposal_fetch_timeout()
+        self._parse_vote_execution_timeout()
+        self._parse_max_retry_attempts()
+        self._parse_retry_delay_seconds()
+
+    def _parse_max_proposals_per_run(self):
+        """Parse max proposals per run from MAX_PROPOSALS_PER_RUN environment variable."""
+        max_proposals_env = os.getenv("MAX_PROPOSALS_PER_RUN")
+        if max_proposals_env:
+            max_proposals = int(max_proposals_env)
+            if not (1 <= max_proposals <= 10):
+                raise ValueError(
+                    f"max_proposals_per_run must be between 1 and 10, got {max_proposals}"
+                )
+            self.max_proposals_per_run = max_proposals
+
+    def _parse_default_confidence_threshold(self):
+        """Parse default confidence threshold from DEFAULT_CONFIDENCE_THRESHOLD environment variable."""
+        confidence_threshold_env = os.getenv("DEFAULT_CONFIDENCE_THRESHOLD")
+        if confidence_threshold_env:
+            threshold = float(confidence_threshold_env)
+            if not (0.0 <= threshold <= 1.0):
+                raise ValueError(
+                    f"default_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
+                )
+            self.default_confidence_threshold = threshold
+
+    def _parse_proposal_fetch_timeout(self):
+        """Parse proposal fetch timeout from PROPOSAL_FETCH_TIMEOUT environment variable."""
+        timeout_env = os.getenv("PROPOSAL_FETCH_TIMEOUT")
+        if timeout_env:
+            timeout = int(timeout_env)
+            if timeout <= 0:
+                raise ValueError(
+                    f"proposal_fetch_timeout must be positive, got {timeout}"
+                )
+            self.proposal_fetch_timeout = timeout
+
+    def _parse_vote_execution_timeout(self):
+        """Parse vote execution timeout from VOTE_EXECUTION_TIMEOUT environment variable."""
+        timeout_env = os.getenv("VOTE_EXECUTION_TIMEOUT")
+        if timeout_env:
+            timeout = int(timeout_env)
+            if timeout <= 0:
+                raise ValueError(
+                    f"vote_execution_timeout must be positive, got {timeout}"
+                )
+            self.vote_execution_timeout = timeout
+
+    def _parse_max_retry_attempts(self):
+        """Parse max retry attempts from MAX_RETRY_ATTEMPTS environment variable."""
+        max_retry_env = os.getenv("MAX_RETRY_ATTEMPTS")
+        if max_retry_env:
+            max_retry = int(max_retry_env)
+            if not (0 <= max_retry <= 10):
+                raise ValueError(
+                    f"max_retry_attempts must be between 0 and 10, got {max_retry}"
+                )
+            self.max_retry_attempts = max_retry
+
+    def _parse_retry_delay_seconds(self):
+        """Parse retry delay seconds from RETRY_DELAY_SECONDS environment variable."""
+        delay_env = os.getenv("RETRY_DELAY_SECONDS")
+        if delay_env:
+            delay = int(delay_env)
+            if delay <= 0:
+                raise ValueError(f"retry_delay_seconds must be positive, got {delay}")
+            self.retry_delay_seconds = delay
+
     @property
     def monitored_daos_list(self) -> List[str]:
         """Parse comma-separated DAO list from environment."""
@@ -263,6 +379,34 @@ class Settings(BaseSettings):
                 if dao and address:
                     addresses[dao] = address
         return addresses
+
+    def reload_config(self) -> None:
+        """Reload configuration from environment variables.
+
+        This method allows hot-reloading of configuration without restarting
+        the application. It re-parses all environment variables and updates
+        the configuration values.
+        """
+        # Re-parse all environment-specific settings
+        self.parse_env_settings()
+
+        # Re-validate the configuration after reloading
+        self.model_validate(self.model_dump())
+
+    def get_agent_run_config(self) -> Dict[str, any]:
+        """Get agent run configuration as a dictionary.
+
+        Returns:
+            Dict containing all agent run configuration values.
+        """
+        return {
+            "max_proposals_per_run": self.max_proposals_per_run,
+            "default_confidence_threshold": self.default_confidence_threshold,
+            "proposal_fetch_timeout": self.proposal_fetch_timeout,
+            "vote_execution_timeout": self.vote_execution_timeout,
+            "max_retry_attempts": self.max_retry_attempts,
+            "retry_delay_seconds": self.retry_delay_seconds,
+        }
 
 
 # Global settings instance
