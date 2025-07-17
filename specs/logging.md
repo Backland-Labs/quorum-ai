@@ -1,191 +1,136 @@
-# Logging Specification
+# Logging & Telemetry Specification
 
 ## Overview
+This specification defines the logging system for Pearl-compliant AI agents, ensuring full compatibility with the OLAS network and Pearl platform requirements.
 
-This document outlines the logging standards and practices for the Quorum AI application. All developers must follow these guidelines to ensure consistent, secure, and useful logging across the codebase.
+## Pearl Compliance Requirements
 
-## Logging Framework
+### Log File Location
+- **Mandatory**: Agent must produce `log.txt` file in its working directory
+- Working directory is set by Pearl platform during agent execution
+- File must be accessible for Pearl monitoring and debugging
 
-### Primary Framework: Logfire
+### Log Format
+**Required Format**: `[YYYY-MM-DD HH:MM:SS,mmm] [LOG_LEVEL] [agent] Your message`
 
-The application uses [Logfire](https://pydantic.dev/logfire) as the primary logging and observability framework.
-
-**Configuration:**
-```python
-# backend/config.py
-logfire_token: Optional[str] = None      # Authentication token (from environment)
-logfire_project: Optional[str] = None    # Project identifier (from environment)
-logfire_ignore_no_config: bool = False   # Ignore missing configuration
+Example:
+```
+[2024-03-14 10:30:00,123] [INFO] [agent] Starting command execution
+[2024-03-14 10:30:01,456] [DEBUG] [agent] Command parameters: {...}
+[2024-03-14 10:30:02,789] [ERROR] [agent] Failed to connect to service
 ```
 
-**Initialization:**
-```python
-# In application lifespan context (backend/main.py)
-if settings.logfire_token:
-    logfire.configure(
-        token=settings.logfire_token,
-        project_name=settings.logfire_project
-    )
+### Log Levels
+- `ERROR`: Critical errors preventing agent execution
+- `WARN`: Warning messages about potential issues  
+- `INFO`: General operational information
+- `DEBUG`: Detailed debugging information
+- `TRACE`: Verbose execution traces
+
+## Required Packages
+
+### Core Logging Dependencies
+```bash
+# Python standard library (no installation required)
+import logging
+import logging.handlers
+from datetime import datetime
+import re
+import os
 ```
 
-## Log Levels and Usage
+## Implementation
 
-### INFO Level
-Use for normal application operations and state changes.
-
-**When to use:**
-- Application startup/shutdown
-- Service initialization
-- Successful operations
-- State transitions
-- Configuration changes
-
-**Example:**
+### Logger Configuration
 ```python
-logfire.info(
-    "VotingService initialized",
-    eoa_address=self.account.address,
-    safe_addresses=self.safe_addresses
-)
+import logging
+from datetime import datetime
+
+def setup_pearl_logger():
+    """Configure logging for Pearl compliance."""
+    logger = logging.getLogger('agent')
+    logger.setLevel(logging.INFO)
+    
+    # Create file handler for log.txt
+    handler = logging.FileHandler('log.txt', mode='a')
+    
+    # Pearl-compliant formatter
+    formatter = PearlFormatter()
+    handler.setFormatter(formatter)
+    
+    logger.addHandler(handler)
+    return logger
+
+class PearlFormatter(logging.Formatter):
+    """Custom formatter for Pearl compliance."""
+    
+    def format(self, record):
+        timestamp = datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S,%f')[:-3]
+        return f"[{timestamp}] [{record.levelname}] [agent] {record.getMessage()}"
 ```
 
-### ERROR Level
-Use for system failures and unrecoverable errors.
-
-**When to use:**
-- API call failures
-- Unhandled exceptions
-- Critical service failures
-- Data corruption or invalid states
-
-**Example:**
+### Usage in Agent Code
 ```python
-logfire.error(
-    "Failed to fetch proposals",
-    space_id=space_id,
-    error=str(e),
-    error_type=type(e).__name__
-)
+logger = setup_pearl_logger()
+
+# Standard logging calls
+logger.info("Agent initialized successfully")
+logger.debug("Processing transaction: %s", tx_hash)
+logger.error("Connection failed: %s", error_msg)
+logger.warn("Retrying operation after timeout")
 ```
 
-### WARN Level
-Use for recoverable issues and non-critical problems.
+## Integration with Pearl Platform
 
-**When to use:**
-- Fallback behavior activated
-- Deprecated feature usage
-- Performance degradation
-- Non-critical configuration issues
+### Environment Variables
+The agent must respect Pearl-provided environment variables:
+- `STORE_PATH`: Persistent data storage location
 
-**Example:**
+### Key Events to Log
+1. **Agent Lifecycle**
+   - Initialization and startup
+   - Shutdown and cleanup
+   - State recovery after SIGKILL
+
+2. **Transaction Operations**
+   - Safe contract interactions
+   - EOA transactions
+   - Gas estimation and execution
+
+3. **Data Persistence**
+   - State saves to STORE_PATH
+   - Recovery operations
+   - Data validation checks
+
+### Compliance Validation
 ```python
-logfire.warn(f"Could not load activity state: {e}")
+import re
+
+def validate_log_format(log_line):
+    """Validate log line matches Pearl format."""
+    pattern = r'^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\] \[(ERROR|WARN|INFO|DEBUG|TRACE)\] \[agent\] .*'
+    return bool(re.match(pattern, log_line))
 ```
 
-### DEBUG Level
-Use for detailed debugging information (development only).
-
-**Configuration:** Controlled via `settings.debug` flag
-**Usage:** Set server log level to "debug" when debug mode is enabled
-
-## Structured Logging Patterns
-
-### Context-Rich Logging
-
-Always include relevant context parameters with log messages:
-
+### Error Recovery
 ```python
-logfire.info(
-    "Starting vote decision making",
-    proposal_id=proposal.id,
-    proposal_title=proposal.title,
-    strategy=strategy.value,
-    model_type=str(type(self.model)),
-)
-```
-
-### Consistent Field Naming
-
-Use these standard field names across all log entries:
-
-| Field Name | Description | Example |
-|------------|-------------|---------|
-| `error` | Error message string | `str(e)` |
-| `error_type` | Exception class name | `type(e).__name__` |
-| `count` | Number of items | `len(proposals)` |
-| `status_code` | HTTP status code | `response.status_code` |
-| `duration` | Time duration in seconds | `time.time() - start_time` |
-| `user_id` | User identifier | `user.id` |
-| `request_id` | Request correlation ID | `request.headers.get("X-Request-ID")` |
-
-
-## Security and Privacy
-
-### Sensitive Data Handling
-
-**NEVER log:**
-- Private keys
-- API keys or tokens
-- Passwords
-- Full blockchain signatures
-- Personal identifiable information (PII)
-
-**Safe logging patterns:**
-```python
-# Log public addresses only
-logfire.info("Account initialized", address=account.address)
-
-# Truncate sensitive data
-logfire.info(
-    "Signature created",
-    signature_preview=f"{signature[:10]}...{signature[-10:]}"
-)
-
-# Log data presence, not content
-logfire.info("Private key loaded", has_private_key=bool(private_key))
-```
-
-### Error Message Sanitization
-
-Ensure error messages don't leak sensitive information:
-
-```python
-try:
-    # Operation
-except Exception as e:
-    # Sanitize error message before logging
-    safe_error = str(e).replace(api_key, "***")
-    logfire.error("Operation failed", error=safe_error)
+def ensure_log_file_exists():
+    """Ensure log.txt exists and is writable."""
+    try:
+        with open('log.txt', 'a') as f:
+            f.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S,%f')[:-3]}] [INFO] [agent] Log file initialized\n")
+        return True
+    except Exception as e:
+        print(f"Failed to initialize log file: {e}")
+        return False
 ```
 
 ## Best Practices
 
-### 1. Use Runtime Assertions
+1. **Log Early and Often**: Log all significant agent operations
+2. **Use Appropriate Levels**: Reserve ERROR for actual failures
+3. **Include Context**: Add transaction hashes, addresses, amounts
+4. **Handle Failures**: Ensure logging doesn't crash the agent
+5. **Performance**: Avoid excessive DEBUG logging in production
 
-Combine assertions with logging for critical invariants:
-
-```python
-assert proposal is not None, "Proposal cannot be None"
-logfire.info("Processing proposal", proposal_id=proposal.id)
-```
-
-### 2. Log at Service Boundaries
-
-Always log when:
-- Entering/exiting service methods
-- Making external API calls
-- Processing user requests
-- Handling background tasks
-
-### 3. Include Request Context
-
-Maintain request context throughout operations:
-
-```python
-class RequestContext:
-    request_id: str
-    user_id: Optional[str]
-
-# Include in all log calls within request
-logfire.info("Operation", request_id=context.request_id)
-```
+This specification ensures full compliance with Pearl platform requirements while providing comprehensive observability for autonomous AI agent operations.
