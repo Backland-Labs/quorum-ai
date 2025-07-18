@@ -1,0 +1,171 @@
+[2025-07-17 17:34:36,501] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 17:34:36,502] [INFO] [agent] Agent run started - run_id: test-space_1752795276, space_id: test-space, dry_run: True, strategy: conservative, confidence_threshold: 0.8, max_proposals: 5
+[2025-07-17 18:14:17,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,290] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,291] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,291] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,291] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,292] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,292] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,292] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,292] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-07-17 18:14:17,292] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-07-17 18:14:17,292] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=2)
+[2025-07-17 18:14:17,292] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=2)
+[2025-07-17 18:14:17,293] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,293] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,293] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,293] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-07-17 18:14:17,293] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-07-17 18:14:17,293] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-07-17 18:14:17,293] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-07-17 18:14:17,294] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,294] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,294] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,294] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-07-17 18:14:17,294] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-07-17 18:14:17,295] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=5, error=Service error)
+[2025-07-17 18:14:17,295] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: Service error
+[2025-07-17 18:14:17,296] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,296] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,296] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,296] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,296] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,296] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-07-17 18:14:17,296] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-07-17 18:14:17,297] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,297] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,297] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,297] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-07-17 18:14:17,297] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-17 18:14:17,297] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-17 18:14:17,297] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-07-17 18:14:17,297] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-17 18:14:17,298] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,298] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,298] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,298] [INFO] [agent] Starting make_voting_decisions (proposal_count=2)
+[2025-07-17 18:14:17,298] [INFO] [agent] Making voting decisions (proposal_count=2, voting_strategy=aggressive, confidence_threshold=0.6)
+[2025-07-17 18:14:17,298] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-17 18:14:17,298] [INFO] [agent] Vote decision accepted (proposal_id=prop-2, vote=AGAINST, confidence=0.7)
+[2025-07-17 18:14:17,298] [INFO] [agent] Voting decisions completed (total_proposals=2, accepted_decisions=2)
+[2025-07-17 18:14:17,298] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-17 18:14:17,299] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,299] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,299] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,299] [INFO] [agent] Starting make_voting_decisions (proposal_count=2)
+[2025-07-17 18:14:17,299] [INFO] [agent] Making voting decisions (proposal_count=2, voting_strategy=balanced, confidence_threshold=0.8)
+[2025-07-17 18:14:17,299] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.9)
+[2025-07-17 18:14:17,299] [INFO] [agent] Vote decision rejected due to low confidence (proposal_id=prop-2, confidence=0.6, threshold=0.8)
+[2025-07-17 18:14:17,299] [INFO] [agent] Voting decisions completed (total_proposals=2, accepted_decisions=1)
+[2025-07-17 18:14:17,299] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-17 18:14:17,300] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,300] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,300] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,300] [INFO] [agent] Starting make_voting_decisions (proposal_count=2)
+[2025-07-17 18:14:17,300] [INFO] [agent] Making voting decisions (proposal_count=2, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-17 18:14:17,300] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-17 18:14:17,300] [INFO] [agent] Vote decision accepted (proposal_id=prop-2, vote=AGAINST, confidence=0.8)
+[2025-07-17 18:14:17,300] [INFO] [agent] Voting decisions completed (total_proposals=2, accepted_decisions=2)
+[2025-07-17 18:14:17,300] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-17 18:14:17,301] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,301] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,301] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,302] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,302] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,302] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,302] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-17 18:14:17,302] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-17 18:14:17,302] [INFO] [agent] Dry run mode - simulating vote execution
+[2025-07-17 18:14:17,302] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-17 18:14:17,303] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,303] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,303] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,303] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-17 18:14:17,303] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-17 18:14:17,303] [INFO] [agent] Vote executed successfully (proposal_id=prop-1, vote_choice=VoteType.FOR, confidence=0.8)
+[2025-07-17 18:14:17,303] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-07-17 18:14:17,303] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-17 18:14:17,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,304] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,306] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,306] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,306] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,306] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-17 18:14:17,306] [INFO] [agent] Agent run started (run_id=test-space_1752797657, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-17 18:14:17,306] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,306] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,306] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=1)
+[2025-07-17 18:14:17,306] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=1)
+[2025-07-17 18:14:17,306] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-07-17 18:14:17,306] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-07-17 18:14:17,310] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-07-17 18:14:17,311] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.005s
+[2025-07-17 18:14:17,311] [INFO] [agent] Proposals fetched and filtered (run_id=test-space_1752797657, total_proposals=1, filtered_proposals=1, proposal_ids=prop-1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-17 18:14:17,311] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-17 18:14:17,311] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-17 18:14:17,311] [INFO] [agent] Proposal analyzed (run_id=test-space_1752797657, proposal_id=prop-1, proposal_title=Test Proposal 1, vote_choice=VoteType.FOR, confidence=0.8, risk_level=LOW)
+[2025-07-17 18:14:17,311] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-17 18:14:17,311] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-17 18:14:17,311] [INFO] [agent] Vote executed successfully (run_id=test-space_1752797657, proposal_id=prop-1, vote_choice=VoteType.FOR, confidence=0.8)
+[2025-07-17 18:14:17,311] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-07-17 18:14:17,311] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-17 18:14:17,311] [INFO] [agent] Agent run completed (run_id=test-space_1752797657, space_id=test-space, proposals_analyzed=1, votes_cast=1, successful_votes=1, failed_votes=0, execution_time=0.006, errors=[])
+[2025-07-17 18:14:17,311] [INFO] [agent] Completed agent_run_execution successfully in 0.006s
+[2025-07-17 18:14:17,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,313] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,313] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=True)
+[2025-07-17 18:14:17,313] [INFO] [agent] Agent run started (run_id=test-space_1752797657, space_id=test-space, dry_run=True, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-17 18:14:17,313] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,313] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,313] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-07-17 18:14:17,313] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-07-17 18:14:17,313] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.000s
+[2025-07-17 18:14:17,313] [INFO] [agent] Proposals fetched and filtered (run_id=test-space_1752797657, total_proposals=1, filtered_proposals=1, proposal_ids=prop-1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-17 18:14:17,313] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-17 18:14:17,313] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-07-17 18:14:17,313] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-17 18:14:17,313] [INFO] [agent] Proposal analyzed (run_id=test-space_1752797657, proposal_id=prop-1, proposal_title=Test Proposal 1, vote_choice=VoteType.FOR, confidence=0.8, risk_level=LOW)
+[2025-07-17 18:14:17,313] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-17 18:14:17,313] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-17 18:14:17,313] [INFO] [agent] Dry run mode - simulating vote execution
+[2025-07-17 18:14:17,313] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-17 18:14:17,313] [INFO] [agent] Agent run completed (run_id=test-space_1752797657, space_id=test-space, proposals_analyzed=1, votes_cast=1, successful_votes=1, failed_votes=0, execution_time=0.001, errors=[])
+[2025-07-17 18:14:17,313] [INFO] [agent] Completed agent_run_execution successfully in 0.001s
+[2025-07-17 18:14:17,314] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,315] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,315] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-17 18:14:17,315] [INFO] [agent] Agent run started (run_id=test-space_1752797657, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-17 18:14:17,315] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,315] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-17 18:14:17,315] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-07-17 18:14:17,315] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-07-17 18:14:17,315] [INFO] [agent] Agent run completed (run_id=test-space_1752797657, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=[])
+[2025-07-17 18:14:17,315] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-17 18:14:17,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,316] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,316] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,316] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,316] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,316] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:14:17,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:14:17,317] [INFO] [agent] AgentRunService initialized with all dependencies

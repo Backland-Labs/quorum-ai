@@ -2,8 +2,9 @@
 
 import time
 from typing import List, Optional, Tuple
+import logging
 
-import logfire
+from logging_config import setup_pearl_logger, log_span
 
 from models import (
     AgentRunRequest,
@@ -68,8 +69,10 @@ class AgentRunService:
         self.voting_service = VotingService()
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger()
-
-        logfire.info("AgentRunService initialized with all dependencies")
+        
+        # Initialize Pearl-compliant logger
+        self.pearl_logger = setup_pearl_logger(name='agent_run_service')
+        self.pearl_logger.info("AgentRunService initialized with all dependencies")
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.
@@ -90,9 +93,9 @@ class AgentRunService:
         errors = []
         user_preferences_applied = False
 
-        with logfire.span(
-            "agent_run_execution", space_id=request.space_id, dry_run=request.dry_run
-        ):
+        with log_span(
+            self.pearl_logger, "agent_run_execution", space_id=request.space_id, dry_run=request.dry_run
+        ) as span_data:
             try:
                 # Step 1: Load user preferences
                 user_preferences, preferences_error = await self._load_user_preferences(
@@ -308,7 +311,7 @@ class AgentRunService:
             AgentRunResponse with error information
         """
         error_msg = f"Unexpected error during agent run: {str(error)}"
-        logfire.error("Unexpected agent run error", error=str(error))
+        self.pearl_logger.error(f"Unexpected agent run error: {str(error)}")
         execution_time = time.time() - start_time
 
         return AgentRunResponse(
@@ -344,10 +347,10 @@ class AgentRunService:
         assert isinstance(limit, int), f"Limit must be integer, got {type(limit)}"
         assert limit > 0, "Limit must be positive integer"
 
-        with logfire.span("fetch_active_proposals", space_id=space_id, limit=limit):
+        with log_span(self.pearl_logger, "fetch_active_proposals", space_id=space_id, limit=limit) as span_data:
             try:
-                logfire.info(
-                    "Fetching active proposals", space_id=space_id, limit=limit
+                self.pearl_logger.info(
+                    f"Fetching active proposals (space_id={space_id}, limit={limit})"
                 )
 
                 # Fetch proposals from Snapshot service
@@ -355,10 +358,9 @@ class AgentRunService:
                     space_ids=[space_id], state="active", first=limit
                 )
 
-                logfire.info(
-                    "Successfully fetched active proposals",
-                    space_id=space_id,
-                    proposal_count=len(proposals),
+                span_data['proposal_count'] = len(proposals)
+                self.pearl_logger.info(
+                    f"Successfully fetched active proposals (space_id={space_id}, proposal_count={len(proposals)})"
                 )
 
                 # Runtime assertion: validate output
@@ -372,11 +374,8 @@ class AgentRunService:
                 return proposals
 
             except Exception as e:
-                logfire.error(
-                    "Failed to fetch active proposals",
-                    space_id=space_id,
-                    limit=limit,
-                    error=str(e),
+                self.pearl_logger.error(
+                    f"Failed to fetch active proposals (space_id={space_id}, limit={limit}, error={str(e)})"
                 )
                 raise ProposalFetchError(
                     f"Failed to fetch active proposals from {space_id}: {str(e)}"
@@ -411,14 +410,13 @@ class AgentRunService:
         if not proposals:
             return []
 
-        with logfire.span("filter_and_rank_proposals", proposal_count=len(proposals)):
+        with log_span(self.pearl_logger, "filter_and_rank_proposals", proposal_count=len(proposals)) as span_data:
             try:
-                logfire.info(
-                    "Starting proposal filtering and ranking",
-                    proposal_count=len(proposals),
-                    blacklisted_count=len(preferences.blacklisted_proposers),
-                    whitelisted_count=len(preferences.whitelisted_proposers),
-                    max_proposals_per_run=preferences.max_proposals_per_run,
+                self.pearl_logger.info(
+                    f"Starting proposal filtering and ranking (proposal_count={len(proposals)}, "
+                    f"blacklisted_count={len(preferences.blacklisted_proposers)}, "
+                    f"whitelisted_count={len(preferences.whitelisted_proposers)}, "
+                    f"max_proposals_per_run={preferences.max_proposals_per_run})"
                 )
 
                 # Initialize proposal filter with user preferences
@@ -427,18 +425,16 @@ class AgentRunService:
                 # Step 1: Filter proposals based on user preferences
                 filtered_proposals = proposal_filter.filter_proposals(proposals)
 
-                logfire.info(
-                    "Proposals filtered",
-                    original_count=len(proposals),
-                    filtered_count=len(filtered_proposals),
+                self.pearl_logger.info(
+                    f"Proposals filtered (original_count={len(proposals)}, "
+                    f"filtered_count={len(filtered_proposals)})"
                 )
 
                 # Step 2: Rank filtered proposals by importance and urgency
                 ranked_proposals = proposal_filter.rank_proposals(filtered_proposals)
 
-                logfire.info(
-                    "Proposals ranked",
-                    ranked_count=len(ranked_proposals),
+                self.pearl_logger.info(
+                    f"Proposals ranked (ranked_count={len(ranked_proposals)})"
                 )
 
                 # Step 3: Limit to max_proposals_per_run if specified
@@ -446,11 +442,10 @@ class AgentRunService:
                     final_proposals = ranked_proposals[
                         : preferences.max_proposals_per_run
                     ]
-                    logfire.info(
-                        "Proposals limited to max per run",
-                        original_ranked_count=len(ranked_proposals),
-                        final_count=len(final_proposals),
-                        max_proposals_per_run=preferences.max_proposals_per_run,
+                    self.pearl_logger.info(
+                        f"Proposals limited to max per run (original_ranked_count={len(ranked_proposals)}, "
+                        f"final_count={len(final_proposals)}, "
+                        f"max_proposals_per_run={preferences.max_proposals_per_run})"
                     )
                 else:
                     final_proposals = ranked_proposals
@@ -460,10 +455,11 @@ class AgentRunService:
                     proposals, filtered_proposals
                 )
 
-                logfire.info(
-                    "Filtering and ranking completed",
-                    **filtering_metrics,
-                    final_proposal_count=len(final_proposals),
+                # Format filtering metrics as string
+                metrics_str = ', '.join(f"{k}={v}" for k, v in filtering_metrics.items())
+                self.pearl_logger.info(
+                    f"Filtering and ranking completed ({metrics_str}, "
+                    f"final_proposal_count={len(final_proposals)})"
                 )
 
                 # Runtime assertion: validate output
@@ -480,10 +476,9 @@ class AgentRunService:
                 return final_proposals
 
             except Exception as e:
-                logfire.error(
-                    "Failed to filter and rank proposals",
-                    proposal_count=len(proposals),
-                    error=str(e),
+                self.pearl_logger.error(
+                    f"Failed to filter and rank proposals (proposal_count={len(proposals)}, "
+                    f"error={str(e)})"
                 )
                 raise AgentRunServiceError(
                     f"Failed to filter and rank proposals: {str(e)}"
@@ -518,13 +513,12 @@ class AgentRunService:
         if not proposals:
             return []
 
-        with logfire.span("make_voting_decisions", proposal_count=len(proposals)):
+        with log_span(self.pearl_logger, "make_voting_decisions", proposal_count=len(proposals)) as span_data:
             try:
-                logfire.info(
-                    "Making voting decisions",
-                    proposal_count=len(proposals),
-                    voting_strategy=preferences.voting_strategy.value,
-                    confidence_threshold=preferences.confidence_threshold,
+                self.pearl_logger.info(
+                    f"Making voting decisions (proposal_count={len(proposals)}, "
+                    f"voting_strategy={preferences.voting_strategy.value}, "
+                    f"confidence_threshold={preferences.confidence_threshold})"
                 )
 
                 vote_decisions = []
@@ -538,24 +532,20 @@ class AgentRunService:
                     # Filter by confidence threshold
                     if decision.confidence >= preferences.confidence_threshold:
                         vote_decisions.append(decision)
-                        logfire.info(
-                            "Vote decision accepted",
-                            proposal_id=proposal.id,
-                            vote=decision.vote.value,
-                            confidence=decision.confidence,
+                        self.pearl_logger.info(
+                            f"Vote decision accepted (proposal_id={proposal.id}, "
+                            f"vote={decision.vote.value}, confidence={decision.confidence})"
                         )
                     else:
-                        logfire.info(
-                            "Vote decision rejected due to low confidence",
-                            proposal_id=proposal.id,
-                            confidence=decision.confidence,
-                            threshold=preferences.confidence_threshold,
+                        self.pearl_logger.info(
+                            f"Vote decision rejected due to low confidence "
+                            f"(proposal_id={proposal.id}, confidence={decision.confidence}, "
+                            f"threshold={preferences.confidence_threshold})"
                         )
 
-                logfire.info(
-                    "Voting decisions completed",
-                    total_proposals=len(proposals),
-                    accepted_decisions=len(vote_decisions),
+                self.pearl_logger.info(
+                    f"Voting decisions completed (total_proposals={len(proposals)}, "
+                    f"accepted_decisions={len(vote_decisions)})"
                 )
 
                 # Runtime assertion: validate output
@@ -569,10 +559,9 @@ class AgentRunService:
                 return vote_decisions
 
             except Exception as e:
-                logfire.error(
-                    "Failed to make voting decisions",
-                    proposal_count=len(proposals),
-                    error=str(e),
+                self.pearl_logger.error(
+                    f"Failed to make voting decisions (proposal_count={len(proposals)}, "
+                    f"error={str(e)})"
                 )
                 raise VotingDecisionError(
                     f"Failed to make voting decisions: {str(e)}"
@@ -611,16 +600,16 @@ class AgentRunService:
         if not decisions:
             return []
 
-        with logfire.span(
-            "execute_votes", space_id=space_id, decision_count=len(decisions), dry_run=dry_run
-        ):
+        with log_span(
+            self.pearl_logger, "execute_votes", space_id=space_id, decision_count=len(decisions), dry_run=dry_run
+        ) as span_data:
             try:
-                logfire.info(
-                    "Executing votes", space_id=space_id, decision_count=len(decisions), dry_run=dry_run
+                self.pearl_logger.info(
+                    f"Executing votes (space_id={space_id}, decision_count={len(decisions)}, dry_run={dry_run})"
                 )
 
                 if dry_run:
-                    logfire.info("Dry run mode - simulating vote execution")
+                    self.pearl_logger.info("Dry run mode - simulating vote execution")
                     return decisions
 
                 # Execute actual votes
@@ -651,10 +640,9 @@ class AgentRunService:
                         # Continue with other votes
                         continue
 
-                logfire.info(
-                    "Vote execution completed",
-                    total_decisions=len(decisions),
-                    successful_executions=len(executed_decisions),
+                self.pearl_logger.info(
+                    f"Vote execution completed (total_decisions={len(decisions)}, "
+                    f"successful_executions={len(executed_decisions)})"
                 )
 
                 # Runtime assertion: validate output
@@ -668,11 +656,9 @@ class AgentRunService:
                 return executed_decisions
 
             except Exception as e:
-                logfire.error(
-                    "Failed to execute votes",
-                    decision_count=len(decisions),
-                    dry_run=dry_run,
-                    error=str(e),
+                self.pearl_logger.error(
+                    f"Failed to execute votes (decision_count={len(decisions)}, "
+                    f"dry_run={dry_run}, error={str(e)})"
                 )
                 raise VoteExecutionError(f"Failed to execute votes: {str(e)}") from e
 
@@ -681,7 +667,7 @@ class AgentRunService:
         if hasattr(self.snapshot_service, "close"):
             await self.snapshot_service.close()
 
-        logfire.info("AgentRunService resources closed")
+        self.pearl_logger.info("AgentRunService resources closed")
 
     async def __aenter__(self) -> "AgentRunService":
         """Async context manager entry."""
