@@ -10,6 +10,8 @@ from safe_eth.safe.api import TransactionServiceApi
 import logfire
 
 from config import settings
+from utils.vote_encoder import encode_cast_vote, Support
+from services.governor_registry import get_governor, GovernorRegistryError
 
 
 SAFE_SERVICE_URLS = {
@@ -17,6 +19,14 @@ SAFE_SERVICE_URLS = {
     "gnosis": "https://safe-transaction-gnosis-chain.safe.global/",
     "base": "https://safe-transaction-base.safe.global/",
     "mode": "https://safe-transaction-mode.safe.global/",
+}
+
+CHAIN_ID_TO_NAME = {
+    1: "ethereum",
+    11155111: "ethereum",  # Sepolia testnet maps to ethereum
+    100: "gnosis",
+    8453: "base",
+    34443: "mode",
 }
 
 
@@ -106,24 +116,29 @@ class SafeService:
 
         raise ValueError("No valid chain configuration found")
 
-    async def perform_activity_transaction(
-        self, chain: Optional[str] = None
+    async def _submit_safe_transaction(
+        self,
+        *,
+        chain: str,
+        to: str,
+        value: int,
+        data: bytes,
+        operation: int = 0
     ) -> Dict[str, Any]:
-        """Perform Safe transaction for daily activity requirement.
-
-        Creates a 0-ETH transaction from the Safe to itself to satisfy activity tracking.
-
+        """Submit a Safe transaction with the given parameters.
+        
         Args:
-            chain: Specific chain to use, or None to select optimal
-
+            chain: Blockchain network name
+            to: Transaction recipient address
+            value: ETH value to send (in wei)
+            data: Transaction data
+            operation: Safe operation type (0=CALL, 1=DELEGATECALL)
+            
         Returns:
             Dict with transaction details and success status
         """
-        if not chain:
-            chain = self.select_optimal_chain()
-
-        with logfire.span("safe_service.perform_activity_transaction", chain=chain):
-            logfire.info(f"Creating Safe activity transaction on {chain}")
+        with logfire.span("safe_service._submit_safe_transaction", chain=chain, to=to):
+            logfire.info(f"Creating Safe transaction on {chain} to {to}")
 
             try:
                 safe_address = self.safe_addresses.get(chain)
@@ -151,12 +166,12 @@ class SafeService:
                     base_url=safe_service_url,
                 )
 
-                # Build dummy transaction: 0 ETH to self (minimal cost)
+                # Build Safe transaction
                 safe_tx = safe_instance.build_multisig_tx(
-                    to=safe_address,  # Send to itself
-                    value=0,  # 0 ETH value
-                    data=b"",  # Empty data
-                    operation=0,  # CALL operation
+                    to=to,
+                    value=value,
+                    data=data,
+                    operation=operation,
                 )
 
                 # Sign Safe transaction hash
@@ -169,6 +184,9 @@ class SafeService:
                     "Safe transaction built",
                     chain=chain,
                     safe_address=safe_address,
+                    to=to,
+                    value=value,
+                    data_length=len(data),
                     nonce=safe_tx.safe_nonce,
                     safe_tx_hash=safe_tx.safe_tx_hash.hex(),
                 )
@@ -200,7 +218,7 @@ class SafeService:
 
                 if receipt["status"] == 1:
                     logfire.info(
-                        "Safe activity transaction successful",
+                        "Safe transaction successful",
                         tx_hash=tx_hash.hex(),
                         block_number=receipt["blockNumber"],
                         gas_used=receipt["gasUsed"],
@@ -223,8 +241,96 @@ class SafeService:
                     }
 
             except Exception as e:
-                logfire.error(f"Error creating Safe activity transaction: {e}")
+                logfire.error(f"Error creating Safe transaction: {e}")
                 return {"success": False, "error": str(e)}
+
+    async def perform_activity_transaction(
+        self, chain: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Perform Safe transaction for daily activity requirement.
+
+        Creates a 0-ETH transaction from the Safe to itself to satisfy activity tracking.
+
+        Args:
+            chain: Specific chain to use, or None to select optimal
+
+        Returns:
+            Dict with transaction details and success status
+        """
+        if not chain:
+            chain = self.select_optimal_chain()
+
+        safe_address = self.safe_addresses.get(chain)
+        if not safe_address:
+            return {"success": False, "error": f"No Safe address configured for chain: {chain}"}
+
+        # Use helper method to submit dummy transaction
+        return await self._submit_safe_transaction(
+            chain=chain,
+            to=safe_address,  # Send to itself
+            value=0,  # 0 ETH value
+            data=b"",  # Empty data
+            operation=0,  # CALL operation
+        )
+
+    async def perform_governor_vote(
+        self,
+        governor_id: str,
+        proposal_id: int,
+        support: Support,
+        reason: str = "",
+        chain: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Cast a vote on a governor proposal via Safe multisig.
+
+        Args:
+            governor_id: Governor identifier (e.g., "compound-mainnet")
+            proposal_id: Proposal ID to vote on
+            support: Vote choice (FOR, AGAINST, ABSTAIN)
+            reason: Optional reason for the vote
+            chain: Specific chain to use, or None to use governor's chain
+
+        Returns:
+            Dict with transaction details and success status
+        """
+        try:
+            # Get governor metadata
+            governor_meta, _ = get_governor(governor_id)
+            
+            # Use governor's chain if not specified
+            if not chain:
+                chain = CHAIN_ID_TO_NAME.get(governor_meta.chain_id)
+                if not chain:
+                    return {
+                        "success": False,
+                        "error": f"Unsupported chain ID: {governor_meta.chain_id}"
+                    }
+
+            # Encode the vote transaction
+            encoded_data = encode_cast_vote(
+                governor_id=governor_id,
+                proposal_id=proposal_id,
+                support=support,
+                reason=reason
+            )
+
+            # Convert hex string to bytes
+            data_bytes = bytes.fromhex(encoded_data[2:])  # Remove '0x' prefix
+
+            # Submit the transaction
+            return await self._submit_safe_transaction(
+                chain=chain,
+                to=governor_meta.address,
+                value=0,  # No ETH sent
+                data=data_bytes,
+                operation=0,  # CALL operation
+            )
+
+        except GovernorRegistryError as e:
+            return {"success": False, "error": str(e)}
+        except Exception as e:
+            logfire.error(f"Error creating governor vote transaction: {e}")
+            return {"success": False, "error": str(e)}
 
     async def get_safe_nonce(self, chain: str, safe_address: str) -> int:
         """Get current nonce for a Safe on specified chain.
