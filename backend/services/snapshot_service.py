@@ -3,10 +3,13 @@
 from typing import Any, Dict, List, Optional
 
 import httpx
-import logfire
 
 from config import settings
+from logging_config import setup_pearl_logger, log_span
 from models import Space, Proposal, Vote
+
+# Initialize Pearl-compliant logger
+logger = setup_pearl_logger(__name__)
 
 
 # Custom exceptions for better error handling
@@ -124,12 +127,31 @@ class SnapshotService:
         self, error_type: str, exception: Exception, **context
     ) -> None:
         """Log network error and raise NetworkError with context."""
-        logfire.error(
-            f"Network error: {error_type}",
-            endpoint=self.base_url,
-            error=str(exception),
-            **context,
-        )
+        # Handle different specific context cases for Pearl logging
+        if "timeout_seconds" in context:
+            logger.error(
+                "Network error: %s, endpoint=%s, error=%s, timeout_seconds=%s",
+                error_type,
+                self.base_url,
+                str(exception),
+                context["timeout_seconds"]
+            )
+        elif "status_code" in context and "response_text" in context:
+            logger.error(
+                "Network error: %s, endpoint=%s, error=%s, status_code=%s, response_text=%s",
+                error_type,
+                self.base_url,
+                str(exception),
+                context["status_code"],
+                context["response_text"]
+            )
+        else:
+            logger.error(
+                "Network error: %s, endpoint=%s, error=%s",
+                error_type,
+                self.base_url,
+                str(exception)
+            )
 
         if isinstance(exception, httpx.TimeoutException):
             raise NetworkError(
@@ -172,20 +194,19 @@ class SnapshotService:
 
     async def _send_graphql_request(self, payload: Dict[str, Any]) -> httpx.Response:
         """Send GraphQL request and return raw HTTP response."""
-        logfire.info(
-            "Sending GraphQL request to Snapshot API",
-            endpoint=self.base_url,
-            query_length=len(payload.get("query", "")),
-            has_variables=payload.get("variables") is not None,
-            request_payload=payload,
+        logger.info(
+            "Sending GraphQL request to Snapshot API, endpoint=%s, query_length=%s, has_variables=%s",
+            self.base_url,
+            len(payload.get("query", "")),
+            payload.get("variables") is not None
         )
 
         response = await self.client.post(self.base_url, json=payload)
 
-        logfire.info(
-            "Received HTTP response from Snapshot API",
-            status_code=response.status_code,
-            content_type=response.headers.get("content-type"),
+        logger.info(
+            "Received HTTP response from Snapshot API, status_code=%s, content_type=%s",
+            response.status_code,
+            response.headers.get("content-type")
         )
 
         response.raise_for_status()
@@ -196,10 +217,10 @@ class SnapshotService:
         try:
             return response.json()
         except Exception as e:
-            logfire.error(
-                "Failed to parse JSON response from Snapshot API",
-                response_text=response.text[:MAX_LOG_RESPONSE_LENGTH],
-                error=str(e),
+            logger.error(
+                "Failed to parse JSON response from Snapshot API, response_text=%s, error=%s",
+                response.text[:MAX_LOG_RESPONSE_LENGTH],
+                str(e)
             )
             raise SnapshotServiceError(
                 f"Snapshot API returned invalid JSON response: {str(e)}"
@@ -213,18 +234,18 @@ class SnapshotService:
         if "errors" in response_data and response_data["errors"]:
             error_details = response_data["errors"]
             error_msg = self._parse_graphql_errors(error_details)
-            logfire.error(
-                "GraphQL query failed at Snapshot API",
-                graphql_errors=error_details,
-                error_count=len(error_details),
+            logger.error(
+                "GraphQL query failed at Snapshot API, graphql_errors=%s, error_count=%s",
+                str(error_details),
+                len(error_details)
             )
             raise GraphQLError(error_msg)
 
         # Validate response structure
         if "data" not in response_data:
-            logfire.error(
-                "Snapshot API response missing 'data' field",
-                response_keys=list(response_data.keys()),
+            logger.error(
+                "Snapshot API response missing 'data' field, response_keys=%s",
+                str(list(response_data.keys()))
             )
             raise SnapshotServiceError("Snapshot API response missing 'data' field")
 
@@ -234,10 +255,10 @@ class SnapshotService:
             if isinstance(data_result, dict)
             else "non-dict-data"
         )
-        logfire.info(
-            "Snapshot GraphQL query completed successfully",
-            data_keys=data_keys_for_logging,
-            response_size=len(str(data_result)),
+        logger.info(
+            "Snapshot GraphQL query completed successfully, data_keys=%s, response_size=%s",
+            str(data_keys_for_logging),
+            len(str(data_result))
         )
 
         return data_result
@@ -260,7 +281,8 @@ class SnapshotService:
         """
         self._validate_query_inputs(query, variables)
 
-        with logfire.span(
+        with log_span(
+            logger,
             "snapshot_api_request",
             query=self._truncate_query_for_logging(query),
             has_variables=variables is not None,
@@ -290,11 +312,11 @@ class SnapshotService:
                     response_text=response_text[:MAX_LOG_RESPONSE_LENGTH],
                 )
             except Exception as e:
-                logfire.error(
-                    "Unexpected error during Snapshot API interaction",
-                    endpoint=self.base_url,
-                    error=str(e),
-                    error_type=type(e).__name__,
+                logger.error(
+                    "Unexpected error during Snapshot API interaction, endpoint=%s, error=%s, error_type=%s",
+                    self.base_url,
+                    str(e),
+                    type(e).__name__
                 )
                 raise SnapshotServiceError(
                     f"Unexpected error during Snapshot API query execution: {str(e)}"
@@ -430,7 +452,7 @@ class SnapshotService:
         """
         variables = {"id": space_id}
 
-        with logfire.span("get_space", space_id=space_id):
+        with log_span(logger, "get_space", space_id=space_id):
             result = await self.execute_query(self.GET_SPACE_QUERY, variables)
 
             if result.get("space") is None:
@@ -449,7 +471,7 @@ class SnapshotService:
         """
         variables = {"ids": space_ids}
 
-        with logfire.span("get_spaces", space_ids=space_ids, count=len(space_ids)):
+        with log_span(logger, "get_spaces", space_ids=space_ids, count=len(space_ids)):
             result = await self.execute_query(self.GET_SPACES_QUERY, variables)
 
             return [Space(**space_data) for space_data in result.get("spaces", [])]
@@ -466,7 +488,7 @@ class SnapshotService:
         """
         variables = {"id": proposal_id}
 
-        with logfire.span("get_proposal", proposal_id=proposal_id):
+        with log_span(logger, "get_proposal", proposal_id=proposal_id):
             result = await self.execute_query(self.GET_PROPOSAL_QUERY, variables)
 
             if result.get("proposal") is None:
@@ -498,8 +520,8 @@ class SnapshotService:
         if state is not None:
             query_variables["state"] = state
 
-        with logfire.span(
-            "get_proposals", space_ids=space_ids, state=state, first=first, skip=skip
+        with log_span(
+            logger, "get_proposals", space_ids=space_ids, state=state, first=first, skip=skip
         ):
             result = await self.execute_query(self.GET_PROPOSALS_QUERY, query_variables)
 
@@ -527,7 +549,7 @@ class SnapshotService:
         """
         variables = {"proposal": proposal_id, "first": first, "skip": skip}
 
-        with logfire.span("get_votes", proposal_id=proposal_id, first=first, skip=skip):
+        with log_span(logger, "get_votes", proposal_id=proposal_id, first=first, skip=skip):
             result = await self.execute_query(self.GET_VOTES_QUERY, variables)
 
             return [Vote(**vote_data) for vote_data in result.get("votes", [])]
@@ -544,8 +566,8 @@ class SnapshotService:
         """
         variables = {"space": space_id, "voter": voter_address}
 
-        with logfire.span(
-            "get_voting_power", space_id=space_id, voter_address=voter_address
+        with log_span(
+            logger, "get_voting_power", space_id=space_id, voter_address=voter_address
         ):
             result = await self.execute_query(self.GET_VOTING_POWER_QUERY, variables)
 

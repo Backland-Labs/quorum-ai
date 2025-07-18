@@ -957,3 +957,84 @@
 [2025-07-17 19:22:35,734] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 19:23:27,697] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 19:23:41,548] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:38:45,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:40:55,121] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:40:55,404] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:41:01,724] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:41:02,040] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:41:49,567] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:41:49,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:42:07,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:42:08,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:42:49,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:42:49,647] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:43:18,917] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:43:19,203] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:43:26,276] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:43:26,563] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:43:27,017] [INFO] [agent] Starting snapshot_api_request (query=query { spaces { id } }, has_variables=False)
+[2025-07-17 19:43:27,017] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=23, has_variables=False
+[2025-07-17 19:43:27,018] [ERROR] [agent] Network error: timeout, endpoint=https://hub.snapshot.org/graphql, error=Request timed out, timeout_seconds=30
+[2025-07-17 19:43:27,018] [ERROR] [agent] Failed snapshot_api_request after 0.001s: Network timeout connecting to Snapshot API (https://hub.snapshot.org/graphql): Request timed out
+[2025-07-17 19:43:27,046] [INFO] [agent] Starting snapshot_api_request (query=query { spaces { id } }, has_variables=False)
+[2025-07-17 19:43:27,046] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=23, has_variables=False
+[2025-07-17 19:43:27,047] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json
+[2025-07-17 19:43:27,047] [ERROR] [agent] GraphQL query failed at Snapshot API, graphql_errors=[{'message': "Field 'invalidField' doesn't exist on type 'Space'", 'locations': [{'line': 1, 'column': 10}], 'path': ['spaces']}], error_count=1
+[2025-07-17 19:43:27,047] [ERROR] [agent] Failed snapshot_api_request after 0.001s: Snapshot API returned GraphQL errors: Field 'invalidField' doesn't exist on type 'Space' (at line 1, in path spaces)
+[2025-07-17 19:43:27,068] [INFO] [agent] Starting snapshot_api_request (query=
+        query {
+            spaces(first: 2, orderBy: "created", orderDirection: desc) {
+          ..., has_variables=False)
+[2025-07-17 19:43:27,068] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=184, has_variables=False
+[2025-07-17 19:43:27,274] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-17 19:43:27,274] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['spaces'], response_size=331
+[2025-07-17 19:43:27,274] [INFO] [agent] Completed snapshot_api_request successfully in 0.205s
+[2025-07-17 19:43:27,299] [INFO] [agent] Starting snapshot_api_request (query=
+        query {
+            spaces(first: 5) {
+                id
+                name
+            ..., has_variables=False)
+[2025-07-17 19:43:27,299] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=120, has_variables=False
+[2025-07-17 19:43:27,299] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json
+[2025-07-17 19:43:27,299] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['spaces'], response_size=96
+[2025-07-17 19:43:27,299] [INFO] [agent] Completed snapshot_api_request successfully in 0.001s
+[2025-07-17 19:43:27,322] [INFO] [agent] Starting snapshot_api_request (query=
+        query GetSpace($id: String!) {
+            space(id: $id) {
+                id
+            ..., has_variables=True)
+[2025-07-17 19:43:27,322] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=163, has_variables=True
+[2025-07-17 19:43:27,322] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json
+[2025-07-17 19:43:27,322] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['space'], response_size=98
+[2025-07-17 19:43:27,322] [INFO] [agent] Completed snapshot_api_request successfully in 0.000s
+[2025-07-17 19:43:27,346] [INFO] [agent] Starting get_space (space_id=arbitrumfoundation.eth)
+[2025-07-17 19:43:27,346] [INFO] [agent] Completed get_space successfully in 0.000s
+[2025-07-17 19:43:27,368] [INFO] [agent] Starting get_space (space_id=invalid.eth)
+[2025-07-17 19:43:27,368] [INFO] [agent] Completed get_space successfully in 0.000s
+[2025-07-17 19:43:27,390] [INFO] [agent] Starting get_spaces (space_ids=['arbitrumfoundation.eth'], count=1)
+[2025-07-17 19:43:27,390] [INFO] [agent] Completed get_spaces successfully in 0.000s
+[2025-07-17 19:43:27,412] [INFO] [agent] Starting get_spaces (space_ids=['invalid.eth'], count=1)
+[2025-07-17 19:43:27,412] [INFO] [agent] Completed get_spaces successfully in 0.000s
+[2025-07-17 19:43:27,434] [INFO] [agent] Starting get_proposal (proposal_id=0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671)
+[2025-07-17 19:43:27,434] [INFO] [agent] Completed get_proposal successfully in 0.000s
+[2025-07-17 19:43:27,456] [INFO] [agent] Starting get_proposal (proposal_id=0xinvalid)
+[2025-07-17 19:43:27,456] [INFO] [agent] Completed get_proposal successfully in 0.000s
+[2025-07-17 19:43:27,478] [INFO] [agent] Starting get_proposals (space_ids=['arbitrumfoundation.eth'], state=None, first=2, skip=0)
+[2025-07-17 19:43:27,478] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-17 19:43:27,500] [INFO] [agent] Starting get_proposals (space_ids=['arbitrumfoundation.eth'], state=active, first=20, skip=0)
+[2025-07-17 19:43:27,501] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-17 19:43:27,523] [INFO] [agent] Starting get_proposals (space_ids=['invalid.eth'], state=None, first=20, skip=0)
+[2025-07-17 19:43:27,523] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-17 19:43:27,545] [INFO] [agent] Starting get_votes (proposal_id=0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671, first=3, skip=0)
+[2025-07-17 19:43:27,545] [INFO] [agent] Completed get_votes successfully in 0.000s
+[2025-07-17 19:43:27,567] [INFO] [agent] Starting get_votes (proposal_id=0xinvalid, first=100, skip=0)
+[2025-07-17 19:43:27,567] [INFO] [agent] Completed get_votes successfully in 0.000s
+[2025-07-17 19:43:27,589] [INFO] [agent] Starting get_voting_power (space_id=arbitrumfoundation.eth, voter_address=0xB933AEe47C438f22DE0747D57fc239FE37878Dd1)
+[2025-07-17 19:43:27,589] [INFO] [agent] Completed get_voting_power successfully in 0.000s
+[2025-07-17 19:43:27,611] [INFO] [agent] Starting get_space (space_id=invalid.eth)
+[2025-07-17 19:43:27,611] [ERROR] [agent] Failed get_space after 0.000s: Space not found
+[2025-07-17 19:43:27,632] [INFO] [agent] Starting get_space (space_id=arbitrumfoundation.eth)
+[2025-07-17 19:43:27,632] [ERROR] [agent] Failed get_space after 0.000s: Connection failed
+[2025-07-17 19:43:27,655] [INFO] [agent] Starting get_proposals (space_ids=['invalid.eth'], state=None, first=20, skip=0)
+[2025-07-17 19:43:27,655] [ERROR] [agent] Failed get_proposals after 0.000s: Invalid query syntax
