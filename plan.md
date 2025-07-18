@@ -203,11 +203,19 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 
 ### 3.1 Main Application Updates
 
-#### `backend/main.py`
-- **Remove**: Logfire configuration and initialization (lines 73-78)
-- **Replace**: Application startup logging with Pearl logger
-- **Update**: Exception handling logging throughout API endpoints
-- **Add**: Logger initialization in application startup
+#### `backend/main.py` ✅ **Implemented**
+- **Remove**: Logfire configuration and initialization (lines 73-78) ✅
+- **Replace**: Application startup logging with Pearl logger ✅
+- **Update**: Exception handling logging throughout API endpoints ✅
+- **Add**: Logger initialization in application startup ✅
+- **Key changes**:
+  - Removed all `import logfire` statements
+  - Added `from logging_config import setup_pearl_logger, log_span`
+  - Initialized Pearl logger: `logger = setup_pearl_logger(__name__)`
+  - Replaced all `logfire.info/error` calls with `logger.info/error`
+  - Updated all spans to use `log_span(logger, ...)`
+  - Converted structured logging to use f-strings with key=value format
+  - Comprehensive test coverage with 6 integration tests
 
 ### 3.2 Dependency Cleanup
 
@@ -273,14 +281,14 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - **Monitoring**: Ensure no logging failures crash the application
 
 ### Validation Checklist
-- [ ] All 10 service files migrated from Logfire (4/10 complete: agent_run_logger.py, agent_run_service.py, ai_service.py)
+- [ ] All 10 service files migrated from Logfire (8/10 complete: agent_run_logger.py, agent_run_service.py, ai_service.py, safe_service.py, snapshot_service.py, voting_service.py, activity_service.py, main.py)
 - [x] **Core logging infrastructure implemented** (Phase 1 complete)
 - [x] **`log.txt` file created with Pearl-compliant format** (Validated in tests)
 - [x] **Comprehensive test suite passing** (50+ tests covering all components)
 - [x] **Agent run logger migration completed** (agent_run_logger.py fully migrated)
 - [x] **Agent run service migration completed** (agent_run_service.py fully migrated)
 - [ ] No Logfire dependencies remaining in codebase
-- [ ] Application startup and shutdown properly logged
+- [x] **Application startup and shutdown properly logged** (main.py migrated)
 - [x] **Error handling maintains audit trail compliance** (agent_run_logger implementation)
 - [x] **Performance impact acceptable** (Standard library, file I/O only)
 - [x] **Logging format validation implemented** (validate_log_format function)

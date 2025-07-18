@@ -1266,3 +1266,54 @@
 [2025-07-17 20:27:44,652] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
 [2025-07-17 20:27:44,653] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 20:27:44,653] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-18 07:40:30,774] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:40:31,090] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:40:31,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:41:42,071] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:41:42,469] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:41:43,361] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:41:43,377] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,377] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,496] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,496] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,505] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,506] [ERROR] [agent] Unhandled exception error=Test exception for logging path=http://testserver/test-exception
+[2025-07-18 07:41:43,506] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,680] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,681] [ERROR] [agent] Failed to fetch proposals error=mock_log_span.<locals>.mock_span() takes 1 positional argument but 2 were given
+[2025-07-18 07:41:43,682] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,690] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,691] [ERROR] [agent] Failed to summarize proposals error=mock_log_span.<locals>.mock_span() takes 1 positional argument but 2 were given
+[2025-07-18 07:41:43,692] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,700] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,702] [ERROR] [agent] Failed to execute agent run space_id=test.eth error=mock_log_span.<locals>.mock_span() takes 1 positional argument but 2 were given
+[2025-07-18 07:41:43,702] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,710] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,711] [INFO] [agent] Starting get_proposals (space_id=test.eth, state=None, limit=20)
+[2025-07-18 07:41:43,711] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-18 07:41:43,712] [INFO] [agent] Starting get_proposal_by_id (proposal_id=0x123)
+[2025-07-18 07:41:43,712] [ERROR] [agent] Failed get_proposal_by_id after 0.000s: 404: Proposal with ID 0x123 not found
+[2025-07-18 07:41:43,713] [INFO] [agent] Starting get_proposal_top_voters (proposal_id=0x123, limit=10)
+[2025-07-18 07:41:43,713] [ERROR] [agent] Failed get_proposal_top_voters after 0.000s: 404: Proposal with ID 0x123 not found
+[2025-07-18 07:41:43,714] [INFO] [agent] Starting get_proposals (space_id=error.eth, state=None, limit=20)
+[2025-07-18 07:41:43,714] [ERROR] [agent] Failed get_proposals after 0.000s: Test error
+[2025-07-18 07:41:43,714] [ERROR] [agent] Failed to fetch proposals error=Test error
+[2025-07-18 07:41:43,714] [INFO] [agent] Application shutdown
+[2025-07-18 07:41:43,718] [INFO] [agent] Application started version=0.1.0
+[2025-07-18 07:41:43,719] [INFO] [agent] Application shutdown
+[2025-07-18 07:42:47,835] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:42:48,160] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:42:48,950] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:43:09,526] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:43:09,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:43:10,547] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:44:19,217] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:44:19,503] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:44:20,241] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:44:20,245] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:44:20,461] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:45:30,357] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:45:30,621] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:45:31,471] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:45:31,507] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:45:31,507] [INFO] [agent] Pearl logger initialized successfully
