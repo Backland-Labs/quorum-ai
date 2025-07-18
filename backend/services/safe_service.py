@@ -7,11 +7,11 @@ from eth_account import Account
 from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
-import logfire
 
 from config import settings
 from utils.vote_encoder import encode_cast_vote, Support
 from services.governor_registry import get_governor, GovernorRegistryError
+from logging_config import setup_pearl_logger, log_span
 
 
 SAFE_SERVICE_URLS = {
@@ -35,6 +35,7 @@ class SafeService:
 
     def __init__(self):
         """Initialize Safe service with configuration."""
+        self.logger = setup_pearl_logger(__name__)
         self.safe_addresses = json.loads(settings.safe_contract_addresses)
         self.rpc_endpoints = {
             "ethereum": settings.ethereum_ledger_rpc,
@@ -50,11 +51,10 @@ class SafeService:
         self.account = Account.from_key(private_key)
         self._web3_connections = {}
 
-        logfire.info(
-            "SafeService initialized",
-            eoa_address=self.account.address,
-            safe_addresses=self.safe_addresses,
-            available_chains=list(self.rpc_endpoints.keys()),
+        self.logger.info(
+            f"SafeService initialized (eoa_address={self.account.address}, "
+            f"safe_addresses={list(self.safe_addresses.keys())}, "
+            f"available_chains={list(self.rpc_endpoints.keys())})"
         )
 
     def get_web3_connection(self, chain: str) -> Web3:
@@ -137,8 +137,8 @@ class SafeService:
         Returns:
             Dict with transaction details and success status
         """
-        with logfire.span("safe_service._submit_safe_transaction", chain=chain, to=to):
-            logfire.info(f"Creating Safe transaction on {chain} to {to}")
+        with log_span(self.logger, "safe_service._submit_safe_transaction", chain=chain, to=to):
+            self.logger.info(f"Creating Safe transaction on {chain} to {to}")
 
             try:
                 safe_address = self.safe_addresses.get(chain)
@@ -180,20 +180,15 @@ class SafeService:
                 )
                 safe_tx.signatures = signed_safe_tx_hash.signature
 
-                logfire.info(
-                    "Safe transaction built",
-                    chain=chain,
-                    safe_address=safe_address,
-                    to=to,
-                    value=value,
-                    data_length=len(data),
-                    nonce=safe_tx.safe_nonce,
-                    safe_tx_hash=safe_tx.safe_tx_hash.hex(),
+                self.logger.info(
+                    f"Built Safe transaction (chain={chain}, safe_address={safe_address}, "
+                    f"to={to}, value={value}, data_length={len(data)}, "
+                    f"nonce={safe_tx.safe_nonce}, safe_tx_hash={safe_tx.safe_tx_hash.hex()})"
                 )
 
                 # Propose transaction to Safe Transaction Service
                 safe_service.post_transaction(safe_tx)
-                logfire.info("Transaction proposed to Safe service")
+                self.logger.info("Proposed transaction to Safe service")
 
                 # Execute Safe transaction on-chain
                 ethereum_tx_sent = safe_instance.send_multisig_tx(
@@ -211,17 +206,15 @@ class SafeService:
                 )
 
                 tx_hash = ethereum_tx_sent.tx_hash
-                logfire.info(f"On-chain transaction sent: {tx_hash.hex()}")
+                self.logger.info(f"Executed Safe transaction on-chain (tx_hash={tx_hash.hex()})")
 
                 # Wait for confirmation
                 receipt = w3.eth.wait_for_transaction_receipt(tx_hash)  # type: ignore
 
                 if receipt["status"] == 1:
-                    logfire.info(
-                        "Safe transaction successful",
-                        tx_hash=tx_hash.hex(),
-                        block_number=receipt["blockNumber"],
-                        gas_used=receipt["gasUsed"],
+                    self.logger.info(
+                        f"Transaction successful (tx_hash={tx_hash.hex()}, "
+                        f"block_number={receipt['blockNumber']}, gas_used={receipt['gasUsed']})"
                     )
 
                     return {
@@ -233,7 +226,7 @@ class SafeService:
                         "gas_used": receipt["gasUsed"],
                     }
                 else:
-                    logfire.error("Safe transaction reverted")
+                    self.logger.error(f"Transaction reverted (tx_hash={tx_hash.hex()})")
                     return {
                         "success": False,
                         "error": "Transaction reverted",
@@ -241,7 +234,7 @@ class SafeService:
                     }
 
             except Exception as e:
-                logfire.error(f"Error creating Safe transaction: {e}")
+                self.logger.error(f"Error creating Safe transaction: {str(e)}")
                 return {"success": False, "error": str(e)}
 
     async def perform_activity_transaction(
@@ -329,7 +322,7 @@ class SafeService:
         except GovernorRegistryError as e:
             return {"success": False, "error": str(e)}
         except Exception as e:
-            logfire.error(f"Error creating governor vote transaction: {e}")
+            self.logger.error(f"Error creating governor vote transaction: {e}")
             return {"success": False, "error": str(e)}
 
     async def get_safe_nonce(self, chain: str, safe_address: str) -> int:

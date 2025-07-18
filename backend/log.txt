@@ -169,3 +169,791 @@
 [2025-07-17 18:14:17,317] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 18:14:17,317] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 18:14:17,317] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-17 18:20:19,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:20:20,165] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:20,166] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:20,166] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:20,166] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:20,166] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:20,216] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:20,216] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:20,217] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:20,217] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:20,217] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:20,219] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:20,219] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:20,219] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:20,219] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:20,219] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:20,223] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:20,223] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:20,223] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:20,223] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:20,223] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:39,228] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:20:39,460] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:39,460] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:39,460] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:39,460] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:39,460] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:39,460] [INFO] [agent] Starting vote decision making, proposal_id=test-proposal, proposal_title=Test Proposal, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:39,461] [INFO] [agent] Successfully generated vote decision, proposal_id=test-proposal, vote=FOR, confidence=0.8, risk_level=LOW
+[2025-07-17 18:20:39,461] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:39,461] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:39,461] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:39,461] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:39,461] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:39,462] [INFO] [agent] Starting proposal summarization, proposal_id=test-proposal, proposal_title=Test Proposal, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:39,462] [INFO] [agent] Successfully generated proposal summary, proposal_id=test-proposal, summary_length=12, key_points_count=2
+[2025-07-17 18:20:39,463] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:39,463] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:39,463] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:39,463] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:39,463] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:20:39,513] [INFO] [agent] Creating AI model
+[2025-07-17 18:20:39,513] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:20:39,513] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:20:39,513] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:20:39,513] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:00,725] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:21:00,957] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:00,957] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:00,957] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,957] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:00,957] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:00,957] [INFO] [agent] Starting vote decision making, proposal_id=test-proposal, proposal_title=Test Proposal, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,957] [INFO] [agent] Successfully generated vote decision, proposal_id=test-proposal, vote=FOR, confidence=0.8, risk_level=LOW
+[2025-07-17 18:21:00,958] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:00,958] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:00,958] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,958] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:00,958] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:00,959] [INFO] [agent] Starting proposal summarization, proposal_id=test-proposal, proposal_title=Test Proposal, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,959] [INFO] [agent] Successfully generated proposal summary, proposal_id=test-proposal, summary_length=12, key_points_count=2
+[2025-07-17 18:21:00,960] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:00,960] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:00,960] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,960] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:00,960] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:00,960] [INFO] [agent] Starting multiple proposal summarization, proposal_count=3, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,960] [INFO] [agent] Successfully generated multiple proposal summaries, proposal_count=3, summary_count=3
+[2025-07-17 18:21:00,962] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:00,962] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:00,962] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:00,962] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:00,962] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:13,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:21:14,139] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,139] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,151] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,151] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,151] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,152] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,152] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,152] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,152] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,152] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,153] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,153] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,153] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,153] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,153] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,153] [ERROR] [agent] Failed to summarize proposal, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,213] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,213] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,213] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,213] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,213] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,214] [ERROR] [agent] Failed to summarize proposal, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,214] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,214] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,214] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,214] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,214] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,215] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,215] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,215] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,215] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,215] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,216] [ERROR] [agent] Failed to summarize multiple proposals, proposal_count=2, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,225] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,225] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,225] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,225] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,225] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,226] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,226] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,226] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,226] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,226] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,227] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,227] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,227] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,227] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,227] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,228] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,228] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,228] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,228] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,228] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,228] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,228] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,228] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,228] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,228] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,229] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,229] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,229] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,229] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,229] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,229] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,229] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,229] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,229] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,230] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,230] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,230] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,230] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,230] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,230] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,231] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,231] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,231] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,231] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,231] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,231] [INFO] [agent] Calling AI model for summarization, prompt_length=11
+[2025-07-17 18:21:14,232] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,232] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,232] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,232] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,232] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,232] [INFO] [agent] Calling AI model for summarization, prompt_length=11
+[2025-07-17 18:21:14,232] [ERROR] [agent] AI model call failed for summarization, error=AI model error
+[2025-07-17 18:21:14,233] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,233] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,233] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,233] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,233] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,233] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,243] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,243] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,243] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,243] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,243] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,243] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,252] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,252] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,253] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,253] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,253] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,253] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,262] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,262] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,262] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,262] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,262] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,263] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,272] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,272] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,272] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,272] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,272] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,272] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,281] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,282] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,282] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,282] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,282] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,282] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,315] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,315] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,315] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,315] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,315] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,316] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,316] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,316] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,316] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,316] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,316] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,316] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,316] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,316] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,316] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,317] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,327] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,327] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,327] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,327] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,327] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,328] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,337] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,338] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,338] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,338] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,338] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,338] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,348] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,348] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,348] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,348] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,348] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,348] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,359] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,359] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,359] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,359] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,359] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,359] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,369] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,369] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,370] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,370] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,370] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,370] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,381] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,381] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,381] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,381] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,381] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,381] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,391] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,391] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,391] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,392] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,392] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,392] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,392] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,392] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,392] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,392] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,393] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,393] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,393] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,393] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,393] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,393] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,393] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,393] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,394] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,394] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,394] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,394] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,394] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,394] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,394] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,395] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,395] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,395] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,395] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,395] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,395] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,395] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,395] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,395] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,396] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,398] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,398] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,399] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,399] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,399] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,399] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,409] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,409] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,409] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,409] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,409] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,409] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,419] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,419] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,419] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,419] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,419] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,419] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=aggressive, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,429] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,429] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,429] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,429] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,429] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,430] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,440] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,440] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,440] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,440] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,440] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,440] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,450] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,450] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,450] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,450] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,450] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,450] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=aggressive, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,460] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,460] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,460] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,460] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,460] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,460] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=log_span() missing 1 required positional argument: 'operation', error_type=TypeError
+[2025-07-17 18:21:14,470] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,470] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,470] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,470] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,470] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,471] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,471] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,471] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,471] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,471] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,471] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,471] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,471] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,471] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,471] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,472] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,472] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,472] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,472] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,472] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:14,472] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:14,472] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:14,473] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:14,473] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:14,473] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,759] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:21:40,974] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,974] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,986] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,986] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,987] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,987] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,987] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,987] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,987] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,987] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,988] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,988] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,988] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,988] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,988] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,989] [INFO] [agent] Starting ai_proposal_summary (proposal_id=prop-123)
+[2025-07-17 18:21:40,989] [INFO] [agent] Starting proposal summarization, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,989] [INFO] [agent] Successfully generated proposal summary, proposal_id=prop-123, summary_length=60, key_points_count=3
+[2025-07-17 18:21:40,989] [INFO] [agent] Completed ai_proposal_summary successfully in 0.000s
+[2025-07-17 18:21:40,989] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,989] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,989] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,989] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,989] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,990] [INFO] [agent] Starting ai_proposal_summary (proposal_id=prop-123)
+[2025-07-17 18:21:40,990] [INFO] [agent] Starting proposal summarization, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,990] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: AI service unavailable
+[2025-07-17 18:21:40,990] [ERROR] [agent] Failed to summarize proposal, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, error=AI service unavailable, error_type=Exception
+[2025-07-17 18:21:40,990] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,990] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,990] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,990] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,990] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,991] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,991] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,991] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,991] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,991] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,992] [INFO] [agent] Starting ai_multiple_proposal_summaries (proposal_count=2)
+[2025-07-17 18:21:40,992] [INFO] [agent] Starting multiple proposal summarization, proposal_count=2, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,992] [INFO] [agent] Successfully generated multiple proposal summaries, proposal_count=2, summary_count=2
+[2025-07-17 18:21:40,992] [INFO] [agent] Completed ai_multiple_proposal_summaries successfully in 0.000s
+[2025-07-17 18:21:40,992] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,992] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,992] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,992] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,992] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,993] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,993] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,993] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,993] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,993] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,994] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,994] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,994] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,994] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,994] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,994] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,995] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,995] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,995] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,995] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,995] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,995] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,995] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,995] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,995] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,996] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,996] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,996] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,996] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,996] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,996] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,996] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,996] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,996] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,996] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,997] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,997] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,997] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,997] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,997] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,997] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,997] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,998] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,998] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,998] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,998] [INFO] [agent] Calling AI model for summarization, prompt_length=11
+[2025-07-17 18:21:40,999] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:40,999] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:40,999] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:40,999] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:40,999] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:40,999] [INFO] [agent] Calling AI model for summarization, prompt_length=11
+[2025-07-17 18:21:41,000] [ERROR] [agent] AI model call failed for summarization, error=AI model error
+[2025-07-17 18:21:41,000] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,000] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,000] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,000] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,000] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,000] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,000] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,000] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.85, risk_level=MEDIUM
+[2025-07-17 18:21:41,001] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,001] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,001] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,001] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,001] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,001] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,001] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,001] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,002] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.85, risk_level=MEDIUM
+[2025-07-17 18:21:41,002] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,002] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,002] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,002] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,002] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,002] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,002] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=conservative)
+[2025-07-17 18:21:41,002] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,002] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=AGAINST, confidence=0.9, risk_level=HIGH
+[2025-07-17 18:21:41,003] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,003] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,003] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,003] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.7, risk_level=MEDIUM
+[2025-07-17 18:21:41,003] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,003] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=aggressive)
+[2025-07-17 18:21:41,003] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=aggressive, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,003] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.7, risk_level=MEDIUM
+[2025-07-17 18:21:41,003] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,003] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,003] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,003] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,003] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,004] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,004] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,004] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,004] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,004] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,004] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,004] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,004] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=AGAINST, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,004] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,004] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,004] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,004] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=ABSTAIN, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,004] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,005] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,005] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,005] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,005] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,005] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,005] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,005] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,005] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.85, risk_level=LOW
+[2025-07-17 18:21:41,005] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,005] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,005] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,005] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.85, risk_level=LOW
+[2025-07-17 18:21:41,005] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,006] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,006] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,006] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,006] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,006] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,006] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,006] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,006] [ERROR] [agent] Failed ai_vote_decision after 0.000s: AI service unavailable
+[2025-07-17 18:21:41,006] [ERROR] [agent] Failed to make vote decision, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, error=AI service unavailable, error_type=Exception
+[2025-07-17 18:21:41,007] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,007] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,007] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,007] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,007] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,007] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,007] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,007] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,007] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,008] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,008] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,008] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,008] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,008] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,008] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,008] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,008] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,008] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=ABSTAIN, confidence=0.5, risk_level=MEDIUM
+[2025-07-17 18:21:41,008] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,009] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,009] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,009] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,009] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,009] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,009] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,009] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,009] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=1.0, risk_level=LOW
+[2025-07-17 18:21:41,009] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,010] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,010] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,010] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,010] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,010] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,010] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,010] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,010] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=ABSTAIN, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,010] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,011] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,011] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,011] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,011] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,011] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,011] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,011] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,011] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,011] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,012] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,012] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,012] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,012] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,012] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,012] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,012] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,012] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=LOW
+[2025-07-17 18:21:41,012] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,013] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,013] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,013] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,013] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,013] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,013] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,013] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,013] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.0, risk_level=LOW
+[2025-07-17 18:21:41,013] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,014] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,014] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,014] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,014] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,014] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,014] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,014] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,014] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.5, risk_level=LOW
+[2025-07-17 18:21:41,014] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,015] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,015] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,015] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,015] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,015] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,015] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,015] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,015] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,015] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,016] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,016] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,016] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,016] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,016] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,016] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,017] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,017] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,017] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,017] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,017] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,017] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,017] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,017] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,017] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,017] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,018] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,018] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,018] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,018] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,018] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,018] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,018] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,018] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,018] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,018] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,021] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,021] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,021] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,021] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,022] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,022] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=conservative)
+[2025-07-17 18:21:41,022] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,022] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=AGAINST, confidence=0.9, risk_level=HIGH
+[2025-07-17 18:21:41,022] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,022] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,022] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,022] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,022] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,023] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,023] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,023] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,023] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.75, risk_level=MEDIUM
+[2025-07-17 18:21:41,023] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,023] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,023] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,024] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,024] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,024] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,024] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=aggressive)
+[2025-07-17 18:21:41,024] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=aggressive, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,024] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,024] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,024] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,024] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,024] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,024] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,025] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,025] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=conservative)
+[2025-07-17 18:21:41,025] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,025] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,025] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,025] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,025] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,025] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,025] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,025] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=aggressive)
+[2025-07-17 18:21:41,025] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=aggressive, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,025] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.8, risk_level=MEDIUM
+[2025-07-17 18:21:41,025] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,026] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,026] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,026] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,026] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,026] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,026] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=conservative)
+[2025-07-17 18:21:41,026] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=conservative, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,026] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=AGAINST, confidence=0.95, risk_level=HIGH
+[2025-07-17 18:21:41,026] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,027] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,027] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,027] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,027] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,027] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,027] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=aggressive)
+[2025-07-17 18:21:41,027] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=aggressive, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,027] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.85, risk_level=MEDIUM
+[2025-07-17 18:21:41,027] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,028] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,028] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,028] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,028] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,028] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,028] [INFO] [agent] Starting ai_vote_decision (proposal_id=prop-123, strategy=balanced)
+[2025-07-17 18:21:41,028] [INFO] [agent] Starting vote decision making, proposal_id=prop-123, proposal_title=Increase Treasury Allocation for Development, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,028] [INFO] [agent] Successfully generated vote decision, proposal_id=prop-123, vote=FOR, confidence=0.75, risk_level=MEDIUM
+[2025-07-17 18:21:41,028] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-07-17 18:21:41,029] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,029] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,029] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,029] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,029] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,029] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,029] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,029] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,029] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,030] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,030] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,030] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,030] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,030] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,030] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,030] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,030] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,031] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,031] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,031] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:21:41,031] [INFO] [agent] Creating AI model
+[2025-07-17 18:21:41,031] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:21:41,031] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:21:41,031] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:21:41,031] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:19,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:22:19,843] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:19,843] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:19,843] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,843] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:19,844] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:19,844] [INFO] [agent] Starting vote decision making, proposal_id=test-proposal, proposal_title=Test Proposal, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,844] [INFO] [agent] Successfully generated vote decision, proposal_id=test-proposal, vote=FOR, confidence=0.8, risk_level=LOW
+[2025-07-17 18:22:19,895] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:19,895] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:19,895] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,895] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:19,896] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:19,896] [INFO] [agent] Starting proposal summarization, proposal_id=test-proposal, proposal_title=Test Proposal, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,896] [INFO] [agent] Successfully generated proposal summary, proposal_id=test-proposal, summary_length=12, key_points_count=2
+[2025-07-17 18:22:19,898] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:19,899] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:19,899] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,899] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:19,899] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:19,899] [INFO] [agent] Starting multiple proposal summarization, proposal_count=3, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,899] [INFO] [agent] Successfully generated multiple proposal summaries, proposal_count=3, summary_count=3
+[2025-07-17 18:22:19,902] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:19,902] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:19,902] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:19,902] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:19,903] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:43,381] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 18:22:43,611] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:43,611] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:43,611] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,611] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:43,611] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:43,612] [INFO] [agent] Starting vote decision making, proposal_id=test-proposal, proposal_title=Test Proposal, strategy=balanced, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,612] [INFO] [agent] Successfully generated vote decision, proposal_id=test-proposal, vote=FOR, confidence=0.8, risk_level=LOW
+[2025-07-17 18:22:43,613] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:43,613] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:43,613] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,613] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:43,613] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:43,613] [INFO] [agent] Starting proposal summarization, proposal_id=test-proposal, proposal_title=Test Proposal, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,613] [INFO] [agent] Successfully generated proposal summary, proposal_id=test-proposal, summary_length=12, key_points_count=2
+[2025-07-17 18:22:43,614] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:43,614] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:43,614] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,614] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:43,614] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 18:22:43,615] [INFO] [agent] Starting multiple proposal summarization, proposal_count=3, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,615] [INFO] [agent] Successfully generated multiple proposal summaries, proposal_count=3, summary_count=3
+[2025-07-17 18:22:43,616] [INFO] [agent] Creating AI model
+[2025-07-17 18:22:43,616] [INFO] [agent] Using OpenRouter
+[2025-07-17 18:22:43,616] [INFO] [agent] Successfully created OpenRouter model, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>
+[2025-07-17 18:22:43,616] [INFO] [agent] Creating Pydantic AI agent, model_type=<class 'pydantic_ai.models.openai.OpenAIModel'>, model_value=OpenAIModel()
+[2025-07-17 18:22:43,617] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=<class 'pydantic_ai.agent.Agent'>
+[2025-07-17 19:17:04,028] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:19:25,915] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:19:32,941] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:20:14,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:20:29,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:21:56,548] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:22:19,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:22:35,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:23:27,697] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 19:23:41,548] [INFO] [agent] Pearl logger initialized successfully
