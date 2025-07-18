@@ -5,11 +5,16 @@ user preferences, urgency, voting power, and other factors to help the agent
 make intelligent decisions about which proposals to analyze and vote on.
 """
 
+import math
 import time
 from typing import List, Dict, Any
-import logfire
+import logging
 
+from logging_config import setup_pearl_logger, log_span
 from models import Proposal, UserPreferences
+
+# Setup Pearl logger for this module
+logger = setup_pearl_logger(__name__)
 
 
 class ProposalFilterError(Exception):
@@ -41,13 +46,15 @@ class ProposalFilter:
 
         self.preferences = preferences
 
-        logfire.info(
+        logger.info(
             "ProposalFilter initialized",
-            voting_strategy=preferences.voting_strategy.value,
-            confidence_threshold=preferences.confidence_threshold,
-            max_proposals_per_run=preferences.max_proposals_per_run,
-            blacklisted_count=len(preferences.blacklisted_proposers),
-            whitelisted_count=len(preferences.whitelisted_proposers),
+            extra={
+                "voting_strategy": preferences.voting_strategy.value,
+                "confidence_threshold": preferences.confidence_threshold,
+                "max_proposals_per_run": preferences.max_proposals_per_run,
+                "blacklisted_count": len(preferences.blacklisted_proposers),
+                "whitelisted_count": len(preferences.whitelisted_proposers),
+            }
         )
 
     def filter_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
@@ -73,12 +80,14 @@ class ProposalFilter:
         if not proposals:
             return []
 
-        with logfire.span("filter_proposals", proposal_count=len(proposals)):
-            logfire.info(
+        with log_span(logger, "filter_proposals", proposal_count=len(proposals)):
+            logger.info(
                 "Starting proposal filtering",
-                initial_count=len(proposals),
-                blacklisted_count=len(self.preferences.blacklisted_proposers),
-                whitelisted_count=len(self.preferences.whitelisted_proposers),
+                extra={
+                    "initial_count": len(proposals),
+                    "blacklisted_count": len(self.preferences.blacklisted_proposers),
+                    "whitelisted_count": len(self.preferences.whitelisted_proposers),
+                }
             )
 
             filtered_proposals = []
@@ -93,34 +102,40 @@ class ProposalFilter:
                 # Check blacklist first (takes precedence)
                 if proposal.author in self.preferences.blacklisted_proposers:
                     blacklisted_count += 1
-                    logfire.debug(
+                    logger.debug(
                         "Proposal filtered out due to blacklisted author",
-                        proposal_id=proposal.id,
-                        author=proposal.author,
+                        extra={
+                            "proposal_id": proposal.id,
+                            "author": proposal.author,
+                        }
                     )
                     continue
 
                 # Check whitelist if it exists
                 if self.preferences.whitelisted_proposers:
                     if proposal.author not in self.preferences.whitelisted_proposers:
-                        logfire.debug(
+                        logger.debug(
                             "Proposal filtered out due to author not in whitelist",
-                            proposal_id=proposal.id,
-                            author=proposal.author,
+                            extra={
+                                "proposal_id": proposal.id,
+                                "author": proposal.author,
+                            }
                         )
                         continue
 
                 # Proposal passes all filters
                 filtered_proposals.append(proposal)
 
-            logfire.info(
+            logger.info(
                 "Proposal filtering completed",
-                initial_count=len(proposals),
-                filtered_count=len(filtered_proposals),
-                blacklisted_count=blacklisted_count,
-                whitelist_filtered_count=len(proposals)
-                - len(filtered_proposals)
-                - blacklisted_count,
+                extra={
+                    "initial_count": len(proposals),
+                    "filtered_count": len(filtered_proposals),
+                    "blacklisted_count": blacklisted_count,
+                    "whitelist_filtered_count": len(proposals)
+                    - len(filtered_proposals)
+                    - blacklisted_count,
+                }
             )
 
             # Runtime assertion: validate output
@@ -156,8 +171,11 @@ class ProposalFilter:
         if not proposals:
             return []
 
-        with logfire.span("rank_proposals", proposal_count=len(proposals)):
-            logfire.info("Starting proposal ranking", proposal_count=len(proposals))
+        with log_span(logger, "rank_proposals", proposal_count=len(proposals)):
+            logger.info(
+                "Starting proposal ranking", 
+                extra={"proposal_count": len(proposals)}
+            )
 
             # Calculate scores for all proposals
             proposal_scores = []
@@ -165,11 +183,13 @@ class ProposalFilter:
                 score = self.calculate_proposal_score(proposal)
                 proposal_scores.append((proposal, score))
 
-                logfire.debug(
+                logger.debug(
                     "Proposal scored",
-                    proposal_id=proposal.id,
-                    score=score,
-                    author=proposal.author,
+                    extra={
+                        "proposal_id": proposal.id,
+                        "score": score,
+                        "author": proposal.author,
+                    }
                 )
 
             # Sort by score (highest first)
@@ -178,11 +198,13 @@ class ProposalFilter:
             # Extract ranked proposals
             ranked_proposals = [proposal for proposal, score in proposal_scores]
 
-            logfire.info(
+            logger.info(
                 "Proposal ranking completed",
-                proposal_count=len(ranked_proposals),
-                top_score=proposal_scores[0][1] if proposal_scores else 0.0,
-                bottom_score=proposal_scores[-1][1] if proposal_scores else 0.0,
+                extra={
+                    "proposal_count": len(ranked_proposals),
+                    "top_score": proposal_scores[0][1] if proposal_scores else 0.0,
+                    "bottom_score": proposal_scores[-1][1] if proposal_scores else 0.0,
+                }
             )
 
             # Runtime assertion: validate output
@@ -213,7 +235,7 @@ class ProposalFilter:
         # Runtime assertions for input validation
         assert isinstance(proposal, Proposal), "Proposal must be a Proposal object"
 
-        with logfire.span("calculate_proposal_score", proposal_id=proposal.id):
+        with log_span(logger, "calculate_proposal_score", proposal_id=proposal.id):
             current_time = int(time.time())
 
             # Calculate urgency factor (higher for more urgent)
@@ -239,14 +261,16 @@ class ProposalFilter:
                 + participation_factor * PARTICIPATION_WEIGHT
             )
 
-            logfire.debug(
+            logger.debug(
                 "Proposal score calculated",
-                proposal_id=proposal.id,
-                urgency_factor=urgency_factor,
-                voting_power_factor=voting_power_factor,
-                participation_factor=participation_factor,
-                composite_score=composite_score,
-                time_until_deadline=time_until_deadline,
+                extra={
+                    "proposal_id": proposal.id,
+                    "urgency_factor": urgency_factor,
+                    "voting_power_factor": voting_power_factor,
+                    "participation_factor": participation_factor,
+                    "composite_score": composite_score,
+                    "time_until_deadline": time_until_deadline,
+                }
             )
 
             # Runtime assertion: validate output
@@ -320,8 +344,6 @@ class ProposalFilter:
             return 0.0
 
         # Use log10 to normalize, with a reasonable baseline
-        import math
-
         log_score = math.log10(max(scores_total, 1.0))
 
         # Normalize to 0-1 range (assuming max reasonable score is 10^6)
@@ -355,8 +377,6 @@ class ProposalFilter:
 
         # Normalize participation using logarithmic scale
         # This prevents extremely high values from dominating
-        import math
-
         log_votes = math.log10(max(votes, 1.0))
 
         # Normalize to 0-1 range (assuming max reasonable votes is 10^3)
