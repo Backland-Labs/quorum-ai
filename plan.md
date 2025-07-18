@@ -75,20 +75,20 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - ✅ Added support for `LOG_FILE_PATH` environment variable with validation
 - ✅ Implemented backward compatibility with graceful defaults
 
-## Phase 2: Service-by-Service Migration (78% Complete)
+## Phase 2: Service-by-Service Migration (89% Complete)
 
 ### Migration Progress Summary
 - **Total Services**: 9
-- **Completed**: 7 (78%)
+- **Completed**: 8 (89%)
   - ✅ agent_run_logger.py (specialized logger)
   - ✅ agent_run_service.py (high-priority)
   - ✅ ai_service.py (high-priority)
   - ✅ safe_service.py (high-priority)
-- **Remaining**: 3
-  - ✅ snapshot_service.py (medium-priority) - **IMPLEMENTED**
-  - ✅ voting_service.py (medium-priority) - **IMPLEMENTED**
-  - ✅ activity_service.py (medium-priority) - **IMPLEMENTED**
-  - ❌ user_preferences_service.py (low-priority)
+  - ✅ snapshot_service.py (medium-priority)
+  - ✅ voting_service.py (medium-priority)
+  - ✅ activity_service.py (medium-priority)
+  - ✅ user_preferences_service.py (low-priority)
+- **Remaining**: 1 service + main.py
   - ❌ proposal_filter.py (low-priority)
   - ❌ main.py (application integration)
 
@@ -171,7 +171,11 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 
 ### 2.3 Low-Priority Services (Simple Logging)
 
-#### `backend/services/user_preferences_service.py`
+#### `backend/services/user_preferences_service.py` ✅ **IMPLEMENTED**
+- **Implementation Date**: 2025-07-18
+- **Changes**: Replaced logfire imports with Pearl logger, converted all log calls to Pearl format
+- **Tests**: 11 Pearl compliance tests added, all existing tests pass
+
 #### `backend/services/proposal_filter.py`
 
 - **Current**: Basic operational logging

@@ -1317,3 +1317,51 @@
 [2025-07-18 07:45:31,471] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-18 07:45:31,507] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-18 07:45:31,507] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:55:45,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:55:46,185] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:55:53,762] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:55:54,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:58:11,475] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:58:11,860] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:58:49,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:58:49,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:59:10,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:59:10,832] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:59:11,150] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:59:11,151] [INFO] [agent] User preferences saved successfully, preferences_file=user_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-07-18 07:59:38,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:59:38,932] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 07:59:39,251] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:08,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:08,743] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,038] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,040] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,044] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,044] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=nonexistent.txt
+[2025-07-18 08:00:09,216] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,217] [INFO] [agent] User preferences saved successfully, preferences_file=test_preferences.txt, voting_strategy=conservative, confidence_threshold=0.8, max_proposals_per_run=5
+[2025-07-18 08:00:09,218] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,219] [INFO] [agent] User preferences saved successfully, preferences_file=subdir/test_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-07-18 08:00:09,250] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,250] [ERROR] [agent] Could not save user preferences, preferences_file=readonly_preferences.txt, error=Permission denied
+[2025-07-18 08:00:09,284] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,284] [INFO] [agent] User preferences saved successfully, preferences_file=atomic_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-07-18 08:00:09,385] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:00:09,385] [ERROR] [agent] Could not save user preferences, preferences_file=error_preferences.txt, error=Disk full
+[2025-07-18 08:02:08,095] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,414] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,731] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,732] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,737] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,737] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=nonexistent.txt
+[2025-07-18 08:02:08,749] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,750] [INFO] [agent] User preferences saved successfully, preferences_file=test_preferences.txt, voting_strategy=conservative, confidence_threshold=0.8, max_proposals_per_run=5
+[2025-07-18 08:02:08,753] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,753] [ERROR] [agent] Could not save user preferences, preferences_file=readonly_preferences.txt, error=Permission denied
+[2025-07-18 08:02:08,754] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,755] [INFO] [agent] User preferences saved successfully, preferences_file=atomic_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-07-18 08:02:08,811] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:08,811] [ERROR] [agent] Could not save user preferences, preferences_file=error_preferences.txt, error=Disk full
+[2025-07-18 08:02:15,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:15,776] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:02:16,078] [INFO] [agent] Pearl logger initialized successfully
