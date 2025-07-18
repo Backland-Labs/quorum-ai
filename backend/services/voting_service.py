@@ -1,12 +1,13 @@
 """Voting service for handling Snapshot DAO voting operations."""
 
 import time
+import logging
 from typing import Dict, Optional, Any
 from web3 import Web3
 from eth_account import Account
 from eth_account.messages import encode_typed_data
 import httpx
-import logfire
+from logging_config import setup_pearl_logger, log_span
 
 
 # Constants for vote choices and API configuration
@@ -38,7 +39,12 @@ class VotingService:
 
         self.account = Account.from_key(private_key)
 
-        logfire.info("VotingService initialized", eoa_address=self.account.address)
+        # Initialize Pearl-compliant logger
+        self.logger = setup_pearl_logger(name="voting_service", level=logging.INFO)
+
+        self.logger.info(
+            f"VotingService initialized (eoa_address={self.account.address})"
+        )
 
     def create_snapshot_vote_message(
         self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
@@ -64,13 +70,9 @@ class VotingService:
             from_address, space, timestamp, proposal, choice, proposal_is_bytes32
         )
 
-        logfire.info(
-            "Snapshot vote message created",
-            space=space,
-            proposal=proposal,
-            choice=choice,
-            timestamp=timestamp,
-            from_address=from_address,
+        self.logger.info(
+            f"Snapshot vote message created (space={space}, proposal={proposal}, "
+            f"choice={choice}, timestamp={timestamp}, from_address={from_address})"
         )
 
         return snapshot_message
@@ -135,10 +137,9 @@ class VotingService:
         signed = self.account.sign_message(signable_message)
         signature = "0x" + signed.signature.hex()
 
-        logfire.info(
-            "Snapshot message signed",
-            signature_length=len(signature),
-            signature_preview=f"{signature[:10]}...{signature[-10:]}",
+        self.logger.info(
+            f"Snapshot message signed (signature_length={len(signature)}, "
+            f"signature_preview={signature[:10]}...{signature[-10:]})"
         )
 
         return signature
@@ -155,8 +156,8 @@ class VotingService:
         Returns:
             API response dictionary with success status
         """
-        with logfire.span("voting_service.submit_vote_to_snapshot"):
-            logfire.info("Submitting Snapshot vote")
+        with log_span(self.logger, "voting_service.submit_vote_to_snapshot"):
+            self.logger.info("Submitting Snapshot vote")
 
             # Snapshot Hub API endpoint
             url = SNAPSHOT_HUB_URL
@@ -188,17 +189,15 @@ class VotingService:
 
                 if response.status_code == 200:
                     result_data = response.json()
-                    logfire.info(
-                        "Snapshot vote submitted successfully",
-                        response_data=result_data,
+                    self.logger.info(
+                        f"Snapshot vote submitted successfully (response_data={result_data})"
                     )
                     return {"success": True, "response": result_data}
                 else:
                     error_text = response.text
-                    logfire.error(
-                        "Snapshot vote submission failed",
-                        status_code=response.status_code,
-                        response_text=error_text,
+                    self.logger.error(
+                        f"Snapshot vote submission failed (status_code={response.status_code}, "
+                        f"response_text={error_text})"
                     )
                     return {
                         "success": False,
@@ -207,7 +206,7 @@ class VotingService:
                     }
 
             except Exception as e:
-                logfire.error(f"Snapshot vote submission error: {e}")
+                self.logger.error(f"Snapshot vote submission error: {e}")
                 return {"success": False, "error": str(e)}
 
     async def vote_on_proposal(
@@ -224,13 +223,14 @@ class VotingService:
         Returns:
             Dict containing complete voting workflow results
         """
-        with logfire.span(
+        with log_span(
+            self.logger,
             "voting_service.vote_on_proposal",
             space=space,
             proposal=proposal,
             choice=choice,
         ):
-            logfire.info(f"Starting vote on proposal {proposal} in space {space}")
+            self.logger.info(f"Starting vote on proposal {proposal} in space {space}")
 
             # Create vote message
             vote_message = self.create_snapshot_vote_message(
@@ -254,10 +254,10 @@ class VotingService:
             }
 
             if submission_result["success"]:
-                logfire.info("Vote workflow completed successfully")
+                self.logger.info("Vote workflow completed successfully")
             else:
-                logfire.error(
-                    "Vote workflow failed", error=submission_result.get("error")
+                self.logger.error(
+                    f"Vote workflow failed (error={submission_result.get('error')})"
                 )
 
             return result
@@ -300,13 +300,10 @@ class VotingService:
         Returns:
             Dict containing test results
         """
-        with logfire.span("voting_service.test_snapshot_voting"):
-            logfire.info(
-                "Testing Snapshot voting workflow",
-                space=space,
-                proposal=proposal,
-                choice=choice,
-                choice_description=self.get_vote_choice_description(choice),
+        with log_span(self.logger, "voting_service.test_snapshot_voting"):
+            self.logger.info(
+                f"Testing Snapshot voting workflow (space={space}, proposal={proposal}, "
+                f"choice={choice}, choice_description={self.get_vote_choice_description(choice)})"
             )
 
             if not self.validate_vote_choice(choice):
@@ -318,10 +315,9 @@ class VotingService:
             # Execute complete voting workflow
             result = await self.vote_on_proposal(space, proposal, choice)
 
-            logfire.info(
-                "Test voting workflow completed",
-                success=result["success"],
-                error=result.get("submission_result", {}).get("error"),
+            self.logger.info(
+                f"Test voting workflow completed (success={result['success']}, "
+                f"error={result.get('submission_result', {}).get('error')})"
             )
 
             return result

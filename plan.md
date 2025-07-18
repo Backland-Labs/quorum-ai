@@ -75,18 +75,18 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - ✅ Added support for `LOG_FILE_PATH` environment variable with validation
 - ✅ Implemented backward compatibility with graceful defaults
 
-## Phase 2: Service-by-Service Migration
+## Phase 2: Service-by-Service Migration (67% Complete)
 
 ### Migration Progress Summary
-- **Total Services**: 10
-- **Completed**: 5 (50%)
+- **Total Services**: 9
+- **Completed**: 6 (67%)
   - ✅ agent_run_logger.py (specialized logger)
   - ✅ agent_run_service.py (high-priority)
   - ✅ ai_service.py (high-priority)
   - ✅ safe_service.py (high-priority)
-- **Remaining**: 5
+- **Remaining**: 4
   - ✅ snapshot_service.py (medium-priority) - **IMPLEMENTED**
-  - ❌ voting_service.py (medium-priority)
+  - ✅ voting_service.py (medium-priority) - **IMPLEMENTED**
   - ❌ activity_service.py (medium-priority)
   - ❌ user_preferences_service.py (low-priority)
   - ❌ proposal_filter.py (low-priority)
@@ -143,11 +143,19 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - **Key Operations**: GraphQL queries, rate limiting, data fetching
 - **Structured Data**: space_id, proposal_id, query_type, response_time
 
-#### `backend/services/voting_service.py`
-- **Current**: Vote execution logging with audit trail
-- **Migration**: Maintain vote audit compliance
-- **Key Operations**: vote execution, signature generation, submission
-- **Structured Data**: proposal_id, vote_choice, signature_hash, execution_result
+#### `backend/services/voting_service.py` ✅ **IMPLEMENTED**
+- **Previous**: Vote execution logging with Logfire (13 logfire calls including spans)
+- **Migration**: ✅ Successfully migrated to Pearl-compliant logging
+- **Implementation Details**:
+  - ✅ Replaced all `logfire` imports with Pearl logging imports
+  - ✅ Migrated logfire.span() calls to log_span() context manager
+  - ✅ Converted structured logging to Pearl format with key=value pairs
+  - ✅ Maintained complete vote audit trail for DAO compliance
+  - ✅ Added comprehensive test suite (10 Pearl-specific tests) using TDD
+  - ✅ All existing tests passing (25 tests total)
+- **Key Operations**: ✅ vote execution, signature generation, submission
+- **Structured Data**: ✅ proposal_id, vote_choice, signature_hash, execution_result
+- **Status**: ✅ Fully migrated using TDD methodology (2025-07-17)
 
 #### `backend/services/activity_service.py`
 - **Current**: Activity state tracking

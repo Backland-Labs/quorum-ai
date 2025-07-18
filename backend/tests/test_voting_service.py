@@ -1,7 +1,7 @@
 """Tests for VotingService."""
 
 import pytest
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch, MagicMock, mock_open, call
 import time
 import requests
 from pytest_httpx import HTTPXMock
@@ -18,7 +18,10 @@ class TestVotingServiceInitialization:
         service = VotingService()
         
         assert service.account.address is not None
-        mock_file.assert_called_once_with("ethereum_private_key.txt", "r")
+        # Check that ethereum_private_key.txt was opened
+        private_key_calls = [call for call in mock_file.call_args_list if call[0][0] == "ethereum_private_key.txt"]
+        assert len(private_key_calls) == 1
+        assert private_key_calls[0][0] == ("ethereum_private_key.txt", "r")
 
 
 class TestVotingServiceSnapshotMessageCreation:
