@@ -1365,3 +1365,671 @@
 [2025-07-18 08:02:15,488] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-18 08:02:15,776] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-18 08:02:16,078] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:06:50,679] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:06:51,056] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:07:47,279] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:07:47,562] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:08:34,909] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:08:35,192] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:08:35,480] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:08:41,176] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:08:41,454] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:08:41,744] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:15,362] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:15,632] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:15,918] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:15,933] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:09:15,933] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-07-18 08:09:15,933] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:09:15,933] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:09:15,934] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:09:30,685] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:30,970] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:31,252] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:09:31,268] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:09:31,268] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-07-18 08:09:31,268] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:09:31,268] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:09:31,268] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:09:31,268] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-18 08:09:31,268] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:09:31,268] [INFO] [agent] Starting calculate_proposal_score (proposal_id=test-proposal-123)
+[2025-07-18 08:09:31,268] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:09:31,268] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:09:31,268] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:09:59,738] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:10:00,022] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:10:00,303] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:10:00,304] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,306] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,307] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,307] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-18 08:10:00,307] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,307] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,307] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,307] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,307] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-18 08:10:00,308] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,308] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,308] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,308] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,308] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-18 08:10:00,308] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,308] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,308] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,309] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,309] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,310] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,310] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,310] [INFO] [agent] Starting rank_proposals (proposal_count=3)
+[2025-07-18 08:10:00,310] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:00,310] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:00,310] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,310] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:00,310] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,310] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-3)
+[2025-07-18 08:10:00,310] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,310] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:00,310] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:00,311] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,311] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-18 08:10:00,311] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:00,311] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:00,311] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,311] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:00,311] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,311] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:00,311] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:00,312] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,312] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,312] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,313] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,313] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-urgent)
+[2025-07-18 08:10:00,313] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,313] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-less-urgent)
+[2025-07-18 08:10:00,313] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,313] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,313] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-high-power)
+[2025-07-18 08:10:00,313] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,314] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-low-power)
+[2025-07-18 08:10:00,314] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,314] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,314] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-high-participation)
+[2025-07-18 08:10:00,314] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,314] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-low-participation)
+[2025-07-18 08:10:00,314] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,315] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,315] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:00,315] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,315] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,316] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,316] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,316] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:00,316] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:00,316] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,316] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:00,316] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:00,316] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:00,316] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,316] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,317] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,318] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting filter_proposals (proposal_count=100)
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,318] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,318] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting rank_proposals (proposal_count=95)
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-5)
+[2025-07-18 08:10:00,318] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-6)
+[2025-07-18 08:10:00,318] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-7)
+[2025-07-18 08:10:00,318] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-8)
+[2025-07-18 08:10:00,318] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,318] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-9)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-10)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-11)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-12)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-13)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-14)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-15)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-16)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-17)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-18)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-19)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-20)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-21)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-22)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-23)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-24)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-25)
+[2025-07-18 08:10:00,319] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,319] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-26)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-27)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-28)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-29)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-30)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-31)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-32)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-33)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-34)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-35)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-36)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-37)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-38)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-39)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-40)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-41)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-42)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,320] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-43)
+[2025-07-18 08:10:00,320] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-44)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-45)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-46)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-47)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-48)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-49)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-50)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-51)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-52)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-53)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-54)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-55)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-56)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-57)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-58)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-59)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,321] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-60)
+[2025-07-18 08:10:00,321] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-61)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-62)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-63)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-64)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-65)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-66)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-67)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-68)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-69)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-70)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-71)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-72)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-73)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-74)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-75)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-76)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,322] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-77)
+[2025-07-18 08:10:00,322] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-78)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-79)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-80)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-81)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-82)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-83)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-84)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-85)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-86)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-87)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-88)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-89)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-90)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-91)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-92)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-93)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-94)
+[2025-07-18 08:10:00,323] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,323] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-95)
+[2025-07-18 08:10:00,324] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,324] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-96)
+[2025-07-18 08:10:00,324] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,324] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-97)
+[2025-07-18 08:10:00,324] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,324] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-98)
+[2025-07-18 08:10:00,324] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,324] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-99)
+[2025-07-18 08:10:00,324] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,324] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:00,324] [INFO] [agent] Completed rank_proposals successfully in 0.006s
+[2025-07-18 08:10:00,325] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,325] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,325] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:00,325] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:00,325] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,325] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:00,325] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:00,325] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:00,325] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:00,325] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:00,325] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:00,326] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-18 08:10:00,326] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:00,326] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:00,326] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:00,326] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:00,326] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:40,750] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:10:41,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:10:41,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:10:41,322] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,323] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,324] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,324] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-18 08:10:41,324] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,324] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,324] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,324] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,324] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-18 08:10:41,324] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,324] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,325] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,325] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,325] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-18 08:10:41,325] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,325] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,325] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,326] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,326] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,326] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,327] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,327] [INFO] [agent] Starting rank_proposals (proposal_count=3)
+[2025-07-18 08:10:41,327] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,327] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:41,327] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,327] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:41,327] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,327] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-3)
+[2025-07-18 08:10:41,327] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,327] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,327] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:41,328] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,328] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-18 08:10:41,328] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,328] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:41,328] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,328] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:41,328] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,328] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,328] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:41,329] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,329] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,329] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,330] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,330] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-urgent)
+[2025-07-18 08:10:41,330] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,330] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-less-urgent)
+[2025-07-18 08:10:41,330] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,330] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,330] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-high-power)
+[2025-07-18 08:10:41,330] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,330] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-low-power)
+[2025-07-18 08:10:41,331] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,331] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,331] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-high-participation)
+[2025-07-18 08:10:41,331] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,331] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-low-participation)
+[2025-07-18 08:10:41,331] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,331] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,332] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:41,332] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,332] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,332] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,332] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:41,333] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,333] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,333] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,333] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-18 08:10:41,333] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,333] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:41,333] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,333] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:41,333] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,333] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,333] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:41,333] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,333] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:41,334] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,334] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,334] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,335] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting filter_proposals (proposal_count=100)
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,335] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,335] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting rank_proposals (proposal_count=95)
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-5)
+[2025-07-18 08:10:41,335] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-6)
+[2025-07-18 08:10:41,335] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-7)
+[2025-07-18 08:10:41,335] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-8)
+[2025-07-18 08:10:41,335] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,335] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-9)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-10)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-11)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-12)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-13)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-14)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-15)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-16)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-17)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-18)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-19)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-20)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-21)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-22)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-23)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-24)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-25)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,336] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-26)
+[2025-07-18 08:10:41,336] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-27)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-28)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-29)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-30)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-31)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-32)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-33)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-34)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-35)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-36)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-37)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-38)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-39)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-40)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-41)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,337] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-42)
+[2025-07-18 08:10:41,337] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-43)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-44)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-45)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-46)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-47)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-48)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-49)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-50)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-51)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-52)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-53)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-54)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-55)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-56)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-57)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-58)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-59)
+[2025-07-18 08:10:41,338] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,338] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-60)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-61)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-62)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-63)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-64)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-65)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-66)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-67)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-68)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-69)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-70)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-71)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-72)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-73)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-74)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-75)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-76)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-77)
+[2025-07-18 08:10:41,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-78)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-79)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-80)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-81)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-82)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-83)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-84)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-85)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-86)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-87)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-88)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-89)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-90)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-91)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-92)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-93)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-94)
+[2025-07-18 08:10:41,340] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,340] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-95)
+[2025-07-18 08:10:41,341] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,341] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-96)
+[2025-07-18 08:10:41,341] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,341] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-97)
+[2025-07-18 08:10:41,341] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,341] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-98)
+[2025-07-18 08:10:41,341] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,341] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-99)
+[2025-07-18 08:10:41,341] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,341] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,341] [INFO] [agent] Completed rank_proposals successfully in 0.006s
+[2025-07-18 08:10:41,342] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,342] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,342] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:41,342] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-18 08:10:41,342] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,342] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,342] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:41,342] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-18 08:10:41,342] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,342] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,342] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,343] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-18 08:10:41,343] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,343] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-18 08:10:41,343] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,343] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,343] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:10:41,363] [INFO] [agent] ProposalFilter initialized
+[2025-07-18 08:10:41,363] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-07-18 08:10:41,363] [INFO] [agent] Starting proposal filtering
+[2025-07-18 08:10:41,364] [INFO] [agent] Proposal filtering completed
+[2025-07-18 08:10:41,364] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-18 08:10:41,366] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-18 08:10:41,366] [INFO] [agent] Starting proposal ranking
+[2025-07-18 08:10:41,366] [INFO] [agent] Starting calculate_proposal_score (proposal_id=test-proposal-123)
+[2025-07-18 08:10:41,366] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-18 08:10:41,366] [INFO] [agent] Proposal ranking completed
+[2025-07-18 08:10:41,366] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-18 08:21:09,933] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:21:09,933] [INFO] [agent] Starting test_span
+[2025-07-18 08:21:09,933] [INFO] [agent] Completed test_span successfully in 0.000s
+[2025-07-18 08:21:25,186] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:21:25,186] [INFO] [agent] Starting test_span
+[2025-07-18 08:21:25,186] [INFO] [agent] Completed test_span successfully in 0.000s
+[2025-07-18 08:24:17,675] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:24:17,675] [INFO] [agent] Starting test_span
+[2025-07-18 08:24:17,675] [INFO] [agent] Completed test_span successfully in 0.000s
+[2025-07-18 08:25:53,063] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:25:53,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:25:54,187] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-18 08:25:54,887] [INFO] [agent] Pearl logger initialized successfully

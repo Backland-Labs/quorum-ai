@@ -29,7 +29,9 @@ OPENROUTER_API_KEY=your_openrouter_api_key
 
 # Optional configuration
 TOP_ORGANIZATIONS=compound,nounsdao,arbitrum  # Default organizations
-LOGFIRE_TOKEN=your_logfire_token  # For observability
+
+# Note: Observability is handled by Pearl-compliant logging to local files
+# Log files are written to ./logs/ directory following Pearl standards
 ```
 
 #### Backend Setup
@@ -178,10 +180,11 @@ quorum-ai/
 |----------|-------------|---------|----------|
 | `OPENROUTER_API_KEY` | OpenRouter API key for Claude 3.5 Sonnet | - | Yes |
 | `TOP_ORGANIZATIONS` | Comma-separated organization slugs | `compound,nounsdao,arbitrum` | No |
-| `LOGFIRE_TOKEN` | Logfire token for observability | - | No |
 | `DEBUG` | Enable debug mode | `false` | No |
 | `HOST` | Server host | `0.0.0.0` | No |
 | `PORT` | Server port | `8000` | No |
+
+**Note**: Observability is now handled by Pearl-compliant logging to local files in the `./logs/` directory, following Pearl standards for containerized deployments.
 
 ### AI Model Configuration
 

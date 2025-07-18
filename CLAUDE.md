@@ -86,7 +86,7 @@ This is a full-stack DAO proposal summarization and autonomous voting applicatio
   - `user_preferences_service.py`: Manages user voting preferences
 - **Pydantic models** for type-safe data validation (`models.py`)
 - **Configuration management** via environment variables (`config.py`)
-- **Logfire integration** for observability and distributed tracing
+- **Pearl-compliant logging** to local files for observability and tracing
 
 ### Frontend Architecture (`frontend/`)
 - **SvelteKit** with TypeScript for type safety and Svelte 5 with runes
@@ -116,11 +116,13 @@ This is a full-stack DAO proposal summarization and autonomous voting applicatio
 # AI Provider (Required)
 OPENROUTER_API_KEY=your_openrouter_api_key  # For Claude 3.5 Sonnet via OpenRouter
 
-# Optional but recommended
-LOGFIRE_TOKEN=your_logfire_token  # For observability
+# Optional configuration
 DEBUG=false  # Enable debug mode
 HOST=0.0.0.0  # Server host
 PORT=8000  # Server port
+
+# Note: Observability is handled by Pearl-compliant logging to local files
+# Log files are written to ./logs/ directory following Pearl standards
 ```
 
 ### Development Workflow
@@ -245,4 +247,4 @@ The application now includes a comprehensive autonomous voting system:
 - **Proposal Filtering**: Intelligent filtering based on urgency and user preferences
 - **Voting Strategies**: Balanced, conservative, and aggressive approaches
 - **Dry Run Mode**: Test decisions without executing actual votes
-- **Comprehensive Logging**: Full audit trail with Logfire integration
+- **Comprehensive Logging**: Full audit trail with Pearl-compliant local file logging
