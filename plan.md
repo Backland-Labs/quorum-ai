@@ -58,16 +58,22 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - ✅ Support for Pearl STORE_PATH environment variable
 - ✅ Exception handling with stack trace preservation
 
-### 1.2 Update Application Configuration
+### 1.2 Update Application Configuration ✅ **COMPLETED**
 
-**File**: `backend/config.py`
-- Remove `logfire_token`, `logfire_project`, `logfire_ignore_no_config` settings
-- Add optional `log_level` setting with default "INFO"
-- Add optional `log_file_path` setting with default "log.txt"
+**File**: `backend/config.py` ✅ **COMPLETED**
+- ✅ Removed `logfire_token`, `logfire_project`, `logfire_ignore_no_config` settings
+- ✅ Added Pearl-compliant `log_level` setting with default "INFO" and validation
+- ✅ Added Pearl-compliant `log_file_path` setting with default "log.txt" and validation
+- ✅ Added constants for valid log levels: DEBUG, INFO, WARNING, ERROR
+- ✅ Added field validation with proper error handling
+- ✅ Added `get_pearl_logging_config()` method for clean configuration access
+- ✅ Added comprehensive test suite with 11 passing tests covering all scenarios
 
-**File**: `.env` and environment handling
-- Remove `LOGFIRE_TOKEN`, `LOGFIRE_PROJECT`, `LOGFIRE_IGNORE_NO_CONFIG`
-- Add optional `LOG_LEVEL` and `LOG_FILE_PATH` variables
+**Environment Variables**: ✅ **COMPLETED**
+- ✅ Removed support for `LOGFIRE_TOKEN`, `LOGFIRE_PROJECT`, `LOGFIRE_IGNORE_NO_CONFIG`
+- ✅ Added support for `LOG_LEVEL` environment variable with validation
+- ✅ Added support for `LOG_FILE_PATH` environment variable with validation
+- ✅ Implemented backward compatibility with graceful defaults
 
 ## Phase 2: Service-by-Service Migration
 
