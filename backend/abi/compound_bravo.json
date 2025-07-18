@@ -1,0 +1,59 @@
+[
+  {
+    "type": "function",
+    "name": "castVote",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"},
+      {"name": "support", "type": "uint8"}
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function", 
+    "name": "castVoteWithReason",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"},
+      {"name": "support", "type": "uint8"},
+      {"name": "reason", "type": "string"}
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "state",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"}
+    ],
+    "outputs": [
+      {"name": "", "type": "uint8"}
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "hasVoted",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"},
+      {"name": "voter", "type": "address"}
+    ],
+    "outputs": [
+      {"name": "", "type": "bool"}
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "proposalVotes",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"}
+    ],
+    "outputs": [
+      {"name": "againstVotes", "type": "uint256"},
+      {"name": "forVotes", "type": "uint256"},
+      {"name": "abstainVotes", "type": "uint256"}
+    ],
+    "stateMutability": "view"
+  }
+]
