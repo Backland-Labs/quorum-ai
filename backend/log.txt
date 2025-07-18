@@ -1050,3 +1050,219 @@
 [2025-07-17 20:00:21,482] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 20:01:01,687] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-17 20:01:02,021] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:16:59,478] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:16:59,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:17:48,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:17:48,491] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:17:48,906] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:17:48,906] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:18:28,389] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:18:28,715] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:18:29,037] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:18:29,037] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:18:29,044] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:18:29,044] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:18:29,044] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:18:29,050] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:18:29,050] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:18:29,051] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:19:04,136] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:04,450] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:04,886] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:04,886] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:04,892] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:04,893] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:19:04,893] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:04,900] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:04,900] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:04,901] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:19:04,902] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:04,902] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:46,397] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:46,708] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:47,044] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:47,044] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:47,051] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:47,051] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:19:47,051] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:47,057] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:47,058] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:19:47,058] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:19:47,059] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:19:47,059] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:21:59,758] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:00,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:12,557] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:12,840] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,135] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,136] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,137] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,137] [INFO] [agent] ActivityService initialized (persistent_file=/tmp/olas/activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,256] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,256] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,400] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,400] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,401] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,401] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,402] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,405] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,406] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,406] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,407] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,407] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,407] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,408] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,408] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,409] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,410] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,410] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,415] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,415] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:22:13,416] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,452] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,452] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:22:13,453] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:22:13,454] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:22:13,454] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,129] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,450] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,767] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,767] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,768] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,768] [INFO] [agent] ActivityService initialized (persistent_file=/tmp/olas/activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,775] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,775] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,878] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,879] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,879] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,911] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,914] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,915] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,915] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,916] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,916] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,917] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,917] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,918] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,918] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,919] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,919] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,923] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,924] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:24:06,924] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,931] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,931] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:06,931] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:24:06,932] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:06,932] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:24:55,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:24:55,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:13,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:13,877] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,092] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,377] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,667] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,667] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,668] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,668] [INFO] [agent] ActivityService initialized (persistent_file=/tmp/olas/activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,673] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,674] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,680] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,680] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,680] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,680] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,681] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,681] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,715] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,715] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,716] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,716] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,716] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,716] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,717] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,717] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,718] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,718] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,719] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,724] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,724] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:25:55,724] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,731] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,731] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:25:55,732] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:25:55,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:25:55,733] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:25,930] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,237] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,550] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,550] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,551] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,551] [INFO] [agent] ActivityService initialized (persistent_file=/tmp/olas/activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,557] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,557] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,564] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,564] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,565] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,565] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,568] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,569] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,569] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,569] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,570] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,570] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,571] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,571] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,572] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,572] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,573] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,579] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,579] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:27:26,579] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,586] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:26,586] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:27:26,587] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:26,587] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,101] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,342] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,588] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,588] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,589] [INFO] [agent] ActivityService initialized (persistent_file=/tmp/olas/activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,594] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,594] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,600] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,600] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,601] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,601] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,602] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,602] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,635] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,635] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,636] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,636] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,637] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,637] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,638] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,638] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,639] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,639] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,639] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,639] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,644] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,644] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-17 20:27:44,644] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,651] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,651] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-17 20:27:44,652] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-17 20:27:44,653] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-17 20:27:44,653] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
