@@ -127,31 +127,21 @@ class SnapshotService:
         self, error_type: str, exception: Exception, **context
     ) -> None:
         """Log network error and raise NetworkError with context."""
-        # Handle different specific context cases for Pearl logging
-        if "timeout_seconds" in context:
-            logger.error(
-                "Network error: %s, endpoint=%s, error=%s, timeout_seconds=%s",
-                error_type,
-                self.base_url,
-                str(exception),
-                context["timeout_seconds"]
-            )
-        elif "status_code" in context and "response_text" in context:
-            logger.error(
-                "Network error: %s, endpoint=%s, error=%s, status_code=%s, response_text=%s",
-                error_type,
-                self.base_url,
-                str(exception),
-                context["status_code"],
-                context["response_text"]
-            )
-        else:
-            logger.error(
-                "Network error: %s, endpoint=%s, error=%s",
-                error_type,
-                self.base_url,
-                str(exception)
-            )
+        # Build log message based on available context
+        log_parts = [
+            f"Network error: {error_type}",
+            f"endpoint={self.base_url}",
+            f"error={str(exception)}"
+        ]
+        
+        # Add context-specific fields
+        context_fields = ["timeout_seconds", "status_code", "response_text"]
+        for field in context_fields:
+            if field in context:
+                log_parts.append(f"{field}={context[field]}")
+        
+        log_message = ", ".join(log_parts)
+        logger.error(log_message)
 
         if isinstance(exception, httpx.TimeoutException):
             raise NetworkError(
@@ -194,19 +184,25 @@ class SnapshotService:
 
     async def _send_graphql_request(self, payload: Dict[str, Any]) -> httpx.Response:
         """Send GraphQL request and return raw HTTP response."""
+        # Extract query metadata for cleaner logging
+        query = payload.get("query", "")
+        query_length = len(query)
+        has_variables = payload.get("variables") is not None
+        
         logger.info(
             "Sending GraphQL request to Snapshot API, endpoint=%s, query_length=%s, has_variables=%s",
             self.base_url,
-            len(payload.get("query", "")),
-            payload.get("variables") is not None
+            query_length,
+            has_variables
         )
 
         response = await self.client.post(self.base_url, json=payload)
 
+        content_type = response.headers.get("content-type")
         logger.info(
             "Received HTTP response from Snapshot API, status_code=%s, content_type=%s",
             response.status_code,
-            response.headers.get("content-type")
+            content_type
         )
 
         response.raise_for_status()
@@ -230,38 +226,48 @@ class SnapshotService:
         self, response_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Validate GraphQL response structure and handle errors."""
+        # Runtime assertions for critical validation
+        assert isinstance(response_data, dict), "Response data must be a dictionary"
+        assert "data" in response_data or "errors" in response_data, "Response must contain 'data' or 'errors'"
+        
         # Check for GraphQL errors returned by Snapshot API
-        if "errors" in response_data and response_data["errors"]:
-            error_details = response_data["errors"]
-            error_msg = self._parse_graphql_errors(error_details)
+        errors = response_data.get("errors", [])
+        if errors:
+            error_msg = self._parse_graphql_errors(errors)
+            error_count = len(errors)
             logger.error(
                 "GraphQL query failed at Snapshot API, graphql_errors=%s, error_count=%s",
-                str(error_details),
-                len(error_details)
+                str(errors),
+                error_count
             )
             raise GraphQLError(error_msg)
 
         # Validate response structure
         if "data" not in response_data:
+            response_keys = list(response_data.keys())
             logger.error(
                 "Snapshot API response missing 'data' field, response_keys=%s",
-                str(list(response_data.keys()))
+                str(response_keys)
             )
             raise SnapshotServiceError("Snapshot API response missing 'data' field")
 
         data_result = response_data.get("data", {})
-        data_keys_for_logging = (
-            list(data_result.keys())
-            if isinstance(data_result, dict)
-            else "non-dict-data"
-        )
+        data_keys_for_logging = self._extract_data_keys_for_logging(data_result)
+        response_size = len(str(data_result))
+        
         logger.info(
             "Snapshot GraphQL query completed successfully, data_keys=%s, response_size=%s",
             str(data_keys_for_logging),
-            len(str(data_result))
+            response_size
         )
 
         return data_result
+    
+    def _extract_data_keys_for_logging(self, data_result: Any) -> Any:
+        """Extract data keys for logging from the result."""
+        if isinstance(data_result, dict):
+            return list(data_result.keys())
+        return "non-dict-data"
 
     async def execute_query(
         self, query: str, variables: Optional[Dict[str, Any]] = None
@@ -450,15 +456,19 @@ class SnapshotService:
         Returns:
             Space object if found, None otherwise
         """
+        # Runtime assertion for critical input
+        assert space_id and isinstance(space_id, str), "Space ID must be a non-empty string"
+        
         variables = {"id": space_id}
 
         with log_span(logger, "get_space", space_id=space_id):
             result = await self.execute_query(self.GET_SPACE_QUERY, variables)
 
-            if result.get("space") is None:
+            space_data = result.get("space")
+            if space_data is None:
                 return None
 
-            return Space(**result["space"])
+            return Space(**space_data)
 
     async def get_spaces(self, space_ids: List[str]) -> List[Space]:
         """Get multiple spaces by IDs.
@@ -486,12 +496,16 @@ class SnapshotService:
         Returns:
             Proposal object if found, None otherwise
         """
+        # Runtime assertion for critical input
+        assert proposal_id and isinstance(proposal_id, str), "Proposal ID must be a non-empty string"
+        
         variables = {"id": proposal_id}
 
         with log_span(logger, "get_proposal", proposal_id=proposal_id):
             result = await self.execute_query(self.GET_PROPOSAL_QUERY, variables)
 
-            if result.get("proposal") is None:
+            proposal_data = result.get("proposal")
+            if proposal_data is None:
                 return None
 
             return Proposal(**result["proposal"])

@@ -96,7 +96,8 @@ class ActivityService:
     
     def _ensure_directory_exists(self) -> None:
         """Ensure the directory for the persistent file exists."""
-        os.makedirs(os.path.dirname(self.persistent_file), exist_ok=True)
+        directory_path = os.path.dirname(self.persistent_file)
+        os.makedirs(directory_path, exist_ok=True)
     
     def _prepare_state_data(self) -> Dict[str, Any]:
         """Prepare state data for persistence.
@@ -132,7 +133,9 @@ class ActivityService:
         Returns:
             True if daily activity is required, False if already completed today
         """
-        return self.last_activity_date != date.today()
+        today = date.today()
+        activity_needed = self.last_activity_date != today
+        return activity_needed
 
     def mark_activity_completed(self, tx_hash: str) -> None:
         """Mark daily activity as completed for OLAS tracking.
@@ -175,9 +178,11 @@ class ActivityService:
         Returns:
             Number of days since last activity, or None if no activity recorded
         """
-        if self.last_activity_date:
-            return (date.today() - self.last_activity_date).days
-        return None
+        if not self.last_activity_date:
+            return None
+        
+        days_elapsed = (date.today() - self.last_activity_date).days
+        return days_elapsed
 
     def check_olas_compliance(self) -> Dict[str, Any]:
         """Check OLAS staking compliance requirements.
