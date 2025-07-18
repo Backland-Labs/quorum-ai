@@ -3,7 +3,7 @@ from typing import Optional
 from web3 import Web3
 from eth_abi import encode
 
-from backend.services.governor_registry import get_governor, GovernorRegistryError
+from services.governor_registry import get_governor, GovernorRegistryError
 
 
 class VoteEncoderError(Exception):

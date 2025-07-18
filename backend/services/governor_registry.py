@@ -3,7 +3,7 @@ from typing import Dict, List, Any, Tuple
 from pydantic import BaseModel, Field, field_validator
 from web3 import Web3
 
-from backend.utils.abi_loader import ABILoader
+from utils.abi_loader import ABILoader
 
 
 class GovernorRegistryError(Exception):
