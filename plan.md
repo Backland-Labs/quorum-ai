@@ -86,11 +86,19 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - **Structured Data**: ✅ run_id, space_id, dry_run, strategy, proposal counts, timing
 - **Status**: ✅ All Logfire references removed, tests passing (20 tests passed)
 
-#### `backend/services/ai_service.py`
-- **Current**: AI decision tracking with spans and structured logging
-- **Migration**: Preserve decision audit trail with standard logging
-- **Key Operations**: ai_vote_decision, model interactions, confidence scoring
-- **Structured Data**: proposal_id, strategy, confidence, risk_level, model_type
+#### `backend/services/ai_service.py` ✅ **COMPLETED**
+- **Previous**: AI decision tracking with spans and structured logging
+- **Migration**: ✅ Preserved decision audit trail with Pearl-compliant logging
+- **Key Operations**: ✅ ai_vote_decision, model interactions, confidence scoring
+- **Structured Data**: ✅ proposal_id, strategy, confidence, risk_level, model_type
+- **Implementation Details**:
+  - ✅ Replaced all `logfire` imports with Pearl logging imports
+  - ✅ Migrated 15+ logfire.span() calls to log_span() context manager
+  - ✅ Converted structured logging to Pearl format with key=value pairs
+  - ✅ Maintained all AI decision tracking and audit capabilities
+  - ✅ Added comprehensive test suite (10 tests) for Pearl compliance
+  - ✅ All existing tests passing (60 tests across all AI service test files)
+- **Status**: ✅ Fully migrated using TDD methodology
 
 #### `backend/services/safe_service.py`
 - **Current**: Blockchain transaction logging with spans
@@ -222,7 +230,7 @@ This document outlines the comprehensive plan to refactor the current Logfire-ba
 - **Monitoring**: Ensure no logging failures crash the application
 
 ### Validation Checklist
-- [ ] All 10 service files migrated from Logfire (3/10 complete: agent_run_logger.py, agent_run_service.py)
+- [ ] All 10 service files migrated from Logfire (4/10 complete: agent_run_logger.py, agent_run_service.py, ai_service.py)
 - [x] **Core logging infrastructure implemented** (Phase 1 complete)
 - [x] **`log.txt` file created with Pearl-compliant format** (Validated in tests)
 - [x] **Comprehensive test suite passing** (50+ tests covering all components)

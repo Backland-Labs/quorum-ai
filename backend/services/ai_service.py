@@ -4,12 +4,15 @@ import asyncio
 import json
 from typing import Dict, List, Any
 
-import logfire
 from pydantic_ai import Agent, NativeOutput
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
+from logging_config import setup_pearl_logger, log_span
+
+# Initialize Pearl-compliant logger
+logger = setup_pearl_logger(__name__)
 from models import (
     Proposal,
     ProposalSummary,
@@ -198,8 +201,8 @@ class AIService:
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
-        logfire.info(
-            "Creating AI model",
+        logger.info(
+            "Creating AI model"
         )
 
         # Runtime assertion: validate API key configuration
@@ -209,14 +212,15 @@ class AIService:
         ), f"API key must be string, got {type(settings.openrouter_api_key)}"
 
         if settings.openrouter_api_key:
-            logfire.info("Using OpenRouter")
+            logger.info("Using OpenRouter")
             try:
                 model = OpenAIModel(
                     "google/gemini-2.0-flash-001",
                     provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
                 )
-                logfire.info(
-                    "Successfully created OpenRouter model", model_type=str(type(model))
+                logger.info(
+                    "Successfully created OpenRouter model, model_type=%s",
+                    str(type(model))
                 )
 
                 # Runtime assertion: validate model creation
@@ -224,14 +228,14 @@ class AIService:
 
                 return model
             except Exception as e:
-                logfire.error(
-                    "Failed to create OpenRouter model",
-                    error=str(e),
-                    error_type=type(e).__name__,
+                logger.error(
+                    "Failed to create OpenRouter model, error=%s, error_type=%s",
+                    str(e),
+                    type(e).__name__
                 )
                 raise
         else:
-            logfire.warning("No AI API keys configured, using default model")
+            logger.warning("No AI API keys configured, using default model")
             return "openai:gpt-4o-mini"  # TODO: need to fix how this is handled
 
     def _create_agent(self) -> Any:
@@ -243,10 +247,10 @@ class AIService:
         ), "Model attribute must exist before agent creation"
 
         try:
-            logfire.info(
-                "Creating Pydantic AI agent",
-                model_type=str(type(self.model)),
-                model_value=str(self.model),
+            logger.info(
+                "Creating Pydantic AI agent, model_type=%s, model_value=%s",
+                str(type(self.model)),
+                str(self.model)
             )
 
             agent = Agent(
@@ -254,17 +258,18 @@ class AIService:
                 system_prompt=self._get_system_prompt(),
                 output_type=NativeOutput(AiVoteResponse, strict=False),
             )
-            logfire.info(
-                "Successfully created Pydantic AI agent", agent_type=str(type(agent))
+            logger.info(
+                "Successfully created Pydantic AI agent, agent_type=%s",
+                str(type(agent))
             )
 
             return agent
         except Exception as e:
-            logfire.error(
-                "Failed to create Pydantic AI agent",
-                error=str(e),
-                error_type=type(e).__name__,
-                model_type=str(type(self.model)),
+            logger.error(
+                "Failed to create Pydantic AI agent, error=%s, error_type=%s, model_type=%s",
+                str(e),
+                type(e).__name__,
+                str(type(self.model))
             )
             raise
 
@@ -308,25 +313,25 @@ class AIService:
         ), f"Expected VotingStrategy enum, got {type(strategy)}"
 
         try:
-            with logfire.span(
-                "ai_vote_decision", proposal_id=proposal.id, strategy=strategy.value
+            with log_span(
+                logger, "ai_vote_decision", proposal_id=proposal.id, strategy=strategy.value
             ):
-                logfire.info(
-                    "Starting vote decision making",
-                    proposal_id=proposal.id,
-                    proposal_title=proposal.title,
-                    strategy=strategy.value,
-                    model_type=str(type(self.model)),
+                logger.info(
+                    "Starting vote decision making, proposal_id=%s, proposal_title=%s, strategy=%s, model_type=%s",
+                    proposal.id,
+                    proposal.title,
+                    strategy.value,
+                    str(type(self.model))
                 )
 
                 decision_data = await self._generate_vote_decision(proposal, strategy)
 
-                logfire.info(
-                    "Successfully generated vote decision",
-                    proposal_id=proposal.id,
-                    vote=decision_data.get("vote"),
-                    confidence=decision_data.get("confidence"),
-                    risk_level=decision_data.get("risk_level"),
+                logger.info(
+                    "Successfully generated vote decision, proposal_id=%s, vote=%s, confidence=%s, risk_level=%s",
+                    proposal.id,
+                    decision_data.get("vote"),
+                    decision_data.get("confidence"),
+                    decision_data.get("risk_level")
                 )
 
                 vote_decision = VoteDecision(
@@ -347,13 +352,13 @@ class AIService:
                 return vote_decision
 
         except Exception as e:
-            logfire.error(
-                "Failed to make vote decision",
-                proposal_id=proposal.id,
-                proposal_title=proposal.title,
-                strategy=strategy.value,
-                error=str(e),
-                error_type=type(e).__name__,
+            logger.error(
+                "Failed to make vote decision, proposal_id=%s, proposal_title=%s, strategy=%s, error=%s, error_type=%s",
+                proposal.id,
+                proposal.title,
+                strategy.value,
+                str(e),
+                type(e).__name__
             )
             raise e
 
@@ -449,14 +454,15 @@ class AIService:
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
         try:
-            logfire.info(
-                "Calling AI model for vote decision", prompt_length=len(prompt)
+            logger.info(
+                "Calling AI model for vote decision, prompt_length=%s",
+                len(prompt)
             )
 
             result = await self.agent.run(prompt)
             return self.response_processor.process_ai_result(result)
         except Exception as e:
-            logfire.error("AI model call failed", error=str(e))
+            logger.error("AI model call failed, error=%s", str(e))
             raise
 
     async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
@@ -468,21 +474,21 @@ class AIService:
         ), f"Expected Proposal object, got {type(proposal)}"
 
         try:
-            with logfire.span("ai_proposal_summary", proposal_id=proposal.id):
-                logfire.info(
-                    "Starting proposal summarization",
-                    proposal_id=proposal.id,
-                    proposal_title=proposal.title,
-                    model_type=str(type(self.model)),
+            with log_span(logger, "ai_proposal_summary", proposal_id=proposal.id):
+                logger.info(
+                    "Starting proposal summarization, proposal_id=%s, proposal_title=%s, model_type=%s",
+                    proposal.id,
+                    proposal.title,
+                    str(type(self.model))
                 )
 
                 summary_data = await self._generate_proposal_summary(proposal)
 
-                logfire.info(
-                    "Successfully generated proposal summary",
-                    proposal_id=proposal.id,
-                    summary_length=len(summary_data.get("summary", "")),
-                    key_points_count=len(summary_data.get("key_points", [])),
+                logger.info(
+                    "Successfully generated proposal summary, proposal_id=%s, summary_length=%s, key_points_count=%s",
+                    proposal.id,
+                    len(summary_data.get("summary", "")),
+                    len(summary_data.get("key_points", []))
                 )
 
                 proposal_summary = ProposalSummary(
@@ -506,12 +512,12 @@ class AIService:
                 return proposal_summary
 
         except Exception as e:
-            logfire.error(
-                "Failed to summarize proposal",
-                proposal_id=proposal.id,
-                proposal_title=proposal.title,
-                error=str(e),
-                error_type=type(e).__name__,
+            logger.error(
+                "Failed to summarize proposal, proposal_id=%s, proposal_title=%s, error=%s, error_type=%s",
+                proposal.id,
+                proposal.title,
+                str(e),
+                type(e).__name__
             )
             raise e
 
@@ -527,23 +533,23 @@ class AIService:
         assert len(proposals) > 0, "Proposals list cannot be empty"
 
         try:
-            with logfire.span(
-                "ai_multiple_proposal_summaries", proposal_count=len(proposals)
+            with log_span(
+                logger, "ai_multiple_proposal_summaries", proposal_count=len(proposals)
             ):
-                logfire.info(
-                    "Starting multiple proposal summarization",
-                    proposal_count=len(proposals),
-                    model_type=str(type(self.model)),
+                logger.info(
+                    "Starting multiple proposal summarization, proposal_count=%s, model_type=%s",
+                    len(proposals),
+                    str(type(self.model))
                 )
 
                 # Create tasks for concurrent processing
                 tasks = [self.summarize_proposal(proposal) for proposal in proposals]
                 summaries = await asyncio.gather(*tasks)
 
-                logfire.info(
-                    "Successfully generated multiple proposal summaries",
-                    proposal_count=len(proposals),
-                    summary_count=len(summaries),
+                logger.info(
+                    "Successfully generated multiple proposal summaries, proposal_count=%s, summary_count=%s",
+                    len(proposals),
+                    len(summaries)
                 )
 
                 # Runtime assertion: validate output
@@ -554,11 +560,11 @@ class AIService:
                 return summaries
 
         except Exception as e:
-            logfire.error(
-                "Failed to summarize multiple proposals",
-                proposal_count=len(proposals),
-                error=str(e),
-                error_type=type(e).__name__,
+            logger.error(
+                "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s",
+                len(proposals),
+                str(e),
+                type(e).__name__
             )
             raise e
 
@@ -571,14 +577,15 @@ class AIService:
     async def _call_ai_model_for_summary(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt for summarization."""
         try:
-            logfire.info(
-                "Calling AI model for summarization", prompt_length=len(prompt)
+            logger.info(
+                "Calling AI model for summarization, prompt_length=%s",
+                len(prompt)
             )
 
             result = await self.agent.run(prompt)
             return self.response_processor.process_ai_result(result)
         except Exception as e:
-            logfire.error("AI model call failed for summarization", error=str(e))
+            logger.error("AI model call failed for summarization, error=%s", str(e))
             raise
 
     def _build_summary_prompt(self, proposal: Proposal) -> str:
