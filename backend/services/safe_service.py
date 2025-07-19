@@ -11,7 +11,9 @@ from safe_eth.safe.api import TransactionServiceApi
 from config import settings
 from utils.vote_encoder import encode_cast_vote, Support
 from services.governor_registry import get_governor, GovernorRegistryError
+
 from logging_config import setup_pearl_logger, log_span
+
 
 
 # Constants for Safe service URLs
@@ -23,6 +25,7 @@ SAFE_SERVICE_URLS = {
 }
 
 # Chain ID mapping for governor vote support
+
 CHAIN_ID_TO_NAME = {
     1: "ethereum",
     11155111: "ethereum",  # Sepolia testnet maps to ethereum
@@ -30,6 +33,7 @@ CHAIN_ID_TO_NAME = {
     8453: "base",
     34443: "mode",
 }
+
 
 # Safe operation types
 SAFE_OPERATION_CALL = 0
@@ -135,6 +139,7 @@ class SafeService:
         value: int,
         data: bytes,
         operation: int = SAFE_OPERATION_CALL
+
     ) -> Dict[str, Any]:
         """Submit a Safe transaction with the given parameters.
         
@@ -206,6 +211,7 @@ class SafeService:
                     f"Built Safe transaction (chain={chain}, safe_address={safe_address}, "
                     f"to={to}, value={value}, data_length={data_length}, "
                     f"nonce={nonce}, safe_tx_hash={tx_hash})"
+
                 )
 
                 # Propose transaction to Safe Transaction Service
@@ -263,6 +269,7 @@ class SafeService:
 
             except Exception as e:
                 self.logger.error(f"Error creating Safe transaction: {str(e)}")
+
                 return {"success": False, "error": str(e)}
 
     async def perform_activity_transaction(
@@ -292,6 +299,7 @@ class SafeService:
             value=0,  # 0 ETH value
             data=b"",  # Empty data
             operation=SAFE_OPERATION_CALL,  # CALL operation
+
         )
 
     async def perform_governor_vote(
@@ -317,7 +325,7 @@ class SafeService:
         # Runtime assertions for critical inputs
         assert isinstance(governor_id, str) and governor_id, "Governor ID must be a non-empty string"
         assert isinstance(proposal_id, int) and proposal_id >= 0, "Proposal ID must be a non-negative integer"
-        
+
         try:
             # Get governor metadata
             governor_meta, _ = get_governor(governor_id)
@@ -330,6 +338,7 @@ class SafeService:
                     return {
                         "success": False,
                         "error": error_msg
+
                     }
 
             # Encode the vote transaction
@@ -350,12 +359,14 @@ class SafeService:
                 value=0,  # No ETH sent
                 data=data_bytes,
                 operation=SAFE_OPERATION_CALL,  # CALL operation
+
             )
 
         except GovernorRegistryError as e:
             return {"success": False, "error": str(e)}
         except Exception as e:
             self.logger.error(f"Error creating governor vote transaction: {e}")
+
             return {"success": False, "error": str(e)}
 
     async def get_safe_nonce(self, chain: str, safe_address: str) -> int:
