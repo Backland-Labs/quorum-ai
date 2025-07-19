@@ -2,11 +2,18 @@
 
 import os
 import json
+import logging
 from datetime import date
 from typing import Dict, Optional, Any
-import logfire
 
 from config import settings
+from logging_config import setup_pearl_logger, log_span
+
+# Constants for repeated strings
+ACTIVITY_TRACKER_FILENAME = "activity_tracker.json"
+DAILY_ACTIVITY_REQUIRED_MSG = "Daily activity required for OLAS staking"
+DAILY_ACTIVITY_COMPLETED_MSG = "Daily activity completed"
+SAFE_TRANSACTION_ACTION = "safe_transaction"
 
 
 class ActivityService:
@@ -14,27 +21,45 @@ class ActivityService:
 
     def __init__(self):
         """Initialize activity service with persistent state."""
+        # Initialize Pearl-compliant logger
+        self.logger = setup_pearl_logger(__name__)
+        
         self.last_activity_date: Optional[date] = None
         self.last_tx_hash: Optional[str] = None
-
-        # Setup persistent file path
-        if settings.store_path:
-            self.persistent_file = os.path.join(
-                settings.store_path, "activity_tracker.json"
-            )
-        else:
-            self.persistent_file = "activity_tracker.json"
-
+        self.persistent_file = self._get_persistent_file_path()
+        
         self.load_state()
-
-        logfire.info(
-            "ActivityService initialized",
-            persistent_file=self.persistent_file,
-            last_activity_date=self.last_activity_date.isoformat()
-            if self.last_activity_date
-            else None,
-            daily_activity_needed=self.is_daily_activity_needed(),
+        self._log_initialization()
+    
+    def _get_persistent_file_path(self) -> str:
+        """Get the path for the persistent activity tracker file.
+        
+        Returns:
+            Path to the activity tracker JSON file
+        """
+        if settings.store_path:
+            return os.path.join(settings.store_path, ACTIVITY_TRACKER_FILENAME)
+        return ACTIVITY_TRACKER_FILENAME
+    
+    def _log_initialization(self) -> None:
+        """Log service initialization details."""
+        self.logger.info(
+            "ActivityService initialized (persistent_file=%s, last_activity_date=%s, daily_activity_needed=%s)",
+            self.persistent_file,
+            self._format_date(self.last_activity_date),
+            self.is_daily_activity_needed(),
         )
+    
+    def _format_date(self, date_obj: Optional[date]) -> Optional[str]:
+        """Format a date object to ISO string.
+        
+        Args:
+            date_obj: Date to format, or None
+            
+        Returns:
+            ISO formatted date string, or None if date_obj is None
+        """
+        return date_obj.isoformat() if date_obj else None
 
     def load_state(self) -> None:
         """Load activity state from persistent storage."""
@@ -48,15 +73,13 @@ class ActivityService:
                         )
                     self.last_tx_hash = data.get("last_tx_hash")
 
-                logfire.info(
-                    "Activity state loaded from file",
-                    last_activity_date=self.last_activity_date.isoformat()
-                    if self.last_activity_date
-                    else None,
-                    last_tx_hash=self.last_tx_hash,
+                self.logger.info(
+                    "Activity state loaded from file (last_activity_date=%s, last_tx_hash=%s)",
+                    self._format_date(self.last_activity_date),
+                    self.last_tx_hash,
                 )
         except Exception as e:
-            logfire.warn(f"Could not load activity state: {e}")
+            self.logger.warning("Could not load activity state: %s", str(e))
             # Reset to defaults on any error
             self.last_activity_date = None
             self.last_tx_hash = None
@@ -64,28 +87,45 @@ class ActivityService:
     def save_state(self) -> None:
         """Save activity state to persistent storage."""
         try:
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(self.persistent_file), exist_ok=True)
-
-            data = {
-                "last_activity_date": self.last_activity_date.isoformat()
-                if self.last_activity_date
-                else None,
-                "last_tx_hash": self.last_tx_hash,
-            }
-
-            with open(self.persistent_file, "w") as f:
-                json.dump(data, f)
-
-            logfire.info(
-                "Activity state saved to file",
-                last_activity_date=self.last_activity_date.isoformat()
-                if self.last_activity_date
-                else None,
-                last_tx_hash=self.last_tx_hash,
-            )
+            self._ensure_directory_exists()
+            state_data = self._prepare_state_data()
+            self._write_state_file(state_data)
+            self._log_state_saved()
         except Exception as e:
-            logfire.warn(f"Could not save activity state: {e}")
+            self.logger.warning("Could not save activity state: %s", str(e))
+    
+    def _ensure_directory_exists(self) -> None:
+        """Ensure the directory for the persistent file exists."""
+        directory_path = os.path.dirname(self.persistent_file)
+        os.makedirs(directory_path, exist_ok=True)
+    
+    def _prepare_state_data(self) -> Dict[str, Any]:
+        """Prepare state data for persistence.
+        
+        Returns:
+            Dictionary with serializable state data
+        """
+        return {
+            "last_activity_date": self._format_date(self.last_activity_date),
+            "last_tx_hash": self.last_tx_hash,
+        }
+    
+    def _write_state_file(self, data: Dict[str, Any]) -> None:
+        """Write state data to file.
+        
+        Args:
+            data: State data to write
+        """
+        with open(self.persistent_file, "w") as f:
+            json.dump(data, f)
+    
+    def _log_state_saved(self) -> None:
+        """Log that state has been saved."""
+        self.logger.info(
+            "Activity state saved to file (last_activity_date=%s, last_tx_hash=%s)",
+            self._format_date(self.last_activity_date),
+            self.last_tx_hash,
+        )
 
     def is_daily_activity_needed(self) -> bool:
         """Check if we need to create activity for today for OLAS staking.
@@ -93,7 +133,9 @@ class ActivityService:
         Returns:
             True if daily activity is required, False if already completed today
         """
-        return self.last_activity_date != date.today()
+        today = date.today()
+        activity_needed = self.last_activity_date != today
+        return activity_needed
 
     def mark_activity_completed(self, tx_hash: str) -> None:
         """Mark daily activity as completed for OLAS tracking.
@@ -101,14 +143,18 @@ class ActivityService:
         Args:
             tx_hash: Transaction hash of the completed activity transaction
         """
+        # Runtime assertions
+        assert tx_hash, "Transaction hash must not be empty"
+        assert isinstance(tx_hash, str), "Transaction hash must be a string"
+        
         self.last_activity_date = date.today()
         self.last_tx_hash = tx_hash
         self.save_state()
 
-        logfire.info(
-            "Activity marked as completed",
-            tx_hash=tx_hash,
-            date=date.today().isoformat(),
+        self.logger.info(
+            "Activity marked as completed (tx_hash=%s, date=%s)",
+            tx_hash,
+            date.today().isoformat(),
         )
 
     def get_activity_status(self) -> Dict[str, Any]:
@@ -117,16 +163,26 @@ class ActivityService:
         Returns:
             Dict containing activity status information
         """
+        days_since = self._calculate_days_since_activity()
+        
         return {
             "daily_activity_needed": self.is_daily_activity_needed(),
-            "last_activity_date": self.last_activity_date.isoformat()
-            if self.last_activity_date
-            else None,
+            "last_activity_date": self._format_date(self.last_activity_date),
             "last_tx_hash": self.last_tx_hash,
-            "days_since_activity": (date.today() - self.last_activity_date).days
-            if self.last_activity_date
-            else None,
+            "days_since_activity": days_since,
         }
+    
+    def _calculate_days_since_activity(self) -> Optional[int]:
+        """Calculate days since last activity.
+        
+        Returns:
+            Number of days since last activity, or None if no activity recorded
+        """
+        if not self.last_activity_date:
+            return None
+        
+        days_elapsed = (date.today() - self.last_activity_date).days
+        return days_elapsed
 
     def check_olas_compliance(self) -> Dict[str, Any]:
         """Check OLAS staking compliance requirements.
@@ -134,24 +190,43 @@ class ActivityService:
         Returns:
             Dict containing compliance status and required actions
         """
+        last_activity = self._format_date(self.last_activity_date)
+        
         if self.is_daily_activity_needed():
-            return {
-                "compliant": False,
-                "reason": "Daily activity required for OLAS staking",
-                "action_required": "safe_transaction",
-                "last_activity": self.last_activity_date.isoformat()
-                if self.last_activity_date
-                else None,
-            }
-        else:
-            return {
-                "compliant": True,
-                "reason": "Daily activity completed",
-                "action_required": None,
-                "last_activity": self.last_activity_date.isoformat()
-                if self.last_activity_date
-                else None,
-            }
+            return self._build_non_compliant_status(last_activity)
+        return self._build_compliant_status(last_activity)
+    
+    def _build_non_compliant_status(self, last_activity: Optional[str]) -> Dict[str, Any]:
+        """Build non-compliant status response.
+        
+        Args:
+            last_activity: Formatted last activity date
+            
+        Returns:
+            Non-compliant status dictionary
+        """
+        return {
+            "compliant": False,
+            "reason": DAILY_ACTIVITY_REQUIRED_MSG,
+            "action_required": SAFE_TRANSACTION_ACTION,
+            "last_activity": last_activity,
+        }
+    
+    def _build_compliant_status(self, last_activity: Optional[str]) -> Dict[str, Any]:
+        """Build compliant status response.
+        
+        Args:
+            last_activity: Formatted last activity date
+            
+        Returns:
+            Compliant status dictionary
+        """
+        return {
+            "compliant": True,
+            "reason": DAILY_ACTIVITY_COMPLETED_MSG,
+            "action_required": None,
+            "last_activity": last_activity,
+        }
 
     def get_compliance_summary(self) -> Dict[str, Any]:
         """Get comprehensive compliance summary for reporting.
@@ -173,37 +248,86 @@ class ActivityService:
         Returns:
             Dict containing compliance action results
         """
-        with logfire.span("activity_service.ensure_daily_compliance"):
+        # Runtime assertions
+        assert safe_service is not None, "SafeService instance is required"
+        
+        with log_span(self.logger, "activity_service.ensure_daily_compliance") as span_data:
             compliance_status = self.check_olas_compliance()
 
             if not compliance_status["compliant"]:
-                logfire.info("Daily OLAS activity needed - requesting Safe transaction")
+                return await self._handle_non_compliant_state(safe_service, compliance_status)
+            
+            return self._handle_compliant_state(compliance_status)
+    
+    async def _handle_non_compliant_state(
+        self, safe_service, compliance_status: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Handle non-compliant state by requesting Safe transaction.
+        
+        Args:
+            safe_service: SafeService instance for creating transactions
+            compliance_status: Current compliance status
+            
+        Returns:
+            Action result dictionary
+        """
+        self.logger.info("Daily OLAS activity needed - requesting Safe transaction")
+        transaction_result = await safe_service.perform_activity_transaction()
 
-                # Request Safe transaction for activity
-                transaction_result = await safe_service.perform_activity_transaction()
-
-                if transaction_result["success"]:
-                    # Mark activity as completed
-                    self.mark_activity_completed(transaction_result["tx_hash"])
-
-                    return {
-                        "action_taken": "safe_transaction",
-                        "success": True,
-                        "transaction_result": transaction_result,
-                        "compliance_status": self.check_olas_compliance(),  # Updated status
-                    }
-                else:
-                    return {
-                        "action_taken": "safe_transaction",
-                        "success": False,
-                        "error": transaction_result.get("error"),
-                        "compliance_status": compliance_status,
-                    }
-            else:
-                logfire.info("Daily OLAS activity already completed")
-                return {
-                    "action_taken": "none",
-                    "success": True,
-                    "message": "Daily activity already completed",
-                    "compliance_status": compliance_status,
-                }
+        if transaction_result["success"]:
+            self.mark_activity_completed(transaction_result["tx_hash"])
+            return self._build_success_response(transaction_result)
+        
+        return self._build_failure_response(transaction_result, compliance_status)
+    
+    def _handle_compliant_state(self, compliance_status: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle already compliant state.
+        
+        Args:
+            compliance_status: Current compliance status
+            
+        Returns:
+            Action result dictionary
+        """
+        self.logger.info("Daily OLAS activity already completed")
+        return {
+            "action_taken": "none",
+            "success": True,
+            "message": DAILY_ACTIVITY_COMPLETED_MSG,
+            "compliance_status": compliance_status,
+        }
+    
+    def _build_success_response(self, transaction_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Build successful transaction response.
+        
+        Args:
+            transaction_result: Result from Safe transaction
+            
+        Returns:
+            Success response dictionary
+        """
+        return {
+            "action_taken": SAFE_TRANSACTION_ACTION,
+            "success": True,
+            "transaction_result": transaction_result,
+            "compliance_status": self.check_olas_compliance(),  # Updated status
+        }
+    
+    def _build_failure_response(
+        self, transaction_result: Dict[str, Any], compliance_status: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Build failed transaction response.
+        
+        Args:
+            transaction_result: Result from Safe transaction
+            compliance_status: Current compliance status
+            
+        Returns:
+            Failure response dictionary
+        """
+        return {
+            "action_taken": SAFE_TRANSACTION_ACTION,
+            "success": False,
+            "error": transaction_result.get("error"),
+            "compliance_status": compliance_status,
+        }

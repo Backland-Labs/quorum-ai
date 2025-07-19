@@ -17,6 +17,11 @@ class Settings(BaseSettings):
         "env_nested_delimiter": "__",
     }
 
+    # Pearl logging constants
+    VALID_LOG_LEVELS: ClassVar[List[str]] = ["DEBUG", "INFO", "WARNING", "ERROR"]
+    DEFAULT_LOG_LEVEL: ClassVar[str] = "INFO"
+    DEFAULT_LOG_FILE_PATH: ClassVar[str] = "log.txt"
+
     # Application settings
     app_name: str = "Quorum AI"
     debug: bool = False
@@ -27,10 +32,17 @@ class Settings(BaseSettings):
     anthropic_api_key: Optional[str] = None
     ai_model: str = "openai:gpt-4o-mini"
 
-    # Logfire settings
-    logfire_token: Optional[str] = None
-    logfire_project: Optional[str] = None
-    logfire_ignore_no_config: bool = False
+    # Pearl logging settings
+    log_level: str = Field(
+        default=DEFAULT_LOG_LEVEL,
+        alias="LOG_LEVEL",
+        description="Pearl-compliant log level (DEBUG, INFO, WARNING, ERROR)"
+    )
+    log_file_path: str = Field(
+        default=DEFAULT_LOG_FILE_PATH,
+        alias="LOG_FILE_PATH", 
+        description="Path to Pearl-compliant log file"
+    )
 
     # Performance settings
     request_timeout: int = 30
@@ -181,6 +193,31 @@ class Settings(BaseSettings):
         description="Mode chain RPC endpoint",
     )
 
+    @field_validator("log_level", mode="before")
+    @classmethod
+    def validate_log_level(cls, v):
+        """Validate log level is one of the Pearl-compliant levels."""
+        if v is None or (isinstance(v, str) and not v.strip()):
+            return cls.DEFAULT_LOG_LEVEL
+        if isinstance(v, str):
+            v = v.upper().strip()
+            if v not in cls.VALID_LOG_LEVELS:
+                raise ValueError(f"Invalid log level: {v}. Must be one of {cls.VALID_LOG_LEVELS}")
+            return v
+        return cls.DEFAULT_LOG_LEVEL
+
+    @field_validator("log_file_path", mode="before")
+    @classmethod
+    def validate_log_file_path(cls, v):
+        """Validate log file path is not empty."""
+        if v is None or (isinstance(v, str) and not v.strip()):
+            return cls.DEFAULT_LOG_FILE_PATH
+        if isinstance(v, str):
+            if v.strip().lower() == "none":
+                raise ValueError("Log file path cannot be empty")
+            return v.strip()
+        return cls.DEFAULT_LOG_FILE_PATH
+
     @field_validator("monitored_daos", mode="before")
     @classmethod
     def parse_monitored_daos(cls, v):
@@ -201,6 +238,7 @@ class Settings(BaseSettings):
         self._parse_vote_threshold()
         self._parse_intervals()
         self._parse_agent_run_config()
+        self._parse_pearl_logging_config()
         return self
 
     def _parse_safe_addresses(self):
@@ -399,6 +437,32 @@ class Settings(BaseSettings):
             "vote_execution_timeout": self.vote_execution_timeout,
             "max_retry_attempts": self.max_retry_attempts,
             "retry_delay_seconds": self.retry_delay_seconds,
+        }
+
+    def _parse_pearl_logging_config(self):
+        """Parse Pearl logging configuration from environment variables."""
+        log_level_env = os.getenv("LOG_LEVEL")
+        if log_level_env:
+            level = log_level_env.upper()
+            if level not in self.VALID_LOG_LEVELS:
+                raise ValueError(f"Invalid log level: {level}. Must be one of {self.VALID_LOG_LEVELS}")
+            self.log_level = level
+
+        log_file_path_env = os.getenv("LOG_FILE_PATH")
+        if log_file_path_env:
+            if not log_file_path_env.strip() or log_file_path_env.strip().lower() == "none":
+                raise ValueError("Log file path cannot be empty")
+            self.log_file_path = log_file_path_env.strip()
+
+    def get_pearl_logging_config(self) -> Dict[str, str]:
+        """Get Pearl logging configuration as a dictionary.
+
+        Returns:
+            Dict containing Pearl logging configuration values.
+        """
+        return {
+            "log_level": self.log_level,
+            "log_file_path": self.log_file_path,
         }
 
 

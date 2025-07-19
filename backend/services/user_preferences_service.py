@@ -4,8 +4,8 @@ import os
 import json
 import tempfile
 from typing import Any
-import logfire
 
+from logging_config import setup_pearl_logger
 from models import UserPreferences, VotingStrategy
 
 
@@ -19,6 +19,7 @@ class UserPreferencesService:
             preferences_file: Path to the preferences file (default: "user_preferences.txt")
         """
         self.preferences_file = preferences_file
+        self.logger = setup_pearl_logger(__name__)
 
     async def load_preferences(self) -> UserPreferences:
         """Load user preferences from file, return defaults if not found.
@@ -28,9 +29,9 @@ class UserPreferencesService:
         """
         try:
             if not os.path.exists(self.preferences_file):
-                logfire.info(
-                    "Preferences file not found, returning defaults",
-                    preferences_file=self.preferences_file,
+                self.logger.info(
+                    "Preferences file not found, returning defaults, preferences_file=%s",
+                    self.preferences_file,
                 )
                 return UserPreferences()
 
@@ -40,28 +41,28 @@ class UserPreferencesService:
             # Try to create UserPreferences from loaded data
             preferences = UserPreferences(**data)
 
-            logfire.info(
-                "User preferences loaded successfully",
-                preferences_file=self.preferences_file,
-                voting_strategy=preferences.voting_strategy.value,
-                confidence_threshold=preferences.confidence_threshold,
-                max_proposals_per_run=preferences.max_proposals_per_run,
+            self.logger.info(
+                "User preferences loaded successfully, preferences_file=%s, voting_strategy=%s, confidence_threshold=%s, max_proposals_per_run=%s",
+                self.preferences_file,
+                preferences.voting_strategy.value,
+                preferences.confidence_threshold,
+                preferences.max_proposals_per_run,
             )
 
             return preferences
 
         except (json.JSONDecodeError, OSError, PermissionError) as e:
-            logfire.warn(
-                "Could not load user preferences, returning defaults",
-                preferences_file=self.preferences_file,
-                error=str(e),
+            self.logger.warning(
+                "Could not load user preferences, returning defaults, preferences_file=%s, error=%s",
+                self.preferences_file,
+                str(e),
             )
             return UserPreferences()
         except Exception as e:
-            logfire.warn(
-                "Unexpected error loading user preferences, returning defaults",
-                preferences_file=self.preferences_file,
-                error=str(e),
+            self.logger.warning(
+                "Unexpected error loading user preferences, returning defaults, preferences_file=%s, error=%s",
+                self.preferences_file,
+                str(e),
             )
             return UserPreferences()
 
@@ -92,19 +93,19 @@ class UserPreferencesService:
             # Atomically rename temp file to final location
             os.rename(temp_file_path, self.preferences_file)
 
-            logfire.info(
-                "User preferences saved successfully",
-                preferences_file=self.preferences_file,
-                voting_strategy=preferences.voting_strategy.value,
-                confidence_threshold=preferences.confidence_threshold,
-                max_proposals_per_run=preferences.max_proposals_per_run,
+            self.logger.info(
+                "User preferences saved successfully, preferences_file=%s, voting_strategy=%s, confidence_threshold=%s, max_proposals_per_run=%s",
+                self.preferences_file,
+                preferences.voting_strategy.value,
+                preferences.confidence_threshold,
+                preferences.max_proposals_per_run,
             )
 
         except (OSError, PermissionError) as e:
-            logfire.error(
-                "Could not save user preferences",
-                preferences_file=self.preferences_file,
-                error=str(e),
+            self.logger.error(
+                "Could not save user preferences, preferences_file=%s, error=%s",
+                self.preferences_file,
+                str(e),
             )
             # Clean up temp file if it exists
             try:
@@ -113,10 +114,10 @@ class UserPreferencesService:
             except:
                 pass
         except Exception as e:
-            logfire.error(
-                "Unexpected error saving user preferences",
-                preferences_file=self.preferences_file,
-                error=str(e),
+            self.logger.error(
+                "Unexpected error saving user preferences, preferences_file=%s, error=%s",
+                self.preferences_file,
+                str(e),
             )
 
     async def update_preference(self, key: str, value: Any) -> None:
@@ -191,9 +192,9 @@ class UserPreferencesService:
         # Save updated preferences
         await self.save_preferences(current_preferences)
 
-        logfire.info(
-            "User preference updated",
-            preferences_file=self.preferences_file,
-            key=key,
-            value=str(value),
+        self.logger.info(
+            "User preference updated, preferences_file=%s, key=%s, value=%s",
+            self.preferences_file,
+            key,
+            str(value),
         )

@@ -4,12 +4,15 @@ import asyncio
 import json
 from typing import Dict, List, Any
 
-import logfire
 from pydantic_ai import Agent, NativeOutput
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
+from logging_config import setup_pearl_logger, log_span
+
+# Initialize Pearl-compliant logger
+logger = setup_pearl_logger(__name__)
 from models import (
     Proposal,
     ProposalSummary,
@@ -44,7 +47,7 @@ class AIResponseProcessor:
         assert result is not None, "AI result cannot be None"
 
         if hasattr(result, "output"):
-            print(result)
+            logger.debug("Processing AI result with output attribute")
             return self._extract_output_data(result.output)
         else:
             return self._create_fallback_response(str(result))
@@ -198,9 +201,11 @@ class AIService:
 
     def _create_model(self) -> Any:
         """Create the AI model with OpenRouter configuration."""
-        logfire.info(
-            "Creating AI model",
-        )
+        # Constants for model configuration
+        GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
+        DEFAULT_MODEL_FALLBACK = "openai:gpt-4o-mini"
+        
+        logger.info("Creating AI model")
 
         # Runtime assertion: validate API key configuration
         assert settings.openrouter_api_key, "OpenRouter API key is not configured"
@@ -209,30 +214,38 @@ class AIService:
         ), f"API key must be string, got {type(settings.openrouter_api_key)}"
 
         if settings.openrouter_api_key:
-            logfire.info("Using OpenRouter")
+            logger.info("Using OpenRouter")
             try:
-                model = OpenAIModel(
-                    "google/gemini-2.0-flash-001",
-                    provider=OpenRouterProvider(api_key=settings.openrouter_api_key),
-                )
-                logfire.info(
-                    "Successfully created OpenRouter model", model_type=str(type(model))
+                # Create OpenRouter provider
+                provider = OpenRouterProvider(api_key=settings.openrouter_api_key)
+                
+                # Create model with provider
+                model = OpenAIModel(GEMINI_MODEL_NAME, provider=provider)
+                
+                # Get model type name for logging
+                model_type_name = type(model).__name__
+                logger.info(
+                    "Successfully created OpenRouter model, model_type=%s",
+                    model_type_name
                 )
 
                 # Runtime assertion: validate model creation
                 assert model is not None, "OpenRouter model creation returned None"
+                assert hasattr(model, '__class__'), "Model must be a valid object instance"
 
                 return model
             except Exception as e:
-                logfire.error(
-                    "Failed to create OpenRouter model",
-                    error=str(e),
-                    error_type=type(e).__name__,
+                error_message = str(e)
+                error_type = type(e).__name__
+                logger.error(
+                    "Failed to create OpenRouter model, error=%s, error_type=%s",
+                    error_message,
+                    error_type
                 )
                 raise
         else:
-            logfire.warning("No AI API keys configured, using default model")
-            return "openai:gpt-4o-mini"  # TODO: need to fix how this is handled
+            logger.warning("No AI API keys configured, using default model")
+            return DEFAULT_MODEL_FALLBACK  # TODO: need to fix how this is handled
 
     def _create_agent(self) -> Any:
         """Create and configure the Pydantic AI agent."""
@@ -243,28 +256,48 @@ class AIService:
         ), "Model attribute must exist before agent creation"
 
         try:
-            logfire.info(
-                "Creating Pydantic AI agent",
-                model_type=str(type(self.model)),
-                model_value=str(self.model),
+            # Extract model information for logging
+            model_type_name = type(self.model).__name__
+            model_value = str(self.model)
+            
+            logger.info(
+                "Creating Pydantic AI agent, model_type=%s, model_value=%s",
+                model_type_name,
+                model_value
             )
 
+            # Create agent with configuration
+            system_prompt = self._get_system_prompt()
+            output_config = NativeOutput(AiVoteResponse, strict=False)
+            
             agent = Agent(
                 model=self.model,
-                system_prompt=self._get_system_prompt(),
-                output_type=NativeOutput(AiVoteResponse, strict=False),
+                system_prompt=system_prompt,
+                output_type=output_config,
             )
-            logfire.info(
-                "Successfully created Pydantic AI agent", agent_type=str(type(agent))
+            
+            # Extract agent type for logging
+            agent_type_name = type(agent).__name__
+            logger.info(
+                "Successfully created Pydantic AI agent, agent_type=%s",
+                agent_type_name
             )
+
+            # Runtime assertion: validate agent creation
+            assert agent is not None, "Agent creation returned None"
+            assert hasattr(agent, 'run'), "Agent must have run method"
 
             return agent
         except Exception as e:
-            logfire.error(
-                "Failed to create Pydantic AI agent",
-                error=str(e),
-                error_type=type(e).__name__,
-                model_type=str(type(self.model)),
+            error_message = str(e)
+            error_type = type(e).__name__
+            model_type_name = type(self.model).__name__
+            
+            logger.error(
+                "Failed to create Pydantic AI agent, error=%s, error_type=%s, model_type=%s",
+                error_message,
+                error_type,
+                model_type_name
             )
             raise
 
@@ -308,34 +341,40 @@ class AIService:
         ), f"Expected VotingStrategy enum, got {type(strategy)}"
 
         try:
-            with logfire.span(
-                "ai_vote_decision", proposal_id=proposal.id, strategy=strategy.value
+            # Extract logging context
+            model_type_name = type(self.model).__name__
+            strategy_value = strategy.value
+            
+            with log_span(
+                logger, "ai_vote_decision", proposal_id=proposal.id, strategy=strategy_value
             ):
-                logfire.info(
-                    "Starting vote decision making",
-                    proposal_id=proposal.id,
-                    proposal_title=proposal.title,
-                    strategy=strategy.value,
-                    model_type=str(type(self.model)),
+                logger.info(
+                    "Starting vote decision making, proposal_id=%s, proposal_title=%s, strategy=%s, model_type=%s",
+                    proposal.id,
+                    proposal.title,
+                    strategy_value,
+                    model_type_name
                 )
 
+                # Generate decision data
                 decision_data = await self._generate_vote_decision(proposal, strategy)
 
-                logfire.info(
-                    "Successfully generated vote decision",
-                    proposal_id=proposal.id,
-                    vote=decision_data.get("vote"),
-                    confidence=decision_data.get("confidence"),
-                    risk_level=decision_data.get("risk_level"),
+                # Extract decision values for logging
+                vote_value = decision_data.get("vote")
+                confidence_value = decision_data.get("confidence")
+                risk_level_value = decision_data.get("risk_level")
+                
+                logger.info(
+                    "Successfully generated vote decision, proposal_id=%s, vote=%s, confidence=%s, risk_level=%s",
+                    proposal.id,
+                    vote_value,
+                    confidence_value,
+                    risk_level_value
                 )
 
-                vote_decision = VoteDecision(
-                    proposal_id=proposal.id,
-                    vote=VoteType(decision_data["vote"]),
-                    confidence=decision_data["confidence"],
-                    reasoning=decision_data["reasoning"],
-                    risk_assessment=RiskLevel(decision_data["risk_level"]),
-                    strategy_used=strategy,
+                # Create vote decision object
+                vote_decision = self._create_vote_decision_from_data(
+                    proposal.id, decision_data, strategy
                 )
 
                 # Runtime assertion: validate output
@@ -343,19 +382,36 @@ class AIService:
                 assert (
                     vote_decision.proposal_id == proposal.id
                 ), "VoteDecision proposal_id mismatch"
+                assert hasattr(vote_decision, 'vote'), "VoteDecision must have vote attribute"
 
                 return vote_decision
 
         except Exception as e:
-            logfire.error(
-                "Failed to make vote decision",
-                proposal_id=proposal.id,
-                proposal_title=proposal.title,
-                strategy=strategy.value,
-                error=str(e),
-                error_type=type(e).__name__,
+            error_message = str(e)
+            error_type = type(e).__name__
+            
+            logger.error(
+                "Failed to make vote decision, proposal_id=%s, proposal_title=%s, strategy=%s, error=%s, error_type=%s",
+                proposal.id,
+                proposal.title,
+                strategy.value,
+                error_message,
+                error_type
             )
             raise e
+
+    def _create_vote_decision_from_data(
+        self, proposal_id: str, decision_data: Dict[str, Any], strategy: VotingStrategy
+    ) -> VoteDecision:
+        """Create VoteDecision object from decision data."""
+        return VoteDecision(
+            proposal_id=proposal_id,
+            vote=VoteType(decision_data["vote"]),
+            confidence=decision_data["confidence"],
+            reasoning=decision_data["reasoning"],
+            risk_assessment=RiskLevel(decision_data["risk_level"]),
+            strategy_used=strategy,
+        )
 
     async def _generate_vote_decision(
         self,
@@ -448,15 +504,28 @@ class AIService:
 
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
+        # Runtime assertion: validate input
+        assert prompt is not None, "Prompt cannot be None"
+        assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
+        
         try:
-            logfire.info(
-                "Calling AI model for vote decision", prompt_length=len(prompt)
+            prompt_length = len(prompt)
+            logger.info(
+                "Calling AI model for vote decision, prompt_length=%s",
+                prompt_length
             )
 
+            # Call AI model and process result
             result = await self.agent.run(prompt)
-            return self.response_processor.process_ai_result(result)
+            processed_result = self.response_processor.process_ai_result(result)
+            
+            # Runtime assertion: validate output
+            assert isinstance(processed_result, dict), "AI result must be a dictionary"
+            
+            return processed_result
         except Exception as e:
-            logfire.error("AI model call failed", error=str(e))
+            error_message = str(e)
+            logger.error("AI model call failed, error=%s", error_message)
             raise
 
     async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
@@ -467,32 +536,41 @@ class AIService:
             proposal, Proposal
         ), f"Expected Proposal object, got {type(proposal)}"
 
+        # Constants for default values
+        DEFAULT_CONFIDENCE_SCORE = 0.85
+        DEFAULT_RECOMMENDATION = ""
+        
         try:
-            with logfire.span("ai_proposal_summary", proposal_id=proposal.id):
-                logfire.info(
-                    "Starting proposal summarization",
-                    proposal_id=proposal.id,
-                    proposal_title=proposal.title,
-                    model_type=str(type(self.model)),
+            # Extract model type for logging
+            model_type_name = type(self.model).__name__
+            
+            with log_span(logger, "ai_proposal_summary", proposal_id=proposal.id):
+                logger.info(
+                    "Starting proposal summarization, proposal_id=%s, proposal_title=%s, model_type=%s",
+                    proposal.id,
+                    proposal.title,
+                    model_type_name
                 )
 
+                # Generate summary data
                 summary_data = await self._generate_proposal_summary(proposal)
 
-                logfire.info(
-                    "Successfully generated proposal summary",
-                    proposal_id=proposal.id,
-                    summary_length=len(summary_data.get("summary", "")),
-                    key_points_count=len(summary_data.get("key_points", [])),
+                # Extract metrics for logging
+                summary_text = summary_data.get("summary", "")
+                key_points_list = summary_data.get("key_points", [])
+                summary_length = len(summary_text)
+                key_points_count = len(key_points_list)
+                
+                logger.info(
+                    "Successfully generated proposal summary, proposal_id=%s, summary_length=%s, key_points_count=%s",
+                    proposal.id,
+                    summary_length,
+                    key_points_count
                 )
 
-                proposal_summary = ProposalSummary(
-                    proposal_id=proposal.id,
-                    title=proposal.title,
-                    summary=summary_data["summary"],
-                    key_points=summary_data["key_points"],
-                    risk_level=summary_data["risk_level"],
-                    recommendation=summary_data.get("recommendation", ""),
-                    confidence_score=0.85,  # Default confidence score
+                # Create proposal summary object
+                proposal_summary = self._create_proposal_summary_from_data(
+                    proposal, summary_data, DEFAULT_CONFIDENCE_SCORE, DEFAULT_RECOMMENDATION
                 )
 
                 # Runtime assertion: validate output
@@ -502,18 +580,37 @@ class AIService:
                 assert (
                     proposal_summary.proposal_id == proposal.id
                 ), "ProposalSummary proposal_id mismatch"
+                assert hasattr(proposal_summary, 'summary'), "ProposalSummary must have summary attribute"
 
                 return proposal_summary
 
         except Exception as e:
-            logfire.error(
-                "Failed to summarize proposal",
-                proposal_id=proposal.id,
-                proposal_title=proposal.title,
-                error=str(e),
-                error_type=type(e).__name__,
+            error_message = str(e)
+            error_type = type(e).__name__
+            
+            logger.error(
+                "Failed to summarize proposal, proposal_id=%s, proposal_title=%s, error=%s, error_type=%s",
+                proposal.id,
+                proposal.title,
+                error_message,
+                error_type
             )
             raise e
+
+    def _create_proposal_summary_from_data(
+        self, proposal: Proposal, summary_data: Dict[str, Any], 
+        default_confidence: float, default_recommendation: str
+    ) -> ProposalSummary:
+        """Create ProposalSummary object from summary data."""
+        return ProposalSummary(
+            proposal_id=proposal.id,
+            title=proposal.title,
+            summary=summary_data["summary"],
+            key_points=summary_data["key_points"],
+            risk_level=summary_data["risk_level"],
+            recommendation=summary_data.get("recommendation", default_recommendation),
+            confidence_score=default_confidence,
+        )
 
     async def summarize_multiple_proposals(
         self, proposals: List[Proposal]
@@ -527,40 +624,53 @@ class AIService:
         assert len(proposals) > 0, "Proposals list cannot be empty"
 
         try:
-            with logfire.span(
-                "ai_multiple_proposal_summaries", proposal_count=len(proposals)
+            # Extract context for logging
+            proposal_count = len(proposals)
+            model_type_name = type(self.model).__name__
+            
+            with log_span(
+                logger, "ai_multiple_proposal_summaries", proposal_count=proposal_count
             ):
-                logfire.info(
-                    "Starting multiple proposal summarization",
-                    proposal_count=len(proposals),
-                    model_type=str(type(self.model)),
+                logger.info(
+                    "Starting multiple proposal summarization, proposal_count=%s, model_type=%s",
+                    proposal_count,
+                    model_type_name
                 )
 
                 # Create tasks for concurrent processing
-                tasks = [self.summarize_proposal(proposal) for proposal in proposals]
-                summaries = await asyncio.gather(*tasks)
+                summary_tasks = self._create_summary_tasks(proposals)
+                summaries = await asyncio.gather(*summary_tasks)
 
-                logfire.info(
-                    "Successfully generated multiple proposal summaries",
-                    proposal_count=len(proposals),
-                    summary_count=len(summaries),
+                # Extract summary count for validation
+                summary_count = len(summaries)
+                
+                logger.info(
+                    "Successfully generated multiple proposal summaries, proposal_count=%s, summary_count=%s",
+                    proposal_count,
+                    summary_count
                 )
 
                 # Runtime assertion: validate output
-                assert len(summaries) == len(
-                    proposals
-                ), "Summary count must match proposal count"
+                assert summary_count == proposal_count, "Summary count must match proposal count"
+                assert all(isinstance(s, ProposalSummary) for s in summaries), "All items must be ProposalSummary objects"
 
                 return summaries
 
         except Exception as e:
-            logfire.error(
-                "Failed to summarize multiple proposals",
-                proposal_count=len(proposals),
-                error=str(e),
-                error_type=type(e).__name__,
+            error_message = str(e)
+            error_type = type(e).__name__
+            
+            logger.error(
+                "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s",
+                len(proposals),
+                error_message,
+                error_type
             )
             raise e
+
+    def _create_summary_tasks(self, proposals: List[Proposal]) -> List:
+        """Create async tasks for summarizing proposals."""
+        return [self.summarize_proposal(proposal) for proposal in proposals]
 
     async def _generate_proposal_summary(self, proposal: Proposal) -> Dict[str, Any]:
         """Generate summary data for a proposal."""
@@ -570,15 +680,28 @@ class AIService:
 
     async def _call_ai_model_for_summary(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt for summarization."""
+        # Runtime assertion: validate input
+        assert prompt is not None, "Prompt cannot be None"
+        assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
+        
         try:
-            logfire.info(
-                "Calling AI model for summarization", prompt_length=len(prompt)
+            prompt_length = len(prompt)
+            logger.info(
+                "Calling AI model for summarization, prompt_length=%s",
+                prompt_length
             )
 
+            # Call AI model and process result
             result = await self.agent.run(prompt)
-            return self.response_processor.process_ai_result(result)
+            processed_result = self.response_processor.process_ai_result(result)
+            
+            # Runtime assertion: validate output
+            assert isinstance(processed_result, dict), "AI result must be a dictionary"
+            
+            return processed_result
         except Exception as e:
-            logfire.error("AI model call failed for summarization", error=str(e))
+            error_message = str(e)
+            logger.error("AI model call failed for summarization, error=%s", error_message)
             raise
 
     def _build_summary_prompt(self, proposal: Proposal) -> str:

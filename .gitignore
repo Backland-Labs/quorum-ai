@@ -207,5 +207,5 @@ cython_debug/
 
 .fridayrules
 .cursor/
-.claude/
+.claude/settings.local.json
 ethereum_private_key.txt

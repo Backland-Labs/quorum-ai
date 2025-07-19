@@ -8,6 +8,9 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from models import UserPreferences, VotingStrategy
 
 
@@ -101,9 +104,13 @@ class TestUserPreferencesServiceLoadPreferences:
 
     @patch("builtins.open", side_effect=PermissionError("Permission denied"))
     @patch("os.path.exists")
-    async def test_load_preferences_permission_error(self, mock_exists, mock_file):
+    @patch("services.user_preferences_service.setup_pearl_logger")
+    async def test_load_preferences_permission_error(self, mock_logger, mock_exists, mock_file):
         """Test loading preferences with permission error returns defaults."""
         from services.user_preferences_service import UserPreferencesService
+        
+        # Mock the logger to avoid file creation issues
+        mock_logger.return_value = MagicMock()
         
         mock_exists.return_value = True
         service = UserPreferencesService("permission_denied.txt")
@@ -185,9 +192,13 @@ class TestUserPreferencesServiceSavePreferences:
     @patch("os.rename")
     @patch("tempfile.NamedTemporaryFile")
     @patch("os.makedirs")
-    async def test_save_preferences_creates_directory(self, mock_makedirs, mock_temp_file, mock_rename):
+    @patch("services.user_preferences_service.setup_pearl_logger")
+    async def test_save_preferences_creates_directory(self, mock_logger, mock_makedirs, mock_temp_file, mock_rename):
         """Test that save_preferences creates directory if it doesn't exist."""
         from services.user_preferences_service import UserPreferencesService
+        
+        # Mock the logger to avoid file creation issues
+        mock_logger.return_value = MagicMock()
         
         # Mock temporary file
         mock_temp_file_obj = MagicMock()
@@ -390,9 +401,13 @@ class TestUserPreferencesServiceErrorHandling:
 
     @patch("builtins.open", side_effect=OSError("Disk full"))
     @patch("os.path.exists")
-    async def test_load_preferences_os_error(self, mock_exists, mock_file):
+    @patch("services.user_preferences_service.setup_pearl_logger")
+    async def test_load_preferences_os_error(self, mock_logger, mock_exists, mock_file):
         """Test load_preferences handles OS errors gracefully."""
         from services.user_preferences_service import UserPreferencesService
+        
+        # Mock the logger to avoid file creation issues
+        mock_logger.return_value = MagicMock()
         
         mock_exists.return_value = True
         service = UserPreferencesService("error_preferences.txt")

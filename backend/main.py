@@ -6,10 +6,11 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import List, Optional, Any
 
-import logfire
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+from logging_config import setup_pearl_logger, log_span
 
 from config import settings
 from models import (
@@ -36,6 +37,8 @@ from services.user_preferences_service import UserPreferencesService
 from services.voting_service import VotingService
 from services.snapshot_service import SnapshotService
 
+# Initialize Pearl-compliant logger
+logger = setup_pearl_logger(__name__)
 
 # Global service instances
 ai_service: AIService
@@ -69,18 +72,12 @@ async def lifespan(_app: FastAPI):
     voting_service = VotingService()
     snapshot_service = SnapshotService()
 
-    # Configure Logfire if credentials are available
-    if settings.logfire_token:
-        logfire.configure(
-            token=settings.logfire_token, project_name=settings.logfire_project
-        )
-
-    logfire.info("Application started", version="0.1.0")
+    logger.info("Application started version=0.1.0")
 
     yield
 
     # Shutdown
-    logfire.info("Application shutdown")
+    logger.info("Application shutdown")
 
 
 # Create FastAPI app
@@ -105,7 +102,7 @@ app.add_middleware(
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     """Handle general exceptions."""
-    logfire.error("Unhandled exception", error=str(exc), path=str(request.url))
+    logger.error(f"Unhandled exception error={str(exc)} path={str(request.url)}")
     return JSONResponse(
         status_code=500, content={"error": "Internal server error", "message": str(exc)}
     )
@@ -132,7 +129,7 @@ async def get_proposals(
 ):
     """Get list of proposals from a Snapshot space with optional filtering."""
     try:
-        with logfire.span("get_proposals", space_id=space_id, state=state, limit=limit):
+        with log_span(logger, "get_proposals", space_id=space_id, state=state, limit=limit):
             # Use Snapshot service
             space_ids = [space_id]
             snapshot_state = state.value.lower() if state else None
@@ -146,7 +143,7 @@ async def get_proposals(
             )
 
     except Exception as e:
-        logfire.error("Failed to fetch proposals", error=str(e))
+        logger.error(f"Failed to fetch proposals error={str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposals: {str(e)}"
         )
@@ -156,7 +153,7 @@ async def get_proposals(
 async def get_proposal_by_id(proposal_id: str):
     """Get a specific proposal by ID."""
     try:
-        with logfire.span("get_proposal_by_id", proposal_id=proposal_id):
+        with log_span(logger, "get_proposal_by_id", proposal_id=proposal_id):
             proposal = await snapshot_service.get_proposal(proposal_id)
 
             if not proposal:
@@ -169,7 +166,7 @@ async def get_proposal_by_id(proposal_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error("Failed to fetch proposal", proposal_id=proposal_id, error=str(e))
+        logger.error(f"Failed to fetch proposal proposal_id={proposal_id} error={str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal: {str(e)}"
         )
@@ -182,8 +179,8 @@ async def summarize_proposals(request: SummarizeRequest):
     start_time = time.time()
 
     try:
-        with logfire.span(
-            "summarize_proposals", proposal_count=len(request.proposal_ids)
+        with log_span(
+            logger, "summarize_proposals", proposal_count=len(request.proposal_ids)
         ):
             # Fetch proposals
             proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
@@ -207,7 +204,7 @@ async def summarize_proposals(request: SummarizeRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error("Failed to summarize proposals", error=str(e))
+        logger.error(f"Failed to summarize proposals error={str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
         )
@@ -226,8 +223,8 @@ async def get_proposal_top_voters(
     _validate_proposal_id(proposal_id)
 
     try:
-        with logfire.span(
-            "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
+        with log_span(
+            logger, "get_proposal_top_voters", proposal_id=proposal_id, limit=limit
         ):
             # Fetch data using Snapshot
             votes = await snapshot_service.get_votes(proposal_id, first=limit)
@@ -242,15 +239,15 @@ async def get_proposal_top_voters(
 
             # Log if no voters found
             if not voters:
-                logfire.info("No voters found for proposal", proposal_id=proposal_id)
+                logger.info(f"No voters found for proposal proposal_id={proposal_id}")
 
             return JSONResponse(content=response_data.model_dump(), headers=headers)
 
     except HTTPException:
         raise
     except Exception as e:
-        logfire.error(
-            "Failed to fetch proposal top voters", proposal_id=proposal_id, error=str(e)
+        logger.error(
+            f"Failed to fetch proposal top voters proposal_id={proposal_id} error={str(e)}"
         )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"
@@ -278,27 +275,26 @@ async def agent_run(request: AgentRunRequest):
         HTTPException: If space_id is invalid or execution fails
     """
     try:
-        with logfire.span(
-            "agent_run", space_id=request.space_id, dry_run=request.dry_run
+        with log_span(
+            logger, "agent_run", space_id=request.space_id, dry_run=request.dry_run
         ):
             # Execute the agent run using the service
             response = await agent_run_service.execute_agent_run(request)
 
-            logfire.info(
-                "Agent run completed",
-                space_id=request.space_id,
-                proposals_analyzed=response.proposals_analyzed,
-                votes_cast=len(response.votes_cast),
-                execution_time=response.execution_time,
-                errors=response.errors,
-                dry_run=request.dry_run,
+            logger.info(
+                f"Agent run completed space_id={request.space_id} "
+                f"proposals_analyzed={response.proposals_analyzed} "
+                f"votes_cast={len(response.votes_cast)} "
+                f"execution_time={response.execution_time} "
+                f"errors={response.errors} "
+                f"dry_run={request.dry_run}"
             )
 
             return response
 
     except Exception as e:
-        logfire.error(
-            "Failed to execute agent run", space_id=request.space_id, error=str(e)
+        logger.error(
+            f"Failed to execute agent run space_id={request.space_id} error={str(e)}"
         )
         raise HTTPException(
             status_code=500, detail=f"Failed to execute agent run: {str(e)}"
@@ -403,7 +399,7 @@ def _build_proposal_filters(
 
 async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:
     """Fetch proposals for summarization using Snapshot."""
-    with logfire.span("fetch_proposals_for_summarization"):
+    with log_span(logger, "fetch_proposals_for_summarization"):
         proposals = []
 
         for proposal_id in proposal_ids:
@@ -414,16 +410,16 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
             except Exception:
                 pass  # Skip if Snapshot fails
 
-        logfire.info("Fetched proposals for summarization", count=len(proposals))
+        logger.info(f"Fetched proposals for summarization count={len(proposals)}")
         return proposals
 
 
 async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
     """Generate AI summaries for proposals."""
-    with logfire.span("generate_proposal_summaries"):
+    with log_span(logger, "generate_proposal_summaries"):
         summaries = await ai_service.summarize_multiple_proposals(proposals)
 
-        logfire.info("Generated proposal summaries", count=len(summaries))
+        logger.info(f"Generated proposal summaries count={len(summaries)}")
         return summaries
 
 
