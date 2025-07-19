@@ -1,4 +1,5 @@
 # CLAUDE.md
+**IMPORTANT**: NEVER delete the `specs/` directory or its contents. These specifications are essential project documentation that guide implementation decisions.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 This application is an AI agent that will run on the Olas Pearl App store. Importantly, this will be deployed in a container on a local machine. Consider this deployment environment when making update or changes to the code.
@@ -248,3 +249,18 @@ The application now includes a comprehensive autonomous voting system:
 - **Voting Strategies**: Balanced, conservative, and aggressive approaches
 - **Dry Run Mode**: Test decisions without executing actual votes
 - **Comprehensive Logging**: Full audit trail with Pearl-compliant local file logging
+
+## Project Specifications
+
+The `specs/` directory contains detailed technical specifications for various components of the application. These specifications provide in-depth implementation details and architectural decisions:
+
+- **[AI Service](specs/ai-service.md)**: AI integration, prompt engineering, and autonomous voting logic
+- **[API](specs/api.md)**: RESTful API design, endpoints, and data contracts
+- **[Authentication](specs/authentication.md)**: Authentication mechanisms and security considerations
+- **[Database](specs/database.md)**: Database schema, migrations, and data modeling
+- **[Deployment](specs/deployment.md)**: Deployment strategies and infrastructure requirements
+- **[Error Handling](specs/error-handling.md)**: Error handling patterns and best practices
+- **[Logging](specs/logging.md)**: Logging standards and Pearl-compliant implementation
+- **[Testing](specs/testing.md)**: Testing strategies, coverage requirements, and best practices
+
+**IMPORTANT**: NEVER delete the `specs/` directory or its contents. These specifications are essential project documentation that guide implementation decisions.
