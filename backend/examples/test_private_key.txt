@@ -1,0 +1,11 @@
+# Example test private key (DO NOT USE FOR REAL FUNDS!)
+# This is a randomly generated private key for testing only
+# Format: 64 hexadecimal characters (with or without 0x prefix)
+
+0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+
+# To generate a real test key:
+# 1. Use a wallet like MetaMask to create a new account
+# 2. Export the private key
+# 3. NEVER use an account with real funds for testing
+# 4. Replace the above example with your test private key

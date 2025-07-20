@@ -1,0 +1,7 @@
+{
+  "voting_strategy": "conservative",
+  "confidence_threshold": 0.85,
+  "max_proposals_per_run": 2,
+  "blacklisted_proposers": [],
+  "whitelisted_proposers": []
+}

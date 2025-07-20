@@ -1,0 +1,7 @@
+{
+  "voting_strategy": "aggressive",
+  "confidence_threshold": 0.6,
+  "max_proposals_per_run": 5,
+  "blacklisted_proposers": [],
+  "whitelisted_proposers": []
+}
