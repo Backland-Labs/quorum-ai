@@ -47,7 +47,7 @@ class WithdrawalService:
 
     async def list_invested_positions(self) -> List[InvestedPosition]:
         """List all invested positions from state."""
-        state = await self.state_manager.get_state()
+        state = await self.state_manager.load_state("withdrawal_service") or {}
         positions_data = state.get("invested_positions", [])
 
         positions = []
@@ -211,7 +211,7 @@ class WithdrawalService:
 
     async def _update_pending_withdrawal(self, withdrawal: WithdrawalTransaction):
         """Update state with pending withdrawal."""
-        state = await self.state_manager.get_state()
+        state = await self.state_manager.load_state("withdrawal_service") or {}
 
         pending_withdrawals = state.get("pending_withdrawals", [])
         pending_withdrawals.append(
@@ -228,11 +228,11 @@ class WithdrawalService:
         )
 
         state["pending_withdrawals"] = pending_withdrawals
-        await self.state_manager.update_state(state)
+        await self.state_manager.save_state("withdrawal_service", state)
 
     async def monitor_pending_withdrawals(self):
         """Monitor and update status of pending withdrawals."""
-        state = await self.state_manager.get_state()
+        state = await self.state_manager.load_state("withdrawal_service") or {}
         pending_withdrawals = state.get("pending_withdrawals", [])
 
         updated_withdrawals = []
@@ -261,7 +261,7 @@ class WithdrawalService:
             updated_withdrawals.append(withdrawal_data)
 
         state["pending_withdrawals"] = updated_withdrawals
-        await self.state_manager.update_state(state)
+        await self.state_manager.save_state("withdrawal_service", state)
 
     async def run_withdrawal_process(self) -> List[WithdrawalTransaction]:
         """Run the complete withdrawal process."""
@@ -306,7 +306,7 @@ class WithdrawalService:
 
     async def get_withdrawal_progress(self) -> Dict:
         """Get current withdrawal progress and status."""
-        state = await self.state_manager.get_state()
+        state = await self.state_manager.load_state("withdrawal_service") or {}
         progress = state.get("withdrawal_progress", {})
 
         if not progress:
@@ -340,10 +340,10 @@ class WithdrawalService:
         """Emergency stop for withdrawal process."""
         logger.warning("EMERGENCY STOP TRIGGERED")
 
-        state = await self.state_manager.get_state()
+        state = await self.state_manager.load_state("withdrawal_service") or {}
         state["emergency_stop"] = True
         state["withdrawal_active"] = False
 
-        await self.state_manager.update_state(state)
+        await self.state_manager.save_state("withdrawal_service", state)
 
         logger.info("Emergency stop completed - all withdrawals halted")
