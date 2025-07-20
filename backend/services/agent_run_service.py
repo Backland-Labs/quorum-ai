@@ -21,6 +21,7 @@ from services.voting_service import VotingService
 from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
+from services.state_transition_tracker import StateTransitionTracker, AgentState
 
 
 # Custom exceptions for better error handling
@@ -76,6 +77,13 @@ class AgentRunService:
         self.logger = AgentRunLogger()
         self.state_manager = state_manager
         
+        # Initialize state transition tracker with StateManager for persistence
+        self.state_tracker = StateTransitionTracker(
+            state_manager=self.state_manager,
+            enable_state_manager=True if state_manager else False,
+            enable_pearl_logging=True
+        )
+        
         # Track active operations for graceful shutdown
         self._active_run = False
         self._current_run_data = None
@@ -83,6 +91,12 @@ class AgentRunService:
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name='agent_run_service')
         self.pearl_logger.info("AgentRunService initialized with all dependencies")
+    
+    async def initialize(self):
+        """Initialize async components including state tracker."""
+        if self.state_manager:
+            await self.state_tracker.async_initialize()
+            self.pearl_logger.info("State tracker initialized with StateManager persistence")
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.
@@ -102,13 +116,18 @@ class AgentRunService:
         start_time = time.time()
         errors = []
         user_preferences_applied = False
+        run_id = f"run_{request.space_id}_{int(start_time)}"
+        
+        # Track state transition from IDLE to STARTING
+        self.state_tracker.transition(AgentState.STARTING, {"run_id": run_id, "spaces": [request.space_id]})
         
         # Mark run as active
         self._active_run = True
         self._current_run_data = {
             'space_id': request.space_id,
             'dry_run': request.dry_run,
-            'start_time': start_time
+            'start_time': start_time,
+            'run_id': run_id
         }
 
         with log_span(
@@ -116,6 +135,7 @@ class AgentRunService:
         ) as span_data:
             try:
                 # Step 1: Load user preferences
+                self.state_tracker.transition(AgentState.LOADING_PREFERENCES, {"run_id": run_id})
                 user_preferences, preferences_error = await self._load_user_preferences(
                     request
                 )
@@ -126,17 +146,28 @@ class AgentRunService:
                     user_preferences_applied = True
 
                 # Step 2: Fetch and process proposals
+                self.state_tracker.transition(AgentState.FETCHING_PROPOSALS, {
+                    "run_id": run_id,
+                    "spaces": [request.space_id]
+                })
                 proposals, filtered_proposals, fetch_errors = (
                     await self._fetch_and_process_proposals(
                         request.space_id, user_preferences
                     )
                 )
                 errors.extend(fetch_errors)
+                
+                # Track filtering state
+                self.state_tracker.transition(AgentState.FILTERING_PROPOSALS, {
+                    "run_id": run_id,
+                    "total_proposals": len(proposals),
+                    "filtered_proposals": len(filtered_proposals)
+                })
 
                 # Step 3: Make and execute voting decisions
                 vote_decisions, final_decisions, voting_errors = (
                     await self._process_voting_decisions(
-                        filtered_proposals, user_preferences, request.space_id, request.dry_run
+                        filtered_proposals, user_preferences, request.space_id, request.dry_run, run_id
                     )
                 )
                 errors.extend(voting_errors)
@@ -159,16 +190,37 @@ class AgentRunService:
                 # Log completion summary
                 self.logger.log_agent_completion(response)
                 
+                # Track completion
+                self.state_tracker.transition(AgentState.COMPLETED, {
+                    "run_id": run_id,
+                    "total_duration": execution_time,
+                    "proposals_analyzed": len(filtered_proposals),
+                    "votes_cast": len(final_decisions)
+                })
+                
                 # Mark run as complete
                 self._active_run = False
                 self._current_run_data = None
                 
+                # Transition back to IDLE
+                self.state_tracker.transition(AgentState.IDLE, {"run_id": run_id})
+                
                 return response
 
             except Exception as e:
+                # Track error state
+                self.state_tracker.transition(AgentState.ERROR, {
+                    "run_id": run_id,
+                    "error": str(e),
+                    "error_type": type(e).__name__
+                })
+                
                 # Mark run as complete even on error
                 self._active_run = False
                 self._current_run_data = None
+                
+                # Transition back to IDLE
+                self.state_tracker.transition(AgentState.IDLE, {"run_id": run_id})
                 
                 # Catch-all for unexpected errors
                 return self._handle_unexpected_error(
@@ -249,6 +301,7 @@ class AgentRunService:
         user_preferences: UserPreferences,
         space_id: str,
         dry_run: bool,
+        run_id: str,
     ) -> Tuple[List[VoteDecision], List[VoteDecision], List[str]]:
         """Make voting decisions and execute them.
 
@@ -273,7 +326,22 @@ class AgentRunService:
                 )
                 # Log individual proposal analysis
                 for proposal, decision in zip(proposals, vote_decisions):
+                    # Track analyzing state for each proposal
+                    self.state_tracker.transition(AgentState.ANALYZING_PROPOSAL, {
+                        "run_id": run_id,
+                        "proposal_id": proposal.id,
+                        "proposal_title": proposal.title
+                    })
+                    
                     self.logger.log_proposal_analysis(proposal, decision)
+                    
+                    # Track decision state
+                    self.state_tracker.transition(AgentState.DECIDING_VOTE, {
+                        "run_id": run_id,
+                        "proposal_id": proposal.id,
+                        "vote_decision": decision.vote.value if decision.vote else "skip",
+                        "confidence_score": decision.confidence
+                    })
             except Exception as e:
                 error_msg = f"Failed to make voting decisions: {str(e)}"
                 errors.append(error_msg)
@@ -283,7 +351,7 @@ class AgentRunService:
         # Execute votes
         if vote_decisions:
             try:
-                final_decisions = await self._execute_votes(vote_decisions, space_id, dry_run)
+                final_decisions = await self._execute_votes(vote_decisions, space_id, dry_run, run_id)
             except Exception as e:
                 error_msg = f"Failed to execute votes: {str(e)}"
                 errors.append(error_msg)
@@ -599,7 +667,7 @@ class AgentRunService:
                 ) from e
 
     async def _execute_votes(
-        self, decisions: List[VoteDecision], space_id: str, dry_run: bool
+        self, decisions: List[VoteDecision], space_id: str, dry_run: bool, run_id: str
     ) -> List[VoteDecision]:
         """Execute votes for the given decisions.
 
@@ -641,6 +709,7 @@ class AgentRunService:
 
                 if dry_run:
                     self.pearl_logger.info("Dry run mode - simulating vote execution")
+                    # In dry run, we skip actual submission but still return decisions
                     return decisions
 
                 # Execute actual votes
@@ -648,6 +717,13 @@ class AgentRunService:
 
                 for decision in decisions:
                     try:
+                        # Track vote submission state
+                        self.state_tracker.transition(AgentState.SUBMITTING_VOTE, {
+                            "run_id": run_id,
+                            "proposal_id": decision.proposal_id,
+                            "vote_type": decision.vote.value
+                        })
+                        
                         # Convert VoteType to Snapshot choice format
                         vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
 

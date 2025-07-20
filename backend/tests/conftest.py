@@ -1,5 +1,6 @@
 """Pytest configuration and fixtures for the test suite."""
 
+import os
 import sys
 from pathlib import Path
 
@@ -9,6 +10,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import pytest
 from datetime import datetime
 from unittest.mock import patch
+
+# Set test environment variables before imports
+os.environ.setdefault("OPENROUTER_API_KEY", "test-key")
 
 
 @pytest.fixture
