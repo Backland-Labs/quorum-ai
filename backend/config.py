@@ -58,13 +58,6 @@ class Settings(BaseSettings):
     max_top_voters_limit: int = MAX_TOP_VOTERS_LIMIT
     min_top_voters_limit: int = MIN_TOP_VOTERS_LIMIT
 
-    # Chain configuration
-    chain_name: str = "celo"
-    celo_rpc: str = Field(
-        default="",
-        alias="CELO_LEDGER_RPC",
-        description="Set from CELO_LEDGER_RPC env var",
-    )
 
     # Safe wallet configuration
     # the safe_addresses come from the pearl runtime env
