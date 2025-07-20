@@ -1,1 +1,0 @@
-If the specs/ folder tells how to build the bike then the stdlib tells you how to ride the bike. In this directory we place the equivelant of project rules. These may also reside in you CLAUDE/AGENT.md but this folder gives us the chance to build a large library or rules. It is best to build this library after you have corrected the agent on some task.
