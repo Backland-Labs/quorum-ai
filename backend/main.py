@@ -1,6 +1,7 @@
 """Main FastAPI application for Quorum AI backend."""
 
 import hashlib
+import os
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -17,17 +18,12 @@ from models import (
     AgentRunRequest,
     AgentRunResponse,
     Proposal,
-    ProposalFilters,
-    ProposalListResponse,
-    ProposalState,
-    SortCriteria,
-    SortOrder,
-    SummarizeRequest,
-    SummarizeResponse,
     ProposalTopVoters,
     ProposalVoter,
     Vote,
     VoteType,
+    SummarizeRequest,
+    SummarizeResponse,
 )
 from services.ai_service import AIService
 from services.agent_run_service import AgentRunService
@@ -38,6 +34,7 @@ from services.voting_service import VotingService
 from services.snapshot_service import SnapshotService
 from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
+from services.withdrawal_service import WithdrawalService
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -53,6 +50,7 @@ snapshot_service: SnapshotService
 state_manager: StateManager
 signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
+withdrawal_service: WithdrawalService
 
 
 @asynccontextmanager
@@ -69,7 +67,8 @@ async def lifespan(_app: FastAPI):
         snapshot_service, \
         state_manager, \
         signal_handler, \
-        shutdown_coordinator
+        shutdown_coordinator, \
+        withdrawal_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -82,6 +81,11 @@ async def lifespan(_app: FastAPI):
     user_preferences_service = UserPreferencesService(state_manager=state_manager)
     voting_service = VotingService()
     snapshot_service = SnapshotService()
+    withdrawal_service = WithdrawalService(
+        state_manager=state_manager,
+        safe_service=safe_service,
+        snapshot_service=snapshot_service
+    )
     
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -108,6 +112,17 @@ async def lifespan(_app: FastAPI):
             logger.error(f"Failed to recover state: {e}")
 
     logger.info("Application started version=0.1.0")
+    
+    # Check for withdrawal mode
+    if os.environ.get("WITHDRAWAL_MODE", "false").lower() == "true":
+        logger.warning("WITHDRAWAL MODE ACTIVE - Skipping normal voting operations")
+        try:
+            await withdrawal_service.run_withdrawal_process()
+        except Exception as e:
+            logger.error(f"Withdrawal process failed: {e}")
+    else:
+        # Normal operation mode - run agent if configured
+        logger.info("Normal operation mode - agent runs will proceed as configured")
 
     yield
 
@@ -158,18 +173,20 @@ async def general_exception_handler(request, exc):
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
+    withdrawal_mode = os.environ.get("WITHDRAWAL_MODE", "false").lower() == "true"
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "version": "0.1.0",
+        "withdrawal_mode": withdrawal_mode,
     }
 
 
 # Proposal endpoints
-@app.get("/proposals", response_model=ProposalListResponse)
+@app.get("/proposals")
 async def get_proposals(
     space_id: str = Query(..., description="Snapshot space ID to fetch proposals from"),
-    state: Optional[ProposalState] = Query(default=None),
+    state: Optional[str] = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     skip: int = Query(default=0, ge=0, description="Number of proposals to skip"),
 ):
@@ -178,15 +195,15 @@ async def get_proposals(
         with log_span(logger, "get_proposals", space_id=space_id, state=state, limit=limit):
             # Use Snapshot service
             space_ids = [space_id]
-            snapshot_state = state.value.lower() if state else None
+            snapshot_state = state.lower() if state else None
             proposals = await snapshot_service.get_proposals(
                 space_ids=space_ids, state=snapshot_state, first=limit, skip=skip
             )
 
-            return ProposalListResponse(
-                proposals=proposals,
-                next_cursor=None,  # Use skip-based pagination instead
-            )
+            return {
+                "proposals": [p.model_dump() if hasattr(p, 'model_dump') else p for p in proposals],
+                "next_cursor": None,  # Use skip-based pagination instead
+            }
 
     except Exception as e:
         logger.error(f"Failed to fetch proposals error={str(e)}")
@@ -320,6 +337,13 @@ async def agent_run(request: AgentRunRequest):
     Raises:
         HTTPException: If space_id is invalid or execution fails
     """
+    # Check if withdrawal mode is active
+    if os.environ.get("WITHDRAWAL_MODE", "false").lower() == "true":
+        raise HTTPException(
+            status_code=503,
+            detail="Service unavailable: System is in withdrawal mode"
+        )
+    
     try:
         with log_span(
             logger, "agent_run", space_id=request.space_id, dry_run=request.dry_run
