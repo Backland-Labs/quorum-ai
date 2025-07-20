@@ -1,1 +1,0 @@
-export OPENROUTER_API_KEY=test_key

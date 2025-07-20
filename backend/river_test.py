@@ -27,15 +27,11 @@ def parse_continue(result_dict):
     # Default to False if no explicit continue flag found
     return False
 
-# Run initial command
-linear_issue = input("Enter the initial prompt for Claude Code: ")
-print(run_claude_code(f"/make_plan {linear_issue}"))
-
 # Loop until continue=false
 continue_flag = True
 while continue_flag:
     print("Starting Ralph command...")
-    output = run_claude_code("/ralph")
+    output = run_claude_code("return 'True'. Do not return anything else.")
     print(output)
     try:
         output_dict = json.loads(output)
