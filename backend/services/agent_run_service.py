@@ -4,6 +4,7 @@ import time
 from typing import List, Optional, Tuple
 import logging
 
+from datetime import datetime
 from logging_config import setup_pearl_logger, log_span
 
 from models import (
@@ -62,13 +63,22 @@ class AgentRunService:
     4. Execute votes (or simulate in dry run mode)
     """
 
-    def __init__(self) -> None:
-        """Initialize AgentRunService with required dependencies."""
+    def __init__(self, state_manager=None) -> None:
+        """Initialize AgentRunService with required dependencies.
+        
+        Args:
+            state_manager: Optional StateManager instance for state persistence
+        """
         self.snapshot_service = SnapshotService()
         self.ai_service = AIService()
         self.voting_service = VotingService()
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger()
+        self.state_manager = state_manager
+        
+        # Track active operations for graceful shutdown
+        self._active_run = False
+        self._current_run_data = None
         
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name='agent_run_service')
@@ -92,6 +102,14 @@ class AgentRunService:
         start_time = time.time()
         errors = []
         user_preferences_applied = False
+        
+        # Mark run as active
+        self._active_run = True
+        self._current_run_data = {
+            'space_id': request.space_id,
+            'dry_run': request.dry_run,
+            'start_time': start_time
+        }
 
         with log_span(
             self.pearl_logger, "agent_run_execution", space_id=request.space_id, dry_run=request.dry_run
@@ -134,11 +152,24 @@ class AgentRunService:
                     errors,
                 )
 
+                # Save checkpoint state if state manager available
+                if self.state_manager:
+                    await self._save_checkpoint_state(response)
+                
                 # Log completion summary
                 self.logger.log_agent_completion(response)
+                
+                # Mark run as complete
+                self._active_run = False
+                self._current_run_data = None
+                
                 return response
 
             except Exception as e:
+                # Mark run as complete even on error
+                self._active_run = False
+                self._current_run_data = None
+                
                 # Catch-all for unexpected errors
                 return self._handle_unexpected_error(
                     e, request.space_id, start_time, user_preferences_applied
@@ -676,3 +707,90 @@ class AgentRunService:
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """Async context manager exit with proper resource cleanup."""
         await self.close()
+    
+    async def shutdown(self) -> None:
+        """Implement shutdown method required by ShutdownService protocol.
+        
+        This method is called during graceful shutdown to clean up resources
+        and save any pending state.
+        """
+        self.pearl_logger.info("Agent run service shutdown initiated")
+        
+        # If there's an active run, try to save its state
+        if self._active_run and self._current_run_data:
+            try:
+                await self._save_shutdown_state()
+            except Exception as e:
+                self.pearl_logger.error(f"Failed to save shutdown state: {e}")
+        
+        # Close resources
+        await self.close()
+        
+        self.pearl_logger.info("Agent run service shutdown completed")
+    
+    async def save_service_state(self) -> None:
+        """Save current service state for recovery."""
+        if not self.state_manager:
+            return
+            
+        state_data = {
+            'active_run': self._active_run,
+            'current_run_data': self._current_run_data,
+            'last_checkpoint': datetime.utcnow().isoformat()
+        }
+        
+        await self.state_manager.save_state(
+            'agent_run_service',
+            state_data,
+            sensitive=False
+        )
+    
+    async def stop(self) -> None:
+        """Stop the service gracefully."""
+        self._active_run = False
+        await self.save_state()
+    
+    async def _save_checkpoint_state(self, response: AgentRunResponse) -> None:
+        """Save checkpoint state during agent run.
+        
+        Args:
+            response: The current agent run response
+        """
+        if not self.state_manager:
+            return
+            
+        checkpoint_data = {
+            'space_id': response.space_id,
+            'proposals_analyzed': response.proposals_analyzed,
+            'votes_cast': len(response.votes_cast),
+            'execution_time': response.execution_time,
+            'timestamp': datetime.utcnow().isoformat(),
+            'errors': response.errors
+        }
+        
+        await self.state_manager.save_state(
+            f'agent_checkpoint_{response.space_id}',
+            checkpoint_data,
+            sensitive=False
+        )
+        
+        self.pearl_logger.info(f"Saved checkpoint state for space {response.space_id}")
+    
+    async def _save_shutdown_state(self) -> None:
+        """Save state during shutdown for recovery."""
+        if not self.state_manager or not self._current_run_data:
+            return
+            
+        shutdown_data = {
+            **self._current_run_data,
+            'shutdown_time': datetime.utcnow().isoformat(),
+            'reason': 'graceful_shutdown'
+        }
+        
+        await self.state_manager.save_state(
+            'agent_shutdown_state',
+            shutdown_data,
+            sensitive=False
+        )
+        
+        self.pearl_logger.info("Saved shutdown state for recovery")

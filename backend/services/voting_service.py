@@ -2,7 +2,7 @@
 
 import time
 import logging
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from web3 import Web3
 from eth_account import Account
 from eth_account.messages import encode_typed_data
@@ -52,6 +52,9 @@ class VotingService:
         self.logger.info(
             f"VotingService initialized (eoa_address={self.account.address})"
         )
+        
+        # Track active votes for graceful shutdown
+        self._active_votes = []
 
     def create_snapshot_vote_message(
         self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
@@ -387,3 +390,40 @@ class VotingService:
             )
 
             return result
+    
+    async def shutdown(self) -> None:
+        """Implement shutdown method required by ShutdownService protocol."""
+        self.logger.info("Voting service shutdown initiated")
+        
+        # Check for any active votes
+        if self._active_votes:
+            self.logger.warning(f"Shutdown with {len(self._active_votes)} active votes")
+            # Clear active votes as they would have completed or failed by now
+            self._active_votes.clear()
+        
+        self.logger.info("Voting service shutdown completed")
+    
+    async def save_service_state(self) -> None:
+        """Save current service state for recovery."""
+        # Voting service doesn't maintain persistent state
+        # Votes are atomic operations that complete or fail
+        pass
+    
+    async def stop(self) -> None:
+        """Stop the service gracefully."""
+        # Clear any tracking of active votes
+        self._active_votes.clear()
+    
+    async def get_active_votes(self) -> List[Dict[str, Any]]:
+        """Get list of active votes for shutdown coordination."""
+        return self._active_votes.copy()
+    
+    async def complete_vote(self, vote_id: str) -> None:
+        """Complete a vote (not applicable for this implementation)."""
+        # Votes are atomic and complete immediately
+        pass
+    
+    async def cancel_vote(self, vote_id: str) -> None:
+        """Cancel a vote (not applicable for this implementation)."""
+        # Votes cannot be cancelled once submitted
+        pass

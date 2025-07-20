@@ -2033,3 +2033,2035 @@
 [2025-07-18 08:25:53,713] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-18 08:25:54,187] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-18 08:25:54,887] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:32:12,196] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:32:12,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:32:12,674] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,490] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,673] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,912] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:33:25,912] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,913] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:33:25,913] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,959] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:25,961] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,062] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,063] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:33:26,063] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:33:26,063] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:33:26,064] [INFO] [agent] Agent service stopped
+[2025-07-19 23:33:26,064] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:33:26,064] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:33:26,064] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:33:26,065] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,066] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:33:26,066] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:33:26,066] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:33:26,066] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:33:26,067] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:33:26,067] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:33:26,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,070] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-4/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:33:26,071] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,072] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:33:26,072] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:33:26,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,391] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,394] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:33:26,394] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:33:26,395] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:33:26,395] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:33:26,395] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:33:26,396] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:33:26,397] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:33:26,399] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,404] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:33:26,405] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:34:52,408] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,588] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,820] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,826] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:34:52,826] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,826] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:34:52,827] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,828] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,828] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,931] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,932] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:34:52,932] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:34:52,932] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:34:52,932] [INFO] [agent] Agent service stopped
+[2025-07-19 23:34:52,932] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:34:52,932] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:34:52,933] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:34:52,934] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,934] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:34:52,934] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:34:52,935] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:34:52,935] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:34:52,935] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:34:52,935] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:34:52,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,938] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-5/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:34:52,939] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:52,939] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:34:52,940] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:34:52,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:53,044] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:53,046] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:34:53,046] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:34:53,046] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:34:53,047] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:34:53,047] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:34:53,047] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:34:53,048] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:34:53,051] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:53,056] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:34:53,056] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:36:05,568] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,749] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,978] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,985] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:36:05,985] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,985] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:36:05,986] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,987] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:05,987] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,090] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,091] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:36:06,091] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:36:06,156] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,156] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:36:06,164] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,165] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-6/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:36:06,165] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,166] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:36:06,166] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:36:06,166] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,269] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,270] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:36:06,270] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:36:06,283] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,285] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:06,285] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:36:45,901] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,082] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,328] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,334] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,335] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:36:46,335] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,336] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:36:46,336] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,337] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,338] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,441] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,442] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:36:46,442] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:36:46,442] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:36:46,442] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:36:46,442] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:36:46,442] [INFO] [agent] Agent service stopped
+[2025-07-19 23:36:46,442] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-19 23:36:46,442] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:36:46,442] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:36:46,442] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:36:46,443] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:36:46,443] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:36:46,443] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:36:46,443] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:36:46,443] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:36:46,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,445] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:36:46,445] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:36:46,445] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:36:46,445] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:36:46,445] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:36:46,445] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:36:46,445] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:36:46,445] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:36:46,446] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:36:46,446] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:36:46,446] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:36:46,446] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:36:46,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,448] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-7/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:36:46,449] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,450] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:36:46,450] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:36:46,451] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,555] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,556] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:36:46,556] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:36:46,556] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:36:46,556] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:36:46,557] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:36:46,557] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-19 23:36:46,557] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:36:46,557] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:36:46,557] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:36:46,557] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:36:46,557] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:36:46,558] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:36:46,558] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:36:46,558] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:36:46,558] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-19 23:36:46,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:36:46,564] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:37:15,712] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:15,897] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,134] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,278] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,554] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,918] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,928] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,931] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:37:16,932] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,932] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:37:16,933] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,934] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:16,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,041] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:17,041] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:37:17,041] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:17,041] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:17,041] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:37:17,041] [INFO] [agent] Agent service stopped
+[2025-07-19 23:37:17,041] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-19 23:37:17,041] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:17,042] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:17,042] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:17,042] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:37:17,042] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:37:17,043] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:17,043] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:37:17,043] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-19 23:37:17,045] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,046] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:17,046] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:17,046] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:17,046] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:17,046] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:37:17,047] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:37:17,047] [INFO] [agent] Completed handle_active_votes successfully in 0.001s
+[2025-07-19 23:37:17,047] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:17,047] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:37:17,048] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:17,048] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:37:17,048] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-19 23:37:17,049] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,051] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-8/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:37:17,053] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,054] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:37:17,054] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:37:17,055] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,163] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:17,164] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:37:17,164] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:17,164] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:17,164] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:37:17,164] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-19 23:37:17,164] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:37:17,165] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:17,165] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:17,165] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:17,165] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:37:17,165] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:37:17,166] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:17,166] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-07-19 23:37:17,166] [INFO] [agent] Completed coordinated_shutdown successfully in 0.003s
+[2025-07-19 23:37:17,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,174] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:17,174] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:37:25,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,058] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,258] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,630] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,699] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,699] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,955] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,956] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,956] [INFO] [agent] ActivityService initialized (persistent_file=/tmp/olas/activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,959] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,959] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,963] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,963] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,964] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,964] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,965] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,966] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,966] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,966] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,966] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,967] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,967] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,967] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,967] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,968] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,968] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,971] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-07-19 23:37:26,971] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,974] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:26,975] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-07-19 23:37:26,975] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:26,975] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-19 23:37:27,001] [INFO] [agent] Starting agent_run (space_id=arbitrumfoundation.eth, dry_run=False)
+[2025-07-19 23:37:27,001] [INFO] [agent] Agent run completed space_id=arbitrumfoundation.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,001] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,003] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=True)
+[2025-07-19 23:37:27,003] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-07-19 23:37:27,003] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,009] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,009] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,009] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,011] [INFO] [agent] Starting agent_run (space_id=arbitrumfoundation.eth, dry_run=False)
+[2025-07-19 23:37:27,011] [INFO] [agent] Agent run completed space_id=arbitrumfoundation.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,011] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,012] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,012] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=1 votes_cast=0 execution_time=5.0 errors=['Failed to connect to voting service', 'Proposal analysis timeout'] dry_run=False
+[2025-07-19 23:37:27,012] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,014] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,014] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=0 votes_cast=0 execution_time=1.2 errors=[] dry_run=False
+[2025-07-19 23:37:27,014] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,015] [INFO] [agent] Starting agent_run (space_id=arbitrumfoundation.eth, dry_run=False)
+[2025-07-19 23:37:27,015] [INFO] [agent] Agent run completed space_id=arbitrumfoundation.eth proposals_analyzed=3 votes_cast=1 execution_time=8.5 errors=[] dry_run=False
+[2025-07-19 23:37:27,015] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,017] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=True)
+[2025-07-19 23:37:27,017] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=2 votes_cast=1 execution_time=3.2 errors=[] dry_run=True
+[2025-07-19 23:37:27,017] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,018] [INFO] [agent] Starting agent_run (space_id=empty-space.eth, dry_run=False)
+[2025-07-19 23:37:27,018] [INFO] [agent] Agent run completed space_id=empty-space.eth proposals_analyzed=0 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,018] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,019] [INFO] [agent] Starting agent_run (space_id=mixed-results.eth, dry_run=False)
+[2025-07-19 23:37:27,020] [INFO] [agent] Agent run completed space_id=mixed-results.eth proposals_analyzed=3 votes_cast=1 execution_time=15.0 errors=['Failed to analyze proposal 2', 'Voting service timeout for proposal 3'] dry_run=False
+[2025-07-19 23:37:27,020] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,021] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,021] [ERROR] [agent] Failed agent_run after 0.000s: Service initialization failed
+[2025-07-19 23:37:27,021] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Service initialization failed
+[2025-07-19 23:37:27,022] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,023] [ERROR] [agent] Failed agent_run after 0.000s: Execution failed
+[2025-07-19 23:37:27,023] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Execution failed
+[2025-07-19 23:37:27,024] [INFO] [agent] Starting agent_run (space_id=slow-space.eth, dry_run=False)
+[2025-07-19 23:37:27,024] [ERROR] [agent] Failed agent_run after 0.000s: Operation timed out
+[2025-07-19 23:37:27,024] [ERROR] [agent] Failed to execute agent run space_id=slow-space.eth error=Operation timed out
+[2025-07-19 23:37:27,026] [INFO] [agent] Starting agent_run (space_id=invalid-space-id, dry_run=False)
+[2025-07-19 23:37:27,026] [ERROR] [agent] Failed agent_run after 0.000s: Invalid space ID
+[2025-07-19 23:37:27,026] [ERROR] [agent] Failed to execute agent run space_id=invalid-space-id error=Invalid space ID
+[2025-07-19 23:37:27,027] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,028] [ERROR] [agent] Failed agent_run after 0.000s: Network unreachable
+[2025-07-19 23:37:27,028] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Network unreachable
+[2025-07-19 23:37:27,029] [INFO] [agent] Starting agent_run (space_id=integration-test.eth, dry_run=False)
+[2025-07-19 23:37:27,029] [INFO] [agent] Agent run completed space_id=integration-test.eth proposals_analyzed=2 votes_cast=0 execution_time=6.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,029] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,030] [INFO] [agent] Starting agent_run (space_id=dependency-test.eth, dry_run=False)
+[2025-07-19 23:37:27,030] [INFO] [agent] Agent run completed space_id=dependency-test.eth proposals_analyzed=0 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,030] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,161] [INFO] [agent] Starting agent_run (space_id=async-test.eth, dry_run=False)
+[2025-07-19 23:37:27,161] [INFO] [agent] Agent run completed space_id=async-test.eth proposals_analyzed=1 votes_cast=0 execution_time=2.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,161] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,162] [INFO] [agent] Starting agent_run (space_id=concurrent-test.eth, dry_run=True)
+[2025-07-19 23:37:27,162] [INFO] [agent] Agent run completed space_id=concurrent-test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-07-19 23:37:27,162] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,162] [INFO] [agent] Starting agent_run (space_id=concurrent-test.eth, dry_run=True)
+[2025-07-19 23:37:27,162] [INFO] [agent] Agent run completed space_id=concurrent-test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-07-19 23:37:27,162] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,162] [INFO] [agent] Starting agent_run (space_id=concurrent-test.eth, dry_run=True)
+[2025-07-19 23:37:27,163] [INFO] [agent] Agent run completed space_id=concurrent-test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-07-19 23:37:27,163] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,169] [INFO] [agent] Starting agent_run (space_id=test.eth, dry_run=False)
+[2025-07-19 23:37:27,169] [INFO] [agent] Agent run completed space_id=test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-07-19 23:37:27,169] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,294] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:27,294] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:27,294] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:27,294] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:27,294] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:27,294] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:27,294] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:27,294] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:27,294] [INFO] [agent] Starting calculate_proposal_score (proposal_id=urgent)
+[2025-07-19 23:37:27,295] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:27,295] [INFO] [agent] Starting calculate_proposal_score (proposal_id=less_urgent)
+[2025-07-19 23:37:27,295] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:27,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,323] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,324] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,324] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,324] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,324] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,325] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,325] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,325] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-07-19 23:37:27,325] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-07-19 23:37:27,325] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=2)
+[2025-07-19 23:37:27,325] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=2)
+[2025-07-19 23:37:27,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,326] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,326] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-07-19 23:37:27,326] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-07-19 23:37:27,326] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-07-19 23:37:27,326] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-07-19 23:37:27,328] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,328] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,328] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,328] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-07-19 23:37:27,328] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-07-19 23:37:27,328] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=5, error=Service error)
+[2025-07-19 23:37:27,328] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: Service error
+[2025-07-19 23:37:27,329] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,329] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,329] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,329] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,329] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,329] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-07-19 23:37:27,329] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-07-19 23:37:27,330] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,330] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,330] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,330] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-07-19 23:37:27,330] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-19 23:37:27,330] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-19 23:37:27,330] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-07-19 23:37:27,330] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-19 23:37:27,331] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,331] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,331] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,331] [INFO] [agent] Starting make_voting_decisions (proposal_count=2)
+[2025-07-19 23:37:27,331] [INFO] [agent] Making voting decisions (proposal_count=2, voting_strategy=aggressive, confidence_threshold=0.6)
+[2025-07-19 23:37:27,331] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-19 23:37:27,331] [INFO] [agent] Vote decision accepted (proposal_id=prop-2, vote=AGAINST, confidence=0.7)
+[2025-07-19 23:37:27,331] [INFO] [agent] Voting decisions completed (total_proposals=2, accepted_decisions=2)
+[2025-07-19 23:37:27,331] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-19 23:37:27,332] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,332] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,332] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,332] [INFO] [agent] Starting make_voting_decisions (proposal_count=2)
+[2025-07-19 23:37:27,332] [INFO] [agent] Making voting decisions (proposal_count=2, voting_strategy=balanced, confidence_threshold=0.8)
+[2025-07-19 23:37:27,332] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.9)
+[2025-07-19 23:37:27,332] [INFO] [agent] Vote decision rejected due to low confidence (proposal_id=prop-2, confidence=0.6, threshold=0.8)
+[2025-07-19 23:37:27,332] [INFO] [agent] Voting decisions completed (total_proposals=2, accepted_decisions=1)
+[2025-07-19 23:37:27,332] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-19 23:37:27,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,333] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,333] [INFO] [agent] Starting make_voting_decisions (proposal_count=2)
+[2025-07-19 23:37:27,333] [INFO] [agent] Making voting decisions (proposal_count=2, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-19 23:37:27,333] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-19 23:37:27,333] [INFO] [agent] Vote decision accepted (proposal_id=prop-2, vote=AGAINST, confidence=0.8)
+[2025-07-19 23:37:27,333] [INFO] [agent] Voting decisions completed (total_proposals=2, accepted_decisions=2)
+[2025-07-19 23:37:27,333] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-19 23:37:27,334] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,334] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,334] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,335] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,335] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,335] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,335] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-19 23:37:27,335] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-19 23:37:27,335] [INFO] [agent] Dry run mode - simulating vote execution
+[2025-07-19 23:37:27,335] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-19 23:37:27,336] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,336] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,336] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,336] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-19 23:37:27,336] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-19 23:37:27,336] [INFO] [agent] Vote executed successfully (proposal_id=prop-1, vote_choice=VoteType.FOR, confidence=0.8)
+[2025-07-19 23:37:27,336] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-07-19 23:37:27,336] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-19 23:37:27,337] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,337] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,337] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,339] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,339] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,339] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,339] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,339] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,339] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-07-19 23:37:27,339] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-07-19 23:37:27,339] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.000s
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposals fetched and filtered (run_id=test-space_1752989847, total_proposals=1, filtered_proposals=1, proposal_ids=prop-1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-19 23:37:27,339] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-19 23:37:27,339] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-19 23:37:27,339] [INFO] [agent] Proposal analyzed (run_id=test-space_1752989847, proposal_id=prop-1, proposal_title=Test Proposal 1, vote_choice=VoteType.FOR, confidence=0.8, risk_level=LOW)
+[2025-07-19 23:37:27,339] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-19 23:37:27,339] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=False)
+[2025-07-19 23:37:27,339] [INFO] [agent] Vote executed successfully (run_id=test-space_1752989847, proposal_id=prop-1, vote_choice=VoteType.FOR, confidence=0.8)
+[2025-07-19 23:37:27,339] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-07-19 23:37:27,339] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-19 23:37:27,340] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=1, votes_cast=1, successful_votes=1, failed_votes=0, execution_time=0.001, errors=[])
+[2025-07-19 23:37:27,340] [INFO] [agent] Completed agent_run_execution successfully in 0.001s
+[2025-07-19 23:37:27,341] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,341] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,341] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=True)
+[2025-07-19 23:37:27,341] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=True, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,341] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,341] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-07-19 23:37:27,341] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-07-19 23:37:27,341] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.000s
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposals fetched and filtered (run_id=test-space_1752989847, total_proposals=1, filtered_proposals=1, proposal_ids=prop-1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-07-19 23:37:27,341] [INFO] [agent] Vote decision accepted (proposal_id=prop-1, vote=FOR, confidence=0.8)
+[2025-07-19 23:37:27,341] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed make_voting_decisions successfully in 0.000s
+[2025-07-19 23:37:27,341] [INFO] [agent] Proposal analyzed (run_id=test-space_1752989847, proposal_id=prop-1, proposal_title=Test Proposal 1, vote_choice=VoteType.FOR, confidence=0.8, risk_level=LOW)
+[2025-07-19 23:37:27,341] [INFO] [agent] Starting execute_votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-19 23:37:27,341] [INFO] [agent] Executing votes (space_id=test-space, decision_count=1, dry_run=True)
+[2025-07-19 23:37:27,341] [INFO] [agent] Dry run mode - simulating vote execution
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-19 23:37:27,341] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=1, votes_cast=1, successful_votes=1, failed_votes=0, execution_time=0.001, errors=[])
+[2025-07-19 23:37:27,341] [INFO] [agent] Completed agent_run_execution successfully in 0.001s
+[2025-07-19 23:37:27,342] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,342] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,342] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,342] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,342] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,342] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,342] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,343] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-07-19 23:37:27,343] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-07-19 23:37:27,343] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=[])
+[2025-07-19 23:37:27,343] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,343] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,343] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,343] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,344] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,345] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,345] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,345] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,347] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,347] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,347] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,347] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,347] [ERROR] [agent] Agent run load_preferences failed (operation=load_preferences, error=object MagicMock can't be used in 'await' expression, error_type=TypeError, space_id=test-space)
+[2025-07-19 23:37:27,347] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,347] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,347] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,347] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=3, error=object MagicMock can't be used in 'await' expression)
+[2025-07-19 23:37:27,347] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression
+[2025-07-19 23:37:27,347] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test-space_1752989847, operation=fetch_proposals, error=Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression, error_type=ProposalFetchError, space_id=test-space)
+[2025-07-19 23:37:27,347] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=["Failed to load user preferences: object MagicMock can't be used in 'await' expression", "Failed to fetch active proposals: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression"])
+[2025-07-19 23:37:27,347] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,373] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,373] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,373] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,373] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,373] [ERROR] [agent] Agent run load_preferences failed (operation=load_preferences, error=object MagicMock can't be used in 'await' expression, error_type=TypeError, space_id=test-space)
+[2025-07-19 23:37:27,373] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,373] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,373] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,374] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=3, error=object MagicMock can't be used in 'await' expression)
+[2025-07-19 23:37:27,374] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression
+[2025-07-19 23:37:27,374] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test-space_1752989847, operation=fetch_proposals, error=Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression, error_type=ProposalFetchError, space_id=test-space)
+[2025-07-19 23:37:27,374] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=["Failed to load user preferences: object MagicMock can't be used in 'await' expression", "Failed to fetch active proposals: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression"])
+[2025-07-19 23:37:27,374] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,391] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,391] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,391] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,391] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,391] [ERROR] [agent] Agent run load_preferences failed (operation=load_preferences, error=object MagicMock can't be used in 'await' expression, error_type=TypeError, space_id=test-space)
+[2025-07-19 23:37:27,391] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,391] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,391] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,391] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=3, error=object MagicMock can't be used in 'await' expression)
+[2025-07-19 23:37:27,391] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression
+[2025-07-19 23:37:27,391] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test-space_1752989847, operation=fetch_proposals, error=Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression, error_type=ProposalFetchError, space_id=test-space)
+[2025-07-19 23:37:27,391] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=["Failed to load user preferences: object MagicMock can't be used in 'await' expression", "Failed to fetch active proposals: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression"])
+[2025-07-19 23:37:27,391] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,409] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,409] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,409] [ERROR] [agent] Agent run load_preferences failed (operation=load_preferences, error=object MagicMock can't be used in 'await' expression, error_type=TypeError, space_id=test-space)
+[2025-07-19 23:37:27,409] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,409] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,409] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,409] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=3, error=object MagicMock can't be used in 'await' expression)
+[2025-07-19 23:37:27,409] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression
+[2025-07-19 23:37:27,409] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test-space_1752989847, operation=fetch_proposals, error=Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression, error_type=ProposalFetchError, space_id=test-space)
+[2025-07-19 23:37:27,409] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=["Failed to load user preferences: object MagicMock can't be used in 'await' expression", "Failed to fetch active proposals: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression"])
+[2025-07-19 23:37:27,409] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,427] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,427] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,427] [ERROR] [agent] Agent run load_preferences failed (operation=load_preferences, error=object MagicMock can't be used in 'await' expression, error_type=TypeError, space_id=test-space)
+[2025-07-19 23:37:27,427] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,427] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,427] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,427] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=3, error=object MagicMock can't be used in 'await' expression)
+[2025-07-19 23:37:27,428] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression
+[2025-07-19 23:37:27,428] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test-space_1752989847, operation=fetch_proposals, error=Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression, error_type=ProposalFetchError, space_id=test-space)
+[2025-07-19 23:37:27,428] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=["Failed to load user preferences: object MagicMock can't be used in 'await' expression", "Failed to fetch active proposals: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression"])
+[2025-07-19 23:37:27,428] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,432] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-19 23:37:27,432] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-19 23:37:27,432] [ERROR] [agent] Agent run load_preferences failed (operation=load_preferences, error=object MagicMock can't be used in 'await' expression, error_type=TypeError, space_id=test-space)
+[2025-07-19 23:37:27,432] [INFO] [agent] Agent run started (run_id=test-space_1752989847, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-19 23:37:27,432] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,432] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-07-19 23:37:27,432] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=3, error=object MagicMock can't be used in 'await' expression)
+[2025-07-19 23:37:27,432] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression
+[2025-07-19 23:37:27,432] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test-space_1752989847, operation=fetch_proposals, error=Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression, error_type=ProposalFetchError, space_id=test-space)
+[2025-07-19 23:37:27,432] [INFO] [agent] Agent run completed (run_id=test-space_1752989847, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=["Failed to load user preferences: object MagicMock can't be used in 'await' expression", "Failed to fetch active proposals: Failed to fetch active proposals from test-space: object MagicMock can't be used in 'await' expression"])
+[2025-07-19 23:37:27,432] [INFO] [agent] Completed agent_run_execution successfully in 0.000s
+[2025-07-19 23:37:27,436] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,436] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,448] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,448] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,448] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,449] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,449] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,449] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,449] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,449] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,456] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,456] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,457] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,457] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,457] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,457] [INFO] [agent] Starting vote decision making, proposal_id=test-proposal, proposal_title=Test Proposal, strategy=balanced, model_type=OpenAIModel
+[2025-07-19 23:37:27,457] [INFO] [agent] Successfully generated vote decision, proposal_id=test-proposal, vote=FOR, confidence=0.8, risk_level=LOW
+[2025-07-19 23:37:27,458] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,458] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,458] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,458] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,458] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,458] [INFO] [agent] Starting proposal summarization, proposal_id=test-proposal, proposal_title=Test Proposal, model_type=OpenAIModel
+[2025-07-19 23:37:27,458] [INFO] [agent] Successfully generated proposal summary, proposal_id=test-proposal, summary_length=12, key_points_count=2
+[2025-07-19 23:37:27,459] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,459] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,459] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,459] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,459] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,459] [INFO] [agent] Starting multiple proposal summarization, proposal_count=3, model_type=OpenAIModel
+[2025-07-19 23:37:27,459] [INFO] [agent] Successfully generated multiple proposal summaries, proposal_count=3, summary_count=3
+[2025-07-19 23:37:27,461] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,461] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,461] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,461] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,461] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,463] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,463] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,463] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,463] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,463] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,463] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,463] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,464] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,464] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,464] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,464] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,464] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,464] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,464] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,464] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,465] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,465] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,465] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,465] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,465] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,466] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,466] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,466] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,466] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,466] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,466] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,466] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,466] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,466] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,467] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,467] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,467] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,467] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,467] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,467] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,468] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,468] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,468] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,468] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,468] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,468] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,468] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,468] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,468] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,468] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,469] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,469] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,469] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,469] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,469] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,469] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,469] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,469] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,469] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,469] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,470] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,470] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,470] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,470] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,470] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,470] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,470] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,471] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,471] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,471] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,471] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,471] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,471] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,471] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,472] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,472] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,472] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,472] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,472] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,472] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,473] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,473] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,473] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,473] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,473] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,473] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,473] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,473] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,473] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,474] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,474] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,474] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,474] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,474] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,475] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,475] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,475] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,475] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,475] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,475] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,476] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,476] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,476] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,476] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,476] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,476] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,476] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,477] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,477] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,477] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,477] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,477] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,477] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,477] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,477] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,478] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,478] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,478] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,478] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,478] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,478] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,478] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,478] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,478] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,478] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,479] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,479] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,479] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,479] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,479] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,479] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,479] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,479] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,479] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,479] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,482] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,482] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,482] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,482] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,482] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,483] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,483] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,483] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,483] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,483] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,484] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,484] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,484] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,484] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,484] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,484] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,484] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,484] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,485] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,485] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,485] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,485] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,485] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,485] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,485] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,486] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,486] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,486] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,486] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,486] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,487] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,487] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,487] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,487] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,487] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,487] [INFO] [agent] Creating AI model
+[2025-07-19 23:37:27,487] [INFO] [agent] Using OpenRouter
+[2025-07-19 23:37:27,487] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-19 23:37:27,487] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-19 23:37:27,487] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-19 23:37:27,678] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,680] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:27,680] [INFO] [agent] Starting test_span
+[2025-07-19 23:37:27,680] [INFO] [agent] Completed test_span successfully in 0.000s
+[2025-07-19 23:37:27,684] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,685] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=2 votes_cast=2 execution_time=12.5 errors=[] dry_run=False
+[2025-07-19 23:37:27,685] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,686] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=True)
+[2025-07-19 23:37:27,686] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=2 votes_cast=2 execution_time=8.2 errors=[] dry_run=True
+[2025-07-19 23:37:27,686] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,687] [INFO] [agent] Starting agent_run (space_id=empty-space.eth, dry_run=False)
+[2025-07-19 23:37:27,687] [INFO] [agent] Agent run completed space_id=empty-space.eth proposals_analyzed=0 votes_cast=0 execution_time=1.2 errors=[] dry_run=False
+[2025-07-19 23:37:27,687] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,688] [INFO] [agent] Starting agent_run (space_id=filtered-space.eth, dry_run=False)
+[2025-07-19 23:37:27,688] [INFO] [agent] Agent run completed space_id=filtered-space.eth proposals_analyzed=1 votes_cast=1 execution_time=5.8 errors=[] dry_run=False
+[2025-07-19 23:37:27,688] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,689] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,689] [ERROR] [agent] Failed agent_run after 0.000s: Service initialization failed
+[2025-07-19 23:37:27,689] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Service initialization failed
+[2025-07-19 23:37:27,690] [INFO] [agent] Starting agent_run (space_id=failing-space.eth, dry_run=False)
+[2025-07-19 23:37:27,690] [ERROR] [agent] Failed agent_run after 0.000s: Failed to fetch proposals from Snapshot
+[2025-07-19 23:37:27,690] [ERROR] [agent] Failed to execute agent run space_id=failing-space.eth error=Failed to fetch proposals from Snapshot
+[2025-07-19 23:37:27,691] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,691] [ERROR] [agent] Failed agent_run after 0.000s: AI service unavailable
+[2025-07-19 23:37:27,691] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=AI service unavailable
+[2025-07-19 23:37:27,692] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,692] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=2 votes_cast=0 execution_time=8.5 errors=['Failed to execute vote on proposal 1', 'Voting service timeout'] dry_run=False
+[2025-07-19 23:37:27,692] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,693] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-07-19 23:37:27,693] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=2 votes_cast=0 execution_time=3.2 errors=['Failed to load user preferences, using defaults'] dry_run=False
+[2025-07-19 23:37:27,693] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,694] [INFO] [agent] Starting agent_run (space_id=slow-space.eth, dry_run=False)
+[2025-07-19 23:37:27,694] [ERROR] [agent] Failed agent_run after 0.000s: Agent run timed out
+[2025-07-19 23:37:27,694] [ERROR] [agent] Failed to execute agent run space_id=slow-space.eth error=Agent run timed out
+[2025-07-19 23:37:27,696] [INFO] [agent] Starting agent_run (space_id=invalid-space, dry_run=False)
+[2025-07-19 23:37:27,696] [ERROR] [agent] Failed agent_run after 0.000s: Invalid space ID: invalid-space
+[2025-07-19 23:37:27,696] [ERROR] [agent] Failed to execute agent run space_id=invalid-space error=Invalid space ID: invalid-space
+[2025-07-19 23:37:27,697] [INFO] [agent] Starting agent_run (space_id=conservative-space.eth, dry_run=False)
+[2025-07-19 23:37:27,697] [INFO] [agent] Agent run completed space_id=conservative-space.eth proposals_analyzed=3 votes_cast=1 execution_time=15.2 errors=[] dry_run=False
+[2025-07-19 23:37:27,697] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,698] [INFO] [agent] Starting agent_run (space_id=aggressive-space.eth, dry_run=False)
+[2025-07-19 23:37:27,698] [INFO] [agent] Agent run completed space_id=aggressive-space.eth proposals_analyzed=3 votes_cast=2 execution_time=18.7 errors=[] dry_run=False
+[2025-07-19 23:37:27,698] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,699] [INFO] [agent] Starting agent_run (space_id=blacklist-space.eth, dry_run=False)
+[2025-07-19 23:37:27,699] [INFO] [agent] Agent run completed space_id=blacklist-space.eth proposals_analyzed=1 votes_cast=1 execution_time=8.3 errors=[] dry_run=False
+[2025-07-19 23:37:27,699] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,700] [INFO] [agent] Starting agent_run (space_id=limited-space.eth, dry_run=False)
+[2025-07-19 23:37:27,700] [INFO] [agent] Agent run completed space_id=limited-space.eth proposals_analyzed=2 votes_cast=2 execution_time=11.4 errors=[] dry_run=False
+[2025-07-19 23:37:27,700] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,701] [INFO] [agent] Starting agent_run (space_id=high-confidence-space.eth, dry_run=False)
+[2025-07-19 23:37:27,701] [INFO] [agent] Agent run completed space_id=high-confidence-space.eth proposals_analyzed=3 votes_cast=1 execution_time=14.1 errors=[] dry_run=False
+[2025-07-19 23:37:27,701] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,702] [INFO] [agent] Starting agent_run (space_id=space1.eth, dry_run=False)
+[2025-07-19 23:37:27,702] [INFO] [agent] Agent run completed space_id=space1.eth proposals_analyzed=2 votes_cast=0 execution_time=5.5 errors=[] dry_run=False
+[2025-07-19 23:37:27,702] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,702] [INFO] [agent] Starting agent_run (space_id=space2.eth, dry_run=False)
+[2025-07-19 23:37:27,702] [INFO] [agent] Agent run completed space_id=space2.eth proposals_analyzed=1 votes_cast=0 execution_time=3.2 errors=[] dry_run=False
+[2025-07-19 23:37:27,702] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,702] [INFO] [agent] Starting agent_run (space_id=space3.eth, dry_run=True)
+[2025-07-19 23:37:27,702] [INFO] [agent] Agent run completed space_id=space3.eth proposals_analyzed=0 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-07-19 23:37:27,702] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,703] [INFO] [agent] Starting agent_run (space_id=concurrent-space.eth, dry_run=False)
+[2025-07-19 23:37:27,703] [INFO] [agent] Agent run completed space_id=concurrent-space.eth proposals_analyzed=1 votes_cast=0 execution_time=4.8 errors=[] dry_run=False
+[2025-07-19 23:37:27,703] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,704] [INFO] [agent] Starting agent_run (space_id=concurrent-space.eth, dry_run=True)
+[2025-07-19 23:37:27,704] [INFO] [agent] Agent run completed space_id=concurrent-space.eth proposals_analyzed=1 votes_cast=0 execution_time=4.8 errors=[] dry_run=True
+[2025-07-19 23:37:27,704] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,704] [INFO] [agent] Starting agent_run (space_id=concurrent-space.eth, dry_run=False)
+[2025-07-19 23:37:27,704] [INFO] [agent] Agent run completed space_id=concurrent-space.eth proposals_analyzed=1 votes_cast=0 execution_time=4.8 errors=[] dry_run=False
+[2025-07-19 23:37:27,704] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,705] [INFO] [agent] Starting agent_run (space_id=success-space.eth, dry_run=False)
+[2025-07-19 23:37:27,705] [INFO] [agent] Agent run completed space_id=success-space.eth proposals_analyzed=1 votes_cast=0 execution_time=2.5 errors=[] dry_run=False
+[2025-07-19 23:37:27,705] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,705] [INFO] [agent] Starting agent_run (space_id=failing-space.eth, dry_run=False)
+[2025-07-19 23:37:27,705] [ERROR] [agent] Failed agent_run after 0.000s: Service unavailable
+[2025-07-19 23:37:27,705] [ERROR] [agent] Failed to execute agent run space_id=failing-space.eth error=Service unavailable
+[2025-07-19 23:37:27,705] [INFO] [agent] Starting agent_run (space_id=another-success.eth, dry_run=True)
+[2025-07-19 23:37:27,705] [INFO] [agent] Agent run completed space_id=another-success.eth proposals_analyzed=1 votes_cast=0 execution_time=2.5 errors=[] dry_run=True
+[2025-07-19 23:37:27,705] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,706] [INFO] [agent] Starting agent_run (space_id=performance-space.eth, dry_run=False)
+[2025-07-19 23:37:27,706] [INFO] [agent] Agent run completed space_id=performance-space.eth proposals_analyzed=5 votes_cast=0 execution_time=25.7 errors=[] dry_run=False
+[2025-07-19 23:37:27,706] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,707] [INFO] [agent] Starting agent_run (space_id=large-dataset-space.eth, dry_run=True)
+[2025-07-19 23:37:27,707] [INFO] [agent] Agent run completed space_id=large-dataset-space.eth proposals_analyzed=100 votes_cast=0 execution_time=45.3 errors=[] dry_run=True
+[2025-07-19 23:37:27,708] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,708] [INFO] [agent] Starting agent_run (space_id=cleanup-space-0.eth, dry_run=True)
+[2025-07-19 23:37:27,708] [INFO] [agent] Agent run completed space_id=cleanup-space-0.eth proposals_analyzed=3 votes_cast=0 execution_time=8.2 errors=[] dry_run=True
+[2025-07-19 23:37:27,709] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,811] [INFO] [agent] Starting agent_run (space_id=cleanup-space-1.eth, dry_run=True)
+[2025-07-19 23:37:27,811] [INFO] [agent] Agent run completed space_id=cleanup-space-1.eth proposals_analyzed=3 votes_cast=0 execution_time=8.2 errors=[] dry_run=True
+[2025-07-19 23:37:27,811] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:27,914] [INFO] [agent] Starting agent_run (space_id=cleanup-space-2.eth, dry_run=True)
+[2025-07-19 23:37:27,914] [INFO] [agent] Agent run completed space_id=cleanup-space-2.eth proposals_analyzed=3 votes_cast=0 execution_time=8.2 errors=[] dry_run=True
+[2025-07-19 23:37:27,914] [INFO] [agent] Completed agent_run successfully in 0.001s
+[2025-07-19 23:37:28,018] [INFO] [agent] Starting agent_run (space_id=cleanup-space-3.eth, dry_run=True)
+[2025-07-19 23:37:28,018] [INFO] [agent] Agent run completed space_id=cleanup-space-3.eth proposals_analyzed=3 votes_cast=0 execution_time=8.2 errors=[] dry_run=True
+[2025-07-19 23:37:28,018] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:28,120] [INFO] [agent] Starting agent_run (space_id=cleanup-space-4.eth, dry_run=True)
+[2025-07-19 23:37:28,120] [INFO] [agent] Agent run completed space_id=cleanup-space-4.eth proposals_analyzed=3 votes_cast=0 execution_time=8.2 errors=[] dry_run=True
+[2025-07-19 23:37:28,120] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:28,226] [INFO] [agent] Starting agent_run (space_id=shutdown-space.eth, dry_run=False)
+[2025-07-19 23:37:28,226] [INFO] [agent] Agent run completed space_id=shutdown-space.eth proposals_analyzed=2 votes_cast=0 execution_time=12.1 errors=[] dry_run=False
+[2025-07-19 23:37:28,226] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-19 23:37:28,540] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,596] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,662] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,662] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,662] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,662] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-19 23:37:28,662] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,662] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,662] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,663] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,663] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-19 23:37:28,663] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,663] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,663] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,663] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,663] [INFO] [agent] Starting filter_proposals (proposal_count=4)
+[2025-07-19 23:37:28,663] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,663] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,663] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,663] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,664] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,664] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,664] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,664] [INFO] [agent] Starting rank_proposals (proposal_count=3)
+[2025-07-19 23:37:28,664] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,664] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:28,664] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,664] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-19 23:37:28,664] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,664] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-3)
+[2025-07-19 23:37:28,664] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,664] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,664] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:28,664] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,665] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-19 23:37:28,665] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,665] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:28,665] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,665] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-19 23:37:28,665] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,665] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,665] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:28,665] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,665] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,665] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,666] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-urgent)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-less-urgent)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,666] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-high-power)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-low-power)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,666] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-high-participation)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-low-participation)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,666] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,666] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:28,666] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,667] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,667] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,667] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,667] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:28,667] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-19 23:37:28,667] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,667] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,667] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:28,667] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-19 23:37:28,667] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,667] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,667] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,668] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting filter_proposals (proposal_count=100)
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,668] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,668] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting rank_proposals (proposal_count=95)
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-5)
+[2025-07-19 23:37:28,668] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-6)
+[2025-07-19 23:37:28,668] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-7)
+[2025-07-19 23:37:28,668] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-8)
+[2025-07-19 23:37:28,668] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,668] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-9)
+[2025-07-19 23:37:28,668] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-10)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-11)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-12)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-13)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-14)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-15)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-16)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-17)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-18)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-19)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-20)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-21)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-22)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-23)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-24)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-25)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-26)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-27)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-28)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-29)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-30)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-31)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-32)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-33)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-34)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-35)
+[2025-07-19 23:37:28,669] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,669] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-36)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-37)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-38)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-39)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-40)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-41)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-42)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-43)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-44)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-45)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-46)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-47)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-48)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-49)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-50)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-51)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-52)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-53)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-54)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-55)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-56)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-57)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-58)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-59)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-60)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-61)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-62)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-63)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-64)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-65)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-66)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-67)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-68)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,670] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-69)
+[2025-07-19 23:37:28,670] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-70)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-71)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-72)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-73)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-74)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-75)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-76)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-77)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-78)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-79)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-80)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-81)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-82)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-83)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-84)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-85)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-86)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-87)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-88)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-89)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-90)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-91)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-92)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-93)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-94)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-95)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-96)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-97)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-98)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-99)
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,671] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,671] [INFO] [agent] Completed rank_proposals successfully in 0.003s
+[2025-07-19 23:37:28,672] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,672] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting rank_proposals (proposal_count=2)
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-2)
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,672] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:28,672] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting filter_proposals (proposal_count=2)
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,672] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,672] [INFO] [agent] Starting calculate_proposal_score (proposal_id=prop-1)
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,672] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,672] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:28,678] [INFO] [agent] ProposalFilter initialized
+[2025-07-19 23:37:28,678] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-07-19 23:37:28,678] [INFO] [agent] Starting proposal filtering
+[2025-07-19 23:37:28,678] [INFO] [agent] Proposal filtering completed
+[2025-07-19 23:37:28,678] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-07-19 23:37:28,678] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-07-19 23:37:28,678] [INFO] [agent] Starting proposal ranking
+[2025-07-19 23:37:28,678] [INFO] [agent] Starting calculate_proposal_score (proposal_id=test-proposal-123)
+[2025-07-19 23:37:28,678] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-07-19 23:37:28,678] [INFO] [agent] Proposal ranking completed
+[2025-07-19 23:37:28,678] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-07-19 23:37:28,681] [INFO] [agent] Starting get_proposal_top_voters (proposal_id=test-proposal-id, limit=10)
+[2025-07-19 23:37:28,682] [INFO] [agent] No voters found for proposal proposal_id=test-proposal-id
+[2025-07-19 23:37:28,682] [INFO] [agent] Completed get_proposal_top_voters successfully in 0.001s
+[2025-07-19 23:37:28,687] [INFO] [agent] Starting get_proposal_top_voters (proposal_id=non-existent-proposal, limit=10)
+[2025-07-19 23:37:28,688] [ERROR] [agent] Failed get_proposal_top_voters after 0.000s: 404: Proposal with ID non-existent-proposal not found
+[2025-07-19 23:37:28,689] [INFO] [agent] Starting get_proposal_top_voters (proposal_id=error-proposal, limit=10)
+[2025-07-19 23:37:28,689] [ERROR] [agent] Failed get_proposal_top_voters after 0.000s: Service unavailable
+[2025-07-19 23:37:28,689] [ERROR] [agent] Failed to fetch proposal top voters proposal_id=error-proposal error=Service unavailable
+[2025-07-19 23:37:28,847] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,847] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:37:28,847] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,848] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:37:28,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,849] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,850] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,953] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:28,953] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:37:28,953] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:28,953] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:28,953] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:37:28,954] [INFO] [agent] Agent service stopped
+[2025-07-19 23:37:28,954] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-19 23:37:28,954] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:28,954] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:28,954] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:28,954] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:37:28,954] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:37:28,954] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:28,954] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:37:28,954] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:37:28,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,956] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:28,956] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:28,956] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:28,956] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:28,956] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:37:28,956] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:37:28,956] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:28,956] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:28,957] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:37:28,957] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:28,957] [INFO] [agent] Completed save_service_states successfully in 0.000s
+[2025-07-19 23:37:28,957] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:37:28,958] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,960] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-9/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:37:28,960] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:28,961] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:37:28,961] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:37:28,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,068] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:29,068] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:37:29,068] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:29,068] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:29,068] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:37:29,069] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-19 23:37:29,069] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:37:29,069] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:29,069] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:29,069] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:29,069] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:37:29,069] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:37:29,070] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:29,070] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-07-19 23:37:29,071] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-19 23:37:29,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,076] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,076] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:37:29,295] [INFO] [agent] Starting snapshot_api_request (query=query { spaces { id } }, has_variables=False)
+[2025-07-19 23:37:29,295] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=23, has_variables=False
+[2025-07-19 23:37:29,295] [ERROR] [agent] Network error: timeout, endpoint=https://hub.snapshot.org/graphql, error=Request timed out, timeout_seconds=30
+[2025-07-19 23:37:29,295] [ERROR] [agent] Failed snapshot_api_request after 0.000s: Network timeout connecting to Snapshot API (https://hub.snapshot.org/graphql): Request timed out
+[2025-07-19 23:37:29,307] [INFO] [agent] Starting snapshot_api_request (query=query { spaces { id } }, has_variables=False)
+[2025-07-19 23:37:29,307] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=23, has_variables=False
+[2025-07-19 23:37:29,307] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json
+[2025-07-19 23:37:29,307] [ERROR] [agent] GraphQL query failed at Snapshot API, graphql_errors=[{'message': "Field 'invalidField' doesn't exist on type 'Space'", 'locations': [{'line': 1, 'column': 10}], 'path': ['spaces']}], error_count=1
+[2025-07-19 23:37:29,307] [ERROR] [agent] Failed snapshot_api_request after 0.000s: Snapshot API returned GraphQL errors: Field 'invalidField' doesn't exist on type 'Space' (at line 1, in path spaces)
+[2025-07-19 23:37:29,319] [INFO] [agent] Starting snapshot_api_request (query=
+        query {
+            spaces(first: 2, orderBy: "created", orderDirection: desc) {
+          ..., has_variables=False)
+[2025-07-19 23:37:29,319] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=184, has_variables=False
+[2025-07-19 23:37:29,535] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-19 23:37:29,535] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['spaces'], response_size=427
+[2025-07-19 23:37:29,535] [INFO] [agent] Completed snapshot_api_request successfully in 0.216s
+[2025-07-19 23:37:29,568] [INFO] [agent] Starting snapshot_api_request (query=
+        query {
+            spaces(first: 5) {
+                id
+                name
+            ..., has_variables=False)
+[2025-07-19 23:37:29,568] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=120, has_variables=False
+[2025-07-19 23:37:29,569] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json
+[2025-07-19 23:37:29,569] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['spaces'], response_size=96
+[2025-07-19 23:37:29,569] [INFO] [agent] Completed snapshot_api_request successfully in 0.001s
+[2025-07-19 23:37:29,595] [INFO] [agent] Starting snapshot_api_request (query=
+        query GetSpace($id: String!) {
+            space(id: $id) {
+                id
+            ..., has_variables=True)
+[2025-07-19 23:37:29,595] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=163, has_variables=True
+[2025-07-19 23:37:29,595] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json
+[2025-07-19 23:37:29,595] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['space'], response_size=98
+[2025-07-19 23:37:29,595] [INFO] [agent] Completed snapshot_api_request successfully in 0.000s
+[2025-07-19 23:37:29,613] [INFO] [agent] Starting get_space (space_id=arbitrumfoundation.eth)
+[2025-07-19 23:37:29,613] [INFO] [agent] Completed get_space successfully in 0.000s
+[2025-07-19 23:37:29,628] [INFO] [agent] Starting get_space (space_id=invalid.eth)
+[2025-07-19 23:37:29,628] [INFO] [agent] Completed get_space successfully in 0.000s
+[2025-07-19 23:37:29,640] [INFO] [agent] Starting get_spaces (space_ids=['arbitrumfoundation.eth'], count=1)
+[2025-07-19 23:37:29,640] [INFO] [agent] Completed get_spaces successfully in 0.000s
+[2025-07-19 23:37:29,653] [INFO] [agent] Starting get_spaces (space_ids=['invalid.eth'], count=1)
+[2025-07-19 23:37:29,653] [INFO] [agent] Completed get_spaces successfully in 0.000s
+[2025-07-19 23:37:29,665] [INFO] [agent] Starting get_proposal (proposal_id=0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671)
+[2025-07-19 23:37:29,665] [INFO] [agent] Completed get_proposal successfully in 0.000s
+[2025-07-19 23:37:29,677] [INFO] [agent] Starting get_proposal (proposal_id=0xinvalid)
+[2025-07-19 23:37:29,677] [INFO] [agent] Completed get_proposal successfully in 0.000s
+[2025-07-19 23:37:29,689] [INFO] [agent] Starting get_proposals (space_ids=['arbitrumfoundation.eth'], state=None, first=2, skip=0)
+[2025-07-19 23:37:29,689] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-19 23:37:29,701] [INFO] [agent] Starting get_proposals (space_ids=['arbitrumfoundation.eth'], state=active, first=20, skip=0)
+[2025-07-19 23:37:29,701] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-19 23:37:29,713] [INFO] [agent] Starting get_proposals (space_ids=['invalid.eth'], state=None, first=20, skip=0)
+[2025-07-19 23:37:29,713] [INFO] [agent] Completed get_proposals successfully in 0.000s
+[2025-07-19 23:37:29,725] [INFO] [agent] Starting get_votes (proposal_id=0x586de5bf366820c4369c041b0bbad2254d78fafe1dcc1528c1ed661bb4dfb671, first=3, skip=0)
+[2025-07-19 23:37:29,726] [INFO] [agent] Completed get_votes successfully in 0.000s
+[2025-07-19 23:37:29,738] [INFO] [agent] Starting get_votes (proposal_id=0xinvalid, first=100, skip=0)
+[2025-07-19 23:37:29,738] [INFO] [agent] Completed get_votes successfully in 0.000s
+[2025-07-19 23:37:29,750] [INFO] [agent] Starting get_voting_power (space_id=arbitrumfoundation.eth, voter_address=0xB933AEe47C438f22DE0747D57fc239FE37878Dd1)
+[2025-07-19 23:37:29,750] [INFO] [agent] Completed get_voting_power successfully in 0.000s
+[2025-07-19 23:37:29,762] [INFO] [agent] Starting get_space (space_id=invalid.eth)
+[2025-07-19 23:37:29,762] [ERROR] [agent] Failed get_space after 0.000s: Space not found
+[2025-07-19 23:37:29,774] [INFO] [agent] Starting get_space (space_id=arbitrumfoundation.eth)
+[2025-07-19 23:37:29,774] [ERROR] [agent] Failed get_space after 0.000s: Connection failed
+[2025-07-19 23:37:29,786] [INFO] [agent] Starting get_proposals (space_ids=['invalid.eth'], state=None, first=20, skip=0)
+[2025-07-19 23:37:29,786] [ERROR] [agent] Failed get_proposals after 0.000s: Invalid query syntax
+[2025-07-19 23:37:29,954] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,954] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,956] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,956] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=nonexistent.txt
+[2025-07-19 23:37:29,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,963] [INFO] [agent] User preferences saved successfully, preferences_file=test_preferences.txt, voting_strategy=conservative, confidence_threshold=0.8, max_proposals_per_run=5
+[2025-07-19 23:37:29,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,965] [ERROR] [agent] Could not save user preferences, preferences_file=readonly_preferences.txt, error=Permission denied
+[2025-07-19 23:37:29,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,966] [INFO] [agent] User preferences saved successfully, preferences_file=atomic_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-07-19 23:37:29,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:29,980] [ERROR] [agent] Could not save user preferences, preferences_file=error_preferences.txt, error=Disk full
+[2025-07-19 23:37:29,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,563] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,703] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,880] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,884] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,885] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:37:37,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,885] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:37:37,886] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,887] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,991] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:37,991] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:37:37,991] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:37,991] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:37,992] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:37:37,992] [INFO] [agent] Agent service stopped
+[2025-07-19 23:37:37,992] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-19 23:37:37,992] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:37,992] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:37,992] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:37,992] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:37:37,992] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:37:37,993] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:37,993] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:37:37,993] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:37:37,993] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,994] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:37,994] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:37,994] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:37,994] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:37,994] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:37:37,995] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:37:37,995] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:37,995] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:37,995] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:37:37,995] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:37,995] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:37:37,995] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:37:37,996] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,998] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-10/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:37:37,998] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:37,999] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:37:37,999] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:37:38,000] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:38,105] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:38,106] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:37:38,107] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:37:38,107] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:37:38,107] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:37:38,107] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:37:38,107] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-19 23:37:38,107] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:37:38,107] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:37:38,107] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:37:38,107] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:37:38,107] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:37:38,108] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:37:38,109] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:37:38,109] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:37:38,109] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-19 23:37:38,111] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:38,115] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:37:38,115] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:41:26,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:41:27,132] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:41:27,361] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,340] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,519] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,755] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,755] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,757] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,758] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:53,759] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,759] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:53,760] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,761] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:53,761] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:43:53,761] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:43:53,807] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,808] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:43:53,808] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:43:53,809] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:43:53,809] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:43:53,810] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:43:53,811] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,811] [INFO] [agent] Successfully saved state: old_state
+[2025-07-19 23:43:53,811] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-12/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-12/test_state_migration_from_old_0/old_state.json
+[2025-07-19 23:43:53,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,813] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-19 23:43:53,814] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,814] [INFO] [agent] Successfully saved state: preferences
+[2025-07-19 23:43:53,815] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:53,815] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:53,919] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:54,024] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:54,128] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:54,231] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:54,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:54,347] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-19 23:43:54,367] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:54,368] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:43:54,369] [INFO] [agent] Successfully saved state: readonly_state
+[2025-07-19 23:43:54,377] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:43:54,395] [INFO] [agent] Successfully saved state: large_state
+[2025-07-19 23:44:43,644] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:43,824] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,053] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,061] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,061] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,063] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,063] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,064] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,065] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,066] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,067] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,067] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:44:44,067] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:44:44,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,069] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:44:44,069] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:44:44,070] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:44:44,070] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:44:44,070] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:44:44,071] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,072] [INFO] [agent] Successfully saved state: old_state
+[2025-07-19 23:44:44,072] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-13/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-13/test_state_migration_from_old_0/old_state.json
+[2025-07-19 23:44:44,073] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,073] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-19 23:44:44,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,075] [INFO] [agent] Successfully saved state: preferences
+[2025-07-19 23:44:44,075] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,076] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,076] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,089] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,102] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,162] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,162] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-19 23:44:44,162] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-19 23:44:44,163] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,163] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:44:44,164] [INFO] [agent] Successfully saved state: readonly_state
+[2025-07-19 23:44:44,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:44:44,177] [INFO] [agent] Successfully saved state: large_state
+[2025-07-19 23:45:14,160] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,347] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,575] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,581] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,582] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,584] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,584] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,585] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,586] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,587] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,588] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,588] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:45:14,588] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:45:14,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,589] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:14,590] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:14,590] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:14,591] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:14,591] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:14,592] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,593] [INFO] [agent] Successfully saved state: old_state
+[2025-07-19 23:45:14,593] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-14/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-14/test_state_migration_from_old_0/old_state.json
+[2025-07-19 23:45:14,594] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,594] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-19 23:45:14,595] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,595] [INFO] [agent] Successfully saved state: preferences
+[2025-07-19 23:45:14,596] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:14,597] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,597] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,700] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,804] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:14,910] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:15,103] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:15,103] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-19 23:45:15,103] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-19 23:45:15,104] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:15,105] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:15,105] [ERROR] [agent] Failed to load state corrupted_state: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+[2025-07-19 23:45:15,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:15,116] [INFO] [agent] Successfully saved state: large_state
+[2025-07-19 23:45:34,328] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:34,514] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:34,746] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:34,753] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:34,754] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:34,755] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:34,858] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:34,963] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,066] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,171] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,173] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,175] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,177] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,178] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,180] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,182] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,184] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,185] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:35,186] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:41,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,138] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,370] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,376] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,376] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,379] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,380] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,380] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,381] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,382] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,382] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,382] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:45:42,382] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:45:42,383] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,384] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:42,384] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:42,385] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:42,385] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:42,386] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:45:42,387] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,387] [INFO] [agent] Successfully saved state: old_state
+[2025-07-19 23:45:42,387] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-16/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-16/test_state_migration_from_old_0/old_state.json
+[2025-07-19 23:45:42,388] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,389] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-19 23:45:42,389] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,390] [INFO] [agent] Successfully saved state: preferences
+[2025-07-19 23:45:42,391] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,391] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,392] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,495] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,599] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,702] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,806] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,807] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,809] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,811] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,813] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,814] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,816] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,817] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,819] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,820] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,823] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,825] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-19 23:45:42,825] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-19 23:45:42,828] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,830] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:45:42,830] [ERROR] [agent] Failed to load state corrupted_state: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+[2025-07-19 23:45:42,832] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:45:42,855] [INFO] [agent] Successfully saved state: large_state
+[2025-07-19 23:46:32,436] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,618] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,855] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,855] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,857] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,858] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:32,859] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,859] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:32,860] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,860] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:32,861] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:32,861] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:46:32,861] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:46:32,862] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,863] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:46:32,863] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:46:32,864] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:46:32,864] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:46:32,865] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:46:32,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,866] [INFO] [agent] Successfully saved state: old_state
+[2025-07-19 23:46:32,866] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-17/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-17/test_state_migration_from_old_0/old_state.json
+[2025-07-19 23:46:32,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,868] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-19 23:46:32,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,869] [INFO] [agent] Successfully saved state: preferences
+[2025-07-19 23:46:32,870] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:32,870] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:32,871] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:32,974] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,078] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,183] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,288] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,289] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,291] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,293] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,294] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,296] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,297] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,299] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,300] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,302] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,306] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:33,307] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-19 23:46:33,308] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-19 23:46:33,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:33,312] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:46:33,312] [ERROR] [agent] Failed to load state corrupted_state: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+[2025-07-19 23:46:33,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:46:33,338] [INFO] [agent] Successfully saved state: large_state
+[2025-07-19 23:48:46,490] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,670] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,897] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,907] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,908] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:46,909] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,909] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:46,910] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,910] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:46,911] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:46,911] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:48:46,911] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-19 23:48:46,911] [INFO] [agent] Attempting to recover test_state from backup
+[2025-07-19 23:48:46,912] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,913] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:48:46,913] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:48:46,914] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:48:46,914] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:48:46,916] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-19 23:48:46,917] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,919] [INFO] [agent] Successfully saved state: old_state
+[2025-07-19 23:48:46,919] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-18/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-18/test_state_migration_from_old_0/old_state.json
+[2025-07-19 23:48:46,920] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,920] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-19 23:48:46,921] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,921] [INFO] [agent] Successfully saved state: preferences
+[2025-07-19 23:48:46,922] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:46,923] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:46,923] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,027] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,132] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,236] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,340] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,342] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,343] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,345] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,347] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,349] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,351] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,353] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,355] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,357] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,360] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:47,362] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-19 23:48:47,362] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-19 23:48:47,365] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:47,366] [INFO] [agent] Successfully saved state: test_state
+[2025-07-19 23:48:47,367] [ERROR] [agent] Failed to load state corrupted_state: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+[2025-07-19 23:48:47,369] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:48:47,392] [INFO] [agent] Successfully saved state: large_state
+[2025-07-19 23:57:29,374] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:57:29,585] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:57:43,275] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:57:43,462] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:57:43,694] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:57:43,967] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:46,992] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,401] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,409] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:58:47,410] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,410] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-19 23:58:47,411] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,412] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,412] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,515] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,516] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:58:47,516] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:58:47,516] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:58:47,516] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:58:47,516] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:58:47,517] [INFO] [agent] Agent service stopped
+[2025-07-19 23:58:47,517] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-19 23:58:47,517] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:58:47,517] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:58:47,517] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:58:47,517] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:58:47,517] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:58:47,518] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:58:47,518] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-07-19 23:58:47,518] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-19 23:58:47,519] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,520] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:58:47,520] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:58:47,520] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:58:47,520] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:58:47,520] [INFO] [agent] Completed vote vote1
+[2025-07-19 23:58:47,520] [INFO] [agent] Cancelled vote vote2
+[2025-07-19 23:58:47,520] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:58:47,520] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:58:47,520] [INFO] [agent] Saved state for service 'voting'
+[2025-07-19 23:58:47,521] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:58:47,521] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-19 23:58:47,521] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-19 23:58:47,522] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,524] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-19/test_state_persistence_before_0/shutdown_state.json
+[2025-07-19 23:58:47,525] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,526] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-19 23:58:47,526] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-19 23:58:47,526] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,630] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,632] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-19 23:58:47,632] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-19 23:58:47,632] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-19 23:58:47,632] [INFO] [agent] Starting coordinated shutdown
+[2025-07-19 23:58:47,633] [INFO] [agent] Starting agent_service_stop
+[2025-07-19 23:58:47,633] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-19 23:58:47,633] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-19 23:58:47,633] [INFO] [agent] Starting handle_active_votes
+[2025-07-19 23:58:47,633] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-19 23:58:47,633] [INFO] [agent] Starting save_service_states
+[2025-07-19 23:58:47,633] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-19 23:58:47,634] [INFO] [agent] Saved state for service 'agent'
+[2025-07-19 23:58:47,635] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-19 23:58:47,635] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-07-19 23:58:47,635] [INFO] [agent] Completed coordinated_shutdown successfully in 0.003s
+[2025-07-19 23:58:47,637] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,641] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,641] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-19 23:58:47,746] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,747] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,753] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,842] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,845] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,856] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,859] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,862] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,865] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-19 23:58:47,871] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:58,780] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,004] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,335] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,343] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,346] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,347] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,348] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,348] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,349] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,350] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,351] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,351] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-20 00:00:59,351] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-20 00:00:59,351] [INFO] [agent] Attempting to recover test_state from backup
+[2025-07-20 00:00:59,352] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,353] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:00:59,353] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:00:59,354] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:00:59,354] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:00:59,355] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:00:59,356] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,357] [INFO] [agent] Successfully saved state: old_state
+[2025-07-20 00:00:59,357] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-20/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-20/test_state_migration_from_old_0/old_state.json
+[2025-07-20 00:00:59,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,358] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-20 00:00:59,359] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,360] [INFO] [agent] Successfully saved state: preferences
+[2025-07-20 00:00:59,360] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,361] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,361] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,465] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,571] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,677] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,783] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,787] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,790] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,793] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,795] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,798] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,800] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,802] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,803] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,804] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,806] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,807] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-20 00:00:59,807] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-20 00:00:59,809] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,810] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:00:59,810] [ERROR] [agent] Failed to load state corrupted_state: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+[2025-07-20 00:00:59,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:00:59,830] [INFO] [agent] Successfully saved state: large_state
+[2025-07-20 00:01:06,277] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,461] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,717] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,718] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 00:01:06,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,719] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 00:01:06,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,720] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,721] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,824] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,825] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:01:06,825] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 00:01:06,825] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:01:06,825] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:01:06,825] [INFO] [agent] Starting agent_service_stop
+[2025-07-20 00:01:06,825] [INFO] [agent] Agent service stopped
+[2025-07-20 00:01:06,825] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-20 00:01:06,825] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:01:06,826] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:01:06,826] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:01:06,826] [ERROR] [agent] Error saving state for service 'voting': object Mock can't be used in 'await' expression
+[2025-07-20 00:01:06,826] [ERROR] [agent] Error saving state for service 'agent': object Mock can't be used in 'await' expression
+[2025-07-20 00:01:06,827] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:01:06,827] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:01:06,827] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-20 00:01:06,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,898] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:01:06,898] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:01:06,899] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:01:06,899] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:01:06,899] [INFO] [agent] Completed vote vote1
+[2025-07-20 00:01:06,899] [INFO] [agent] Cancelled vote vote2
+[2025-07-20 00:01:06,899] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:01:06,899] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:01:06,899] [ERROR] [agent] Error saving state for service 'voting': object Mock can't be used in 'await' expression
+[2025-07-20 00:01:06,899] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:01:06,899] [INFO] [agent] Completed save_service_states successfully in 0.000s
+[2025-07-20 00:01:06,899] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-20 00:01:06,900] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,901] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-21/test_state_persistence_before_0/shutdown_state.json
+[2025-07-20 00:01:06,901] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:06,902] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-20 00:01:06,902] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-20 00:01:06,902] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:07,005] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:07,006] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:01:07,006] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 00:01:07,006] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:01:07,006] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:01:07,006] [INFO] [agent] Starting agent_service_stop
+[2025-07-20 00:01:07,006] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-20 00:01:07,006] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-20 00:01:07,006] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:01:07,006] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:01:07,006] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:01:07,006] [ERROR] [agent] Error saving state for service 'voting': object Mock can't be used in 'await' expression
+[2025-07-20 00:01:07,006] [ERROR] [agent] Error saving state for service 'agent': object Mock can't be used in 'await' expression
+[2025-07-20 00:01:07,007] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:01:07,007] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:01:07,007] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-20 00:01:07,032] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:07,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:01:07,033] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-20 00:02:31,020] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,160] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,335] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,339] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,340] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 00:02:31,340] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,341] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 00:02:31,341] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,342] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,343] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,447] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:02:31,447] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 00:02:31,447] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:02:31,447] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:02:31,447] [INFO] [agent] Starting agent_service_stop
+[2025-07-20 00:02:31,447] [INFO] [agent] Agent service stopped
+[2025-07-20 00:02:31,447] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-20 00:02:31,447] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:02:31,447] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:02:31,447] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:02:31,447] [INFO] [agent] Saved state for service 'voting'
+[2025-07-20 00:02:31,448] [INFO] [agent] Saved state for service 'agent'
+[2025-07-20 00:02:31,448] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:02:31,448] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:02:31,448] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-20 00:02:31,449] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,450] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:02:31,450] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:02:31,450] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:02:31,450] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:02:31,450] [INFO] [agent] Completed vote vote1
+[2025-07-20 00:02:31,450] [INFO] [agent] Cancelled vote vote2
+[2025-07-20 00:02:31,450] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:02:31,450] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:02:31,451] [INFO] [agent] Saved state for service 'voting'
+[2025-07-20 00:02:31,451] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:02:31,451] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:02:31,451] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-20 00:02:31,452] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,453] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-22/test_state_persistence_before_0/shutdown_state.json
+[2025-07-20 00:02:31,454] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,455] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-20 00:02:31,455] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-20 00:02:31,456] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,562] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:02:31,562] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 00:02:31,562] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:02:31,562] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:02:31,562] [INFO] [agent] Starting agent_service_stop
+[2025-07-20 00:02:31,562] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-20 00:02:31,562] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-20 00:02:31,562] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:02:31,562] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:02:31,562] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:02:31,562] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-20 00:02:31,563] [INFO] [agent] Saved state for service 'agent'
+[2025-07-20 00:02:31,564] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:02:31,564] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:02:31,564] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-20 00:02:31,565] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,569] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:02:31,569] [INFO] [agent] Received SIGTERM, initiating graceful shutdown

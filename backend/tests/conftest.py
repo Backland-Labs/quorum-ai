@@ -1,5 +1,11 @@
 """Pytest configuration and fixtures for the test suite."""
 
+import sys
+from pathlib import Path
+
+# Add backend directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import pytest
 from datetime import datetime
 from unittest.mock import patch

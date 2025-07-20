@@ -36,6 +36,8 @@ from services.activity_service import ActivityService
 from services.user_preferences_service import UserPreferencesService
 from services.voting_service import VotingService
 from services.snapshot_service import SnapshotService
+from services.state_manager import StateManager
+from services.signal_handler import SignalHandler, ShutdownCoordinator
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -48,6 +50,9 @@ activity_service: ActivityService
 user_preferences_service: UserPreferencesService
 voting_service: VotingService
 snapshot_service: SnapshotService
+state_manager: StateManager
+signal_handler: SignalHandler
+shutdown_coordinator: ShutdownCoordinator
 
 
 @asynccontextmanager
@@ -61,23 +66,64 @@ async def lifespan(_app: FastAPI):
         activity_service, \
         user_preferences_service, \
         voting_service, \
-        snapshot_service
+        snapshot_service, \
+        state_manager, \
+        signal_handler, \
+        shutdown_coordinator
 
-    # Initialize services
+    # Initialize state manager
+    state_manager = StateManager()
+    
+    # Initialize services with state manager where needed
     ai_service = AIService()
-    agent_run_service = AgentRunService()
+    agent_run_service = AgentRunService(state_manager=state_manager)
     safe_service = SafeService()
     activity_service = ActivityService()
-    user_preferences_service = UserPreferencesService()
+    user_preferences_service = UserPreferencesService(state_manager=state_manager)
     voting_service = VotingService()
     snapshot_service = SnapshotService()
+    
+    # Initialize signal handling
+    signal_handler = SignalHandler()
+    shutdown_coordinator = ShutdownCoordinator()
+    
+    # Register services with shutdown coordinator
+    shutdown_coordinator.register_service('agent', agent_run_service)
+    shutdown_coordinator.register_service('voting', voting_service)
+    shutdown_coordinator.register_service('user_preferences', user_preferences_service)
+    shutdown_coordinator.register_service('state_manager', state_manager)
+    
+    # Set up shutdown callback
+    signal_handler.register_shutdown_callback(shutdown_coordinator.shutdown)
+    
+    # Register signal handlers
+    await signal_handler.register_handlers()
+    
+    # Check for recovery from previous run
+    if await shutdown_coordinator.check_recovery_needed():
+        try:
+            state = await shutdown_coordinator.recover_state()
+            logger.info(f"Recovered state from previous run: {state['timestamp']}")
+        except Exception as e:
+            logger.error(f"Failed to recover state: {e}")
 
     logger.info("Application started version=0.1.0")
 
     yield
 
     # Shutdown
-    logger.info("Application shutdown")
+    logger.info("Application shutdown initiated")
+    
+    # Execute graceful shutdown
+    try:
+        await shutdown_coordinator.shutdown()
+    except Exception as e:
+        logger.error(f"Error during graceful shutdown: {e}")
+    
+    # Cleanup state manager
+    await state_manager.cleanup()
+    
+    logger.info("Application shutdown completed")
 
 
 # Create FastAPI app
