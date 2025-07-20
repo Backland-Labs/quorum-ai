@@ -8,7 +8,7 @@ def run_claude_code(prompt):
     print(f"Running Claude Code with prompt: {prompt}")
     cmd = [
         'claude', '-p', prompt, #linear_issue
-        '--output-format', 'json',
+        '--output-format', 'text',
         '--system-prompt', 'You are an expert software engineer with deep knowledge of TDD, Python, Typescript. Execute the following tasks with surgical precision while taking care not to overengineer solutions. IMPORTANT: Return ONLY valid JSON without any additional text, markdown formatting, or explanations.',
         '--allowedTools', 'mcp__linear-server__*', 'mcp__context7__*', 'Bash', 'Read', 'Write', 'Edit', 'Remove'
     ]
@@ -29,19 +29,48 @@ def parse_continue(result_dict):
 
 # Run initial command
 linear_issue = input("Enter the initial prompt for Claude Code: ")
-print(run_claude_code(f"/make_plan {linear_issue}"))
+NEED_PLAN = input("Do you need a plan? (True/False): ") == True
+
+if NEED_PLAN:
+    print("Generating plan...")
+    print(run_claude_code(f"/make_plan {linear_issue}"))
 
 # Loop until continue=false
 continue_flag = True
 while continue_flag:
-    print("Starting Ralph command...")
-    output = run_claude_code("/ralph")
+    print("Starting command...")
+    output = run_claude_code("return 'True'. Do not return anything else.")
     print(output)
+    print(f"Raw output: {repr(output)}")
+    print(f"Output length: {len(output)}")
     try:
-        output_dict = json.loads(output)
-        continue_flag = parse_continue(output_dict)
+        if not output.strip():
+            print("Output is empty!")
+            continue_flag = False
+        else:
+            # Strip markdown code block formatting
+            clean_output = output.strip()
+            if clean_output.startswith('```json'):
+                clean_output = clean_output[7:]  # Remove ```json
+            if clean_output.startswith('```'):
+                clean_output = clean_output[3:]   # Remove ```
+            if clean_output.endswith('```'):
+                clean_output = clean_output[:-3]  # Remove trailing ```
+            clean_output = clean_output.strip()
+            
+            print(f"Clean output: {repr(clean_output)}")
+            print(f"Clean output length: {len(clean_output)}")
+            
+            parsed_output = json.loads(clean_output)
+            # Handle both string and object responses
+            if isinstance(parsed_output, str):
+                result_bool = parsed_output.lower() == 'true'
+            else:
+                result_bool = parsed_output.get('result', '').lower() == 'true'
+            continue_flag = result_bool
     except json.JSONDecodeError as e:
         print(f"Error parsing JSON: {e}")
+        print(f"First 200 chars of output: {output[:200]}")
         continue_flag = False
 
 

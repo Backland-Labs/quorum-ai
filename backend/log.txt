@@ -4411,3 +4411,215 @@
 [2025-07-20 07:37:51,797] [INFO] [agent] Private key loaded and cached
 [2025-07-20 07:37:51,800] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x4EeC070Ab8798e5Ebebb0ab9A497CF237912F949)
 [2025-07-20 07:37:51,803] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x4EeC070Ab8798e5Ebebb0ab9A497CF237912F949)
+[2025-07-20 08:03:11,176] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:11,492] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:11,894] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:35,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:35,802] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:36,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:36,636] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:03:36,644] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,646] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,647] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:03:36,649] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,773] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,804] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,867] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,869] [INFO] [agent] Calculated withdrawals for 2 positions at 100% withdrawal rate
+[2025-07-20 08:03:36,870] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,871] [INFO] [agent] Calculated withdrawals for 1 positions at 50% withdrawal rate
+[2025-07-20 08:03:36,872] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,874] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,907] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,938] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,969] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:36,976] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:03:37,006] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:57,596] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:04:57,903] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:04:58,285] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:04:58,752] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:04:58,761] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,763] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,764] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:04:58,766] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,766] [INFO] [agent] Found 0 invested positions
+[2025-07-20 08:04:58,768] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,769] [INFO] [agent] Found 2 invested positions
+[2025-07-20 08:04:58,770] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,770] [INFO] [agent] Querying positions for Safe 0x1234...safe on chain 1
+[2025-07-20 08:04:58,770] [INFO] [agent] Querying positions for Safe 0x5678...safe on chain 100
+[2025-07-20 08:04:58,771] [INFO] [agent] Discovered 2 on-chain positions
+[2025-07-20 08:04:58,868] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,869] [INFO] [agent] Calculated withdrawals for 2 positions at 100% withdrawal rate
+[2025-07-20 08:04:58,870] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,870] [INFO] [agent] Calculated withdrawals for 1 positions at 50% withdrawal rate
+[2025-07-20 08:04:58,872] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,874] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,875] [INFO] [agent] Executing withdrawal for position aave-usdc-1 amount: 10000.0 USDC
+[2025-07-20 08:04:58,875] [ERROR] [agent] Withdrawal attempt 1 failed: Mock object has no attribute 'get_state'
+[2025-07-20 08:04:58,880] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,881] [INFO] [agent] Executing withdrawal for position compound-dai-1 amount: 5000.0 DAI
+[2025-07-20 08:04:58,881] [ERROR] [agent] Withdrawal attempt 1 failed: Network error
+[2025-07-20 08:04:58,881] [ERROR] [agent] Withdrawal attempt 2 failed: Mock object has no attribute 'get_state'
+[2025-07-20 08:04:58,887] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,888] [INFO] [agent] Withdrawal 0x1111111111111111111111111111111111111111111111111111111111111111 confirmed
+[2025-07-20 08:04:58,889] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,890] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:04:58,890] [INFO] [agent] Starting withdrawal process
+[2025-07-20 08:04:58,890] [INFO] [agent] Calculated withdrawals for 1 positions at 100% withdrawal rate
+[2025-07-20 08:04:58,928] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,930] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:04:58,931] [WARN] [agent] EMERGENCY STOP TRIGGERED
+[2025-07-20 08:04:58,931] [INFO] [agent] Emergency stop completed - all withdrawals halted
+[2025-07-20 08:06:30,101] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:30,393] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:30,773] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:31,276] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:31,284] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,286] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,287] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:06:31,289] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,289] [INFO] [agent] Found 0 invested positions
+[2025-07-20 08:06:31,290] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,291] [INFO] [agent] Found 2 invested positions
+[2025-07-20 08:06:31,292] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,293] [INFO] [agent] Querying positions for Safe 0x1234...safe on chain 1
+[2025-07-20 08:06:31,293] [INFO] [agent] Querying positions for Safe 0x5678...safe on chain 100
+[2025-07-20 08:06:31,293] [INFO] [agent] Discovered 1 on-chain positions
+[2025-07-20 08:06:31,294] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,295] [INFO] [agent] Calculated withdrawals for 2 positions at 100% withdrawal rate
+[2025-07-20 08:06:31,296] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,296] [INFO] [agent] Calculated withdrawals for 1 positions at 50% withdrawal rate
+[2025-07-20 08:06:31,298] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,299] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,300] [INFO] [agent] Executing withdrawal for position aave-usdc-1 amount: 10000.0 USDC
+[2025-07-20 08:06:31,300] [INFO] [agent] Withdrawal transaction submitted: 0x1111111111111111111111111111111111111111111111111111111111111111
+[2025-07-20 08:06:31,302] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,303] [INFO] [agent] Executing withdrawal for position compound-dai-1 amount: 5000.0 DAI
+[2025-07-20 08:06:31,303] [ERROR] [agent] Withdrawal attempt 1 failed: Network error
+[2025-07-20 08:06:31,303] [INFO] [agent] Withdrawal transaction submitted: 0x3333333333333333333333333333333333333333333333333333333333333333
+[2025-07-20 08:06:31,304] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,305] [INFO] [agent] Withdrawal 0x1111111111111111111111111111111111111111111111111111111111111111 confirmed
+[2025-07-20 08:06:31,306] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,307] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:06:31,307] [INFO] [agent] Starting withdrawal process
+[2025-07-20 08:06:31,307] [INFO] [agent] Calculated withdrawals for 1 positions at 100% withdrawal rate
+[2025-07-20 08:06:31,438] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,440] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:31,441] [WARN] [agent] EMERGENCY STOP TRIGGERED
+[2025-07-20 08:06:31,441] [INFO] [agent] Emergency stop completed - all withdrawals halted
+[2025-07-20 08:06:47,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:48,282] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:48,660] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:49,133] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:06:49,141] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,143] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,145] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:06:49,146] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,147] [INFO] [agent] Found 0 invested positions
+[2025-07-20 08:06:49,148] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,149] [INFO] [agent] Found 2 invested positions
+[2025-07-20 08:06:49,150] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,151] [INFO] [agent] Querying positions for Safe 0x1234...safe on chain 1
+[2025-07-20 08:06:49,151] [INFO] [agent] Querying positions for Safe 0x5678...safe on chain 100
+[2025-07-20 08:06:49,151] [INFO] [agent] Discovered 1 on-chain positions
+[2025-07-20 08:06:49,152] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,153] [INFO] [agent] Calculated withdrawals for 2 positions at 100% withdrawal rate
+[2025-07-20 08:06:49,154] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,154] [INFO] [agent] Calculated withdrawals for 1 positions at 50% withdrawal rate
+[2025-07-20 08:06:49,156] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,157] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,158] [INFO] [agent] Executing withdrawal for position aave-usdc-1 amount: 10000.0 USDC
+[2025-07-20 08:06:49,158] [INFO] [agent] Withdrawal transaction submitted: 0x1111111111111111111111111111111111111111111111111111111111111111
+[2025-07-20 08:06:49,159] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,160] [INFO] [agent] Executing withdrawal for position compound-dai-1 amount: 5000.0 DAI
+[2025-07-20 08:06:49,160] [ERROR] [agent] Withdrawal attempt 1 failed: Network error
+[2025-07-20 08:06:49,160] [INFO] [agent] Withdrawal transaction submitted: 0x3333333333333333333333333333333333333333333333333333333333333333
+[2025-07-20 08:06:49,162] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,162] [INFO] [agent] Withdrawal 0x1111111111111111111111111111111111111111111111111111111111111111 confirmed
+[2025-07-20 08:06:49,163] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,164] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:06:49,164] [INFO] [agent] Starting withdrawal process
+[2025-07-20 08:06:49,164] [INFO] [agent] Calculated withdrawals for 1 positions at 100% withdrawal rate
+[2025-07-20 08:06:49,165] [INFO] [agent] Withdrawal process completed with 1 transactions
+[2025-07-20 08:06:49,166] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,168] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:06:49,168] [WARN] [agent] EMERGENCY STOP TRIGGERED
+[2025-07-20 08:06:49,169] [INFO] [agent] Emergency stop completed - all withdrawals halted
+[2025-07-20 08:07:56,900] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:07:57,226] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:07:57,634] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:07:58,153] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:07:58,161] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,163] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,164] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:07:58,166] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,166] [INFO] [agent] Found 0 invested positions
+[2025-07-20 08:07:58,168] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,169] [INFO] [agent] Found 2 invested positions
+[2025-07-20 08:07:58,170] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,171] [INFO] [agent] Querying positions for Safe 0x1234...safe on chain 1
+[2025-07-20 08:07:58,171] [INFO] [agent] Querying positions for Safe 0x5678...safe on chain 100
+[2025-07-20 08:07:58,171] [INFO] [agent] Discovered 1 on-chain positions
+[2025-07-20 08:07:58,172] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,172] [INFO] [agent] Calculated withdrawals for 2 positions at 100% withdrawal rate
+[2025-07-20 08:07:58,174] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,174] [INFO] [agent] Calculated withdrawals for 1 positions at 50% withdrawal rate
+[2025-07-20 08:07:58,176] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,177] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,178] [INFO] [agent] Executing withdrawal for position aave-usdc-1 amount: 10000.0 USDC
+[2025-07-20 08:07:58,178] [INFO] [agent] Withdrawal transaction submitted: 0x1111111111111111111111111111111111111111111111111111111111111111
+[2025-07-20 08:07:58,179] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,180] [INFO] [agent] Executing withdrawal for position compound-dai-1 amount: 5000.0 DAI
+[2025-07-20 08:07:58,180] [ERROR] [agent] Withdrawal attempt 1 failed: Network error
+[2025-07-20 08:07:58,180] [INFO] [agent] Withdrawal transaction submitted: 0x3333333333333333333333333333333333333333333333333333333333333333
+[2025-07-20 08:07:58,182] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,182] [INFO] [agent] Withdrawal 0x1111111111111111111111111111111111111111111111111111111111111111 confirmed
+[2025-07-20 08:07:58,183] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,184] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:07:58,184] [INFO] [agent] Starting withdrawal process
+[2025-07-20 08:07:58,184] [INFO] [agent] Calculated withdrawals for 1 positions at 100% withdrawal rate
+[2025-07-20 08:07:58,185] [INFO] [agent] Withdrawal process completed with 1 transactions
+[2025-07-20 08:07:58,186] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,188] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:07:58,188] [WARN] [agent] EMERGENCY STOP TRIGGERED
+[2025-07-20 08:07:58,188] [INFO] [agent] Emergency stop completed - all withdrawals halted
+[2025-07-20 08:15:57,311] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:15:57,651] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:15:58,064] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:15:58,556] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 08:15:58,565] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,567] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,569] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:15:58,570] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,571] [INFO] [agent] Found 0 invested positions
+[2025-07-20 08:15:58,573] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,573] [INFO] [agent] Found 2 invested positions
+[2025-07-20 08:15:58,575] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,575] [INFO] [agent] Querying positions for Safe 0x1234...safe on chain 1
+[2025-07-20 08:15:58,575] [INFO] [agent] Querying positions for Safe 0x5678...safe on chain 100
+[2025-07-20 08:15:58,575] [INFO] [agent] Discovered 1 on-chain positions
+[2025-07-20 08:15:58,577] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,577] [INFO] [agent] Calculated withdrawals for 2 positions at 100% withdrawal rate
+[2025-07-20 08:15:58,579] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,579] [INFO] [agent] Calculated withdrawals for 1 positions at 50% withdrawal rate
+[2025-07-20 08:15:58,581] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,583] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,584] [INFO] [agent] Executing withdrawal for position aave-usdc-1 amount: 10000.0 USDC
+[2025-07-20 08:15:58,584] [INFO] [agent] Withdrawal transaction submitted: 0x1111111111111111111111111111111111111111111111111111111111111111
+[2025-07-20 08:15:58,586] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,587] [INFO] [agent] Executing withdrawal for position compound-dai-1 amount: 5000.0 DAI
+[2025-07-20 08:15:58,587] [ERROR] [agent] Withdrawal attempt 1 failed: Network error
+[2025-07-20 08:15:58,587] [INFO] [agent] Withdrawal transaction submitted: 0x3333333333333333333333333333333333333333333333333333333333333333
+[2025-07-20 08:15:58,588] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,589] [INFO] [agent] Withdrawal 0x1111111111111111111111111111111111111111111111111111111111111111 confirmed
+[2025-07-20 08:15:58,591] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,592] [WARN] [agent] WITHDRAWAL MODE IS ACTIVE - Normal voting disabled
+[2025-07-20 08:15:58,592] [INFO] [agent] Starting withdrawal process
+[2025-07-20 08:15:58,592] [INFO] [agent] Calculated withdrawals for 1 positions at 100% withdrawal rate
+[2025-07-20 08:15:58,592] [INFO] [agent] Withdrawal process completed with 1 transactions
+[2025-07-20 08:15:58,594] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,596] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 08:15:58,597] [WARN] [agent] EMERGENCY STOP TRIGGERED
+[2025-07-20 08:15:58,597] [INFO] [agent] Emergency stop completed - all withdrawals halted
