@@ -538,26 +538,6 @@ def _convert_voting_power_to_wei(voting_power: float) -> str:
 
 
 # Private helper functions
-# TODO: Fix undefined types (ProposalState, SortCriteria, SortOrder, ProposalFilters)
-# def _build_proposal_filters(
-#     dao_id: Optional[str],
-#     organization_id: Optional[str],
-#     state: Optional[ProposalState],
-#     limit: int,
-#     after_cursor: Optional[str],
-#     sort_by: SortCriteria,
-#     sort_order: SortOrder,
-# ) -> ProposalFilters:
-#     """Build ProposalFilters object from query parameters."""
-#     return ProposalFilters(
-#         dao_id=dao_id,
-#         organization_id=organization_id,
-#         state=state,
-#         limit=limit,
-#         after_cursor=after_cursor,
-#         sort_by=sort_by,
-#         sort_order=sort_order,
-#     )
 
 
 async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:

@@ -1,3 +1,17 @@
+"""Vote Encoder for On-Chain Governor Voting.
+
+NOTE: This module is currently not in active use as the system has migrated to 
+Snapshot (off-chain) voting. However, this code is being retained for future 
+implementation of on-chain governance support.
+
+This module provides utilities for encoding vote transactions for various on-chain
+governor contracts. It handles the different voting interfaces and parameters
+required by different governor implementations (Compound Bravo, OpenZeppelin, etc.).
+
+Future work will use this encoder when submitting on-chain votes through Safe
+multisig transactions.
+"""
+
 from enum import IntEnum
 from typing import Optional
 from web3 import Web3

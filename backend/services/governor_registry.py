@@ -1,3 +1,20 @@
+"""Governor Registry for On-Chain Voting Support.
+
+NOTE: This module is currently not in active use as the system has migrated to 
+Snapshot (off-chain) voting. However, this code is being retained for future 
+implementation of on-chain governance support.
+
+This registry contains definitions and utilities for interacting with various
+on-chain governor contracts including:
+- Compound Governor Bravo
+- Nouns DAO Governor
+- Uniswap Governor (OpenZeppelin based)
+- Arbitrum Governor
+
+Future work will integrate this with the agent voting system to support both
+Snapshot (off-chain) and traditional governor (on-chain) voting mechanisms.
+"""
+
 from enum import Enum
 from typing import Dict, List, Any, Tuple
 from pydantic import BaseModel, Field, field_validator

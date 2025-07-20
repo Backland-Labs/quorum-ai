@@ -420,12 +420,3 @@ class VotingService:
         """Get list of active votes for shutdown coordination."""
         return self._active_votes.copy()
     
-    async def complete_vote(self, vote_id: str) -> None:
-        """Complete a vote (not applicable for this implementation)."""
-        # Votes are atomic and complete immediately
-        pass
-    
-    async def cancel_vote(self, vote_id: str) -> None:
-        """Cancel a vote (not applicable for this implementation)."""
-        # Votes cannot be cancelled once submitted
-        pass

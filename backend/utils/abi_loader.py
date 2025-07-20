@@ -1,3 +1,17 @@
+"""ABI Loader for On-Chain Governor Contract Interfaces.
+
+NOTE: This module is currently not in active use as the system has migrated to 
+Snapshot (off-chain) voting. However, this code is being retained for future 
+implementation of on-chain governance support.
+
+This utility loads Application Binary Interface (ABI) definitions for various
+on-chain governor contracts. These ABIs are essential for encoding and decoding
+transaction data when interacting with governor smart contracts.
+
+Future work will use this loader when constructing on-chain vote transactions
+for governor contracts like Compound Bravo, OpenZeppelin Governor, etc.
+"""
+
 from functools import lru_cache
 from pathlib import Path
 import json
