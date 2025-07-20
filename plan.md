@@ -1,391 +1,260 @@
-# Implementation Plan: Agent Interface Layer (BAC-173)
-
-## Implementation Status Summary
-
-### Completed Features ✅
-- **P0: Signal Handling for Graceful Shutdowns (BAC-174)** - IMPLEMENTED
-- **P0: State Persistence with STORE_PATH (BAC-174)** - IMPLEMENTED  
-- **P1: Private Key File Reading (BAC-175)** - IMPLEMENTED
-- **P1: Safe Contract Address Integration (BAC-176)** - IMPLEMENTED
-- **P2: Withdrawal Mode Implementation (BAC-177)** - IMPLEMENTED (2025-01-20)
-
+# BAC-178: Health Check & Logging Implementation Plan
 
 ## Overview
 
-**Issue**: BAC-173 - Agent Interface Layer  
-**Objective**: Implement core agent infrastructure for Pearl integration including state management, key handling, and blockchain integration.
+**Issue**: BAC-178 - Health Check & Logging  
+**Objective**: Implement Pearl-compliant health monitoring and logging system for agent status tracking and debugging.
 
-This plan provides a comprehensive, TDD-driven approach to integrating Quorum AI with the Pearl platform while maintaining existing autonomous voting functionality.
+**Key Requirements**:
+- Pearl-compliant health check endpoint at `/healthcheck` returning FSM state data
+- Pearl-compliant logging format (already implemented)
+- State transition tracking for agent lifecycle monitoring
+- Integration with Pearl platform's observability requirements
 
-## Priority Levels
+## Prioritized Feature List
 
-- **P0 (Critical)**: Blocks Pearl deployment - must be done first
-- **P1 (High)**: Core functionality - required for proper operation  
-- **P2 (Medium)**: Important features - enhances reliability
-- **P3 (Low)**: Nice-to-have - polish and optimization
+### P0 - Critical (Must Have)
+1. **Pearl-compliant health check endpoint** - Required for Pearl platform integration
+2. **Agent state transition tracking** - Core requirement for health monitoring
 
-## Implementation Status
+### P1 - High Priority
+3. **State persistence and recovery** - Maintain state across restarts
+4. **Comprehensive state logging** - Debug and audit trail
 
-### Completed Features ✅
+### P2 - Medium Priority
+5. **Performance metrics** - Transition timing and frequency analysis
+6. **Health check configuration** - Port and endpoint flexibility
 
-#### P0: Signal Handling for Graceful Shutdowns (BAC-174)
-- **Status**: ✅ IMPLEMENTED (2024-01-XX)
-- **Files**: 
-  - `backend/services/signal_handler.py` - Core signal handling and shutdown coordination
-  - `backend/tests/test_signal_handler.py` - Comprehensive test suite (14 tests passing)
-- **Integration**: Integrated into main.py and all services
-- **Notes**: Full TDD implementation with 100% test coverage
+### P3 - Nice to Have
+7. **State history API** - Query past state transitions
+8. **Monitoring dashboard** - Visual state representation
 
-#### P0: State Persistence with STORE_PATH (BAC-174) 
-- **Status**: ✅ IMPLEMENTED (2024-01-XX)
-- **Files**:
-  - `backend/services/state_manager.py` - Atomic state persistence with corruption recovery
-  - `backend/tests/test_state_manager.py` - Comprehensive test suite (12 tests passing)
-- **Integration**: Integrated into UserPreferencesService and AgentRunService
-- **Notes**: Supports atomic writes, corruption detection, backups, and version migration
+## Detailed Task Breakdown
 
+### Task 1: Create Agent State Enum and Transition Tracker (P0) ✅ IMPLEMENTED
 
-## Features and Tasks
-
-### P0: Signal Handling for Graceful Shutdowns (BAC-174) ✅
-
-#### Task 1: Create Signal Handler Service
 **Acceptance Criteria**:
-- Service captures SIGTERM and SIGINT signals
-- Triggers graceful shutdown of all services
-- Prevents new operations during shutdown
-- Logs shutdown events with Pearl format
+- Define comprehensive agent states covering the full lifecycle
+- Track state transitions with timestamps
+- Calculate transition metrics (duration, frequency)
+- Thread-safe for concurrent access
 
 **Test Cases**:
-1. `test_signal_handler_captures_sigterm` - Verify SIGTERM triggers shutdown
-2. `test_signal_handler_captures_sigint` - Verify SIGINT triggers shutdown  
-3. `test_signal_handler_prevents_new_operations` - Ensure no new work during shutdown
-4. `test_signal_handler_logs_events` - Verify Pearl-compliant logging
+1. `test_agent_states_enum_completeness` - Verify all required states are defined
+2. `test_state_transition_tracking` - Verify transitions are recorded with timestamps
+3. `test_concurrent_state_transitions` - Ensure thread safety under concurrent access
+4. `test_transition_metrics_calculation` - Verify seconds_since_last_transition accuracy
+5. `test_fast_transition_detection` - Verify is_transitioning_fast logic
 
 **Implementation Steps**:
-1. Create `signal_handler_service.py` with asyncio signal handling
-2. Implement shutdown event propagation system
-3. Add is_shutting_down flag to prevent new operations
-4. Integrate Pearl logging for all signal events
+1. Create `backend/models/agent_state.py`:
+   ```python
+   from enum import Enum
+   
+   class AgentState(str, Enum):
+       INITIALIZING = "initializing"
+       IDLE = "idle"
+       FETCHING_PROPOSALS = "fetching_proposals"
+       FILTERING_PROPOSALS = "filtering_proposals"
+       ANALYZING = "analyzing"
+       DECIDING = "deciding"
+       VOTING = "voting"
+       ERROR = "error"
+       SHUTDOWN = "shutdown"
+   ```
+
+2. Create `backend/services/state_transition_tracker.py`:
+   - Implement `StateTransitionTracker` class
+   - Track current state, last transition time, transition history
+   - Calculate metrics for health check response
+   - Integrate with Pearl logger for transition events
 
 **Integration Points**:
-- All services must register with signal handler
-- Main application loop must respect shutdown flag
+- Import into `AgentRunService` for workflow state tracking
+- Register with `ShutdownCoordinator` for graceful shutdown
+- Use `StateManager` for persistence
 
-#### Task 2: Add Shutdown Methods to Services
+### Task 2: Integrate State Tracking into Agent Run Service (P0)
+
 **Acceptance Criteria**:
-- Each service has async shutdown() method
-- Services save state before shutdown
-- Resources are properly released
-- Shutdown completes within 30 seconds
+- Agent run workflow reports state transitions
+- State persists across restarts
+- Graceful shutdown saves current state
+- All transitions are logged
 
 **Test Cases**:
-1. `test_agent_run_service_shutdown` - Verify clean agent shutdown
-2. `test_voting_service_shutdown` - Ensure pending votes are saved
-3. `test_snapshot_service_shutdown` - Verify cache persistence
-4. `test_shutdown_timeout` - Ensure 30-second limit is enforced
+1. `test_agent_run_state_transitions` - Verify all workflow stages trigger transitions
+2. `test_state_persistence_on_shutdown` - Verify state is saved during shutdown
+3. `test_state_recovery_on_startup` - Verify state is restored correctly
+4. `test_transition_logging` - Verify Pearl-compliant logs for each transition
 
 **Implementation Steps**:
-1. Add abstract base service with shutdown interface
-2. Implement shutdown in each service
-3. Add timeout decorator for 30-second limit
-4. Create shutdown orchestrator in main.py
+1. Update `backend/services/agent_run_service.py`:
+   - Import `StateTransitionTracker` and `AgentState`
+   - Add state transitions at each workflow stage
+   - Persist state in checkpoints
+   - Handle error states appropriately
+
+2. Update checkpoint structure to include state information
 
 **Integration Points**:
-- Signal handler calls shutdown orchestrator
-- Each service must extend base service
+- Existing checkpoint save/load mechanism
+- Pearl logger for transition events
+- Error handling for failed transitions
 
-### P0: State Persistence with STORE_PATH (BAC-174) ✅
+### Task 3: Implement Pearl-compliant Health Check Endpoint (P0) ✅ IMPLEMENTED
 
-#### Task 3: Create State Manager Service ✅
 **Acceptance Criteria**:
-- Centralized state management using STORE_PATH
-- Atomic writes with corruption detection
-- State recovery after crashes
-- Version migration support
+- Endpoint available at `/healthcheck` 
+- Returns Pearl-expected JSON format
+- Accurate state transition metrics
+- No external dependencies
 
 **Test Cases**:
-1. `test_state_manager_uses_store_path` - Verify correct path usage
-2. `test_state_atomic_writes` - Ensure no partial writes
-3. `test_state_corruption_recovery` - Handle corrupted files
-4. `test_state_version_migration` - Support schema changes
+1. `test_healthcheck_endpoint_format` - Verify JSON structure matches Pearl spec
+2. `test_healthcheck_metrics_accuracy` - Verify metrics are calculated correctly
+3. `test_healthcheck_error_handling` - Verify graceful handling when no transitions
+4. `test_healthcheck_performance` - Verify sub-100ms response time
 
 **Implementation Steps**:
-1. Create `state_manager_service.py` with atomic file operations
-2. Implement JSON schema validation
-3. Add backup/restore mechanism
-4. Create migration framework for version changes
+1. Update `backend/main.py`:
+   - Add `/healthcheck` endpoint
+   - Inject `StateTransitionTracker` dependency
+   - Return Pearl-compliant response
+
+2. Response format:
+   ```python
+   {
+       "seconds_since_last_transition": float,
+       "is_transitioning_fast": bool,
+       "period": int,  # Optional: transition check period
+       "reset_pause_duration": int  # Optional: pause duration
+   }
+   ```
 
 **Integration Points**:
-- Replace direct file I/O in all services
-- UserPreferencesService migrates to state manager
+- FastAPI router
+- StateTransitionTracker service
+- Existing health check can remain for backwards compatibility
 
-#### Task 4: Implement State Checkpointing
+### Task 4: Add State Persistence to StateManager (P1)
+
 **Acceptance Criteria**:
-- Periodic state saves during long operations
-- Checkpoint before risky operations
-- Recovery from last checkpoint
-- Minimal performance impact
+- State transitions persist across restarts
+- Migration support for schema changes
+- Atomic updates prevent corruption
+- Efficient storage for history
 
 **Test Cases**:
-1. `test_periodic_checkpointing` - Verify automatic saves
-2. `test_checkpoint_before_voting` - Save before blockchain ops
-3. `test_checkpoint_recovery` - Restore from checkpoint
-4. `test_checkpoint_performance` - Under 100ms overhead
+1. `test_state_persistence_save_load` - Verify state data persistence
+2. `test_state_history_limits` - Verify history is bounded (e.g., last 100 transitions)
+3. `test_state_data_migration` - Verify schema migration works
+4. `test_concurrent_state_updates` - Verify atomic updates
 
 **Implementation Steps**:
-1. Add checkpoint() method to state manager
-2. Implement time-based auto-checkpointing
-3. Add checkpoint triggers in critical paths
-4. Create recovery logic in startup
+1. Extend `backend/models/state.py`:
+   - Add `agent_state` field to AppState
+   - Add `state_history` list with size limit
+   - Update schema version
+
+2. Update `StateManager` to handle state data
+   - Save state transitions atomically
+   - Implement history rotation (keep last N transitions)
+   - Add migration logic for existing states
 
 **Integration Points**:
-- AgentRunService triggers checkpoints
-- VotingService checkpoints before transactions
+- Existing StateManager save/load mechanism
+- Schema validation
+- Backup/recovery system
 
-### P1: Private Key File Reading (BAC-175) ✅ IMPLEMENTED
+### Task 5: Enhance Logging for State Transitions (P1)
 
-#### Task 5: Implement Secure Key Reader
 **Acceptance Criteria**:
-- Read ethereum_private_key.txt from working directory
-- Validate file permissions (600 only)
-- Secure key handling in memory
-- Clear error messages without exposing paths
+- All state transitions are logged with Pearl format
+- Log includes transition details (from, to, reason)
+- Error transitions include stack traces
+- Performance impact < 1ms per transition
 
 **Test Cases**:
-1. `test_key_reader_finds_file` - Locate key file correctly
-2. `test_key_reader_validates_permissions` - Reject insecure files
-3. `test_key_reader_validates_content` - Check key format
-4. `test_key_reader_secure_errors` - No sensitive data in errors
+1. `test_transition_log_format` - Verify Pearl-compliant format
+2. `test_transition_log_content` - Verify all required fields
+3. `test_error_transition_logging` - Verify error details included
+4. `test_logging_performance` - Verify minimal overhead
 
 **Implementation Steps**:
-1. Create `key_manager_service.py` with secure file reading
-2. Implement permission validation (stat.S_IRUSR only)
-3. Add key format validation (ethereum private key)
-4. Create secure error messages
+1. Update `StateTransitionTracker`:
+   - Add structured logging for each transition
+   - Include transition context (reason, metadata)
+   - Use appropriate log levels (INFO for normal, WARN for fast, ERROR for errors)
 
 **Integration Points**:
-- VotingService uses key manager for signing
-- Remove hardcoded private key logic
+- Existing Pearl logger configuration
+- Structured logging adapter
+- Log span context
 
-#### Task 6: Integrate Key Manager with Services
+### Task 6: Add Health Check Configuration (P2)
+
 **Acceptance Criteria**:
-- VotingService uses key manager
-- Lazy loading of private key
-- Key caching with timeout
-- Memory clearing after use
+- Port configurable via environment variable
+- Endpoint path configurable
+- Transition thresholds configurable
+- Backwards compatible defaults
 
 **Test Cases**:
-1. `test_voting_service_uses_key_manager` - Integration test
-2. `test_key_lazy_loading` - Load only when needed
-3. `test_key_cache_timeout` - Expire after 5 minutes
-4. `test_key_memory_clearing` - Secure cleanup
+1. `test_port_configuration` - Verify PORT env var respected
+2. `test_endpoint_configuration` - Verify custom paths work
+3. `test_threshold_configuration` - Verify custom thresholds apply
+4. `test_default_configuration` - Verify defaults match Pearl spec
 
 **Implementation Steps**:
-1. Refactor VotingService to use key manager
-2. Implement lazy loading pattern
-3. Add TTL cache with secure storage
-4. Use context manager for memory cleanup
+1. Update `backend/config.py`:
+   - Add `HEALTH_CHECK_PORT` (default: 8716)
+   - Add `HEALTH_CHECK_PATH` (default: "/healthcheck")
+   - Add `FAST_TRANSITION_THRESHOLD` (default: 5 seconds)
+
+2. Update health check implementation to use config
 
 **Integration Points**:
-- VotingService constructor accepts key manager
-- Configuration updated for key file path
-
-**Implementation Notes** (2025-01-20):
-- ✅ Created KeyManager service with 8 comprehensive tests
-- ✅ Implemented secure file reading with 600 permission validation
-- ✅ Added key format validation for Ethereum private keys
-- ✅ Implemented 5-minute TTL caching mechanism
-- ✅ Integrated KeyManager with VotingService using lazy loading
-- ✅ Added 5 integration tests for VotingService-KeyManager interaction
-- ✅ All 13 tests passing with proper error handling and security
-
-### P1: Safe Contract Address Integration (BAC-176)
-
-#### Task 7: Parse Multi-Chain Safe Addresses
-**Acceptance Criteria**:
-- Parse SAFE_CONTRACT_ADDRESSES environment variable
-- Support chain_id:address format
-- Validate ethereum addresses
-- Default handling for missing chains
-
-**Test Cases**:
-1. `test_parse_safe_addresses_format` - Parse "1:0x123,42161:0x456"
-2. `test_validate_ethereum_addresses` - Check address format
-3. `test_handle_missing_chains` - Graceful degradation
-4. `test_parse_malformed_input` - Error handling
-
-**Implementation Steps**:
-1. Add safe_addresses parser to config.py
-2. Create SafeAddress dataclass with validation
-3. Implement chain-specific lookup method
-4. Add configuration validation on startup
-
-**Integration Points**:
-- VotingService uses Safe addresses
-- Configuration validates on startup
-
-#### Task 8: Integrate Safe with Voting Service
-**Acceptance Criteria**:
-- VotingService uses Safe for transactions
-- Multi-chain support maintained
-- Fallback to direct execution
-- Transaction monitoring
-
-**Test Cases**:
-1. `test_voting_via_safe` - Execute through Safe
-2. `test_multi_chain_safe_support` - Different chains
-3. `test_safe_fallback` - Direct execution backup
-4. `test_safe_transaction_monitoring` - Status tracking
-
-**Implementation Steps**:
-1. Update VotingService with Safe integration
-2. Implement Safe SDK or contract calls
-3. Add transaction queue management
-4. Create monitoring for Safe transactions
-
-**Integration Points**:
-- VotingService enhanced with Safe support
-- State manager tracks pending Safe transactions
-
-### P2: Withdrawal Mode Implementation (BAC-177) ✅
-
-**Status**: ✅ IMPLEMENTED (2025-01-20)
-
-#### Task 9: Create Withdrawal Service ✅
-**Acceptance Criteria**:
-- Detect WITHDRAWAL_MODE=true ✅
-- List all invested positions ✅
-- Calculate withdrawal amounts ✅
-- Execute withdrawal transactions ✅
-
-**Test Cases**:
-1. `test_withdrawal_mode_detection` - Check env variable ✅
-2. `test_list_invested_positions` - Find all investments ✅
-3. `test_calculate_withdrawals` - Compute amounts ✅
-4. `test_execute_withdrawals` - Process transactions ✅
-
-**Implementation Steps**:
-1. Create `withdrawal_service.py` ✅
-2. Implement position discovery logic ✅
-3. Add withdrawal calculation engine ✅
-4. Create transaction execution flow ✅
-
-**Files Created/Modified**:
-- `backend/services/withdrawal_service.py` - Core withdrawal service implementation
-- `backend/tests/test_withdrawal_service.py` - Comprehensive test suite (14 tests)
-- `backend/tests/test_withdrawal_mode_integration.py` - Integration tests
-- `backend/main.py` - Added WITHDRAWAL_MODE detection and integration
-- `backend/models.py` - Added withdrawal-related models (Vote, InvestedPosition, WithdrawalTransaction)
-
-**Key Features Implemented**:
-- Emergency withdrawal mode detection via WITHDRAWAL_MODE environment variable
-- Position discovery from state and on-chain data
-- Withdrawal amount calculation with percentage support
-- Withdrawal prioritization by size and chain
-- Safe contract integration for withdrawal execution
-- Transaction monitoring and status updates
-- Emergency stop functionality
-- Health check reporting of withdrawal mode status
-- API endpoint protection during withdrawal mode
-
-**Integration Points**:
-- Main.py checks withdrawal mode
-- Uses VotingService for transactions
-
-#### Task 10: Integrate Withdrawal with Agent ✅
-**Acceptance Criteria**:
-- Agent skips voting in withdrawal mode ✅
-- Withdrawal runs instead of voting ✅
-- Progress tracking and reporting ✅
-- Safe integration for withdrawals ✅
-
-**Test Cases**:
-1. `test_agent_withdrawal_mode` - Skip normal flow ✅
-2. `test_withdrawal_progress_tracking` - Monitor status ✅
-3. `test_withdrawal_via_safe` - Use Safe contracts ✅
-4. `test_withdrawal_completion` - Verify success ✅
-
-**Implementation Steps**:
-1. Modify main.py for withdrawal mode ✅
-2. Create withdrawal orchestrator ✅
-3. Add progress tracking to state ✅
-4. Integrate with Safe for execution ✅
-
-**Integration Points**:
-- Main application flow modification ✅
-- State manager tracks withdrawal progress
-
+- Existing configuration system
+- Environment variable loading
+- Docker configuration
 
 ## Risk Assessment
 
-### High Risks
-1. **Signal Handling Complexity**: 
-   - **Risk**: Async signal handling is complex
-   - **Mitigation**: Extensive testing, timeout limits
+### Technical Risks
+1. **State Tracking Overhead**: Mitigated by efficient in-memory tracking with periodic persistence
+2. **Port Conflicts**: Mitigated by configuration flexibility
+3. **State Corruption**: Mitigated by atomic updates and validation
 
-2. **State Corruption**:
-   - **Risk**: Corrupted state prevents startup
-   - **Mitigation**: Backup/restore, validation, checksums
+### Integration Risks
+1. **Pearl Platform Changes**: Mitigated by following documented spec
+2. **Backwards Compatibility**: Mitigated by keeping existing `/health` endpoint
 
-3. **Private Key Security**:
-   - **Risk**: Key exposure via logs or errors
-   - **Mitigation**: Secure coding practices, audit
+## Success Criteria Checklist
 
-### Medium Risks
-1. **Safe Integration Delays**:
-   - **Risk**: Safe transactions slower than direct
-   - **Mitigation**: Async processing, timeout handling
-
-2. **Multi-Chain Complexity**:
-   - **Risk**: Chain-specific issues
-   - **Mitigation**: Comprehensive testing per chain
-
-### Low Risks
-1. **Performance Overhead**:
-   - **Risk**: New services slow down agent
-   - **Mitigation**: Performance testing, optimization
-
-## Success Criteria
-
-- [ ] Agent handles SIGTERM gracefully with state preservation
-- [ ] All state persisted to STORE_PATH with corruption recovery
-- [ ] Private key read from ethereum_private_key.txt securely
-- [ ] Safe addresses parsed and used for transactions
-- [ ] Withdrawal mode executes when enabled
-- [ ] Zero data loss during shutdowns
-- [ ] All tests pass with >90% coverage
-- [ ] Pearl compliance verified in test deployment
-- [ ] Performance within 10% of baseline
-- [ ] Security audit passed for key handling
+- [x] Health check endpoint returns Pearl-compliant JSON at `/healthcheck`
+- [x] All agent state transitions are tracked with timestamps
+- [ ] State persists across agent restarts
+- [ ] All transitions are logged in Pearl format
+- [ ] Health check responds in < 100ms
+- [ ] No regression in existing functionality
+- [ ] Documentation updated for new endpoints
+- [ ] Integration tests pass with Pearl platform
 
 ## Resource Estimates
 
-### Development Time
-- **P0 Tasks**: 5-6 days
-- **P1 Tasks**: 4-5 days  
-- **P2 Tasks**: 2-3 days
-- **P3 Tasks**: 2-3 days
-- **Testing & Integration**: 3-4 days
-- **Total**: 16-21 days
+**Development Time**: 2-3 days
+- Task 1-3 (P0): 1 day
+- Task 4-5 (P1): 1 day  
+- Task 6 (P2): 0.5 days
+- Testing & Integration: 0.5 days
 
-### Team Requirements
-- 1 Senior Developer (full-time)
-- 1 QA Engineer (50% allocation)
-- Security review (2 days)
-- Pearl platform access for testing
+**Complexity**: Medium
+- Leverages existing infrastructure
+- Clear integration points
+- Minimal external dependencies
 
-### Dependencies
-- Pearl documentation and test environment
-- Safe SDK or contract ABIs
-- Multi-chain test infrastructure
-- Security audit resources
-
-## Implementation Order
-
-1. **Week 1**: P0 Signal handling and state persistence
-2. **Week 2**: P1 Key management and Safe integration  
-3. **Week 3**: P2 Withdrawal mode and P3 enhancements
-4. **Week 4**: Integration testing and Pearl deployment
-
-This plan ensures systematic, test-driven development with minimal risk to existing functionality while achieving full Pearl platform compliance.
+**Testing Effort**: Comprehensive
+- Unit tests for each component
+- Integration tests for workflow
+- Performance validation

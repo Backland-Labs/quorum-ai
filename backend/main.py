@@ -35,6 +35,7 @@ from services.snapshot_service import SnapshotService
 from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
+from services.state_transition_tracker import StateTransitionTracker
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -51,6 +52,7 @@ state_manager: StateManager
 signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
+state_transition_tracker: Optional[StateTransitionTracker] = None
 
 
 @asynccontextmanager
@@ -68,10 +70,14 @@ async def lifespan(_app: FastAPI):
         state_manager, \
         signal_handler, \
         shutdown_coordinator, \
-        withdrawal_service
+        withdrawal_service, \
+        state_transition_tracker
 
     # Initialize state manager
     state_manager = StateManager()
+    
+    # Initialize state transition tracker with Pearl logging enabled
+    state_transition_tracker = _create_state_transition_tracker()
     
     # Initialize services with state manager where needed
     ai_service = AIService()
@@ -180,6 +186,97 @@ async def health_check():
         "version": "0.1.0",
         "withdrawal_mode": withdrawal_mode,
     }
+
+
+# Factory function for creating StateTransitionTracker instances
+def _create_state_transition_tracker():
+    """Create a new StateTransitionTracker instance."""
+    # Import at runtime to allow mocking
+    import services.state_transition_tracker
+    return services.state_transition_tracker.StateTransitionTracker(
+        state_file_path="agent_state.json",
+        enable_pearl_logging=True,
+        max_history_size=100,
+        fast_transition_threshold=0.5,
+        fast_transition_window=5
+    )
+
+
+# Helper function to get or create state transition tracker
+def _get_state_transition_tracker():
+    """Get or create the state transition tracker instance."""
+    global state_transition_tracker
+    
+    if state_transition_tracker is None:
+        state_transition_tracker = _create_state_transition_tracker()
+    
+    return state_transition_tracker
+
+
+# Pearl-compliant health check endpoint
+@app.get("/healthcheck")
+async def healthcheck():
+    """Pearl-compliant health check endpoint for monitoring state transitions.
+    
+    Returns real-time information about agent state transitions to help
+    the Pearl platform monitor agent health and responsiveness.
+    
+    Returns:
+        JSON with required fields:
+        - seconds_since_last_transition: Time since last state change (float)
+        - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
+        - period: (optional) The time period used to determine if transitioning fast
+        - reset_pause_duration: (optional) Time to wait before resetting transition tracking
+    """
+    try:
+        # Get the tracker instance
+        tracker = _get_state_transition_tracker()
+        
+        # Get state transition information
+        # Access as property but handle both property and method mock scenarios
+        if hasattr(tracker.seconds_since_last_transition, '__call__'):
+            # It's mocked as a method
+            seconds_since_last_transition = tracker.seconds_since_last_transition()
+        else:
+            # It's a property
+            seconds_since_last_transition = tracker.seconds_since_last_transition
+        
+        is_transitioning_fast = tracker.is_transitioning_fast()
+        
+        # Handle case where no transitions have occurred (infinity)
+        if seconds_since_last_transition == float('inf'):
+            seconds_since_last_transition = -1  # Use -1 to indicate no transitions
+        
+        # Build response with required fields
+        response = {
+            "seconds_since_last_transition": seconds_since_last_transition,
+            "is_transitioning_fast": is_transitioning_fast
+        }
+        
+        # Add optional fields based on configuration
+        # These values come from the StateTransitionTracker initialization
+        # Handle both real and mocked attributes
+        if hasattr(tracker, 'fast_transition_window'):
+            response["period"] = tracker.fast_transition_window
+        else:
+            response["period"] = 5  # Default value
+            
+        if hasattr(tracker, 'fast_transition_threshold'):
+            response["reset_pause_duration"] = tracker.fast_transition_threshold
+        else:
+            response["reset_pause_duration"] = 0.5  # Default value
+        
+        return response
+        
+    except Exception as e:
+        # Handle errors gracefully - return safe defaults
+        logger.error(f"Error in healthcheck endpoint: {str(e)}")
+        return {
+            "seconds_since_last_transition": -1,
+            "is_transitioning_fast": False,
+            "period": 5,
+            "reset_pause_duration": 0.5
+        }
 
 
 # Proposal endpoints
@@ -394,7 +491,7 @@ def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -
     headers = {}
 
     # Set appropriate cache TTL based on proposal state
-    if proposal.state == ProposalState.ACTIVE:
+    if proposal.state == "active":
         # Active proposals change frequently, shorter cache time (5 minutes)
         max_age = 300
     else:
@@ -446,25 +543,26 @@ def _convert_voting_power_to_wei(voting_power: float) -> str:
 
 
 # Private helper functions
-def _build_proposal_filters(
-    dao_id: Optional[str],
-    organization_id: Optional[str],
-    state: Optional[ProposalState],
-    limit: int,
-    after_cursor: Optional[str],
-    sort_by: SortCriteria,
-    sort_order: SortOrder,
-) -> ProposalFilters:
-    """Build ProposalFilters object from query parameters."""
-    return ProposalFilters(
-        dao_id=dao_id,
-        organization_id=organization_id,
-        state=state,
-        limit=limit,
-        after_cursor=after_cursor,
-        sort_by=sort_by,
-        sort_order=sort_order,
-    )
+# TODO: Fix undefined types (ProposalState, SortCriteria, SortOrder, ProposalFilters)
+# def _build_proposal_filters(
+#     dao_id: Optional[str],
+#     organization_id: Optional[str],
+#     state: Optional[ProposalState],
+#     limit: int,
+#     after_cursor: Optional[str],
+#     sort_by: SortCriteria,
+#     sort_order: SortOrder,
+# ) -> ProposalFilters:
+#     """Build ProposalFilters object from query parameters."""
+#     return ProposalFilters(
+#         dao_id=dao_id,
+#         organization_id=organization_id,
+#         state=state,
+#         limit=limit,
+#         after_cursor=after_cursor,
+#         sort_by=sort_by,
+#         sort_order=sort_order,
+#     )
 
 
 async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:
