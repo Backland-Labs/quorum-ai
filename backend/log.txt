@@ -411,3 +411,284 @@
 [2025-07-20 11:05:49,067] [ERROR] [agent] Unhandled exception error=maximum recursion depth exceeded path=http://testserver/healthcheck
 [2025-07-20 11:05:53,805] [ERROR] [agent] Unhandled exception error=maximum recursion depth exceeded path=http://testserver/healthcheck
 [2025-07-20 11:05:55,068] [ERROR] [agent] Error in healthcheck endpoint: Tracker error
+[2025-07-20 11:12:28,181] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:12:28,425] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:12:28,700] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:12:28,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:12:28,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:13:16,414] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:13:16,602] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:13:16,840] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:13:16,846] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:13:16,846] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:14:30,652] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:14:30,891] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:14:31,151] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:14:49,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:14:49,782] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:14:50,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:15:36,597] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:15:36,786] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:15:37,025] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:15:56,321] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:15:56,518] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:15:56,769] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:32,396] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:32,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:32,869] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,037] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,233] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,478] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,498] [INFO] [agent] Creating AI model
+[2025-07-20 11:21:57,498] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:21:57,509] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:21:57,510] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:21:57,510] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:21:57,511] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,512] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:21:57,512] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,512] [INFO] [agent] VotingService initialized
+[2025-07-20 11:21:57,512] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,512] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,512] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:21:57,512] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:22:58,104] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,530] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,549] [INFO] [agent] Creating AI model
+[2025-07-20 11:22:58,549] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:22:58,561] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:22:58,561] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:22:58,561] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:22:58,562] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,562] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:22:58,562] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,562] [INFO] [agent] VotingService initialized
+[2025-07-20 11:22:58,563] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,563] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,563] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:22:58,563] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:22:58,564] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:22:58,564] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:22:58,564] [INFO] [agent] Agent run started (run_id=space1_1753032178, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:22:58,564] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:22:58,564] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:22:58,564] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:22:58,564] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:22:58,564] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:22:58,911] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:22:58,912] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:22:58,912] [INFO] [agent] Completed snapshot_api_request successfully in 0.348s
+[2025-07-20 11:22:58,912] [INFO] [agent] Completed get_proposals successfully in 0.348s
+[2025-07-20 11:22:58,912] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:22:58,912] [INFO] [agent] Completed fetch_active_proposals successfully in 0.348s (proposal_count=0)
+[2025-07-20 11:22:58,914] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:22:58,914] [INFO] [agent] Completed agent_run_execution successfully in 0.351s
+[2025-07-20 11:23:57,379] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,607] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,875] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,894] [INFO] [agent] Creating AI model
+[2025-07-20 11:23:57,894] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:23:57,906] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:23:57,906] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:23:57,906] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:23:57,907] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,907] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:23:57,907] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,907] [INFO] [agent] VotingService initialized
+[2025-07-20 11:23:57,907] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,907] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,907] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:23:57,907] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:23:57,908] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:23:57,908] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:23:57,908] [INFO] [agent] Agent run started (run_id=space1_1753032237, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:23:57,908] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:23:57,908] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:23:57,908] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:23:57,908] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:23:57,908] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:23:58,165] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:23:58,165] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:23:58,166] [INFO] [agent] Completed snapshot_api_request successfully in 0.257s
+[2025-07-20 11:23:58,166] [INFO] [agent] Completed get_proposals successfully in 0.257s
+[2025-07-20 11:23:58,166] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:23:58,166] [INFO] [agent] Completed fetch_active_proposals successfully in 0.258s (proposal_count=0)
+[2025-07-20 11:23:58,168] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:23:58,168] [INFO] [agent] Completed agent_run_execution successfully in 0.260s
+[2025-07-20 11:24:12,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,983] [INFO] [agent] Creating AI model
+[2025-07-20 11:24:12,983] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:24:12,995] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:24:12,996] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:24:12,996] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:24:12,996] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,997] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:24:12,997] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,997] [INFO] [agent] VotingService initialized
+[2025-07-20 11:24:12,997] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,997] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,997] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:12,997] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:24:12,998] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:24:12,998] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:24:12,998] [INFO] [agent] Agent run started (run_id=space1_1753032252, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:24:12,998] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:12,998] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:12,998] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:24:12,998] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:24:12,998] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:24:13,259] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:24:13,259] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:24:13,259] [INFO] [agent] Completed snapshot_api_request successfully in 0.261s
+[2025-07-20 11:24:13,259] [INFO] [agent] Completed get_proposals successfully in 0.261s
+[2025-07-20 11:24:13,259] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:24:13,259] [INFO] [agent] Completed fetch_active_proposals successfully in 0.262s (proposal_count=0)
+[2025-07-20 11:24:13,260] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:24:13,260] [INFO] [agent] Completed agent_run_execution successfully in 0.263s
+[2025-07-20 11:24:13,322] [INFO] [agent] Creating AI model
+[2025-07-20 11:24:13,322] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:24:13,322] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:24:13,323] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:24:13,323] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:24:13,323] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:24:13,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,323] [INFO] [agent] VotingService initialized
+[2025-07-20 11:24:13,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,323] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:24:13,327] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:24:13,336] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:24:13,336] [INFO] [agent] Agent run started (run_id=space1_1753032253, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:24:13,336] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:13,336] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:13,336] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:24:13,336] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:24:13,336] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:24:13,569] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:24:13,569] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:24:13,569] [INFO] [agent] Completed snapshot_api_request successfully in 0.233s
+[2025-07-20 11:24:13,569] [INFO] [agent] Completed get_proposals successfully in 0.233s
+[2025-07-20 11:24:13,569] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:24:13,569] [INFO] [agent] Completed fetch_active_proposals successfully in 0.233s (proposal_count=0)
+[2025-07-20 11:24:13,570] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:24:13,570] [INFO] [agent] Completed agent_run_execution successfully in 0.243s
+[2025-07-20 11:24:13,791] [INFO] [agent] Creating AI model
+[2025-07-20 11:24:13,791] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:24:13,791] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:24:13,791] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:24:13,791] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:24:13,792] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:24:13,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,792] [INFO] [agent] VotingService initialized
+[2025-07-20 11:24:13,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:13,792] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:24:13,792] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:24:13,793] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:24:13,793] [INFO] [agent] Agent run started (run_id=space1_1753032253, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:24:13,793] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:13,793] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:13,793] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:24:13,793] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:24:13,793] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:24:13,966] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:24:13,966] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:24:13,966] [INFO] [agent] Completed snapshot_api_request successfully in 0.173s
+[2025-07-20 11:24:13,966] [INFO] [agent] Completed get_proposals successfully in 0.173s
+[2025-07-20 11:24:13,966] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:24:13,966] [INFO] [agent] Completed fetch_active_proposals successfully in 0.174s (proposal_count=0)
+[2025-07-20 11:24:13,967] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:24:13,967] [INFO] [agent] Completed agent_run_execution successfully in 0.175s
+[2025-07-20 11:24:14,003] [INFO] [agent] Creating AI model
+[2025-07-20 11:24:14,004] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:24:14,004] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:24:14,004] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:24:14,004] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:24:14,004] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:24:14,004] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,004] [INFO] [agent] VotingService initialized
+[2025-07-20 11:24:14,004] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,004] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,004] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,004] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:24:14,005] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=True)
+[2025-07-20 11:24:14,005] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:24:14,006] [INFO] [agent] Agent run started (run_id=space1_1753032254, space_id=space1, dry_run=True, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:24:14,006] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:14,006] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:14,006] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:24:14,006] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:24:14,006] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:24:14,165] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:24:14,165] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:24:14,165] [INFO] [agent] Completed snapshot_api_request successfully in 0.159s
+[2025-07-20 11:24:14,165] [INFO] [agent] Completed get_proposals successfully in 0.160s
+[2025-07-20 11:24:14,165] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:24:14,166] [INFO] [agent] Completed fetch_active_proposals successfully in 0.160s (proposal_count=0)
+[2025-07-20 11:24:14,166] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:24:14,166] [INFO] [agent] Completed agent_run_execution successfully in 0.161s
+[2025-07-20 11:24:14,197] [INFO] [agent] Creating AI model
+[2025-07-20 11:24:14,197] [INFO] [agent] Using OpenRouter
+[2025-07-20 11:24:14,197] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 11:24:14,197] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 11:24:14,197] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 11:24:14,197] [INFO] [agent] KeyManager initialized
+[2025-07-20 11:24:14,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,197] [INFO] [agent] VotingService initialized
+[2025-07-20 11:24:14,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:24:14,198] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 11:24:14,198] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:24:14,198] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:24:14,198] [INFO] [agent] Agent run started (run_id=space1_1753032254, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:24:14,198] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:14,198] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:14,198] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:24:14,198] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:24:14,198] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:24:14,198] [INFO] [agent] Starting agent_run_execution (space_id=space1, dry_run=False)
+[2025-07-20 11:24:14,198] [INFO] [agent] Preferences file not found, returning defaults, preferences_file=user_preferences.txt
+[2025-07-20 11:24:14,198] [INFO] [agent] Agent run started (run_id=space1_1753032254, space_id=space1, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-20 11:24:14,199] [INFO] [agent] Starting fetch_active_proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:14,199] [INFO] [agent] Fetching active proposals (space_id=space1, limit=3)
+[2025-07-20 11:24:14,199] [INFO] [agent] Starting get_proposals (space_ids=['space1'], state=active, first=3, skip=0)
+[2025-07-20 11:24:14,199] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 11:24:14,199] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 11:24:14,391] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:24:14,391] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:24:14,391] [INFO] [agent] Completed snapshot_api_request successfully in 0.193s
+[2025-07-20 11:24:14,392] [INFO] [agent] Completed get_proposals successfully in 0.193s
+[2025-07-20 11:24:14,392] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:24:14,392] [INFO] [agent] Completed fetch_active_proposals successfully in 0.194s (proposal_count=0)
+[2025-07-20 11:24:14,393] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:24:14,393] [INFO] [agent] Completed agent_run_execution successfully in 0.195s
+[2025-07-20 11:24:14,395] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 11:24:14,395] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-07-20 11:24:14,395] [INFO] [agent] Completed snapshot_api_request successfully in 0.196s
+[2025-07-20 11:24:14,395] [INFO] [agent] Completed get_proposals successfully in 0.197s
+[2025-07-20 11:24:14,395] [INFO] [agent] Successfully fetched active proposals (space_id=space1, proposal_count=0)
+[2025-07-20 11:24:14,395] [INFO] [agent] Completed fetch_active_proposals successfully in 0.197s (proposal_count=0)
+[2025-07-20 11:24:14,396] [ERROR] [agent] Unexpected agent run error: object MagicMock can't be used in 'await' expression
+[2025-07-20 11:24:14,396] [INFO] [agent] Completed agent_run_execution successfully in 0.198s
