@@ -2,6 +2,7 @@
 
 import subprocess
 import json
+import os
 
 
 def run_claude_code(prompt):
@@ -15,63 +16,47 @@ def run_claude_code(prompt):
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.stdout
 
-def parse_continue(result_dict):
-    # Check if the result contains a continue flag
-    if isinstance(result_dict, dict):
-        result_text = result_dict.get('result', '')
-        # Look for explicit continue flag in the result text
-        if 'continue=true' in result_text.lower():
-            return True
-        elif 'continue=false' in result_text.lower():
-            return False
-    # Default to False if no explicit continue flag found
-    return False
+def check_status_file():
+    """Check claude_status.json for continuation status."""
+    try:
+        with open('claude_status.json', 'r') as f:
+            status = json.load(f)
+        return status.get('continue', 'no').lower() == 'yes'
+    except (FileNotFoundError, json.JSONDecodeError):
+        return True  # Continue if no status file or invalid JSON
+
+def cleanup_status_file():
+    """Remove the status file at the end."""
+    try:
+        os.remove('claude_status.json')
+    except FileNotFoundError:
+        pass
 
 # Run initial command
 linear_issue = input("Enter the initial prompt for Claude Code: ")
-NEED_PLAN = input("Do you need a plan? (True/False): ") == True
+NEED_PLAN = input("Do you need a plan? (True/False): ").strip().lower() == 'true'
 
 if NEED_PLAN:
     print("Generating plan...")
     print(run_claude_code(f"/make_plan {linear_issue}"))
 
-# Loop until continue=false
+# Loop until status file indicates completion
 continue_flag = True
-while continue_flag:
-    print("Starting command...")
+max_iterations = 20  # Safety limit
+
+iteration = 0
+while continue_flag and iteration < max_iterations:
+    iteration += 1
+    print(f"Starting command... (Iteration {iteration})")
     output = run_claude_code("/ralph")
     print(output)
-    print(f"Raw output: {repr(output)}")
-    print(f"Output length: {len(output)}")
-    try:
-        if not output.strip():
-            print("Output is empty!")
-            continue_flag = False
-        else:
-            # Strip markdown code block formatting
-            clean_output = output.strip()
-            if clean_output.startswith('```json'):
-                clean_output = clean_output[7:]  # Remove ```json
-            if clean_output.startswith('```'):
-                clean_output = clean_output[3:]   # Remove ```
-            if clean_output.endswith('```'):
-                clean_output = clean_output[:-3]  # Remove trailing ```
-            clean_output = clean_output.strip()
-            
-            print(f"Clean output: {repr(clean_output)}")
-            print(f"Clean output length: {len(clean_output)}")
-            
-            parsed_output = json.loads(clean_output)
-            # Handle both string and object responses
-            if isinstance(parsed_output, str):
-                result_bool = parsed_output.lower() == 'true'
-            else:
-                result_bool = parsed_output.get('result', '').lower() == 'true'
-            continue_flag = result_bool
-    except json.JSONDecodeError as e:
-        print(f"Error parsing JSON: {e}")
-        print(f"First 200 chars of output: {output[:200]}")
-        continue_flag = False
+    
+    # Check status file for continuation
+    continue_flag = check_status_file()
+    if not continue_flag:
+        print("Status file indicates completion. Stopping.")
 
+if iteration >= max_iterations:
+    print(f"Reached maximum iterations ({max_iterations}). Stopping.")
 
-'''{"type":"result","subtype":"success","is_error":false,"duration_ms":469812,"duration_api_ms":416822,"num_turns":18,"result":"I've successfully created a comprehensive implementation plan for BAC-173 (Agent Interface Layer) in `plan.md`. Here's a summary of what the plan includes:\n\n## Plan Overview\n\nThe plan provides a detailed, TDD-friendly breakdown of implementing the Pearl Agent Interface Layer with:\n\n### Key Sections:\n\n1. **Overview & Objectives**\n   - Implement core agent infrastructure for Pearl platform integration\n   - Focus on state management, key handling, and blockchain integration\n\n2. **Prioritized Features (P0-P3)**\n   - P0: Critical requirements like signal handling, state persistence\n   - P1: Core features like Safe contract management, health monitoring\n   - P2: Advanced features like withdrawal mode, metrics\n   - P3: Nice-to-have enhancements\n\n3. **Detailed Task Breakdown**\n   - 8 phases of implementation\n   - Each task includes:\n     - Specific test cases to write first (TDD)\n     - Implementation steps\n     - Integration points\n     - Justification for testing\n\n4. **Risk Assessment**\n   - Technical risks (signal handling, state corruption, security)\n   - Integration risks (Pearl platform changes, service coordination)\n   - Mitigation strategies for each risk\n\n5. **Success Criteria**\n   - Functional requirements checklist\n   - Non-functional requirements (performance, reliability)\n   - Testing requirements (>90% coverage)\n   - Documentation requirements\n\n6. **Resource Estimates**\n   - 10-14 days total development effort\n   - Week-by-week implementation schedule\n   - Required technical resources\n\n### Key Implementation Highlights:\n\n- **Signal Handling**: Graceful shutdown with SIGTERM/SIGINT support\n- **State Persistence**: Atomic saves with corruption recovery\n- **Private Key Security**: Enhanced validation and secure loading\n- **Pearl Interface**: Command processing and event streaming\n- **Multi-chain Support**: Safe wallet integration across chains\n- **Withdrawal Mode**: Emergency fund recovery capability\n\nEach task is designed to be completed in one TDD cycle (red-green-refactor) with clear boundaries and testable outcomes. The plan emphasizes Pearl platform compliance while maintaining the existing service architecture.","session_id":"369014cf-51ef-48f3-88e6-60313791a9db","total_cost_usd":6.5635146,"usage":{"input_tokens":34,"cache_creation_input_tokens":39201,"cache_read_input_tokens":152633,"output_tokens":5978,"server_tool_use":{"web_search_requests":0},"service_tier":"standard"}}'''
+cleanup_status_file()
