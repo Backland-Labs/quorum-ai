@@ -230,6 +230,93 @@ The autonomous voting agent can be configured via environment variables:
 | `PROPOSAL_FETCH_TIMEOUT` | Timeout for fetching proposals (seconds) | `30` |
 | `VOTE_EXECUTION_TIMEOUT` | Timeout for vote execution (seconds) | `60` |
 
+## Voting Flow: From Decision to On-Chain Vote
+
+Quorum AI implements a sophisticated voting system that bridges AI decision-making with on-chain governance. Here's how votes flow through the system:
+
+### 🔄 Complete Voting Flow
+
+```
+User Request → Agent Run → Fetch Proposals → AI Analysis → Vote Decision → Submit Vote
+                  ↓              ↓                ↓              ↓              ↓
+           AgentRunService  SnapshotService   AIService    VoteDecision  VotingService/SafeService
+```
+
+### 📋 Step-by-Step Process
+
+#### 1. **Vote Initiation**
+- Agent run triggered via `/agent-run` endpoint
+- Fetches active proposals from Snapshot spaces
+- Applies user preferences (filtering, strategies)
+- Ranks proposals by urgency and importance
+
+#### 2. **AI Decision Making**
+- Google Gemini 2.0 Flash analyzes each proposal
+- Considers voting strategy (Conservative/Balanced/Aggressive)
+- Returns structured decision with:
+  - Vote choice: FOR, AGAINST, or ABSTAIN
+  - Confidence score (0-1)
+  - Risk assessment (LOW/MEDIUM/HIGH)
+  - Detailed reasoning
+
+#### 3. **Vote Submission Paths**
+
+**Direct Voting (EOA)**:
+- Creates EIP-712 typed message for Snapshot
+- Signs with agent's private key
+- Submits to Snapshot Hub API
+- No gas fees required (off-chain)
+
+**Multi-Sig Voting (Gnosis Safe)**:
+- Builds Safe transaction for governor contract
+- Encodes vote using governor ABI
+- Signs and executes through Safe
+- Requires on-chain gas fees
+
+### 🔐 Security & Signatures
+
+**EIP-712 Signature Structure**:
+```json
+{
+  "from": "0xVoterAddress",
+  "space": "compound.eth",
+  "timestamp": 1234567890,
+  "proposal": "0xProposalId",
+  "choice": 1,  // 1=For, 2=Against, 3=Abstain
+  "reason": "",
+  "app": "",
+  "metadata": "{}"
+}
+```
+
+### ⛓️ Supported Blockchains
+- **Ethereum** (Chain ID: 1)
+- **Gnosis Chain** (Chain ID: 100)
+- **Base** (Chain ID: 8453)
+- **Mode** (Chain ID: 34443)
+- **Sepolia Testnet** (Chain ID: 11155111)
+
+### 🏛️ Governor Contract Support
+- Compound Bravo
+- Nouns Governor
+- OpenZeppelin (Uniswap-style)
+- Arbitrum Governor
+
+### 🔍 State Tracking
+The system tracks vote progression through states:
+```
+IDLE → STARTING → LOADING_PREFERENCES → FETCHING_PROPOSALS
+→ FILTERING_PROPOSALS → ANALYZING_PROPOSAL → DECIDING_VOTE
+→ SUBMITTING_VOTE → COMPLETED
+```
+
+### 🛡️ Key Security Features
+- Private keys stored with 600 permissions
+- Keys cached in memory (5-minute expiration)
+- All votes cryptographically signed
+- Comprehensive error handling
+- Audit trail via Pearl-compliant logging
+
 ## Pearl Platform Integration
 
 Quorum AI is designed specifically for deployment on the Olas Pearl App Store:
