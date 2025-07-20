@@ -4065,3 +4065,349 @@
 [2025-07-20 00:02:31,565] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 00:02:31,569] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 00:02:31,569] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-20 00:11:46,334] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,542] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,806] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,814] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 00:11:46,815] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,815] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 00:11:46,815] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,816] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,817] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,919] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,920] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:11:46,921] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 00:11:46,921] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:11:46,921] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:11:46,921] [INFO] [agent] Starting agent_service_stop
+[2025-07-20 00:11:46,921] [INFO] [agent] Agent service stopped
+[2025-07-20 00:11:46,921] [INFO] [agent] Completed agent_service_stop successfully in 0.000s
+[2025-07-20 00:11:46,921] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:11:46,921] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:11:46,921] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:11:46,921] [INFO] [agent] Saved state for service 'voting'
+[2025-07-20 00:11:46,921] [INFO] [agent] Saved state for service 'agent'
+[2025-07-20 00:11:46,922] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:11:46,922] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-07-20 00:11:46,923] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-20 00:11:46,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,925] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:11:46,925] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:11:46,925] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:11:46,925] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:11:46,925] [INFO] [agent] Completed vote vote1
+[2025-07-20 00:11:46,925] [INFO] [agent] Cancelled vote vote2
+[2025-07-20 00:11:46,925] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:11:46,925] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:11:46,925] [INFO] [agent] Saved state for service 'voting'
+[2025-07-20 00:11:46,926] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:11:46,926] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:11:46,926] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-07-20 00:11:46,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,928] [INFO] [agent] Saved shutdown state to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-23/test_state_persistence_before_0/shutdown_state.json
+[2025-07-20 00:11:46,930] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:46,931] [WARN] [agent] Detected previous SIGKILL, recovery needed
+[2025-07-20 00:11:46,931] [INFO] [agent] Recovering state from 2024-01-01T00:00:00
+[2025-07-20 00:11:46,931] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,034] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,036] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 00:11:47,036] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 00:11:47,036] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-20 00:11:47,036] [INFO] [agent] Starting coordinated shutdown
+[2025-07-20 00:11:47,036] [INFO] [agent] Starting agent_service_stop
+[2025-07-20 00:11:47,036] [ERROR] [agent] Failed agent_service_stop after 0.000s: object Mock can't be used in 'await' expression
+[2025-07-20 00:11:47,036] [ERROR] [agent] Error stopping agent service: object Mock can't be used in 'await' expression
+[2025-07-20 00:11:47,036] [INFO] [agent] Starting handle_active_votes
+[2025-07-20 00:11:47,037] [INFO] [agent] Completed handle_active_votes successfully in 0.000s
+[2025-07-20 00:11:47,037] [INFO] [agent] Starting save_service_states
+[2025-07-20 00:11:47,037] [ERROR] [agent] Error saving state for service 'voting': Save failed
+[2025-07-20 00:11:47,037] [INFO] [agent] Saved state for service 'agent'
+[2025-07-20 00:11:47,038] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-20 00:11:47,038] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-07-20 00:11:47,038] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-20 00:11:47,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,042] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,042] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-07-20 00:11:47,146] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,147] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,151] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,152] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,155] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,157] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,157] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,158] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,159] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-20 00:11:47,159] [ERROR] [agent] Failed to load state test_state: State file test_state has checksum mismatch
+[2025-07-20 00:11:47,159] [INFO] [agent] Attempting to recover test_state from backup
+[2025-07-20 00:11:47,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,162] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:11:47,163] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:11:47,165] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:11:47,166] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:11:47,167] [INFO] [agent] Successfully saved state: concurrent_test
+[2025-07-20 00:11:47,168] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,169] [INFO] [agent] Successfully saved state: old_state
+[2025-07-20 00:11:47,169] [INFO] [agent] Migrated legacy state from /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-23/test_state_migration_from_old_0/legacy/old_state.json to /private/var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/pytest-of-max/pytest-23/test_state_migration_from_old_0/old_state.json
+[2025-07-20 00:11:47,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,172] [INFO] [agent] Successfully saved state: sensitive_state
+[2025-07-20 00:11:47,173] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,174] [INFO] [agent] Successfully saved state: preferences
+[2025-07-20 00:11:47,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,175] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,176] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,279] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,384] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,493] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,598] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,602] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,604] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,605] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,608] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,610] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,612] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,614] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,615] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,617] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,620] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,621] [INFO] [agent] Successfully saved state: versioned_state
+[2025-07-20 00:11:47,621] [INFO] [agent] Applied migration from 1.0.0 to 2.0.0
+[2025-07-20 00:11:47,623] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,624] [INFO] [agent] Successfully saved state: test_state
+[2025-07-20 00:11:47,624] [ERROR] [agent] Failed to load state corrupted_state: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+[2025-07-20 00:11:47,626] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 00:11:47,642] [INFO] [agent] Successfully saved state: large_state
+[2025-07-20 07:31:43,791] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:31:44,141] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:31:44,388] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:31:44,391] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:31:44,391] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:32:25,511] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:32:25,853] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:32:26,091] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:32:26,094] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:32:26,099] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:32:26,106] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:14,849] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:15,195] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:15,430] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:15,433] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:15,437] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:15,443] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:15,444] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:15,447] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:15,448] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:15,448] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:15,448] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:15,448] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:15,448] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:15,449] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:30,405] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:30,834] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:31,138] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:31,140] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:33:31,145] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,151] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:31,152] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,156] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,156] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,156] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,156] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,156] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,156] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,157] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,158] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,158] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,158] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,159] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,159] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,159] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,159] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:33:31,160] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,160] [ERROR] [agent] Key file not found
+[2025-07-20 07:33:31,161] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:33:31,161] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,166] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:31,167] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,170] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:31,172] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:31,173] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,177] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:31,177] [INFO] [agent] Private key cache cleared
+[2025-07-20 07:33:31,177] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:33:31,178] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:33:31,182] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,307] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:34:58,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:34:58,889] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:34:58,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:34:58,897] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,903] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,904] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,908] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,908] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,908] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,908] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,908] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,908] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,909] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,909] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,909] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,909] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,910] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,910] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,910] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,910] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:34:58,911] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,911] [ERROR] [agent] Key file not found
+[2025-07-20 07:34:58,911] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:34:58,912] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,915] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,916] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,919] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,920] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,921] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,924] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,924] [INFO] [agent] Private key cache cleared
+[2025-07-20 07:34:58,924] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:34:58,925] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:34:58,928] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:36:34,547] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:34,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:35,119] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:35,121] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:35,131] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:36:35,131] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:35,131] [INFO] [agent] VotingService initialized
+[2025-07-20 07:36:35,131] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:36:35,134] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x386c987dc0C8CCFc7C742174DCBB70bd44a55A8b)
+[2025-07-20 07:36:52,401] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,709] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,929] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,932] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,941] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:36:52,941] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,941] [INFO] [agent] VotingService initialized
+[2025-07-20 07:36:52,941] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:36:52,944] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x94C6a0A68A98FebC75BaC577C8eAb92914C62135)
+[2025-07-20 07:36:52,948] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:36:52,949] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,949] [INFO] [agent] VotingService initialized
+[2025-07-20 07:36:52,951] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A)
+[2025-07-20 07:36:52,952] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:36:52,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,952] [INFO] [agent] VotingService initialized
+[2025-07-20 07:36:52,952] [ERROR] [agent] Key file not found
+[2025-07-20 07:36:52,953] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:36:52,953] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,953] [INFO] [agent] VotingService initialized
+[2025-07-20 07:36:52,957] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:36:52,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:36:52,957] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:17,641] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:17,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,172] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,174] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,183] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:18,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,184] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:18,184] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:18,187] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x57FB59D0e37fF3494f4B6E42eD37f3316Ab63DeA)
+[2025-07-20 07:37:18,191] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:18,191] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,191] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:18,194] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A)
+[2025-07-20 07:37:18,195] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:18,195] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,195] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:18,195] [ERROR] [agent] Key file not found
+[2025-07-20 07:37:18,196] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:18,196] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,196] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:18,200] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:18,200] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:18,200] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:43,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,583] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,585] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,595] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:43,595] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,595] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:43,595] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:43,598] [INFO] [agent] Account loaded from KeyManager (eoa_address=0xE597f4CAfaa2B68A15cFaaF8d078f03BC3AA6975)
+[2025-07-20 07:37:43,602] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:43,603] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,603] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:43,605] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A)
+[2025-07-20 07:37:43,606] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:43,606] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,606] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:43,606] [ERROR] [agent] Key file not found
+[2025-07-20 07:37:43,607] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:43,607] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,607] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:43,611] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:43,611] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:43,611] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:43,611] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:43,614] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x04EF1B6978652EF4479eBB6cF25d87De6CBDbF87)
+[2025-07-20 07:37:43,617] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x04EF1B6978652EF4479eBB6cF25d87De6CBDbF87)
+[2025-07-20 07:37:51,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,515] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,736] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,738] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,744] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,750] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,751] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,755] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,755] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,755] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,755] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,755] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,755] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,756] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,756] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,757] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,757] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,757] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,757] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,757] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,757] [ERROR] [agent] Invalid key format detected
+[2025-07-20 07:37:51,758] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,758] [ERROR] [agent] Key file not found
+[2025-07-20 07:37:51,758] [ERROR] [agent] Key file has insecure permissions
+[2025-07-20 07:37:51,759] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,763] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,764] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,768] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,768] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,769] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,772] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,772] [INFO] [agent] Private key cache cleared
+[2025-07-20 07:37:51,772] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,773] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,777] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,781] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,781] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:51,781] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,784] [INFO] [agent] Account loaded from KeyManager (eoa_address=0xD5A3314baCCBba8c6546CAD674f6b196f7Bc8E9c)
+[2025-07-20 07:37:51,788] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,788] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,788] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:51,791] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A)
+[2025-07-20 07:37:51,792] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,792] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:51,792] [ERROR] [agent] Key file not found
+[2025-07-20 07:37:51,793] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,793] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,793] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:51,797] [INFO] [agent] KeyManager initialized
+[2025-07-20 07:37:51,797] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 07:37:51,797] [INFO] [agent] VotingService initialized
+[2025-07-20 07:37:51,797] [INFO] [agent] Private key loaded and cached
+[2025-07-20 07:37:51,800] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x4EeC070Ab8798e5Ebebb0ab9A497CF237912F949)
+[2025-07-20 07:37:51,803] [INFO] [agent] Account loaded from KeyManager (eoa_address=0x4EeC070Ab8798e5Ebebb0ab9A497CF237912F949)

@@ -31,30 +31,32 @@ SNAPSHOT_DOMAIN_VERSION = "0.1.4"
 class VotingService:
     """Service for handling Snapshot DAO voting operations."""
 
-    def __init__(self):
-        """Initialize voting service with account from private key."""
-        # Constants
-        PRIVATE_KEY_FILE = "ethereum_private_key.txt"
+    def __init__(self, key_manager=None):
+        """Initialize voting service with account from private key.
         
-        # Load private key from file (OLAS-provided)
-        with open(PRIVATE_KEY_FILE, "r") as f:
-            private_key = f.read().strip()
+        Args:
+            key_manager: Optional KeyManager instance. If not provided, creates a new one.
+        """
+        # Initialize KeyManager
+        from services.key_manager import KeyManager
+        self.key_manager = key_manager or KeyManager()
         
-        # Runtime assertions
-        assert private_key, "Private key must not be empty"
-        assert len(private_key) >= 64, "Private key must be at least 64 characters"
-
-        self.account = Account.from_key(private_key)
+        # Initialize account lazily
+        self._account = None
 
         # Initialize Pearl-compliant logger
         self.logger = setup_pearl_logger(name="voting_service", level=logging.INFO)
-
-        self.logger.info(
-            f"VotingService initialized (eoa_address={self.account.address})"
-        )
         
-        # Track active votes for graceful shutdown
-        self._active_votes = []
+        self.logger.info("VotingService initialized")
+    
+    @property
+    def account(self):
+        """Get the account, loading it lazily from KeyManager."""
+        if self._account is None:
+            private_key = self.key_manager.get_private_key()
+            self._account = Account.from_key(private_key)
+            self.logger.info(f"Account loaded from KeyManager (eoa_address={self._account.address})")
+        return self._account
 
     def create_snapshot_vote_message(
         self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
