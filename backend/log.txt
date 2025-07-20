@@ -2839,3 +2839,59 @@
 [2025-07-20 11:47:53,628] [INFO] [agent] Successfully saved state: agent_state_transitions
 [2025-07-20 11:47:53,628] [INFO] [agent] Successfully saved state: agent_state_transitions
 [2025-07-20 11:47:53,629] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-07-20 11:55:02,757] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:02,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:03,237] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:03,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:03,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:45,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:46,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:46,394] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:46,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:46,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:55:46,686] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:33,237] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:33,463] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:33,725] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:34,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:34,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:34,036] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:56:34,038] [ERROR] [agent] Unhandled exception error=[TypeError("'coroutine' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')] path=http://testserver/healthcheck
+[2025-07-20 11:56:34,191] [ERROR] [agent] Unhandled exception error=[TypeError("'coroutine' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')] path=http://testserver/healthcheck
+[2025-07-20 11:57:10,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:11,138] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:11,369] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:11,663] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:11,664] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:11,683] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:12,891] [ERROR] [agent] Unhandled exception error=maximum recursion depth exceeded path=http://testserver/healthcheck
+[2025-07-20 11:57:15,150] [ERROR] [agent] Unhandled exception error=maximum recursion depth exceeded path=http://testserver/healthcheck
+[2025-07-20 11:57:53,527] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:53,807] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:54,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:54,371] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:54,372] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:57:54,390] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:12,708] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:12,913] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:13,141] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:13,421] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:13,421] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:13,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:58:15,150] [ERROR] [agent] Unhandled exception error=maximum recursion depth exceeded path=http://testserver/healthcheck
+[2025-07-20 11:58:19,349] [ERROR] [agent] Unhandled exception error=maximum recursion depth exceeded path=http://testserver/healthcheck
+[2025-07-20 11:58:20,797] [ERROR] [agent] Error in healthcheck endpoint: Tracker error
+[2025-07-20 11:59:01,509] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:01,729] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:01,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:02,267] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:02,267] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:02,277] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:02,347] [ERROR] [agent] Error in healthcheck endpoint: Tracker error
+[2025-07-20 11:59:26,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:27,184] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:27,399] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:27,680] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:27,680] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:27,690] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 11:59:27,704] [ERROR] [agent] Error in healthcheck endpoint: Tracker error

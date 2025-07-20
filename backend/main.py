@@ -196,12 +196,14 @@ def _create_state_transition_tracker():
     """Create a new StateTransitionTracker instance."""
     # Import at runtime to allow mocking
     import services.state_transition_tracker
+    from config import settings
+    
     return services.state_transition_tracker.StateTransitionTracker(
         state_file_path="agent_state.json",
         enable_pearl_logging=True,
         max_history_size=100,
         fast_transition_threshold=0.5,
-        fast_transition_window=5
+        fast_transition_window=settings.FAST_TRANSITION_THRESHOLD
     )
 
 
@@ -262,7 +264,8 @@ async def healthcheck():
         if hasattr(tracker, 'fast_transition_window'):
             response["period"] = tracker.fast_transition_window
         else:
-            response["period"] = 5  # Default value
+            from config import settings
+            response["period"] = settings.FAST_TRANSITION_THRESHOLD
             
         if hasattr(tracker, 'fast_transition_threshold'):
             response["reset_pause_duration"] = tracker.fast_transition_threshold

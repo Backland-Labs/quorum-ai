@@ -170,6 +170,26 @@ class Settings(BaseSettings):
         gt=0,
         description="Delay between retry attempts in seconds",
     )
+    
+    # Health check configuration
+    HEALTH_CHECK_PORT: int = Field(
+        default=8716,
+        ge=1,
+        le=65535,
+        alias="HEALTH_CHECK_PORT",
+        description="Port for Pearl-compliant health check endpoint",
+    )
+    HEALTH_CHECK_PATH: str = Field(
+        default="/healthcheck",
+        alias="HEALTH_CHECK_PATH",
+        description="Path for Pearl-compliant health check endpoint",
+    )
+    FAST_TRANSITION_THRESHOLD: int = Field(
+        default=5,
+        gt=0,
+        alias="FAST_TRANSITION_THRESHOLD",
+        description="Threshold in seconds for detecting fast state transitions",
+    )
 
     # RPC endpoints for multiple chains
     ethereum_ledger_rpc: Optional[str] = Field(
@@ -229,6 +249,38 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return v or []
+    
+    @field_validator("HEALTH_CHECK_PORT", mode="before")
+    @classmethod
+    def validate_health_check_port(cls, v):
+        """Validate health check port is a valid integer."""
+        if v is None:
+            return 8716  # Default value
+        try:
+            port = int(v)
+            if not (1 <= port <= 65535):
+                raise ValueError(f"Port must be between 1 and 65535, got {port}")
+            return port
+        except (ValueError, TypeError) as e:
+            if isinstance(v, str) and not v.isdigit():
+                raise ValueError(f"Invalid port value: {v}")
+            raise
+    
+    @field_validator("FAST_TRANSITION_THRESHOLD", mode="before")
+    @classmethod
+    def validate_fast_transition_threshold(cls, v):
+        """Validate fast transition threshold is a valid positive integer."""
+        if v is None:
+            return 5  # Default value
+        try:
+            threshold = int(v)
+            if threshold <= 0:
+                raise ValueError(f"Fast transition threshold must be positive, got {threshold}")
+            return threshold
+        except (ValueError, TypeError) as e:
+            if isinstance(v, str) and not v.isdigit():
+                raise ValueError(f"Invalid threshold value: {v}")
+            raise
 
     @model_validator(mode="after")
     def parse_env_settings(self):
