@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-07-20
+### Added
+- Pearl-compliant health check endpoint for monitoring agent status (BAC-178)
+- State persistence and recovery functionality for agent lifecycle management
+- State transition tracking with fast transition detection
+- Graceful shutdown signal handling (SIGTERM/SIGINT)
+- Pearl-compliant structured logging to local files
+- Comprehensive test coverage for health check and state management
+
+### Changed
+- Enhanced configuration with health check parameters (port, path, thresholds)
+- Improved agent run logging with Pearl-compliant format
+
 ## [0.3.0] - 2025-07-20
 ### Added
 - Agent Interface Layer for Pearl Platform integration (BAC-173)
@@ -54,7 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Docker service healthcheck and port configuration issues
 
-[Unreleased]: https://github.com/quorum-ai/quorum-ai/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/quorum-ai/quorum-ai/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/quorum-ai/quorum-ai/releases/tag/v0.1.0
