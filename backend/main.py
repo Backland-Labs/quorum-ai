@@ -202,8 +202,8 @@ def _create_state_transition_tracker():
         state_file_path="agent_state.json",
         enable_pearl_logging=True,
         max_history_size=100,
-        fast_transition_threshold=0.5,
-        fast_transition_window=settings.FAST_TRANSITION_THRESHOLD
+        fast_transition_threshold=settings.FAST_TRANSITION_THRESHOLD,
+        fast_transition_window=5
     )
 
 
