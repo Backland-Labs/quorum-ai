@@ -10,7 +10,7 @@ import asyncio
 import json
 import logging
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Any
@@ -70,23 +70,32 @@ class StateTransitionTracker:
         enable_pearl_logging: bool = False,
         max_history_size: Optional[int] = 100,
         fast_transition_threshold: float = 0.5,
-        fast_transition_window: int = 5
+        fast_transition_window: int = 5,
+        state_manager: Optional[Any] = None,
+        enable_state_manager: bool = False,
+        migrate_from_file: bool = False
     ):
         """
         Initialize the state transition tracker.
         
         Args:
-            state_file_path: Path to persist state information
+            state_file_path: Path to persist state information (legacy)
             enable_pearl_logging: Whether to enable Pearl logging integration
             max_history_size: Maximum number of transitions to keep in history
             fast_transition_threshold: Seconds threshold for fast transition detection
             fast_transition_window: Number of recent transitions to check for fast detection
+            state_manager: StateManager instance for persistence
+            enable_state_manager: Whether to use StateManager for persistence
+            migrate_from_file: Whether to migrate from old file-based storage
         """
         self.state_file_path = Path(state_file_path)
         self.enable_pearl_logging = enable_pearl_logging
         self.max_history_size = max_history_size
         self.fast_transition_threshold = fast_transition_threshold
         self.fast_transition_window = fast_transition_window
+        self.state_manager = state_manager
+        self.enable_state_manager = enable_state_manager
+        self.migrate_from_file = migrate_from_file
         
         # Thread safety
         self._lock = threading.Lock()
@@ -106,8 +115,9 @@ class StateTransitionTracker:
                 self.pearl_logger = logging.getLogger("state_transition_tracker")
                 self.pearl_logger.log_state_transition = self._log_state_transition_fallback
         
-        # Load existing state or initialize defaults
-        self._load_or_initialize_state()
+        # Initialize state (synchronous for backward compatibility)
+        if not enable_state_manager:
+            self._load_or_initialize_state()
     
     def _log_state_transition_fallback(self, from_state: str, to_state: str, metadata: Dict[str, Any]):
         """Fallback method for logging state transitions when PearlLogger is not available."""
@@ -205,7 +215,11 @@ class StateTransitionTracker:
             self._persist_state()
     
     def _persist_state(self):
-        """Persist current state to file."""
+        """Persist current state to file (legacy method)."""
+        if self.enable_state_manager:
+            # Use async method instead
+            return
+            
         state_data = {
             "current_state": self.current_state.value,
             "last_transition_time": self.last_transition_time.isoformat(),
@@ -338,3 +352,194 @@ class StateTransitionTracker:
         stats["transition_pairs"] = list(transition_pairs.keys())
         
         return stats
+    
+    def transition(self, new_state: AgentState, metadata: Optional[Dict[str, Any]] = None):
+        """
+        Synchronous wrapper for record_transition for backward compatibility.
+        
+        This method is provided for backward compatibility with existing code
+        that uses the synchronous transition method.
+        
+        Args:
+            new_state: The new state to transition to
+            metadata: Optional metadata about the transition
+        """
+        # For synchronous compatibility, we call the sync version
+        self.record_transition(new_state, metadata, validate_transition=False)
+        
+        # If using state manager, also persist to state manager asynchronously
+        if self.enable_state_manager and self.state_manager:
+            try:
+                # Create a new event loop task to persist state
+                import asyncio
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # Schedule the coroutine as a task
+                    asyncio.create_task(self._persist_to_state_manager())
+                else:
+                    # Run in a new event loop if none is running
+                    asyncio.run(self._persist_to_state_manager())
+            except Exception:
+                # Fallback to file persistence if async fails
+                pass
+    
+    # Async methods for StateManager integration
+    
+    async def async_initialize(self):
+        """
+        Asynchronously initialize the tracker with StateManager support.
+        
+        This method loads existing state from StateManager or migrates
+        from file-based storage if requested.
+        """
+        if not self.enable_state_manager:
+            # Use synchronous initialization for backward compatibility
+            self._load_or_initialize_state()
+            return
+        
+        # Try to load from StateManager first
+        loaded = await self._load_from_state_manager()
+        
+        if not loaded and self.migrate_from_file and self.state_file_path.exists():
+            # Migrate from file-based storage
+            await self._migrate_from_file_storage()
+        elif not loaded:
+            # Initialize with defaults
+            self._initialize_defaults()
+            await self._persist_to_state_manager()
+    
+    async def _load_from_state_manager(self) -> bool:
+        """
+        Load state from StateManager.
+        
+        Returns:
+            True if state was successfully loaded, False otherwise
+        """
+        try:
+            data = await self.state_manager.load_state("agent_state_transitions")
+            if data:
+                # Restore state
+                self.current_state = AgentState(data["current_state"])
+                self.last_transition_time = datetime.fromisoformat(data["last_transition_time"])
+                
+                # Restore transition history
+                self.transition_history = []
+                for transition_data in data.get("transition_history", []):
+                    transition = StateTransition(
+                        from_state=AgentState(transition_data["from_state"]),
+                        to_state=AgentState(transition_data["to_state"]),
+                        timestamp=datetime.fromisoformat(transition_data["timestamp"]),
+                        metadata=transition_data.get("metadata", {})
+                    )
+                    self.transition_history.append(transition)
+                
+                return True
+        except Exception as e:
+            if self.pearl_logger:
+                self.pearl_logger.error(f"Failed to load state from StateManager: {e}")
+        
+        return False
+    
+    async def _migrate_from_file_storage(self):
+        """Migrate state from file-based storage to StateManager."""
+        try:
+            # Load from file
+            self._load_or_initialize_state()
+            
+            # Save to StateManager
+            await self._persist_to_state_manager()
+            
+            # Backup old file
+            backup_path = self.state_file_path.with_suffix('.backup')
+            self.state_file_path.rename(backup_path)
+            
+            if self.pearl_logger:
+                self.pearl_logger.info(f"Migrated state from {self.state_file_path} to StateManager")
+        except Exception as e:
+            if self.pearl_logger:
+                self.pearl_logger.error(f"Failed to migrate state: {e}")
+            self._initialize_defaults()
+    
+    async def _persist_to_state_manager(self):
+        """Persist current state to StateManager."""
+        state_data = {
+            "current_state": self.current_state.value,
+            "last_transition_time": self.last_transition_time.isoformat(),
+            "transition_history": [
+                {
+                    "from_state": t.from_state.value,
+                    "to_state": t.to_state.value,
+                    "timestamp": t.timestamp.isoformat(),
+                    "metadata": t.metadata
+                }
+                for t in self.transition_history
+            ]
+        }
+        
+        try:
+            await self.state_manager.save_state("agent_state_transitions", state_data)
+        except Exception as e:
+            if self.pearl_logger:
+                self.pearl_logger.error(f"Failed to persist state to StateManager: {e}")
+    
+    async def async_record_transition(
+        self,
+        new_state: AgentState,
+        metadata: Optional[Dict[str, Any]] = None,
+        validate_transition: bool = False
+    ):
+        """
+        Asynchronously record a state transition.
+        
+        This method is thread-safe and uses StateManager for persistence
+        when enabled.
+        
+        Args:
+            new_state: The new state to transition to
+            metadata: Optional metadata about the transition
+            validate_transition: Whether to validate the transition is allowed
+        
+        Raises:
+            ValueError: If validate_transition is True and transition is invalid
+        """
+        async with self._async_lock:
+            # Validate transition if requested
+            if validate_transition:
+                if self.current_state in self.VALID_TRANSITIONS:
+                    allowed_states = self.VALID_TRANSITIONS[self.current_state]
+                    if new_state not in allowed_states:
+                        raise ValueError(
+                            f"Invalid state transition: {self.current_state.value} -> {new_state.value}"
+                        )
+            
+            # Create transition record
+            transition = StateTransition(
+                from_state=self.current_state,
+                to_state=new_state,
+                timestamp=datetime.now(),
+                metadata=metadata or {}
+            )
+            
+            # Update state
+            self.current_state = new_state
+            self.last_transition_time = transition.timestamp
+            
+            # Add to history with size limit
+            self.transition_history.append(transition)
+            if self.max_history_size and len(self.transition_history) > self.max_history_size:
+                self.transition_history = self.transition_history[-self.max_history_size:]
+            
+            # Log with Pearl if enabled
+            if self.pearl_logger:
+                self.pearl_logger.log_state_transition(
+                    from_state=transition.from_state.value,
+                    to_state=transition.to_state.value,
+                    metadata=transition.metadata
+                )
+            
+            # Persist state
+            if self.enable_state_manager:
+                await self._persist_to_state_manager()
+            else:
+                self._persist_state()
+    

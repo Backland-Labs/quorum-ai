@@ -77,8 +77,12 @@ class AgentRunService:
         self.logger = AgentRunLogger()
         self.state_manager = state_manager
         
-        # Initialize state transition tracker for comprehensive logging
-        self.state_tracker = StateTransitionTracker()
+        # Initialize state transition tracker with StateManager for persistence
+        self.state_tracker = StateTransitionTracker(
+            state_manager=self.state_manager,
+            enable_state_manager=True if state_manager else False,
+            enable_pearl_logging=True
+        )
         
         # Track active operations for graceful shutdown
         self._active_run = False
@@ -87,6 +91,12 @@ class AgentRunService:
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name='agent_run_service')
         self.pearl_logger.info("AgentRunService initialized with all dependencies")
+    
+    async def initialize(self):
+        """Initialize async components including state tracker."""
+        if self.state_manager:
+            await self.state_tracker.async_initialize()
+            self.pearl_logger.info("State tracker initialized with StateManager persistence")
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.
@@ -185,7 +195,7 @@ class AgentRunService:
                     "run_id": run_id,
                     "total_duration": execution_time,
                     "proposals_analyzed": len(filtered_proposals),
-                    "votes_cast": len([d for d in final_decisions if d.vote_submitted])
+                    "votes_cast": len(final_decisions)
                 })
                 
                 # Mark run as complete
@@ -329,8 +339,8 @@ class AgentRunService:
                     self.state_tracker.transition(AgentState.DECIDING_VOTE, {
                         "run_id": run_id,
                         "proposal_id": proposal.id,
-                        "vote_decision": decision.vote_type.value if decision.vote_type else "skip",
-                        "confidence_score": decision.confidence_score
+                        "vote_decision": decision.vote.value if decision.vote else "skip",
+                        "confidence_score": decision.confidence
                     })
             except Exception as e:
                 error_msg = f"Failed to make voting decisions: {str(e)}"

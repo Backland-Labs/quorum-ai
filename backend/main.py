@@ -97,6 +97,9 @@ async def lifespan(_app: FastAPI):
     signal_handler = SignalHandler()
     shutdown_coordinator = ShutdownCoordinator()
     
+    # Initialize async components
+    await agent_run_service.initialize()
+    
     # Register services with shutdown coordinator
     shutdown_coordinator.register_service('agent', agent_run_service)
     shutdown_coordinator.register_service('voting', voting_service)

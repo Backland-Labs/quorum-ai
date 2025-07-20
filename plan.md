@@ -131,35 +131,45 @@
 - StateTransitionTracker service
 - Existing health check can remain for backwards compatibility
 
-### Task 3: Add State Persistence to StateManager (P1)
+### Task 3: Add State Persistence to StateManager (P1) ✅ IMPLEMENTED
 
 **Acceptance Criteria**:
-- State transitions persist across restarts
-- Migration support for schema changes
-- Atomic updates prevent corruption
-- Efficient storage for history
+- State transitions persist across restarts ✅
+- Migration support for schema changes ✅
+- Atomic updates prevent corruption ✅
+- Efficient storage for history ✅
 
 **Test Cases**:
-1. `test_state_persistence_save_load` - Verify state data persistence
-2. `test_state_history_limits` - Verify history is bounded (e.g., last 100 transitions)
-3. `test_state_data_migration` - Verify schema migration works
-4. `test_concurrent_state_updates` - Verify atomic updates
+1. `test_state_persistence_save_load` - Verify state data persistence ✅
+2. `test_state_history_limits` - Verify history is bounded (e.g., last 100 transitions) ✅
+3. `test_state_data_migration` - Verify schema migration works ✅
+4. `test_concurrent_state_updates` - Verify atomic updates ✅
 
 **Implementation Steps**:
-1. Extend `backend/models/state.py`:
-   - Add `agent_state` field to AppState
-   - Add `state_history` list with size limit
-   - Update schema version
+1. Extend `backend/models/state.py`: ✅
+   - Add `agent_state` field to AppState ✅
+   - Add `state_history` list with size limit ✅
+   - Update schema version ✅
 
-2. Update `StateManager` to handle state data
-   - Save state transitions atomically
-   - Implement history rotation (keep last N transitions)
-   - Add migration logic for existing states
+2. Update `StateManager` to handle state data ✅
+   - Save state transitions atomically ✅
+   - Implement history rotation (keep last N transitions) ✅
+   - Add migration logic for existing states ✅
 
 **Integration Points**:
-- Existing StateManager save/load mechanism
-- Schema validation
-- Backup/recovery system
+- Existing StateManager save/load mechanism ✅
+- Schema validation ✅
+- Backup/recovery system ✅
+
+**Implementation Notes**:
+- Enhanced StateTransitionTracker to integrate with StateManager for persistence
+- Added async methods `async_initialize()` and `async_record_transition()`
+- Synchronous `transition()` method automatically persists to StateManager when enabled
+- AgentRunService now initializes StateTransitionTracker with StateManager
+- State transitions are saved to "agent_state_transitions" in StateManager
+- Migration from file-based to StateManager-based persistence supported
+- Created comprehensive integration tests in test_state_persistence_integration.py
+- All state transitions now persist across agent restarts
 
 ### Task 4: Enhance Logging for State Transitions (P1) ✅ IMPLEMENTED
 
@@ -236,8 +246,8 @@
 
 - [x] Health check endpoint returns Pearl-compliant JSON at `/healthcheck`
 - [x] All agent state transitions are tracked with timestamps
-- [ ] State persists across agent restarts
-- [ ] All transitions are logged in Pearl format
+- [x] State persists across agent restarts
+- [x] All transitions are logged in Pearl format
 - [ ] Health check responds in < 100ms
 - [ ] No regression in existing functionality
 - [ ] Documentation updated for new endpoints
