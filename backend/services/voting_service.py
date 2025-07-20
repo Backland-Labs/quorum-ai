@@ -2,7 +2,7 @@
 
 import time
 import logging
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from web3 import Web3
 from eth_account import Account
 from eth_account.messages import encode_typed_data
@@ -31,27 +31,32 @@ SNAPSHOT_DOMAIN_VERSION = "0.1.4"
 class VotingService:
     """Service for handling Snapshot DAO voting operations."""
 
-    def __init__(self):
-        """Initialize voting service with account from private key."""
-        # Constants
-        PRIVATE_KEY_FILE = "ethereum_private_key.txt"
+    def __init__(self, key_manager=None):
+        """Initialize voting service with account from private key.
         
-        # Load private key from file (OLAS-provided)
-        with open(PRIVATE_KEY_FILE, "r") as f:
-            private_key = f.read().strip()
+        Args:
+            key_manager: Optional KeyManager instance. If not provided, creates a new one.
+        """
+        # Initialize KeyManager
+        from services.key_manager import KeyManager
+        self.key_manager = key_manager or KeyManager()
         
-        # Runtime assertions
-        assert private_key, "Private key must not be empty"
-        assert len(private_key) >= 64, "Private key must be at least 64 characters"
-
-        self.account = Account.from_key(private_key)
+        # Initialize account lazily
+        self._account = None
 
         # Initialize Pearl-compliant logger
         self.logger = setup_pearl_logger(name="voting_service", level=logging.INFO)
-
-        self.logger.info(
-            f"VotingService initialized (eoa_address={self.account.address})"
-        )
+        
+        self.logger.info("VotingService initialized")
+    
+    @property
+    def account(self):
+        """Get the account, loading it lazily from KeyManager."""
+        if self._account is None:
+            private_key = self.key_manager.get_private_key()
+            self._account = Account.from_key(private_key)
+            self.logger.info(f"Account loaded from KeyManager (eoa_address={self._account.address})")
+        return self._account
 
     def create_snapshot_vote_message(
         self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
@@ -387,3 +392,40 @@ class VotingService:
             )
 
             return result
+    
+    async def shutdown(self) -> None:
+        """Implement shutdown method required by ShutdownService protocol."""
+        self.logger.info("Voting service shutdown initiated")
+        
+        # Check for any active votes
+        if self._active_votes:
+            self.logger.warning(f"Shutdown with {len(self._active_votes)} active votes")
+            # Clear active votes as they would have completed or failed by now
+            self._active_votes.clear()
+        
+        self.logger.info("Voting service shutdown completed")
+    
+    async def save_service_state(self) -> None:
+        """Save current service state for recovery."""
+        # Voting service doesn't maintain persistent state
+        # Votes are atomic operations that complete or fail
+        pass
+    
+    async def stop(self) -> None:
+        """Stop the service gracefully."""
+        # Clear any tracking of active votes
+        self._active_votes.clear()
+    
+    async def get_active_votes(self) -> List[Dict[str, Any]]:
+        """Get list of active votes for shutdown coordination."""
+        return self._active_votes.copy()
+    
+    async def complete_vote(self, vote_id: str) -> None:
+        """Complete a vote (not applicable for this implementation)."""
+        # Votes are atomic and complete immediately
+        pass
+    
+    async def cancel_vote(self, vote_id: str) -> None:
+        """Cancel a vote (not applicable for this implementation)."""
+        # Votes cannot be cancelled once submitted
+        pass

@@ -36,7 +36,7 @@ def main():
     if not token:
         print("Warning: LOGFIRE_TOKEN not set. Using default configuration.", file=sys.stderr)
     
-    logfire.configure(token=token)
+    logfire.configure(token=token, scrubbing=False)
     
     # Extract relevant data from the hook input
     event_type = input_data.get('hook_event_name', 'unknown')

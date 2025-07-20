@@ -3,6 +3,7 @@
 from .agent_run_service import AgentRunService
 from .ai_service import AIService
 from .snapshot_service import SnapshotService
+from .state_manager import StateManager
 from .voting_service import VotingService
 from .user_preferences_service import UserPreferencesService
 
@@ -10,6 +11,7 @@ __all__ = [
     "AgentRunService",
     "AIService",
     "SnapshotService",
+    "StateManager",
     "VotingService",
     "UserPreferencesService",
 ]
