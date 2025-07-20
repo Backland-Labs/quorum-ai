@@ -178,17 +178,6 @@ async def general_exception_handler(request, exc):
     )
 
 
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    withdrawal_mode = os.environ.get("WITHDRAWAL_MODE", "false").lower() == "true"
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
-        "version": "0.1.0",
-        "withdrawal_mode": withdrawal_mode,
-    }
 
 
 # Factory function for creating StateTransitionTracker instances
