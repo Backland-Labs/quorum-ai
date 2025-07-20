@@ -366,22 +366,6 @@ class StateTransitionTracker:
         """
         # For synchronous compatibility, we call the sync version
         self.record_transition(new_state, metadata, validate_transition=False)
-        
-        # If using state manager, also persist to state manager asynchronously
-        if self.enable_state_manager and self.state_manager:
-            try:
-                # Create a new event loop task to persist state
-                import asyncio
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # Schedule the coroutine as a task
-                    asyncio.create_task(self._persist_to_state_manager())
-                else:
-                    # Run in a new event loop if none is running
-                    asyncio.run(self._persist_to_state_manager())
-            except Exception:
-                # Fallback to file persistence if async fails
-                pass
     
     # Async methods for StateManager integration
     
