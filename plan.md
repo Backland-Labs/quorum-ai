@@ -1,271 +1,378 @@
-# Agent Interface Layer Implementation Plan
+# Implementation Plan: Agent Interface Layer (BAC-173)
 
 ## Overview
 
-**Linear Issue**: BAC-173 - Agent Interface Layer  
-**Priority**: Urgent (P1)  
+**Issue**: BAC-173 - Agent Interface Layer  
 **Objective**: Implement core agent infrastructure for Pearl integration including state management, key handling, and blockchain integration.
 
-This plan details the implementation of fundamental system-level integration requirements for Pearl platform compatibility, broken down into atomic, TDD-friendly tasks.
+This plan provides a comprehensive, TDD-driven approach to integrating Quorum AI with the Pearl platform while maintaining existing autonomous voting functionality.
+
+## Priority Levels
+
+- **P0 (Critical)**: Blocks Pearl deployment - must be done first
+- **P1 (High)**: Core functionality - required for proper operation  
+- **P2 (Medium)**: Important features - enhances reliability
+- **P3 (Low)**: Nice-to-have - polish and optimization
+
+## Features and Tasks
+
+### P0: Signal Handling for Graceful Shutdowns (BAC-174)
+
+#### Task 1: Create Signal Handler Service
+**Acceptance Criteria**:
+- Service captures SIGTERM and SIGINT signals
+- Triggers graceful shutdown of all services
+- Prevents new operations during shutdown
+- Logs shutdown events with Pearl format
+
+**Test Cases**:
+1. `test_signal_handler_captures_sigterm` - Verify SIGTERM triggers shutdown
+2. `test_signal_handler_captures_sigint` - Verify SIGINT triggers shutdown  
+3. `test_signal_handler_prevents_new_operations` - Ensure no new work during shutdown
+4. `test_signal_handler_logs_events` - Verify Pearl-compliant logging
+
+**Implementation Steps**:
+1. Create `signal_handler_service.py` with asyncio signal handling
+2. Implement shutdown event propagation system
+3. Add is_shutting_down flag to prevent new operations
+4. Integrate Pearl logging for all signal events
+
+**Integration Points**:
+- All services must register with signal handler
+- Main application loop must respect shutdown flag
+
+#### Task 2: Add Shutdown Methods to Services
+**Acceptance Criteria**:
+- Each service has async shutdown() method
+- Services save state before shutdown
+- Resources are properly released
+- Shutdown completes within 30 seconds
+
+**Test Cases**:
+1. `test_agent_run_service_shutdown` - Verify clean agent shutdown
+2. `test_voting_service_shutdown` - Ensure pending votes are saved
+3. `test_snapshot_service_shutdown` - Verify cache persistence
+4. `test_shutdown_timeout` - Ensure 30-second limit is enforced
+
+**Implementation Steps**:
+1. Add abstract base service with shutdown interface
+2. Implement shutdown in each service
+3. Add timeout decorator for 30-second limit
+4. Create shutdown orchestrator in main.py
+
+**Integration Points**:
+- Signal handler calls shutdown orchestrator
+- Each service must extend base service
+
+### P0: State Persistence with STORE_PATH (BAC-174)
+
+#### Task 3: Create State Manager Service
+**Acceptance Criteria**:
+- Centralized state management using STORE_PATH
+- Atomic writes with corruption detection
+- State recovery after crashes
+- Version migration support
+
+**Test Cases**:
+1. `test_state_manager_uses_store_path` - Verify correct path usage
+2. `test_state_atomic_writes` - Ensure no partial writes
+3. `test_state_corruption_recovery` - Handle corrupted files
+4. `test_state_version_migration` - Support schema changes
+
+**Implementation Steps**:
+1. Create `state_manager_service.py` with atomic file operations
+2. Implement JSON schema validation
+3. Add backup/restore mechanism
+4. Create migration framework for version changes
+
+**Integration Points**:
+- Replace direct file I/O in all services
+- UserPreferencesService migrates to state manager
+
+#### Task 4: Implement State Checkpointing
+**Acceptance Criteria**:
+- Periodic state saves during long operations
+- Checkpoint before risky operations
+- Recovery from last checkpoint
+- Minimal performance impact
+
+**Test Cases**:
+1. `test_periodic_checkpointing` - Verify automatic saves
+2. `test_checkpoint_before_voting` - Save before blockchain ops
+3. `test_checkpoint_recovery` - Restore from checkpoint
+4. `test_checkpoint_performance` - Under 100ms overhead
+
+**Implementation Steps**:
+1. Add checkpoint() method to state manager
+2. Implement time-based auto-checkpointing
+3. Add checkpoint triggers in critical paths
+4. Create recovery logic in startup
+
+**Integration Points**:
+- AgentRunService triggers checkpoints
+- VotingService checkpoints before transactions
+
+### P1: Private Key File Reading (BAC-175)
+
+#### Task 5: Implement Secure Key Reader
+**Acceptance Criteria**:
+- Read ethereum_private_key.txt from working directory
+- Validate file permissions (600 only)
+- Secure key handling in memory
+- Clear error messages without exposing paths
+
+**Test Cases**:
+1. `test_key_reader_finds_file` - Locate key file correctly
+2. `test_key_reader_validates_permissions` - Reject insecure files
+3. `test_key_reader_validates_content` - Check key format
+4. `test_key_reader_secure_errors` - No sensitive data in errors
+
+**Implementation Steps**:
+1. Create `key_manager_service.py` with secure file reading
+2. Implement permission validation (stat.S_IRUSR only)
+3. Add key format validation (ethereum private key)
+4. Create secure error messages
+
+**Integration Points**:
+- VotingService uses key manager for signing
+- Remove hardcoded private key logic
+
+#### Task 6: Integrate Key Manager with Services
+**Acceptance Criteria**:
+- VotingService uses key manager
+- Lazy loading of private key
+- Key caching with timeout
+- Memory clearing after use
+
+**Test Cases**:
+1. `test_voting_service_uses_key_manager` - Integration test
+2. `test_key_lazy_loading` - Load only when needed
+3. `test_key_cache_timeout` - Expire after 5 minutes
+4. `test_key_memory_clearing` - Secure cleanup
+
+**Implementation Steps**:
+1. Refactor VotingService to use key manager
+2. Implement lazy loading pattern
+3. Add TTL cache with secure storage
+4. Use context manager for memory cleanup
+
+**Integration Points**:
+- VotingService constructor accepts key manager
+- Configuration updated for key file path
+
+### P1: Safe Contract Address Integration (BAC-176)
+
+#### Task 7: Parse Multi-Chain Safe Addresses
+**Acceptance Criteria**:
+- Parse SAFE_CONTRACT_ADDRESSES environment variable
+- Support chain_id:address format
+- Validate ethereum addresses
+- Default handling for missing chains
+
+**Test Cases**:
+1. `test_parse_safe_addresses_format` - Parse "1:0x123,42161:0x456"
+2. `test_validate_ethereum_addresses` - Check address format
+3. `test_handle_missing_chains` - Graceful degradation
+4. `test_parse_malformed_input` - Error handling
+
+**Implementation Steps**:
+1. Add safe_addresses parser to config.py
+2. Create SafeAddress dataclass with validation
+3. Implement chain-specific lookup method
+4. Add configuration validation on startup
+
+**Integration Points**:
+- VotingService uses Safe addresses
+- Configuration validates on startup
+
+#### Task 8: Integrate Safe with Voting Service
+**Acceptance Criteria**:
+- VotingService uses Safe for transactions
+- Multi-chain support maintained
+- Fallback to direct execution
+- Transaction monitoring
+
+**Test Cases**:
+1. `test_voting_via_safe` - Execute through Safe
+2. `test_multi_chain_safe_support` - Different chains
+3. `test_safe_fallback` - Direct execution backup
+4. `test_safe_transaction_monitoring` - Status tracking
+
+**Implementation Steps**:
+1. Update VotingService with Safe integration
+2. Implement Safe SDK or contract calls
+3. Add transaction queue management
+4. Create monitoring for Safe transactions
+
+**Integration Points**:
+- VotingService enhanced with Safe support
+- State manager tracks pending Safe transactions
+
+### P2: Withdrawal Mode Implementation (BAC-177)
+
+#### Task 9: Create Withdrawal Service
+**Acceptance Criteria**:
+- Detect WITHDRAWAL_MODE=true
+- List all invested positions
+- Calculate withdrawal amounts
+- Execute withdrawal transactions
+
+**Test Cases**:
+1. `test_withdrawal_mode_detection` - Check env variable
+2. `test_list_invested_positions` - Find all investments
+3. `test_calculate_withdrawals` - Compute amounts
+4. `test_execute_withdrawals` - Process transactions
+
+**Implementation Steps**:
+1. Create `withdrawal_service.py`
+2. Implement position discovery logic
+3. Add withdrawal calculation engine
+4. Create transaction execution flow
+
+**Integration Points**:
+- Main.py checks withdrawal mode
+- Uses VotingService for transactions
+
+#### Task 10: Integrate Withdrawal with Agent
+**Acceptance Criteria**:
+- Agent skips voting in withdrawal mode
+- Withdrawal runs instead of voting
+- Progress tracking and reporting
+- Safe integration for withdrawals
+
+**Test Cases**:
+1. `test_agent_withdrawal_mode` - Skip normal flow
+2. `test_withdrawal_progress_tracking` - Monitor status
+3. `test_withdrawal_via_safe` - Use Safe contracts
+4. `test_withdrawal_completion` - Verify success
+
+**Implementation Steps**:
+1. Modify main.py for withdrawal mode
+2. Create withdrawal orchestrator
+3. Add progress tracking to state
+4. Integrate with Safe for execution
+
+**Integration Points**:
+- Main application flow modification
+- State manager tracks withdrawal progress
+
+### P3: Performance and Reliability
+
+#### Task 11: Implement Health Checks
+**Acceptance Criteria**:
+- Periodic self-health checks
+- Service availability monitoring
+- Resource usage tracking
+- Pearl-compliant health reporting
+
+**Test Cases**:
+1. `test_health_check_all_services` - Monitor availability
+2. `test_resource_monitoring` - Track memory/CPU
+3. `test_health_reporting` - Pearl format output
+4. `test_unhealthy_service_handling` - Recovery logic
+
+**Implementation Steps**:
+1. Add health check endpoint to each service
+2. Create health monitor service
+3. Implement resource tracking
+4. Add Pearl health report generation
+
+**Integration Points**:
+- All services implement health interface
+- Main loop includes health monitoring
+
+#### Task 12: Add Retry and Circuit Breaker
+**Acceptance Criteria**:
+- Retry failed operations with backoff
+- Circuit breaker for external services
+- Configurable retry policies
+- Failure tracking and reporting
+
+**Test Cases**:
+1. `test_retry_with_exponential_backoff` - Retry logic
+2. `test_circuit_breaker_triggers` - Open on failures
+3. `test_circuit_breaker_recovery` - Half-open state
+4. `test_failure_reporting` - Track patterns
+
+**Implementation Steps**:
+1. Create retry decorator with policies
+2. Implement circuit breaker pattern
+3. Add failure tracking to state
+4. Create failure analysis reports
+
+**Integration Points**:
+- All external service calls use retry
+- Circuit breaker on Snapshot/blockchain calls
+
+## Risk Assessment
+
+### High Risks
+1. **Signal Handling Complexity**: 
+   - **Risk**: Async signal handling is complex
+   - **Mitigation**: Extensive testing, timeout limits
+
+2. **State Corruption**:
+   - **Risk**: Corrupted state prevents startup
+   - **Mitigation**: Backup/restore, validation, checksums
+
+3. **Private Key Security**:
+   - **Risk**: Key exposure via logs or errors
+   - **Mitigation**: Secure coding practices, audit
+
+### Medium Risks
+1. **Safe Integration Delays**:
+   - **Risk**: Safe transactions slower than direct
+   - **Mitigation**: Async processing, timeout handling
+
+2. **Multi-Chain Complexity**:
+   - **Risk**: Chain-specific issues
+   - **Mitigation**: Comprehensive testing per chain
+
+### Low Risks
+1. **Performance Overhead**:
+   - **Risk**: New services slow down agent
+   - **Mitigation**: Performance testing, optimization
 
 ## Success Criteria
 
-- [ ] Agent handles SIGTERM/SIGINT signals gracefully
-- [ ] Agent recovers state after SIGKILL without corruption
-- [ ] Private keys are loaded securely from `ethereum_private_key.txt`
-- [ ] Safe contract addresses are parsed from environment
-- [ ] Withdrawal mode can be triggered via environment variable
-- [ ] All operations are logged in Pearl-compliant format
-- [ ] State persistence works atomically with corruption recovery
-- [ ] Multi-chain operations are supported
-
-## Prioritized Features
-
-### P0 - Critical Core Infrastructure
-
-#### 1. Signal Handling & Graceful Shutdown (BAC-174)
-Implement SIGKILL/SIGTERM signal handling for graceful shutdowns and state recovery.
-
-**Task 1.1: Add Signal Handler Infrastructure**
-- **Acceptance Criteria**: Application responds to SIGTERM/SIGINT by saving state before exit
-- **Test Cases**:
-  - `test_signal_handler_saves_state`: Verify state is saved when SIGTERM received
-  - `test_signal_handler_completes_operations`: Verify in-flight operations complete
-  - `test_signal_handler_timeout`: Verify forced shutdown after grace period
-- **Implementation**:
-  1. Create `backend/services/signal_handler.py`
-  2. Add signal registration in `main.py` lifespan
-  3. Implement graceful shutdown callback
-  4. Add state save trigger on shutdown
-- **Integration**: Integrates with FastAPI lifespan context
-
-**Task 1.2: State Recovery After SIGKILL**
-- **Acceptance Criteria**: Agent recovers last known state after unexpected termination
-- **Test Cases**:
-  - `test_state_recovery_after_crash`: Verify state loads correctly after simulated crash
-  - `test_corrupted_state_recovery`: Verify fallback when state file is corrupted
-  - `test_missing_state_initialization`: Verify clean start when no state exists
-- **Implementation**:
-  1. Create `backend/services/state_manager.py`
-  2. Implement state validation and recovery logic
-  3. Add startup state check in `main.py`
-  4. Create state schema with versioning
-- **Integration**: Called during application startup
-
-#### 2. Centralized Key Management (BAC-175)
-Implement secure private key file reading for blockchain access.
-
-**Task 2.1: Create Key Manager Service**
-- **Acceptance Criteria**: Single service manages all private key operations securely
-- **Test Cases**:
-  - `test_key_manager_loads_private_key`: Verify key loads from file
-  - `test_key_manager_validates_format`: Verify invalid keys are rejected
-  - `test_key_manager_file_permissions`: Verify security warnings for bad permissions
-  - `test_key_manager_missing_file`: Verify appropriate error when file missing
-- **Implementation**:
-  1. Create `backend/services/key_manager.py`
-  2. Implement secure file reading with validation
-  3. Add caching to avoid repeated file reads
-  4. Implement key format validation
-- **Integration**: Replace direct file reads in voting_service, safe_service
-
-**Task 2.2: Refactor Services to Use Key Manager**
-- **Acceptance Criteria**: All services use centralized key management
-- **Test Cases**:
-  - `test_voting_service_uses_key_manager`: Verify voting service gets key from manager
-  - `test_safe_service_uses_key_manager`: Verify safe service gets key from manager
-  - `test_key_manager_dependency_injection`: Verify services receive key manager
-- **Implementation**:
-  1. Update `voting_service.py` to use KeyManager
-  2. Update `safe_service.py` to use KeyManager
-  3. Update `voter.py` and `voter_olas.py`
-  4. Remove direct file reads
-- **Integration**: Dependency injection in service initialization
-
-### P1 - Safe Contract Integration
-
-#### 3. Multi-Chain Safe Address Management (BAC-176)
-Integrate Safe contract addresses for multi-chain operations.
-
-**Task 3.1: Parse Safe Contract Addresses**
-- **Acceptance Criteria**: Environment variable parsed into chain-specific addresses
-- **Test Cases**:
-  - `test_parse_safe_addresses_json`: Verify JSON parsing of addresses
-  - `test_invalid_safe_address_format`: Verify error handling for malformed data
-  - `test_missing_safe_addresses`: Verify graceful handling when not provided
-- **Implementation**:
-  1. Update `config.py` with SAFE_CONTRACT_ADDRESSES field
-  2. Add JSON parsing with validation
-  3. Create address mapping structure
-  4. Add chain ID to address resolution
-- **Integration**: Used by safe_service for multi-chain operations
-
-**Task 3.2: Enhance Safe Service for Multi-Chain**
-- **Acceptance Criteria**: Safe service handles operations across multiple chains
-- **Test Cases**:
-  - `test_safe_service_chain_selection`: Verify correct chain is selected
-  - `test_safe_service_multi_chain_state`: Verify state tracked per chain
-  - `test_safe_service_chain_fallback`: Verify fallback for unsupported chains
-- **Implementation**:
-  1. Update `safe_service.py` with chain routing
-  2. Add per-chain RPC configuration
-  3. Implement chain-specific transaction building
-  4. Add multi-chain state tracking
-- **Integration**: Used by voting and withdrawal operations
-
-### P2 - Withdrawal Mode
-
-#### 4. Withdrawal Mode Implementation (BAC-177)
-Implement withdrawal mode for fund recovery via WITHDRAWAL_MODE environment variable.
-
-**Task 4.1: Add Withdrawal Mode Detection**
-- **Acceptance Criteria**: Agent detects withdrawal mode from environment
-- **Test Cases**:
-  - `test_withdrawal_mode_enabled`: Verify mode detected when env var true
-  - `test_withdrawal_mode_disabled`: Verify normal operation when false/missing
-  - `test_withdrawal_mode_logging`: Verify mode change is logged
-- **Implementation**:
-  1. Add WITHDRAWAL_MODE to `config.py`
-  2. Create withdrawal mode check in `main.py`
-  3. Add mode status to health endpoint
-  4. Log mode on startup
-- **Integration**: Affects agent_run_service behavior
-
-**Task 4.2: Implement Fund Withdrawal Logic**
-- **Acceptance Criteria**: Agent withdraws funds to Safe when in withdrawal mode
-- **Test Cases**:
-  - `test_withdrawal_identifies_funds`: Verify fund discovery across chains
-  - `test_withdrawal_transaction_creation`: Verify correct withdrawal transactions
-  - `test_withdrawal_safe_return`: Verify funds return to agent Safe
-  - `test_withdrawal_error_recovery`: Verify handling of failed withdrawals
-- **Implementation**:
-  1. Create `backend/services/withdrawal_service.py`
-  2. Implement fund discovery logic
-  3. Add withdrawal transaction builder
-  4. Integrate with safe_service
-- **Integration**: Called instead of voting when mode enabled
-
-### P3 - Enhanced Monitoring & Recovery
-
-#### 5. State Persistence Framework
-Extend state persistence beyond user preferences.
-
-**Task 5.1: Create Comprehensive State Schema**
-- **Acceptance Criteria**: All agent state is defined in versioned schema
-- **Test Cases**:
-  - `test_state_schema_validation`: Verify schema validates state data
-  - `test_state_schema_migration`: Verify old versions upgrade correctly
-  - `test_state_schema_defaults`: Verify missing fields get defaults
-- **Implementation**:
-  1. Define state schema in `models.py`
-  2. Add version field for migrations
-  3. Include: agent runs, pending votes, last check times
-  4. Create migration logic
-- **Integration**: Used by state_manager service
-
-**Task 5.2: Implement Atomic State Operations**
-- **Acceptance Criteria**: State saves are atomic with corruption recovery
-- **Test Cases**:
-  - `test_atomic_state_save`: Verify atomic writes with temp files
-  - `test_concurrent_state_access`: Verify thread-safe operations
-  - `test_state_backup_rotation`: Verify backup files are managed
-- **Implementation**:
-  1. Extend atomic write pattern from user_preferences
-  2. Add file locking for concurrent access
-  3. Implement backup rotation (keep last 3)
-  4. Add corruption detection and recovery
-- **Integration**: Used throughout application for state
-
-#### 6. Pearl Platform Interface
-Add Pearl-specific command processing and monitoring.
-
-**Task 6.1: Add Pearl Command Endpoint**
-- **Acceptance Criteria**: Pearl can send commands to agent via API
-- **Test Cases**:
-  - `test_pearl_command_vote`: Verify vote command processing
-  - `test_pearl_command_status`: Verify status command returns state
-  - `test_pearl_command_validation`: Verify invalid commands rejected
-- **Implementation**:
-  1. Add `/pearl/command` endpoint to `main.py`
-  2. Create command schema in `models.py`
-  3. Implement command router
-  4. Add command logging
-- **Integration**: New API endpoint for Pearl platform
-
-**Task 6.2: Enhanced Health Monitoring**
-- **Acceptance Criteria**: Health endpoint provides Pearl-required metrics
-- **Test Cases**:
-  - `test_health_includes_pearl_fields`: Verify Pearl fields in response
-  - `test_health_performance`: Verify < 1 second response time
-  - `test_health_during_operations`: Verify accurate during active work
-- **Implementation**:
-  1. Enhance `/health` endpoint
-  2. Add: last activity, pending operations, mode status
-  3. Include service health checks
-  4. Add performance metrics
-- **Integration**: Updates existing health endpoint
-
-## Risk Assessment & Mitigation
-
-### Technical Risks
-
-1. **Signal Handling Complexity**
-   - **Risk**: Platform differences in signal behavior
-   - **Mitigation**: Use standard library signal module, test on target OS
-   - **Fallback**: Implement polling-based shutdown if signals unreliable
-
-2. **State Corruption During SIGKILL**
-   - **Risk**: Partial writes leave corrupted state
-   - **Mitigation**: Atomic writes with temp files, validation on load
-   - **Fallback**: Multiple backup files with timestamps
-
-3. **Private Key Security**
-   - **Risk**: Key exposure through logs or memory dumps
-   - **Mitigation**: Never log keys, validate file permissions, secure memory
-   - **Fallback**: Support hardware wallet integration path
-
-4. **Multi-Chain Complexity**
-   - **Risk**: Chain-specific quirks cause failures
-   - **Mitigation**: Comprehensive chain abstraction layer
-   - **Fallback**: Limit initial support to well-tested chains
-
-### Integration Risks
-
-1. **Pearl Platform Changes**
-   - **Risk**: Pearl API changes break integration
-   - **Mitigation**: Version command interface, maintain compatibility
-   - **Fallback**: Adapter pattern for version differences
-
-2. **Existing Service Disruption**
-   - **Risk**: Changes break current functionality
-   - **Mitigation**: Interface layer pattern, extensive testing
-   - **Fallback**: Feature flags for gradual rollout
+- [ ] Agent handles SIGTERM gracefully with state preservation
+- [ ] All state persisted to STORE_PATH with corruption recovery
+- [ ] Private key read from ethereum_private_key.txt securely
+- [ ] Safe addresses parsed and used for transactions
+- [ ] Withdrawal mode executes when enabled
+- [ ] Zero data loss during shutdowns
+- [ ] All tests pass with >90% coverage
+- [ ] Pearl compliance verified in test deployment
+- [ ] Performance within 10% of baseline
+- [ ] Security audit passed for key handling
 
 ## Resource Estimates
 
-### Development Time (2 developers)
-- **P0 Tasks**: 3-4 days (critical path)
-- **P1 Tasks**: 2-3 days
-- **P2 Tasks**: 2 days
+### Development Time
+- **P0 Tasks**: 5-6 days
+- **P1 Tasks**: 4-5 days  
+- **P2 Tasks**: 2-3 days
 - **P3 Tasks**: 2-3 days
-- **Testing & Integration**: 2 days
-- **Total**: 11-15 days
+- **Testing & Integration**: 3-4 days
+- **Total**: 16-21 days
 
-### Testing Requirements
-- **Unit Tests**: ~50 new tests across all tasks
-- **Integration Tests**: ~15 tests for service interactions
-- **E2E Tests**: 5 tests for Pearl platform scenarios
-- **Performance Tests**: Response time and resource usage
+### Team Requirements
+- 1 Senior Developer (full-time)
+- 1 QA Engineer (50% allocation)
+- Security review (2 days)
+- Pearl platform access for testing
 
-### Documentation
-- **Technical Docs**: 2 days
-- **Operational Guide**: 1 day
-- **API Updates**: Automated from OpenAPI
+### Dependencies
+- Pearl documentation and test environment
+- Safe SDK or contract ABIs
+- Multi-chain test infrastructure
+- Security audit resources
 
 ## Implementation Order
 
-1. **Week 1**: P0 tasks (signal handling, key management)
-2. **Week 2**: P1 tasks (Safe integration) + P2 tasks (withdrawal)
-3. **Week 3**: P3 tasks (monitoring) + testing + documentation
+1. **Week 1**: P0 Signal handling and state persistence
+2. **Week 2**: P1 Key management and Safe integration  
+3. **Week 3**: P2 Withdrawal mode and P3 enhancements
+4. **Week 4**: Integration testing and Pearl deployment
 
-This order ensures critical infrastructure is in place first, followed by feature implementation, and finally enhanced monitoring and polish.
+This plan ensures systematic, test-driven development with minimal risk to existing functionality while achieving full Pearl platform compliance.
