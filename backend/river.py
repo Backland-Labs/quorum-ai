@@ -39,7 +39,7 @@ if NEED_PLAN:
 continue_flag = True
 while continue_flag:
     print("Starting command...")
-    output = run_claude_code("return 'True'. Do not return anything else.")
+    output = run_claude_code("/ralph")
     print(output)
     print(f"Raw output: {repr(output)}")
     print(f"Output length: {len(output)}")
