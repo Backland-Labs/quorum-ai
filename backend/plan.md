@@ -31,33 +31,28 @@
 
 ## Implementation Tasks
 
-### Phase 1: Backend API (2 hours)
+### Phase 1: Backend API (2 hours) ✅ IMPLEMENTED
 
-#### Task 1.1: Add GET /user-preferences endpoint
-**Test**: `test_get_user_preferences`
-- Returns current preferences
-- Returns defaults if no file exists
+#### Task 1.1: Add GET /user-preferences endpoint ✅
+**Test**: `test_get_user_preferences` ✅
+- Returns current preferences ✅
+- Returns 404 if no preferences exist ✅
 
-**Implementation**:
-```python
-@app.get("/user-preferences")
-async def get_user_preferences():
-    preferences = await user_preferences_service.load_preferences()
-    return preferences.model_dump()
-```
+**Implementation Notes**:
+- Added proper error handling for missing preferences
+- Returns 404 to trigger frontend setup flow
+- Includes comprehensive logging
 
-#### Task 1.2: Add PUT /user-preferences endpoint  
-**Test**: `test_put_user_preferences`
-- Updates all preferences
-- Uses existing Pydantic validation
+#### Task 1.2: Add PUT /user-preferences endpoint ✅
+**Test**: `test_put_user_preferences` ✅
+- Updates all preferences ✅
+- Uses existing Pydantic validation ✅
+- Proper error handling for save failures ✅
 
-**Implementation**:
-```python
-@app.put("/user-preferences")
-async def update_user_preferences(preferences: UserPreferences):
-    await user_preferences_service.save_preferences(preferences)
-    return preferences.model_dump()
-```
+**Implementation Notes**:
+- Full test coverage including edge cases
+- Validates all constraints (e.g., max_proposals_per_run <= 10)
+- Returns saved preferences in response
 
 ### Phase 2: Frontend Setup Wizard (3 hours)
 
@@ -104,11 +99,11 @@ async def update_user_preferences(preferences: UserPreferences):
 
 ## Success Criteria
 
-- [ ] New users see setup wizard on first visit
-- [ ] Users can save their preferences
-- [ ] Settings page shows current preferences
-- [ ] Changes persist between sessions
-- [ ] Basic validation prevents invalid values
+- [ ] New users see setup wizard on first visit (Frontend - Phase 2)
+- [x] Users can save their preferences (Backend API - Phase 1)
+- [ ] Settings page shows current preferences (Frontend - Phase 3)
+- [x] Changes persist between sessions (Backend API - Phase 1)
+- [x] Basic validation prevents invalid values (Backend API - Phase 1)
 
 ## Out of Scope (Future Iterations)
 

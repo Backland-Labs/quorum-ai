@@ -2903,3 +2903,123 @@
 [2025-07-20 13:48:50,786] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 13:48:50,788] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 13:48:50,789] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:32,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:32,704] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:33,081] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:33,617] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:33,617] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:15,284] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:15,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:15,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:16,406] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:16,407] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:43,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:43,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:44,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:44,787] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:44,787] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:19,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:19,499] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:19,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:20,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:20,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:20,312] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:02:20,312] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,312] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,415] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:02:20,415] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,415] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,420] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:02:20,420] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,420] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,427] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:02:20,427] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,427] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:04,566] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:04,913] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,248] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,740] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:03:05,740] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,741] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,841] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:03:05,841] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,841] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,846] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:03:05,846] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,846] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,853] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:03:05,853] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,853] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:04:29,577] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:29,772] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:30,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:30,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:30,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:42,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,816] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:05:43,817] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:05:43,817] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:05:52,185] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,956] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:05:52,956] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:05:52,956] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:06:10,156] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,342] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,580] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,927] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:06:10,928] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:06:10,928] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:07:23,858] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,042] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,277] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,621] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,622] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,626] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:07:24,626] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:07:24,626] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:07:24,627] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:07:24,627] [INFO] [agent] User preferences not found
+[2025-07-20 18:07:24,627] [ERROR] [agent] Failed get_user_preferences after 0.000s: 404: User preferences not found. Please complete initial setup.
+[2025-07-20 18:07:24,629] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:07:24,629] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.CONSERVATIVE confidence_threshold=0.9 max_proposals_per_run=5 blacklisted_count=1 whitelisted_count=0
+[2025-07-20 18:07:24,629] [INFO] [agent] Completed update_user_preferences successfully in 0.000s
+[2025-07-20 18:07:24,632] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:07:24,632] [ERROR] [agent] Failed to save user preferences error=Failed to save preferences
+[2025-07-20 18:07:24,632] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: Failed to save preferences
+[2025-07-20 18:07:45,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,352] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,925] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:10,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:10,837] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,069] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,411] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,411] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,415] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:08:11,415] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:08:11,415] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:08:11,416] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:08:11,416] [INFO] [agent] User preferences not found
+[2025-07-20 18:08:11,416] [ERROR] [agent] Failed get_user_preferences after 0.000s: 404: User preferences not found. Please complete initial setup.
+[2025-07-20 18:08:11,418] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:08:11,418] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.CONSERVATIVE confidence_threshold=0.9 max_proposals_per_run=5 blacklisted_count=1 whitelisted_count=0
+[2025-07-20 18:08:11,418] [INFO] [agent] Completed update_user_preferences successfully in 0.000s
+[2025-07-20 18:08:11,421] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:08:11,421] [ERROR] [agent] Failed to save user preferences error=Failed to save preferences
+[2025-07-20 18:08:11,421] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: Failed to save preferences
+[2025-07-20 18:08:11,422] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:08:11,422] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.AGGRESSIVE confidence_threshold=0.5 max_proposals_per_run=10 blacklisted_count=2 whitelisted_count=3
+[2025-07-20 18:08:11,422] [INFO] [agent] Completed update_user_preferences successfully in 0.000s

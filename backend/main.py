@@ -24,6 +24,7 @@ from models import (
     VoteType,
     SummarizeRequest,
     SummarizeResponse,
+    UserPreferences,
 )
 from services.ai_service import AIService
 from services.agent_run_service import AgentRunService
@@ -564,6 +565,78 @@ async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
 
         logger.info(f"Generated proposal summaries count={len(summaries)}")
         return summaries
+
+
+@app.get("/user-preferences", response_model=UserPreferences)
+async def get_user_preferences():
+    """
+    Get current user preferences.
+    
+    Returns the user's voting preferences configuration. If no preferences
+    are found, returns 404 to indicate the user needs to complete setup.
+    """
+    global user_preferences_service
+    
+    with log_span(logger, "get_user_preferences"):
+        try:
+            preferences = await user_preferences_service.load_preferences()
+            
+            if not preferences:
+                logger.info("User preferences not found")
+                raise HTTPException(
+                    status_code=404,
+                    detail="User preferences not found. Please complete initial setup."
+                )
+            
+            logger.info(
+                f"Retrieved user preferences voting_strategy={preferences.voting_strategy} "
+                f"confidence_threshold={preferences.confidence_threshold} "
+                f"max_proposals_per_run={preferences.max_proposals_per_run}"
+            )
+            
+            return preferences
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to load user preferences error={str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to load user preferences: {str(e)}"
+            )
+
+
+@app.put("/user-preferences", response_model=UserPreferences)
+async def update_user_preferences(preferences: UserPreferences):
+    """
+    Update user preferences.
+    
+    Saves the user's voting preferences configuration. Validates all fields
+    according to the UserPreferences model constraints.
+    """
+    global user_preferences_service
+    
+    with log_span(logger, "update_user_preferences"):
+        try:
+            # Save preferences
+            await user_preferences_service.save_preferences(preferences)
+            
+            logger.info(
+                f"Updated user preferences voting_strategy={preferences.voting_strategy} "
+                f"confidence_threshold={preferences.confidence_threshold} "
+                f"max_proposals_per_run={preferences.max_proposals_per_run} "
+                f"blacklisted_count={len(preferences.blacklisted_proposers)} "
+                f"whitelisted_count={len(preferences.whitelisted_proposers)}"
+            )
+            
+            return preferences
+            
+        except Exception as e:
+            logger.error(f"Failed to save user preferences error={str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to save user preferences: {str(e)}"
+            )
 
 
 # Development server
