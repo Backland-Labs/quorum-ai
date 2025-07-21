@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { client } from '$lib/api/client';
+  import apiClient from '$lib/api';
   import PreferenceForm from '$lib/components/setup/PreferenceForm.svelte';
-  import type { UserPreferencesSchema } from '$lib/api/generated/openapi-schema';
+  import type { components } from '$lib/api/client';
   import { onMount } from 'svelte';
 
-  let preferences = $state<UserPreferencesSchema | null>(null);
+  let preferences = $state<components['schemas']['UserPreferences'] | null>(null);
   let loading = $state(true);
   let error = $state<string | null>(null);
   let successMessage = $state<string | null>(null);
@@ -19,7 +19,7 @@
     error = null;
 
     try {
-      const response = await client.GET('/user-preferences');
+      const response = await apiClient.GET('/user-preferences');
       
       if (response.error) {
         if (response.error.status === 404) {
@@ -38,12 +38,12 @@
     }
   }
 
-  async function handleSave(event: CustomEvent<UserPreferencesSchema>) {
+  async function handleSave(event: CustomEvent<components['schemas']['UserPreferences']>) {
     error = null;
     successMessage = null;
 
     try {
-      const response = await client.PUT('/user-preferences', {
+      const response = await apiClient.PUT('/user-preferences', {
         body: event.detail
       });
 

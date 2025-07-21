@@ -4,12 +4,14 @@
   import type { components } from '$lib/api/client';
 
   interface Props {
-    proposal: any;
+    proposal: components['schemas']['Proposal'];
+    summary?: components['schemas']['ProposalSummary'];
     fullProposal?: components['schemas']['Proposal'];
     variant?: 'compact' | 'detailed';
+    onClick?: () => void;
   }
 
-  let { proposal, fullProposal, variant = 'compact' }: Props = $props();
+  let { proposal, summary, fullProposal, variant = 'compact', onClick }: Props = $props();
 
   function validateProps(): void {
     console.assert(proposal !== null, 'Proposal should not be null');
@@ -48,11 +50,17 @@
     });
   }
 
-  const parsedProposal = parseProposalSummary(proposal);
+  const parsedProposal = summary ? {
+    summary: summary.summary,
+    key_points: summary.key_points,
+    risk_level: summary.risk_level,
+    recommendation: summary.recommendation,
+    confidence_score: summary.confidence_score
+  } : parseProposalSummary(proposal);
   validateProps();
 </script>
 
-<div class="group relative">
+<div class="group relative" role={onClick ? 'button' : undefined} onclick={onClick} tabindex={onClick ? 0 : undefined}>
   <div class="relative bg-white border border-secondary-200 rounded-lg p-5 hover:border-primary-300 hover:shadow-md transition-all duration-200">
     <!-- Header with title and badges -->
     <div class="flex items-start justify-between mb-3">
@@ -62,9 +70,9 @@
         </h5>
         {#if fullProposal}
           <div class="flex items-center gap-3 mt-1 text-xs text-gray-500">
-            <span>{fullProposal.dao_name}</span>
+            <span>{fullProposal?.dao_name || proposal.space?.name || ''}</span>
             <span>•</span>
-            <span>Created {formatDate(fullProposal.created_at)}</span>
+            <span>Created {formatDate(fullProposal?.created_at || proposal.created)}</span>
           </div>
         {/if}
       </div>
@@ -127,10 +135,21 @@
           </svg>
           {calculateConfidencePercentage(parsedProposal.confidence_score)}% confidence
         </div>
-        {#if fullProposal?.id || proposal?.proposal_id}
-          <a
-            href="/proposals/{fullProposal?.id || proposal?.proposal_id}"
+        {#if onClick}
+          <button
             class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+            onclick={(e) => { e.stopPropagation(); onClick(); }}
+          >
+            View Details
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        {:else if fullProposal?.id || proposal?.proposal_id || proposal.id}
+          <a
+            href="/proposals/{fullProposal?.id || proposal?.proposal_id || proposal.id}"
+            class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+            onclick={(e) => e.stopPropagation()}
           >
             View Details
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

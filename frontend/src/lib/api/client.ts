@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/health": {
+    "/healthcheck": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,10 +12,20 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Health Check
-         * @description Health check endpoint.
+         * Healthcheck
+         * @description Pearl-compliant health check endpoint for monitoring state transitions.
+         *
+         *     Returns real-time information about agent state transitions to help
+         *     the Pearl platform monitor agent health and responsiveness.
+         *
+         *     Returns:
+         *         JSON with required fields:
+         *         - seconds_since_last_transition: Time since last state change (float)
+         *         - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
+         *         - period: (optional) The time period used to determine if transitioning fast
+         *         - reset_pause_duration: (optional) Time to wait before resetting transition tracking
          */
-        get: operations["health_check_health_get"];
+        get: operations["healthcheck_healthcheck_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -149,11 +159,17 @@ export interface paths {
         /**
          * Get User Preferences
          * @description Get current user preferences.
+         *
+         *     Returns the user's voting preferences configuration. If no preferences
+         *     are found, returns 404 to indicate the user needs to complete setup.
          */
         get: operations["get_user_preferences_user_preferences_get"];
         /**
          * Update User Preferences
          * @description Update user preferences.
+         *
+         *     Saves the user's voting preferences configuration. Validates all fields
+         *     according to the UserPreferences model constraints.
          */
         put: operations["update_user_preferences_user_preferences_put"];
         post?: never;
@@ -232,7 +248,7 @@ export interface components {
         };
         /**
          * Proposal
-         * @description Snapshot-based DAO proposal model.
+         * @description Snapshot proposal model representing a governance proposal.
          */
         Proposal: {
             /**
@@ -246,159 +262,102 @@ export interface components {
              */
             title: string;
             /**
-             * Choices
-             * @description Array of voting options
+             * Body
+             * @description Full proposal description
              */
-            choices: string[];
-            /**
-             * Start
-             * @description Start timestamp
-             */
-            start: number;
-            /**
-             * End
-             * @description End timestamp
-             */
-            end: number;
+            body: string;
             /**
              * State
-             * @description Proposal state
+             * @description Current state of the proposal
              */
             state: string;
             /**
              * Author
-             * @description Author's wallet address
+             * @description Proposal author address
              */
             author: string;
-            /**
-             * Network
-             * @description Blockchain network
-             */
-            network: string;
-            /**
-             * Symbol
-             * @description Token symbol
-             */
-            symbol: string;
-            /**
-             * Scores
-             * @description Vote scores per choice
-             */
-            scores: number[];
-            /**
-             * Scores Total
-             * @description Total voting power
-             */
-            scores_total: number;
-            /**
-             * Votes
-             * @description Number of votes cast
-             */
-            votes: number;
             /**
              * Created
              * @description Creation timestamp
              */
             created: number;
             /**
-             * Quorum
-             * @description Quorum threshold
+             * Start
+             * @description Voting start timestamp
              */
-            quorum: number;
+            start: number;
             /**
-             * Body
-             * @description Proposal description/content
+             * End
+             * @description Voting end timestamp
              */
-            body?: string | null;
+            end: number;
+            /**
+             * Votes
+             * @description Total number of votes
+             * @default 0
+             */
+            votes: number;
+            /**
+             * Scores Total
+             * @description Total voting score
+             * @default 0
+             */
+            scores_total: number;
+            /**
+             * Choices
+             * @description Voting choice options
+             */
+            choices?: string[];
+            /**
+             * Scores
+             * @description Scores per choice
+             */
+            scores?: number[];
             /**
              * Snapshot
-             * @description Block number snapshot
+             * @description Blockchain snapshot identifier
              */
-            snapshot?: number | null;
-            /**
-             * Space
-             * @description Associated space object
-             */
-            space?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Scores By Strategy
-             * @description Breakdown by strategy
-             */
-            scores_by_strategy?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Updated
-             * @description Last update timestamp
-             */
-            updated?: number | null;
-            /**
-             * Type
-             * @description Proposal type
-             */
-            type?: string | null;
-            /**
-             * Strategies
-             * @description Voting strategies used
-             */
-            strategies?: {
-                [key: string]: unknown;
-            }[];
-            /**
-             * Plugins
-             * @description Additional plugins
-             */
-            plugins?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Ipfs
-             * @description IPFS hash
-             */
-            ipfs?: string | null;
+            snapshot?: string | null;
             /**
              * Discussion
-             * @description Discussion link
+             * @description Discussion forum link
              */
             discussion?: string | null;
             /**
-             * Privacy
-             * @description Privacy setting
+             * Ipfs
+             * @description IPFS content hash
              */
-            privacy?: string | null;
-        };
-        /**
-         * ProposalListResponse
-         * @description Response model for proposal listing.
-         */
-        ProposalListResponse: {
+            ipfs?: string | null;
             /**
-             * Proposals
-             * @description List of proposals
+             * Space Id
+             * @description Parent space identifier
              */
-            proposals: components["schemas"]["Proposal"][];
+            space_id?: string | null;
             /**
-             * Next Cursor
-             * @description Cursor for the next page of results
+             * Is Active
+             * @description Whether voting is currently open
+             * @default false
              */
-            next_cursor?: string | null;
+            is_active: boolean;
+            /**
+             * Time Remaining
+             * @description Human-readable time remaining
+             */
+            time_remaining?: string | null;
+            /**
+             * Vote Choices
+             * @description Processed voting choices with percentages
+             */
+            vote_choices?: components["schemas"]["VoteChoice"][];
         };
-        /**
-         * ProposalState
-         * @description Snapshot proposal state enumeration.
-         * @enum {string}
-         */
-        ProposalState: "pending" | "active" | "closed";
         /**
          * ProposalSummary
-         * @description AI-generated proposal summary.
+         * @description AI-generated summary of a proposal.
          */
         ProposalSummary: {
             /**
              * Proposal Id
-             * @description Original proposal ID
+             * @description The proposal ID being summarized
              */
             proposal_id: string;
             /**
@@ -408,29 +367,26 @@ export interface components {
             title: string;
             /**
              * Summary
-             * @description AI-generated summary in plain English
+             * @description AI-generated concise summary
              */
             summary: string;
             /**
              * Key Points
-             * @description Key points extracted from proposal
+             * @description List of key points from the proposal
              */
             key_points: string[];
-            /**
-             * Risk Level
-             * @description Assessed risk level (LOW/MEDIUM/HIGH)
-             */
-            risk_level: string;
+            /** @description Risk level assessment */
+            risk_assessment?: components["schemas"]["RiskLevel"] | null;
             /**
              * Recommendation
-             * @description AI recommendation
+             * @description AI-generated voting recommendation
              */
-            recommendation: string;
+            recommendation?: string | null;
             /**
-             * Confidence Score
-             * @description Confidence in analysis
+             * Confidence
+             * @description Confidence in the analysis
              */
-            confidence_score: number;
+            confidence: number;
         };
         /**
          * ProposalTopVoters
@@ -517,6 +473,39 @@ export interface components {
              */
             model_used: string;
         };
+        /**
+         * UserPreferences
+         * @description User preferences model for agent run configuration.
+         */
+        UserPreferences: {
+            /**
+             * @description Voting strategy to use
+             * @default balanced
+             */
+            voting_strategy: components["schemas"]["VotingStrategy"];
+            /**
+             * Confidence Threshold
+             * @description Minimum confidence threshold for voting
+             * @default 0.7
+             */
+            confidence_threshold: number;
+            /**
+             * Max Proposals Per Run
+             * @description Maximum proposals to analyze per run
+             * @default 3
+             */
+            max_proposals_per_run: number;
+            /**
+             * Blacklisted Proposers
+             * @description List of proposer addresses to avoid
+             */
+            blacklisted_proposers?: string[];
+            /**
+             * Whitelisted Proposers
+             * @description List of trusted proposer addresses
+             */
+            whitelisted_proposers?: string[];
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -525,6 +514,32 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /**
+         * VoteChoice
+         * @description Individual voting choice for proposals.
+         */
+        VoteChoice: {
+            /**
+             * Choice
+             * @description Numeric choice identifier
+             */
+            choice: number;
+            /**
+             * Label
+             * @description Human-readable choice label
+             */
+            label: string;
+            /**
+             * Votes
+             * @description Number of votes for this choice
+             */
+            votes: number;
+            /**
+             * Percentage
+             * @description Percentage of total votes
+             */
+            percentage: number;
         };
         /**
          * VoteDecision
@@ -564,7 +579,7 @@ export interface components {
         };
         /**
          * VoteType
-         * @description Vote type enumeration.
+         * @description Vote types on proposals.
          * @enum {string}
          */
         VoteType: "FOR" | "AGAINST" | "ABSTAIN";
@@ -574,37 +589,6 @@ export interface components {
          * @enum {string}
          */
         VotingStrategy: "conservative" | "balanced" | "aggressive";
-        /**
-         * UserPreferences
-         * @description User preferences for autonomous voting agent behavior.
-         */
-        UserPreferences: {
-            /**
-             * Voting Strategy
-             * @description The voting strategy to use for decisions
-             */
-            voting_strategy: components["schemas"]["VotingStrategy"];
-            /**
-             * Confidence Threshold
-             * @description Minimum confidence score (0.0 to 1.0) required to cast a vote
-             */
-            confidence_threshold: number;
-            /**
-             * Max Proposals Per Run
-             * @description Maximum number of proposals to analyze in a single agent run
-             */
-            max_proposals_per_run: number;
-            /**
-             * Blacklisted Proposers
-             * @description List of wallet addresses whose proposals should be automatically rejected
-             */
-            blacklisted_proposers: string[];
-            /**
-             * Whitelisted Proposers
-             * @description List of wallet addresses whose proposals should receive priority consideration
-             */
-            whitelisted_proposers: string[];
-        };
     };
     responses: never;
     parameters: never;
@@ -614,7 +598,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    health_check_health_get: {
+    healthcheck_healthcheck_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -639,7 +623,7 @@ export interface operations {
             query: {
                 /** @description Snapshot space ID to fetch proposals from */
                 space_id: string;
-                state?: components["schemas"]["ProposalState"] | null;
+                state?: string | null;
                 limit?: number;
                 /** @description Number of proposals to skip */
                 skip?: number;
@@ -656,7 +640,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProposalListResponse"];
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -816,15 +800,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserPreferences"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
                 };
             };
         };

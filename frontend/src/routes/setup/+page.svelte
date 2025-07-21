@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import PreferenceForm from '$lib/components/setup/PreferenceForm.svelte';
 	import type { UserPreferences } from '$lib/types/preferences';
-	import { extractApiErrorMessage } from '$lib/utils';
+	import { extractApiErrorMessage } from '$lib/utils/api';
 	import apiClient from '$lib/api';
 	
 	let errorMessage = $state('');

@@ -3031,3 +3031,493 @@
 [2025-07-20 18:14:52,745] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 18:14:52,747] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 18:14:52,747] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:38,086] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:38,377] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:38,737] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,201] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,201] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,201] [INFO] [agent] Creating AI model
+[2025-07-20 19:05:39,201] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:05:39,238] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:05:39,238] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:05:39,240] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:05:39,264] [INFO] [agent] Creating AI model
+[2025-07-20 19:05:39,264] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:05:39,264] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:05:39,264] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:05:39,265] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:05:39,265] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,265] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:05:39,265] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,265] [INFO] [agent] VotingService initialized
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,269] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 19:05:39,269] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,269] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-20 19:05:39,270] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,270] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:05:39,270] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,270] [INFO] [agent] VotingService initialized
+[2025-07-20 19:05:39,290] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 19:05:39,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,291] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-07-20 19:05:39,291] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 19:05:39,291] [INFO] [agent] Application started version=0.1.0
+[2025-07-20 19:05:39,291] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-20 19:08:06,653] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:06,943] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,763] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,766] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,766] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:36,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:36,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,744] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,744] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,795] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,796] [INFO] [agent] Creating AI model
+[2025-07-20 19:08:37,796] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:08:37,836] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:08:37,836] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:08:37,838] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:08:37,862] [INFO] [agent] Creating AI model
+[2025-07-20 19:08:37,862] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:08:37,862] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:08:37,862] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:08:37,862] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:08:37,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,863] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:08:37,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] VotingService initialized
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,867] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 19:08:37,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,867] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-20 19:08:37,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,868] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:08:37,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,868] [INFO] [agent] VotingService initialized
+[2025-07-20 19:08:37,888] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 19:08:37,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,889] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 19:08:37,889] [INFO] [agent] Application started version=0.1.0
+[2025-07-20 19:08:37,889] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-20 19:12:07,121] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:07,418] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:07,819] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,235] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,236] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,282] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,285] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,286] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,286] [INFO] [agent] Creating AI model
+[2025-07-20 19:12:08,286] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:12:08,324] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:12:08,324] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:12:08,326] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:12:08,351] [INFO] [agent] Creating AI model
+[2025-07-20 19:12:08,351] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:12:08,351] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:12:08,351] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:12:08,352] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] VotingService initialized
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,354] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:12:08,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,357] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 19:12:08,357] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,357] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-20 19:12:08,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,358] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:12:08,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,358] [INFO] [agent] VotingService initialized
+[2025-07-20 19:12:08,378] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 19:12:08,379] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,379] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,379] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 19:12:08,380] [INFO] [agent] Application started version=0.1.0
+[2025-07-20 19:12:08,380] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-20 19:24:15,372] [INFO] [agent] Starting get_proposals (space_id=uniswapgovernance.eth, state=None, limit=20)
+[2025-07-20 19:24:15,372] [INFO] [agent] Starting get_proposals (space_ids=['uniswapgovernance.eth'], state=None, first=20, skip=0)
+[2025-07-20 19:24:15,373] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 19:24:15,373] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 19:24:15,729] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:15,731] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=127007
+[2025-07-20 19:24:15,731] [INFO] [agent] Completed snapshot_api_request successfully in 0.358s
+[2025-07-20 19:24:15,731] [INFO] [agent] Completed get_proposals successfully in 0.359s
+[2025-07-20 19:24:15,731] [INFO] [agent] Completed get_proposals successfully in 0.360s
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting summarize_proposals (proposal_count=20)
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting fetch_proposals_for_summarization
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting get_proposal (proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1)
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:15,741] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:15,840] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:15,841] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=5842
+[2025-07-20 19:24:15,841] [INFO] [agent] Completed snapshot_api_request successfully in 0.100s
+[2025-07-20 19:24:15,841] [INFO] [agent] Completed get_proposal successfully in 0.100s
+[2025-07-20 19:24:15,841] [INFO] [agent] Starting get_proposal (proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab)
+[2025-07-20 19:24:15,841] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:15,841] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:15,944] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:15,945] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=7705
+[2025-07-20 19:24:15,945] [INFO] [agent] Completed snapshot_api_request successfully in 0.104s
+[2025-07-20 19:24:15,945] [INFO] [agent] Completed get_proposal successfully in 0.104s
+[2025-07-20 19:24:15,945] [INFO] [agent] Starting get_proposal (proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485)
+[2025-07-20 19:24:15,945] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:15,945] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,044] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,044] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=8609
+[2025-07-20 19:24:16,044] [INFO] [agent] Completed snapshot_api_request successfully in 0.099s
+[2025-07-20 19:24:16,044] [INFO] [agent] Completed get_proposal successfully in 0.099s
+[2025-07-20 19:24:16,044] [INFO] [agent] Starting get_proposal (proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4)
+[2025-07-20 19:24:16,044] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,044] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,135] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,135] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=2762
+[2025-07-20 19:24:16,135] [INFO] [agent] Completed snapshot_api_request successfully in 0.091s
+[2025-07-20 19:24:16,135] [INFO] [agent] Completed get_proposal successfully in 0.091s
+[2025-07-20 19:24:16,135] [INFO] [agent] Starting get_proposal (proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804)
+[2025-07-20 19:24:16,135] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,135] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,246] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,247] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=1466
+[2025-07-20 19:24:16,247] [INFO] [agent] Completed snapshot_api_request successfully in 0.112s
+[2025-07-20 19:24:16,247] [INFO] [agent] Completed get_proposal successfully in 0.112s
+[2025-07-20 19:24:16,247] [INFO] [agent] Starting get_proposal (proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f)
+[2025-07-20 19:24:16,247] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,247] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,347] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,347] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=6344
+[2025-07-20 19:24:16,347] [INFO] [agent] Completed snapshot_api_request successfully in 0.100s
+[2025-07-20 19:24:16,348] [INFO] [agent] Completed get_proposal successfully in 0.101s
+[2025-07-20 19:24:16,348] [INFO] [agent] Starting get_proposal (proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05)
+[2025-07-20 19:24:16,348] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,348] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,438] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,438] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=6605
+[2025-07-20 19:24:16,438] [INFO] [agent] Completed snapshot_api_request successfully in 0.091s
+[2025-07-20 19:24:16,439] [INFO] [agent] Completed get_proposal successfully in 0.091s
+[2025-07-20 19:24:16,439] [INFO] [agent] Starting get_proposal (proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215)
+[2025-07-20 19:24:16,439] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,439] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,529] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,530] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10582
+[2025-07-20 19:24:16,530] [INFO] [agent] Completed snapshot_api_request successfully in 0.091s
+[2025-07-20 19:24:16,530] [INFO] [agent] Completed get_proposal successfully in 0.091s
+[2025-07-20 19:24:16,530] [INFO] [agent] Starting get_proposal (proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf)
+[2025-07-20 19:24:16,530] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,530] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,616] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,616] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=1344
+[2025-07-20 19:24:16,617] [INFO] [agent] Completed snapshot_api_request successfully in 0.086s
+[2025-07-20 19:24:16,617] [INFO] [agent] Completed get_proposal successfully in 0.087s
+[2025-07-20 19:24:16,617] [INFO] [agent] Starting get_proposal (proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890)
+[2025-07-20 19:24:16,617] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,617] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,718] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,718] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=3349
+[2025-07-20 19:24:16,719] [INFO] [agent] Completed snapshot_api_request successfully in 0.101s
+[2025-07-20 19:24:16,719] [INFO] [agent] Completed get_proposal successfully in 0.102s
+[2025-07-20 19:24:16,719] [INFO] [agent] Starting get_proposal (proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740)
+[2025-07-20 19:24:16,719] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,719] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,813] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,814] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=9360
+[2025-07-20 19:24:16,814] [INFO] [agent] Completed snapshot_api_request successfully in 0.094s
+[2025-07-20 19:24:16,814] [INFO] [agent] Completed get_proposal successfully in 0.095s
+[2025-07-20 19:24:16,814] [INFO] [agent] Starting get_proposal (proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f)
+[2025-07-20 19:24:16,814] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,814] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,902] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,903] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10220
+[2025-07-20 19:24:16,903] [INFO] [agent] Completed snapshot_api_request successfully in 0.089s
+[2025-07-20 19:24:16,903] [INFO] [agent] Completed get_proposal successfully in 0.089s
+[2025-07-20 19:24:16,903] [INFO] [agent] Starting get_proposal (proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8)
+[2025-07-20 19:24:16,903] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,904] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,996] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,996] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=8825
+[2025-07-20 19:24:16,996] [INFO] [agent] Completed snapshot_api_request successfully in 0.093s
+[2025-07-20 19:24:16,997] [INFO] [agent] Completed get_proposal successfully in 0.093s
+[2025-07-20 19:24:16,997] [INFO] [agent] Starting get_proposal (proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4)
+[2025-07-20 19:24:16,997] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,997] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,103] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,104] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10076
+[2025-07-20 19:24:17,104] [INFO] [agent] Completed snapshot_api_request successfully in 0.107s
+[2025-07-20 19:24:17,104] [INFO] [agent] Completed get_proposal successfully in 0.107s
+[2025-07-20 19:24:17,104] [INFO] [agent] Starting get_proposal (proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf)
+[2025-07-20 19:24:17,104] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,104] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,224] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,225] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=2969
+[2025-07-20 19:24:17,225] [INFO] [agent] Completed snapshot_api_request successfully in 0.121s
+[2025-07-20 19:24:17,225] [INFO] [agent] Completed get_proposal successfully in 0.121s
+[2025-07-20 19:24:17,225] [INFO] [agent] Starting get_proposal (proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b)
+[2025-07-20 19:24:17,225] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,225] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,355] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,355] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=3330
+[2025-07-20 19:24:17,356] [INFO] [agent] Completed snapshot_api_request successfully in 0.130s
+[2025-07-20 19:24:17,356] [INFO] [agent] Completed get_proposal successfully in 0.130s
+[2025-07-20 19:24:17,356] [INFO] [agent] Starting get_proposal (proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af)
+[2025-07-20 19:24:17,356] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,356] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,459] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,459] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=7981
+[2025-07-20 19:24:17,460] [INFO] [agent] Completed snapshot_api_request successfully in 0.104s
+[2025-07-20 19:24:17,460] [INFO] [agent] Completed get_proposal successfully in 0.104s
+[2025-07-20 19:24:17,460] [INFO] [agent] Starting get_proposal (proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e)
+[2025-07-20 19:24:17,460] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,460] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,556] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,557] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=4637
+[2025-07-20 19:24:17,557] [INFO] [agent] Completed snapshot_api_request successfully in 0.097s
+[2025-07-20 19:24:17,557] [INFO] [agent] Completed get_proposal successfully in 0.098s
+[2025-07-20 19:24:17,558] [INFO] [agent] Starting get_proposal (proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d)
+[2025-07-20 19:24:17,558] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,558] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,659] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,660] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=4876
+[2025-07-20 19:24:17,660] [INFO] [agent] Completed snapshot_api_request successfully in 0.102s
+[2025-07-20 19:24:17,660] [INFO] [agent] Completed get_proposal successfully in 0.103s
+[2025-07-20 19:24:17,660] [INFO] [agent] Starting get_proposal (proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d)
+[2025-07-20 19:24:17,660] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,660] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,770] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,771] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10350
+[2025-07-20 19:24:17,771] [INFO] [agent] Completed snapshot_api_request successfully in 0.110s
+[2025-07-20 19:24:17,771] [INFO] [agent] Completed get_proposal successfully in 0.111s
+[2025-07-20 19:24:17,771] [INFO] [agent] Fetched proposals for summarization count=20
+[2025-07-20 19:24:17,771] [INFO] [agent] Completed fetch_proposals_for_summarization successfully in 2.030s
+[2025-07-20 19:24:17,771] [INFO] [agent] Starting generate_proposal_summaries
+[2025-07-20 19:24:17,771] [INFO] [agent] Starting ai_multiple_proposal_summaries (proposal_count=20)
+[2025-07-20 19:24:17,771] [INFO] [agent] Starting multiple proposal summarization, proposal_count=20, model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1, proposal_title=[TEMP CHECK] - Etherlink Co-incentives Proposal, model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1, proposal_title=[TEMP CHECK] - Etherlink Co-incentives Proposal, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab, proposal_title=Uniswap Unichain - USDS and sUSDS Co-Incentives Growth Management Plan, model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab, proposal_title=Uniswap Unichain - USDS and sUSDS Co-Incentives Growth Management Plan, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485, proposal_title=Trial run a Technical Advisory Board (TAB), model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485, proposal_title=Trial run a Technical Advisory Board (TAB), error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4, proposal_title=Uniswap Accountability Committee S4 Elections, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4, proposal_title=Uniswap Accountability Committee S4 Elections, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804, proposal_title=Four Chains for Analytics Hub for Uniswap’s Revitalization and Growth Program, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804, proposal_title=Four Chains for Analytics Hub for Uniswap’s Revitalization and Growth Program, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f, proposal_title=[Temp Check] Analytics Hub for Uniswap’s Revitalization and Growth Program, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f, proposal_title=[Temp Check] Analytics Hub for Uniswap’s Revitalization and Growth Program, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05, proposal_title=[TEMP CHECK] Scaling V4 and Supporting Unichain, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05, proposal_title=[TEMP CHECK] Scaling V4 and Supporting Unichain, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215, proposal_title=[Temp Check/Revised] Treasury Delegation Round 2, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215, proposal_title=[Temp Check/Revised] Treasury Delegation Round 2, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf, proposal_title=Approved Budgets Rebalancing (S4), model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf, proposal_title=Approved Budgets Rebalancing (S4), error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890, proposal_title=UAC Renewal S4, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890, proposal_title=UAC Renewal S4, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740, proposal_title=[TEMP CHECK] Establish Uniswap v4 Licensing Process, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740, proposal_title=[TEMP CHECK] Establish Uniswap v4 Licensing Process, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f, proposal_title=[TEMP CHECK] BoB Uniswap v3 Incentives Package, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f, proposal_title=[TEMP CHECK] BoB Uniswap v3 Incentives Package, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8, proposal_title=[Temp Check] Treasury Delegation Round 2, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8, proposal_title=[Temp Check] Treasury Delegation Round 2, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4, proposal_title=[Temp Check] Saga Uniswap v3 Liquidity Incentives, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4, proposal_title=[Temp Check] Saga Uniswap v3 Liquidity Incentives, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf, proposal_title=[Temp Check] Unichain and Uniswap v4 Liquidity Incentives, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf, proposal_title=[Temp Check] Unichain and Uniswap v4 Liquidity Incentives, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b, proposal_title=[Temp Check] Uniswap Unleashed, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b, proposal_title=[Temp Check] Uniswap Unleashed, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af, proposal_title=[Temp Check] Uniswap Delegate Reward Initiative - Cycle 3, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af, proposal_title=[Temp Check] Uniswap Delegate Reward Initiative - Cycle 3, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e, proposal_title=Incentive Package for Sonic (Formerly Fantom), model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e, proposal_title=Incentive Package for Sonic (Formerly Fantom), error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d, proposal_title=Discretionary Budget from UAC for Co-Incentive Campaigns, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d, proposal_title=Discretionary Budget from UAC for Co-Incentive Campaigns, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d, proposal_title=[TEMP CHECK] Metal L2: Bridging TradFi and DeFi Through Uniswap V3, model_type=OpenAIModel
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d, proposal_title=[TEMP CHECK] Metal L2: Bridging TradFi and DeFi Through Uniswap V3, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed ai_multiple_proposal_summaries after 0.004s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed to summarize multiple proposals, proposal_count=20, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed generate_proposal_summaries after 0.005s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed summarize_proposals after 2.035s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed to summarize proposals error='Proposal' object has no attribute 'network'
