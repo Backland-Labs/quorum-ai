@@ -567,6 +567,29 @@ async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
         return summaries
 
 
+def _log_preferences_retrieval(preferences: UserPreferences) -> None:
+    """Log successful preferences retrieval."""
+    logger.info(
+        f"Retrieved user preferences voting_strategy={preferences.voting_strategy} "
+        f"confidence_threshold={preferences.confidence_threshold} "
+        f"max_proposals_per_run={preferences.max_proposals_per_run}"
+    )
+
+
+def _log_preferences_update(preferences: UserPreferences) -> None:
+    """Log successful preferences update."""
+    blacklisted_count = len(preferences.blacklisted_proposers)
+    whitelisted_count = len(preferences.whitelisted_proposers)
+    
+    logger.info(
+        f"Updated user preferences voting_strategy={preferences.voting_strategy} "
+        f"confidence_threshold={preferences.confidence_threshold} "
+        f"max_proposals_per_run={preferences.max_proposals_per_run} "
+        f"blacklisted_count={blacklisted_count} "
+        f"whitelisted_count={whitelisted_count}"
+    )
+
+
 @app.get("/user-preferences", response_model=UserPreferences)
 async def get_user_preferences():
     """
@@ -579,6 +602,9 @@ async def get_user_preferences():
     
     with log_span(logger, "get_user_preferences"):
         try:
+            # Runtime assertion: service must be initialized
+            assert user_preferences_service is not None, "User preferences service not initialized"
+            
             preferences = await user_preferences_service.load_preferences()
             
             if not preferences:
@@ -588,11 +614,7 @@ async def get_user_preferences():
                     detail="User preferences not found. Please complete initial setup."
                 )
             
-            logger.info(
-                f"Retrieved user preferences voting_strategy={preferences.voting_strategy} "
-                f"confidence_threshold={preferences.confidence_threshold} "
-                f"max_proposals_per_run={preferences.max_proposals_per_run}"
-            )
+            _log_preferences_retrieval(preferences)
             
             return preferences
             
@@ -618,16 +640,15 @@ async def update_user_preferences(preferences: UserPreferences):
     
     with log_span(logger, "update_user_preferences"):
         try:
+            # Runtime assertion: service must be initialized
+            assert user_preferences_service is not None, "User preferences service not initialized"
+            # Runtime assertion: preferences must have valid structure
+            assert isinstance(preferences, UserPreferences), "Invalid preferences type"
+            
             # Save preferences
             await user_preferences_service.save_preferences(preferences)
             
-            logger.info(
-                f"Updated user preferences voting_strategy={preferences.voting_strategy} "
-                f"confidence_threshold={preferences.confidence_threshold} "
-                f"max_proposals_per_run={preferences.max_proposals_per_run} "
-                f"blacklisted_count={len(preferences.blacklisted_proposers)} "
-                f"whitelisted_count={len(preferences.whitelisted_proposers)}"
-            )
+            _log_preferences_update(preferences)
             
             return preferences
             

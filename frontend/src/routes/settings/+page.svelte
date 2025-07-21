@@ -38,13 +38,13 @@
     }
   }
 
-  async function handleSave(event: CustomEvent<components['schemas']['UserPreferences']>) {
+  async function handleSave(data: components['schemas']['UserPreferences']) {
     error = null;
     successMessage = null;
 
     try {
       const response = await apiClient.PUT('/user-preferences', {
-        body: event.detail
+        body: data
       });
 
       if (response.error) {
@@ -89,7 +89,7 @@
     
     <PreferenceForm 
       initialValues={preferences}
-      on:save={handleSave}
+      onSubmit={handleSave}
     />
   {/if}
 </div>

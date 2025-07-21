@@ -11,14 +11,14 @@
     onSpaceChange
   }: Props = $props();
 
-  // Predefined list of Snapshot spaces
-  const spaces = [
+  // Predefined list of Snapshot spaces - extracted as configuration
+  const SNAPSHOT_SPACES = [
     { id: 'uniswapgovernance.eth', name: 'Uniswap' },
     { id: 'aave.eth', name: 'Aave' },
     { id: 'compound-governance.eth', name: 'Compound' },
     { id: 'snapshot.dcl.eth', name: 'Decentraland' },
     { id: 'gitcoindao.eth', name: 'Gitcoin' }
-  ];
+  ] as const;
 
   function handleSpaceSelect(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -40,7 +40,7 @@
         onchange={handleSpaceSelect}
         class="px-4 py-2 border border-secondary-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
       >
-        {#each spaces as space}
+        {#each SNAPSHOT_SPACES as space}
           <option value={space.id}>{space.name}</option>
         {/each}
       </select>

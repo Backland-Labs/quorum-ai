@@ -20,10 +20,19 @@
 	
 	let { initialValues, onSubmit }: Props = $props();
 	
+	// Default configuration values
+	const DEFAULT_VOTING_STRATEGY: VotingStrategy = 'balanced';
+	const DEFAULT_CONFIDENCE_THRESHOLD = 0.7;
+	const DEFAULT_MAX_PROPOSALS_PER_RUN = 5;
+	const MIN_CONFIDENCE_THRESHOLD = 0;
+	const MAX_CONFIDENCE_THRESHOLD = 1;
+	const MIN_PROPOSALS_PER_RUN = 1;
+	const MAX_PROPOSALS_PER_RUN = 10;
+	
 	// Form state with defaults
-	let votingStrategy = $state<VotingStrategy>(initialValues?.voting_strategy || 'balanced');
-	let confidenceThreshold = $state(initialValues?.confidence_threshold || 0.7);
-	let maxProposalsPerRun = $state(initialValues?.max_proposals_per_run || 5);
+	let votingStrategy = $state<VotingStrategy>(initialValues?.voting_strategy || DEFAULT_VOTING_STRATEGY);
+	let confidenceThreshold = $state(initialValues?.confidence_threshold || DEFAULT_CONFIDENCE_THRESHOLD);
+	let maxProposalsPerRun = $state(initialValues?.max_proposals_per_run || DEFAULT_MAX_PROPOSALS_PER_RUN);
 	let blacklistedProposers = $state(initialValues?.blacklisted_proposers?.join('\n') || '');
 	let whitelistedProposers = $state(initialValues?.whitelisted_proposers?.join('\n') || '');
 	
@@ -34,16 +43,16 @@
 	
 	// Validation functions
 	const validateConfidence = () => {
-		if (confidenceThreshold < 0 || confidenceThreshold > 1) {
-			confidenceError = 'Confidence threshold must be between 0 and 1';
+		if (confidenceThreshold < MIN_CONFIDENCE_THRESHOLD || confidenceThreshold > MAX_CONFIDENCE_THRESHOLD) {
+			confidenceError = `Confidence threshold must be between ${MIN_CONFIDENCE_THRESHOLD} and ${MAX_CONFIDENCE_THRESHOLD}`;
 		} else {
 			confidenceError = '';
 		}
 	};
 	
 	const validateMaxProposals = () => {
-		if (maxProposalsPerRun < 1 || maxProposalsPerRun > 10) {
-			maxProposalsError = 'Maximum proposals must be between 1 and 10';
+		if (maxProposalsPerRun < MIN_PROPOSALS_PER_RUN || maxProposalsPerRun > MAX_PROPOSALS_PER_RUN) {
+			maxProposalsError = `Maximum proposals must be between ${MIN_PROPOSALS_PER_RUN} and ${MAX_PROPOSALS_PER_RUN}`;
 		} else {
 			maxProposalsError = '';
 		}
@@ -118,8 +127,8 @@
 			id="confidence-threshold"
 			type="number"
 			step="0.1"
-			min="0"
-			max="1"
+			min={MIN_CONFIDENCE_THRESHOLD}
+			max={MAX_CONFIDENCE_THRESHOLD}
 			bind:value={confidenceThreshold}
 			onblur={validateConfidence}
 			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
@@ -142,8 +151,8 @@
 		<input
 			id="max-proposals"
 			type="number"
-			min="1"
-			max="10"
+			min={MIN_PROPOSALS_PER_RUN}
+			max={MAX_PROPOSALS_PER_RUN}
 			bind:value={maxProposalsPerRun}
 			onblur={validateMaxProposals}
 			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
