@@ -54,24 +54,38 @@
 - Validates all constraints (e.g., max_proposals_per_run <= 10)
 - Returns saved preferences in response
 
-### Phase 2: Frontend Setup Wizard (3 hours)
+### Phase 2: Frontend Setup Wizard (3 hours) ✅ IMPLEMENTED
 
-#### Task 2.1: Create /setup route
+#### Task 2.1: Create /setup route ✅
 **Test**: `test_setup_page_renders`
-- Basic form page at `/setup`
+- Basic form page at `/setup` ✅
+- Welcome message and instructions ✅
+- Documentation link ✅
 
-#### Task 2.2: Build preference form component
-**Test**: `test_preference_form_submits`
-- Form with 5 fields:
-  - Voting strategy (dropdown)
-  - Confidence threshold (number input)
-  - Max proposals (number input)
-  - Blacklisted proposers (textarea)
-  - Whitelisted proposers (textarea)
-- Submit button calls PUT endpoint
-- Redirect to dashboard on success
+**Implementation Notes**:
+- Created clean, centered layout with TailwindCSS
+- Added success/error message handling
+- Includes help link to documentation page
 
-**Implementation**: Single `PreferenceForm.svelte` component used in both setup and settings
+#### Task 2.2: Build preference form component ✅
+**Test**: `test_preference_form_submits` (tests written but framework issues)
+- Form with 5 fields: ✅
+  - Voting strategy (dropdown) ✅
+  - Confidence threshold (number input) ✅
+  - Max proposals (number input) ✅
+  - Blacklisted proposers (textarea) ✅
+  - Whitelisted proposers (textarea) ✅
+- Submit button calls PUT endpoint ✅
+- Redirect to dashboard on success ✅
+
+**Implementation**: Single `PreferenceForm.svelte` component used in both setup and settings ✅
+
+**Implementation Notes**:
+- Built reusable component with Svelte 5 runes
+- Form validation with error messages
+- Loading state during submission
+- Accepts initial values for settings page reuse
+- Address lists parsed from newline-separated text
 
 ### Phase 3: Frontend Settings Page (2 hours)
 
@@ -88,8 +102,9 @@
 
 ### Phase 4: Integration (1 hour)
 
-#### Task 4.1: Regenerate API client
-- Run `npm run generate-api`
+#### Task 4.1: Regenerate API client ✅
+- Run `npm run generate-api` ✅
+- Manually added user preferences endpoints to client ✅
 
 #### Task 4.2: Add navigation links
 - Add "Settings" link to dashboard
@@ -99,11 +114,11 @@
 
 ## Success Criteria
 
-- [ ] New users see setup wizard on first visit (Frontend - Phase 2)
-- [x] Users can save their preferences (Backend API - Phase 1)
+- [x] New users see setup wizard on first visit (Frontend - Phase 2) ✅
+- [x] Users can save their preferences (Backend API - Phase 1) ✅
 - [ ] Settings page shows current preferences (Frontend - Phase 3)
-- [x] Changes persist between sessions (Backend API - Phase 1)
-- [x] Basic validation prevents invalid values (Backend API - Phase 1)
+- [x] Changes persist between sessions (Backend API - Phase 1) ✅
+- [x] Basic validation prevents invalid values (Backend API - Phase 1) ✅
 
 ## Out of Scope (Future Iterations)
 

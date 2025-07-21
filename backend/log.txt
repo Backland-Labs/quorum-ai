@@ -3023,3 +3023,11 @@
 [2025-07-20 18:08:11,422] [INFO] [agent] Starting update_user_preferences
 [2025-07-20 18:08:11,422] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.AGGRESSIVE confidence_threshold=0.5 max_proposals_per_run=10 blacklisted_count=2 whitelisted_count=3
 [2025-07-20 18:08:11,422] [INFO] [agent] Completed update_user_preferences successfully in 0.000s
+[2025-07-20 18:14:52,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,222] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,455] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,745] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,747] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,747] [INFO] [agent] Pearl logger initialized successfully
