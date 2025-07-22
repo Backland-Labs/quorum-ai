@@ -389,6 +389,13 @@ class VoteDecision(BaseModel):
     strategy_used: VotingStrategy = Field(
         ..., description="The voting strategy used to make this decision"
     )
+    
+    # Attestation tracking fields
+    space_id: Optional[str] = Field(None, description="Snapshot space ID for attestation")
+    attestation_status: Optional[str] = Field(None, description="Status: pending, success, failed")
+    attestation_tx_hash: Optional[str] = Field(None, description="On-chain attestation transaction hash")
+    attestation_uid: Optional[str] = Field(None, description="EAS attestation unique identifier")
+    attestation_error: Optional[str] = Field(None, description="Error message if attestation failed")
 
     @field_validator("proposal_id")
     @classmethod
@@ -890,4 +897,54 @@ class WithdrawalTransaction(BaseModel):
             raise ValueError("Transaction hash must start with 0x")
         if len(v) != 66:  # 0x + 64 hex chars
             raise ValueError("Transaction hash must be 66 characters")
+        return v
+
+
+class EASAttestationData(BaseModel):
+    """Data model for EAS (Ethereum Attestation Service) attestations."""
+    
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+    
+    # Required fields for attestation
+    proposal_id: str = Field(..., description="Snapshot proposal ID being attested")
+    space_id: str = Field(..., description="Snapshot space ID")
+    voter_address: str = Field(..., description="Address of the voter")
+    choice: int = Field(..., description="Vote choice value")
+    vote_tx_hash: str = Field(..., description="Transaction hash of the Snapshot vote")
+    timestamp: datetime = Field(..., description="Timestamp of the attestation")
+    retry_count: int = Field(default=0, ge=0, le=3, description="Number of retry attempts")
+    
+    # Optional fields for attestation results
+    attestation_tx_hash: Optional[str] = Field(None, description="On-chain attestation transaction hash")
+    attestation_uid: Optional[str] = Field(None, description="EAS attestation unique identifier")
+    attestation_status: Optional[str] = Field(None, description="Status: pending, success, failed")
+    attestation_error: Optional[str] = Field(None, description="Error message if attestation failed")
+    
+    @field_validator("voter_address")
+    @classmethod
+    def validate_voter_address(cls, v: str) -> str:
+        """Validate Ethereum address format."""
+        return ModelValidationHelper.validate_blockchain_address(v)
+    
+    @field_validator("vote_tx_hash", "attestation_tx_hash")
+    @classmethod
+    def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
+        """Validate transaction hash format."""
+        if v is None:
+            return v
+        if not v.startswith("0x"):
+            raise ValueError("Transaction hash must start with 0x")
+        if len(v) != 66:  # 0x + 64 hex chars
+            raise ValueError("Transaction hash must be 66 characters")
+        return v
+    
+    @field_validator("attestation_status")
+    @classmethod
+    def validate_attestation_status(cls, v: Optional[str]) -> Optional[str]:
+        """Validate attestation status."""
+        if v is None:
+            return v
+        valid_statuses = {"pending", "success", "failed"}
+        if v not in valid_statuses:
+            raise ValueError(f"Invalid attestation status: {v}. Must be one of {valid_statuses}")
         return v

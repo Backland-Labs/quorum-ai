@@ -206,6 +206,28 @@ class Settings(BaseSettings):
         description="Mode chain RPC endpoint",
     )
 
+    # EAS (Ethereum Attestation Service) configuration
+    eas_contract_address: Optional[str] = Field(
+        default=None,
+        alias="EAS_CONTRACT_ADDRESS",
+        description="EAS contract address on Base network",
+    )
+    eas_schema_uid: Optional[str] = Field(
+        default=None,
+        alias="EAS_SCHEMA_UID",
+        description="EAS schema UID for vote attestations",
+    )
+    base_safe_address: Optional[str] = Field(
+        default=None,
+        alias="BASE_SAFE_ADDRESS",
+        description="Agent's Gnosis Safe address on Base network",
+    )
+    base_rpc_url: Optional[str] = Field(
+        default=None,
+        alias="BASE_RPC_URL",
+        description="Base network RPC endpoint (alternative to BASE_LEDGER_RPC)",
+    )
+
     @field_validator("log_level", mode="before")
     @classmethod
     def validate_log_level(cls, v):
@@ -509,6 +531,14 @@ class Settings(BaseSettings):
             "log_level": self.log_level,
             "log_file_path": self.log_file_path,
         }
+
+    def get_base_rpc_endpoint(self) -> Optional[str]:
+        """Get Base network RPC endpoint.
+        
+        Returns:
+            Base RPC endpoint from either base_rpc_url or base_ledger_rpc.
+        """
+        return self.base_rpc_url or self.base_ledger_rpc
 
 
 # Global settings instance
