@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/health": {
+    "/healthcheck": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,130 +12,20 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Health Check
-         * @description Health check endpoint.
+         * Healthcheck
+         * @description Pearl-compliant health check endpoint for monitoring state transitions.
+         *
+         *     Returns real-time information about agent state transitions to help
+         *     the Pearl platform monitor agent health and responsiveness.
+         *
+         *     Returns:
+         *         JSON with required fields:
+         *         - seconds_since_last_transition: Time since last state change (float)
+         *         - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
+         *         - period: (optional) The time period used to determine if transitioning fast
+         *         - reset_pause_duration: (optional) Time to wait before resetting transition tracking
          */
-        get: operations["health_check_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Organizations
-         * @description Get top 3 organizations with their 3 most active proposals, summarized with AI.
-         */
-        get: operations["get_organizations_organizations_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Organizations List
-         * @description Get list of available organizations, sorted alphabetically.
-         */
-        get: operations["get_organizations_list_organizations_list_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations/{org_id}/overview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Organization Overview
-         * @description Get comprehensive overview data for a specific organization.
-         */
-        get: operations["get_organization_overview_organizations__org_id__overview_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/daos": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Daos
-         * @description Get list of available DAOs.
-         */
-        get: operations["get_daos_daos_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/organizations/{org_id}/proposals": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Organization Proposals
-         * @description Get list of proposals for a specific organization.
-         */
-        get: operations["get_organization_proposals_organizations__org_id__proposals_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/daos/{dao_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Dao By Id
-         * @description Get a specific DAO by ID.
-         */
-        get: operations["get_dao_by_id_daos__dao_id__get"];
+        get: operations["healthcheck_healthcheck_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -153,7 +43,7 @@ export interface paths {
         };
         /**
          * Get Proposals
-         * @description Get list of proposals with optional filtering and sorting.
+         * @description Get list of proposals from a Snapshot space with optional filtering.
          */
         get: operations["get_proposals_proposals_get"];
         put?: never;
@@ -224,68 +114,132 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/agent-run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Agent Run
+         * @description Execute an autonomous agent run for a given Snapshot space.
+         *
+         *     This endpoint orchestrates the complete agent run workflow:
+         *     1. Fetches active proposals from the specified Snapshot space
+         *     2. Loads user preferences to guide voting decisions
+         *     3. Uses AI to analyze proposals and make voting decisions
+         *     4. Executes votes (or simulates them in dry run mode)
+         *
+         *     Args:
+         *         request: AgentRunRequest containing space_id and dry_run flag
+         *
+         *     Returns:
+         *         AgentRunResponse with execution results and vote decisions
+         *
+         *     Raises:
+         *         HTTPException: If space_id is invalid or execution fails
+         */
+        post: operations["agent_run_agent_run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user-preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Preferences
+         * @description Get current user preferences.
+         *
+         *     Returns the user's voting preferences configuration. If no preferences
+         *     are found, returns 404 to indicate the user needs to complete setup.
+         */
+        get: operations["get_user_preferences_user_preferences_get"];
+        /**
+         * Update User Preferences
+         * @description Update user preferences.
+         *
+         *     Saves the user's voting preferences configuration. Validates all fields
+         *     according to the UserPreferences model constraints.
+         */
+        put: operations["update_user_preferences_user_preferences_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /**
-         * DAO
-         * @description DAO (Decentralized Autonomous Organization) model.
+         * AgentRunRequest
+         * @description Request model for agent run execution.
          */
-        DAO: {
+        AgentRunRequest: {
             /**
-             * Id
-             * @description Unique DAO identifier
+             * Space Id
+             * @description Snapshot space ID to monitor
              */
-            id: string;
+            space_id: string;
             /**
-             * Name
-             * @description DAO name
+             * Dry Run
+             * @description If true, simulate without voting
+             * @default false
              */
-            name: string;
-            /**
-             * Slug
-             * @description DAO slug for URLs
-             */
-            slug: string;
-            /**
-             * Description
-             * @description DAO description
-             */
-            description?: string | null;
-            /**
-             * Organization Id
-             * @description Organization identifier
-             */
-            organization_id: string;
-            /**
-             * Active Proposals Count
-             * @description Number of active proposals
-             * @default 0
-             */
-            active_proposals_count: number;
-            /**
-             * Total Proposals Count
-             * @description Total number of proposals
-             * @default 0
-             */
-            total_proposals_count: number;
+            dry_run: boolean;
         };
         /**
-         * DAOListResponse
-         * @description Response model for DAO listing.
+         * AgentRunResponse
+         * @description Response model for agent run execution.
          */
-        DAOListResponse: {
+        AgentRunResponse: {
             /**
-             * Daos
-             * @description List of DAOs
+             * Space Id
+             * @description Snapshot space ID that was monitored
              */
-            daos: components["schemas"]["DAO"][];
+            space_id: string;
             /**
-             * Next Cursor
-             * @description Cursor for the next page of results
+             * Proposals Analyzed
+             * @description Number of proposals analyzed
              */
-            next_cursor?: string | null;
+            proposals_analyzed: number;
+            /**
+             * Votes Cast
+             * @description List of vote decisions made
+             */
+            votes_cast: components["schemas"]["VoteDecision"][];
+            /**
+             * User Preferences Applied
+             * @description Whether user preferences were applied
+             */
+            user_preferences_applied: boolean;
+            /**
+             * Execution Time
+             * @description Execution time in seconds
+             */
+            execution_time: number;
+            /**
+             * Errors
+             * @description List of errors encountered
+             */
+            errors?: string[];
+            /**
+             * Next Check Time
+             * @description Next scheduled check time
+             */
+            next_check_time?: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -293,150 +247,8 @@ export interface components {
             detail?: components["schemas"]["ValidationError"][];
         };
         /**
-         * Organization
-         * @description Represents a DAO organization.
-         */
-        Organization: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Slug */
-            slug: string;
-            /** Chain Ids */
-            chain_ids?: string[];
-            /** Token Ids */
-            token_ids?: string[];
-            /** Governor Ids */
-            governor_ids?: string[];
-            /** Metadata */
-            metadata?: {
-                [key: string]: unknown;
-            } | null;
-            /** Creator */
-            creator?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Has Active Proposals
-             * @default false
-             */
-            has_active_proposals: boolean;
-            /**
-             * Proposals Count
-             * @default 0
-             */
-            proposals_count: number;
-            /**
-             * Delegates Count
-             * @default 0
-             */
-            delegates_count: number;
-            /**
-             * Delegates Votes Count
-             * @default 0
-             */
-            delegates_votes_count: string;
-            /**
-             * Token Owners Count
-             * @default 0
-             */
-            token_owners_count: number;
-            /** Endorsement Service */
-            endorsement_service?: {
-                [key: string]: unknown;
-            } | null;
-        };
-        /**
-         * OrganizationListResponse
-         * @description Response model for organization listing.
-         */
-        OrganizationListResponse: {
-            /**
-             * Organizations
-             * @description List of organizations
-             */
-            organizations: components["schemas"]["Organization"][];
-            /**
-             * Next Cursor
-             * @description Cursor for the next page of results
-             */
-            next_cursor?: string | null;
-        };
-        /**
-         * OrganizationOverviewResponse
-         * @description Response model for organization overview.
-         */
-        OrganizationOverviewResponse: {
-            /**
-             * Organization Id
-             * @description Organization unique identifier
-             */
-            organization_id: string;
-            /**
-             * Organization Name
-             * @description Organization name
-             */
-            organization_name: string;
-            /**
-             * Organization Slug
-             * @description Organization slug for URLs
-             */
-            organization_slug: string;
-            /**
-             * Description
-             * @description Organization description
-             */
-            description?: string | null;
-            /**
-             * Delegate Count
-             * @description Number of delegates
-             */
-            delegate_count: number;
-            /**
-             * Token Holder Count
-             * @description Number of token holders
-             */
-            token_holder_count: number;
-            /**
-             * Total Proposals Count
-             * @description Total number of proposals
-             */
-            total_proposals_count: number;
-            /**
-             * Proposal Counts By Status
-             * @description Proposal counts grouped by status
-             */
-            proposal_counts_by_status: {
-                [key: string]: number;
-            };
-            /**
-             * Recent Activity Count
-             * @description Recent governance activity count
-             */
-            recent_activity_count: number;
-            /**
-             * Governance Participation Rate
-             * @description Governance participation rate
-             */
-            governance_participation_rate: number;
-        };
-        /**
-         * OrganizationWithProposals
-         * @description Organization with its top proposals.
-         */
-        OrganizationWithProposals: {
-            /** @description Organization details */
-            organization: components["schemas"]["Organization"];
-            /**
-             * Proposals
-             * @description Top 3 summarized proposals
-             */
-            proposals: components["schemas"]["ProposalSummary"][];
-        };
-        /**
          * Proposal
-         * @description DAO proposal model.
+         * @description Snapshot proposal model representing a governance proposal.
          */
         Proposal: {
             /**
@@ -450,92 +262,102 @@ export interface components {
              */
             title: string;
             /**
-             * Description
-             * @description Proposal description
+             * Body
+             * @description Full proposal description
              */
-            description: string;
-            /** @description Current proposal state */
-            state: components["schemas"]["ProposalState"];
+            body: string;
             /**
-             * Created At
-             * Format: date-time
+             * State
+             * @description Current state of the proposal
+             */
+            state: string;
+            /**
+             * Author
+             * @description Proposal author address
+             */
+            author: string;
+            /**
+             * Created
              * @description Creation timestamp
              */
-            created_at: string;
+            created: number;
             /**
-             * Start Block
-             * @description Block number when voting starts
+             * Start
+             * @description Voting start timestamp
              */
-            start_block: number;
+            start: number;
             /**
-             * End Block
-             * @description Block number when voting ends
+             * End
+             * @description Voting end timestamp
              */
-            end_block: number;
+            end: number;
             /**
-             * Votes For
-             * @description Total votes in favor
+             * Votes
+             * @description Total number of votes
              * @default 0
              */
-            votes_for: string;
+            votes: number;
             /**
-             * Votes Against
-             * @description Total votes against
+             * Scores Total
+             * @description Total voting score
              * @default 0
              */
-            votes_against: string;
+            scores_total: number;
             /**
-             * Votes Abstain
-             * @description Total abstain votes
-             * @default 0
+             * Choices
+             * @description Voting choice options
              */
-            votes_abstain: string;
+            choices?: string[];
             /**
-             * Dao Id
-             * @description DAO this proposal belongs to
+             * Scores
+             * @description Scores per choice
              */
-            dao_id: string;
+            scores?: number[];
             /**
-             * Dao Name
-             * @description Name of the DAO
+             * Snapshot
+             * @description Blockchain snapshot identifier
              */
-            dao_name: string;
+            snapshot?: string | null;
             /**
-             * Url
-             * @description URL to view proposal
+             * Discussion
+             * @description Discussion forum link
              */
-            url?: string | null;
+            discussion?: string | null;
+            /**
+             * Ipfs
+             * @description IPFS content hash
+             */
+            ipfs?: string | null;
+            /**
+             * Space Id
+             * @description Parent space identifier
+             */
+            space_id?: string | null;
+            /**
+             * Is Active
+             * @description Whether voting is currently open
+             * @default false
+             */
+            is_active: boolean;
+            /**
+             * Time Remaining
+             * @description Human-readable time remaining
+             */
+            time_remaining?: string | null;
+            /**
+             * Vote Choices
+             * @description Processed voting choices with percentages
+             */
+            vote_choices?: components["schemas"]["VoteChoice"][];
         };
-        /**
-         * ProposalListResponse
-         * @description Response model for proposal listing.
-         */
-        ProposalListResponse: {
-            /**
-             * Proposals
-             * @description List of proposals
-             */
-            proposals: components["schemas"]["Proposal"][];
-            /**
-             * Next Cursor
-             * @description Cursor for the next page of results
-             */
-            next_cursor?: string | null;
-        };
-        /**
-         * ProposalState
-         * @description Proposal state enumeration.
-         * @enum {string}
-         */
-        ProposalState: "ACTIVE" | "CANCELED" | "CROSSCHAINEXECUTED" | "DEFEATED" | "EXECUTED" | "EXPIRED" | "PENDING" | "QUEUED" | "SUCCEEDED";
         /**
          * ProposalSummary
-         * @description AI-generated proposal summary.
+         * @description AI-generated summary of a proposal.
          */
         ProposalSummary: {
             /**
              * Proposal Id
-             * @description Original proposal ID
+             * @description The proposal ID being summarized
              */
             proposal_id: string;
             /**
@@ -545,29 +367,26 @@ export interface components {
             title: string;
             /**
              * Summary
-             * @description AI-generated summary in plain English
+             * @description AI-generated concise summary
              */
             summary: string;
             /**
              * Key Points
-             * @description Key points extracted from proposal
+             * @description List of key points from the proposal
              */
             key_points: string[];
-            /**
-             * Risk Level
-             * @description Assessed risk level (LOW/MEDIUM/HIGH)
-             */
-            risk_level: string;
+            /** @description Risk level assessment */
+            risk_assessment?: components["schemas"]["RiskLevel"] | null;
             /**
              * Recommendation
-             * @description AI recommendation
+             * @description AI-generated voting recommendation
              */
-            recommendation: string;
+            recommendation?: string | null;
             /**
-             * Confidence Score
-             * @description Confidence in analysis
+             * Confidence
+             * @description Confidence in the analysis
              */
-            confidence_score: number;
+            confidence: number;
         };
         /**
          * ProposalTopVoters
@@ -610,17 +429,11 @@ export interface components {
             vote_type: components["schemas"]["VoteType"];
         };
         /**
-         * SortCriteria
-         * @description Criteria for sorting proposals.
+         * RiskLevel
+         * @description Risk assessment levels for proposals.
          * @enum {string}
          */
-        SortCriteria: "created_date" | "vote_count" | "state" | "title";
-        /**
-         * SortOrder
-         * @description Sort order.
-         * @enum {string}
-         */
-        SortOrder: "asc" | "desc";
+        RiskLevel: "LOW" | "MEDIUM" | "HIGH";
         /**
          * SummarizeRequest
          * @description Request model for proposal summarization.
@@ -661,25 +474,37 @@ export interface components {
             model_used: string;
         };
         /**
-         * TopOrganizationsResponse
-         * @description Response model for top organizations with proposals.
+         * UserPreferences
+         * @description User preferences model for agent run configuration.
          */
-        TopOrganizationsResponse: {
+        UserPreferences: {
             /**
-             * Organizations
-             * @description Top organizations with proposals
+             * @description Voting strategy to use
+             * @default balanced
              */
-            organizations: components["schemas"]["OrganizationWithProposals"][];
+            voting_strategy: components["schemas"]["VotingStrategy"];
             /**
-             * Processing Time
-             * @description Time taken to process in seconds
+             * Confidence Threshold
+             * @description Minimum confidence threshold for voting
+             * @default 0.7
              */
-            processing_time: number;
+            confidence_threshold: number;
             /**
-             * Model Used
-             * @description AI model used for summarization
+             * Max Proposals Per Run
+             * @description Maximum proposals to analyze per run
+             * @default 3
              */
-            model_used: string;
+            max_proposals_per_run: number;
+            /**
+             * Blacklisted Proposers
+             * @description List of proposer addresses to avoid
+             */
+            blacklisted_proposers?: string[];
+            /**
+             * Whitelisted Proposers
+             * @description List of trusted proposer addresses
+             */
+            whitelisted_proposers?: string[];
         };
         /** ValidationError */
         ValidationError: {
@@ -691,11 +516,79 @@ export interface components {
             type: string;
         };
         /**
+         * VoteChoice
+         * @description Individual voting choice for proposals.
+         */
+        VoteChoice: {
+            /**
+             * Choice
+             * @description Numeric choice identifier
+             */
+            choice: number;
+            /**
+             * Label
+             * @description Human-readable choice label
+             */
+            label: string;
+            /**
+             * Votes
+             * @description Number of votes for this choice
+             */
+            votes: number;
+            /**
+             * Percentage
+             * @description Percentage of total votes
+             */
+            percentage: number;
+        };
+        /**
+         * VoteDecision
+         * @description AI-generated voting decision for a proposal.
+         */
+        VoteDecision: {
+            /**
+             * Proposal Id
+             * @description The proposal ID being voted on
+             */
+            proposal_id: string;
+            /** @description The voting decision: FOR, AGAINST, or ABSTAIN */
+            vote: components["schemas"]["VoteType"];
+            /**
+             * Confidence
+             * @description Confidence score in the decision (0.0 to 1.0)
+             */
+            confidence: number;
+            /**
+             * Reasoning
+             * @description AI-generated explanation for the vote
+             */
+            reasoning: string;
+            /**
+             * @description Risk level: LOW, MEDIUM, or HIGH
+             * @default MEDIUM
+             */
+            risk_assessment: components["schemas"]["RiskLevel"];
+            /**
+             * Estimated Gas Cost
+             * @description Estimated transaction cost in CELO
+             * @default 0.005
+             */
+            estimated_gas_cost: number;
+            /** @description The voting strategy used to make this decision */
+            strategy_used: components["schemas"]["VotingStrategy"];
+        };
+        /**
          * VoteType
-         * @description Vote type enumeration.
+         * @description Vote types on proposals.
          * @enum {string}
          */
         VoteType: "FOR" | "AGAINST" | "ABSTAIN";
+        /**
+         * VotingStrategy
+         * @description Voting strategies for autonomous agent decision making.
+         * @enum {string}
+         */
+        VotingStrategy: "conservative" | "balanced" | "aggressive";
     };
     responses: never;
     parameters: never;
@@ -705,7 +598,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    health_check_health_get: {
+    healthcheck_healthcheck_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -725,200 +618,15 @@ export interface operations {
             };
         };
     };
-    get_organizations_organizations_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TopOrganizationsResponse"];
-                };
-            };
-        };
-    };
-    get_organizations_list_organizations_list_get: {
-        parameters: {
-            query?: {
-                limit?: number;
-                after_cursor?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_organization_overview_organizations__org_id__overview_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                org_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationOverviewResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_daos_daos_get: {
-        parameters: {
-            query: {
-                organization_id: string;
-                limit?: number;
-                after_cursor?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DAOListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_organization_proposals_organizations__org_id__proposals_get: {
-        parameters: {
-            query?: {
-                state?: components["schemas"]["ProposalState"] | null;
-                limit?: number;
-                after_cursor?: string | null;
-                sort_by?: components["schemas"]["SortCriteria"];
-                sort_order?: components["schemas"]["SortOrder"];
-            };
-            header?: never;
-            path: {
-                org_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProposalListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_dao_by_id_daos__dao_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                dao_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DAO"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     get_proposals_proposals_get: {
         parameters: {
-            query?: {
-                dao_id?: string | null;
-                organization_id?: string | null;
-                state?: components["schemas"]["ProposalState"] | null;
+            query: {
+                /** @description Snapshot space ID to fetch proposals from */
+                space_id: string;
+                state?: string | null;
                 limit?: number;
-                after_cursor?: string | null;
-                sort_by?: components["schemas"]["SortCriteria"];
-                sort_order?: components["schemas"]["SortOrder"];
+                /** @description Number of proposals to skip */
+                skip?: number;
             };
             header?: never;
             path?: never;
@@ -932,7 +640,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProposalListResponse"];
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -1030,6 +738,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProposalTopVoters"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    agent_run_agent_run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_user_preferences_user_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPreferences"];
+                };
+            };
+        };
+    };
+    update_user_preferences_user_preferences_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserPreferences"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPreferences"];
                 };
             };
             /** @description Validation Error */

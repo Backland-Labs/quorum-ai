@@ -9,7 +9,7 @@ This application is an AI agent that will run on the Olas Pearl App store. Impor
 ### Backend (Python/FastAPI)
 - **Install dependencies**: `uv sync` (or `pip install -e .`)
 - **Run development server**: `uv run main.py`
-- **Run production server**: `uv run uvicorn main:app --host 0.0.0.0 --port 8000`
+- **Run production server**: `uv run uvicorn main:app --host 0.0.0.0 --port 8716`
 - **Run tests**: `uv run pytest`
 - **Run tests with coverage**: `uv run pytest --cov=. --cov-report=html`
 - **Run specific test**: `uv run pytest tests/test_models.py -v`
@@ -22,13 +22,13 @@ This application is an AI agent that will run on the Olas Pearl App store. Impor
 - **Build for production**: `npm run build`
 - **Preview production build**: `npm run preview`
 - **Type checking**: `npm run check`
-- **Generate API client**: `npm run generate-api` (requires backend running on localhost:8000)
+- **Generate API client**: `npm run generate-api` (requires backend running on localhost:8716)
 - **Run tests**: `npm run test`
 - **Run tests in watch mode**: `npm run test:watch`
 
 ### Docker
 - **Build image**: `docker build -t quorum-ai .`
-- **Run container**: `docker run -p 8000:8000 --env-file .env quorum-ai`
+- **Run container**: `docker run -p 8716:8716 --env-file .env quorum-ai`
 
 ### Docker Compose Services
 - **Start all services**: `docker-compose up -d`
@@ -52,13 +52,13 @@ This application is an AI agent that will run on the Olas Pearl App store. Impor
   - Persistence: AOF enabled
   - Volume: `redis_data`
 - **Backend (FastAPI)**:
-  - Port: 8000
-  - Health check: `/health` endpoint
+  - Port: 8716
+  - Health check: `/healthcheck` endpoint
   - Depends on: PostgreSQL, Redis
 - **Frontend (SvelteKit)**:
   - Port: 3000
   - Depends on: Backend
-  - API Base URL: `http://backend:8000`
+  - API Base URL: `http://backend:8716`
 
 #### Environment Variables for Docker Services
 ```bash
@@ -120,7 +120,7 @@ OPENROUTER_API_KEY=your_openrouter_api_key  # For Claude 3.5 Sonnet via OpenRout
 # Optional configuration
 DEBUG=false  # Enable debug mode
 HOST=0.0.0.0  # Server host
-PORT=8000  # Server port
+HEALTH_CHECK_PORT=8716  # Server port (defaults to 8716)
 
 # Note: Observability is handled by Pearl-compliant logging to local files
 # Log files are written to ./logs/ directory following Pearl standards
@@ -133,8 +133,8 @@ PORT=8000  # Server port
    - Generate API client: `cd frontend && npm run generate-api`
    - Start frontend: `cd frontend && npm run dev`
 3. **Access Applications**:
-   - Backend API: http://localhost:8000
-   - API docs: http://localhost:8000/docs
+   - Backend API: http://localhost:8716
+   - API docs: http://localhost:8716/docs
    - Frontend: http://localhost:5173
 
 ## Code Style Guidelines

@@ -29,10 +29,10 @@
   });
 
   function initializeDashboard(): void {
-    console.assert(typeof dashboardStore.loadOrganizations === 'function', 'Dashboard store should have loadOrganizations method');
+    console.assert(typeof dashboardStore.loadProposals === 'function', 'Dashboard store should have loadProposals method');
     console.assert(!mounted, 'Dashboard should only initialize once');
 
-    dashboardStore.loadOrganizations();
+    dashboardStore.loadProposals();
   }
 
   function handleTabChange(tabId: TabType): void {
@@ -42,18 +42,18 @@
     dashboardStore.changeTab(tabId);
   }
 
-  function handleOrganizationChange(organization: any): void {
-    console.assert(organization !== null, 'Organization should not be null');
-    console.assert(typeof organization === 'object', 'Organization should be an object');
+  function handleSpaceChange(spaceId: string): void {
+    console.assert(spaceId !== null, 'Space ID should not be null');
+    console.assert(typeof spaceId === 'string', 'Space ID should be a string');
 
-    dashboardStore.changeOrganization(organization);
+    dashboardStore.changeSpace(spaceId);
   }
 
-  function handleOrganizationClick(orgId: string): void {
-    console.assert(typeof orgId === 'string', 'Organization ID must be a string');
-    console.assert(orgId.length > 0, 'Organization ID should not be empty');
+  function handleProposalClick(proposalId: string): void {
+    console.assert(typeof proposalId === 'string', 'Proposal ID must be a string');
+    console.assert(proposalId.length > 0, 'Proposal ID should not be empty');
 
-    goto(`/organizations/${orgId}`);
+    goto(`/proposals/${proposalId}`);
   }
 
   function handleViewAllProposals(): void {
@@ -63,11 +63,8 @@
   }
 
   // Derived values from store
-  const currentOrgData = $derived($dashboardState.selectedOrganization
-    ? $dashboardState.organizationsWithProposals.find(org => org.organization.id === $dashboardState.selectedOrganization?.id) || null
-    : null);
-
-  const organizations = $derived($dashboardState.organizationsWithProposals.map(org => org.organization));
+  const proposals = $derived($dashboardState.allProposals);
+  const currentSpaceId = $derived($dashboardState.currentSpaceId);
 </script>
 
 <svelte:head>
@@ -77,10 +74,9 @@
 
 <div class="space-y-6">
   <DashboardHeader
-    {organizations}
-    selectedOrganization={$dashboardState.selectedOrganization}
+    spaceId={currentSpaceId}
     loading={$dashboardState.loading}
-    onOrganizationChange={handleOrganizationChange}
+    onSpaceChange={handleSpaceChange}
   />
 
   {#if $dashboardState.loading}
@@ -97,12 +93,17 @@
     <div class="mt-6">
       {#if $dashboardState.activeTab === 'overview'}
         <OverviewTab
-          {currentOrgData}
-          onOrganizationClick={handleOrganizationClick}
+          {proposals}
+          proposalSummaries={$dashboardState.proposalSummaries}
+          onProposalClick={handleProposalClick}
           onViewAllProposals={handleViewAllProposals}
         />
       {:else if $dashboardState.activeTab === 'proposals'}
-        <ProposalsTab {currentOrgData} {dashboardStore} />
+        <ProposalsTab 
+          {proposals} 
+          proposalSummaries={$dashboardState.proposalSummaries}
+          {dashboardStore} 
+        />
       {:else if $dashboardState.activeTab === 'activity'}
         <ActivityTab />
       {/if}
