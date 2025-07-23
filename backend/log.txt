@@ -2903,521 +2903,621 @@
 [2025-07-20 13:48:50,786] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 13:48:50,788] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 13:48:50,789] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:26,409] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:26,746] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:26,747] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:27,262] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:27,400] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:27,444] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:54:27,485] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:14,554] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:14,865] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:14,866] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:15,320] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:40,059] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:40,387] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:40,388] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:40,849] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:55:40,853] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
-[2025-07-22 17:56:12,554] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:56:12,871] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:56:12,873] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:56:13,459] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:56:13,463] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
-[2025-07-22 17:57:34,059] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:57:34,368] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:57:34,370] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:57:34,857] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:57:34,861] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
-[2025-07-22 17:59:51,925] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:59:52,236] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:59:52,237] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:59:52,728] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 17:59:52,731] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
-[2025-07-22 18:10:31,206] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:10:31,525] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:10:31,905] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:11:08,374] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:11:08,667] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:11:09,034] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:12:00,777] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:12:01,080] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:12:01,437] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:12:27,711] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:12:28,099] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:12:28,505] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:16:31,608] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:16:31,901] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:16:32,720] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:18:18,480] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:18:18,770] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:18:19,570] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:18:34,146] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:18:34,438] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:18:35,260] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:20:20,575] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:20:20,868] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:20:21,683] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:20:59,893] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:00,199] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:01,025] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:01,033] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:01,033] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:01,033] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:01,033] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:21:23,123] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:23,415] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:24,262] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:24,271] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:24,271] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:24,271] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:24,272] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:21:24,272] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
-[2025-07-22 18:21:24,272] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False)
-[2025-07-22 18:21:24,272] [ERROR] [agent] Vote execution failed (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9, error='StateTransitionTracker' object has no attribute 'current_state')
-[2025-07-22 18:21:24,272] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=0)
-[2025-07-22 18:21:24,272] [INFO] [agent] Completed execute_votes successfully in 0.000s
-[2025-07-22 18:21:43,024] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:43,396] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:44,286] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:44,295] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:44,295] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:44,295] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:21:44,295] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:21:44,296] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:22:03,034] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:03,325] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:04,155] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:04,163] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:04,164] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:04,164] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:04,164] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:22:04,165] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:22:23,079] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:23,498] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:24,346] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:24,354] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:24,354] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:24,354] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:24,354] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:22:24,355] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:22:56,056] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:56,375] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:57,236] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:57,245] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:57,246] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:57,246] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:22:57,246] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:22:57,247] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:23:15,705] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:15,997] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:16,830] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:16,839] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:16,840] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:16,840] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:16,840] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:23:16,841] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:23:47,910] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:48,246] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:49,117] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:49,126] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:49,127] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:49,127] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:23:49,127] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:23:49,127] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:24:15,258] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:15,549] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:16,354] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:16,363] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:16,363] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:16,363] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:16,363] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:24:16,364] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:24:30,274] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:31,139] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:32,836] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:32,849] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:32,850] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:32,850] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:24:32,850] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:24:32,851] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:25:17,224] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:17,560] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,477] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,486] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,486] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,486] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,486] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:25:18,487] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:25:18,489] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,489] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,489] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,489] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:25:18,585] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,585] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,585] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,585] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:25:18,590] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,590] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,590] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,590] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:25:18,595] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,595] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,595] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:25:18,595] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:31:53,761] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,108] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,961] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,973] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,973] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,973] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,973] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:31:54,974] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:31:54,976] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,977] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,977] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,977] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:31:54,978] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:31:54,981] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,981] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,981] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:54,981] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:31:54,984] [INFO] [agent] Agent run started (run_id=test.eth_1753230714, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4477356944'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4477360880'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4477364816'>)
-[2025-07-22 18:31:54,984] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230714, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
-[2025-07-22 18:31:55,109] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:55,109] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:55,109] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:31:55,109] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:31:55,112] [INFO] [agent] Agent run started (run_id=test.eth_1753230715, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4477425360'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4477421424'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4477431168'>)
-[2025-07-22 18:31:55,112] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230715, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
-[2025-07-22 18:32:42,402] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:42,707] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,510] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,519] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,520] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,520] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,520] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:32:43,521] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:32:43,523] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,523] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,523] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,523] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:32:43,524] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:32:43,526] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,527] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,527] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,527] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:32:43,529] [INFO] [agent] Agent run started (run_id=test.eth_1753230763, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4438124848'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4438128784'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4438149168'>)
-[2025-07-22 18:32:43,529] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230763, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
-[2025-07-22 18:32:43,654] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,655] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,655] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:32:43,655] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:32:43,657] [INFO] [agent] Agent run started (run_id=test.eth_1753230763, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4437475152'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4437471120'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4437466848'>)
-[2025-07-22 18:32:43,657] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230763, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
-[2025-07-22 18:34:35,054] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:34:35,349] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:34:36,157] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:34:36,165] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:34:36,165] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:34:36,165] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:34:36,166] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:34:36,167] [INFO] [agent] Agent run started (run_id=test.eth_1753230876, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:35:40,461] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:35:40,753] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:35:41,558] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:35:41,567] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:35:41,567] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:35:41,567] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:35:41,567] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:35:41,568] [INFO] [agent] Agent run started (run_id=test.eth_1753230941, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:36:05,848] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:06,147] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:06,965] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:06,973] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:06,974] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:06,974] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:06,974] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:36:06,975] [INFO] [agent] Agent run started (run_id=test.eth_1753230966, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:36:19,153] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:19,453] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:20,292] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:20,300] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:20,301] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:20,301] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:20,301] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:36:20,302] [INFO] [agent] Agent run started (run_id=test.eth_1753230980, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:36:35,458] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:35,762] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:36,573] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:36,582] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:36,582] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:36,582] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:36:36,582] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:36:36,584] [INFO] [agent] Agent run started (run_id=test.eth_1753230996, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:37:33,519] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:33,811] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:34,616] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:34,624] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:34,625] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:34,625] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:34,625] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:37:34,626] [INFO] [agent] Agent run started (run_id=test.eth_1753231054, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:37:58,280] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:58,597] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:59,462] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:59,470] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:59,471] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:59,471] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:37:59,471] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:37:59,472] [INFO] [agent] Agent run started (run_id=test.eth_1753231079, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:38:18,128] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:18,425] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:19,240] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:19,249] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:19,249] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:19,249] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:19,249] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:38:19,250] [INFO] [agent] Agent run started (run_id=test.eth_1753231099, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:38:39,564] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:39,872] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,685] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,695] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,695] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,695] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,695] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:38:40,696] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:38:40,698] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,698] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,699] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,699] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:38:40,699] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:38:40,701] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,702] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,702] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,702] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:38:40,703] [INFO] [agent] Agent run started (run_id=test.eth_1753231120, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:38:40,707] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,707] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,707] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,708] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:38:40,709] [INFO] [agent] Agent run started (run_id=test.eth_1753231120, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:38:40,711] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,711] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,711] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:38:40,711] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:41,926] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:42,222] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:43,033] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:43,041] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:43,041] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:43,041] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:43,042] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:43,043] [INFO] [agent] Agent run started (run_id=test.eth_1753231183, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:39:50,078] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:50,383] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,197] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,206] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,206] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,206] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,206] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:51,207] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:39:51,209] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,210] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,210] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,210] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:51,211] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:39:51,213] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,213] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,213] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,213] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:51,214] [INFO] [agent] Agent run started (run_id=test.eth_1753231191, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:39:51,218] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,218] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,218] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,218] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:51,219] [INFO] [agent] Agent run started (run_id=test.eth_1753231191, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:39:51,222] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,222] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,222] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:39:51,222] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:39:51,223] [INFO] [agent] Agent run started (run_id=test.eth_1753231191, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:43:17,123] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:17,437] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,281] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,290] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,290] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,291] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,291] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:43:18,292] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:43:18,294] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,294] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,295] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,295] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:43:18,295] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:43:18,298] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,298] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,298] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,298] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:43:18,299] [INFO] [agent] Agent run started (run_id=test.eth_1753231398, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:43:18,303] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,303] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,304] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,304] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:43:18,305] [INFO] [agent] Agent run started (run_id=test.eth_1753231398, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:43:18,307] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,307] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,307] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:43:18,307] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:43:18,308] [INFO] [agent] Agent run started (run_id=test.eth_1753231398, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:44:39,885] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:40,198] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,048] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,058] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,058] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,058] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,058] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:44:41,059] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:44:41,061] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,062] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,062] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,062] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:44:41,063] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 18:44:41,065] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,065] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,065] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,065] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:44:41,066] [INFO] [agent] Agent run started (run_id=test.eth_1753231481, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:44:41,070] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,070] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,071] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,071] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:44:41,072] [INFO] [agent] Agent run started (run_id=test.eth_1753231481, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:44:41,074] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,074] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,074] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:41,074] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 18:44:41,075] [INFO] [agent] Agent run started (run_id=test.eth_1753231481, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 18:44:56,640] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:56,951] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:57,407] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:57,425] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 18:44:57,428] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
-[2025-07-22 19:05:31,141] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:05:31,480] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:05:32,432] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:06:44,213] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:06:44,503] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:06:45,320] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:07:24,345] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:07:24,675] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:07:25,504] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:07:41,640] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:07:41,936] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:07:42,789] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:19,030] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:19,326] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:20,142] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:34,806] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:35,108] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:35,947] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:42,913] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:43,222] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:44,036] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:08:59,736] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:00,055] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:00,513] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:08,302] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:08,614] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:09,071] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:09,087] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:09,090] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
-[2025-07-22 19:09:16,056] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:16,307] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,106] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,116] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,116] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,116] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,116] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:09:17,117] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 19:09:17,119] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,120] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,120] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,120] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:09:17,120] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 19:09:17,123] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,123] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,123] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,123] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:09:17,125] [INFO] [agent] Agent run started (run_id=test.eth_1753232957, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:09:17,129] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,129] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,129] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,129] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:09:17,130] [INFO] [agent] Agent run started (run_id=test.eth_1753232957, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:09:17,133] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,133] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,133] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:09:17,133] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:09:17,134] [INFO] [agent] Agent run started (run_id=test.eth_1753232957, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:19,212] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:19,531] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,390] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,406] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,407] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,407] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,407] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:20,408] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 19:25:20,411] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,411] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,411] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,411] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:20,412] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 19:25:20,414] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,415] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,415] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,415] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:20,416] [INFO] [agent] Agent run started (run_id=test.eth_1753233920, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:20,418] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,419] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,419] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,419] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:20,421] [INFO] [agent] Agent run started (run_id=test.eth_1753233920, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:20,423] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,423] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,424] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:20,424] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:20,425] [INFO] [agent] Agent run started (run_id=test.eth_1753233920, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:36,232] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:36,525] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,333] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,343] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,343] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,343] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,343] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:37,344] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 19:25:37,347] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,347] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,347] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,347] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:37,348] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
-[2025-07-22 19:25:37,350] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,350] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,351] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,351] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:37,352] [INFO] [agent] Agent run started (run_id=test.eth_1753233937, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:37,355] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,355] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,355] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,355] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:37,357] [INFO] [agent] Agent run started (run_id=test.eth_1753233937, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:37,360] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,360] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,360] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:37,360] [INFO] [agent] AgentRunService initialized with all dependencies
-[2025-07-22 19:25:37,361] [INFO] [agent] Agent run started (run_id=test.eth_1753233937, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
-[2025-07-22 19:25:43,736] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:44,061] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:44,517] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:44,533] [INFO] [agent] Pearl logger initialized successfully
-[2025-07-22 19:25:44,536] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 17:57:32,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:32,704] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:33,081] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:33,617] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:57:33,617] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:15,284] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:15,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:15,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:16,406] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 17:59:16,407] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:43,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:43,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:44,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:44,787] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:00:44,787] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:19,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:19,499] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:19,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:20,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:20,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:02:20,312] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:02:20,312] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,312] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,415] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:02:20,415] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,415] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,420] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:02:20,420] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,420] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,427] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:02:20,427] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:02:20,427] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:04,566] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:04,913] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,248] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:03:05,740] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:03:05,740] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,741] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,841] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:03:05,841] [ERROR] [agent] Failed to load user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,841] [ERROR] [agent] Failed get_user_preferences after 0.000s: 500: Failed to load user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,846] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:03:05,846] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,846] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,853] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:03:05,853] [ERROR] [agent] Failed to save user preferences error=name 'user_preferences_service' is not defined
+[2025-07-20 18:03:05,853] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: name 'user_preferences_service' is not defined
+[2025-07-20 18:04:29,577] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:29,772] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:30,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:30,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:04:30,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:42,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:43,816] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:05:43,817] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:05:43,817] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:05:52,185] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,378] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:05:52,956] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:05:52,956] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:05:52,956] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:06:10,156] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,342] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,580] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:06:10,927] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:06:10,928] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:06:10,928] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:07:23,858] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,042] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,277] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,621] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,622] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:24,626] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:07:24,626] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:07:24,626] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:07:24,627] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:07:24,627] [INFO] [agent] User preferences not found
+[2025-07-20 18:07:24,627] [ERROR] [agent] Failed get_user_preferences after 0.000s: 404: User preferences not found. Please complete initial setup.
+[2025-07-20 18:07:24,629] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:07:24,629] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.CONSERVATIVE confidence_threshold=0.9 max_proposals_per_run=5 blacklisted_count=1 whitelisted_count=0
+[2025-07-20 18:07:24,629] [INFO] [agent] Completed update_user_preferences successfully in 0.000s
+[2025-07-20 18:07:24,632] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:07:24,632] [ERROR] [agent] Failed to save user preferences error=Failed to save preferences
+[2025-07-20 18:07:24,632] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: Failed to save preferences
+[2025-07-20 18:07:45,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,352] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,925] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:07:45,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:10,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:10,837] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,069] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,411] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,411] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:08:11,415] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:08:11,415] [INFO] [agent] Retrieved user preferences voting_strategy=VotingStrategy.BALANCED confidence_threshold=0.7 max_proposals_per_run=10
+[2025-07-20 18:08:11,415] [INFO] [agent] Completed get_user_preferences successfully in 0.000s
+[2025-07-20 18:08:11,416] [INFO] [agent] Starting get_user_preferences
+[2025-07-20 18:08:11,416] [INFO] [agent] User preferences not found
+[2025-07-20 18:08:11,416] [ERROR] [agent] Failed get_user_preferences after 0.000s: 404: User preferences not found. Please complete initial setup.
+[2025-07-20 18:08:11,418] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:08:11,418] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.CONSERVATIVE confidence_threshold=0.9 max_proposals_per_run=5 blacklisted_count=1 whitelisted_count=0
+[2025-07-20 18:08:11,418] [INFO] [agent] Completed update_user_preferences successfully in 0.000s
+[2025-07-20 18:08:11,421] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:08:11,421] [ERROR] [agent] Failed to save user preferences error=Failed to save preferences
+[2025-07-20 18:08:11,421] [ERROR] [agent] Failed update_user_preferences after 0.000s: 500: Failed to save user preferences: Failed to save preferences
+[2025-07-20 18:08:11,422] [INFO] [agent] Starting update_user_preferences
+[2025-07-20 18:08:11,422] [INFO] [agent] Updated user preferences voting_strategy=VotingStrategy.AGGRESSIVE confidence_threshold=0.5 max_proposals_per_run=10 blacklisted_count=2 whitelisted_count=3
+[2025-07-20 18:08:11,422] [INFO] [agent] Completed update_user_preferences successfully in 0.000s
+[2025-07-20 18:14:52,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,222] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,455] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,745] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,747] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 18:14:52,747] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:38,086] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:38,377] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:38,737] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,201] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,201] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,201] [INFO] [agent] Creating AI model
+[2025-07-20 19:05:39,201] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:05:39,238] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:05:39,238] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:05:39,240] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:05:39,264] [INFO] [agent] Creating AI model
+[2025-07-20 19:05:39,264] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:05:39,264] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:05:39,264] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:05:39,265] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:05:39,265] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,265] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:05:39,265] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,265] [INFO] [agent] VotingService initialized
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,266] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:05:39,266] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,269] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 19:05:39,269] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,269] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-20 19:05:39,270] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,270] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:05:39,270] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,270] [INFO] [agent] VotingService initialized
+[2025-07-20 19:05:39,290] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 19:05:39,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:05:39,291] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-07-20 19:05:39,291] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-20 19:05:39,291] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 19:05:39,291] [INFO] [agent] Application started version=0.1.0
+[2025-07-20 19:05:39,291] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-20 19:08:06,653] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:06,943] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,763] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,766] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:07,766] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:36,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:36,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,744] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,744] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,792] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,795] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,796] [INFO] [agent] Creating AI model
+[2025-07-20 19:08:37,796] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:08:37,836] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:08:37,836] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:08:37,838] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:08:37,862] [INFO] [agent] Creating AI model
+[2025-07-20 19:08:37,862] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:08:37,862] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:08:37,862] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:08:37,862] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:08:37,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,863] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:08:37,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] VotingService initialized
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,864] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:08:37,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,867] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 19:08:37,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,867] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-20 19:08:37,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,868] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:08:37,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,868] [INFO] [agent] VotingService initialized
+[2025-07-20 19:08:37,888] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 19:08:37,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:08:37,889] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-20 19:08:37,889] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 19:08:37,889] [INFO] [agent] Application started version=0.1.0
+[2025-07-20 19:08:37,889] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-20 19:12:07,121] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:07,418] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:07,819] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,235] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,236] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,282] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,285] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,286] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,286] [INFO] [agent] Creating AI model
+[2025-07-20 19:12:08,286] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:12:08,324] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:12:08,324] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:12:08,326] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:12:08,351] [INFO] [agent] Creating AI model
+[2025-07-20 19:12:08,351] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:12:08,351] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:12:08,351] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:12:08,352] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] VotingService initialized
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,354] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:12:08,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,357] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-20 19:12:08,357] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,357] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-20 19:12:08,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,358] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:12:08,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,358] [INFO] [agent] VotingService initialized
+[2025-07-20 19:12:08,378] [INFO] [agent] WithdrawalService initialized
+[2025-07-20 19:12:08,379] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,379] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:12:08,379] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-20 19:12:08,379] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-20 19:12:08,380] [INFO] [agent] Application started version=0.1.0
+[2025-07-20 19:12:08,380] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-20 19:24:15,372] [INFO] [agent] Starting get_proposals (space_id=uniswapgovernance.eth, state=None, limit=20)
+[2025-07-20 19:24:15,372] [INFO] [agent] Starting get_proposals (space_ids=['uniswapgovernance.eth'], state=None, first=20, skip=0)
+[2025-07-20 19:24:15,373] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-07-20 19:24:15,373] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-07-20 19:24:15,729] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:15,731] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=127007
+[2025-07-20 19:24:15,731] [INFO] [agent] Completed snapshot_api_request successfully in 0.358s
+[2025-07-20 19:24:15,731] [INFO] [agent] Completed get_proposals successfully in 0.359s
+[2025-07-20 19:24:15,731] [INFO] [agent] Completed get_proposals successfully in 0.360s
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting summarize_proposals (proposal_count=20)
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting fetch_proposals_for_summarization
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting get_proposal (proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1)
+[2025-07-20 19:24:15,741] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:15,741] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:15,840] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:15,841] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=5842
+[2025-07-20 19:24:15,841] [INFO] [agent] Completed snapshot_api_request successfully in 0.100s
+[2025-07-20 19:24:15,841] [INFO] [agent] Completed get_proposal successfully in 0.100s
+[2025-07-20 19:24:15,841] [INFO] [agent] Starting get_proposal (proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab)
+[2025-07-20 19:24:15,841] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:15,841] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:15,944] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:15,945] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=7705
+[2025-07-20 19:24:15,945] [INFO] [agent] Completed snapshot_api_request successfully in 0.104s
+[2025-07-20 19:24:15,945] [INFO] [agent] Completed get_proposal successfully in 0.104s
+[2025-07-20 19:24:15,945] [INFO] [agent] Starting get_proposal (proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485)
+[2025-07-20 19:24:15,945] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:15,945] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,044] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,044] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=8609
+[2025-07-20 19:24:16,044] [INFO] [agent] Completed snapshot_api_request successfully in 0.099s
+[2025-07-20 19:24:16,044] [INFO] [agent] Completed get_proposal successfully in 0.099s
+[2025-07-20 19:24:16,044] [INFO] [agent] Starting get_proposal (proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4)
+[2025-07-20 19:24:16,044] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,044] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,135] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,135] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=2762
+[2025-07-20 19:24:16,135] [INFO] [agent] Completed snapshot_api_request successfully in 0.091s
+[2025-07-20 19:24:16,135] [INFO] [agent] Completed get_proposal successfully in 0.091s
+[2025-07-20 19:24:16,135] [INFO] [agent] Starting get_proposal (proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804)
+[2025-07-20 19:24:16,135] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,135] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,246] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,247] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=1466
+[2025-07-20 19:24:16,247] [INFO] [agent] Completed snapshot_api_request successfully in 0.112s
+[2025-07-20 19:24:16,247] [INFO] [agent] Completed get_proposal successfully in 0.112s
+[2025-07-20 19:24:16,247] [INFO] [agent] Starting get_proposal (proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f)
+[2025-07-20 19:24:16,247] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,247] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,347] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,347] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=6344
+[2025-07-20 19:24:16,347] [INFO] [agent] Completed snapshot_api_request successfully in 0.100s
+[2025-07-20 19:24:16,348] [INFO] [agent] Completed get_proposal successfully in 0.101s
+[2025-07-20 19:24:16,348] [INFO] [agent] Starting get_proposal (proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05)
+[2025-07-20 19:24:16,348] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,348] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,438] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,438] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=6605
+[2025-07-20 19:24:16,438] [INFO] [agent] Completed snapshot_api_request successfully in 0.091s
+[2025-07-20 19:24:16,439] [INFO] [agent] Completed get_proposal successfully in 0.091s
+[2025-07-20 19:24:16,439] [INFO] [agent] Starting get_proposal (proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215)
+[2025-07-20 19:24:16,439] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,439] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,529] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,530] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10582
+[2025-07-20 19:24:16,530] [INFO] [agent] Completed snapshot_api_request successfully in 0.091s
+[2025-07-20 19:24:16,530] [INFO] [agent] Completed get_proposal successfully in 0.091s
+[2025-07-20 19:24:16,530] [INFO] [agent] Starting get_proposal (proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf)
+[2025-07-20 19:24:16,530] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,530] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,616] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,616] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=1344
+[2025-07-20 19:24:16,617] [INFO] [agent] Completed snapshot_api_request successfully in 0.086s
+[2025-07-20 19:24:16,617] [INFO] [agent] Completed get_proposal successfully in 0.087s
+[2025-07-20 19:24:16,617] [INFO] [agent] Starting get_proposal (proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890)
+[2025-07-20 19:24:16,617] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,617] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,718] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,718] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=3349
+[2025-07-20 19:24:16,719] [INFO] [agent] Completed snapshot_api_request successfully in 0.101s
+[2025-07-20 19:24:16,719] [INFO] [agent] Completed get_proposal successfully in 0.102s
+[2025-07-20 19:24:16,719] [INFO] [agent] Starting get_proposal (proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740)
+[2025-07-20 19:24:16,719] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,719] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,813] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,814] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=9360
+[2025-07-20 19:24:16,814] [INFO] [agent] Completed snapshot_api_request successfully in 0.094s
+[2025-07-20 19:24:16,814] [INFO] [agent] Completed get_proposal successfully in 0.095s
+[2025-07-20 19:24:16,814] [INFO] [agent] Starting get_proposal (proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f)
+[2025-07-20 19:24:16,814] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,814] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,902] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,903] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10220
+[2025-07-20 19:24:16,903] [INFO] [agent] Completed snapshot_api_request successfully in 0.089s
+[2025-07-20 19:24:16,903] [INFO] [agent] Completed get_proposal successfully in 0.089s
+[2025-07-20 19:24:16,903] [INFO] [agent] Starting get_proposal (proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8)
+[2025-07-20 19:24:16,903] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,904] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:16,996] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:16,996] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=8825
+[2025-07-20 19:24:16,996] [INFO] [agent] Completed snapshot_api_request successfully in 0.093s
+[2025-07-20 19:24:16,997] [INFO] [agent] Completed get_proposal successfully in 0.093s
+[2025-07-20 19:24:16,997] [INFO] [agent] Starting get_proposal (proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4)
+[2025-07-20 19:24:16,997] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:16,997] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,103] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,104] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10076
+[2025-07-20 19:24:17,104] [INFO] [agent] Completed snapshot_api_request successfully in 0.107s
+[2025-07-20 19:24:17,104] [INFO] [agent] Completed get_proposal successfully in 0.107s
+[2025-07-20 19:24:17,104] [INFO] [agent] Starting get_proposal (proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf)
+[2025-07-20 19:24:17,104] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,104] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,224] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,225] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=2969
+[2025-07-20 19:24:17,225] [INFO] [agent] Completed snapshot_api_request successfully in 0.121s
+[2025-07-20 19:24:17,225] [INFO] [agent] Completed get_proposal successfully in 0.121s
+[2025-07-20 19:24:17,225] [INFO] [agent] Starting get_proposal (proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b)
+[2025-07-20 19:24:17,225] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,225] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,355] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,355] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=3330
+[2025-07-20 19:24:17,356] [INFO] [agent] Completed snapshot_api_request successfully in 0.130s
+[2025-07-20 19:24:17,356] [INFO] [agent] Completed get_proposal successfully in 0.130s
+[2025-07-20 19:24:17,356] [INFO] [agent] Starting get_proposal (proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af)
+[2025-07-20 19:24:17,356] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,356] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,459] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,459] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=7981
+[2025-07-20 19:24:17,460] [INFO] [agent] Completed snapshot_api_request successfully in 0.104s
+[2025-07-20 19:24:17,460] [INFO] [agent] Completed get_proposal successfully in 0.104s
+[2025-07-20 19:24:17,460] [INFO] [agent] Starting get_proposal (proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e)
+[2025-07-20 19:24:17,460] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,460] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,556] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,557] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=4637
+[2025-07-20 19:24:17,557] [INFO] [agent] Completed snapshot_api_request successfully in 0.097s
+[2025-07-20 19:24:17,557] [INFO] [agent] Completed get_proposal successfully in 0.098s
+[2025-07-20 19:24:17,558] [INFO] [agent] Starting get_proposal (proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d)
+[2025-07-20 19:24:17,558] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,558] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,659] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,660] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=4876
+[2025-07-20 19:24:17,660] [INFO] [agent] Completed snapshot_api_request successfully in 0.102s
+[2025-07-20 19:24:17,660] [INFO] [agent] Completed get_proposal successfully in 0.103s
+[2025-07-20 19:24:17,660] [INFO] [agent] Starting get_proposal (proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d)
+[2025-07-20 19:24:17,660] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-07-20 19:24:17,660] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-07-20 19:24:17,770] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-07-20 19:24:17,771] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=10350
+[2025-07-20 19:24:17,771] [INFO] [agent] Completed snapshot_api_request successfully in 0.110s
+[2025-07-20 19:24:17,771] [INFO] [agent] Completed get_proposal successfully in 0.111s
+[2025-07-20 19:24:17,771] [INFO] [agent] Fetched proposals for summarization count=20
+[2025-07-20 19:24:17,771] [INFO] [agent] Completed fetch_proposals_for_summarization successfully in 2.030s
+[2025-07-20 19:24:17,771] [INFO] [agent] Starting generate_proposal_summaries
+[2025-07-20 19:24:17,771] [INFO] [agent] Starting ai_multiple_proposal_summaries (proposal_count=20)
+[2025-07-20 19:24:17,771] [INFO] [agent] Starting multiple proposal summarization, proposal_count=20, model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1, proposal_title=[TEMP CHECK] - Etherlink Co-incentives Proposal, model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xc689d74757ccf1de09c3b8656dcd2f0d678972c9715a318aa4e9b659a5ebaca1, proposal_title=[TEMP CHECK] - Etherlink Co-incentives Proposal, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab, proposal_title=Uniswap Unichain - USDS and sUSDS Co-Incentives Growth Management Plan, model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x537a301c4c94c1ec0b972bab558e2e36b1fa1111f0cbc4d5a59b0465f505c9ab, proposal_title=Uniswap Unichain - USDS and sUSDS Co-Incentives Growth Management Plan, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485, proposal_title=Trial run a Technical Advisory Board (TAB), model_type=OpenAIModel
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,772] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x5915e661808f896203ff5759e737e04861bf8fa09525972d481cbccf7776f485, proposal_title=Trial run a Technical Advisory Board (TAB), error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4)
+[2025-07-20 19:24:17,772] [INFO] [agent] Starting proposal summarization, proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4, proposal_title=Uniswap Accountability Committee S4 Elections, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xb9a79884fab779132907835d8c6360b781ed0a17c8a33ac41594a27f6c366ce4, proposal_title=Uniswap Accountability Committee S4 Elections, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804, proposal_title=Four Chains for Analytics Hub for Uniswap’s Revitalization and Growth Program, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xd0e154ab11dfeed1fb652c4a4db011937ffa7dd3333847936c09a668b5e5e804, proposal_title=Four Chains for Analytics Hub for Uniswap’s Revitalization and Growth Program, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f, proposal_title=[Temp Check] Analytics Hub for Uniswap’s Revitalization and Growth Program, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x675c9697cc6c8d1cab27e1cffab3fdc7740b3e978eb37d8b6dcce76d1726670f, proposal_title=[Temp Check] Analytics Hub for Uniswap’s Revitalization and Growth Program, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05, proposal_title=[TEMP CHECK] Scaling V4 and Supporting Unichain, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x58f16ed9e140551bb80d265ea9b958e96c542a7d7afc081610f72506a4f7cb05, proposal_title=[TEMP CHECK] Scaling V4 and Supporting Unichain, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215, proposal_title=[Temp Check/Revised] Treasury Delegation Round 2, model_type=OpenAIModel
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,773] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x46fef087a43555e156db287d370151a76e19e1e2cd7d36f442409987f93d4215, proposal_title=[Temp Check/Revised] Treasury Delegation Round 2, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf)
+[2025-07-20 19:24:17,773] [INFO] [agent] Starting proposal summarization, proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf, proposal_title=Approved Budgets Rebalancing (S4), model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xaf7a6894af35b3a71cd7222d4a17ef2ef85ff8ffb3f02be8c7e6e9dec548f9bf, proposal_title=Approved Budgets Rebalancing (S4), error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890, proposal_title=UAC Renewal S4, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x629995d68efbfea149bbd4fdc35cfcacca9bd327e3cbf1382fd6753df583e890, proposal_title=UAC Renewal S4, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740, proposal_title=[TEMP CHECK] Establish Uniswap v4 Licensing Process, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xfbaf8a48bc110a815e6b8cfaaf6c73451cb0c6e5e3d48e10e72893bf95911740, proposal_title=[TEMP CHECK] Establish Uniswap v4 Licensing Process, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f, proposal_title=[TEMP CHECK] BoB Uniswap v3 Incentives Package, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xad0e29aa7bc8e783c15b959b92b02b871af879b8f36372e80fc5ff5fc189ed8f, proposal_title=[TEMP CHECK] BoB Uniswap v3 Incentives Package, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8, proposal_title=[Temp Check] Treasury Delegation Round 2, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x04af1fcb7538cf5458c5c17baa50fe410952d48e98d451a6ca5f7b94fea87ee8, proposal_title=[Temp Check] Treasury Delegation Round 2, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4)
+[2025-07-20 19:24:17,774] [INFO] [agent] Starting proposal summarization, proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4, proposal_title=[Temp Check] Saga Uniswap v3 Liquidity Incentives, model_type=OpenAIModel
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,774] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4, proposal_title=[Temp Check] Saga Uniswap v3 Liquidity Incentives, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf, proposal_title=[Temp Check] Unichain and Uniswap v4 Liquidity Incentives, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0xe7fb39bd6f16b65d0847cdd6ab6ecef3a6c1e89bd523cf895f3d806c4bb4b1cf, proposal_title=[Temp Check] Unichain and Uniswap v4 Liquidity Incentives, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b, proposal_title=[Temp Check] Uniswap Unleashed, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x424f821d0378b7152e02cbcfedf12c1c3aa2af5fe50b0476cdadfc4269892b4b, proposal_title=[Temp Check] Uniswap Unleashed, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af, proposal_title=[Temp Check] Uniswap Delegate Reward Initiative - Cycle 3, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x0c7b3acc56ad1d276cd4c9338e2ef8ca9e15e8ab3e3a22d395fd34398bda40af, proposal_title=[Temp Check] Uniswap Delegate Reward Initiative - Cycle 3, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e, proposal_title=Incentive Package for Sonic (Formerly Fantom), model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x5527b3846cd05a64346a00461d2c763531f43e2b2f4f1c7d55e1ba7de60c4d4e, proposal_title=Incentive Package for Sonic (Formerly Fantom), error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d, proposal_title=Discretionary Budget from UAC for Co-Incentive Campaigns, model_type=OpenAIModel
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,775] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x90fab9ab51bb8ca09bab7d76e7ccacaf7dad184e697c870c30957770211cc95d, proposal_title=Discretionary Budget from UAC for Co-Incentive Campaigns, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d)
+[2025-07-20 19:24:17,775] [INFO] [agent] Starting proposal summarization, proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d, proposal_title=[TEMP CHECK] Metal L2: Bridging TradFi and DeFi Through Uniswap V3, model_type=OpenAIModel
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x1b31cc6ab6b8ceb3ea3ada7684d08debc20d8a3b29fd94363223892264ab937d, proposal_title=[TEMP CHECK] Metal L2: Bridging TradFi and DeFi Through Uniswap V3, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed ai_multiple_proposal_summaries after 0.004s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed to summarize multiple proposals, proposal_count=20, error='Proposal' object has no attribute 'network', error_type=AttributeError
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed generate_proposal_summaries after 0.005s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed summarize_proposals after 2.035s: 'Proposal' object has no attribute 'network'
+[2025-07-20 19:24:17,776] [ERROR] [agent] Failed to summarize proposals error='Proposal' object has no attribute 'network'

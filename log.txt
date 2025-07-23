@@ -1,0 +1,28 @@
+[2025-07-20 19:11:44,533] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:44,849] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,211] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,623] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,623] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,666] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,670] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,670] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,670] [INFO] [agent] Creating AI model
+[2025-07-20 19:11:45,670] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:11:45,707] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:11:45,707] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:11:45,709] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:11:45,733] [INFO] [agent] Creating AI model
+[2025-07-20 19:11:45,733] [INFO] [agent] Using OpenRouter
+[2025-07-20 19:11:45,733] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-20 19:11:45,733] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-20 19:11:45,733] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-20 19:11:45,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,734] [INFO] [agent] KeyManager initialized
+[2025-07-20 19:11:45,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,734] [INFO] [agent] VotingService initialized
+[2025-07-20 19:11:45,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-20 19:11:45,735] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-20 19:11:45,735] [INFO] [agent] Pearl logger initialized successfully

@@ -1,49 +1,52 @@
 <script lang="ts">
-  import type { OrganizationWithProposals } from '$lib/types/dashboard.js';
-  import OrganizationStats from './OrganizationStats.svelte';
+  import type { components } from '$lib/api/client';
+  import ProposalStats from './ProposalStats.svelte';
   import RecentProposals from './RecentProposals.svelte';
   import EmptyState from './EmptyState.svelte';
 
   interface Props {
-    currentOrgData: OrganizationWithProposals | null;
-    onOrganizationClick: (orgId: string) => void;
+    proposals: components['schemas']['Proposal'][];
+    proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
+    onProposalClick: (proposalId: string) => void;
     onViewAllProposals: () => void;
   }
 
-  let { currentOrgData, onOrganizationClick, onViewAllProposals }: Props = $props();
+  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals }: Props = $props();
 
   function validateProps(): void {
-    console.assert(typeof onOrganizationClick === 'function', 'onOrganizationClick must be a function');
+    console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
     console.assert(typeof onViewAllProposals === 'function', 'onViewAllProposals must be a function');
   }
 
-  function hasOrganizationData(): boolean {
-    console.assert(currentOrgData === null || typeof currentOrgData === 'object', 'Organization data should be null or object');
+  function hasProposals(): boolean {
+    console.assert(Array.isArray(proposals), 'Proposals should be an array');
 
-    return currentOrgData !== null;
+    return proposals.length > 0;
   }
 
   validateProps();
 </script>
 
 <div id="tab-panel-overview" role="tabpanel" aria-labelledby="tab-overview">
-  {#if hasOrganizationData() && currentOrgData}
+  {#if hasProposals()}
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <OrganizationStats
-        organization={currentOrgData.organization}
-        onViewDetails={onOrganizationClick}
+      <ProposalStats
+        {proposals}
+        onViewDetails={onViewAllProposals}
       />
 
       <RecentProposals
-        organizationData={currentOrgData}
-        onViewAllProposals={onViewAllProposals}
+        {proposals}
+        {proposalSummaries}
+        {onProposalClick}
+        {onViewAllProposals}
       />
     </div>
   {:else}
     <EmptyState
-      title="No organization selected"
-      description="Choose an organization from the dropdown to view its overview."
-      icon="organization"
+      title="No proposals found"
+      description="This Snapshot space doesn't have any proposals yet."
+      icon="document"
     />
   {/if}
 </div>
