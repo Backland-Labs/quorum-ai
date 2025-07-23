@@ -1,7 +1,7 @@
 """Governor Registry for On-Chain Voting Support.
 
-NOTE: This module is currently not in active use as the system has migrated to 
-Snapshot (off-chain) voting. However, this code is being retained for future 
+NOTE: This module is currently not in active use as the system has migrated to
+Snapshot (off-chain) voting. However, this code is being retained for future
 implementation of on-chain governance support.
 
 This registry contains definitions and utilities for interacting with various
@@ -57,7 +57,7 @@ GOVERNORS: Dict[str, GovernorMeta] = {
         type=GovernorType.COMPOUND_BRAVO,
     ),
     "compound-sepolia": GovernorMeta(
-        id="compound-sepolia", 
+        id="compound-sepolia",
         chain_id=11155111,
         address="0xAbCdEf1234567890123456789012345678901234",
         type=GovernorType.COMPOUND_BRAVO,
@@ -86,9 +86,9 @@ GOVERNORS: Dict[str, GovernorMeta] = {
 def get_governor(governor_id: str) -> Tuple[GovernorMeta, List[Dict[str, Any]]]:
     if governor_id not in GOVERNORS:
         raise GovernorRegistryError(f"Governor '{governor_id}' not found")
-    
+
     meta = GOVERNORS[governor_id]
     abi_loader = ABILoader()
     abi = abi_loader.load(meta.type.value)
-    
+
     return meta, abi

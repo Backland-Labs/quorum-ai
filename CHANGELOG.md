@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-07-23
+### Added
+- EAS (Ethereum Attestation Service) integration for on-chain vote attestation
+- Complete SafeService implementation with multi-chain support (Ethereum, Gnosis, Base, Mode, Celo)
+- EAS contract ABI and attestation creation functionality
+- Multi-chain Safe wallet configuration and transaction support
+- Enhanced VoteDecision model with attestation tracking fields
+- EASAttestationData model for structured attestation records
+- Comprehensive blockchain specification documentation
+- Environment validation for EAS and multi-chain configuration
+- Dedicated test suite for EAS attestation and SafeService operations
+
+### Changed
+- Enhanced voting service with EAS attestation integration
+- Updated agent run service to track attestation status
+- Improved configuration with multi-chain RPC endpoints and Safe addresses
+- Enhanced README with EAS configuration and deployment instructions
+
 ## [0.4.0] - 2025-07-20
 ### Added
 - Pearl-compliant health check endpoint for monitoring agent status (BAC-178)
@@ -67,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Docker service healthcheck and port configuration issues
 
-[Unreleased]: https://github.com/quorum-ai/quorum-ai/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/quorum-ai/quorum-ai/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/quorum-ai/quorum-ai/compare/v0.1.0...v0.2.0

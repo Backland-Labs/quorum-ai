@@ -8,7 +8,6 @@ make intelligent decisions about which proposals to analyze and vote on.
 import math
 import time
 from typing import List, Dict, Any
-import logging
 
 from logging_config import setup_pearl_logger, log_span
 from models import Proposal, UserPreferences
@@ -54,7 +53,7 @@ class ProposalFilter:
                 "max_proposals_per_run": preferences.max_proposals_per_run,
                 "blacklisted_count": len(preferences.blacklisted_proposers),
                 "whitelisted_count": len(preferences.whitelisted_proposers),
-            }
+            },
         )
 
     def filter_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
@@ -87,7 +86,7 @@ class ProposalFilter:
                     "initial_count": len(proposals),
                     "blacklisted_count": len(self.preferences.blacklisted_proposers),
                     "whitelisted_count": len(self.preferences.whitelisted_proposers),
-                }
+                },
             )
 
             filtered_proposals = []
@@ -107,7 +106,7 @@ class ProposalFilter:
                         extra={
                             "proposal_id": proposal.id,
                             "author": proposal.author,
-                        }
+                        },
                     )
                     continue
 
@@ -119,7 +118,7 @@ class ProposalFilter:
                             extra={
                                 "proposal_id": proposal.id,
                                 "author": proposal.author,
-                            }
+                            },
                         )
                         continue
 
@@ -135,7 +134,7 @@ class ProposalFilter:
                     "whitelist_filtered_count": len(proposals)
                     - len(filtered_proposals)
                     - blacklisted_count,
-                }
+                },
             )
 
             # Runtime assertion: validate output
@@ -173,8 +172,7 @@ class ProposalFilter:
 
         with log_span(logger, "rank_proposals", proposal_count=len(proposals)):
             logger.info(
-                "Starting proposal ranking", 
-                extra={"proposal_count": len(proposals)}
+                "Starting proposal ranking", extra={"proposal_count": len(proposals)}
             )
 
             # Calculate scores for all proposals
@@ -189,7 +187,7 @@ class ProposalFilter:
                         "proposal_id": proposal.id,
                         "score": score,
                         "author": proposal.author,
-                    }
+                    },
                 )
 
             # Sort by score (highest first)
@@ -204,7 +202,7 @@ class ProposalFilter:
                     "proposal_count": len(ranked_proposals),
                     "top_score": proposal_scores[0][1] if proposal_scores else 0.0,
                     "bottom_score": proposal_scores[-1][1] if proposal_scores else 0.0,
-                }
+                },
             )
 
             # Runtime assertion: validate output
@@ -270,7 +268,7 @@ class ProposalFilter:
                     "participation_factor": participation_factor,
                     "composite_score": composite_score,
                     "time_until_deadline": time_until_deadline,
-                }
+                },
             )
 
             # Runtime assertion: validate output

@@ -5,7 +5,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator, model_validator, HttpUrl
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # Constants for VoteDecision model
@@ -75,7 +75,9 @@ class ModelValidationHelper:
     @staticmethod
     def validate_string_field(value: str, field_name: str) -> str:
         """Validate field is non-empty string."""
-        return ModelValidationHelper._validate_string_type_and_content(value, field_name)
+        return ModelValidationHelper._validate_string_type_and_content(
+            value, field_name
+        )
 
     @staticmethod
     def validate_meaningful_text(
@@ -192,7 +194,9 @@ class VoteChoice(BaseModel):
     choice: int = Field(..., description="Numeric choice identifier")
     label: str = Field(..., description="Human-readable choice label")
     votes: float = Field(..., ge=0, description="Number of votes for this choice")
-    percentage: float = Field(..., ge=0, le=100, description="Percentage of total votes")
+    percentage: float = Field(
+        ..., ge=0, le=100, description="Percentage of total votes"
+    )
 
 
 class Proposal(BaseModel):
@@ -211,7 +215,9 @@ class Proposal(BaseModel):
     scores_total: float = Field(default=0.0, description="Total voting score")
 
     # Choice fields
-    choices: List[str] = Field(default_factory=list, description="Voting choice options")
+    choices: List[str] = Field(
+        default_factory=list, description="Voting choice options"
+    )
     scores: List[float] = Field(default_factory=list, description="Scores per choice")
 
     # Optional fields
@@ -221,7 +227,9 @@ class Proposal(BaseModel):
     space_id: Optional[str] = Field(None, description="Parent space identifier")
 
     # Computed fields
-    is_active: bool = Field(default=False, description="Whether voting is currently open")
+    is_active: bool = Field(
+        default=False, description="Whether voting is currently open"
+    )
     time_remaining: Optional[str] = Field(
         None, description="Human-readable time remaining"
     )
@@ -388,6 +396,23 @@ class VoteDecision(BaseModel):
     )
     strategy_used: VotingStrategy = Field(
         ..., description="The voting strategy used to make this decision"
+    )
+
+    # Attestation tracking fields
+    space_id: Optional[str] = Field(
+        None, description="Snapshot space ID for attestation"
+    )
+    attestation_status: Optional[str] = Field(
+        None, description="Status: pending, success, failed"
+    )
+    attestation_tx_hash: Optional[str] = Field(
+        None, description="On-chain attestation transaction hash"
+    )
+    attestation_uid: Optional[str] = Field(
+        None, description="EAS attestation unique identifier"
+    )
+    attestation_error: Optional[str] = Field(
+        None, description="Error message if attestation failed"
     )
 
     @field_validator("proposal_id")
@@ -802,26 +827,28 @@ class UserPreferences(BaseModel):
 
 class Vote(BaseModel):
     """Snapshot vote model representing a vote on a proposal."""
-    
+
     id: str = Field(..., description="Unique vote identifier")
     voter: str = Field(..., description="Voter's blockchain address")
     choice: int = Field(..., description="Vote choice")
     created: int = Field(..., ge=0, description="Creation timestamp")
     vp: float = Field(..., ge=0, description="Total voting power")
-    vp_by_strategy: List[float] = Field(default_factory=list, description="Voting power by strategy")
+    vp_by_strategy: List[float] = Field(
+        default_factory=list, description="Voting power by strategy"
+    )
     reason: Optional[str] = Field(None, description="Vote reason/comment")
     ipfs: Optional[str] = Field(None, description="IPFS hash")
     vp_state: Optional[str] = Field(None, description="Voting power state")
     space: Optional[Dict[str, Any]] = Field(None, description="Space metadata")
     proposal: Optional[Dict[str, Any]] = Field(None, description="Proposal metadata")
     app: Optional[str] = Field(None, description="App used to vote")
-    
+
     @field_validator("id")
     @classmethod
     def validate_id(cls, v: str) -> str:
         """Validate vote ID is non-empty string."""
         return ModelValidationHelper.validate_string_field(v, "id")
-    
+
     @field_validator("voter")
     @classmethod
     def validate_voter(cls, v: str) -> str:
@@ -831,27 +858,29 @@ class Vote(BaseModel):
 
 class InvestedPosition(BaseModel):
     """Represents an invested position in a DeFi protocol."""
-    
+
     protocol: str = Field(..., description="DeFi protocol name (e.g., Aave, Compound)")
     asset: str = Field(..., description="Asset symbol or identifier")
     amount: Decimal = Field(..., description="Amount invested")
     chain_id: int = Field(..., description="Blockchain chain ID")
     position_id: str = Field(..., description="Unique position identifier")
     timestamp: str = Field(..., description="Position creation timestamp")
-    contract_address: Optional[str] = Field(None, description="Protocol contract address")
-    
+    contract_address: Optional[str] = Field(
+        None, description="Protocol contract address"
+    )
+
     @field_validator("protocol")
     @classmethod
     def validate_protocol(cls, v: str) -> str:
         """Validate protocol is non-empty string."""
         return ModelValidationHelper.validate_string_field(v, "protocol")
-    
+
     @field_validator("asset")
     @classmethod
     def validate_asset(cls, v: str) -> str:
         """Validate asset is non-empty string."""
         return ModelValidationHelper.validate_string_field(v, "asset")
-    
+
     @field_validator("amount")
     @classmethod
     def validate_amount(cls, v: Decimal) -> Decimal:
@@ -859,12 +888,18 @@ class InvestedPosition(BaseModel):
         if v <= 0:
             raise ValueError(f"Amount must be positive, got {v}")
         return v
-    
+
     @field_validator("chain_id")
     @classmethod
     def validate_chain_id(cls, v: int) -> int:
         """Validate chain_id is valid."""
-        valid_chains = [1, 10, 100, 8453, 34443]  # Ethereum, Optimism, Gnosis, Base, Mode
+        valid_chains = [
+            1,
+            10,
+            100,
+            8453,
+            34443,
+        ]  # Ethereum, Optimism, Gnosis, Base, Mode
         if v not in valid_chains:
             raise ValueError(f"Invalid chain_id: {v}")
         return v
@@ -872,7 +907,7 @@ class InvestedPosition(BaseModel):
 
 class WithdrawalTransaction(BaseModel):
     """Represents a withdrawal transaction."""
-    
+
     transaction_hash: str = Field(..., description="Blockchain transaction hash")
     safe_tx_hash: Optional[str] = Field(None, description="Safe transaction hash")
     status: WithdrawalStatus = Field(..., description="Transaction status")
@@ -881,7 +916,7 @@ class WithdrawalTransaction(BaseModel):
     chain_id: int = Field(..., description="Blockchain chain ID")
     timestamp: Optional[str] = Field(None, description="Transaction timestamp")
     error_message: Optional[str] = Field(None, description="Error message if failed")
-    
+
     @field_validator("transaction_hash")
     @classmethod
     def validate_transaction_hash(cls, v: str) -> str:
@@ -890,4 +925,66 @@ class WithdrawalTransaction(BaseModel):
             raise ValueError("Transaction hash must start with 0x")
         if len(v) != 66:  # 0x + 64 hex chars
             raise ValueError("Transaction hash must be 66 characters")
+        return v
+
+
+class EASAttestationData(BaseModel):
+    """Data model for EAS (Ethereum Attestation Service) attestations."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    # Required fields for attestation
+    proposal_id: str = Field(..., description="Snapshot proposal ID being attested")
+    space_id: str = Field(..., description="Snapshot space ID")
+    voter_address: str = Field(..., description="Address of the voter")
+    choice: int = Field(..., description="Vote choice value")
+    vote_tx_hash: str = Field(..., description="Transaction hash of the Snapshot vote")
+    timestamp: datetime = Field(..., description="Timestamp of the attestation")
+    retry_count: int = Field(
+        default=0, ge=0, le=3, description="Number of retry attempts"
+    )
+
+    # Optional fields for attestation results
+    attestation_tx_hash: Optional[str] = Field(
+        None, description="On-chain attestation transaction hash"
+    )
+    attestation_uid: Optional[str] = Field(
+        None, description="EAS attestation unique identifier"
+    )
+    attestation_status: Optional[str] = Field(
+        None, description="Status: pending, success, failed"
+    )
+    attestation_error: Optional[str] = Field(
+        None, description="Error message if attestation failed"
+    )
+
+    @field_validator("voter_address")
+    @classmethod
+    def validate_voter_address(cls, v: str) -> str:
+        """Validate Ethereum address format."""
+        return ModelValidationHelper.validate_blockchain_address(v)
+
+    @field_validator("vote_tx_hash", "attestation_tx_hash")
+    @classmethod
+    def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
+        """Validate transaction hash format."""
+        if v is None:
+            return v
+        if not v.startswith("0x"):
+            raise ValueError("Transaction hash must start with 0x")
+        if len(v) != 66:  # 0x + 64 hex chars
+            raise ValueError("Transaction hash must be 66 characters")
+        return v
+
+    @field_validator("attestation_status")
+    @classmethod
+    def validate_attestation_status(cls, v: Optional[str]) -> Optional[str]:
+        """Validate attestation status."""
+        if v is None:
+            return v
+        valid_statuses = {"pending", "success", "failed"}
+        if v not in valid_statuses:
+            raise ValueError(
+                f"Invalid attestation status: {v}. Must be one of {valid_statuses}"
+            )
         return v

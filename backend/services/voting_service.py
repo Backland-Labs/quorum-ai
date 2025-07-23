@@ -33,29 +33,32 @@ class VotingService:
 
     def __init__(self, key_manager=None):
         """Initialize voting service with account from private key.
-        
+
         Args:
             key_manager: Optional KeyManager instance. If not provided, creates a new one.
         """
         # Initialize KeyManager
         from services.key_manager import KeyManager
+
         self.key_manager = key_manager or KeyManager()
-        
+
         # Initialize account lazily
         self._account = None
 
         # Initialize Pearl-compliant logger
         self.logger = setup_pearl_logger(name="voting_service", level=logging.INFO)
-        
+
         self.logger.info("VotingService initialized")
-    
+
     @property
     def account(self):
         """Get the account, loading it lazily from KeyManager."""
         if self._account is None:
             private_key = self.key_manager.get_private_key()
             self._account = Account.from_key(private_key)
-            self.logger.info(f"Account loaded from KeyManager (eoa_address={self._account.address})")
+            self.logger.info(
+                f"Account loaded from KeyManager (eoa_address={self._account.address})"
+            )
         return self._account
 
     def create_snapshot_vote_message(
@@ -76,15 +79,17 @@ class VotingService:
         assert space, "Space ID must not be empty"
         assert proposal, "Proposal ID must not be empty"
         assert choice in VALID_VOTE_CHOICES, f"Invalid choice: {choice}"
-        
+
         # Constants
         BYTES32_LENGTH = 66  # 0x prefix + 64 hex chars
-        
+
         if timestamp is None:
             timestamp = int(time.time())
 
         from_address = Web3.to_checksum_address(self.account.address)
-        proposal_is_bytes32 = proposal.startswith("0x") and len(proposal) == BYTES32_LENGTH
+        proposal_is_bytes32 = (
+            proposal.startswith("0x") and len(proposal) == BYTES32_LENGTH
+        )
 
         snapshot_message = self._build_snapshot_message_structure(
             from_address, space, timestamp, proposal, choice, proposal_is_bytes32
@@ -111,10 +116,10 @@ class VotingService:
         EMPTY_REASON = ""
         EMPTY_APP = ""
         EMPTY_METADATA = "{}"
-        
+
         # Build type definition for proposal field
         proposal_type = "bytes32" if proposal_is_bytes32 else "string"
-        
+
         return {
             "domain": {
                 "name": SNAPSHOT_DOMAIN_NAME,
@@ -163,18 +168,22 @@ class VotingService:
         """
         # Runtime assertions
         assert snapshot_message, "Snapshot message must not be empty"
-        assert "message" in snapshot_message, "Snapshot message must contain 'message' field"
-        
+        assert (
+            "message" in snapshot_message
+        ), "Snapshot message must contain 'message' field"
+
         # Constants
         HEX_PREFIX = "0x"
         PREVIEW_LENGTH = 10
-        
+
         signable_message = encode_typed_data(full_message=snapshot_message)
         signed = self.account.sign_message(signable_message)
         signature = HEX_PREFIX + signed.signature.hex()
-        
+
         # Create signature preview for logging
-        signature_preview = f"{signature[:PREVIEW_LENGTH]}...{signature[-PREVIEW_LENGTH:]}"
+        signature_preview = (
+            f"{signature[:PREVIEW_LENGTH]}...{signature[-PREVIEW_LENGTH:]}"
+        )
 
         self.logger.info(
             f"Snapshot message signed (signature_length={len(signature)}, "
@@ -198,10 +207,10 @@ class VotingService:
         # Runtime assertions
         assert snapshot_message, "Snapshot message must not be empty"
         assert signature, "Signature must not be empty"
-        
+
         # Constants
         HEX_PREFIX = "0x"
-        
+
         with log_span(self.logger, "voting_service.submit_vote_to_snapshot"):
             self.logger.info("Submitting Snapshot vote")
 
@@ -211,7 +220,9 @@ class VotingService:
             # Prepare Snapshot vote request
             from_address = Web3.to_checksum_address(self.account.address)
             clean_signature = (
-                signature if signature.startswith(HEX_PREFIX) else f"{HEX_PREFIX}{signature}"
+                signature
+                if signature.startswith(HEX_PREFIX)
+                else f"{HEX_PREFIX}{signature}"
             )
 
             request_body = {
@@ -235,14 +246,14 @@ class VotingService:
 
                 # Constants for HTTP status
                 HTTP_OK = 200
-                
+
                 if response.status_code == HTTP_OK:
                     result_data = response.json()
                     self.logger.info(
                         f"Snapshot vote submitted successfully (response_data={result_data})"
                     )
                     return {"success": True, "response": result_data}
-                
+
                 # Handle error response
                 error_text = response.text
                 self.logger.error(
@@ -277,7 +288,7 @@ class VotingService:
         assert space, "Space ID must not be empty"
         assert proposal, "Proposal ID must not be empty"
         assert self.validate_vote_choice(choice), f"Invalid vote choice: {choice}"
-        
+
         with log_span(
             self.logger,
             "voting_service.vote_on_proposal",
@@ -312,10 +323,8 @@ class VotingService:
             if submission_result["success"]:
                 self.logger.info("Vote workflow completed successfully")
             else:
-                error_message = submission_result.get('error', 'Unknown error')
-                self.logger.error(
-                    f"Vote workflow failed (error={error_message})"
-                )
+                error_message = submission_result.get("error", "Unknown error")
+                self.logger.error(f"Vote workflow failed (error={error_message})")
 
             return result
 
@@ -359,14 +368,16 @@ class VotingService:
         """
         # Constants for test defaults
         DEFAULT_TEST_SPACE = "spectradao.eth"
-        DEFAULT_TEST_PROPOSAL = "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
+        DEFAULT_TEST_PROPOSAL = (
+            "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
+        )
         DEFAULT_TEST_CHOICE = 1
-        
+
         # Use provided values or defaults
         test_space = space or DEFAULT_TEST_SPACE
         test_proposal = proposal or DEFAULT_TEST_PROPOSAL
         test_choice = choice or DEFAULT_TEST_CHOICE
-        
+
         with log_span(self.logger, "voting_service.test_snapshot_voting"):
             choice_description = self.get_vote_choice_description(test_choice)
             self.logger.info(
@@ -375,7 +386,9 @@ class VotingService:
             )
 
             if not self.validate_vote_choice(test_choice):
-                error_message = f"Invalid vote choice: {test_choice}. Must be 1, 2, or 3."
+                error_message = (
+                    f"Invalid vote choice: {test_choice}. Must be 1, 2, or 3."
+                )
                 return {
                     "success": False,
                     "error": error_message,
@@ -385,38 +398,37 @@ class VotingService:
             result = await self.vote_on_proposal(test_space, test_proposal, test_choice)
 
             # Extract error for logging
-            submission_error = result.get('submission_result', {}).get('error')
+            submission_error = result.get("submission_result", {}).get("error")
             self.logger.info(
                 f"Test voting workflow completed (success={result['success']}, "
                 f"error={submission_error})"
             )
 
             return result
-    
+
     async def shutdown(self) -> None:
         """Implement shutdown method required by ShutdownService protocol."""
         self.logger.info("Voting service shutdown initiated")
-        
+
         # Check for any active votes
         if self._active_votes:
             self.logger.warning(f"Shutdown with {len(self._active_votes)} active votes")
             # Clear active votes as they would have completed or failed by now
             self._active_votes.clear()
-        
+
         self.logger.info("Voting service shutdown completed")
-    
+
     async def save_service_state(self) -> None:
         """Save current service state for recovery."""
         # Voting service doesn't maintain persistent state
         # Votes are atomic operations that complete or fail
         pass
-    
+
     async def stop(self) -> None:
         """Stop the service gracefully."""
         # Clear any tracking of active votes
         self._active_votes.clear()
-    
+
     async def get_active_votes(self) -> List[Dict[str, Any]]:
         """Get list of active votes for shutdown coordination."""
         return self._active_votes.copy()
-    

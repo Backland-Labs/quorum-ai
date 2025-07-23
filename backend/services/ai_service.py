@@ -204,7 +204,7 @@ class AIService:
         # Constants for model configuration
         GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
         DEFAULT_MODEL_FALLBACK = "openai:gpt-4o-mini"
-        
+
         logger.info("Creating AI model")
 
         # Runtime assertion: validate API key configuration
@@ -218,20 +218,22 @@ class AIService:
             try:
                 # Create OpenRouter provider
                 provider = OpenRouterProvider(api_key=settings.openrouter_api_key)
-                
+
                 # Create model with provider
                 model = OpenAIModel(GEMINI_MODEL_NAME, provider=provider)
-                
+
                 # Get model type name for logging
                 model_type_name = type(model).__name__
                 logger.info(
                     "Successfully created OpenRouter model, model_type=%s",
-                    model_type_name
+                    model_type_name,
                 )
 
                 # Runtime assertion: validate model creation
                 assert model is not None, "OpenRouter model creation returned None"
-                assert hasattr(model, '__class__'), "Model must be a valid object instance"
+                assert hasattr(
+                    model, "__class__"
+                ), "Model must be a valid object instance"
 
                 return model
             except Exception as e:
@@ -240,7 +242,7 @@ class AIService:
                 logger.error(
                     "Failed to create OpenRouter model, error=%s, error_type=%s",
                     error_message,
-                    error_type
+                    error_type,
                 )
                 raise
         else:
@@ -259,45 +261,44 @@ class AIService:
             # Extract model information for logging
             model_type_name = type(self.model).__name__
             model_value = str(self.model)
-            
+
             logger.info(
                 "Creating Pydantic AI agent, model_type=%s, model_value=%s",
                 model_type_name,
-                model_value
+                model_value,
             )
 
             # Create agent with configuration
             system_prompt = self._get_system_prompt()
             output_config = NativeOutput(AiVoteResponse, strict=False)
-            
+
             agent = Agent(
                 model=self.model,
                 system_prompt=system_prompt,
                 output_type=output_config,
             )
-            
+
             # Extract agent type for logging
             agent_type_name = type(agent).__name__
             logger.info(
-                "Successfully created Pydantic AI agent, agent_type=%s",
-                agent_type_name
+                "Successfully created Pydantic AI agent, agent_type=%s", agent_type_name
             )
 
             # Runtime assertion: validate agent creation
             assert agent is not None, "Agent creation returned None"
-            assert hasattr(agent, 'run'), "Agent must have run method"
+            assert hasattr(agent, "run"), "Agent must have run method"
 
             return agent
         except Exception as e:
             error_message = str(e)
             error_type = type(e).__name__
             model_type_name = type(self.model).__name__
-            
+
             logger.error(
                 "Failed to create Pydantic AI agent, error=%s, error_type=%s, model_type=%s",
                 error_message,
                 error_type,
-                model_type_name
+                model_type_name,
             )
             raise
 
@@ -344,16 +345,19 @@ class AIService:
             # Extract logging context
             model_type_name = type(self.model).__name__
             strategy_value = strategy.value
-            
+
             with log_span(
-                logger, "ai_vote_decision", proposal_id=proposal.id, strategy=strategy_value
+                logger,
+                "ai_vote_decision",
+                proposal_id=proposal.id,
+                strategy=strategy_value,
             ):
                 logger.info(
                     "Starting vote decision making, proposal_id=%s, proposal_title=%s, strategy=%s, model_type=%s",
                     proposal.id,
                     proposal.title,
                     strategy_value,
-                    model_type_name
+                    model_type_name,
                 )
 
                 # Generate decision data
@@ -363,13 +367,13 @@ class AIService:
                 vote_value = decision_data.get("vote")
                 confidence_value = decision_data.get("confidence")
                 risk_level_value = decision_data.get("risk_level")
-                
+
                 logger.info(
                     "Successfully generated vote decision, proposal_id=%s, vote=%s, confidence=%s, risk_level=%s",
                     proposal.id,
                     vote_value,
                     confidence_value,
-                    risk_level_value
+                    risk_level_value,
                 )
 
                 # Create vote decision object
@@ -382,21 +386,23 @@ class AIService:
                 assert (
                     vote_decision.proposal_id == proposal.id
                 ), "VoteDecision proposal_id mismatch"
-                assert hasattr(vote_decision, 'vote'), "VoteDecision must have vote attribute"
+                assert hasattr(
+                    vote_decision, "vote"
+                ), "VoteDecision must have vote attribute"
 
                 return vote_decision
 
         except Exception as e:
             error_message = str(e)
             error_type = type(e).__name__
-            
+
             logger.error(
                 "Failed to make vote decision, proposal_id=%s, proposal_title=%s, strategy=%s, error=%s, error_type=%s",
                 proposal.id,
                 proposal.title,
                 strategy.value,
                 error_message,
-                error_type
+                error_type,
             )
             raise e
 
@@ -507,21 +513,20 @@ class AIService:
         # Runtime assertion: validate input
         assert prompt is not None, "Prompt cannot be None"
         assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
-        
+
         try:
             prompt_length = len(prompt)
             logger.info(
-                "Calling AI model for vote decision, prompt_length=%s",
-                prompt_length
+                "Calling AI model for vote decision, prompt_length=%s", prompt_length
             )
 
             # Call AI model and process result
             result = await self.agent.run(prompt)
             processed_result = self.response_processor.process_ai_result(result)
-            
+
             # Runtime assertion: validate output
             assert isinstance(processed_result, dict), "AI result must be a dictionary"
-            
+
             return processed_result
         except Exception as e:
             error_message = str(e)
@@ -539,17 +544,17 @@ class AIService:
         # Constants for default values
         DEFAULT_CONFIDENCE_SCORE = 0.85
         DEFAULT_RECOMMENDATION = ""
-        
+
         try:
             # Extract model type for logging
             model_type_name = type(self.model).__name__
-            
+
             with log_span(logger, "ai_proposal_summary", proposal_id=proposal.id):
                 logger.info(
                     "Starting proposal summarization, proposal_id=%s, proposal_title=%s, model_type=%s",
                     proposal.id,
                     proposal.title,
-                    model_type_name
+                    model_type_name,
                 )
 
                 # Generate summary data
@@ -560,17 +565,20 @@ class AIService:
                 key_points_list = summary_data.get("key_points", [])
                 summary_length = len(summary_text)
                 key_points_count = len(key_points_list)
-                
+
                 logger.info(
                     "Successfully generated proposal summary, proposal_id=%s, summary_length=%s, key_points_count=%s",
                     proposal.id,
                     summary_length,
-                    key_points_count
+                    key_points_count,
                 )
 
                 # Create proposal summary object
                 proposal_summary = self._create_proposal_summary_from_data(
-                    proposal, summary_data, DEFAULT_CONFIDENCE_SCORE, DEFAULT_RECOMMENDATION
+                    proposal,
+                    summary_data,
+                    DEFAULT_CONFIDENCE_SCORE,
+                    DEFAULT_RECOMMENDATION,
                 )
 
                 # Runtime assertion: validate output
@@ -580,26 +588,31 @@ class AIService:
                 assert (
                     proposal_summary.proposal_id == proposal.id
                 ), "ProposalSummary proposal_id mismatch"
-                assert hasattr(proposal_summary, 'summary'), "ProposalSummary must have summary attribute"
+                assert hasattr(
+                    proposal_summary, "summary"
+                ), "ProposalSummary must have summary attribute"
 
                 return proposal_summary
 
         except Exception as e:
             error_message = str(e)
             error_type = type(e).__name__
-            
+
             logger.error(
                 "Failed to summarize proposal, proposal_id=%s, proposal_title=%s, error=%s, error_type=%s",
                 proposal.id,
                 proposal.title,
                 error_message,
-                error_type
+                error_type,
             )
             raise e
 
     def _create_proposal_summary_from_data(
-        self, proposal: Proposal, summary_data: Dict[str, Any], 
-        default_confidence: float, default_recommendation: str
+        self,
+        proposal: Proposal,
+        summary_data: Dict[str, Any],
+        default_confidence: float,
+        default_recommendation: str,
     ) -> ProposalSummary:
         """Create ProposalSummary object from summary data."""
         return ProposalSummary(
@@ -627,14 +640,14 @@ class AIService:
             # Extract context for logging
             proposal_count = len(proposals)
             model_type_name = type(self.model).__name__
-            
+
             with log_span(
                 logger, "ai_multiple_proposal_summaries", proposal_count=proposal_count
             ):
                 logger.info(
                     "Starting multiple proposal summarization, proposal_count=%s, model_type=%s",
                     proposal_count,
-                    model_type_name
+                    model_type_name,
                 )
 
                 # Create tasks for concurrent processing
@@ -643,28 +656,32 @@ class AIService:
 
                 # Extract summary count for validation
                 summary_count = len(summaries)
-                
+
                 logger.info(
                     "Successfully generated multiple proposal summaries, proposal_count=%s, summary_count=%s",
                     proposal_count,
-                    summary_count
+                    summary_count,
                 )
 
                 # Runtime assertion: validate output
-                assert summary_count == proposal_count, "Summary count must match proposal count"
-                assert all(isinstance(s, ProposalSummary) for s in summaries), "All items must be ProposalSummary objects"
+                assert (
+                    summary_count == proposal_count
+                ), "Summary count must match proposal count"
+                assert all(
+                    isinstance(s, ProposalSummary) for s in summaries
+                ), "All items must be ProposalSummary objects"
 
                 return summaries
 
         except Exception as e:
             error_message = str(e)
             error_type = type(e).__name__
-            
+
             logger.error(
                 "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s",
                 len(proposals),
                 error_message,
-                error_type
+                error_type,
             )
             raise e
 
@@ -683,25 +700,26 @@ class AIService:
         # Runtime assertion: validate input
         assert prompt is not None, "Prompt cannot be None"
         assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
-        
+
         try:
             prompt_length = len(prompt)
             logger.info(
-                "Calling AI model for summarization, prompt_length=%s",
-                prompt_length
+                "Calling AI model for summarization, prompt_length=%s", prompt_length
             )
 
             # Call AI model and process result
             result = await self.agent.run(prompt)
             processed_result = self.response_processor.process_ai_result(result)
-            
+
             # Runtime assertion: validate output
             assert isinstance(processed_result, dict), "AI result must be a dictionary"
-            
+
             return processed_result
         except Exception as e:
             error_message = str(e)
-            logger.error("AI model call failed for summarization, error=%s", error_message)
+            logger.error(
+                "AI model call failed for summarization, error=%s", error_message
+            )
             raise
 
     def _build_summary_prompt(self, proposal: Proposal) -> str:

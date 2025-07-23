@@ -404,19 +404,19 @@ class StateManager:
                 self.logger.info(f"Applied migration from {from_v} to {to_v}")
 
         return current_data
-    
+
     async def shutdown(self) -> None:
         """Implement shutdown method for graceful shutdown."""
         self.logger.info("State manager shutdown initiated")
         await self.cleanup()
         self.logger.info("State manager shutdown completed")
-    
+
     async def save_service_state(self) -> None:
         """Save current service state (StateManager has no internal state to save)."""
         # StateManager itself doesn't maintain state that needs to be saved
         # It manages state for other services
         pass
-    
+
     async def stop(self) -> None:
         """Stop the service gracefully."""
         await self.cleanup()

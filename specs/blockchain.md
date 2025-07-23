@@ -60,7 +60,7 @@ Chain configuration is centralized in `config.py` with RPC endpoints:
 ```python
 # RPC endpoint environment variables
 ETHEREUM_LEDGER_RPC
-GNOSIS_LEDGER_RPC  
+GNOSIS_LEDGER_RPC
 BASE_LEDGER_RPC
 MODE_LEDGER_RPC
 CELO_LEDGER_RPC
@@ -68,7 +68,7 @@ CELO_LEDGER_RPC
 # Chain ID mapping
 CHAIN_ID_TO_NAME = {
     1: "ethereum",
-    100: "gnosis", 
+    100: "gnosis",
     8453: "base",
     34443: "mode",
     42220: "celo"
@@ -182,11 +182,11 @@ class SafeService:
         rpc_url = self.rpc_endpoints.get(chain)
         if not rpc_url:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
-        
+
         w3 = Web3(Web3.HTTPProvider(rpc_url))
         if not w3.is_connected():
             raise ConnectionError(f"Failed to connect to {chain} network")
-        
+
         return w3
 ```
 
@@ -212,7 +212,7 @@ class SafeService:
 ```python
 # Safe transactions set gas parameters to 0
 safe_tx_gas=0
-base_gas=0  
+base_gas=0
 gas_price=0
 gas_token=NULL_ADDRESS  # No gas token
 ```
@@ -309,11 +309,11 @@ async def test_safe_transaction(mock_safe_service):
 ```python
 def test_key_validation():
     key_manager = KeyManager()
-    
+
     # Test valid key
     valid_key = "a" * 64
     assert key_manager._validate_private_key(valid_key) is True
-    
+
     # Test invalid key
     with pytest.raises(KeyManagerError):
         key_manager._validate_private_key("invalid")
