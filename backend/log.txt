@@ -2903,3 +2903,342 @@
 [2025-07-20 13:48:50,786] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 13:48:50,788] [INFO] [agent] Pearl logger initialized successfully
 [2025-07-20 13:48:50,789] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:26,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:26,746] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:26,747] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:27,262] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:27,400] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:27,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:54:27,485] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:14,554] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:14,865] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:14,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:15,320] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:40,059] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:40,387] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:40,388] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:40,849] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:55:40,853] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-22 17:56:12,554] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:56:12,871] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:56:12,873] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:56:13,459] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:56:13,463] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-22 17:57:34,059] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:57:34,368] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:57:34,370] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:57:34,857] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:57:34,861] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-22 17:59:51,925] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:59:52,236] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:59:52,237] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:59:52,728] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 17:59:52,731] [INFO] [agent] SafeService initialized (eoa_address=0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-22 18:10:31,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:10:31,525] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:10:31,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:11:08,374] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:11:08,667] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:11:09,034] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:12:00,777] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:12:01,080] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:12:01,437] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:12:27,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:12:28,099] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:12:28,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:16:31,608] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:16:31,901] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:16:32,720] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:18:18,480] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:18:18,770] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:18:19,570] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:18:34,146] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:18:34,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:18:35,260] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:20:20,575] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:20:20,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:20:21,683] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:20:59,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:00,199] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:01,025] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:01,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:01,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:01,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:01,033] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:21:23,123] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:23,415] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:24,262] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:24,271] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:24,271] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:24,271] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:24,272] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:21:24,272] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-07-22 18:21:24,272] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-07-22 18:21:24,272] [ERROR] [agent] Vote execution failed (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9, error='StateTransitionTracker' object has no attribute 'current_state')
+[2025-07-22 18:21:24,272] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=0)
+[2025-07-22 18:21:24,272] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-07-22 18:21:43,024] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:43,396] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:44,286] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:44,295] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:44,295] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:44,295] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:21:44,295] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:21:44,296] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:22:03,034] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:03,325] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:04,155] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:04,163] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:04,164] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:04,164] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:04,164] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:22:04,165] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:22:23,079] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:23,498] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:24,346] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:24,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:24,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:24,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:24,354] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:22:24,355] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:22:56,056] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:56,375] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:57,236] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:57,245] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:57,246] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:57,246] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:22:57,246] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:22:57,247] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:23:15,705] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:15,997] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:16,830] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:16,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:16,840] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:16,840] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:16,840] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:23:16,841] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:23:47,910] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:48,246] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:49,117] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:49,126] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:49,127] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:49,127] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:23:49,127] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:23:49,127] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:24:15,258] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:15,549] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:16,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:16,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:16,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:16,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:16,363] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:24:16,364] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:24:30,274] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:31,139] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:32,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:32,849] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:32,850] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:32,850] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:24:32,850] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:24:32,851] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:25:17,224] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:17,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,477] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,486] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,486] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,486] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,486] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:25:18,487] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:25:18,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,489] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:25:18,585] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,585] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,585] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,585] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:25:18,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,590] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:25:18,595] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,595] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,595] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:25:18,595] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:31:53,761] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,108] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,961] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,973] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,973] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,973] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,973] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:31:54,974] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:31:54,976] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,977] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,977] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,977] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:31:54,978] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:31:54,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:54,981] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:31:54,984] [INFO] [agent] Agent run started (run_id=test.eth_1753230714, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4477356944'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4477360880'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4477364816'>)
+[2025-07-22 18:31:54,984] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230714, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
+[2025-07-22 18:31:55,109] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:55,109] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:55,109] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:31:55,109] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:31:55,112] [INFO] [agent] Agent run started (run_id=test.eth_1753230715, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4477425360'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4477421424'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4477431168'>)
+[2025-07-22 18:31:55,112] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230715, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
+[2025-07-22 18:32:42,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:42,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,510] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,519] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,520] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,520] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,520] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:32:43,521] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:32:43,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,523] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:32:43,524] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:32:43,526] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,527] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,527] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,527] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:32:43,529] [INFO] [agent] Agent run started (run_id=test.eth_1753230763, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4438124848'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4438128784'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4438149168'>)
+[2025-07-22 18:32:43,529] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230763, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
+[2025-07-22 18:32:43,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,655] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,655] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:32:43,655] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:32:43,657] [INFO] [agent] Agent run started (run_id=test.eth_1753230763, space_id=test.eth, dry_run=False, strategy=<AsyncMock name='UserPreferencesService().load_preferences().voting_strategy.value' id='4437475152'>, confidence_threshold=<AsyncMock name='UserPreferencesService().load_preferences().confidence_threshold' id='4437471120'>, max_proposals=<AsyncMock name='UserPreferencesService().load_preferences().max_proposals_per_run' id='4437466848'>)
+[2025-07-22 18:32:43,657] [ERROR] [agent] Agent run fetch_proposals failed (run_id=test.eth_1753230763, operation=fetch_proposals, error=Limit must be integer, got <class 'unittest.mock.AsyncMock'>, error_type=AssertionError, space_id=test.eth)
+[2025-07-22 18:34:35,054] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:34:35,349] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:34:36,157] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:34:36,165] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:34:36,165] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:34:36,165] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:34:36,166] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:34:36,167] [INFO] [agent] Agent run started (run_id=test.eth_1753230876, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:35:40,461] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:35:40,753] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:35:41,558] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:35:41,567] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:35:41,567] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:35:41,567] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:35:41,567] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:35:41,568] [INFO] [agent] Agent run started (run_id=test.eth_1753230941, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:36:05,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:06,147] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:06,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:06,973] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:06,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:06,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:06,974] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:36:06,975] [INFO] [agent] Agent run started (run_id=test.eth_1753230966, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:36:19,153] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:19,453] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:20,292] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:20,300] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:20,301] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:20,301] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:20,301] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:36:20,302] [INFO] [agent] Agent run started (run_id=test.eth_1753230980, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:36:35,458] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:35,762] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:36,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:36,582] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:36,582] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:36,582] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:36:36,582] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:36:36,584] [INFO] [agent] Agent run started (run_id=test.eth_1753230996, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:37:33,519] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:33,811] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:34,616] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:34,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:34,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:34,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:34,625] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:37:34,626] [INFO] [agent] Agent run started (run_id=test.eth_1753231054, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:37:58,280] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:58,597] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:59,462] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:59,470] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:59,471] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:59,471] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:37:59,471] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:37:59,472] [INFO] [agent] Agent run started (run_id=test.eth_1753231079, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:38:18,128] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:18,425] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:19,240] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:19,249] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:19,249] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:19,249] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:19,249] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:38:19,250] [INFO] [agent] Agent run started (run_id=test.eth_1753231099, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:38:39,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:39,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,685] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,695] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,695] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,695] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,695] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:38:40,696] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:38:40,698] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,698] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,699] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,699] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:38:40,699] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:38:40,701] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,702] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:38:40,703] [INFO] [agent] Agent run started (run_id=test.eth_1753231120, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:38:40,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,708] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:38:40,709] [INFO] [agent] Agent run started (run_id=test.eth_1753231120, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:38:40,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:38:40,711] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:41,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:42,222] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:43,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:43,041] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:43,041] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:43,041] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:43,042] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:43,043] [INFO] [agent] Agent run started (run_id=test.eth_1753231183, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:39:50,078] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:50,383] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,206] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:51,207] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:39:51,209] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,210] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,210] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,210] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:51,211] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-07-22 18:39:51,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,213] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:51,214] [INFO] [agent] Agent run started (run_id=test.eth_1753231191, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:39:51,218] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,218] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,218] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,218] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:51,219] [INFO] [agent] Agent run started (run_id=test.eth_1753231191, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-22 18:39:51,222] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,222] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,222] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-22 18:39:51,222] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-22 18:39:51,223] [INFO] [agent] Agent run started (run_id=test.eth_1753231191, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)

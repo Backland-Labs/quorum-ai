@@ -4,7 +4,7 @@ import time
 from typing import List, Optional, Tuple
 import logging
 
-from datetime import datetime
+from datetime import datetime, timezone
 from logging_config import setup_pearl_logger, log_span
 
 from models import (
@@ -14,15 +14,20 @@ from models import (
     VoteDecision,
     VoteType,
     UserPreferences,
+    EASAttestationData,
 )
 from services.snapshot_service import SnapshotService
 from services.ai_service import AIService
 from services.voting_service import VotingService
+from services.safe_service import SafeService
 from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
 from services.state_transition_tracker import StateTransitionTracker, AgentState
 
+
+# Constants
+MAX_ATTESTATION_RETRIES = 3
 
 # Custom exceptions for better error handling
 class AgentRunServiceError(Exception):
@@ -73,6 +78,7 @@ class AgentRunService:
         self.snapshot_service = SnapshotService()
         self.ai_service = AIService()
         self.voting_service = VotingService()
+        self.safe_service = SafeService()
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger()
         self.state_manager = state_manager
@@ -134,6 +140,8 @@ class AgentRunService:
             self.pearl_logger, "agent_run_execution", space_id=request.space_id, dry_run=request.dry_run
         ) as span_data:
             try:
+                # Process any pending attestations from previous runs
+                await self._process_pending_attestations(request.space_id)
                 # Step 1: Load user preferences
                 self.state_tracker.transition(AgentState.LOADING_PREFERENCES, {"run_id": run_id})
                 user_preferences, preferences_error = await self._load_user_preferences(
@@ -737,6 +745,9 @@ class AgentRunService:
                         if vote_result.get("success"):
                             executed_decisions.append(decision)
                             self.logger.log_vote_execution(decision, True)
+                            
+                            # Queue attestation for successful vote
+                            await self._queue_attestation(decision, space_id, run_id)
                         else:
                             self.logger.log_vote_execution(
                                 decision, False, vote_result.get("error")
@@ -826,6 +837,141 @@ class AgentRunService:
         self._active_run = False
         await self.save_state()
     
+    async def _process_pending_attestations(self, space_id: str) -> None:
+        """Process any pending attestations from previous runs.
+        
+        Args:
+            space_id: The space ID to process attestations for
+        """
+        if not self.state_manager:
+            return
+            
+        try:
+            # Load checkpoint with any pending attestations
+            checkpoint = await self.state_manager.load_checkpoint(f'agent_checkpoint_{space_id}')
+            if not checkpoint or 'pending_attestations' not in checkpoint:
+                return
+                
+            pending_attestations = checkpoint['pending_attestations']
+            if not pending_attestations:
+                return
+                
+            self.pearl_logger.info(
+                f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
+            )
+            
+            processed_attestations = []
+            remaining_attestations = []
+            
+            for attestation in pending_attestations:
+                # Check retry count
+                retry_count = attestation.get('retry_count', 0)
+                if retry_count >= MAX_ATTESTATION_RETRIES:
+                    self.pearl_logger.warning(
+                        f"Attestation for proposal {attestation['proposal_id']} exceeded max retries, dropping"
+                    )
+                    continue
+                    
+                try:
+                    # Create EAS attestation data
+                    eas_data = EASAttestationData(
+                        proposal_id=attestation['proposal_id'],
+                        space_id=space_id,
+                        voter_address=attestation['voter_address'],
+                        choice=attestation['vote_choice'],
+                        vote_tx_hash=attestation.get('vote_tx_hash', 'unknown'),
+                        timestamp=datetime.fromisoformat(attestation['timestamp']) if isinstance(attestation['timestamp'], str) else attestation['timestamp'],
+                        retry_count=attestation.get('retry_count', 0)
+                    )
+                    
+                    # Submit attestation
+                    result = await self.safe_service.create_eas_attestation(eas_data)
+                    
+                    self.pearl_logger.info(
+                        f"Successfully created attestation for proposal {attestation['proposal_id']}: "
+                        f"tx_hash={result.get('tx_hash')}, uid={result.get('attestation_uid')}"
+                    )
+                    
+                    processed_attestations.append(attestation['proposal_id'])
+                    
+                except Exception as e:
+                    self.pearl_logger.error(
+                        f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
+                    )
+                    
+                    # Increment retry count and keep in queue
+                    attestation['retry_count'] = retry_count + 1
+                    remaining_attestations.append(attestation)
+            
+            # Update checkpoint with remaining attestations
+            checkpoint['pending_attestations'] = remaining_attestations
+            await self.state_manager.save_checkpoint(f'agent_checkpoint_{space_id}', checkpoint)
+            
+            if processed_attestations:
+                self.pearl_logger.info(
+                    f"Processed {len(processed_attestations)} attestations successfully"
+                )
+                
+        except Exception as e:
+            self.pearl_logger.error(
+                f"Error processing pending attestations for space {space_id}: {str(e)}"
+            )
+    
+    async def _queue_attestation(self, decision: VoteDecision, space_id: str, run_id: str) -> None:
+        """Queue an attestation for a successful vote.
+        
+        Args:
+            decision: The vote decision that was executed
+            space_id: The space ID where the vote was cast
+            run_id: The current agent run ID
+        """
+        if not self.state_manager:
+            self.pearl_logger.warning("No state manager, skipping attestation queue")
+            return
+            
+        try:
+            # Load current checkpoint
+            checkpoint = await self.state_manager.load_checkpoint(f"run_{run_id}")
+            if checkpoint is None:
+                checkpoint = {}
+            
+            # Initialize pending_attestations if not present
+            if 'pending_attestations' not in checkpoint:
+                checkpoint['pending_attestations'] = []
+            
+            # Get voter address from voting service account
+            voter_address = self.voting_service.account.address
+            
+            # For now, use the same address as delegate (can be configured later)
+            delegate_address = voter_address
+            
+            # Create attestation data
+            attestation_data = {
+                'proposal_id': decision.proposal_id,
+                'vote_choice': VOTE_CHOICE_MAPPING[decision.vote],  # Convert VoteType to choice number
+                'voter_address': voter_address,
+                'delegate_address': delegate_address,
+                'reasoning': decision.reasoning,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'retry_count': 0
+            }
+            
+            # Add to pending attestations
+            checkpoint['pending_attestations'].append(attestation_data)
+            
+            # Save updated checkpoint
+            await self.state_manager.save_checkpoint(f"run_{run_id}", checkpoint)
+            
+            self.pearl_logger.info(
+                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: run_{run_id}"
+            )
+            
+        except Exception as e:
+            self.pearl_logger.error(
+                f"Failed to queue attestation for proposal {decision.proposal_id}: {str(e)}"
+            )
+            # Don't raise - attestation failures should not block voting
+    
     async def _save_checkpoint_state(self, response: AgentRunResponse) -> None:
         """Save checkpoint state during agent run.
         
@@ -841,7 +987,8 @@ class AgentRunService:
             'votes_cast': len(response.votes_cast),
             'execution_time': response.execution_time,
             'timestamp': datetime.utcnow().isoformat(),
-            'errors': response.errors
+            'errors': response.errors,
+            'pending_attestations': []  # Initialize empty if not loaded
         }
         
         await self.state_manager.save_state(
