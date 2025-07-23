@@ -586,38 +586,3 @@ class SafeService:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
         
         return Web3(Web3.HTTPProvider(rpc_url))
-    
-    async def _submit_safe_transaction(self, chain: str, to: str, data: str, value: int = 0) -> Dict[str, Any]:
-        """Submit a transaction through Safe.
-        
-        This is a placeholder for the actual Safe transaction submission logic.
-        In a real implementation, this would:
-        1. Build the Safe transaction
-        2. Sign it with the agent's key
-        3. Submit it to the Safe transaction service
-        
-        Args:
-            chain: The chain to submit on
-            to: Target address
-            data: Transaction data
-            value: ETH value to send
-            
-        Returns:
-            Dict with transaction details including 'hash'
-        """
-        # For now, we'll use the existing transaction building logic
-        tx_data = self._build_safe_tx(
-            chain=chain,
-            to=to,
-            value=value,
-            data=Web3.to_bytes(hexstr=data),
-            operation=SAFE_OPERATION_CALL
-        )
-        
-        # In a real implementation, we would sign and submit this
-        # For now, return a mock response
-        return {
-            "hash": tx_data["safe_tx_hash"],
-            "safe_address": tx_data["safe_address"],
-            "nonce": tx_data["nonce"]
-        }
