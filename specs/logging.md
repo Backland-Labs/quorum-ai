@@ -22,7 +22,7 @@ Example:
 
 ### Log Levels
 - `ERROR`: Critical errors preventing agent execution
-- `WARN`: Warning messages about potential issues  
+- `WARN`: Warning messages about potential issues
 - `INFO`: General operational information
 - `DEBUG`: Detailed debugging information
 - `TRACE`: Verbose execution traces
@@ -50,20 +50,20 @@ def setup_pearl_logger():
     """Configure logging for Pearl compliance."""
     logger = logging.getLogger('agent')
     logger.setLevel(logging.INFO)
-    
+
     # Create file handler for log.txt
     handler = logging.FileHandler('log.txt', mode='a')
-    
+
     # Pearl-compliant formatter
     formatter = PearlFormatter()
     handler.setFormatter(formatter)
-    
+
     logger.addHandler(handler)
     return logger
 
 class PearlFormatter(logging.Formatter):
     """Custom formatter for Pearl compliance."""
-    
+
     def format(self, record):
         timestamp = datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S,%f')[:-3]
         return f"[{timestamp}] [{record.levelname}] [agent] {record.getMessage()}"

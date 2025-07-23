@@ -17,7 +17,7 @@ echo "✅ Backend is running"
 test_space() {
     local space_id=$1
     echo -e "\n🔍 Testing $space_id..."
-    
+
     curl -X POST http://localhost:8000/agent-run \
         -H "Content-Type: application/json" \
         -d "{\"space_id\": \"$space_id\", \"dry_run\": true}" \

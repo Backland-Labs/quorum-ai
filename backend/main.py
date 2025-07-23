@@ -4,7 +4,6 @@ import hashlib
 import os
 import time
 from contextlib import asynccontextmanager
-from datetime import datetime
 from typing import List, Optional, Any
 
 from fastapi import FastAPI, HTTPException, Query
@@ -75,10 +74,10 @@ async def lifespan(_app: FastAPI):
 
     # Initialize state manager
     state_manager = StateManager()
-    
+
     # Initialize state transition tracker with Pearl logging enabled
     state_transition_tracker = _create_state_transition_tracker()
-    
+
     # Initialize services with state manager where needed
     ai_service = AIService()
     agent_run_service = AgentRunService(state_manager=state_manager)
@@ -90,28 +89,28 @@ async def lifespan(_app: FastAPI):
     withdrawal_service = WithdrawalService(
         state_manager=state_manager,
         safe_service=safe_service,
-        snapshot_service=snapshot_service
+        snapshot_service=snapshot_service,
     )
-    
+
     # Initialize signal handling
     signal_handler = SignalHandler()
     shutdown_coordinator = ShutdownCoordinator()
-    
+
     # Initialize async components
     await agent_run_service.initialize()
-    
+
     # Register services with shutdown coordinator
-    shutdown_coordinator.register_service('agent', agent_run_service)
-    shutdown_coordinator.register_service('voting', voting_service)
-    shutdown_coordinator.register_service('user_preferences', user_preferences_service)
-    shutdown_coordinator.register_service('state_manager', state_manager)
-    
+    shutdown_coordinator.register_service("agent", agent_run_service)
+    shutdown_coordinator.register_service("voting", voting_service)
+    shutdown_coordinator.register_service("user_preferences", user_preferences_service)
+    shutdown_coordinator.register_service("state_manager", state_manager)
+
     # Set up shutdown callback
     signal_handler.register_shutdown_callback(shutdown_coordinator.shutdown)
-    
+
     # Register signal handlers
     await signal_handler.register_handlers()
-    
+
     # Check for recovery from previous run
     if await shutdown_coordinator.check_recovery_needed():
         try:
@@ -121,7 +120,7 @@ async def lifespan(_app: FastAPI):
             logger.error(f"Failed to recover state: {e}")
 
     logger.info("Application started version=0.1.0")
-    
+
     # Check for withdrawal mode
     if os.environ.get("WITHDRAWAL_MODE", "false").lower() == "true":
         logger.warning("WITHDRAWAL MODE ACTIVE - Skipping normal voting operations")
@@ -137,16 +136,16 @@ async def lifespan(_app: FastAPI):
 
     # Shutdown
     logger.info("Application shutdown initiated")
-    
+
     # Execute graceful shutdown
     try:
         await shutdown_coordinator.shutdown()
     except Exception as e:
         logger.error(f"Error during graceful shutdown: {e}")
-    
+
     # Cleanup state manager
     await state_manager.cleanup()
-    
+
     logger.info("Application shutdown completed")
 
 
@@ -178,21 +177,19 @@ async def general_exception_handler(request, exc):
     )
 
 
-
-
 # Factory function for creating StateTransitionTracker instances
 def _create_state_transition_tracker():
     """Create a new StateTransitionTracker instance."""
     # Import at runtime to allow mocking
     import services.state_transition_tracker
     from config import settings
-    
+
     return services.state_transition_tracker.StateTransitionTracker(
         state_file_path="agent_state.json",
         enable_pearl_logging=True,
         max_history_size=100,
         fast_transition_threshold=settings.FAST_TRANSITION_THRESHOLD,
-        fast_transition_window=5
+        fast_transition_window=5,
     )
 
 
@@ -200,10 +197,10 @@ def _create_state_transition_tracker():
 def _get_state_transition_tracker():
     """Get or create the state transition tracker instance."""
     global state_transition_tracker
-    
+
     if state_transition_tracker is None:
         state_transition_tracker = _create_state_transition_tracker()
-    
+
     return state_transition_tracker
 
 
@@ -211,10 +208,10 @@ def _get_state_transition_tracker():
 @app.get("/healthcheck")
 async def healthcheck():
     """Pearl-compliant health check endpoint for monitoring state transitions.
-    
+
     Returns real-time information about agent state transitions to help
     the Pearl platform monitor agent health and responsiveness.
-    
+
     Returns:
         JSON with required fields:
         - seconds_since_last_transition: Time since last state change (float)
@@ -225,44 +222,45 @@ async def healthcheck():
     try:
         # Get the tracker instance
         tracker = _get_state_transition_tracker()
-        
+
         # Get state transition information
         # Access as property but handle both property and method mock scenarios
-        if hasattr(tracker.seconds_since_last_transition, '__call__'):
+        if hasattr(tracker.seconds_since_last_transition, "__call__"):
             # It's mocked as a method
             seconds_since_last_transition = tracker.seconds_since_last_transition()
         else:
             # It's a property
             seconds_since_last_transition = tracker.seconds_since_last_transition
-        
+
         is_transitioning_fast = tracker.is_transitioning_fast()
-        
+
         # Handle case where no transitions have occurred (infinity)
-        if seconds_since_last_transition == float('inf'):
+        if seconds_since_last_transition == float("inf"):
             seconds_since_last_transition = -1  # Use -1 to indicate no transitions
-        
+
         # Build response with required fields
         response = {
             "seconds_since_last_transition": seconds_since_last_transition,
-            "is_transitioning_fast": is_transitioning_fast
+            "is_transitioning_fast": is_transitioning_fast,
         }
-        
+
         # Add optional fields based on configuration
         # These values come from the StateTransitionTracker initialization
         # Handle both real and mocked attributes
-        if hasattr(tracker, 'fast_transition_window'):
+        if hasattr(tracker, "fast_transition_window"):
             response["period"] = tracker.fast_transition_window
         else:
             from config import settings
+
             response["period"] = settings.FAST_TRANSITION_THRESHOLD
-            
-        if hasattr(tracker, 'fast_transition_threshold'):
+
+        if hasattr(tracker, "fast_transition_threshold"):
             response["reset_pause_duration"] = tracker.fast_transition_threshold
         else:
             response["reset_pause_duration"] = 0.5  # Default value
-        
+
         return response
-        
+
     except Exception as e:
         # Handle errors gracefully - return safe defaults
         logger.error(f"Error in healthcheck endpoint: {str(e)}")
@@ -270,7 +268,7 @@ async def healthcheck():
             "seconds_since_last_transition": -1,
             "is_transitioning_fast": False,
             "period": 5,
-            "reset_pause_duration": 0.5
+            "reset_pause_duration": 0.5,
         }
 
 
@@ -284,7 +282,9 @@ async def get_proposals(
 ):
     """Get list of proposals from a Snapshot space with optional filtering."""
     try:
-        with log_span(logger, "get_proposals", space_id=space_id, state=state, limit=limit):
+        with log_span(
+            logger, "get_proposals", space_id=space_id, state=state, limit=limit
+        ):
             # Use Snapshot service
             space_ids = [space_id]
             snapshot_state = state.lower() if state else None
@@ -293,7 +293,9 @@ async def get_proposals(
             )
 
             return {
-                "proposals": [p.model_dump() if hasattr(p, 'model_dump') else p for p in proposals],
+                "proposals": [
+                    p.model_dump() if hasattr(p, "model_dump") else p for p in proposals
+                ],
                 "next_cursor": None,  # Use skip-based pagination instead
             }
 
@@ -321,7 +323,9 @@ async def get_proposal_by_id(proposal_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to fetch proposal proposal_id={proposal_id} error={str(e)}")
+        logger.error(
+            f"Failed to fetch proposal proposal_id={proposal_id} error={str(e)}"
+        )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch proposal: {str(e)}"
         )
@@ -432,10 +436,9 @@ async def agent_run(request: AgentRunRequest):
     # Check if withdrawal mode is active
     if os.environ.get("WITHDRAWAL_MODE", "false").lower() == "true":
         raise HTTPException(
-            status_code=503,
-            detail="Service unavailable: System is in withdrawal mode"
+            status_code=503, detail="Service unavailable: System is in withdrawal mode"
         )
-    
+
     try:
         with log_span(
             logger, "agent_run", space_id=request.space_id, dry_run=request.dry_run

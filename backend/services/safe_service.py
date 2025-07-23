@@ -16,7 +16,6 @@ from models import EASAttestationData
 from logging_config import setup_pearl_logger, log_span
 
 
-
 # Constants for Safe service URLs
 SAFE_SERVICE_URLS = {
     "ethereum": "https://safe-transaction-mainnet.safe.global/",
@@ -66,7 +65,7 @@ class SafeService:
         eoa_address = self.account.address
         configured_safes = list(self.safe_addresses.keys())
         available_chains = list(self.rpc_endpoints.keys())
-        
+
         self.logger.info(
             f"SafeService initialized (eoa_address={eoa_address}, "
             f"safe_addresses={configured_safes}, "
@@ -139,28 +138,31 @@ class SafeService:
         to: str,
         value: int,
         data: bytes,
-        operation: int = SAFE_OPERATION_CALL
-
+        operation: int = SAFE_OPERATION_CALL,
     ) -> Dict[str, Any]:
         """Submit a Safe transaction with the given parameters.
-        
+
         Args:
             chain: Blockchain network name
             to: Transaction recipient address
             value: ETH value to send (in wei)
             data: Transaction data
             operation: Safe operation type (0=CALL, 1=DELEGATECALL)
-            
+
         Returns:
             Dict with transaction details and success status
         """
         # Runtime assertions for critical inputs
         assert isinstance(chain, str) and chain, "Chain must be a non-empty string"
         assert isinstance(to, str) and to, "To address must be a non-empty string"
-        assert isinstance(value, int) and value >= 0, "Value must be a non-negative integer"
+        assert (
+            isinstance(value, int) and value >= 0
+        ), "Value must be a non-negative integer"
         assert isinstance(data, bytes), "Data must be bytes"
-        
-        with log_span(self.logger, "safe_service._submit_safe_transaction", chain=chain, to=to):
+
+        with log_span(
+            self.logger, "safe_service._submit_safe_transaction", chain=chain, to=to
+        ):
             self.logger.info(f"Creating Safe transaction on {chain} to {to}")
 
             try:
@@ -207,12 +209,11 @@ class SafeService:
                 data_length = len(data)
                 nonce = safe_tx.safe_nonce
                 tx_hash = safe_tx.safe_tx_hash.hex()
-                
+
                 self.logger.info(
                     f"Built Safe transaction (chain={chain}, safe_address={safe_address}, "
                     f"to={to}, value={value}, data_length={data_length}, "
                     f"nonce={nonce}, safe_tx_hash={tx_hash})"
-
                 )
 
                 # Propose transaction to Safe Transaction Service
@@ -235,7 +236,9 @@ class SafeService:
                 )
 
                 tx_hash = ethereum_tx_sent.tx_hash
-                self.logger.info(f"Executed Safe transaction on-chain (tx_hash={tx_hash.hex()})")
+                self.logger.info(
+                    f"Executed Safe transaction on-chain (tx_hash={tx_hash.hex()})"
+                )
 
                 # Wait for confirmation
                 receipt = w3.eth.wait_for_transaction_receipt(tx_hash)  # type: ignore
@@ -245,7 +248,7 @@ class SafeService:
                 block_number = receipt["blockNumber"]
                 gas_used = receipt["gasUsed"]
                 tx_successful = receipt["status"] == 1
-                
+
                 if tx_successful:
                     self.logger.info(
                         f"Transaction successful (tx_hash={tx_hash_hex}, "
@@ -291,7 +294,10 @@ class SafeService:
 
         safe_address = self.safe_addresses.get(chain)
         if not safe_address:
-            return {"success": False, "error": f"No Safe address configured for chain: {chain}"}
+            return {
+                "success": False,
+                "error": f"No Safe address configured for chain: {chain}",
+            }
 
         # Use helper method to submit dummy transaction
         return await self._submit_safe_transaction(
@@ -300,7 +306,6 @@ class SafeService:
             value=0,  # 0 ETH value
             data=b"",  # Empty data
             operation=SAFE_OPERATION_CALL,  # CALL operation
-
         )
 
     async def perform_governor_vote(
@@ -309,7 +314,7 @@ class SafeService:
         proposal_id: int,
         support: Support,
         reason: str = "",
-        chain: Optional[str] = None
+        chain: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Cast a vote on a governor proposal via Safe multisig.
 
@@ -324,30 +329,30 @@ class SafeService:
             Dict with transaction details and success status
         """
         # Runtime assertions for critical inputs
-        assert isinstance(governor_id, str) and governor_id, "Governor ID must be a non-empty string"
-        assert isinstance(proposal_id, int) and proposal_id >= 0, "Proposal ID must be a non-negative integer"
+        assert (
+            isinstance(governor_id, str) and governor_id
+        ), "Governor ID must be a non-empty string"
+        assert (
+            isinstance(proposal_id, int) and proposal_id >= 0
+        ), "Proposal ID must be a non-negative integer"
 
         try:
             # Get governor metadata
             governor_meta, _ = get_governor(governor_id)
-            
+
             # Use governor's chain if not specified
             if not chain:
                 chain = CHAIN_ID_TO_NAME.get(governor_meta.chain_id)
                 if not chain:
                     error_msg = f"Unsupported chain ID: {governor_meta.chain_id}"
-                    return {
-                        "success": False,
-                        "error": error_msg
-
-                    }
+                    return {"success": False, "error": error_msg}
 
             # Encode the vote transaction
             encoded_data = encode_cast_vote(
                 governor_id=governor_id,
                 proposal_id=proposal_id,
                 support=support,
-                reason=reason
+                reason=reason,
             )
 
             # Convert hex string to bytes
@@ -360,7 +365,6 @@ class SafeService:
                 value=0,  # No ETH sent
                 data=data_bytes,
                 operation=SAFE_OPERATION_CALL,  # CALL operation
-
             )
 
         except GovernorRegistryError as e:
@@ -428,13 +432,15 @@ class SafeService:
             "nonce": safe_tx.safe_nonce,
             "safe_tx_hash": safe_tx.safe_tx_hash.hex(),
         }
-    
-    async def create_eas_attestation(self, attestation_data: EASAttestationData) -> Dict[str, Any]:
+
+    async def create_eas_attestation(
+        self, attestation_data: EASAttestationData
+    ) -> Dict[str, Any]:
         """Create an EAS attestation for a Snapshot vote.
-        
+
         Args:
             attestation_data: The attestation data containing vote details
-            
+
         Returns:
             Dict containing success status and transaction details or error
         """
@@ -443,110 +449,100 @@ class SafeService:
             if not settings.eas_contract_address or not settings.eas_schema_uid:
                 return {
                     "success": False,
-                    "error": "EAS configuration missing: contract address or schema UID not set"
+                    "error": "EAS configuration missing: contract address or schema UID not set",
                 }
-            
+
             if not settings.base_safe_address:
-                return {
-                    "success": False,
-                    "error": "Base Safe address not configured"
-                }
-            
+                return {"success": False, "error": "Base Safe address not configured"}
+
             # Build the attestation transaction
             tx_data = self._build_eas_attestation_tx(attestation_data)
-            
+
             # Submit through Safe
             result = await self._submit_safe_transaction(
                 chain="base",
                 to=tx_data["to"],
                 data=tx_data["data"],
-                value=tx_data.get("value", 0)
+                value=tx_data.get("value", 0),
             )
-            
+
             self.logger.info(
                 f"Submitted Safe transaction for attestation. "
                 f"Safe tx hash: {result.get('hash')}."
             )
-            
-            return {
-                "success": True,
-                "safe_tx_hash": result.get("hash")
-            }
-            
+
+            return {"success": True, "safe_tx_hash": result.get("hash")}
+
         except Exception as e:
             self.logger.error(f"Failed to create EAS attestation: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
-    
-    def _build_eas_attestation_tx(self, attestation_data: EASAttestationData) -> Dict[str, Any]:
+            return {"success": False, "error": str(e)}
+
+    def _build_eas_attestation_tx(
+        self, attestation_data: EASAttestationData
+    ) -> Dict[str, Any]:
         """Build EAS attestation transaction data.
-        
+
         Args:
             attestation_data: The attestation data to encode
-            
+
         Returns:
             Transaction data dict with 'to', 'data', and 'value' fields
         """
         # Get Web3 instance for Base network
         w3 = self._get_web3_instance("base")
-        
+
         # Load EAS ABI
         eas_abi = self._load_eas_abi()
-        
+
         # Create contract instance
         eas_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(settings.eas_contract_address),
-            abi=eas_abi
+            address=Web3.to_checksum_address(settings.eas_contract_address), abi=eas_abi
         )
-        
+
         # Encode attestation data
         encoded_data = self._encode_attestation_data(attestation_data)
-        
+
         # Build attestation request structure
         attestation_request = {
-            "uid": b'\x00' * 32,  # Empty for new attestation
+            "uid": b"\x00" * 32,  # Empty for new attestation
             "schema": Web3.to_bytes(hexstr=settings.eas_schema_uid),
             "time": 0,  # Will be set by contract
             "expirationTime": 0,  # No expiration
             "revocationTime": 0,  # Not revoked
-            "refUID": b'\x00' * 32,  # No reference
+            "refUID": b"\x00" * 32,  # No reference
             "recipient": Web3.to_checksum_address(attestation_data.voter_address),
             "attester": Web3.to_checksum_address(settings.agent_address),
             "revocable": True,
-            "data": encoded_data
+            "data": encoded_data,
         }
-        
+
         # Build the transaction
-        tx = eas_contract.functions.attest(attestation_request).build_transaction({
-            "from": settings.base_safe_address,
-            "gas": 300000,  # Reasonable gas limit for attestation
-        })
-        
-        return {
-            "to": tx["to"],
-            "data": tx["data"],
-            "value": tx.get("value", 0)
-        }
-    
+        tx = eas_contract.functions.attest(attestation_request).build_transaction(
+            {
+                "from": settings.base_safe_address,
+                "gas": 300000,  # Reasonable gas limit for attestation
+            }
+        )
+
+        return {"to": tx["to"], "data": tx["data"], "value": tx.get("value", 0)}
+
     def _encode_attestation_data(self, attestation_data: EASAttestationData) -> bytes:
         """Encode attestation data according to EAS schema.
-        
+
         The schema encodes:
         - proposal_id (string)
         - space_id (string)
         - choice (uint256)
         - vote_tx_hash (bytes32)
-        
+
         Args:
             attestation_data: The attestation data to encode
-            
+
         Returns:
             ABI-encoded bytes
         """
         w3 = Web3()
-        
+
         # Encode the attestation data
         encoded = w3.codec.encode(
             ["string", "string", "uint256", "bytes32"],
@@ -554,35 +550,36 @@ class SafeService:
                 attestation_data.proposal_id,
                 attestation_data.space_id,
                 attestation_data.choice,
-                Web3.to_bytes(hexstr=attestation_data.vote_tx_hash)
-            ]
+                Web3.to_bytes(hexstr=attestation_data.vote_tx_hash),
+            ],
         )
-        
+
         return encoded
-    
+
     def _load_eas_abi(self) -> list:
         """Load EAS contract ABI from file.
-        
+
         Returns:
             List containing the EAS ABI
         """
         import os
+
         abi_path = os.path.join(os.path.dirname(__file__), "../abi/eas.json")
-        
+
         with open(abi_path, "r") as f:
             return json.load(f)
-    
+
     def _get_web3_instance(self, chain: str) -> Web3:
         """Get Web3 instance for a specific chain.
-        
+
         Args:
             chain: The chain name (e.g., 'base')
-            
+
         Returns:
             Web3 instance connected to the chain
         """
         rpc_url = self.rpc_endpoints.get(chain)
         if not rpc_url:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
-        
+
         return Web3(Web3.HTTPProvider(rpc_url))

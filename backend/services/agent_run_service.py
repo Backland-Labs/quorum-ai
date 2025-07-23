@@ -2,7 +2,6 @@
 
 import time
 from typing import List, Optional, Tuple
-import logging
 
 from datetime import datetime, timezone
 from logging_config import setup_pearl_logger, log_span
@@ -28,6 +27,7 @@ from services.state_transition_tracker import StateTransitionTracker, AgentState
 
 # Constants
 MAX_ATTESTATION_RETRIES = 3
+
 
 # Custom exceptions for better error handling
 class AgentRunServiceError(Exception):
@@ -71,7 +71,7 @@ class AgentRunService:
 
     def __init__(self, state_manager=None) -> None:
         """Initialize AgentRunService with required dependencies.
-        
+
         Args:
             state_manager: Optional StateManager instance for state persistence
         """
@@ -82,27 +82,29 @@ class AgentRunService:
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger()
         self.state_manager = state_manager
-        
+
         # Initialize state transition tracker with StateManager for persistence
         self.state_tracker = StateTransitionTracker(
             state_manager=self.state_manager,
             enable_state_manager=True if state_manager else False,
-            enable_pearl_logging=True
+            enable_pearl_logging=True,
         )
-        
+
         # Track active operations for graceful shutdown
         self._active_run = False
         self._current_run_data = None
-        
+
         # Initialize Pearl-compliant logger
-        self.pearl_logger = setup_pearl_logger(name='agent_run_service')
+        self.pearl_logger = setup_pearl_logger(name="agent_run_service")
         self.pearl_logger.info("AgentRunService initialized with all dependencies")
-    
+
     async def initialize(self):
         """Initialize async components including state tracker."""
         if self.state_manager:
             await self.state_tracker.async_initialize()
-            self.pearl_logger.info("State tracker initialized with StateManager persistence")
+            self.pearl_logger.info(
+                "State tracker initialized with StateManager persistence"
+            )
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.
@@ -123,27 +125,34 @@ class AgentRunService:
         errors = []
         user_preferences_applied = False
         run_id = f"run_{request.space_id}_{int(start_time)}"
-        
+
         # Track state transition from IDLE to STARTING
-        self.state_tracker.transition(AgentState.STARTING, {"run_id": run_id, "spaces": [request.space_id]})
-        
+        self.state_tracker.transition(
+            AgentState.STARTING, {"run_id": run_id, "spaces": [request.space_id]}
+        )
+
         # Mark run as active
         self._active_run = True
         self._current_run_data = {
-            'space_id': request.space_id,
-            'dry_run': request.dry_run,
-            'start_time': start_time,
-            'run_id': run_id
+            "space_id": request.space_id,
+            "dry_run": request.dry_run,
+            "start_time": start_time,
+            "run_id": run_id,
         }
 
         with log_span(
-            self.pearl_logger, "agent_run_execution", space_id=request.space_id, dry_run=request.dry_run
+            self.pearl_logger,
+            "agent_run_execution",
+            space_id=request.space_id,
+            dry_run=request.dry_run,
         ) as span_data:
             try:
                 # Process any pending attestations from previous runs
                 await self._process_pending_attestations(request.space_id)
                 # Step 1: Load user preferences
-                self.state_tracker.transition(AgentState.LOADING_PREFERENCES, {"run_id": run_id})
+                self.state_tracker.transition(
+                    AgentState.LOADING_PREFERENCES, {"run_id": run_id}
+                )
                 user_preferences, preferences_error = await self._load_user_preferences(
                     request
                 )
@@ -154,29 +163,40 @@ class AgentRunService:
                     user_preferences_applied = True
 
                 # Step 2: Fetch and process proposals
-                self.state_tracker.transition(AgentState.FETCHING_PROPOSALS, {
-                    "run_id": run_id,
-                    "spaces": [request.space_id]
-                })
-                proposals, filtered_proposals, fetch_errors = (
-                    await self._fetch_and_process_proposals(
-                        request.space_id, user_preferences
-                    )
+                self.state_tracker.transition(
+                    AgentState.FETCHING_PROPOSALS,
+                    {"run_id": run_id, "spaces": [request.space_id]},
+                )
+                (
+                    proposals,
+                    filtered_proposals,
+                    fetch_errors,
+                ) = await self._fetch_and_process_proposals(
+                    request.space_id, user_preferences
                 )
                 errors.extend(fetch_errors)
-                
+
                 # Track filtering state
-                self.state_tracker.transition(AgentState.FILTERING_PROPOSALS, {
-                    "run_id": run_id,
-                    "total_proposals": len(proposals),
-                    "filtered_proposals": len(filtered_proposals)
-                })
+                self.state_tracker.transition(
+                    AgentState.FILTERING_PROPOSALS,
+                    {
+                        "run_id": run_id,
+                        "total_proposals": len(proposals),
+                        "filtered_proposals": len(filtered_proposals),
+                    },
+                )
 
                 # Step 3: Make and execute voting decisions
-                vote_decisions, final_decisions, voting_errors = (
-                    await self._process_voting_decisions(
-                        filtered_proposals, user_preferences, request.space_id, request.dry_run, run_id
-                    )
+                (
+                    vote_decisions,
+                    final_decisions,
+                    voting_errors,
+                ) = await self._process_voting_decisions(
+                    filtered_proposals,
+                    user_preferences,
+                    request.space_id,
+                    request.dry_run,
+                    run_id,
                 )
                 errors.extend(voting_errors)
 
@@ -194,42 +214,44 @@ class AgentRunService:
                 # Save checkpoint state if state manager available
                 if self.state_manager:
                     await self._save_checkpoint_state(response)
-                
+
                 # Log completion summary
                 self.logger.log_agent_completion(response)
-                
+
                 # Track completion
-                self.state_tracker.transition(AgentState.COMPLETED, {
-                    "run_id": run_id,
-                    "total_duration": execution_time,
-                    "proposals_analyzed": len(filtered_proposals),
-                    "votes_cast": len(final_decisions)
-                })
-                
+                self.state_tracker.transition(
+                    AgentState.COMPLETED,
+                    {
+                        "run_id": run_id,
+                        "total_duration": execution_time,
+                        "proposals_analyzed": len(filtered_proposals),
+                        "votes_cast": len(final_decisions),
+                    },
+                )
+
                 # Mark run as complete
                 self._active_run = False
                 self._current_run_data = None
-                
+
                 # Transition back to IDLE
                 self.state_tracker.transition(AgentState.IDLE, {"run_id": run_id})
-                
+
                 return response
 
             except Exception as e:
                 # Track error state
-                self.state_tracker.transition(AgentState.ERROR, {
-                    "run_id": run_id,
-                    "error": str(e),
-                    "error_type": type(e).__name__
-                })
-                
+                self.state_tracker.transition(
+                    AgentState.ERROR,
+                    {"run_id": run_id, "error": str(e), "error_type": type(e).__name__},
+                )
+
                 # Mark run as complete even on error
                 self._active_run = False
                 self._current_run_data = None
-                
+
                 # Transition back to IDLE
                 self.state_tracker.transition(AgentState.IDLE, {"run_id": run_id})
-                
+
                 # Catch-all for unexpected errors
                 return self._handle_unexpected_error(
                     e, request.space_id, start_time, user_preferences_applied
@@ -291,9 +313,7 @@ class AgentRunService:
                 filtered_proposals = await self._filter_and_rank_proposals(
                     proposals, user_preferences
                 )
-                self.logger.log_proposals_fetched(
-                    proposals, len(filtered_proposals)
-                )
+                self.logger.log_proposals_fetched(proposals, len(filtered_proposals))
             except Exception as e:
                 error_msg = f"Failed to filter and rank proposals: {str(e)}"
                 errors.append(error_msg)
@@ -335,21 +355,29 @@ class AgentRunService:
                 # Log individual proposal analysis
                 for proposal, decision in zip(proposals, vote_decisions):
                     # Track analyzing state for each proposal
-                    self.state_tracker.transition(AgentState.ANALYZING_PROPOSAL, {
-                        "run_id": run_id,
-                        "proposal_id": proposal.id,
-                        "proposal_title": proposal.title
-                    })
-                    
+                    self.state_tracker.transition(
+                        AgentState.ANALYZING_PROPOSAL,
+                        {
+                            "run_id": run_id,
+                            "proposal_id": proposal.id,
+                            "proposal_title": proposal.title,
+                        },
+                    )
+
                     self.logger.log_proposal_analysis(proposal, decision)
-                    
+
                     # Track decision state
-                    self.state_tracker.transition(AgentState.DECIDING_VOTE, {
-                        "run_id": run_id,
-                        "proposal_id": proposal.id,
-                        "vote_decision": decision.vote.value if decision.vote else "skip",
-                        "confidence_score": decision.confidence
-                    })
+                    self.state_tracker.transition(
+                        AgentState.DECIDING_VOTE,
+                        {
+                            "run_id": run_id,
+                            "proposal_id": proposal.id,
+                            "vote_decision": decision.vote.value
+                            if decision.vote
+                            else "skip",
+                            "confidence_score": decision.confidence,
+                        },
+                    )
             except Exception as e:
                 error_msg = f"Failed to make voting decisions: {str(e)}"
                 errors.append(error_msg)
@@ -359,7 +387,9 @@ class AgentRunService:
         # Execute votes
         if vote_decisions:
             try:
-                final_decisions = await self._execute_votes(vote_decisions, space_id, dry_run, run_id)
+                final_decisions = await self._execute_votes(
+                    vote_decisions, space_id, dry_run, run_id
+                )
             except Exception as e:
                 error_msg = f"Failed to execute votes: {str(e)}"
                 errors.append(error_msg)
@@ -454,7 +484,9 @@ class AgentRunService:
         assert isinstance(limit, int), f"Limit must be integer, got {type(limit)}"
         assert limit > 0, "Limit must be positive integer"
 
-        with log_span(self.pearl_logger, "fetch_active_proposals", space_id=space_id, limit=limit) as span_data:
+        with log_span(
+            self.pearl_logger, "fetch_active_proposals", space_id=space_id, limit=limit
+        ) as span_data:
             try:
                 self.pearl_logger.info(
                     f"Fetching active proposals (space_id={space_id}, limit={limit})"
@@ -465,7 +497,7 @@ class AgentRunService:
                     space_ids=[space_id], state="active", first=limit
                 )
 
-                span_data['proposal_count'] = len(proposals)
+                span_data["proposal_count"] = len(proposals)
                 self.pearl_logger.info(
                     f"Successfully fetched active proposals (space_id={space_id}, proposal_count={len(proposals)})"
                 )
@@ -517,7 +549,11 @@ class AgentRunService:
         if not proposals:
             return []
 
-        with log_span(self.pearl_logger, "filter_and_rank_proposals", proposal_count=len(proposals)) as span_data:
+        with log_span(
+            self.pearl_logger,
+            "filter_and_rank_proposals",
+            proposal_count=len(proposals),
+        ) as span_data:
             try:
                 self.pearl_logger.info(
                     f"Starting proposal filtering and ranking (proposal_count={len(proposals)}, "
@@ -563,7 +599,9 @@ class AgentRunService:
                 )
 
                 # Format filtering metrics as string
-                metrics_str = ', '.join(f"{k}={v}" for k, v in filtering_metrics.items())
+                metrics_str = ", ".join(
+                    f"{k}={v}" for k, v in filtering_metrics.items()
+                )
                 self.pearl_logger.info(
                     f"Filtering and ranking completed ({metrics_str}, "
                     f"final_proposal_count={len(final_proposals)})"
@@ -620,7 +658,9 @@ class AgentRunService:
         if not proposals:
             return []
 
-        with log_span(self.pearl_logger, "make_voting_decisions", proposal_count=len(proposals)) as span_data:
+        with log_span(
+            self.pearl_logger, "make_voting_decisions", proposal_count=len(proposals)
+        ) as span_data:
             try:
                 self.pearl_logger.info(
                     f"Making voting decisions (proposal_count={len(proposals)}, "
@@ -694,9 +734,9 @@ class AgentRunService:
         assert isinstance(
             decisions, list
         ), f"Decisions must be a list, got {type(decisions)}"
-        assert isinstance(
-            space_id, str
-        ) and space_id.strip(), f"Space ID must be non-empty string, got {space_id}"
+        assert (
+            isinstance(space_id, str) and space_id.strip()
+        ), f"Space ID must be non-empty string, got {space_id}"
         assert isinstance(
             dry_run, bool
         ), f"Dry run must be boolean, got {type(dry_run)}"
@@ -708,7 +748,11 @@ class AgentRunService:
             return []
 
         with log_span(
-            self.pearl_logger, "execute_votes", space_id=space_id, decision_count=len(decisions), dry_run=dry_run
+            self.pearl_logger,
+            "execute_votes",
+            space_id=space_id,
+            decision_count=len(decisions),
+            dry_run=dry_run,
         ) as span_data:
             try:
                 self.pearl_logger.info(
@@ -726,12 +770,15 @@ class AgentRunService:
                 for decision in decisions:
                     try:
                         # Track vote submission state
-                        self.state_tracker.transition(AgentState.SUBMITTING_VOTE, {
-                            "run_id": run_id,
-                            "proposal_id": decision.proposal_id,
-                            "vote_type": decision.vote.value
-                        })
-                        
+                        self.state_tracker.transition(
+                            AgentState.SUBMITTING_VOTE,
+                            {
+                                "run_id": run_id,
+                                "proposal_id": decision.proposal_id,
+                                "vote_type": decision.vote.value,
+                            },
+                        )
+
                         # Convert VoteType to Snapshot choice format
                         vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
 
@@ -745,7 +792,7 @@ class AgentRunService:
                         if vote_result.get("success"):
                             executed_decisions.append(decision)
                             self.logger.log_vote_execution(decision, True)
-                            
+
                             # Queue attestation for successful vote
                             await self._queue_attestation(decision, space_id, run_id)
                         else:
@@ -794,132 +841,138 @@ class AgentRunService:
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """Async context manager exit with proper resource cleanup."""
         await self.close()
-    
+
     async def shutdown(self) -> None:
         """Implement shutdown method required by ShutdownService protocol.
-        
+
         This method is called during graceful shutdown to clean up resources
         and save any pending state.
         """
         self.pearl_logger.info("Agent run service shutdown initiated")
-        
+
         # If there's an active run, try to save its state
         if self._active_run and self._current_run_data:
             try:
                 await self._save_shutdown_state()
             except Exception as e:
                 self.pearl_logger.error(f"Failed to save shutdown state: {e}")
-        
+
         # Close resources
         await self.close()
-        
+
         self.pearl_logger.info("Agent run service shutdown completed")
-    
+
     async def save_service_state(self) -> None:
         """Save current service state for recovery."""
         if not self.state_manager:
             return
-            
+
         state_data = {
-            'active_run': self._active_run,
-            'current_run_data': self._current_run_data,
-            'last_checkpoint': datetime.utcnow().isoformat()
+            "active_run": self._active_run,
+            "current_run_data": self._current_run_data,
+            "last_checkpoint": datetime.utcnow().isoformat(),
         }
-        
+
         await self.state_manager.save_state(
-            'agent_run_service',
-            state_data,
-            sensitive=False
+            "agent_run_service", state_data, sensitive=False
         )
-    
+
     async def stop(self) -> None:
         """Stop the service gracefully."""
         self._active_run = False
         await self.save_state()
-    
+
     async def _process_pending_attestations(self, space_id: str) -> None:
         """Process any pending attestations from previous runs.
-        
+
         Args:
             space_id: The space ID to process attestations for
         """
         if not self.state_manager:
             return
-            
+
         try:
             # Load checkpoint with any pending attestations
-            checkpoint = await self.state_manager.load_checkpoint(f'agent_checkpoint_{space_id}')
-            if not checkpoint or 'pending_attestations' not in checkpoint:
+            checkpoint = await self.state_manager.load_checkpoint(
+                f"agent_checkpoint_{space_id}"
+            )
+            if not checkpoint or "pending_attestations" not in checkpoint:
                 return
-                
-            pending_attestations = checkpoint['pending_attestations']
+
+            pending_attestations = checkpoint["pending_attestations"]
             if not pending_attestations:
                 return
-                
+
             self.pearl_logger.info(
                 f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
             )
-            
+
             processed_attestations = []
             remaining_attestations = []
-            
+
             for attestation in pending_attestations:
                 # Check retry count
-                retry_count = attestation.get('retry_count', 0)
+                retry_count = attestation.get("retry_count", 0)
                 if retry_count >= MAX_ATTESTATION_RETRIES:
                     self.pearl_logger.warning(
                         f"Attestation for proposal {attestation['proposal_id']} exceeded max retries, dropping"
                     )
                     continue
-                    
+
                 try:
                     # Create EAS attestation data
                     eas_data = EASAttestationData(
-                        proposal_id=attestation['proposal_id'],
+                        proposal_id=attestation["proposal_id"],
                         space_id=space_id,
-                        voter_address=attestation['voter_address'],
-                        choice=attestation['vote_choice'],
-                        vote_tx_hash=attestation.get('vote_tx_hash', 'unknown'),
-                        timestamp=datetime.fromisoformat(attestation['timestamp']) if isinstance(attestation['timestamp'], str) else attestation['timestamp'],
-                        retry_count=attestation.get('retry_count', 0)
+                        voter_address=attestation["voter_address"],
+                        choice=attestation["vote_choice"],
+                        vote_tx_hash=attestation.get("vote_tx_hash", "unknown"),
+                        timestamp=datetime.fromisoformat(attestation["timestamp"])
+                        if isinstance(attestation["timestamp"], str)
+                        else attestation["timestamp"],
+                        retry_count=attestation.get("retry_count", 0),
                     )
-                    
+
                     # Submit attestation
                     result = await self.safe_service.create_eas_attestation(eas_data)
-                    
+
                     self.pearl_logger.info(
                         f"Successfully created attestation for proposal {attestation['proposal_id']}: "
                         f"tx_hash={result.get('tx_hash')}, uid={result.get('attestation_uid')}"
                     )
-                    
-                    processed_attestations.append(attestation['proposal_id'])
-                    
+
+                    processed_attestations.append(attestation["proposal_id"])
+
                 except Exception as e:
                     self.pearl_logger.error(
                         f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
                     )
-                    
+
                     # Increment retry count and keep in queue
-                    attestation['retry_count'] = retry_count + 1
+                    attestation["retry_count"] = retry_count + 1
                     remaining_attestations.append(attestation)
-            
+
             # Update checkpoint with remaining attestations
-            checkpoint['pending_attestations'] = remaining_attestations
-            await self.state_manager.save_checkpoint(f'agent_checkpoint_{space_id}', checkpoint)
-            
+            checkpoint["pending_attestations"] = remaining_attestations
+            await self.state_manager.save_checkpoint(
+                f"agent_checkpoint_{space_id}", checkpoint
+            )
+
             if processed_attestations:
                 self.pearl_logger.info(
                     f"Processed {len(processed_attestations)} attestations successfully"
                 )
-                
+
         except Exception as e:
             self.pearl_logger.error(
                 f"Error processing pending attestations for space {space_id}: {str(e)}"
             )
-    
-    async def _queue_attestation(self, decision: VoteDecision, space_id: str, run_id: str) -> None:
+
+    async def _queue_attestation(
+        self, decision: VoteDecision, space_id: str, run_id: str
+    ) -> None:
         """Queue an attestation for a successful vote.
-        
+
         Args:
             decision: The vote decision that was executed
             space_id: The space ID where the vote was cast
@@ -928,92 +981,90 @@ class AgentRunService:
         if not self.state_manager:
             self.pearl_logger.warning("No state manager, skipping attestation queue")
             return
-            
+
         try:
             # Load current checkpoint
             checkpoint = await self.state_manager.load_checkpoint(f"run_{run_id}")
             if checkpoint is None:
                 checkpoint = {}
-            
+
             # Initialize pending_attestations if not present
-            if 'pending_attestations' not in checkpoint:
-                checkpoint['pending_attestations'] = []
-            
+            if "pending_attestations" not in checkpoint:
+                checkpoint["pending_attestations"] = []
+
             # Get voter address from voting service account
             voter_address = self.voting_service.account.address
-            
+
             # For now, use the same address as delegate (can be configured later)
             delegate_address = voter_address
-            
+
             # Create attestation data
             attestation_data = {
-                'proposal_id': decision.proposal_id,
-                'vote_choice': VOTE_CHOICE_MAPPING[decision.vote],  # Convert VoteType to choice number
-                'voter_address': voter_address,
-                'delegate_address': delegate_address,
-                'reasoning': decision.reasoning,
-                'timestamp': datetime.now(timezone.utc).isoformat(),
-                'retry_count': 0
+                "proposal_id": decision.proposal_id,
+                "vote_choice": VOTE_CHOICE_MAPPING[
+                    decision.vote
+                ],  # Convert VoteType to choice number
+                "voter_address": voter_address,
+                "delegate_address": delegate_address,
+                "reasoning": decision.reasoning,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "retry_count": 0,
             }
-            
+
             # Add to pending attestations
-            checkpoint['pending_attestations'].append(attestation_data)
-            
+            checkpoint["pending_attestations"].append(attestation_data)
+
             # Save updated checkpoint
             await self.state_manager.save_checkpoint(f"run_{run_id}", checkpoint)
-            
+
             self.pearl_logger.info(
                 f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: run_{run_id}"
             )
-            
+
         except Exception as e:
             self.pearl_logger.error(
                 f"Failed to queue attestation for proposal {decision.proposal_id}: {str(e)}"
             )
             # Don't raise - attestation failures should not block voting
-    
+
     async def _save_checkpoint_state(self, response: AgentRunResponse) -> None:
         """Save checkpoint state during agent run.
-        
+
         Args:
             response: The current agent run response
         """
         if not self.state_manager:
             return
-            
+
         checkpoint_data = {
-            'space_id': response.space_id,
-            'proposals_analyzed': response.proposals_analyzed,
-            'votes_cast': len(response.votes_cast),
-            'execution_time': response.execution_time,
-            'timestamp': datetime.utcnow().isoformat(),
-            'errors': response.errors,
-            'pending_attestations': []  # Initialize empty if not loaded
+            "space_id": response.space_id,
+            "proposals_analyzed": response.proposals_analyzed,
+            "votes_cast": len(response.votes_cast),
+            "execution_time": response.execution_time,
+            "timestamp": datetime.utcnow().isoformat(),
+            "errors": response.errors,
+            "pending_attestations": [],  # Initialize empty if not loaded
         }
-        
+
         await self.state_manager.save_state(
-            f'agent_checkpoint_{response.space_id}',
-            checkpoint_data,
-            sensitive=False
+            f"agent_checkpoint_{response.space_id}", checkpoint_data, sensitive=False
         )
-        
+
         self.pearl_logger.info(f"Saved checkpoint state for space {response.space_id}")
-    
+
     async def _save_shutdown_state(self) -> None:
         """Save state during shutdown for recovery."""
         if not self.state_manager or not self._current_run_data:
             return
-            
+
         shutdown_data = {
             **self._current_run_data,
-            'shutdown_time': datetime.utcnow().isoformat(),
-            'reason': 'graceful_shutdown'
+            "shutdown_time": datetime.utcnow().isoformat(),
+            "reason": "graceful_shutdown",
         }
-        
+
         await self.state_manager.save_state(
-            'agent_shutdown_state',
-            shutdown_data,
-            sensitive=False
+            "agent_shutdown_state", shutdown_data, sensitive=False
         )
-        
+
         self.pearl_logger.info("Saved shutdown state for recovery")

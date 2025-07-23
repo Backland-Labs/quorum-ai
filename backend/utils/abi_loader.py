@@ -1,7 +1,7 @@
 """ABI Loader for On-Chain Governor Contract Interfaces.
 
-NOTE: This module is currently not in active use as the system has migrated to 
-Snapshot (off-chain) voting. However, this code is being retained for future 
+NOTE: This module is currently not in active use as the system has migrated to
+Snapshot (off-chain) voting. However, this code is being retained for future
 implementation of on-chain governance support.
 
 This utility loads Application Binary Interface (ABI) definitions for various
@@ -29,17 +29,17 @@ class ABILoader:
     @lru_cache(maxsize=32)
     def load(self, name: str) -> List[Dict[str, Any]]:
         abi_path = self.abi_dir / f"{name}.json"
-        
+
         if not abi_path.exists():
             raise ABILoaderError(f"ABI '{name}' not found")
-        
+
         try:
-            with open(abi_path, 'r') as f:
+            with open(abi_path, "r") as f:
                 abi = json.load(f)
-            
+
             if not isinstance(abi, list):
                 raise ABILoaderError(f"Invalid ABI format for '{name}': expected list")
-            
+
             return abi
         except json.JSONDecodeError as e:
             raise ABILoaderError(f"Invalid JSON in ABI '{name}': {e}")

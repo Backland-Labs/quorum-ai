@@ -12,7 +12,9 @@ from models import UserPreferences, VotingStrategy
 class UserPreferencesService:
     """Service for managing user preferences stored in user_preferences.txt file."""
 
-    def __init__(self, preferences_file: str = "user_preferences.txt", state_manager=None):
+    def __init__(
+        self, preferences_file: str = "user_preferences.txt", state_manager=None
+    ):
         """Initialize user preferences service.
 
         Args:
@@ -22,7 +24,7 @@ class UserPreferencesService:
         self.preferences_file = preferences_file
         self.state_manager = state_manager
         self.logger = setup_pearl_logger(__name__)
-        
+
         # Cache for preferences to avoid frequent reads
         self._preferences_cache = None
 
@@ -36,9 +38,7 @@ class UserPreferencesService:
         if self.state_manager:
             try:
                 state_data = await self.state_manager.load_state(
-                    'user_preferences',
-                    sensitive=False,
-                    allow_recovery=True
+                    "user_preferences", sensitive=False, allow_recovery=True
                 )
                 if state_data:
                     preferences = UserPreferences(**state_data)
@@ -53,9 +53,9 @@ class UserPreferencesService:
             except Exception as e:
                 self.logger.warning(
                     "Could not load from state manager, falling back to file, error=%s",
-                    str(e)
+                    str(e),
                 )
-        
+
         # Fall back to file-based loading
         try:
             if not os.path.exists(self.preferences_file):
@@ -71,7 +71,7 @@ class UserPreferencesService:
             # Try to create UserPreferences from loaded data
             preferences = UserPreferences(**data)
             self._preferences_cache = preferences
-            
+
             # Migrate to state manager if available
             if self.state_manager:
                 await self._migrate_to_state_manager(preferences)
@@ -109,14 +109,12 @@ class UserPreferencesService:
         """
         # Update cache
         self._preferences_cache = preferences
-        
+
         # Save to state manager if available
         if self.state_manager:
             try:
                 await self.state_manager.save_state(
-                    'user_preferences',
-                    preferences.model_dump(),
-                    sensitive=False
+                    "user_preferences", preferences.model_dump(), sensitive=False
                 )
                 self.logger.info(
                     "User preferences saved to state manager, voting_strategy=%s, confidence_threshold=%s, max_proposals_per_run=%s",
@@ -128,9 +126,9 @@ class UserPreferencesService:
             except Exception as e:
                 self.logger.error(
                     "Could not save to state manager, falling back to file, error=%s",
-                    str(e)
+                    str(e),
                 )
-        
+
         # Save to file (for backward compatibility or as fallback)
         try:
             # Ensure directory exists
@@ -258,38 +256,36 @@ class UserPreferencesService:
             key,
             str(value),
         )
-    
+
     async def shutdown(self) -> None:
         """Implement shutdown method required by ShutdownService protocol."""
         # Save current preferences if cached
         if self._preferences_cache:
             await self.save_preferences(self._preferences_cache)
-        
+
         self.logger.info("User preferences service shutdown completed")
-    
+
     async def save_service_state(self) -> None:
         """Save current service state for recovery."""
         if self._preferences_cache:
             await self.save_preferences(self._preferences_cache)
-    
+
     async def stop(self) -> None:
         """Stop the service gracefully."""
         await self.save_state()
-    
+
     async def _migrate_to_state_manager(self, preferences: UserPreferences) -> None:
         """Migrate preferences from file to state manager.
-        
+
         Args:
             preferences: The preferences to migrate
         """
         if not self.state_manager:
             return
-            
+
         try:
             await self.state_manager.save_state(
-                'user_preferences',
-                preferences.model_dump(),
-                sensitive=False
+                "user_preferences", preferences.model_dump(), sensitive=False
             )
             self.logger.info("Successfully migrated preferences to state manager")
         except Exception as e:

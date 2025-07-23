@@ -29,7 +29,7 @@ The agent-run endpoint executes an autonomous voting agent that:
    ```bash
    # Required for AI analysis
    OPENROUTER_API_KEY=your_openrouter_api_key
-   
+
    # Optional
    LOG_LEVEL=INFO
    ```
@@ -81,7 +81,7 @@ def test_agent_run(space_id, dry_run=True):
     """Test the agent-run endpoint."""
     print(f"\n🔍 Testing space: {space_id}")
     print(f"   Dry run: {dry_run}")
-    
+
     response = requests.post(
         f"{API_URL}/agent-run",
         json={
@@ -89,14 +89,14 @@ def test_agent_run(space_id, dry_run=True):
             "dry_run": dry_run
         }
     )
-    
+
     if response.status_code == 200:
         data = response.json()
         print(f"✅ Success!")
         print(f"   Proposals analyzed: {data['proposals_analyzed']}")
         print(f"   Votes cast: {len(data['votes_cast'])}")
         print(f"   Execution time: {data['execution_time']:.2f}s")
-        
+
         # Show voting decisions
         for vote in data['votes_cast']:
             print(f"\n   📊 Proposal: {vote['proposal_id'][:10]}...")
@@ -149,7 +149,7 @@ Expected: Agent analyzes proposals and returns decisions without voting
 # Conservative strategy
 echo '{"voting_strategy": "conservative", "confidence_threshold": 0.8}' > user_preferences.txt
 
-# Aggressive strategy  
+# Aggressive strategy
 echo '{"voting_strategy": "aggressive", "confidence_threshold": 0.6}' > user_preferences.txt
 ```
 

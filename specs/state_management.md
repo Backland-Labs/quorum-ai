@@ -135,29 +135,29 @@ $STORE_PATH/
 ```python
 class StateManager:
     """Manages persistent state storage for the Quorum AI agent."""
-    
+
     def __init__(self):
         """Initialize the state manager with configured storage paths."""
         # Set up Pearl-compliant logging
         self.logger = setup_pearl_logger("state_manager")
-        
+
         # Get store path from environment or use default
         store_path_env = os.environ.get("STORE_PATH")
         if store_path_env:
             self.store_path = Path(store_path_env)
         else:
             self.store_path = Path.home() / ".quorum_ai" / "state"
-        
+
         # Ensure store path exists
         self.store_path.mkdir(parents=True, exist_ok=True)
-        
+
         # Create subdirectories for organization
         self.backups_dir = self.store_path / "backups"
         self.backups_dir.mkdir(exist_ok=True)
-        
+
         # File locks for concurrent access protection
         self._locks: Dict[str, asyncio.Lock] = {}
-        
+
         # Maximum number of backups to keep
         self.max_backups = 5
 ```
@@ -172,7 +172,7 @@ class StateManager:
 @dataclass
 class StateSchema:
     """Defines the schema for validating state data."""
-    
+
     required_fields: List[str]
     field_types: Dict[str, type]
     validators: Dict[str, Callable[[Any], bool]]
@@ -202,14 +202,14 @@ preferences_schema = StateSchema(
 @dataclass(frozen=True)
 class StateVersion:
     """Represents a semantic version for state schemas."""
-    
+
     major: int
     minor: int
     patch: int
-    
+
     def __str__(self) -> str:
         return f"{self.major}.{self.minor}.{self.patch}"
-    
+
     def __lt__(self, other: "StateVersion") -> bool:
         return (self.major, self.minor, self.patch) < (
             other.major, other.minor, other.patch
@@ -244,18 +244,18 @@ async def save_state(
     # Validate schema if provided
     if schema:
         self._validate_schema(data, schema)
-    
+
     # Get or create lock for this state file
     if name not in self._locks:
         self._locks[name] = asyncio.Lock()
-    
+
     async with self._locks[name]:
         state_file = self.store_path / f"{name}.json"
-        
+
         # Create backup of existing file
         if state_file.exists():
             await self._create_backup(name, state_file)
-        
+
         # Prepare state data with metadata
         state_data = {
             "version": str(version) if version else "1.0.0",
@@ -263,23 +263,23 @@ async def save_state(
             "data": data,
             "checksum": self._calculate_checksum(data),
         }
-        
+
         # Write atomically using temporary file
         temp_fd, temp_path = tempfile.mkstemp(dir=self.store_path, suffix=".tmp")
         try:
             with os.fdopen(temp_fd, "w") as f:
                 json.dump(state_data, f, indent=2)
-            
+
             # Set permissions for sensitive files
             if sensitive:
                 os.chmod(temp_path, 0o600)
-            
+
             # Atomic rename
             Path(temp_path).replace(state_file)
-            
+
             self.logger.info(f"Successfully saved state: {name}")
             return state_file
-            
+
         except Exception as e:
             # Clean up temp file on error
             if os.path.exists(temp_path):
@@ -312,14 +312,14 @@ async def _load_and_validate_state(
     """Load state data and validate integrity."""
     with open(state_file, "r") as f:
         state_data = json.load(f)
-    
+
     # Verify checksum
     if "checksum" in state_data:
         expected_checksum = state_data["checksum"]
         actual_checksum = self._calculate_checksum(state_data["data"])
         if expected_checksum != actual_checksum:
             raise StateCorruptionError(f"State file {name} has checksum mismatch")
-    
+
     return state_data.get("data", state_data)
 ```
 
@@ -341,7 +341,7 @@ async def _apply_migrations(
 ) -> Dict[str, Any]:
     """Apply migrations to upgrade data to target version."""
     current_data = data
-    
+
     # Find and apply migrations in order
     for (from_v, to_v), migration_func in sorted(self._migrations.items()):
         if from_v >= from_version and to_v <= to_version:
@@ -349,9 +349,9 @@ async def _apply_migrations(
                 current_data = await migration_func(current_data)
             else:
                 current_data = migration_func(current_data)
-            
+
             self.logger.info(f"Applied migration from {from_v} to {to_v}")
-    
+
     return current_data
 
 # Example migration
@@ -375,29 +375,29 @@ class MyService:
     def __init__(self, state_manager: Optional[StateManager] = None):
         self.state_manager = state_manager
         self.logger = setup_pearl_logger(__name__)
-    
+
     async def save_service_state(self) -> None:
         """Save current service state."""
         if not self.state_manager:
             return
-        
+
         state_data = {
             "version": "1.0.0",
             "last_update": datetime.now(timezone.utc).isoformat(),
             "service_data": self._get_current_state()
         }
-        
+
         await self.state_manager.save_state(
             'my_service',
             state_data,
             schema=self._get_state_schema()
         )
-    
+
     async def load_service_state(self) -> Optional[Dict[str, Any]]:
         """Load saved service state."""
         if not self.state_manager:
             return None
-        
+
         return await self.state_manager.load_state(
             'my_service',
             schema=self._get_state_schema(),
@@ -415,11 +415,11 @@ class MyService:
 async def process_with_checkpoints(self, items: List[Any]) -> None:
     """Process items with checkpoint saves."""
     checkpoint_interval = 10
-    
+
     for i, item in enumerate(items):
         # Process item
         result = await self._process_item(item)
-        
+
         # Save checkpoint periodically
         if i % checkpoint_interval == 0 and self.state_manager:
             checkpoint_data = {
@@ -428,7 +428,7 @@ async def process_with_checkpoints(self, items: List[Any]) -> None:
                 "last_item_id": item.id,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
-            
+
             await self.state_manager.save_state(
                 f'checkpoint_{self.operation_id}',
                 checkpoint_data
@@ -605,10 +605,10 @@ async def state_manager(tmp_path):
 async def test_service_with_state(state_manager):
     """Test service state persistence."""
     service = MyService(state_manager=state_manager)
-    
+
     # Test save
     await service.save_service_state()
-    
+
     # Test load
     loaded = await service.load_service_state()
     assert loaded is not None
@@ -658,12 +658,12 @@ await state_manager.save_state("api_keys", {
 class AgentRunService:
     def __init__(self, state_manager: Optional[StateManager] = None):
         self.state_manager = state_manager
-    
+
     async def save_checkpoint(self, run_id: str, progress: Dict[str, Any]):
         """Save execution checkpoint."""
         if not self.state_manager:
             return
-        
+
         await self.state_manager.save_state(
             f'checkpoint_{run_id}',
             {
@@ -671,17 +671,17 @@ class AgentRunService:
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
         )
-    
+
     async def resume_from_checkpoint(self, run_id: str) -> Optional[Dict[str, Any]]:
         """Resume from saved checkpoint."""
         if not self.state_manager:
             return None
-        
+
         checkpoint = await self.state_manager.load_state(
             f'checkpoint_{run_id}',
             allow_recovery=True
         )
-        
+
         return checkpoint.get("progress") if checkpoint else None
 ```
 

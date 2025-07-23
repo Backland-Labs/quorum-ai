@@ -230,6 +230,20 @@ The autonomous voting agent can be configured via environment variables:
 | `PROPOSAL_FETCH_TIMEOUT` | Timeout for fetching proposals (seconds) | `30` |
 | `VOTE_EXECUTION_TIMEOUT` | Timeout for vote execution (seconds) | `60` |
 
+## Vote Attestation Setup (Manual Step)
+
+To enable on-chain vote attestations using the Ethereum Attestation Service (EAS), you must first manually register a schema on the Base network. This is a one-time setup process.
+
+1.  **Connect to Base Network**: Use a tool like Remix, Foundry, or the [EAS Schema Registry UI](https://base.easscan.org/schema/create).
+2.  **Register the Schema**: Register a new schema with the following definition:
+    ```
+    address agent, string spaceId, string proposalId, uint8 voteChoice, string snapshotSig, uint256 timestamp, string runId, uint8 confidence
+    ```
+3.  **Get the Schema UID**: After registration, you will receive a unique schema UID (a `bytes32` value).
+4.  **Set Environment Variable**: Set the `EAS_SCHEMA_UID` environment variable in your `.env` file to this new UID.
+
+The agent will use this schema to record all its voting activities on-chain.
+
 ## Voting Flow: From Decision to On-Chain Vote
 
 Quorum AI implements a sophisticated voting system that bridges AI decision-making with on-chain governance. Here's how votes flow through the system:
