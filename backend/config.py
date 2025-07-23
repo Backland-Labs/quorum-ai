@@ -36,12 +36,12 @@ class Settings(BaseSettings):
     log_level: str = Field(
         default=DEFAULT_LOG_LEVEL,
         alias="LOG_LEVEL",
-        description="Pearl-compliant log level (DEBUG, INFO, WARNING, ERROR)"
+        description="Pearl-compliant log level (DEBUG, INFO, WARNING, ERROR)",
     )
     log_file_path: str = Field(
         default=DEFAULT_LOG_FILE_PATH,
-        alias="LOG_FILE_PATH", 
-        description="Path to Pearl-compliant log file"
+        alias="LOG_FILE_PATH",
+        description="Path to Pearl-compliant log file",
     )
 
     # Performance settings
@@ -57,7 +57,6 @@ class Settings(BaseSettings):
     default_top_voters_limit: int = DEFAULT_TOP_VOTERS_LIMIT
     max_top_voters_limit: int = MAX_TOP_VOTERS_LIMIT
     min_top_voters_limit: int = MIN_TOP_VOTERS_LIMIT
-
 
     # Safe wallet configuration
     # the safe_addresses come from the pearl runtime env
@@ -163,7 +162,7 @@ class Settings(BaseSettings):
         gt=0,
         description="Delay between retry attempts in seconds",
     )
-    
+
     # Health check configuration
     HEALTH_CHECK_PORT: int = Field(
         default=8716,
@@ -205,6 +204,25 @@ class Settings(BaseSettings):
         alias="MODE_LEDGER_RPC",
         description="Mode chain RPC endpoint",
     )
+    celo_ledger_rpc: Optional[str] = Field(
+        default=None,
+        alias="CELO_LEDGER_RPC",
+        description="Celo chain RPC endpoint",
+    )
+
+    # Legacy compatibility fields for existing tests
+    chain_name: str = Field(
+        default="celo",
+        description="Default blockchain name for backwards compatibility",
+    )
+
+    @property
+    def celo_rpc(self) -> str:
+        """Legacy property for celo_rpc compatibility.
+
+        Returns celo_ledger_rpc value or empty string for backwards compatibility.
+        """
+        return self.celo_ledger_rpc or ""
 
     # EAS (Ethereum Attestation Service) configuration
     eas_contract_address: Optional[str] = Field(
@@ -237,7 +255,9 @@ class Settings(BaseSettings):
         if isinstance(v, str):
             v = v.upper().strip()
             if v not in cls.VALID_LOG_LEVELS:
-                raise ValueError(f"Invalid log level: {v}. Must be one of {cls.VALID_LOG_LEVELS}")
+                raise ValueError(
+                    f"Invalid log level: {v}. Must be one of {cls.VALID_LOG_LEVELS}"
+                )
             return v
         return cls.DEFAULT_LOG_LEVEL
 
@@ -264,7 +284,7 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return v or []
-    
+
     @field_validator("HEALTH_CHECK_PORT", mode="before")
     @classmethod
     def validate_health_check_port(cls, v):
@@ -276,11 +296,11 @@ class Settings(BaseSettings):
             if not (1 <= port <= 65535):
                 raise ValueError(f"Port must be between 1 and 65535, got {port}")
             return port
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             if isinstance(v, str) and not v.isdigit():
                 raise ValueError(f"Invalid port value: {v}")
             raise
-    
+
     @field_validator("FAST_TRANSITION_THRESHOLD", mode="before")
     @classmethod
     def validate_fast_transition_threshold(cls, v):
@@ -290,9 +310,11 @@ class Settings(BaseSettings):
         try:
             threshold = int(v)
             if threshold <= 0:
-                raise ValueError(f"Fast transition threshold must be positive, got {threshold}")
+                raise ValueError(
+                    f"Fast transition threshold must be positive, got {threshold}"
+                )
             return threshold
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             if isinstance(v, str) and not v.isdigit():
                 raise ValueError(f"Invalid threshold value: {v}")
             raise
@@ -512,12 +534,17 @@ class Settings(BaseSettings):
         if log_level_env:
             level = log_level_env.upper()
             if level not in self.VALID_LOG_LEVELS:
-                raise ValueError(f"Invalid log level: {level}. Must be one of {self.VALID_LOG_LEVELS}")
+                raise ValueError(
+                    f"Invalid log level: {level}. Must be one of {self.VALID_LOG_LEVELS}"
+                )
             self.log_level = level
 
         log_file_path_env = os.getenv("LOG_FILE_PATH")
         if log_file_path_env:
-            if not log_file_path_env.strip() or log_file_path_env.strip().lower() == "none":
+            if (
+                not log_file_path_env.strip()
+                or log_file_path_env.strip().lower() == "none"
+            ):
                 raise ValueError("Log file path cannot be empty")
             self.log_file_path = log_file_path_env.strip()
 
@@ -534,11 +561,76 @@ class Settings(BaseSettings):
 
     def get_base_rpc_endpoint(self) -> Optional[str]:
         """Get Base network RPC endpoint.
-        
+
         Returns:
             Base RPC endpoint from either base_rpc_url or base_ledger_rpc.
         """
         return self.base_rpc_url or self.base_ledger_rpc
+
+    def validate_attestation_environment(self) -> bool:
+        """Validate that all required environment variables for vote attestation are present.
+
+        This method checks for critical environment variables needed for the vote
+        attestation system to function properly in production.
+
+        Returns:
+            True if all required variables are present and valid.
+
+        Raises:
+            ValueError: If any required environment variable is missing or invalid.
+        """
+        missing_vars = []
+
+        # Check required OpenRouter API key for AI voting decisions
+        if not self.openrouter_api_key:
+            missing_vars.append("OPENROUTER_API_KEY")
+
+        # Check required EAS configuration for on-chain attestations
+        if not self.eas_contract_address:
+            missing_vars.append("EAS_CONTRACT_ADDRESS")
+
+        if not self.eas_schema_uid:
+            missing_vars.append("EAS_SCHEMA_UID")
+
+        # Check required Base network configuration for attestation transactions
+        if not self.base_safe_address:
+            missing_vars.append("BASE_SAFE_ADDRESS")
+
+        # Check that at least one Base RPC endpoint is configured
+        if not self.get_base_rpc_endpoint():
+            missing_vars.append("BASE_RPC_URL or BASE_LEDGER_RPC")
+
+        if missing_vars:
+            missing_vars_str = ", ".join(missing_vars)
+            raise ValueError(
+                f"Missing required environment variables for vote attestation system: {missing_vars_str}. "
+                f"Please configure these variables in your .env file. See .env.example for reference."
+            )
+
+        # Validate EAS contract address format (should be a valid Ethereum address)
+        if self.eas_contract_address and not self.eas_contract_address.startswith("0x"):
+            raise ValueError(
+                f"Invalid EAS_CONTRACT_ADDRESS format: {self.eas_contract_address}. "
+                f"Must be a valid Ethereum address starting with '0x'."
+            )
+
+        # Validate EAS schema UID format (should be a 32-byte hex string with 0x prefix)
+        if self.eas_schema_uid and not (
+            self.eas_schema_uid.startswith("0x") and len(self.eas_schema_uid) == 66
+        ):
+            raise ValueError(
+                f"Invalid EAS_SCHEMA_UID format: {self.eas_schema_uid}. "
+                f"Must be a 32-byte hex string with '0x' prefix (66 characters total)."
+            )
+
+        # Validate Base Safe address format
+        if self.base_safe_address and not self.base_safe_address.startswith("0x"):
+            raise ValueError(
+                f"Invalid BASE_SAFE_ADDRESS format: {self.base_safe_address}. "
+                f"Must be a valid Ethereum address starting with '0x'."
+            )
+
+        return True
 
 
 # Global settings instance
