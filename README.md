@@ -166,7 +166,6 @@ quorum-ai/
 │   ├── config.py                  # Pearl-compliant configuration
 │   ├── models.py                  # Pydantic data models
 │   ├── logging_config.py          # Pearl logging setup
-│   ├── river.py                   # River framework interface
 │   ├── services/
 │   │   ├── ai_service.py          # AI summarization & voting logic
 │   │   ├── snapshot_service.py    # Snapshot GraphQL integration
