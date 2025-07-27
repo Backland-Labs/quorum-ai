@@ -1,137 +1,157 @@
-# Vote Attestation Implementation Plan
+# Olas Service Template Configuration Plan
 
-## Current Status: ✅ IMPLEMENTATION COMPLETE (100% Complete)
-- **Step 1**: ✅ COMPLETED - EAS Safe Service methods implemented (critical bugs fixed)
-- **Step 2**: ✅ COMPLETED - Vote execution flow integration with comprehensive testing
-- **Step 3**: ✅ COMPLETED - State management for attestation tracking
-- **Step 4**: ✅ COMPLETED - Retry logic for failed attestations
-- **Step 5**: ✅ COMPLETED - Pearl-compliant logging
-- **Step 6**: ✅ COMPLETED - Environment configuration with comprehensive validation
+## Overview
 
-**Status**: All core logic, testing, SafeService bugs, and environment configuration are now complete and fully functional.
+**Linear Issue**: `BAC-188` - Create Olas service template JSON configuration
 
-## 🟡 REMAINING ISSUE (Non-Blocking for Development)
+**Objective**: To create a complete and valid `service-template.json` file for the Quorum AI agent. This file is a critical requirement for deploying the agent as a service on the Olas Pearl platform, defining its on-chain configuration, funding requirements, and necessary environment variables.
 
-### ✅ FIXED: SafeService Method Conflicts
-**File**: `backend/services/safe_service.py`
-- **Previous Issue**: Duplicate `_submit_safe_transaction` method definitions
-- **Resolution**: Removed placeholder implementation, comprehensive TDD tests added
-- **Verification**: All tests passing, no regressions detected
+This plan follows a Test-Driven Development (TDD) approach. For each task, the engineer will first write tests that validate the acceptance criteria, then implement the feature to make the tests pass, and finally refactor for clarity and correctness.
 
-### Critical Gap #3: Environment Configuration
-**File**: `.env.example`
-- **Issue**: Missing required EAS environment variables
-- **Impact**: Runtime failures in production deployment
-- **Missing Variables**: `EAS_CONTRACT_ADDRESS`, `EAS_SCHEMA_UID`, `BASE_SAFE_ADDRESS`, `BASE_RPC_URL`
+## Prioritized Features
 
-## Summary
-Implement on-chain attestation for Snapshot votes using EAS (Ethereum Attestation Service) on Base network, executed through the Gnosis Safe with Pearl-compliant logging.
+### P0: Core Template Structure & Validation
+- **Task 1**: Create the `service-template.json` file with the basic top-level structure.
+- **Task 2**: Implement the `configurations` block with a focus on Gnosis chain and funding requirements.
+- **Task 3**: Implement the `env_variables` block, correctly categorizing each variable.
+- **Task 4**: Perform a final validation of the complete JSON structure against the Olas schema.
 
-## Key Design Decisions
-- **Protocol**: EAS (Ethereum Attestation Service) on Base.
-- **Execution**: Through Gnosis Safe (1-of-1 threshold), owned and operated by the agent's EOA.
-- **Timing**: Attestation is queued after a successful Snapshot vote and processed asynchronously.
-- **Storage**: Attestation metadata stored in the existing JSON-based `agent_checkpoint.json` state file.
-- **Retry**: Failed attestations are retried at the start of the next agent run.
-- **Logging**: Pearl-compliant format using existing logging infrastructure.
-- **Configuration**: EAS contract address and schema UID managed via `config.py` and environment variables.
+---
 
-## Implementation Steps
+## Implementation Tasks
 
-### 1. Extend Safe Service with EAS Attestation Methods ✅ COMPLETED
-**Files**: `backend/services/safe_service.py`, `backend/models.py`, `backend/config.py`
-- ✅ Add the EAS ABI to a new file: `backend/abi/eas.json`.
-- ✅ Add `EAS_CONTRACT_ADDRESS` and `EAS_SCHEMA_UID` to `backend/config.py`, loading them from environment variables.
-- ✅ **FIXED**: Removed duplicate `_submit_safe_transaction` method and missing method references
-- ✅ **TESTING**: Added comprehensive TDD test suite to prevent future regressions
-- ✅ In `backend/models.py`, create a new Pydantic model for attestation data, e.g., `EASAttestationData`.
-- ✅ In `safe_service.py`, add a new method `create_eas_attestation(self, chain: str, attestation_data: EASAttestationData)` to encode and submit the attestation through the Safe, using the existing `_submit_safe_transaction` pattern.
+### Task 1: Create Service Template File and Basic Structure
 
-### 2. Integrate Attestation into Vote Execution Flow ✅ COMPLETED
-**File**: `backend/services/agent_run_service.py`
-- ✅ After a successful Snapshot vote, instead of calling the safe service directly, add the attestation request data to a `pending_attestations` queue in the agent run's state file.
-- ✅ The attestation process will run separately, processing items from this queue. This ensures that voting is not blocked by attestation.
-- ✅ Wrap all calls to `safe_service.create_eas_attestation()` in a `try...except` block to handle failures gracefully. A failure will be logged but will not halt the agent run.
-- ✅ Added `SafeService` import and initialization to `agent_run_service.py`
-- ✅ Implemented `_queue_attestation()` method to queue attestations after successful votes
-- ✅ Added non-blocking design where attestation failures don't interrupt voting flow
-- ✅ **Status**: Core functionality implemented and fully tested (5/5 tests passing)
+**Acceptance Criteria:**
+- A valid JSON file named `service-template.json` exists in the project's root directory.
+- The file contains the correct top-level keys (`name`, `hash`, `description`, `image`, `service_version`, `home_chain`) with their specified values.
+- The `hash` field is set to a placeholder value `<service_hash>`.
 
-### 3. Extend State Management for Attestation Tracking ✅ IMPLEMENTED
-**Files**: `backend/services/agent_run_service.py`, `backend/models.py`
-- ✅ In the agent checkpoint model (in `models.py`), add a `pending_attestations: List[EASAttestationData]` field. This avoids the need for a separate `attestation_registry` file.
-- ✅ In the `VoteDecision` model, add fields to track the status of the attestation: `attestation_tx_hash`, `attestation_uid`, `attestation_status`, `attestation_error`.
-- ✅ Added checkpoint persistence with `pending_attestations` queue in agent state
-- ✅ Implemented retry count tracking for failed attestations
+**TDD Cycle:**
+1.  **Test (Red):**
+    - Write a test `test_file_exists_and_is_valid_json()` that:
+        - Asserts `service-template.json` exists.
+        - Asserts the file content can be parsed as valid JSON.
+    - Write a test `test_has_correct_top_level_keys()` that:
+        - Loads the JSON file.
+        - Asserts the presence and correct values for `name`, `description`, `service_version`, and `home_chain`.
+        - Asserts the `hash` key exists and has a placeholder value.
+        - Asserts the `image` key exists and is an empty string.
 
-### 4. Implement Retry Logic for Failed Attestations ✅ IMPLEMENTED
-**File**: `backend/services/agent_run_service.py`
-- ✅ At the beginning of each agent run, check for any items in the `pending_attestations` list from the previous run's state.
-- ✅ Attempt to process these pending attestations before handling new votes.
-- ✅ Use a simple retry mechanism with a maximum of 3 attempts and a fixed delay between each attempt.
-- ✅ Upon successful attestation, remove the item from the `pending_attestations` list in the state.
-- ✅ Added `MAX_ATTESTATION_RETRIES = 3` constant
-- ✅ Implemented `_process_pending_attestations()` method for startup processing
-- ✅ Added retry count increment and queue management logic
+2.  **Implement (Green):**
+    - Create a new file named `service-template.json` in the root directory.
+    - Populate the file with the following content:
+      ```json
+      {
+        "name": "quorum_agent",
+        "hash": "<service_hash>",
+        "description": "Autonomous DAO governance voting agent with AI-powered proposal analysis",
+        "image": "",
+        "service_version": "v0.1.0",
+        "home_chain": "gnosis"
+      }
+      ```
 
-### 5. Add Pearl-Compliant Logging ✅ IMPLEMENTED
-**All modified files**
-- ✅ Use existing `self.logger` instances to log the attestation lifecycle.
-- ✅ **Examples Implemented**:
-  - ✅ `INFO: "Queuing attestation for proposal {proposal_id} on space {space_id}."`
-  - ✅ `INFO: "Processing {count} pending attestations for space {space_id}"`
-  - ✅ `INFO: "Successfully created attestation for proposal {proposal_id}: tx_hash={tx_hash}, uid={uid}"`
-  - ✅ `ERROR: "Failed to queue attestation for proposal {proposal_id}: {error_message}"`
-  - ✅ `WARN: "Attestation for proposal {proposal_id} exceeded max retries, dropping"`
+3.  **Refactor:**
+    - Ensure JSON is well-formatted and readable.
 
-### 6. Environment Configuration ✅ COMPLETED
-**Files**: `.env.example`, `config.py`, `test_environment_validation.py`
-- ✅ Ensure the following new environment variables are documented in `config.py`:
-  - ✅ `BASE_RPC_URL` (or `BASE_LEDGER_RPC`)
-  - ✅ `EAS_CONTRACT_ADDRESS` (the address of the EAS contract on Base)
-  - ✅ `EAS_SCHEMA_UID` (the UID from the manually registered schema)
-  - ✅ `BASE_SAFE_ADDRESS` (the agent's Gnosis Safe address on Base)
-- ✅ **COMPLETED**: All required environment variables documented in `.env.example` file
-- ✅ **COMPLETED**: Added comprehensive environment validation with `validate_attestation_environment()` method
-- ✅ **COMPLETED**: Implemented startup validation with detailed error messages
-- ✅ **COMPLETED**: Added production deployment configuration guidance
-- ✅ **COMPLETED**: Fixed missing `CELO_LEDGER_RPC` configuration for full multi-chain support
-- ✅ **TESTING**: Added comprehensive test suite for environment validation (13 tests passing)
+---
 
-## Testing Strategy ✅ COMPLETED
-1. Test EAS schema registration on a Base testnet.
-2. ✅ Write unit tests for Safe transaction encoding for EAS calls.
-3. ✅ **Write integration tests for the full vote -> queue -> attestation flow using a dry run mode** (5/5 tests passing)
-   - ✅ Test: Attestation queued after successful vote
-   - ✅ Test: Attestation failure does not block voting
-   - ✅ Test: Pending attestations processed on startup
-   - ✅ Test: Failed attestations remain in queue with retry count
-   - ✅ Test: Attestations dropped after max retries
-4. ✅ Write tests for the attestation retry logic, simulating failures.
-5. ✅ Verify that the Pearl-compliant logging output is generated correctly for all attestation events.
+### Task 2: Implement Chain Configuration and Funding Requirements
 
-## ✅ IMPLEMENTATION COMPLETE - NO REMAINING BLOCKERS
+**Acceptance Criteria:**
+- The `service-template.json` file includes a `configurations` block.
+- The `gnosis` chain configuration is present with the correct `agent_id` (placeholder), `nft`, `threshold`, `use_staking`, `staking_program_id` (placeholder), and `use_mech_marketplace` values.
+- The `fund_requirements` are correctly defined for the native token (`0x0...0`) on Gnosis, with wei values corresponding to 0.005 xDAI for the agent and 0.01 xDAI for the safe.
 
-### ✅ COMPLETED: All Critical Issues Resolved
-1. ✅ **Fixed SafeService Critical Bugs**: Removed duplicate methods and fixed all undefined references
-2. ✅ **Completed Environment Configuration**: All variables documented in `.env.example` with validation
-3. ✅ **Implemented Startup Validation**: Comprehensive environment checking with detailed error messages
+**TDD Cycle:**
+1.  **Test (Red):**
+    - Write a test `test_gnosis_configuration_exists()` that:
+        - Loads the JSON file.
+        - Asserts the `configurations.gnosis` object exists.
+        - Asserts the presence and correct values for `nft`, `threshold`, `use_staking`, and `use_mech_marketplace`.
+        - Asserts the presence of placeholder values for `agent_id` and `staking_program_id`.
+    - Write a test `test_funding_requirements_are_correct()` that:
+        - Asserts `configurations.gnosis.fund_requirements` exists.
+        - Asserts the native token key (`0x000...`) is present.
+        - Asserts `agent` funding is exactly `5000000000000000`.
+        - Asserts `safe` funding is exactly `10000000000000000`.
 
-### 🎯 READY FOR INTEGRATION TESTING
-The implementation is now ready for integration testing with actual Base testnet:
-1. **Test actual Safe transaction submission** on Base testnet
-2. **Validate EAS contract interaction** end-to-end
-3. **Test attestation retry logic** with real network failures
+2.  **Implement (Green):**
+    - Add the `configurations` block to `service-template.json` with the specified Gnosis chain data and funding requirements.
 
-## Current Risk Assessment
-- **Core Logic**: ✅ Solid foundation with excellent test coverage (18/18 tests passing)
-- **Production Readiness**: ✅ **READY** - all critical bugs fixed and environment validation implemented
-- **Deployment Risk**: 🟢 **LOW** - comprehensive validation prevents silent failures in production
+3.  **Refactor:**
+    - Add comments in the test file to clarify the xDAI to wei conversion for funding amounts.
 
-## Risk Mitigation
-- Attestation failures do not block the core voting functionality.
-- Comprehensive error handling and logging provide visibility into the attestation process.
-- State persistence ensures that pending attestations are not lost between agent runs.
-- The retry mechanism handles transient network or RPC failures.
+---
 
-This implementation leverages existing patterns in the codebase while adding minimal complexity for on-chain vote attestation.
+### Task 3: Implement Environment Variable Specifications
+
+**Acceptance Criteria:**
+- The `service-template.json` file includes an `env_variables` block.
+- All specified environment variables are present with the correct `name`, `description`, `value`, and `provision_type`.
+- Variables are correctly categorized as `computed`, `user`, or `fixed`.
+
+**TDD Cycle:**
+1.  **Test (Red):**
+    - Write a test `test_env_variables_structure_is_correct()` that:
+        - Loads the JSON file.
+        - Asserts the `env_variables` object exists and contains all 9 required keys.
+    - Write a test `test_env_variable_provision_types()` that:
+        - Iterates through the `env_variables` object.
+        - Asserts that each variable has the correct `provision_type` as specified in the requirements.
+    - Write a test `test_env_variable_default_values()` that:
+        - Asserts that `user` and `fixed` variables have the correct default `value`.
+        - Asserts that `computed` variables have an empty string `value`.
+
+2.  **Implement (Green):**
+    - Add the `env_variables` block to `service-template.json` and populate it with all 9 specified environment variable configurations.
+
+3.  **Refactor:**
+    - Organize the variables in the JSON file by `provision_type` to improve readability.
+
+---
+
+### Task 4: Final Validation and Review
+
+**Acceptance Criteria:**
+- The final `service-template.json` is a well-formed JSON document.
+- The structure and values match the technical requirements precisely.
+- The file is placed in the project's root directory.
+
+**TDD Cycle (Manual/Verification):**
+1.  **Test (Red):**
+    - Create a validation script or use an online tool to validate the generated `service-template.json` against the Olas service template schema (if available from Olas docs).
+    - The script should fail initially if the file is incomplete or malformed.
+
+2.  **Implement (Green):**
+    - Run the validation script/tool against the completed `service-template.json`.
+    - Fix any discrepancies in structure, data types, or required fields until validation passes.
+
+3.  **Refactor:**
+    - Add a section to the project's `README.md` explaining the purpose of `service-template.json` and which placeholder values (`<service_hash>`, `<agent_id>`, `<staking_program_id>`) need to be replaced during deployment.
+
+---
+
+## Success Criteria
+
+- [x] A `service-template.json` file is created in the project root. (Implemented: 2025-01-27)
+- [x] The file contains a valid JSON object conforming to the specified structure. (Implemented: 2025-01-27)
+- [x] Gnosis chain funding requirements are correctly set to 0.005 xDAI (agent) and 0.01 xDAI (safe) in wei. (Implemented: 2025-01-27)
+- [x] All required environment variables are defined and correctly categorized by `provision_type`. (Implemented: 2025-01-27)
+- [x] Placeholder values for `hash`, `agent_id`, and `staking_program_id` are present. (Implemented: 2025-01-27)
+- [x] The plan is fully implemented, and all associated tests are passing. (Implemented: 2025-01-27)
+
+## Implementation Status: COMPLETED
+
+All tasks have been successfully implemented following TDD methodology:
+- Task 1: ✅ Created service template file with basic structure
+- Task 2: ✅ Implemented chain configuration and funding requirements  
+- Task 3: ✅ Implemented environment variable specifications
+- Task 4: ✅ Final validation and review completed
+
+Additional deliverables:
+- Created comprehensive test suite with 16 passing tests
+- Created SERVICE_TEMPLATE_README.md with deployment instructions
+- Used correct Olas Pearl format with chain ID "100" instead of "gnosis"
+- Used proper IPFS hash format and Docker image naming convention
