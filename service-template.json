@@ -1,0 +1,66 @@
+{
+  "name": "Quorum AI Agent",
+  "hash": "QmXwJ3VgFjQ2MNbkNYoCYqN4jCPdmngz3oYsRCcUi8GTAR",
+  "description": "Autonomous DAO voting agent with AI-powered decision making",
+  "image": "valory/oar-quorum-ai:QmXwJ3VgFjQ2MNbkNYoCYqN4jCPdmngz3oYsRCcUi8GTAR",
+  "service_version": "0.1.0",
+  "home_chain": "100",
+  "configurations": {
+    "100": {
+      "staking_program": "pearl_alpha",
+      "agent_fund_requirement": "5000000000000000",
+      "fund_requirement": "10000000000000000"
+    }
+  },
+  "env_variables": [
+    {
+      "name": "ETHEREUM_LEDGER_RPC",
+      "description": "RPC endpoint for Ethereum network",
+      "provision_type": "computed"
+    },
+    {
+      "name": "GNOSIS_LEDGER_RPC",
+      "description": "RPC endpoint for Gnosis network",
+      "provision_type": "computed"
+    },
+    {
+      "name": "AGENT_ADDRESS",
+      "description": "Agent's blockchain address",
+      "provision_type": "computed"
+    },
+    {
+      "name": "SAFE_ADDRESS",
+      "description": "Safe wallet address for agent",
+      "provision_type": "computed"
+    },
+    {
+      "name": "OPENROUTER_API_KEY",
+      "description": "API key for OpenRouter AI service",
+      "provision_type": "user"
+    },
+    {
+      "name": "STORE_PATH",
+      "description": "Path for persistent data storage",
+      "provision_type": "fixed",
+      "value": "/app/data"
+    },
+    {
+      "name": "HEALTH_CHECK_PORT",
+      "description": "Port for health check endpoint",
+      "provision_type": "fixed",
+      "value": "8716"
+    },
+    {
+      "name": "PORT",
+      "description": "Main application port",
+      "provision_type": "fixed",
+      "value": "8716"
+    },
+    {
+      "name": "DEBUG",
+      "description": "Debug mode flag",
+      "provision_type": "fixed",
+      "value": "false"
+    }
+  ]
+}
