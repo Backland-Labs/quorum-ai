@@ -714,6 +714,25 @@ class AgentRunResponse(BaseModel):
         return float(v)
 
 
+class AgentRunStatus(BaseModel):
+    """Response model for agent run status endpoint."""
+    
+    current_state: str = Field(
+        description="Current state of the agent (e.g., IDLE, FETCHING_PROPOSALS)"
+    )
+    last_run_timestamp: Optional[str] = Field(
+        None,
+        description="ISO timestamp of the last completed agent run"
+    )
+    is_active: bool = Field(
+        description="Whether the agent is currently running"
+    )
+    current_space_id: Optional[str] = Field(
+        None,
+        description="Space ID of the current or last run"
+    )
+
+
 class UserPreferences(BaseModel):
     """User preferences model for agent run configuration."""
 

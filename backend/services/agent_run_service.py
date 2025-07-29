@@ -1,5 +1,7 @@
 """Agent Run Service for executing autonomous voting decisions."""
 
+import glob
+import os
 import time
 from typing import List, Optional, Tuple
 
@@ -1068,3 +1070,89 @@ class AgentRunService:
         )
 
         self.pearl_logger.info("Saved shutdown state for recovery")
+
+    def _get_checkpoint_pattern(self) -> str:
+        """Get the file pattern for checkpoint files.
+        
+        Returns:
+            Glob pattern for checkpoint files
+        """
+        return os.path.join(
+            self.state_manager.store_path,
+            "agent_checkpoint_*.json"
+        )
+
+    async def get_latest_checkpoint(self) -> Optional[dict]:
+        """Get the most recent checkpoint across all spaces.
+        
+        Returns:
+            The most recent checkpoint data or None if no checkpoints exist
+        """
+        if not self.state_manager:
+            return None
+        
+        latest_checkpoint = None
+        latest_timestamp = None
+        
+        # Find all checkpoint files
+        checkpoint_files = glob.glob(self._get_checkpoint_pattern())
+        
+        for file_path in checkpoint_files:
+            checkpoint_name = os.path.basename(file_path).replace('.json', '')
+            checkpoint_data = await self.state_manager.load_state(checkpoint_name)
+            
+            if checkpoint_data and "timestamp" in checkpoint_data:
+                # Parse timestamp
+                try:
+                    timestamp = datetime.fromisoformat(
+                        checkpoint_data["timestamp"].replace("Z", "+00:00")
+                    )
+                    
+                    if latest_timestamp is None or timestamp > latest_timestamp:
+                        latest_timestamp = timestamp
+                        latest_checkpoint = checkpoint_data
+                except Exception as e:
+                    self.pearl_logger.warning(
+                        f"Failed to parse timestamp for {checkpoint_name}: {e}"
+                    )
+                    
+        return latest_checkpoint
+
+    def get_current_state(self) -> str:
+        """Get the current agent state from StateTransitionTracker.
+        
+        Returns:
+            Current state value as string
+        """
+        return self.state_tracker.current_state.value
+
+    def is_agent_active(self) -> bool:
+        """Check if the agent is currently running.
+        
+        Returns:
+            True if agent is active, False otherwise
+        """
+        return self._active_run or self.state_tracker.current_state != AgentState.IDLE
+
+    async def get_all_checkpoint_data(self) -> List[dict]:
+        """Get data from all checkpoint files.
+        
+        Returns:
+            List of all checkpoint data
+        """
+        if not self.state_manager:
+            return []
+        
+        checkpoints = []
+        
+        # Find all checkpoint files
+        checkpoint_files = glob.glob(self._get_checkpoint_pattern())
+        
+        for file_path in checkpoint_files:
+            checkpoint_name = os.path.basename(file_path).replace('.json', '')
+            checkpoint_data = await self.state_manager.load_state(checkpoint_name)
+            
+            if checkpoint_data:
+                checkpoints.append(checkpoint_data)
+                
+        return checkpoints

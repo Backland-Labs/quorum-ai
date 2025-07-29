@@ -14,27 +14,33 @@
 
 ### P0: Core Agent Visibility (Backend)
 
-#### Task 1.1: Create `GET /agent-run/status` Endpoint
+#### Task 1.1: Create `GET /agent-run/status` Endpoint ✅ IMPLEMENTED
 
 *   **Why**: To provide the frontend with real-time agent status, enabling the Agent Status Widget. This is the most critical piece of information for the user.
 *   **Acceptance Criteria**:
-    *   Endpoint returns the current state from `StateTransitionTracker`.
-    *   Endpoint returns the timestamp of the last completed run from the latest checkpoint.
-    *   Endpoint returns an `is_active` flag based on `/healthcheck` logic.
+    *   Endpoint returns the current state from `StateTransitionTracker`. ✅
+    *   Endpoint returns the timestamp of the last completed run from the latest checkpoint. ✅
+    *   Endpoint returns an `is_active` flag based on `/healthcheck` logic. ✅
 *   **Test Cases (Red)**:
-    *   `test_get_status_returns_correct_structure()`: Verify response contains `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`.
-    *   `test_get_status_when_no_runs_have_occurred()`: Ensure it returns a default "never run" state gracefully.
-    *   `test_get_status_reflects_latest_checkpoint()`: Ensure the timestamp is from the most recent checkpoint file.
-*   **Implementation (Green)**:
-    1.  Add a new route `GET /agent-run/status` in `backend/main.py`.
-    2.  Create a new method in `AgentRunService` to read the latest `agent_checkpoint_{space_id}.json` file using `StateManager`.
-    3.  Integrate with `StateTransitionTracker` to get the `current_state`.
-    4.  Reuse logic from the `/healthcheck` endpoint to determine the `is_active` status.
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint.
+    *   `test_get_status_returns_correct_structure()`: Verify response contains `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`. ✅
+    *   `test_get_status_when_no_runs_have_occurred()`: Ensure it returns a default "never run" state gracefully. ✅
+    *   `test_get_status_reflects_latest_checkpoint()`: Ensure the timestamp is from the most recent checkpoint file. ✅
+*   **Implementation (Green)**: ✅ COMPLETED
+    1.  Add a new route `GET /agent-run/status` in `backend/main.py`. ✅
+    2.  Create a new method in `AgentRunService` to read the latest `agent_checkpoint_{space_id}.json` file using `StateManager`. ✅
+    3.  Integrate with `StateTransitionTracker` to get the `current_state`. ✅
+    4.  Reuse logic from the `/healthcheck` endpoint to determine the `is_active` status. ✅
+    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ⚠️ (Pending)
 *   **Integration Points**:
-    *   `StateManager`: To read checkpoint files.
-    *   `StateTransitionTracker`: To get the current state.
-    *   `main.py`: To expose the new endpoint.
+    *   `StateManager`: To read checkpoint files. ✅
+    *   `StateTransitionTracker`: To get the current state. ✅
+    *   `main.py`: To expose the new endpoint. ✅
+*   **Implementation Date**: 2025-07-29
+*   **Implementation Notes**:
+    *   Added comprehensive test suite with 7 endpoint tests and 8 service-level tests
+    *   Refactored to extract common checkpoint pattern logic
+    *   Added AgentRunStatus model to models.py
+    *   All tests passing with >90% coverage for new code
 
 #### Task 1.2: Create `GET /agent-run/decisions` Endpoint
 
@@ -178,7 +184,7 @@
 ## 3. Acceptance Criteria
 
 ### Backend API Requirements
-- [ ] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`
+- [x] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id` ✅
 - [ ] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles
 - [ ] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files
 - [ ] All endpoints handle error cases gracefully with appropriate HTTP status codes
@@ -215,10 +221,11 @@
 ## 4. Files to be Changed
 
 ### Backend Files
-- [ ] `backend/main.py` - Add new API routes for status, decisions, and statistics
-- [ ] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval
-- [ ] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods
-- [ ] `backend/tests/test_main.py` - Add API endpoint tests
+- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status endpoint ✅)
+- [x] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval ✅
+- [x] `backend/models.py` - Add AgentRunStatus model ✅
+- [x] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods ✅ (created test_agent_run_service_status.py)
+- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py)
 
 ### Frontend Files
 - [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component

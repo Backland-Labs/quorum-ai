@@ -16,6 +16,7 @@ from config import settings
 from models import (
     AgentRunRequest,
     AgentRunResponse,
+    AgentRunStatus,
     Proposal,
     ProposalTopVoters,
     ProposalVoter,
@@ -465,6 +466,45 @@ async def agent_run(request: AgentRunRequest):
         raise HTTPException(
             status_code=500, detail=f"Failed to execute agent run: {str(e)}"
         )
+
+
+@app.get("/agent-run/status", response_model=AgentRunStatus)
+async def get_agent_run_status():
+    """Get current agent run status.
+    
+    Returns the agent's current state, last run timestamp, active status,
+    and the space ID of the current/last run.
+    
+    Returns:
+        AgentRunStatus with current agent state information
+    """
+    try:
+        with log_span(logger, "get_agent_run_status"):
+            # Get latest checkpoint
+            checkpoint = await agent_run_service.get_latest_checkpoint()
+            
+            # Get current state and active status
+            current_state = agent_run_service.get_current_state()
+            is_active = agent_run_service.is_agent_active()
+            
+            # Extract data from checkpoint if available
+            last_run_timestamp = None
+            current_space_id = None
+            
+            if checkpoint:
+                last_run_timestamp = checkpoint.get("timestamp")
+                current_space_id = checkpoint.get("space_id")
+            
+            return AgentRunStatus(
+                current_state=current_state,
+                last_run_timestamp=last_run_timestamp,
+                is_active=is_active,
+                current_space_id=current_space_id
+            )
+            
+    except Exception as e:
+        logger.error(f"Error getting agent run status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # Private helper functions for top voters endpoint
