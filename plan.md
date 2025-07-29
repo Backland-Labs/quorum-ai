@@ -8,6 +8,11 @@
 
 **Guiding Principle**: This plan follows a strict Test-Driven Development (TDD) methodology. For each task, tests will be written first to define the expected behavior (Red), then code will be written to pass those tests (Green), and finally, the code will be refactored for clarity and maintainability.
 
+**Verification Instructions**: After completing each task, verify the implementation by running the appropriate test commands:
+- **Backend changes**: Run `uv run main.py` to start the server and verify endpoints work correctly
+- **Frontend changes**: Run `npm run build` in the frontend directory to ensure the build succeeds
+- **Always run tests**: Execute the relevant test suite to confirm all tests pass before marking a task complete
+
 ---
 
 ## 2. Prioritized Feature Implementation
@@ -42,28 +47,36 @@
     *   Added AgentRunStatus model to models.py
     *   All tests passing with >90% coverage for new code
 
-#### Task 1.2: Create `GET /agent-run/decisions` Endpoint ✅
+#### Task 1.2: Create `GET /agent-run/decisions` Endpoint ✅ IMPLEMENTED
 
 *   **Why**: To provide the frontend with the agent's most recent voting decisions, populating the Recent Decisions Panel. This directly exposes the agent's primary function.
 *   **Acceptance Criteria**:
-    *   Endpoint returns a list of the `N` most recent `VoteDecision` objects.
-    *   Each decision object is enriched with the proposal title.
-    *   The list is sorted in reverse chronological order.
+    *   Endpoint returns a list of the `N` most recent `VoteDecision` objects. ✅
+    *   Each decision object is enriched with the proposal title. ✅
+    *   The list is sorted in reverse chronological order. ✅
 *   **Test Cases (Red)**:
-    *   `test_get_decisions_returns_correct_structure()`: Verify response contains a `decisions` array with correctly structured objects.
-    *   `test_get_decisions_respects_limit_parameter()`: Ensure `?limit=N` works as expected.
-    *   `test_get_decisions_enriches_with_proposal_title()`: Verify it calls the proposal service to get the title.
-    *   `test_get_decisions_returns_empty_list_when_no_history()`: Handle the case with no prior decisions gracefully.
-*   **Implementation (Green)**:
-    1.  Add a new route `GET /agent-run/decisions` in `backend/main.py`.
-    2.  Create a new method in `AgentRunService` to scan all `agent_checkpoint_*.json` files.
-    3.  Aggregate `votes_cast` from all checkpoints, sort them by timestamp, and take the top `N`.
-    4.  For each decision, call `SnapshotService.get_proposal()` to fetch the title and add it to the response object.
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint.
+    *   `test_get_decisions_returns_correct_structure()`: Verify response contains a `decisions` array with correctly structured objects. ✅
+    *   `test_get_decisions_respects_limit_parameter()`: Ensure `?limit=N` works as expected. ✅
+    *   `test_get_decisions_enriches_with_proposal_title()`: Verify it calls the proposal service to get the title. ✅
+    *   `test_get_decisions_returns_empty_list_when_no_history()`: Handle the case with no prior decisions gracefully. ✅
+    *   `test_get_decisions_handles_service_errors_gracefully()`: Handle service errors appropriately. ✅
+    *   `test_get_decisions_default_limit_is_applied()`: Apply default limit when not specified. ✅
+*   **Implementation (Green)**: ✅ COMPLETED
+    1.  Add a new route `GET /agent-run/decisions` in `backend/main.py`. ✅
+    2.  Create a new method in `AgentRunService` to scan all `agent_checkpoint_*.json` files. ✅
+    3.  Aggregate `votes_cast` from all checkpoints, sort them by timestamp, and take the top `N`. ✅
+    4.  For each decision, call `SnapshotService.get_proposal()` to fetch the title and add it to the response object. ✅
+    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ⚠️ (Pending)
 *   **Integration Points**:
-    *   `StateManager`: To read checkpoint files.
-    *   `SnapshotService`: To fetch proposal details.
-    *   `main.py`: To expose the new endpoint.
+    *   `StateManager`: To read checkpoint files. ✅
+    *   `SnapshotService`: To fetch proposal details. ✅
+    *   `main.py`: To expose the new endpoint. ✅
+*   **Implementation Date**: 2025-07-29
+*   **Implementation Notes**:
+    *   Added comprehensive test suite in test_agent_run_decisions.py
+    *   Endpoint enriches decisions with proposal titles from Snapshot
+    *   Added AgentDecisionResponse and AgentDecisionsResponse models to models.py
+    *   All tests passing, endpoint verified working
 
 ---
 
@@ -185,7 +198,7 @@
 
 ### Backend API Requirements
 - [x] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id` ✅
-- [ ] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles
+- [x] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles ✅
 - [ ] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files
 - [ ] All endpoints handle error cases gracefully with appropriate HTTP status codes
 - [ ] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints
@@ -221,11 +234,11 @@
 ## 4. Files to be Changed
 
 ### Backend Files
-- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status endpoint ✅)
+- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status ✅, decisions ✅)
 - [x] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval ✅
-- [x] `backend/models.py` - Add AgentRunStatus model ✅
+- [x] `backend/models.py` - Add AgentRunStatus, AgentDecisionResponse, AgentDecisionsResponse models ✅
 - [x] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods ✅ (created test_agent_run_service_status.py)
-- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py)
+- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py, test_agent_run_decisions.py)
 
 ### Frontend Files
 - [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component
