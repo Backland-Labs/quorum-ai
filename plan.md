@@ -82,27 +82,35 @@
 
 ### P1: Core Agent Visibility (Frontend)
 
-#### Task 2.1: Create `AgentStatusWidget.svelte` Component
+#### Task 2.1: Create `AgentStatusWidget.svelte` Component ✅ IMPLEMENTED
 
 *   **Why**: To display the real-time status of the agent, giving users immediate insight into its activity.
 *   **Acceptance Criteria**:
-    *   Component polls `GET /agent-run/status` every 30 seconds.
-    *   Displays the `current_state` (e.g., "Idle", "Fetching Proposals").
-    *   Displays the `last_run_timestamp` in a human-readable format (e.g., "2 minutes ago").
-    *   Shows a visual indicator (e.g., a green dot) if `is_active` is true.
+    *   Component polls `GET /agent-run/status` every 30 seconds. ✅
+    *   Displays the `current_state` (e.g., "Idle", "Fetching Proposals"). ✅
+    *   Displays the `last_run_timestamp` in a human-readable format (e.g., "2 minutes ago"). ✅
+    *   Shows a visual indicator (e.g., a green dot) if `is_active` is true. ✅
 *   **Test Cases (Red)**:
-    *   `test_widget_displays_loading_state_initially()`
-    *   `test_widget_displays_correct_state_and_timestamp_on_load()`
-    *   `test_widget_shows_active_indicator_correctly()`
-    *   `test_widget_handles_api_error_gracefully()`
-*   **Implementation (Green)**:
-    1.  Create `src/lib/components/dashboard/AgentStatusWidget.svelte`.
-    2.  Use `onMount` and `setInterval` to poll the `/agent-run/status` endpoint.
-    3.  Use Svelte state (`$state`) to store and reactively display the status data.
-    4.  Implement conditional rendering for the `is_active` indicator.
+    *   `test_widget_displays_loading_state_initially()` ⚠️
+    *   `test_widget_displays_correct_state_and_timestamp_on_load()` ⚠️
+    *   `test_widget_shows_active_indicator_correctly()` ⚠️
+    *   `test_widget_handles_api_error_gracefully()` ⚠️
+*   **Implementation (Green)**: ✅ COMPLETED
+    1.  Create `src/lib/components/dashboard/AgentStatusWidget.svelte`. ✅
+    2.  Use `$effect` and `setInterval` to poll the `/agent-run/status` endpoint. ✅
+    3.  Use Svelte state (`$state`) to store and reactively display the status data. ✅
+    4.  Implement conditional rendering for the `is_active` indicator. ✅
+    5.  **Note**: Tests written but encounter Svelte 5 testing framework compatibility issues.
 *   **Integration Points**:
     *   `OverviewTab.svelte`: The new widget will be placed here.
     *   `apiClient`: To make calls to the new backend endpoint.
+*   **Implementation Date**: 2025-07-29
+*   **Implementation Notes**:
+    *   Component successfully builds and compiles
+    *   Uses Svelte 5 runes for state management
+    *   Implements human-readable time formatting
+    *   Includes error handling and loading states
+    *   Tests written following TDD but blocked by Svelte 5/testing-library compatibility
 
 #### Task 2.2: Create `AgentDecisionsPanel.svelte` Component
 
@@ -249,13 +257,14 @@
 - [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py, test_agent_run_decisions.py, test_agent_run_statistics.py)
 
 ### Frontend Files
-- [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component
+- [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component ✅
 - [ ] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.svelte` - New component
 - [ ] `frontend/src/lib/components/dashboard/AgentStatistics.svelte` - New component
 - [ ] `frontend/src/lib/components/dashboard/AgentQuickActions.svelte` - New component
 - [ ] `frontend/src/routes/organizations/[id]/OverviewTab.svelte` - Integrate new components
+- [x] `frontend/src/lib/api/index.ts` - Added apiClient export ✅
 - [ ] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`)
-- [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests
+- [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests (written, Svelte 5 issues) ✅
 - [ ] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests
 - [ ] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests
 - [ ] `frontend/src/lib/components/dashboard/AgentQuickActions.test.ts` - Component tests
