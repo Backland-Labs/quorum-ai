@@ -576,6 +576,31 @@ export interface components {
             estimated_gas_cost: number;
             /** @description The voting strategy used to make this decision */
             strategy_used: components["schemas"]["VotingStrategy"];
+            /**
+             * Space Id
+             * @description Snapshot space ID for attestation
+             */
+            space_id?: string | null;
+            /**
+             * Attestation Status
+             * @description Status: pending, success, failed
+             */
+            attestation_status?: string | null;
+            /**
+             * Attestation Tx Hash
+             * @description On-chain attestation transaction hash
+             */
+            attestation_tx_hash?: string | null;
+            /**
+             * Attestation Uid
+             * @description EAS attestation unique identifier
+             */
+            attestation_uid?: string | null;
+            /**
+             * Attestation Error
+             * @description Error message if attestation failed
+             */
+            attestation_error?: string | null;
         };
         /**
          * VoteType
