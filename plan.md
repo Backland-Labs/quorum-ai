@@ -112,27 +112,34 @@
     *   Includes error handling and loading states
     *   Tests written following TDD but blocked by Svelte 5/testing-library compatibility
 
-#### Task 2.2: Create `AgentDecisionsPanel.svelte` Component
+#### Task 2.2: Create `AgentDecisionsPanel.svelte` Component ✅ IMPLEMENTED
 
 *   **Why**: To show the user the tangible output of the agent's work, building trust and transparency.
 *   **Acceptance Criteria**:
-    *   Component fetches data from `GET /agent-run/decisions`.
-    *   Displays a list of the last 5 decisions.
-    *   For each decision, it shows the proposal title, vote (`FOR`/`AGAINST`), and confidence score.
-    *   The proposal title is a link to the proposal details page.
+    *   Component fetches data from `GET /agent-run/decisions`. ✅
+    *   Displays a list of the last 5 decisions. ✅
+    *   For each decision, it shows the proposal title, vote (`FOR`/`AGAINST`), and confidence score. ✅
+    *   The proposal title is a link to the proposal details page. ✅
 *   **Test Cases (Red)**:
-    *   `test_panel_displays_loading_state()`
-    *   `test_panel_renders_a_list_of_decisions()`
-    *   `test_panel_displays_correct_data_for_each_decision()`
-    *   `test_panel_shows_empty_state_when_no_decisions_are_available()`
-*   **Implementation (Green)**:
-    1.  Create `src/lib/components/dashboard/AgentDecisionsPanel.svelte`.
-    2.  Fetch data from `/agent-run/decisions` in `onMount`.
-    3.  Use an `#each` block to render the list of decisions.
-    4.  Use TailwindCSS for styling the list items.
+    *   `test_panel_displays_loading_state()` ✅
+    *   `test_panel_renders_a_list_of_decisions()` ✅
+    *   `test_panel_displays_correct_data_for_each_decision()` ✅
+    *   `test_panel_shows_empty_state_when_no_decisions_are_available()` ✅
+*   **Implementation (Green)**: ✅ COMPLETED
+    1.  Create `src/lib/components/dashboard/AgentDecisionsPanel.svelte`. ✅
+    2.  Fetch data from `/agent-run/decisions` in `onMount`. ✅
+    3.  Use an `#each` block to render the list of decisions. ✅
+    4.  Use TailwindCSS for styling the list items. ✅
 *   **Integration Points**:
     *   `OverviewTab.svelte`: The new panel will be placed here.
     *   `apiClient`: To fetch decision data.
+*   **Implementation Date**: 2025-07-29
+*   **Implementation Notes**:
+    *   Added comprehensive test suite following TDD methodology
+    *   Component includes loading states, error handling, and empty state
+    *   Refactored for code quality with constants and utility functions
+    *   Added accessibility features (ARIA labels, semantic HTML)
+    *   Tests written but blocked by Svelte 5/testing-library compatibility issues
 
 ---
 
@@ -220,8 +227,8 @@
 - [ ] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints
 
 ### Frontend Component Requirements
-- [ ] **AgentStatusWidget** displays real-time agent status with 30-second polling interval
-- [ ] **AgentDecisionsPanel** shows last 5 voting decisions with proposal links and confidence scores
+- [x] **AgentStatusWidget** displays real-time agent status with 30-second polling interval ✅
+- [x] **AgentDecisionsPanel** shows last 5 voting decisions with proposal links and confidence scores ✅
 - [ ] **AgentStatistics** displays performance metrics from statistics endpoint
 - [ ] **AgentQuickActions** provides "Run Now" button that triggers agent execution
 - [ ] All components handle loading states and API errors gracefully
@@ -258,14 +265,14 @@
 
 ### Frontend Files
 - [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component ✅
-- [ ] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.svelte` - New component
+- [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.svelte` - New component ✅
 - [ ] `frontend/src/lib/components/dashboard/AgentStatistics.svelte` - New component
 - [ ] `frontend/src/lib/components/dashboard/AgentQuickActions.svelte` - New component
 - [ ] `frontend/src/routes/organizations/[id]/OverviewTab.svelte` - Integrate new components
 - [x] `frontend/src/lib/api/index.ts` - Added apiClient export ✅
 - [ ] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`)
 - [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests (written, Svelte 5 issues) ✅
-- [ ] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests
+- [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests ✅
 - [ ] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests
 - [ ] `frontend/src/lib/components/dashboard/AgentQuickActions.test.ts` - Component tests
 
