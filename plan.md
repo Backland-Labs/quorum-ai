@@ -42,7 +42,7 @@
     *   Added AgentRunStatus model to models.py
     *   All tests passing with >90% coverage for new code
 
-#### Task 1.2: Create `GET /agent-run/decisions` Endpoint
+#### Task 1.2: Create `GET /agent-run/decisions` Endpoint ✅
 
 *   **Why**: To provide the frontend with the agent's most recent voting decisions, populating the Recent Decisions Panel. This directly exposes the agent's primary function.
 *   **Acceptance Criteria**:

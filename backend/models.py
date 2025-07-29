@@ -716,20 +716,40 @@ class AgentRunResponse(BaseModel):
 
 class AgentRunStatus(BaseModel):
     """Response model for agent run status endpoint."""
-    
+
     current_state: str = Field(
         description="Current state of the agent (e.g., IDLE, FETCHING_PROPOSALS)"
     )
     last_run_timestamp: Optional[str] = Field(
-        None,
-        description="ISO timestamp of the last completed agent run"
+        None, description="ISO timestamp of the last completed agent run"
     )
-    is_active: bool = Field(
-        description="Whether the agent is currently running"
-    )
+    is_active: bool = Field(description="Whether the agent is currently running")
     current_space_id: Optional[str] = Field(
-        None,
-        description="Space ID of the current or last run"
+        None, description="Space ID of the current or last run"
+    )
+
+
+class AgentDecisionResponse(BaseModel):
+    """Response model for an individual agent decision with enriched data."""
+
+    proposal_id: str = Field(..., description="The proposal ID that was voted on")
+    vote: VoteType = Field(
+        ..., description="The vote decision: FOR, AGAINST, or ABSTAIN"
+    )
+    confidence: float = Field(
+        ..., description="Confidence score in the decision (0.0 to 1.0)"
+    )
+    reasoning: str = Field(..., description="AI-generated explanation for the vote")
+    strategy_used: VotingStrategy = Field(..., description="The voting strategy used")
+    timestamp: str = Field(..., description="ISO timestamp when the decision was made")
+    proposal_title: str = Field(..., description="Title of the proposal from Snapshot")
+
+
+class AgentDecisionsResponse(BaseModel):
+    """Response model for the agent decisions endpoint."""
+
+    decisions: List[AgentDecisionResponse] = Field(
+        ..., description="List of recent voting decisions with enriched data"
     )
 
 

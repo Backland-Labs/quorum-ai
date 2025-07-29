@@ -17,6 +17,8 @@ from models import (
     AgentRunRequest,
     AgentRunResponse,
     AgentRunStatus,
+    AgentDecisionResponse,
+    AgentDecisionsResponse,
     Proposal,
     ProposalTopVoters,
     ProposalVoter,
@@ -471,10 +473,10 @@ async def agent_run(request: AgentRunRequest):
 @app.get("/agent-run/status", response_model=AgentRunStatus)
 async def get_agent_run_status():
     """Get current agent run status.
-    
+
     Returns the agent's current state, last run timestamp, active status,
     and the space ID of the current/last run.
-    
+
     Returns:
         AgentRunStatus with current agent state information
     """
@@ -482,29 +484,89 @@ async def get_agent_run_status():
         with log_span(logger, "get_agent_run_status"):
             # Get latest checkpoint
             checkpoint = await agent_run_service.get_latest_checkpoint()
-            
+
             # Get current state and active status
             current_state = agent_run_service.get_current_state()
             is_active = agent_run_service.is_agent_active()
-            
+
             # Extract data from checkpoint if available
             last_run_timestamp = None
             current_space_id = None
-            
+
             if checkpoint:
                 last_run_timestamp = checkpoint.get("timestamp")
                 current_space_id = checkpoint.get("space_id")
-            
+
             return AgentRunStatus(
                 current_state=current_state,
                 last_run_timestamp=last_run_timestamp,
                 is_active=is_active,
-                current_space_id=current_space_id
+                current_space_id=current_space_id,
             )
-            
+
     except Exception as e:
         logger.error(f"Error getting agent run status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/agent-run/decisions", response_model=AgentDecisionsResponse)
+async def get_agent_run_decisions(limit: int = Query(5, ge=1, le=100)):
+    """Get recent voting decisions made by the agent.
+
+    Returns a list of the most recent voting decisions across all spaces,
+    enriched with proposal titles from Snapshot.
+
+    Args:
+        limit: Maximum number of decisions to return (default: 5, max: 100)
+
+    Returns:
+        AgentDecisionsResponse with list of recent decisions
+    """
+    try:
+        with log_span(logger, "get_agent_run_decisions"):
+            # Get recent decisions from service
+            decisions_with_timestamps = await agent_run_service.get_recent_decisions(
+                limit=limit
+            )
+
+            # Enrich decisions with proposal titles
+            enriched_decisions = []
+            for vote_decision, timestamp in decisions_with_timestamps:
+                try:
+                    # Fetch proposal title from Snapshot
+                    proposal = await snapshot_service.get_proposal(
+                        vote_decision.proposal_id
+                    )
+                    proposal_title = (
+                        proposal.get("title", "Unknown Proposal")
+                        if proposal
+                        else "Unknown Proposal"
+                    )
+                except Exception as e:
+                    logger.warning(
+                        f"Error fetching proposal title for {vote_decision.proposal_id}: {e}"
+                    )
+                    proposal_title = "Unknown Proposal"
+
+                # Create enriched decision response
+                enriched_decision = AgentDecisionResponse(
+                    proposal_id=vote_decision.proposal_id,
+                    vote=vote_decision.vote,
+                    confidence=vote_decision.confidence,
+                    reasoning=vote_decision.reasoning,
+                    strategy_used=vote_decision.strategy_used,
+                    timestamp=timestamp,
+                    proposal_title=proposal_title,
+                )
+                enriched_decisions.append(enriched_decision)
+
+            return AgentDecisionsResponse(decisions=enriched_decisions)
+
+    except Exception as e:
+        logger.error(f"Error getting agent decisions: {e}")
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve agent decisions"
+        )
 
 
 # Private helper functions for top voters endpoint
@@ -623,7 +685,7 @@ def _log_preferences_update(preferences: UserPreferences) -> None:
     """Log successful preferences update."""
     blacklisted_count = len(preferences.blacklisted_proposers)
     whitelisted_count = len(preferences.whitelisted_proposers)
-    
+
     logger.info(
         f"Updated user preferences voting_strategy={preferences.voting_strategy} "
         f"confidence_threshold={preferences.confidence_threshold} "
@@ -637,37 +699,38 @@ def _log_preferences_update(preferences: UserPreferences) -> None:
 async def get_user_preferences():
     """
     Get current user preferences.
-    
+
     Returns the user's voting preferences configuration. If no preferences
     are found, returns 404 to indicate the user needs to complete setup.
     """
     global user_preferences_service
-    
+
     with log_span(logger, "get_user_preferences"):
         try:
             # Runtime assertion: service must be initialized
-            assert user_preferences_service is not None, "User preferences service not initialized"
-            
+            assert (
+                user_preferences_service is not None
+            ), "User preferences service not initialized"
+
             preferences = await user_preferences_service.load_preferences()
-            
+
             if not preferences:
                 logger.info("User preferences not found")
                 raise HTTPException(
                     status_code=404,
-                    detail="User preferences not found. Please complete initial setup."
+                    detail="User preferences not found. Please complete initial setup.",
                 )
-            
+
             _log_preferences_retrieval(preferences)
-            
+
             return preferences
-            
+
         except HTTPException:
             raise
         except Exception as e:
             logger.error(f"Failed to load user preferences error={str(e)}")
             raise HTTPException(
-                status_code=500,
-                detail=f"Failed to load user preferences: {str(e)}"
+                status_code=500, detail=f"Failed to load user preferences: {str(e)}"
             )
 
 
@@ -675,31 +738,32 @@ async def get_user_preferences():
 async def update_user_preferences(preferences: UserPreferences):
     """
     Update user preferences.
-    
+
     Saves the user's voting preferences configuration. Validates all fields
     according to the UserPreferences model constraints.
     """
     global user_preferences_service
-    
+
     with log_span(logger, "update_user_preferences"):
         try:
             # Runtime assertion: service must be initialized
-            assert user_preferences_service is not None, "User preferences service not initialized"
+            assert (
+                user_preferences_service is not None
+            ), "User preferences service not initialized"
             # Runtime assertion: preferences must have valid structure
             assert isinstance(preferences, UserPreferences), "Invalid preferences type"
-            
+
             # Save preferences
             await user_preferences_service.save_preferences(preferences)
-            
+
             _log_preferences_update(preferences)
-            
+
             return preferences
-            
+
         except Exception as e:
             logger.error(f"Failed to save user preferences error={str(e)}")
             raise HTTPException(
-                status_code=500,
-                detail=f"Failed to save user preferences: {str(e)}"
+                status_code=500, detail=f"Failed to save user preferences: {str(e)}"
             )
 
 
