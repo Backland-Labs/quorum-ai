@@ -1,157 +1,239 @@
-# Olas Service Template Configuration Plan
+# Autonomous Voting Dashboard - Implementation Plan
 
-## Overview
+## 1. Overview
 
-**Linear Issue**: `BAC-188` - Create Olas service template JSON configuration
+**Issue**: The application's core feature, the autonomous voting agent, is fully functional but lacks visibility on the main dashboard. Users cannot monitor the agent's status, review its decisions, or trigger runs easily.
 
-**Objective**: To create a complete and valid `service-template.json` file for the Quorum AI agent. This file is a critical requirement for deploying the agent as a service on the Olas Pearl platform, defining its on-chain configuration, funding requirements, and necessary environment variables.
+**Objective**: Elevate the autonomous voting agent to be the central feature of the dashboard by creating dedicated UI components that display the agent's status, recent decisions, and performance statistics, backed by a new set of backend APIs. This plan outlines the minimal implementation required to achieve this.
 
-This plan follows a Test-Driven Development (TDD) approach. For each task, the engineer will first write tests that validate the acceptance criteria, then implement the feature to make the tests pass, and finally refactor for clarity and correctness.
-
-## Prioritized Features
-
-### P0: Core Template Structure & Validation
-- **Task 1**: Create the `service-template.json` file with the basic top-level structure.
-- **Task 2**: Implement the `configurations` block with a focus on Gnosis chain and funding requirements.
-- **Task 3**: Implement the `env_variables` block, correctly categorizing each variable.
-- **Task 4**: Perform a final validation of the complete JSON structure against the Olas schema.
+**Guiding Principle**: This plan follows a strict Test-Driven Development (TDD) methodology. For each task, tests will be written first to define the expected behavior (Red), then code will be written to pass those tests (Green), and finally, the code will be refactored for clarity and maintainability.
 
 ---
 
-## Implementation Tasks
+## 2. Prioritized Feature Implementation
 
-### Task 1: Create Service Template File and Basic Structure
+### P0: Core Agent Visibility (Backend)
 
-**Acceptance Criteria:**
-- A valid JSON file named `service-template.json` exists in the project's root directory.
-- The file contains the correct top-level keys (`name`, `hash`, `description`, `image`, `service_version`, `home_chain`) with their specified values.
-- The `hash` field is set to a placeholder value `<service_hash>`.
+#### Task 1.1: Create `GET /agent-run/status` Endpoint
 
-**TDD Cycle:**
-1.  **Test (Red):**
-    - Write a test `test_file_exists_and_is_valid_json()` that:
-        - Asserts `service-template.json` exists.
-        - Asserts the file content can be parsed as valid JSON.
-    - Write a test `test_has_correct_top_level_keys()` that:
-        - Loads the JSON file.
-        - Asserts the presence and correct values for `name`, `description`, `service_version`, and `home_chain`.
-        - Asserts the `hash` key exists and has a placeholder value.
-        - Asserts the `image` key exists and is an empty string.
+*   **Why**: To provide the frontend with real-time agent status, enabling the Agent Status Widget. This is the most critical piece of information for the user.
+*   **Acceptance Criteria**:
+    *   Endpoint returns the current state from `StateTransitionTracker`.
+    *   Endpoint returns the timestamp of the last completed run from the latest checkpoint.
+    *   Endpoint returns an `is_active` flag based on `/healthcheck` logic.
+*   **Test Cases (Red)**:
+    *   `test_get_status_returns_correct_structure()`: Verify response contains `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`.
+    *   `test_get_status_when_no_runs_have_occurred()`: Ensure it returns a default "never run" state gracefully.
+    *   `test_get_status_reflects_latest_checkpoint()`: Ensure the timestamp is from the most recent checkpoint file.
+*   **Implementation (Green)**:
+    1.  Add a new route `GET /agent-run/status` in `backend/main.py`.
+    2.  Create a new method in `AgentRunService` to read the latest `agent_checkpoint_{space_id}.json` file using `StateManager`.
+    3.  Integrate with `StateTransitionTracker` to get the `current_state`.
+    4.  Reuse logic from the `/healthcheck` endpoint to determine the `is_active` status.
+    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint.
+*   **Integration Points**:
+    *   `StateManager`: To read checkpoint files.
+    *   `StateTransitionTracker`: To get the current state.
+    *   `main.py`: To expose the new endpoint.
 
-2.  **Implement (Green):**
-    - Create a new file named `service-template.json` in the root directory.
-    - Populate the file with the following content:
-      ```json
-      {
-        "name": "quorum_agent",
-        "hash": "<service_hash>",
-        "description": "Autonomous DAO governance voting agent with AI-powered proposal analysis",
-        "image": "",
-        "service_version": "v0.1.0",
-        "home_chain": "gnosis"
-      }
-      ```
+#### Task 1.2: Create `GET /agent-run/decisions` Endpoint
 
-3.  **Refactor:**
-    - Ensure JSON is well-formatted and readable.
-
----
-
-### Task 2: Implement Chain Configuration and Funding Requirements
-
-**Acceptance Criteria:**
-- The `service-template.json` file includes a `configurations` block.
-- The `gnosis` chain configuration is present with the correct `agent_id` (placeholder), `nft`, `threshold`, `use_staking`, `staking_program_id` (placeholder), and `use_mech_marketplace` values.
-- The `fund_requirements` are correctly defined for the native token (`0x0...0`) on Gnosis, with wei values corresponding to 0.005 xDAI for the agent and 0.01 xDAI for the safe.
-
-**TDD Cycle:**
-1.  **Test (Red):**
-    - Write a test `test_gnosis_configuration_exists()` that:
-        - Loads the JSON file.
-        - Asserts the `configurations.gnosis` object exists.
-        - Asserts the presence and correct values for `nft`, `threshold`, `use_staking`, and `use_mech_marketplace`.
-        - Asserts the presence of placeholder values for `agent_id` and `staking_program_id`.
-    - Write a test `test_funding_requirements_are_correct()` that:
-        - Asserts `configurations.gnosis.fund_requirements` exists.
-        - Asserts the native token key (`0x000...`) is present.
-        - Asserts `agent` funding is exactly `5000000000000000`.
-        - Asserts `safe` funding is exactly `10000000000000000`.
-
-2.  **Implement (Green):**
-    - Add the `configurations` block to `service-template.json` with the specified Gnosis chain data and funding requirements.
-
-3.  **Refactor:**
-    - Add comments in the test file to clarify the xDAI to wei conversion for funding amounts.
+*   **Why**: To provide the frontend with the agent's most recent voting decisions, populating the Recent Decisions Panel. This directly exposes the agent's primary function.
+*   **Acceptance Criteria**:
+    *   Endpoint returns a list of the `N` most recent `VoteDecision` objects.
+    *   Each decision object is enriched with the proposal title.
+    *   The list is sorted in reverse chronological order.
+*   **Test Cases (Red)**:
+    *   `test_get_decisions_returns_correct_structure()`: Verify response contains a `decisions` array with correctly structured objects.
+    *   `test_get_decisions_respects_limit_parameter()`: Ensure `?limit=N` works as expected.
+    *   `test_get_decisions_enriches_with_proposal_title()`: Verify it calls the proposal service to get the title.
+    *   `test_get_decisions_returns_empty_list_when_no_history()`: Handle the case with no prior decisions gracefully.
+*   **Implementation (Green)**:
+    1.  Add a new route `GET /agent-run/decisions` in `backend/main.py`.
+    2.  Create a new method in `AgentRunService` to scan all `agent_checkpoint_*.json` files.
+    3.  Aggregate `votes_cast` from all checkpoints, sort them by timestamp, and take the top `N`.
+    4.  For each decision, call `SnapshotService.get_proposal()` to fetch the title and add it to the response object.
+    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint.
+*   **Integration Points**:
+    *   `StateManager`: To read checkpoint files.
+    *   `SnapshotService`: To fetch proposal details.
+    *   `main.py`: To expose the new endpoint.
 
 ---
 
-### Task 3: Implement Environment Variable Specifications
+### P1: Core Agent Visibility (Frontend)
 
-**Acceptance Criteria:**
-- The `service-template.json` file includes an `env_variables` block.
-- All specified environment variables are present with the correct `name`, `description`, `value`, and `provision_type`.
-- Variables are correctly categorized as `computed`, `user`, or `fixed`.
+#### Task 2.1: Create `AgentStatusWidget.svelte` Component
 
-**TDD Cycle:**
-1.  **Test (Red):**
-    - Write a test `test_env_variables_structure_is_correct()` that:
-        - Loads the JSON file.
-        - Asserts the `env_variables` object exists and contains all 9 required keys.
-    - Write a test `test_env_variable_provision_types()` that:
-        - Iterates through the `env_variables` object.
-        - Asserts that each variable has the correct `provision_type` as specified in the requirements.
-    - Write a test `test_env_variable_default_values()` that:
-        - Asserts that `user` and `fixed` variables have the correct default `value`.
-        - Asserts that `computed` variables have an empty string `value`.
+*   **Why**: To display the real-time status of the agent, giving users immediate insight into its activity.
+*   **Acceptance Criteria**:
+    *   Component polls `GET /agent-run/status` every 30 seconds.
+    *   Displays the `current_state` (e.g., "Idle", "Fetching Proposals").
+    *   Displays the `last_run_timestamp` in a human-readable format (e.g., "2 minutes ago").
+    *   Shows a visual indicator (e.g., a green dot) if `is_active` is true.
+*   **Test Cases (Red)**:
+    *   `test_widget_displays_loading_state_initially()`
+    *   `test_widget_displays_correct_state_and_timestamp_on_load()`
+    *   `test_widget_shows_active_indicator_correctly()`
+    *   `test_widget_handles_api_error_gracefully()`
+*   **Implementation (Green)**:
+    1.  Create `src/lib/components/dashboard/AgentStatusWidget.svelte`.
+    2.  Use `onMount` and `setInterval` to poll the `/agent-run/status` endpoint.
+    3.  Use Svelte state (`$state`) to store and reactively display the status data.
+    4.  Implement conditional rendering for the `is_active` indicator.
+*   **Integration Points**:
+    *   `OverviewTab.svelte`: The new widget will be placed here.
+    *   `apiClient`: To make calls to the new backend endpoint.
 
-2.  **Implement (Green):**
-    - Add the `env_variables` block to `service-template.json` and populate it with all 9 specified environment variable configurations.
+#### Task 2.2: Create `AgentDecisionsPanel.svelte` Component
 
-3.  **Refactor:**
-    - Organize the variables in the JSON file by `provision_type` to improve readability.
+*   **Why**: To show the user the tangible output of the agent's work, building trust and transparency.
+*   **Acceptance Criteria**:
+    *   Component fetches data from `GET /agent-run/decisions`.
+    *   Displays a list of the last 5 decisions.
+    *   For each decision, it shows the proposal title, vote (`FOR`/`AGAINST`), and confidence score.
+    *   The proposal title is a link to the proposal details page.
+*   **Test Cases (Red)**:
+    *   `test_panel_displays_loading_state()`
+    *   `test_panel_renders_a_list_of_decisions()`
+    *   `test_panel_displays_correct_data_for_each_decision()`
+    *   `test_panel_shows_empty_state_when_no_decisions_are_available()`
+*   **Implementation (Green)**:
+    1.  Create `src/lib/components/dashboard/AgentDecisionsPanel.svelte`.
+    2.  Fetch data from `/agent-run/decisions` in `onMount`.
+    3.  Use an `#each` block to render the list of decisions.
+    4.  Use TailwindCSS for styling the list items.
+*   **Integration Points**:
+    *   `OverviewTab.svelte`: The new panel will be placed here.
+    *   `apiClient`: To fetch decision data.
 
 ---
 
-### Task 4: Final Validation and Review
+### P2: Agent Statistics & Actions
 
-**Acceptance Criteria:**
-- The final `service-template.json` is a well-formed JSON document.
-- The structure and values match the technical requirements precisely.
-- The file is placed in the project's root directory.
+#### Task 3.1: Create `GET /agent-run/statistics` Endpoint
 
-**TDD Cycle (Manual/Verification):**
-1.  **Test (Red):**
-    - Create a validation script or use an online tool to validate the generated `service-template.json` against the Olas service template schema (if available from Olas docs).
-    - The script should fail initially if the file is incomplete or malformed.
+*   **Why**: To provide users with an aggregated overview of agent performance over time.
+*   **Acceptance Criteria**:
+    *   Endpoint returns aggregated statistics as defined in the feature request.
+    *   Calculations correctly sum totals and compute averages from all checkpoint files.
+    *   `success_rate` is calculated as `(runs_with_no_errors / total_runs)`.
+*   **Test Cases (Red)**:
+    *   `test_statistics_returns_correct_structure()`
+    *   `test_statistics_aggregates_data_from_multiple_checkpoints()`
+    *   `test_statistics_handles_division_by_zero_when_no_runs()`
+    *   `test_statistics_calculates_success_rate_correctly()`
+*   **Implementation (Green)**:
+    1.  Add a new route `GET /agent-run/statistics` in `backend/main.py`.
+    2.  Create a new method in `AgentRunService` to scan and aggregate data from all `agent_checkpoint_*.json` files.
+    3.  Implement the logic for calculating totals, averages, and success rate.
+    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint.
+*   **Integration Points**:
+    *   `StateManager`: To read all checkpoint files.
+    *   `main.py`: To expose the new endpoint.
 
-2.  **Implement (Green):**
-    - Run the validation script/tool against the completed `service-template.json`.
-    - Fix any discrepancies in structure, data types, or required fields until validation passes.
+#### Task 3.2: Create `AgentStatistics.svelte` and `AgentQuickActions.svelte`
 
-3.  **Refactor:**
-    - Add a section to the project's `README.md` explaining the purpose of `service-template.json` and which placeholder values (`<service_hash>`, `<agent_id>`, `<staking_program_id>`) need to be replaced during deployment.
+*   **Why**: To complete the dashboard view with performance metrics and give the user control over the agent.
+*   **Acceptance Criteria**:
+    *   `AgentStatistics` displays all metrics from the `/agent-run/statistics` endpoint.
+    *   `AgentQuickActions` has a "Run Now" button that triggers a `POST` to `/agent-run`.
+    *   Actions are disabled when a run is already active.
+*   **Test Cases (Red)**:
+    *   `test_statistics_displays_all_metrics()`
+    *   `test_quick_actions_run_now_button_calls_api()`
+    *   `test_quick_actions_buttons_are_disabled_when_agent_is_active()`
+*   **Implementation (Green)**:
+    1.  Create `src/lib/components/dashboard/AgentStatistics.svelte` to fetch and display stats.
+    2.  Create `src/lib/components/dashboard/AgentQuickActions.svelte`.
+    3.  The "Run Now" button will use `apiClient` to call `POST /agent-run`. It will get the `current_space_id` from the shared dashboard store.
+    4.  Integrate all new components into `OverviewTab.svelte`.
+*   **Integration Points**:
+    *   `OverviewTab.svelte`: To place the new components.
+    *   `apiClient`: For both `GET` (stats) and `POST` (run now) calls.
+    *   Dashboard Store: To get the `current_space_id` for the "Run Now" action.
 
 ---
 
-## Success Criteria
+---
 
-- [x] A `service-template.json` file is created in the project root. (Implemented: 2025-01-27)
-- [x] The file contains a valid JSON object conforming to the specified structure. (Implemented: 2025-01-27)
-- [x] Gnosis chain funding requirements are correctly set to 0.005 xDAI (agent) and 0.01 xDAI (safe) in wei. (Implemented: 2025-01-27)
-- [x] All required environment variables are defined and correctly categorized by `provision_type`. (Implemented: 2025-01-27)
-- [x] Placeholder values for `hash`, `agent_id`, and `staking_program_id` are present. (Implemented: 2025-01-27)
-- [x] The plan is fully implemented, and all associated tests are passing. (Implemented: 2025-01-27)
+### P3: Documentation & Deployment
 
-## Implementation Status: COMPLETED
+#### Task 4.1: Update All Relevant Documentation
 
-All tasks have been successfully implemented following TDD methodology:
-- Task 1: ✅ Created service template file with basic structure
-- Task 2: ✅ Implemented chain configuration and funding requirements  
-- Task 3: ✅ Implemented environment variable specifications
-- Task 4: ✅ Final validation and review completed
+*   **Why**: Ensure all project documentation reflects the new autonomous voting dashboard features and API endpoints.
+*   **Acceptance Criteria**:
+    *   Update OpenAPI schema documentation for all new endpoints
+    *   Add API usage examples to relevant spec files
+    *   Update CLAUDE.md with new component locations and usage patterns
+    *   Document new dashboard components in frontend architecture docs
+*   **Implementation**:
+    1.  Update `specs/api.md` with new endpoint documentation
+    2.  Add component documentation to `specs/frontend.md`
+    3.  Update `CLAUDE.md` with new development workflow steps
+    4.  Add troubleshooting guide for agent dashboard issues
 
-Additional deliverables:
-- Created comprehensive test suite with 16 passing tests
-- Created SERVICE_TEMPLATE_README.md with deployment instructions
-- Used correct Olas Pearl format with chain ID "100" instead of "gnosis"
-- Used proper IPFS hash format and Docker image naming convention
+---
+
+## 3. Acceptance Criteria
+
+### Backend API Requirements
+- [ ] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`
+- [ ] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles
+- [ ] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files
+- [ ] All endpoints handle error cases gracefully with appropriate HTTP status codes
+- [ ] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints
+
+### Frontend Component Requirements
+- [ ] **AgentStatusWidget** displays real-time agent status with 30-second polling interval
+- [ ] **AgentDecisionsPanel** shows last 5 voting decisions with proposal links and confidence scores
+- [ ] **AgentStatistics** displays performance metrics from statistics endpoint
+- [ ] **AgentQuickActions** provides "Run Now" button that triggers agent execution
+- [ ] All components handle loading states and API errors gracefully
+- [ ] Components are fully responsive and accessible on mobile devices
+
+### Integration Requirements
+- [ ] All new components are integrated into `OverviewTab.svelte`
+- [ ] Dashboard updates in near real-time (30-second intervals)
+- [ ] Agent run status is reflected across all dashboard components
+- [ ] "Run Now" action is disabled when agent is already active
+
+### Testing Requirements
+- [ ] All backend endpoints have comprehensive unit tests with >90% coverage
+- [ ] All frontend components have unit tests using Vitest and Testing Library
+- [ ] Integration tests verify end-to-end data flow from API to UI
+- [ ] Error handling scenarios are thoroughly tested
+
+### Documentation Requirements
+- [ ] OpenAPI documentation includes all new endpoints with examples
+- [ ] Component usage is documented in relevant specification files
+- [ ] CLAUDE.md is updated with new development workflow steps
+- [ ] Troubleshooting guide covers common dashboard issues
+
+---
+
+## 4. Files to be Changed
+
+### Backend Files
+- [ ] `backend/main.py` - Add new API routes for status, decisions, and statistics
+- [ ] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval
+- [ ] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods
+- [ ] `backend/tests/test_main.py` - Add API endpoint tests
+
+### Frontend Files
+- [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component
+- [ ] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.svelte` - New component
+- [ ] `frontend/src/lib/components/dashboard/AgentStatistics.svelte` - New component
+- [ ] `frontend/src/lib/components/dashboard/AgentQuickActions.svelte` - New component
+- [ ] `frontend/src/routes/organizations/[id]/OverviewTab.svelte` - Integrate new components
+- [ ] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`)
+- [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests
+- [ ] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests
+- [ ] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests
+- [ ] `frontend/src/lib/components/dashboard/AgentQuickActions.test.ts` - Component tests
+
+### Documentation Files
+- [ ] `specs/api.md` - Document new endpoints
+- [ ] `specs/frontend.md` - Document new components
+- [ ] `CLAUDE.md` - Update development workflow
+- [ ] `specs/testing.md` - Update testing examples if needed
