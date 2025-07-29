@@ -1027,3 +1027,31 @@ class EASAttestationData(BaseModel):
                 f"Invalid attestation status: {v}. Must be one of {valid_statuses}"
             )
         return v
+
+
+class AgentRunStatistics(BaseModel):
+    """Aggregated statistics about agent runs across all spaces."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    total_runs: int = Field(
+        ..., ge=0, description="Total number of agent runs across all spaces"
+    )
+    total_proposals_evaluated: int = Field(
+        ..., ge=0, description="Total number of proposals evaluated"
+    )
+    total_votes_cast: int = Field(
+        ..., ge=0, description="Total number of votes cast"
+    )
+    average_confidence_score: float = Field(
+        ..., ge=0.0, le=1.0, description="Average confidence score across all votes"
+    )
+    success_rate: float = Field(
+        ...,
+        ge=0.0,
+        le=1.0,
+        description="Percentage of runs completed without errors (0.0 to 1.0)",
+    )
+    average_runtime_seconds: float = Field(
+        ..., ge=0.0, description="Average runtime per run in seconds"
+    )

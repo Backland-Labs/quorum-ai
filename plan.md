@@ -130,26 +130,34 @@
 
 ### P2: Agent Statistics & Actions
 
-#### Task 3.1: Create `GET /agent-run/statistics` Endpoint
+#### Task 3.1: Create `GET /agent-run/statistics` Endpoint ✅ IMPLEMENTED
 
 *   **Why**: To provide users with an aggregated overview of agent performance over time.
 *   **Acceptance Criteria**:
-    *   Endpoint returns aggregated statistics as defined in the feature request.
-    *   Calculations correctly sum totals and compute averages from all checkpoint files.
-    *   `success_rate` is calculated as `(runs_with_no_errors / total_runs)`.
+    *   Endpoint returns aggregated statistics as defined in the feature request. ✅
+    *   Calculations correctly sum totals and compute averages from all checkpoint files. ✅
+    *   `success_rate` is calculated as `(runs_with_no_errors / total_runs)`. ✅
 *   **Test Cases (Red)**:
-    *   `test_statistics_returns_correct_structure()`
-    *   `test_statistics_aggregates_data_from_multiple_checkpoints()`
-    *   `test_statistics_handles_division_by_zero_when_no_runs()`
-    *   `test_statistics_calculates_success_rate_correctly()`
-*   **Implementation (Green)**:
-    1.  Add a new route `GET /agent-run/statistics` in `backend/main.py`.
-    2.  Create a new method in `AgentRunService` to scan and aggregate data from all `agent_checkpoint_*.json` files.
-    3.  Implement the logic for calculating totals, averages, and success rate.
-    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint.
+    *   `test_statistics_returns_correct_structure()` ✅
+    *   `test_statistics_aggregates_data_from_multiple_checkpoints()` ✅
+    *   `test_statistics_handles_division_by_zero_when_no_runs()` ✅
+    *   `test_statistics_calculates_success_rate_correctly()` ✅
+    *   `test_statistics_handles_corrupted_checkpoint_gracefully()` ✅ (additional test)
+    *   `test_statistics_handles_missing_fields_in_checkpoints()` ✅ (additional test)
+*   **Implementation (Green)**: ✅ COMPLETED
+    1.  Add a new route `GET /agent-run/statistics` in `backend/main.py`. ✅
+    2.  Create a new method in `AgentRunService` to scan and aggregate data from all `agent_checkpoint_*.json` files. ✅
+    3.  Implement the logic for calculating totals, averages, and success rate. ✅
+    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ⚠️ (Pending)
 *   **Integration Points**:
-    *   `StateManager`: To read all checkpoint files.
-    *   `main.py`: To expose the new endpoint.
+    *   `StateManager`: To read all checkpoint files. ✅
+    *   `main.py`: To expose the new endpoint. ✅
+*   **Implementation Date**: 2025-07-29
+*   **Implementation Notes**:
+    *   Added AgentRunStatistics model to models.py
+    *   Implemented get_agent_run_statistics() method in AgentRunService
+    *   Added comprehensive test suite covering all edge cases
+    *   All tests passing with proper error handling for corrupted/missing data
 
 #### Task 3.2: Create `AgentStatistics.svelte` and `AgentQuickActions.svelte`
 
@@ -199,8 +207,8 @@
 ### Backend API Requirements
 - [x] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id` ✅
 - [x] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles ✅
-- [ ] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files
-- [ ] All endpoints handle error cases gracefully with appropriate HTTP status codes
+- [x] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files ✅
+- [x] All endpoints handle error cases gracefully with appropriate HTTP status codes ✅
 - [ ] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints
 
 ### Frontend Component Requirements
@@ -234,11 +242,11 @@
 ## 4. Files to be Changed
 
 ### Backend Files
-- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status ✅, decisions ✅)
+- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status ✅, decisions ✅, statistics ✅)
 - [x] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval ✅
-- [x] `backend/models.py` - Add AgentRunStatus, AgentDecisionResponse, AgentDecisionsResponse models ✅
+- [x] `backend/models.py` - Add AgentRunStatus, AgentDecisionResponse, AgentDecisionsResponse, AgentRunStatistics models ✅
 - [x] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods ✅ (created test_agent_run_service_status.py)
-- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py, test_agent_run_decisions.py)
+- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py, test_agent_run_decisions.py, test_agent_run_statistics.py)
 
 ### Frontend Files
 - [ ] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component

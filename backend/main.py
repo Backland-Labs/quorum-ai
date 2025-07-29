@@ -19,6 +19,7 @@ from models import (
     AgentRunStatus,
     AgentDecisionResponse,
     AgentDecisionsResponse,
+    AgentRunStatistics,
     Proposal,
     ProposalTopVoters,
     ProposalVoter,
@@ -566,6 +567,23 @@ async def get_agent_run_decisions(limit: int = Query(5, ge=1, le=100)):
         logger.error(f"Error getting agent decisions: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to retrieve agent decisions"
+        )
+
+
+@app.get("/agent-run/statistics", response_model=AgentRunStatistics)
+async def get_agent_run_statistics():
+    """Get aggregated statistics about agent runs.
+
+    Returns statistics including total runs, proposals evaluated, votes cast,
+    average confidence scores, success rates, and average runtime.
+    """
+    try:
+        stats = await agent_run_service.get_agent_run_statistics()
+        return AgentRunStatistics(**stats)
+    except Exception as e:
+        logger.error(f"Error getting agent statistics: {e}")
+        raise HTTPException(
+            status_code=500, detail="Failed to calculate agent statistics"
         )
 
 
