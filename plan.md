@@ -239,6 +239,33 @@
 
 ---
 
+#### Task 3.3: Implement Shared State Management for Agent Dashboard
+
+*   **Why**: To ensure all dashboard components share a single source of truth for agent status, preventing inconsistent states and enabling proper integration between components.
+*   **Acceptance Criteria**:
+    *   Create a Svelte store for agent status that includes all data from `/agent-run/status` endpoint.
+    *   Move polling logic from individual components to a single location (preferably OverviewTab).
+    *   All components subscribe to the shared store instead of polling independently.
+    *   AgentQuickActions receives actual agent status through the store, not a prop.
+    *   Store updates trigger reactive updates in all subscribed components.
+*   **Test Cases (Red)**:
+    *   `test_agent_store_initializes_with_default_state()`: Verify store has proper initial state.
+    *   `test_agent_store_updates_from_api_response()`: Ensure store updates when API data is fetched.
+    *   `test_agent_store_handles_polling_errors()`: Verify error states are properly stored.
+    *   `test_components_react_to_store_changes()`: Ensure components update when store changes.
+*   **Implementation (Green)**:
+    1.  Create `src/lib/stores/agentStatus.ts` with a writable Svelte store.
+    2.  Define TypeScript interface for agent status matching API response.
+    3.  Implement polling logic in the store with start/stop methods.
+    4.  Update OverviewTab to initialize and manage the store's polling lifecycle.
+    5.  Refactor AgentStatusWidget to subscribe to the store instead of polling.
+    6.  Refactor AgentQuickActions to get `isAgentActive` from the store.
+    7.  Update other components to use shared store data where applicable.
+*   **Integration Points**:
+    *   All agent dashboard components: To subscribe to shared state.
+    *   OverviewTab: To manage polling lifecycle.
+    *   apiClient: Store will make API calls.
+
 ---
 
 ### P3: Documentation & Deployment
@@ -320,10 +347,12 @@
 - [x] `frontend/src/routes/+page.svelte` - Pass currentSpaceId to OverviewTab ✅
 - [x] `frontend/src/lib/api/index.ts` - Added apiClient export ✅
 - [x] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`) ✅
+- [ ] `frontend/src/lib/stores/agentStatus.ts` - New shared state store (Task 3.3)
 - [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests (written, Svelte 5 issues) ✅
 - [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests ✅
 - [x] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests ✅
 - [x] `frontend/src/lib/components/dashboard/AgentQuickActions.test.ts` - Component tests ✅
+- [ ] `frontend/src/lib/stores/agentStatus.test.ts` - Store tests (Task 3.3)
 
 ### Documentation Files
 - [x] `specs/api.md` - Document new endpoints ✅
@@ -337,10 +366,10 @@
 
 ### Critical Issues to Address
 
-1. **Shared State Management** ❌
+1. **Shared State Management** 📝 PLANNED (Task 3.3)
    - **Issue**: Components operate in isolation with no shared state for agent status
    - **Impact**: Inconsistent UI states, AgentQuickActions doesn't know actual agent status
-   - **Solution**: Implement a Svelte store or context for agent status that:
+   - **Solution**: Task 3.3 has been added to implement a Svelte store for agent status that:
      - Single polling mechanism in parent component
      - Share status with all child components
      - Connect AgentQuickActions' `isAgentActive` prop to actual status
