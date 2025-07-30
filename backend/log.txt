@@ -7737,3 +7737,70 @@ confidence
 [2025-07-29 20:58:16,053] [INFO] [agent] Starting agent_run (space_id=dependency-test.eth, dry_run=False)
 [2025-07-29 20:58:16,053] [INFO] [agent] Agent run completed space_id=dependency-test.eth proposals_analyzed=0 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
 [2025-07-29 20:58:16,053] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-07-29 21:28:42,366] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:42,588] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,115] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,118] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,118] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,153] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,155] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,155] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,156] [INFO] [agent] Creating AI model
+[2025-07-29 21:28:43,156] [INFO] [agent] Using OpenRouter
+[2025-07-29 21:28:43,209] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-29 21:28:43,209] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-29 21:28:43,210] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-29 21:28:43,225] [INFO] [agent] Creating AI model
+[2025-07-29 21:28:43,225] [INFO] [agent] Using OpenRouter
+[2025-07-29 21:28:43,225] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-29 21:28:43,225] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-29 21:28:43,225] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-29 21:28:43,226] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,226] [INFO] [agent] KeyManager initialized
+[2025-07-29 21:28:43,226] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,226] [INFO] [agent] VotingService initialized
+[2025-07-29 21:28:43,226] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,228] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-29 21:28:43,228] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,228] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,228] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,229] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,229] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-29 21:28:43,229] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,230] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-29 21:28:43,230] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,230] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-07-29 21:28:43,230] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,230] [INFO] [agent] KeyManager initialized
+[2025-07-29 21:28:43,231] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,231] [INFO] [agent] VotingService initialized
+[2025-07-29 21:28:43,242] [INFO] [agent] WithdrawalService initialized
+[2025-07-29 21:28:43,242] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,242] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-29 21:28:43,243] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-29 21:28:43,243] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-07-29 21:28:43,243] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-07-29 21:28:43,243] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-07-29 21:28:43,243] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-07-29 21:28:43,243] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-07-29 21:28:43,244] [INFO] [agent] Application started version=0.1.0
+[2025-07-29 21:28:43,244] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-07-29 21:28:43,245] [INFO] [agent] Application shutdown initiated
+[2025-07-29 21:28:43,245] [INFO] [agent] Starting coordinated_shutdown
+[2025-07-29 21:28:43,245] [INFO] [agent] Starting coordinated shutdown
+[2025-07-29 21:28:43,245] [INFO] [agent] Starting agent_service_stop
+[2025-07-29 21:28:43,245] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-07-29 21:28:43,245] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-07-29 21:28:43,245] [INFO] [agent] Starting handle_active_votes
+[2025-07-29 21:28:43,245] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-07-29 21:28:43,245] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-07-29 21:28:43,245] [INFO] [agent] Starting save_service_states
+[2025-07-29 21:28:43,247] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-07-29 21:28:43,247] [INFO] [agent] Saved state for service 'agent'
+[2025-07-29 21:28:43,247] [INFO] [agent] Saved state for service 'voting'
+[2025-07-29 21:28:43,247] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-07-29 21:28:43,247] [INFO] [agent] Saved state for service 'state_manager'
+[2025-07-29 21:28:43,247] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-07-29 21:28:43,247] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-07-29 21:28:43,247] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-07-29 21:28:43,247] [INFO] [agent] Application shutdown completed
