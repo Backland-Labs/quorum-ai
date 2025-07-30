@@ -3,6 +3,9 @@
   import ProposalStats from './ProposalStats.svelte';
   import RecentProposals from './RecentProposals.svelte';
   import EmptyState from './EmptyState.svelte';
+  import AgentStatusWidget from './AgentStatusWidget.svelte';
+  import AgentDecisionsPanel from './AgentDecisionsPanel.svelte';
+  import AgentStatistics from './AgentStatistics.svelte';
 
   interface Props {
     proposals: components['schemas']['Proposal'][];
@@ -28,25 +31,46 @@
 </script>
 
 <div id="tab-panel-overview" role="tabpanel" aria-labelledby="tab-overview">
-  {#if hasProposals()}
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <ProposalStats
-        {proposals}
-        onViewDetails={onViewAllProposals}
-      />
-
-      <RecentProposals
-        {proposals}
-        {proposalSummaries}
-        {onProposalClick}
-        {onViewAllProposals}
-      />
+  <!-- Autonomous Voting Agent Section -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Autonomous Voting Agent</h2>
+    
+    <!-- Agent Status and Statistics Row -->
+    <div class="grid gap-6 mb-6 lg:grid-cols-2">
+      <AgentStatusWidget />
+      <AgentStatistics />
     </div>
-  {:else}
-    <EmptyState
-      title="No proposals found"
-      description="This Snapshot space doesn't have any proposals yet."
-      icon="document"
-    />
-  {/if}
+    
+    <!-- Agent Decisions Panel -->
+    <div class="mb-6">
+      <AgentDecisionsPanel />
+    </div>
+  </div>
+
+  <!-- Proposals Section -->
+  <div>
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Proposals Overview</h2>
+    
+    {#if hasProposals()}
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ProposalStats
+          {proposals}
+          onViewDetails={onViewAllProposals}
+        />
+
+        <RecentProposals
+          {proposals}
+          {proposalSummaries}
+          {onProposalClick}
+          {onViewAllProposals}
+        />
+      </div>
+    {:else}
+      <EmptyState
+        title="No proposals found"
+        description="This Snapshot space doesn't have any proposals yet."
+        icon="document"
+      />
+    {/if}
+  </div>
 </div>
