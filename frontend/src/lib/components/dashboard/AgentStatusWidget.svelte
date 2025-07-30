@@ -103,45 +103,50 @@
   }
 </script>
 
-<div class="bg-white shadow rounded-lg p-6">
-  <h3 class="text-lg font-medium text-gray-900 mb-4">Agent Status</h3>
+<div 
+  data-testid="agent-status-widget"
+  role="region"
+  aria-label="Agent Status"
+  class="bg-white shadow rounded-lg p-3 sm:p-4 w-full sm:w-auto"
+>
+  <h3 data-testid="widget-title" class="text-sm sm:text-base font-medium text-gray-900 mb-4">Agent Status</h3>
   
   {#if loading}
-    <div data-testid="loading-state" class="text-gray-500">
+    <div data-testid="loading-state" class="text-gray-500 text-sm">
       Loading agent status...
     </div>
   {:else if error}
-    <div data-testid="error-state" class="text-red-600">
+    <div data-testid="error-state" class="text-red-600 text-sm">
       {error}
     </div>
   {:else if agentStatus}
-    <div class="space-y-4">
-      <div class="flex items-center justify-between">
+    <div role="status" class="space-y-4">
+      <div data-testid="status-content" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <p class="text-sm text-gray-500">Current State</p>
-          <p data-testid="agent-state" class="text-lg font-medium text-gray-900">
+          <p class="text-xs sm:text-sm text-gray-500">Current State</p>
+          <p data-testid="agent-state" class="text-xs sm:text-sm font-medium text-gray-900">
             {formatState(agentStatus.current_state)}
           </p>
         </div>
         {#if agentStatus.is_active}
           <div data-testid="active-indicator" class="flex items-center">
             <div class="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="ml-2 text-sm text-green-600">Active</span>
+            <span class="ml-2 text-xs sm:text-sm text-green-600">Active</span>
           </div>
         {/if}
       </div>
       
       <div>
-        <p class="text-sm text-gray-500">Last Run</p>
-        <p data-testid="last-run-timestamp" class="text-lg font-medium text-gray-900">
+        <p class="text-xs sm:text-sm text-gray-500">Last Run</p>
+        <p data-testid="last-run-timestamp" class="text-xs sm:text-sm font-medium text-gray-900">
           {formatTimestamp(agentStatus.last_run_timestamp)}
         </p>
       </div>
       
       {#if agentStatus.current_space_id}
         <div>
-          <p class="text-sm text-gray-500">Space ID</p>
-          <p class="text-sm font-mono text-gray-700">{agentStatus.current_space_id}</p>
+          <p class="text-xs sm:text-sm text-gray-500">Space ID</p>
+          <p class="text-xs sm:text-sm font-mono text-gray-700 break-all">{agentStatus.current_space_id}</p>
         </div>
       {/if}
     </div>

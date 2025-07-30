@@ -2,12 +2,12 @@
   import { apiClient } from '$lib/api';
 
   interface Props {
-    currentSpaceId: string | null;
+    spaceId: string | null;
     isAgentActive?: boolean;
     onRunComplete?: () => void;
   }
 
-  let { currentSpaceId, isAgentActive = false, onRunComplete }: Props = $props();
+  let { spaceId: currentSpaceId, isAgentActive = false, onRunComplete }: Props = $props();
   
   // Constants
   const SUCCESS_MESSAGE_DURATION = 5000;
@@ -20,8 +20,9 @@
 
   // Derived values
   const buttonDisabled = $derived(isLoading || isAgentActive);
-  const buttonText = $derived(isLoading ? 'Running...' : 'Run Agent Now');
+  const buttonText = $derived(isLoading ? 'Running...' : 'Run Now');
   const buttonTitle = $derived(isAgentActive ? 'Agent is currently active' : undefined);
+  const buttonAriaLabel = $derived(isAgentActive ? 'Run agent (currently active)' : 'Run autonomous voting agent now');
   const alertClasses = $derived(
     message?.type === 'success' 
       ? 'bg-green-50 text-green-800 border-green-200' 
@@ -95,11 +96,14 @@
   });
 </script>
 
-<div class="flex flex-col gap-2">
+<div data-testid="quick-actions" class="flex flex-col gap-2 w-full sm:w-auto">
+  <h4 data-testid="actions-title" class="text-sm sm:text-base font-medium text-gray-900 mb-2 sm:mb-3">Quick Actions</h4>
+  
   {#if message}
     <div 
+      data-testid={message.type === 'success' ? 'feedback-message' : 'error-message'}
       role="alert" 
-      class="px-4 py-3 rounded-md text-sm border {alertClasses}"
+      class="px-2 sm:px-0 py-3 rounded-md text-xs sm:text-sm border {alertClasses} break-words"
     >
       {message.text}
     </div>
@@ -109,15 +113,16 @@
     onclick={handleRunNow}
     onkeydown={handleKeyDown}
     disabled={buttonDisabled}
-    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-    aria-label="Run autonomous voting agent"
+    class="inline-flex items-center justify-center px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-600 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 w-full sm:w-auto min-h-[44px]"
+    aria-label={buttonAriaLabel}
     title={buttonTitle}
   >
     {#if isLoading}
       <svg 
+        data-testid="loading-spinner"
         role="status" 
         aria-label="Loading" 
-        class="w-4 h-4 mr-2 animate-spin"
+        class="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin"
         viewBox="0 0 24 24"
         fill="none"
       >
@@ -136,6 +141,6 @@
         />
       </svg>
     {/if}
-    {buttonText}
+    <span data-testid="button-text" class="text-sm sm:text-base">{buttonText}</span>
   </button>
 </div>

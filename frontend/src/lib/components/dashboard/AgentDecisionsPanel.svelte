@@ -105,57 +105,64 @@
   });
 </script>
 
-<div class="bg-white rounded-lg shadow p-6" role="region" aria-labelledby="decisions-heading">
-  <h2 id="decisions-heading" class="text-lg font-semibold mb-4">Recent Voting Decisions</h2>
+<div 
+  data-testid="decisions-panel"
+  class="bg-white rounded-lg shadow p-3 sm:p-4 w-full max-w-full sm:max-w-2xl" 
+  role="region" 
+  aria-labelledby="decisions-heading"
+>
+  <h2 id="decisions-heading" data-testid="panel-title" class="text-base sm:text-lg font-semibold mb-4">Recent Voting Decisions</h2>
   
   {#if loading}
-    <div data-testid="loading-state" class="text-gray-500">
+    <div data-testid="loading-state" class="text-gray-500 text-sm p-4 sm:p-6 text-center">
       Loading decisions...
     </div>
   {:else if error}
-    <div data-testid="error-state" class="text-red-600">
+    <div data-testid="error-state" class="text-red-600 text-sm p-4 sm:p-6 text-center">
       {error}
     </div>
   {:else if decisions.length === 0}
-    <div data-testid="empty-state" class="text-gray-500">
+    <div data-testid="empty-state" class="text-gray-500 text-sm p-4 sm:p-6 text-center">
       No voting decisions yet
     </div>
   {:else}
-    <ul data-testid="decisions-list" class="space-y-4" role="list">
+    <ul data-testid="decisions-list" class="space-y-3 sm:space-y-4" role="list">
       {#each decisions as decision}
-        <li data-testid="decision-item" class="border-b pb-4 last:border-b-0" role="listitem">
-          <div class="flex items-start justify-between">
+        <li data-testid="decision-item" class="border-b pb-3 sm:pb-4 last:border-b-0" role="listitem">
+          <div data-testid="decision-card" class="flex flex-col sm:flex-row gap-3 p-3 sm:p-4">
             <div class="flex-1">
               <a 
                 href="/proposals/{decision.proposal_id}"
                 data-testid="proposal-link"
-                class="text-blue-600 hover:text-blue-800 font-medium"
+                class="text-blue-600 hover:text-blue-800 font-medium min-h-[44px] flex items-center"
                 aria-label="View proposal: {decision.proposal_title}"
               >
-                <span data-testid="decision-title">{decision.proposal_title}</span>
+                <span data-testid="proposal-title" class="text-sm sm:text-base break-words line-clamp-2 sm:line-clamp-none">
+                  {decision.proposal_title}
+                </span>
               </a>
-              <div class="mt-1 flex items-center gap-4 text-sm">
+              <div data-testid="vote-info" class="mt-2 grid grid-cols-2 gap-2 sm:flex sm:gap-4">
                 <span class="flex items-center gap-1">
-                  <span class="text-gray-500">Vote:</span>
+                  <span class="text-gray-500 text-xs sm:text-sm">Vote:</span>
                   <span 
-                    data-testid="decision-vote" 
-                    class={`font-medium ${getVoteColorClass(decision.vote)}`}
+                    data-testid="vote-badge" 
+                    class={`font-medium text-xs sm:text-sm ${getVoteColorClass(decision.vote)}`}
                   >
                     {decision.vote}
                   </span>
                 </span>
                 <span class="flex items-center gap-1">
-                  <span class="text-gray-500">Confidence:</span>
+                  <span class="text-gray-500 text-xs sm:text-sm">Confidence:</span>
                   <span 
-                    data-testid="decision-confidence"
-                    class={`font-medium ${getConfidenceColorClass(decision.confidence_score)}`}
+                    data-testid="confidence-score"
+                    class={`font-medium text-xs sm:text-sm ${getConfidenceColorClass(decision.confidence_score)}`}
                   >
                     {formatConfidencePercentage(decision.confidence_score)}
                   </span>
                 </span>
                 <span 
                   data-testid="decision-timestamp"
-                  class="text-gray-500"
+                  class="text-gray-500 text-xs sm:text-sm col-span-2 sm:col-span-1"
                 >
                   {formatTimestamp(decision.timestamp)}
                 </span>
