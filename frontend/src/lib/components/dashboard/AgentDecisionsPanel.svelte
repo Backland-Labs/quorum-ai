@@ -1,27 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { apiClient } from '$lib/api';
+  import { agentStatusStore } from '$lib/stores/agentStatus';
   
-  // Temporary types until OpenAPI client is regenerated
-  interface AgentDecisionResponse {
-    proposal_id: string;
-    proposal_title: string;
-    vote: 'FOR' | 'AGAINST' | 'ABSTAIN';
-    confidence_score: number;
-    voting_power: string;
-    timestamp: string;
-    reasoning: string;
-  }
-  
-  interface AgentDecisionsResponse {
-    decisions: AgentDecisionResponse[];
-    total_count: number;
-  }
-  
-  // Component state
-  let decisions: AgentDecisionResponse[] = $state([]);
-  let loading = $state(true);
-  let error = $state<string | null>(null);
+  // Get data from the store
+  const storeState = $state($agentStatusStore);
   
   // Constants
   const DECISIONS_LIMIT = 5;
@@ -74,35 +55,6 @@
     return `${Math.round(confidence * 100)}%`;
   }
   
-  // API functions
-  async function fetchDecisions(): Promise<void> {
-    try {
-      loading = true;
-      error = null;
-      
-      // @ts-ignore - endpoint will be typed after OpenAPI client regeneration
-      const response = await apiClient.GET('/agent-run/decisions' as any, {
-        params: { query: { limit: DECISIONS_LIMIT } }
-      });
-      
-      if (response.error) {
-        error = 'Unable to load decisions';
-        return;
-      }
-      
-      decisions = response.data?.decisions || [];
-    } catch (err) {
-      error = 'Unable to load decisions';
-      console.error('Failed to fetch decisions:', err);
-    } finally {
-      loading = false;
-    }
-  }
-  
-  // Lifecycle
-  onMount(() => {
-    fetchDecisions();
-  });
 </script>
 
 <div 
@@ -113,21 +65,21 @@
 >
   <h2 id="decisions-heading" data-testid="panel-title" class="text-base sm:text-lg font-semibold mb-4">Recent Voting Decisions</h2>
   
-  {#if loading}
+  {#if storeState.loading.decisions}
     <div data-testid="loading-state" class="text-gray-500 text-sm p-4 sm:p-6 text-center">
       Loading decisions...
     </div>
-  {:else if error}
+  {:else if storeState.errors.decisions}
     <div data-testid="error-state" class="text-red-600 text-sm p-4 sm:p-6 text-center">
-      {error}
+      {storeState.errors.decisions}
     </div>
-  {:else if decisions.length === 0}
+  {:else if storeState.decisions.length === 0}
     <div data-testid="empty-state" class="text-gray-500 text-sm p-4 sm:p-6 text-center">
       No voting decisions yet
     </div>
   {:else}
     <ul data-testid="decisions-list" class="space-y-3 sm:space-y-4" role="list">
-      {#each decisions as decision}
+      {#each storeState.decisions as decision}
         <li data-testid="decision-item" class="border-b pb-3 sm:pb-4 last:border-b-0" role="listitem">
           <div data-testid="decision-card" class="flex flex-col sm:flex-row gap-3 p-3 sm:p-4">
             <div class="flex-1">
@@ -155,9 +107,9 @@
                   <span class="text-gray-500 text-xs sm:text-sm">Confidence:</span>
                   <span 
                     data-testid="confidence-score"
-                    class={`font-medium text-xs sm:text-sm ${getConfidenceColorClass(decision.confidence_score)}`}
+                    class={`font-medium text-xs sm:text-sm ${getConfidenceColorClass(decision.confidence)}`}
                   >
-                    {formatConfidencePercentage(decision.confidence_score)}
+                    {formatConfidencePercentage(decision.confidence)}
                   </span>
                 </span>
                 <span 

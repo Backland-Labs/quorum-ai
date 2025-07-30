@@ -188,6 +188,14 @@ class VoteType(str, Enum):
     ABSTAIN = "ABSTAIN"
 
 
+class ProposalState(str, Enum):
+    """Proposal states from Snapshot."""
+
+    PENDING = "pending"
+    ACTIVE = "active"
+    CLOSED = "closed"
+
+
 class VoteChoice(BaseModel):
     """Individual voting choice for proposals."""
 

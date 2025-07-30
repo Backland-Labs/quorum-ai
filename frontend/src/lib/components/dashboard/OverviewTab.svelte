@@ -7,6 +7,8 @@
   import AgentDecisionsPanel from './AgentDecisionsPanel.svelte';
   import AgentStatistics from './AgentStatistics.svelte';
   import AgentQuickActions from './AgentQuickActions.svelte';
+  import { agentStatusStore } from '$lib/stores/agentStatus';
+  import { onMount, onDestroy } from 'svelte';
 
   interface Props {
     proposals: components['schemas']['Proposal'][];
@@ -30,6 +32,23 @@
   }
 
   validateProps();
+
+  // Update store with current space ID when it changes
+  $effect(() => {
+    if (currentSpaceId) {
+      agentStatusStore.setCurrentSpaceId(currentSpaceId);
+    }
+  });
+
+  // Start polling when component mounts
+  onMount(() => {
+    agentStatusStore.startPolling(30000); // 30 second interval
+  });
+
+  // Stop polling when component unmounts
+  onDestroy(() => {
+    agentStatusStore.stopPolling();
+  });
 </script>
 
 <div id="tab-panel-overview" role="tabpanel" aria-labelledby="tab-overview">
@@ -45,7 +64,7 @@
     
     <!-- Agent Quick Actions -->
     <div class="mb-6">
-      <AgentQuickActions {currentSpaceId} />
+      <AgentQuickActions />
     </div>
     
     <!-- Agent Decisions Panel -->

@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { apiClient } from '$lib/api';
-  import { browser } from '$app/environment';
+  import { agentStatusStore } from '$lib/stores/agentStatus';
   
   interface Props {
     // Allow override for testing
@@ -9,17 +8,8 @@
   
   let { testMode = false }: Props = $props();
 
-  // Component state
-  let loading = $state(true);
-  let error = $state<string | null>(null);
-  let agentStatus = $state<{
-    current_state: string;
-    last_run_timestamp: string | null;
-    is_active: boolean;
-    current_space_id: string | null;
-  } | null>(null);
-
-  let intervalId: ReturnType<typeof setInterval> | null = null;
+  // Subscribe to the store
+  const storeState = $state($agentStatusStore);
 
   // Format timestamp to human-readable format
   function formatTimestamp(timestamp: string | null): string {
@@ -50,57 +40,6 @@
     };
     return stateMap[state] || state;
   }
-
-  // Fetch agent status from API
-  async function fetchStatus() {
-    try {
-      // TODO: Update after regenerating OpenAPI client with new endpoint
-      const response = await apiClient.GET('/agent-run/status' as any);
-      
-      if (response.error) {
-        error = 'Unable to load agent status';
-        agentStatus = null;
-      } else {
-        error = null;
-        agentStatus = response.data;
-      }
-    } catch (e) {
-      error = 'Unable to load agent status';
-      agentStatus = null;
-    } finally {
-      loading = false;
-    }
-  }
-
-  // Initialize component
-  function initialize() {
-    if (!browser && !testMode) return;
-    
-    // Initial fetch
-    fetchStatus();
-    
-    // Set up polling interval (30 seconds)
-    intervalId = setInterval(fetchStatus, 30000);
-  }
-
-  // Cleanup function
-  function cleanup() {
-    if (intervalId) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
-  }
-
-  // Use $effect for lifecycle management in Svelte 5
-  if (browser || testMode) {
-    // Initialize immediately
-    initialize();
-    
-    // Register cleanup on unmount
-    $effect(() => {
-      return cleanup;
-    });
-  }
 </script>
 
 <div 
@@ -111,24 +50,24 @@
 >
   <h3 data-testid="widget-title" class="text-sm sm:text-base font-medium text-gray-900 mb-4">Agent Status</h3>
   
-  {#if loading}
+  {#if storeState.loading.status}
     <div data-testid="loading-state" class="text-gray-500 text-sm">
       Loading agent status...
     </div>
-  {:else if error}
+  {:else if storeState.errors.status}
     <div data-testid="error-state" class="text-red-600 text-sm">
-      {error}
+      {storeState.errors.status}
     </div>
-  {:else if agentStatus}
+  {:else if storeState.status}
     <div role="status" class="space-y-4">
       <div data-testid="status-content" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <p class="text-xs sm:text-sm text-gray-500">Current State</p>
           <p data-testid="agent-state" class="text-xs sm:text-sm font-medium text-gray-900">
-            {formatState(agentStatus.current_state)}
+            {formatState(storeState.status.current_state)}
           </p>
         </div>
-        {#if agentStatus.is_active}
+        {#if storeState.status.is_active}
           <div data-testid="active-indicator" class="flex items-center">
             <div class="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
             <span class="ml-2 text-xs sm:text-sm text-green-600">Active</span>
@@ -139,14 +78,14 @@
       <div>
         <p class="text-xs sm:text-sm text-gray-500">Last Run</p>
         <p data-testid="last-run-timestamp" class="text-xs sm:text-sm font-medium text-gray-900">
-          {formatTimestamp(agentStatus.last_run_timestamp)}
+          {formatTimestamp(storeState.status.last_run_timestamp)}
         </p>
       </div>
       
-      {#if agentStatus.current_space_id}
+      {#if storeState.status.current_space_id}
         <div>
           <p class="text-xs sm:text-sm text-gray-500">Space ID</p>
-          <p class="text-xs sm:text-sm font-mono text-gray-700 break-all">{agentStatus.current_space_id}</p>
+          <p class="text-xs sm:text-sm font-mono text-gray-700 break-all">{storeState.status.current_space_id}</p>
         </div>
       {/if}
     </div>

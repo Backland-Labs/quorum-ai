@@ -1,13 +1,17 @@
 <script lang="ts">
   import { apiClient } from '$lib/api';
+  import { agentStatusStore } from '$lib/stores/agentStatus';
 
   interface Props {
-    spaceId: string | null;
-    isAgentActive?: boolean;
     onRunComplete?: () => void;
   }
 
-  let { spaceId: currentSpaceId, isAgentActive = false, onRunComplete }: Props = $props();
+  let { onRunComplete }: Props = $props();
+  
+  // Get data from the store
+  const storeState = $state($agentStatusStore);
+  const isAgentActive = $state($agentStatusStore.isAgentActive);
+  const currentSpaceId = $derived(storeState.currentSpaceId);
   
   // Constants
   const SUCCESS_MESSAGE_DURATION = 5000;
@@ -59,6 +63,8 @@
       showMessage('error', `Failed to trigger agent run: ${error.message || 'Unknown error'}`);
     } else {
       showMessage('success', 'Agent run triggered successfully!');
+      // Refresh the store to get the latest status
+      agentStatusStore.fetchAll();
       onRunComplete?.();
     }
   }
