@@ -6,15 +6,17 @@
   import AgentStatusWidget from './AgentStatusWidget.svelte';
   import AgentDecisionsPanel from './AgentDecisionsPanel.svelte';
   import AgentStatistics from './AgentStatistics.svelte';
+  import AgentQuickActions from './AgentQuickActions.svelte';
 
   interface Props {
     proposals: components['schemas']['Proposal'][];
     proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
     onProposalClick: (proposalId: string) => void;
     onViewAllProposals: () => void;
+    currentSpaceId?: string | null;
   }
 
-  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals }: Props = $props();
+  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals, currentSpaceId = null }: Props = $props();
 
   function validateProps(): void {
     console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
@@ -39,6 +41,11 @@
     <div class="grid gap-6 mb-6 lg:grid-cols-2">
       <AgentStatusWidget />
       <AgentStatistics />
+    </div>
+    
+    <!-- Agent Quick Actions -->
+    <div class="mb-6">
+      <AgentQuickActions {currentSpaceId} />
     </div>
     
     <!-- Agent Decisions Panel -->

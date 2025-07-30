@@ -97,6 +97,7 @@
           proposalSummaries={$dashboardState.proposalSummaries}
           onProposalClick={handleProposalClick}
           onViewAllProposals={handleViewAllProposals}
+          {currentSpaceId}
         />
       {:else if $dashboardState.activeTab === 'proposals'}
         <ProposalsTab 
