@@ -91,10 +91,10 @@
     *   Displays the `last_run_timestamp` in a human-readable format (e.g., "2 minutes ago"). ✅
     *   Shows a visual indicator (e.g., a green dot) if `is_active` is true. ✅
 *   **Test Cases (Red)**:
-    *   `test_widget_displays_loading_state_initially()` ⚠️
-    *   `test_widget_displays_correct_state_and_timestamp_on_load()` ⚠️
-    *   `test_widget_shows_active_indicator_correctly()` ⚠️
-    *   `test_widget_handles_api_error_gracefully()` ⚠️
+    *   `test_widget_displays_loading_state_initially()` ❌ BLOCKED - Svelte 5 testing issues
+    *   `test_widget_displays_correct_state_and_timestamp_on_load()` ❌ BLOCKED - Svelte 5 testing issues
+    *   `test_widget_shows_active_indicator_correctly()` ❌ BLOCKED - Svelte 5 testing issues
+    *   `test_widget_handles_api_error_gracefully()` ❌ BLOCKED - Svelte 5 testing issues
 *   **Implementation (Green)**: ✅ COMPLETED
     1.  Create `src/lib/components/dashboard/AgentStatusWidget.svelte`. ✅
     2.  Use `$effect` and `setInterval` to poll the `/agent-run/status` endpoint. ✅
@@ -284,15 +284,15 @@
 
 ### Integration Requirements
 - [x] All new components are integrated into `OverviewTab.svelte` ✅ (AgentStatusWidget, AgentDecisionsPanel, AgentStatistics, AgentQuickActions)
-- [ ] Dashboard updates in near real-time (30-second intervals)
-- [ ] Agent run status is reflected across all dashboard components
-- [x] "Run Now" action is disabled when agent is already active ✅
+- [x] Dashboard updates in near real-time (30-second intervals) ⚠️ PARTIAL - Each component polls independently
+- [ ] Agent run status is reflected across all dashboard components ❌ NOT IMPLEMENTED - No shared state management
+- [ ] "Run Now" action is disabled when agent is already active ❌ NOT IMPLEMENTED - isAgentActive prop not connected
 
 ### Testing Requirements
-- [ ] All backend endpoints have comprehensive unit tests with >90% coverage
-- [ ] All frontend components have unit tests using Vitest and Testing Library
-- [ ] Integration tests verify end-to-end data flow from API to UI
-- [ ] Error handling scenarios are thoroughly tested
+- [x] All backend endpoints have comprehensive unit tests with >90% coverage ✅ COMPLETED
+- [ ] All frontend components have unit tests using Vitest and Testing Library ❌ BLOCKED - Svelte 5 compatibility issues with testing library
+- [ ] Integration tests verify end-to-end data flow from API to UI ❌ NOT IMPLEMENTED
+- [x] Error handling scenarios are thoroughly tested ⚠️ PARTIAL - Backend only
 
 ### Documentation Requirements
 - [x] OpenAPI documentation includes all new endpoints with examples ✅
@@ -330,3 +330,46 @@
 - [x] `specs/frontend.md` - Document new components ✅
 - [x] `CLAUDE.md` - Update development workflow ✅ (skipped per user request)
 - [ ] `specs/testing.md` - Update testing examples if needed
+
+---
+
+## 5. Remaining Work & Known Issues
+
+### Critical Issues to Address
+
+1. **Shared State Management** ❌
+   - **Issue**: Components operate in isolation with no shared state for agent status
+   - **Impact**: Inconsistent UI states, AgentQuickActions doesn't know actual agent status
+   - **Solution**: Implement a Svelte store or context for agent status that:
+     - Single polling mechanism in parent component
+     - Share status with all child components
+     - Connect AgentQuickActions' `isAgentActive` prop to actual status
+
+2. **Frontend Testing** ❌ BLOCKED
+   - **Issue**: All frontend tests fail due to Svelte 5 compatibility with testing library
+   - **Impact**: Cannot verify component behavior or achieve coverage requirements
+   - **Solution Options**:
+     - Wait for Svelte 5 testing library support
+     - Implement E2E tests with Playwright as alternative
+     - Use Svelte 4 compatible testing approach
+
+3. **Integration Testing** ❌ NOT STARTED
+   - **Issue**: No end-to-end tests exist for the complete flow
+   - **Impact**: Cannot verify full system behavior
+   - **Solution**: Add integration tests using backend test framework
+
+### Minor Issues
+
+1. **Real-time Updates Architecture** ⚠️
+   - Each component polls independently (inefficient)
+   - Could lead to race conditions or inconsistent states
+   - Solution: Centralize polling in parent component
+
+2. **Error Recovery** ⚠️
+   - Components handle errors individually
+   - No global error state or recovery mechanism
+   - Solution: Implement error boundary or global error handling
+
+### Summary
+
+The implementation is functionally complete with all features working in isolation. However, the lack of shared state management means the dashboard components don't work as a cohesive system. The frontend testing is completely blocked by framework compatibility issues. These issues prevent the feature from being production-ready despite having all individual pieces implemented.
