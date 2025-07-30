@@ -35,7 +35,7 @@
     2.  Create a new method in `AgentRunService` to read the latest `agent_checkpoint_{space_id}.json` file using `StateManager`. ✅
     3.  Integrate with `StateTransitionTracker` to get the `current_state`. ✅
     4.  Reuse logic from the `/healthcheck` endpoint to determine the `is_active` status. ✅
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ⚠️ (Pending)
+    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
 *   **Integration Points**:
     *   `StateManager`: To read checkpoint files. ✅
     *   `StateTransitionTracker`: To get the current state. ✅
@@ -66,7 +66,7 @@
     2.  Create a new method in `AgentRunService` to scan all `agent_checkpoint_*.json` files. ✅
     3.  Aggregate `votes_cast` from all checkpoints, sort them by timestamp, and take the top `N`. ✅
     4.  For each decision, call `SnapshotService.get_proposal()` to fetch the title and add it to the response object. ✅
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ⚠️ (Pending)
+    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
 *   **Integration Points**:
     *   `StateManager`: To read checkpoint files. ✅
     *   `SnapshotService`: To fetch proposal details. ✅
@@ -163,7 +163,7 @@
     1.  Add a new route `GET /agent-run/statistics` in `backend/main.py`. ✅
     2.  Create a new method in `AgentRunService` to scan and aggregate data from all `agent_checkpoint_*.json` files. ✅
     3.  Implement the logic for calculating totals, averages, and success rate. ✅
-    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ⚠️ (Pending)
+    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
 *   **Integration Points**:
     *   `StateManager`: To read all checkpoint files. ✅
     *   `main.py`: To expose the new endpoint. ✅
@@ -266,7 +266,7 @@
 - [x] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles ✅
 - [x] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files ✅
 - [x] All endpoints handle error cases gracefully with appropriate HTTP status codes ✅
-- [ ] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints
+- [x] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints ✅
 
 ### Frontend Component Requirements
 - [x] **AgentStatusWidget** displays real-time agent status with 30-second polling interval ✅
@@ -313,7 +313,7 @@
 - [x] `frontend/src/lib/components/dashboard/OverviewTab.svelte` - Integrate new components ✅ (all 4 components)
 - [x] `frontend/src/routes/+page.svelte` - Pass currentSpaceId to OverviewTab ✅
 - [x] `frontend/src/lib/api/index.ts` - Added apiClient export ✅
-- [ ] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`)
+- [x] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`) ✅
 - [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests (written, Svelte 5 issues) ✅
 - [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests ✅
 - [x] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests ✅

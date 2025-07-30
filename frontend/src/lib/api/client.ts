@@ -149,6 +149,84 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/agent-run/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Agent Run Status
+         * @description Get current agent run status.
+         *
+         *     Returns the agent's current state, last run timestamp, active status,
+         *     and the space ID of the current/last run.
+         *
+         *     Returns:
+         *         AgentRunStatus with current agent state information
+         */
+        get: operations["get_agent_run_status_agent_run_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/agent-run/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Agent Run Decisions
+         * @description Get recent voting decisions made by the agent.
+         *
+         *     Returns a list of the most recent voting decisions across all spaces,
+         *     enriched with proposal titles from Snapshot.
+         *
+         *     Args:
+         *         limit: Maximum number of decisions to return (default: 5, max: 100)
+         *
+         *     Returns:
+         *         AgentDecisionsResponse with list of recent decisions
+         */
+        get: operations["get_agent_run_decisions_agent_run_decisions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/agent-run/statistics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Agent Run Statistics
+         * @description Get aggregated statistics about agent runs.
+         *
+         *     Returns statistics including total runs, proposals evaluated, votes cast,
+         *     average confidence scores, success rates, and average runtime.
+         */
+        get: operations["get_agent_run_statistics_agent_run_statistics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user-preferences": {
         parameters: {
             query?: never;
@@ -183,6 +261,52 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AgentDecisionResponse
+         * @description Response model for an individual agent decision with enriched data.
+         */
+        AgentDecisionResponse: {
+            /**
+             * Proposal Id
+             * @description The proposal ID that was voted on
+             */
+            proposal_id: string;
+            /** @description The vote decision: FOR, AGAINST, or ABSTAIN */
+            vote: components["schemas"]["VoteType"];
+            /**
+             * Confidence
+             * @description Confidence score in the decision (0.0 to 1.0)
+             */
+            confidence: number;
+            /**
+             * Reasoning
+             * @description AI-generated explanation for the vote
+             */
+            reasoning: string;
+            /** @description The voting strategy used */
+            strategy_used: components["schemas"]["VotingStrategy"];
+            /**
+             * Timestamp
+             * @description ISO timestamp when the decision was made
+             */
+            timestamp: string;
+            /**
+             * Proposal Title
+             * @description Title of the proposal from Snapshot
+             */
+            proposal_title: string;
+        };
+        /**
+         * AgentDecisionsResponse
+         * @description Response model for the agent decisions endpoint.
+         */
+        AgentDecisionsResponse: {
+            /**
+             * Decisions
+             * @description List of recent voting decisions with enriched data
+             */
+            decisions: components["schemas"]["AgentDecisionResponse"][];
+        };
         /**
          * AgentRunRequest
          * @description Request model for agent run execution.
@@ -240,6 +364,68 @@ export interface components {
              * @description Next scheduled check time
              */
             next_check_time?: string | null;
+        };
+        /**
+         * AgentRunStatistics
+         * @description Aggregated statistics about agent runs across all spaces.
+         */
+        AgentRunStatistics: {
+            /**
+             * Total Runs
+             * @description Total number of agent runs across all spaces
+             */
+            total_runs: number;
+            /**
+             * Total Proposals Evaluated
+             * @description Total number of proposals evaluated
+             */
+            total_proposals_evaluated: number;
+            /**
+             * Total Votes Cast
+             * @description Total number of votes cast
+             */
+            total_votes_cast: number;
+            /**
+             * Average Confidence Score
+             * @description Average confidence score across all votes
+             */
+            average_confidence_score: number;
+            /**
+             * Success Rate
+             * @description Percentage of runs completed without errors (0.0 to 1.0)
+             */
+            success_rate: number;
+            /**
+             * Average Runtime Seconds
+             * @description Average runtime per run in seconds
+             */
+            average_runtime_seconds: number;
+        };
+        /**
+         * AgentRunStatus
+         * @description Response model for agent run status endpoint.
+         */
+        AgentRunStatus: {
+            /**
+             * Current State
+             * @description Current state of the agent (e.g., IDLE, FETCHING_PROPOSALS)
+             */
+            current_state: string;
+            /**
+             * Last Run Timestamp
+             * @description ISO timestamp of the last completed agent run
+             */
+            last_run_timestamp?: string | null;
+            /**
+             * Is Active
+             * @description Whether the agent is currently running
+             */
+            is_active: boolean;
+            /**
+             * Current Space Id
+             * @description Space ID of the current or last run
+             */
+            current_space_id?: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -805,6 +991,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_agent_run_status_agent_run_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentRunStatus"];
+                };
+            };
+        };
+    };
+    get_agent_run_decisions_agent_run_decisions_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentDecisionsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_agent_run_statistics_agent_run_statistics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentRunStatistics"];
                 };
             };
         };
