@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Comprehensive API documentation in specs/api.md for all agent dashboard endpoints
+- Agent Dashboard Components documentation in specs/frontend.md
+- Troubleshooting guide for common agent dashboard issues
+- Detailed endpoint documentation for /agent-run/status, /agent-run/decisions, and /agent-run/statistics
+
 ## [0.5.0] - 2025-07-23
 ### Added
 - EAS (Ethereum Attestation Service) integration for on-chain vote attestation
