@@ -402,3 +402,36 @@
 ### Summary
 
 The implementation is functionally complete with all features working in isolation. However, the lack of shared state management means the dashboard components don't work as a cohesive system. The frontend testing is completely blocked by framework compatibility issues. These issues prevent the feature from being production-ready despite having all individual pieces implemented.
+
+---
+
+## 6. End-to-End Verification
+
+### Task 5.1: Launch Server and Verify Functionality with Playwright
+
+*   **Why**: To ensure all implemented features work correctly in a real browser environment and provide visual verification of the dashboard functionality.
+*   **Acceptance Criteria**:
+    *   Backend and frontend servers are running successfully.
+    *   All agent dashboard components are visible and functional.
+    *   Agent status updates properly when polling.
+    *   Recent decisions panel displays data correctly.
+    *   Statistics show accurate metrics.
+    *   "Run Now" button triggers agent execution.
+*   **Verification Steps**:
+    1.  Start the backend server: `cd backend && uv run main.py`
+    2.  Start the frontend server: `cd frontend && npm run dev`
+    3.  Use Playwright MCP to navigate to `http://localhost:5173`
+    4.  Take screenshots of the dashboard showing:
+        - Agent Status Widget with current state
+        - Agent Statistics panel with metrics
+        - Agent Quick Actions with "Run Now" button
+        - Recent Decisions panel with voting history
+    5.  Verify interactive functionality:
+        - Wait for 30 seconds to confirm status polling works
+        - Click "Run Now" button and verify feedback message
+        - Check that all components display loading states appropriately
+    6.  Document any visual or functional issues discovered
+*   **Integration Points**:
+    *   Backend API: Must be running on port 8716
+    *   Frontend Dev Server: Must be running on port 5173
+    *   Playwright MCP: For browser automation and verification
