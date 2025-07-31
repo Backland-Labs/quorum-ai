@@ -1,5 +1,8 @@
 """Agent Run Service for executing autonomous voting decisions."""
 
+import glob
+import os
+import re
 import time
 from typing import List, Optional, Tuple
 
@@ -1036,10 +1039,17 @@ class AgentRunService:
         if not self.state_manager:
             return
 
+        # Serialize vote decisions with timestamps
+        votes_with_timestamps = []
+        for vote in response.votes_cast:
+            vote_data = vote.model_dump(mode="json")
+            vote_data["timestamp"] = datetime.utcnow().isoformat()
+            votes_with_timestamps.append(vote_data)
+
         checkpoint_data = {
             "space_id": response.space_id,
             "proposals_analyzed": response.proposals_analyzed,
-            "votes_cast": len(response.votes_cast),
+            "votes_cast": votes_with_timestamps,
             "execution_time": response.execution_time,
             "timestamp": datetime.utcnow().isoformat(),
             "errors": response.errors,
@@ -1068,3 +1078,274 @@ class AgentRunService:
         )
 
         self.pearl_logger.info("Saved shutdown state for recovery")
+
+    def _get_checkpoint_pattern(self) -> str:
+        """Get the file pattern for checkpoint files.
+
+        Returns:
+            Glob pattern for checkpoint files
+        """
+        return os.path.join(self.state_manager.store_path, "agent_checkpoint_*.json")
+
+    async def get_latest_checkpoint(self) -> Optional[dict]:
+        """Get the most recent checkpoint across all spaces.
+
+        Returns:
+            The most recent checkpoint data or None if no checkpoints exist
+        """
+        if not self.state_manager:
+            return None
+
+        latest_checkpoint = None
+        latest_timestamp = None
+
+        # Find all checkpoint files
+        checkpoint_files = glob.glob(self._get_checkpoint_pattern())
+
+        for file_path in checkpoint_files:
+            checkpoint_name = os.path.basename(file_path).replace(".json", "")
+            checkpoint_data = await self.state_manager.load_state(checkpoint_name)
+
+            if checkpoint_data and "timestamp" in checkpoint_data:
+                # Parse timestamp
+                try:
+                    timestamp = datetime.fromisoformat(
+                        checkpoint_data["timestamp"].replace("Z", "+00:00")
+                    )
+
+                    if latest_timestamp is None or timestamp > latest_timestamp:
+                        latest_timestamp = timestamp
+                        latest_checkpoint = checkpoint_data
+                except Exception as e:
+                    self.pearl_logger.warning(
+                        f"Failed to parse timestamp for {checkpoint_name}: {e}"
+                    )
+
+        return latest_checkpoint
+
+    def get_current_state(self) -> str:
+        """Get the current agent state from StateTransitionTracker.
+
+        Returns:
+            Current state value as string
+        """
+        return self.state_tracker.current_state.value
+
+    def is_agent_active(self) -> bool:
+        """Check if the agent is currently running.
+
+        Returns:
+            True if agent is active, False otherwise
+        """
+        return self._active_run or self.state_tracker.current_state != AgentState.IDLE
+
+    async def get_all_checkpoint_data(self) -> List[dict]:
+        """Get data from all checkpoint files.
+
+        Returns:
+            List of all checkpoint data
+        """
+        if not self.state_manager:
+            return []
+
+        checkpoints = []
+
+        # Find all checkpoint files
+        checkpoint_files = glob.glob(self._get_checkpoint_pattern())
+
+        for file_path in checkpoint_files:
+            checkpoint_name = os.path.basename(file_path).replace(".json", "")
+            checkpoint_data = await self.state_manager.load_state(checkpoint_name)
+
+            if checkpoint_data:
+                checkpoints.append(checkpoint_data)
+
+        return checkpoints
+
+    async def get_recent_decisions(
+        self, limit: int = 5
+    ) -> List[Tuple[VoteDecision, str]]:
+        """Get recent voting decisions from all checkpoint files.
+
+        Args:
+            limit: Maximum number of decisions to return
+
+        Returns:
+            List of tuples containing (VoteDecision, timestamp)
+        """
+        if not self.state_manager:
+            return []
+
+        all_decisions = []
+
+        try:
+            # List all checkpoint files
+            checkpoint_files = await self.state_manager.list_files()
+            checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")
+
+            # Filter for checkpoint files
+            checkpoint_files = [
+                f for f in checkpoint_files if checkpoint_pattern.match(f)
+            ]
+
+            # Load and aggregate decisions from each checkpoint
+            for checkpoint_file in checkpoint_files:
+                try:
+                    # Remove .json extension to get the key name
+                    checkpoint_key = checkpoint_file.replace(".json", "")
+                    checkpoint_data = await self.state_manager.load_state(
+                        checkpoint_key, allow_recovery=True
+                    )
+
+                    if checkpoint_data and "votes_cast" in checkpoint_data:
+                        votes = checkpoint_data["votes_cast"]
+
+                        # Handle both old format (count) and new format (list of decisions)
+                        if isinstance(votes, list):
+                            for vote_data in votes:
+                                try:
+                                    # Create a copy to avoid modifying the original
+                                    vote_data_copy = vote_data.copy()
+
+                                    # Extract timestamp before creating VoteDecision
+                                    timestamp = vote_data_copy.pop(
+                                        "timestamp",
+                                        checkpoint_data.get("timestamp", ""),
+                                    )
+
+                                    # Create VoteDecision from the data
+                                    vote_decision = VoteDecision(**vote_data_copy)
+                                    all_decisions.append((vote_decision, timestamp))
+                                except Exception as e:
+                                    self.pearl_logger.warning(
+                                        f"Skipping invalid vote decision: {e}"
+                                    )
+
+                except Exception as e:
+                    self.pearl_logger.warning(
+                        f"Error loading checkpoint {checkpoint_file}: {e}"
+                    )
+                    continue
+
+            # Sort by timestamp (most recent first)
+            all_decisions.sort(key=lambda x: x[1], reverse=True)
+
+            # Apply limit
+            return all_decisions[:limit]
+
+        except Exception as e:
+            self.pearl_logger.error(f"Error retrieving recent decisions: {e}")
+            return []
+
+    async def get_agent_run_statistics(self) -> dict:
+        """Calculate aggregated statistics from all agent checkpoint files.
+
+        Returns:
+            Dictionary containing aggregated statistics:
+            - total_runs: Total number of agent runs
+            - total_proposals_evaluated: Total proposals evaluated across all runs
+            - total_votes_cast: Total votes cast across all runs
+            - average_confidence_score: Average confidence across all votes
+            - success_rate: Percentage of runs without errors (0.0 to 1.0)
+            - average_runtime_seconds: Average runtime per run
+        """
+        if not self.state_manager:
+            return {
+                "total_runs": 0,
+                "total_proposals_evaluated": 0,
+                "total_votes_cast": 0,
+                "average_confidence_score": 0.0,
+                "success_rate": 0.0,
+                "average_runtime_seconds": 0.0,
+            }
+
+        # Initialize counters
+        total_runs = 0
+        total_proposals_evaluated = 0
+        total_votes_cast = 0
+        total_confidence_sum = 0.0
+        successful_runs = 0
+        total_runtime_seconds = 0.0
+
+        try:
+            # List all checkpoint files
+            checkpoint_files = await self.state_manager.list_files()
+            checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")
+
+            # Filter for checkpoint files
+            checkpoint_files = [
+                f for f in checkpoint_files if checkpoint_pattern.match(f)
+            ]
+
+            # Load and aggregate data from each checkpoint
+            for checkpoint_file in checkpoint_files:
+                try:
+                    # Remove .json extension to get the key name
+                    checkpoint_key = checkpoint_file.replace(".json", "")
+                    checkpoint_data = await self.state_manager.load_state(
+                        checkpoint_key, allow_recovery=True
+                    )
+
+                    if checkpoint_data:
+                        total_runs += 1
+
+                        # Count proposals evaluated
+                        proposals_evaluated = checkpoint_data.get(
+                            "proposals_evaluated", 0
+                        )
+                        total_proposals_evaluated += proposals_evaluated
+
+                        # Count votes cast and aggregate confidence scores
+                        votes_cast = checkpoint_data.get("votes_cast", [])
+                        if isinstance(votes_cast, list):
+                            total_votes_cast += len(votes_cast)
+
+                            # Sum confidence scores
+                            for vote in votes_cast:
+                                if isinstance(vote, dict):
+                                    confidence = vote.get("confidence", 0.0)
+                                    total_confidence_sum += confidence
+
+                        # Check if run was successful (no errors)
+                        errors = checkpoint_data.get("errors", [])
+                        if not errors:
+                            successful_runs += 1
+
+                        # Aggregate runtime
+                        runtime = checkpoint_data.get("runtime_seconds", 0.0)
+                        total_runtime_seconds += runtime
+
+                except Exception as e:
+                    self.pearl_logger.warning(
+                        f"Error loading checkpoint {checkpoint_file}: {e}"
+                    )
+                    continue
+
+            # Calculate averages
+            average_confidence_score = (
+                total_confidence_sum / total_votes_cast if total_votes_cast > 0 else 0.0
+            )
+            success_rate = successful_runs / total_runs if total_runs > 0 else 0.0
+            average_runtime_seconds = (
+                total_runtime_seconds / total_runs if total_runs > 0 else 0.0
+            )
+
+            return {
+                "total_runs": total_runs,
+                "total_proposals_evaluated": total_proposals_evaluated,
+                "total_votes_cast": total_votes_cast,
+                "average_confidence_score": round(average_confidence_score, 3),
+                "success_rate": round(success_rate, 3),
+                "average_runtime_seconds": round(average_runtime_seconds, 2),
+            }
+
+        except Exception as e:
+            self.pearl_logger.error(f"Error calculating agent statistics: {e}")
+            return {
+                "total_runs": 0,
+                "total_proposals_evaluated": 0,
+                "total_votes_cast": 0,
+                "average_confidence_score": 0.0,
+                "success_rate": 0.0,
+                "average_runtime_seconds": 0.0,
+            }

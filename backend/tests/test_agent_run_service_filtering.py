@@ -18,8 +18,7 @@ from models import (
     VoteType,
     VotingStrategy,
     RiskLevel,
-    UserPreferences,
-    ProposalState
+    UserPreferences
 )
 
 

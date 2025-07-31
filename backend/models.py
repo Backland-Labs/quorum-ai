@@ -188,6 +188,14 @@ class VoteType(str, Enum):
     ABSTAIN = "ABSTAIN"
 
 
+class ProposalState(str, Enum):
+    """Proposal states from Snapshot."""
+
+    PENDING = "pending"
+    ACTIVE = "active"
+    CLOSED = "closed"
+
+
 class VoteChoice(BaseModel):
     """Individual voting choice for proposals."""
 
@@ -714,6 +722,45 @@ class AgentRunResponse(BaseModel):
         return float(v)
 
 
+class AgentRunStatus(BaseModel):
+    """Response model for agent run status endpoint."""
+
+    current_state: str = Field(
+        description="Current state of the agent (e.g., IDLE, FETCHING_PROPOSALS)"
+    )
+    last_run_timestamp: Optional[str] = Field(
+        None, description="ISO timestamp of the last completed agent run"
+    )
+    is_active: bool = Field(description="Whether the agent is currently running")
+    current_space_id: Optional[str] = Field(
+        None, description="Space ID of the current or last run"
+    )
+
+
+class AgentDecisionResponse(BaseModel):
+    """Response model for an individual agent decision with enriched data."""
+
+    proposal_id: str = Field(..., description="The proposal ID that was voted on")
+    vote: VoteType = Field(
+        ..., description="The vote decision: FOR, AGAINST, or ABSTAIN"
+    )
+    confidence: float = Field(
+        ..., description="Confidence score in the decision (0.0 to 1.0)"
+    )
+    reasoning: str = Field(..., description="AI-generated explanation for the vote")
+    strategy_used: VotingStrategy = Field(..., description="The voting strategy used")
+    timestamp: str = Field(..., description="ISO timestamp when the decision was made")
+    proposal_title: str = Field(..., description="Title of the proposal from Snapshot")
+
+
+class AgentDecisionsResponse(BaseModel):
+    """Response model for the agent decisions endpoint."""
+
+    decisions: List[AgentDecisionResponse] = Field(
+        ..., description="List of recent voting decisions with enriched data"
+    )
+
+
 class UserPreferences(BaseModel):
     """User preferences model for agent run configuration."""
 
@@ -988,3 +1035,31 @@ class EASAttestationData(BaseModel):
                 f"Invalid attestation status: {v}. Must be one of {valid_statuses}"
             )
         return v
+
+
+class AgentRunStatistics(BaseModel):
+    """Aggregated statistics about agent runs across all spaces."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    total_runs: int = Field(
+        ..., ge=0, description="Total number of agent runs across all spaces"
+    )
+    total_proposals_evaluated: int = Field(
+        ..., ge=0, description="Total number of proposals evaluated"
+    )
+    total_votes_cast: int = Field(
+        ..., ge=0, description="Total number of votes cast"
+    )
+    average_confidence_score: float = Field(
+        ..., ge=0.0, le=1.0, description="Average confidence score across all votes"
+    )
+    success_rate: float = Field(
+        ...,
+        ge=0.0,
+        le=1.0,
+        description="Percentage of runs completed without errors (0.0 to 1.0)",
+    )
+    average_runtime_seconds: float = Field(
+        ..., ge=0.0, description="Average runtime per run in seconds"
+    )
