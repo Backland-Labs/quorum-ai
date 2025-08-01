@@ -100,10 +100,10 @@
           {currentSpaceId}
         />
       {:else if $dashboardState.activeTab === 'proposals'}
-        <ProposalsTab 
-          {proposals} 
+        <ProposalsTab
+          {proposals}
           proposalSummaries={$dashboardState.proposalSummaries}
-          {dashboardStore} 
+          {dashboardStore}
         />
       {:else if $dashboardState.activeTab === 'activity'}
         <ActivityTab />

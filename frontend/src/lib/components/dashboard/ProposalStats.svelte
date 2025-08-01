@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { components } from '$lib/api/client';
-  
+
   interface Props {
     proposals: components['schemas']['Proposal'][];
     onViewDetails: () => void;
   }
-  
+
   let { proposals, onViewDetails }: Props = $props();
-  
+
   const stats = $derived({
     total: proposals.length,
     active: proposals.filter(p => p.state === 'active').length,
@@ -26,7 +26,7 @@
       View all
     </button>
   </div>
-  
+
   <div class="grid grid-cols-2 gap-4">
     <div>
       <p class="text-2xl font-bold text-secondary-900">{stats.total}</p>

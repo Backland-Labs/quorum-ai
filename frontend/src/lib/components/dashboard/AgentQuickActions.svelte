@@ -7,16 +7,16 @@
   }
 
   let { onRunComplete }: Props = $props();
-  
+
   // Get data from the store
   const storeState = $state($agentStatusStore);
   const isAgentActive = $state($agentStatusStore.isAgentActive);
   const currentSpaceId = $derived(storeState.currentSpaceId);
-  
+
   // Constants
   const SUCCESS_MESSAGE_DURATION = 5000;
   const API_ENDPOINT = '/agent-run';
-  
+
   // State
   let isLoading = $state(false);
   let message = $state<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -28,8 +28,8 @@
   const buttonTitle = $derived(isAgentActive ? 'Agent is currently active' : undefined);
   const buttonAriaLabel = $derived(isAgentActive ? 'Run agent (currently active)' : 'Run autonomous voting agent now');
   const alertClasses = $derived(
-    message?.type === 'success' 
-      ? 'bg-green-50 text-green-800 border-green-200' 
+    message?.type === 'success'
+      ? 'bg-green-50 text-green-800 border-green-200'
       : 'bg-red-50 text-red-800 border-red-200'
   );
 
@@ -43,7 +43,7 @@
   function showMessage(type: 'success' | 'error', text: string): void {
     message = { type, text };
     clearMessageTimer();
-    
+
     if (type === 'success') {
       messageTimer = setTimeout(() => {
         message = null;
@@ -89,7 +89,7 @@
 
   function handleKeyDown(event: KeyboardEvent): void {
     const isActivationKey = event.key === 'Enter' || event.key === ' ';
-    
+
     if (isActivationKey && !buttonDisabled) {
       event.preventDefault();
       handleRunNow();
@@ -104,11 +104,11 @@
 
 <div data-testid="quick-actions" class="flex flex-col gap-2 w-full sm:w-auto">
   <h4 data-testid="actions-title" class="text-sm sm:text-base font-medium text-gray-900 mb-2 sm:mb-3">Quick Actions</h4>
-  
+
   {#if message}
-    <div 
+    <div
       data-testid={message.type === 'success' ? 'feedback-message' : 'error-message'}
-      role="alert" 
+      role="alert"
       class="px-2 sm:px-0 py-3 rounded-md text-xs sm:text-sm border {alertClasses} break-words"
     >
       {message.text}
@@ -124,25 +124,25 @@
     title={buttonTitle}
   >
     {#if isLoading}
-      <svg 
+      <svg
         data-testid="loading-spinner"
-        role="status" 
-        aria-label="Loading" 
+        role="status"
+        aria-label="Loading"
         class="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin"
         viewBox="0 0 24 24"
         fill="none"
       >
-        <circle 
-          class="opacity-25" 
-          cx="12" 
-          cy="12" 
-          r="10" 
-          stroke="currentColor" 
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
           stroke-width="4"
         />
-        <path 
-          class="opacity-75" 
-          fill="currentColor" 
+        <path
+          class="opacity-75"
+          fill="currentColor"
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>

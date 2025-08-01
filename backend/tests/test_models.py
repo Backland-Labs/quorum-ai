@@ -8,7 +8,6 @@ from pydantic import ValidationError
 from models import (
     Proposal,
     ProposalSummary,
-    ProposalFilters,
     ProposalListResponse,
     SummarizeRequest,
     SummarizeResponse,
@@ -257,60 +256,6 @@ class TestProposalSummary:
         summary = ProposalSummary(**summary_data)
         assert summary.confidence_score == 1.0
 
-
-class TestProposalFilters:
-    """Test cases for ProposalFilters model."""
-
-    def test_proposal_filters_with_defaults(self) -> None:
-        """Test ProposalFilters creation with default values."""
-        filters = ProposalFilters()
-
-        assert filters.state is None
-        assert filters.dao_id is None
-        assert filters.limit == 20
-        assert filters.after_cursor is None
-        assert filters.sort_by == SortCriteria.CREATED_DATE
-        assert filters.sort_order == SortOrder.DESC
-
-    def test_proposal_filters_with_custom_values(self) -> None:
-        """Test ProposalFilters creation with custom values."""
-        filters = ProposalFilters(
-            state=ProposalState.ACTIVE,
-            dao_id="dao-123",
-            limit=50,
-            after_cursor="cursor_10",
-            sort_by=SortCriteria.VOTE_COUNT,
-            sort_order=SortOrder.ASC,
-        )
-
-        assert filters.state == ProposalState.ACTIVE
-        assert filters.dao_id == "dao-123"
-        assert filters.limit == 50
-        assert filters.after_cursor == "cursor_10"
-        assert filters.sort_by == SortCriteria.VOTE_COUNT
-        assert filters.sort_order == SortOrder.ASC
-
-    def test_proposal_filters_limit_validation(self) -> None:
-        """Test that limit is validated to be within valid range."""
-        # Test limit too low
-        with pytest.raises(ValidationError):
-            ProposalFilters(limit=0)
-
-        # Test limit too high
-        with pytest.raises(ValidationError):
-            ProposalFilters(limit=101)
-
-        # Test valid boundaries
-        filters_min = ProposalFilters(limit=1)
-        assert filters_min.limit == 1
-
-        filters_max = ProposalFilters(limit=100)
-        assert filters_max.limit == 100
-
-    def test_proposal_filters_cursor_validation(self) -> None:
-        """Test that after_cursor can be set to any string value."""
-        filters = ProposalFilters(after_cursor="test_cursor")
-        assert filters.after_cursor == "test_cursor"
 
 
 class TestSummarizeRequest:

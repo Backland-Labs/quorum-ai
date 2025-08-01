@@ -6,7 +6,7 @@ import re
 import time
 from typing import List, Optional, Tuple, Dict, Any
 
-from datetime import datetime, timezone
+from datetime import datetime
 from logging_config import setup_pearl_logger, log_span
 
 from models import (
@@ -470,7 +470,7 @@ class AgentRunService:
     async def _make_voting_decisions(
         self, proposals: List[Proposal], user_preferences: UserPreferences
     ) -> List[VoteDecision]:
-        """Make voting decisions using AI service.
+        """Make voting decisions using AI service with strategic context.
 
         Args:
             proposals: Proposals to analyze
@@ -483,8 +483,50 @@ class AgentRunService:
             VotingDecisionError: If making decisions fails
         """
         try:
-            self.pearl_logger.info(f"Making voting decisions for {len(proposals)} proposals")
-            decisions = await self.ai_service.decide_votes(proposals, user_preferences)
+            self.pearl_logger.info(
+                f"Making voting decisions for {len(proposals)} proposals"
+            )
+            
+            # Load voting history (limited to 10 most recent)
+            voting_history = await self.get_voting_history()
+            self.pearl_logger.info(
+                f"Loaded {len(voting_history)} historical voting decisions"
+            )
+            
+            # Generate strategic briefing
+            try:
+                briefing = await self.ai_service.generate_strategic_briefing(
+                    proposals, user_preferences, voting_history
+                )
+                self.pearl_logger.info(
+                    "Generated strategic briefing",
+                    extra={
+                        "briefing_summary": briefing.summary,
+                        "insights_count": len(briefing.key_insights),
+                        "history_size": len(voting_history)
+                    }
+                )
+            except Exception as e:
+                # Log error but continue with None briefing
+                self.pearl_logger.error(
+                    f"Failed to generate strategic briefing: {str(e)}"
+                )
+                briefing = None
+            
+            # Make strategic decisions with briefing and history
+            if hasattr(self.ai_service, 'make_strategic_decision'):
+                decisions = await self.ai_service.make_strategic_decision(
+                    proposals=proposals,
+                    user_preferences=user_preferences,
+                    briefing=briefing,
+                    voting_history=voting_history
+                )
+            else:
+                # Fallback to regular decide_votes if strategic method not available
+                self.pearl_logger.info(
+                    "Using fallback decide_votes method"
+                )
+                decisions = await self.ai_service.decide_votes(proposals, user_preferences)
 
             # Validate decisions match proposals
             if len(decisions) != len(proposals):
@@ -526,7 +568,7 @@ class AgentRunService:
             try:
                 # Track voting state
                 self.state_tracker.transition(
-                    AgentState.VOTING,
+                    AgentState.SUBMITTING_VOTE,
                     {
                         "run_id": run_id,
                         "proposal_id": decision.proposal_id,
@@ -542,12 +584,12 @@ class AgentRunService:
                     # Execute actual vote
                     success = await self._execute_single_vote(decision, space_id)
                     if success:
-                        self.logger.log_vote_execution(decision, space_id, success)
+                        self.logger.log_vote_execution(decision, success)
                         executed_decisions.append(decision)
                         # Add space_id to decision for attestation tracking
                         decision.space_id = space_id
                     else:
-                        self.logger.log_vote_execution(decision, space_id, success)
+                        self.logger.log_vote_execution(decision, success)
 
             except Exception as e:
                 self.pearl_logger.error(
@@ -557,9 +599,7 @@ class AgentRunService:
 
         return executed_decisions
 
-    async def _execute_single_vote(
-        self, decision: VoteDecision, space_id: str
-    ) -> bool:
+    async def _execute_single_vote(self, decision: VoteDecision, space_id: str) -> bool:
         """Execute a single vote.
 
         Args:
@@ -572,24 +612,24 @@ class AgentRunService:
         try:
             # Map vote type to choice index
             choice = VOTE_CHOICE_MAPPING.get(decision.vote, 1)
-            
+
             # Get Safe address for this space
             safe_addresses = self.safe_service.get_safe_addresses()
             if not safe_addresses:
                 self.pearl_logger.error("No Safe addresses configured")
                 return False
-                
+
             safe_address = safe_addresses[0]  # Use first Safe for now
-            
+
             result = await self.voting_service.cast_vote(
                 safe_address=safe_address,
                 space=space_id,
                 proposal=decision.proposal_id,
                 choice=choice,
             )
-            
+
             return result is not None
-            
+
         except Exception as e:
             self.pearl_logger.error(f"Failed to execute vote: {e}")
             return False
@@ -643,8 +683,10 @@ class AgentRunService:
         Returns:
             AgentRunResponse with error information
         """
-        self.pearl_logger.error(f"Unexpected error in agent run: {error}", exc_info=True)
-        
+        self.pearl_logger.error(
+            f"Unexpected error in agent run: {error}", exc_info=True
+        )
+
         return AgentRunResponse(
             space_id=space_id,
             proposals_analyzed=0,
@@ -750,7 +792,10 @@ class AgentRunService:
             self.pearl_logger.error(f"Error processing pending attestations: {e}")
 
     async def _retry_attestation(
-        self, vote_decision: VoteDecision, eas_data: EASAttestationData, retry_count: int
+        self,
+        vote_decision: VoteDecision,
+        eas_data: EASAttestationData,
+        retry_count: int,
     ) -> bool:
         """Retry a failed attestation."""
         if retry_count >= MAX_ATTESTATION_RETRIES:
@@ -1143,28 +1188,28 @@ class AgentRunService:
 
     async def get_voting_history(self, limit: int = 10) -> List[VoteDecision]:
         """Get recent voting history from state manager (max 10).
-        
+
         Args:
             limit: Maximum number of decisions to return (default and max: 10)
-            
+
         Returns:
             List of VoteDecision objects representing recent votes
         """
         if not self.state_manager:
             return []
-            
+
         # Enforce maximum limit of 10
         limit = min(limit, 10)
-        
+
         try:
             # Load voting history from state
             state = await self.state_manager.load_state("voting_history")
-            
+
             if not state or "voting_history" not in state:
                 return []
-                
+
             history_data = state["voting_history"]
-            
+
             # Convert to VoteDecision objects, filtering invalid entries
             decisions = []
             for item in history_data:
@@ -1172,74 +1217,74 @@ class AgentRunService:
                     # Ensure all required fields are present
                     if not isinstance(item, dict):
                         continue
-                        
+
                     # Set defaults for missing optional fields
                     if "confidence" not in item:
                         item["confidence"] = 0.0
                     if "strategy_used" not in item:
                         item["strategy_used"] = VotingStrategy.BALANCED.value
                     if "reasoning" not in item or len(item.get("reasoning", "")) < 10:
-                        item["reasoning"] = "Decision made based on available information"
-                        
+                        item["reasoning"] = (
+                            "Decision made based on available information"
+                        )
+
                     decision = VoteDecision(**item)
                     decisions.append(decision)
                 except Exception as e:
                     self.pearl_logger.warning(f"Skipping invalid vote decision: {e}")
                     continue
-                    
+
             # Return only the most recent N decisions
             return decisions[-limit:]
-            
+
         except Exception as e:
             self.pearl_logger.error(f"Error loading voting history: {e}")
             return []
 
     async def save_voting_decisions(self, decisions: List[VoteDecision]) -> None:
         """Save new voting decisions and maintain 10-item history.
-        
+
         Args:
             decisions: List of new VoteDecision objects to save
         """
         if not self.state_manager:
             return
-            
+
         try:
             # Load existing history
             state = await self.state_manager.load_state("voting_history")
             existing_history = []
-            
+
             if state and "voting_history" in state:
                 existing_history = state["voting_history"]
-            
+
             # Convert new decisions to dict format
             new_history_items = []
             for decision in decisions:
                 decision_dict = decision.model_dump(mode="json")
                 new_history_items.append(decision_dict)
-            
+
             # Combine and prune to keep only 10 most recent
             combined_history = existing_history + new_history_items
             pruned_history = combined_history[-10:]  # Keep only last 10
-            
+
             # Save updated history
             await self.state_manager.save_state(
-                "voting_history",
-                {"voting_history": pruned_history},
-                sensitive=False
+                "voting_history", {"voting_history": pruned_history}, sensitive=False
             )
-            
+
             self.pearl_logger.info(
                 f"Saved {len(decisions)} new decisions, "
                 f"maintaining history of {len(pruned_history)} items"
             )
-            
+
         except Exception as e:
             self.pearl_logger.error(f"Error saving voting decisions: {e}")
             # Don't raise - voting history failures should not block voting
 
     async def get_voting_patterns(self) -> Dict[str, Any]:
         """Analyze voting patterns from history.
-        
+
         Returns:
             Dictionary containing:
             - vote_distribution: Count of each vote type
@@ -1248,34 +1293,34 @@ class AgentRunService:
         """
         try:
             history = await self.get_voting_history()
-            
+
             if not history:
                 return {
                     "vote_distribution": {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0},
                     "average_confidence": 0.0,
-                    "total_votes": 0
+                    "total_votes": 0,
                 }
-            
+
             # Calculate vote distribution
             vote_distribution = {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0}
             confidence_sum = 0.0
-            
+
             for decision in history:
                 vote_distribution[decision.vote.value] += 1
                 confidence_sum += decision.confidence
-            
+
             average_confidence = confidence_sum / len(history) if history else 0.0
-            
+
             return {
                 "vote_distribution": vote_distribution,
                 "average_confidence": average_confidence,
-                "total_votes": len(history)
+                "total_votes": len(history),
             }
-            
+
         except Exception as e:
             self.pearl_logger.error(f"Error analyzing voting patterns: {e}")
             return {
                 "vote_distribution": {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0},
                 "average_confidence": 0.0,
-                "total_votes": 0
+                "total_votes": 0,
             }

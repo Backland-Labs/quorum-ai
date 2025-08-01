@@ -55,18 +55,18 @@
   <!-- Autonomous Voting Agent Section -->
   <div class="mb-8">
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Autonomous Voting Agent</h2>
-    
+
     <!-- Agent Status and Statistics Row -->
     <div class="grid gap-6 mb-6 lg:grid-cols-2">
       <AgentStatusWidget />
       <AgentStatistics />
     </div>
-    
+
     <!-- Agent Quick Actions -->
     <div class="mb-6">
       <AgentQuickActions />
     </div>
-    
+
     <!-- Agent Decisions Panel -->
     <div class="mb-6">
       <AgentDecisionsPanel />
@@ -76,7 +76,7 @@
   <!-- Proposals Section -->
   <div>
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Proposals Overview</h2>
-    
+
     {#if hasProposals()}
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <ProposalStats

@@ -1,13 +1,13 @@
 /*
  * Test suite for AgentDecisionsPanel component
- * 
+ *
  * These tests verify that the component correctly:
  * 1. Displays a loading state while fetching data
  * 2. Renders a list of voting decisions with all required information
  * 3. Shows correct data for each decision (title, vote, confidence)
  * 4. Handles empty state when no decisions exist
  * 5. Links to proposal details pages
- * 
+ *
  * Following TDD methodology - tests written before implementation
  */
 
@@ -38,7 +38,7 @@ describe('AgentDecisionsPanel', () => {
     // Tests that the panel shows a loading indicator while fetching decisions
     // This ensures users see appropriate feedback during data loading
     const { container } = render(AgentDecisionsPanel);
-    
+
     const loadingElement = container.querySelector('[data-testid="loading-state"]');
     expect(loadingElement).toBeTruthy();
     expect(loadingElement?.textContent).toContain('Loading');
@@ -81,7 +81,7 @@ describe('AgentDecisionsPanel', () => {
     await waitFor(() => {
       const decisionsList = container.querySelector('[data-testid="decisions-list"]');
       expect(decisionsList).toBeTruthy();
-      
+
       const decisionItems = container.querySelectorAll('[data-testid="decision-item"]');
       expect(decisionItems).toHaveLength(2);
     });
@@ -116,12 +116,12 @@ describe('AgentDecisionsPanel', () => {
       // Check proposal title
       const titleElement = container.querySelector('[data-testid="decision-title"]');
       expect(titleElement?.textContent).toBe('Test Proposal Title');
-      
+
       // Check vote display
       const voteElement = container.querySelector('[data-testid="decision-vote"]');
       expect(voteElement?.textContent).toBe('FOR');
       expect(voteElement?.classList.toString()).toMatch(/green|emerald/); // FOR should be green
-      
+
       // Check confidence score
       const confidenceElement = container.querySelector('[data-testid="decision-confidence"]');
       expect(confidenceElement?.textContent).toContain('95%');
@@ -268,10 +268,10 @@ describe('AgentDecisionsPanel', () => {
     await waitFor(() => {
       const voteElements = container.querySelectorAll('[data-testid="decision-vote"]');
       expect(voteElements).toHaveLength(2);
-      
+
       // First vote (FOR) should have green styling
       expect(voteElements[0]?.classList.toString()).toMatch(/green|emerald/);
-      
+
       // Second vote (AGAINST) should have red styling
       expect(voteElements[1]?.classList.toString()).toMatch(/red|rose/);
     });
@@ -357,13 +357,13 @@ describe('AgentDecisionsPanel', () => {
     await waitFor(() => {
       const confidenceElements = container.querySelectorAll('[data-testid="decision-confidence"]');
       expect(confidenceElements).toHaveLength(3);
-      
+
       // High confidence should have green styling
       expect(confidenceElements[0]?.classList.toString()).toMatch(/green|emerald/);
-      
+
       // Medium confidence should have yellow/amber styling
       expect(confidenceElements[1]?.classList.toString()).toMatch(/yellow|amber/);
-      
+
       // Low confidence should have red styling
       expect(confidenceElements[2]?.classList.toString()).toMatch(/red|rose/);
     });

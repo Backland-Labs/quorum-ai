@@ -1048,9 +1048,7 @@ class AgentRunStatistics(BaseModel):
     total_proposals_evaluated: int = Field(
         ..., ge=0, description="Total number of proposals evaluated"
     )
-    total_votes_cast: int = Field(
-        ..., ge=0, description="Total number of votes cast"
-    )
+    total_votes_cast: int = Field(..., ge=0, description="Total number of votes cast")
     average_confidence_score: float = Field(
         ..., ge=0.0, le=1.0, description="Average confidence score across all votes"
     )
@@ -1067,7 +1065,7 @@ class AgentRunStatistics(BaseModel):
 
 class StrategicBriefing(BaseModel):
     """Strategic briefing for agent decision making.
-    
+
     Provides contextual information including user preferences, voting history
     analysis, and strategic recommendations to enhance AI decision-making.
     """
@@ -1103,7 +1101,7 @@ class StrategicBriefing(BaseModel):
             raise ValueError("Key insights must be a list")
         if len(v) == 0:
             raise ValueError("Key insights cannot be empty")
-        
+
         validated_insights = []
         for i, insight in enumerate(v):
             if not isinstance(insight, str):
@@ -1116,7 +1114,7 @@ class StrategicBriefing(BaseModel):
                     f"Key insight at index {i} must be at least {MIN_MEANINGFUL_TEXT_LENGTH} characters"
                 )
             validated_insights.append(cleaned)
-        
+
         return validated_insights
 
     @field_validator("recommendations")
@@ -1127,7 +1125,7 @@ class StrategicBriefing(BaseModel):
             raise ValueError("Recommendations must be a list")
         if len(v) == 0:
             raise ValueError("Recommendations cannot be empty")
-        
+
         validated_recommendations = []
         for i, recommendation in enumerate(v):
             if not isinstance(recommendation, str):
@@ -1140,5 +1138,5 @@ class StrategicBriefing(BaseModel):
                     f"Recommendation at index {i} must be at least {MIN_MEANINGFUL_TEXT_LENGTH} characters"
                 )
             validated_recommendations.append(cleaned)
-        
+
         return validated_recommendations

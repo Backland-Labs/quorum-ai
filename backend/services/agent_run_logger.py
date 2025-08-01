@@ -157,6 +157,17 @@ class AgentRunLogger:
             message = self._format_structured_message("Vote execution failed", params)
             self.logger.error(message)
 
+    def log_dry_run_vote(self, decision: VoteDecision) -> None:
+        """Log dry run vote simulation."""
+        params = {
+            "proposal_id": decision.proposal_id,
+            "vote_choice": decision.vote.value,
+            "confidence": decision.confidence,
+            "dry_run": True
+        }
+        message = self._format_structured_message("Dry run vote simulated", params)
+        self.logger.info(message)
+
     def log_agent_completion(self, response: AgentRunResponse) -> None:
         """Log agent run completion with summary metrics."""
         execution_time = time.time() - self.start_time if self.start_time else 0
