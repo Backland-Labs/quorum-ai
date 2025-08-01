@@ -50,7 +50,7 @@ from backend.models import Proposal, UserPreferences, VoteDecision, VotingStrate
 async def test_generate_strategic_briefing():
     """Test that strategic briefing incorporates preferences and history."""
     ai_service = AIService()
-    
+
     # Setup test data
     proposals = [Proposal(id="0x1", title="Test Proposal")]
     preferences = UserPreferences(
@@ -65,12 +65,12 @@ async def test_generate_strategic_briefing():
             reasoning="Previous vote"
         )
     ]
-    
+
     # Generate briefing
     briefing = await ai_service.generate_strategic_briefing(
         proposals, preferences, history
     )
-    
+
     # Verify briefing contains key elements
     assert "voting strategy: BALANCED" in briefing.lower()
     assert "recent voting history" in briefing.lower()
@@ -81,11 +81,11 @@ async def test_strategic_system_prompt_includes_briefing():
     """Test that system prompt properly includes strategic briefing."""
     ai_service = AIService()
     briefing = "Strategic context: Conservative approach needed"
-    
+
     prompt = ai_service._get_strategic_system_prompt(
         briefing, VotingStrategy.CONSERVATIVE
     )
-    
+
     assert briefing in prompt
     assert "conservative" in prompt.lower()
 ```
@@ -123,9 +123,16 @@ def _get_strategic_system_prompt(
     """Enhanced system prompt with strategic context."""
 ```
 
-### Phase 2: Persistent Voting History (Foundation)
+### Phase 2: Persistent Voting History (Foundation) ✅ IMPLEMENTED
 
 **Goal:** Track and persist voting decisions for strategic analysis (limit to 10 most recent)
+
+**Status:** ✅ Implemented on 2025-08-01
+- Implemented get_voting_history() method with 10-item limit
+- Implemented save_voting_decisions() with automatic pruning
+- Added get_voting_patterns() for pattern analysis
+- Full test coverage with all tests passing
+- StateManager integration complete
 
 **Test First (TDD):**
 ```python
@@ -147,12 +154,12 @@ async def test_voting_history_limited_to_10():
         "voting_history": existing_history
     })
     mock_state_manager.save_state = AsyncMock()
-    
+
     service = AgentRunService(state_manager=mock_state_manager)
-    
+
     # Get voting history
     history = await service.get_voting_history()
-    
+
     # Should only return 10 most recent
     assert len(history) == 10
     assert history[0].proposal_id == "0x5"  # Oldest in the 10
@@ -167,18 +174,18 @@ async def test_voting_history_persistence():
         "voting_history": existing
     })
     mock_state_manager.save_state = AsyncMock()
-    
+
     service = AgentRunService(state_manager=mock_state_manager)
-    
+
     # Add new decisions
     new_decisions = [
-        VoteDecision(proposal_id=f"0xnew{i}", vote=VoteType.FOR, 
+        VoteDecision(proposal_id=f"0xnew{i}", vote=VoteType.FOR,
                     confidence=0.9, reasoning="New vote")
         for i in range(3)
     ]
-    
+
     await service.save_voting_decisions(new_decisions)
-    
+
     # Verify save was called with 10 items (8 existing + 3 new - 1 pruned)
     saved_data = mock_state_manager.save_state.call_args[0][1]
     assert len(saved_data["voting_history"]) == 10
@@ -244,9 +251,9 @@ async def test_analyze_proposal_impact():
         body="Allocate 500,000 USDC for development",
         choices=["For", "Against"]
     )
-    
+
     impact = await service.analyze_proposal_impact(proposal)
-    
+
     assert impact["has_financial_impact"] is True
     assert impact["estimated_amount"] == 500000
     assert impact["impact_level"] in ["high", "medium", "low"]
@@ -255,7 +262,7 @@ async def test_analyze_proposal_impact():
 async def test_assess_treasury_implications():
     """Test treasury impact assessment with regex patterns."""
     service = ProposalEvaluationService()
-    
+
     # Test various financial patterns
     test_cases = [
         ("Request 1,000,000 DAI", {"amount": 1000000, "currency": "DAI"}),
@@ -263,11 +270,11 @@ async def test_assess_treasury_implications():
         ("Transfer 50 ETH", {"amount": 50, "currency": "ETH"}),
         ("No financial impact", None)
     ]
-    
+
     for body, expected in test_cases:
         proposal = Proposal(id="0x1", title="Test", body=body)
         result = await service.assess_treasury_implications(proposal)
-        
+
         if expected is None:
             assert result["treasury_impact"] is None
         else:
@@ -279,7 +286,7 @@ async def test_check_proposal_precedent():
     """Test precedent checking against voting history."""
     service = ProposalEvaluationService()
     proposal = Proposal(id="0x1", title="Treasury Allocation")
-    
+
     history = [
         VoteDecision(
             proposal_id="0x0",
@@ -288,9 +295,9 @@ async def test_check_proposal_precedent():
             reasoning="Supported similar treasury proposal"
         )
     ]
-    
+
     precedent = await service.check_proposal_precedent(proposal, history)
-    
+
     assert precedent["has_precedent"] is True
     assert precedent["similar_votes"] == 1
     assert precedent["historical_stance"] == "supportive"
@@ -315,13 +322,13 @@ from backend.models import Proposal, VoteDecision
 
 class ProposalEvaluationService:
     """Service for evaluating governance proposals."""
-    
+
     async def analyze_proposal_impact(self, proposal: Proposal) -> Dict[str, Any]:
         """Analyze potential impact of proposal."""
         # Check for financial keywords
         # Assess governance changes
         # Return impact assessment
-    
+
     async def assess_treasury_implications(self, proposal: Proposal) -> Dict[str, Any]:
         """Assess treasury and financial impact using regex."""
         # Pattern matching for amounts and currencies
@@ -331,13 +338,13 @@ class ProposalEvaluationService:
             r'\$(\d+(?:\.\d+)?)[MK]?\s*([A-Z]{3,4})',      # $2.5M USDC
             r'(\d+(?:\.\d+)?)[MK]\s*([A-Z]{3,4})',         # 1M DAI
         ]
-    
+
     async def evaluate_governance_risk(self, proposal: Proposal) -> Dict[str, Any]:
         """Evaluate governance and protocol risks."""
         # Check for parameter changes
         # Assess voting power implications
         # Return risk assessment
-    
+
     async def check_proposal_precedent(
         self, proposal: Proposal, history: List[VoteDecision]
     ) -> Dict[str, Any]:
@@ -345,7 +352,7 @@ class ProposalEvaluationService:
         # Find similar proposals in history
         # Analyze voting patterns
         # Return precedent analysis
-    
+
     async def analyze_community_sentiment(self, proposal: Proposal) -> Dict[str, Any]:
         """Analyze voting patterns and community response."""
         # Check current voting status
@@ -362,14 +369,14 @@ class AIService:
     def __init__(self):
         # ... existing init ...
         self.evaluation_service = ProposalEvaluationService()
-    
+
     def _create_agent_with_tools(self, context: Dict[str, Any]) -> Agent:
         """Create agent with evaluation tools."""
         # Tool wrapper functions for Pydantic AI
         async def analyze_impact(proposal_id: str) -> Dict[str, Any]:
             proposal = context["proposals_map"].get(proposal_id)
             return await self.evaluation_service.analyze_proposal_impact(proposal)
-        
+
         # Register tools with agent
         tools = [analyze_impact, ...]  # Add all wrapped tools
 ```
@@ -393,23 +400,23 @@ async def test_proactive_workflow_integration():
     mock_state_manager = MagicMock()
     mock_ai_service = MagicMock()
     mock_snapshot_service = MagicMock()
-    
+
     # Setup test data
     proposals = [
-        Proposal(id="0x1", title="Treasury Proposal", 
+        Proposal(id="0x1", title="Treasury Proposal",
                 body="Request 100,000 USDC", state="active")
     ]
     voting_history = [
-        VoteDecision(proposal_id="0x0", vote=VoteType.FOR, 
+        VoteDecision(proposal_id="0x0", vote=VoteType.FOR,
                     confidence=0.8, reasoning="Previous decision")
     ]
-    
+
     # Mock methods
     mock_snapshot_service.get_proposals = AsyncMock(return_value=proposals)
     mock_state_manager.load_state = AsyncMock(return_value={
         "voting_history": [vh.model_dump() for vh in voting_history]
     })
-    
+
     # Mock strategic briefing
     mock_ai_service.generate_strategic_briefing = AsyncMock(
         return_value=StrategicBriefing(
@@ -419,7 +426,7 @@ async def test_proactive_workflow_integration():
             recommendations=["Vote against high-value proposals"]
         )
     )
-    
+
     # Mock AI decision with tools
     mock_ai_service.make_strategic_decision = AsyncMock(
         return_value=[
@@ -431,28 +438,28 @@ async def test_proactive_workflow_integration():
             )
         ]
     )
-    
+
     service = AgentRunService(
         state_manager=mock_state_manager,
         ai_service=mock_ai_service,
         snapshot_service=mock_snapshot_service
     )
-    
+
     # Execute proactive run
     request = AgentRunRequest(space_id="test.eth", dry_run=True)
     response = await service.execute_agent_run(request)
-    
+
     # Verify workflow
     assert response.proposals_analyzed == 1
     assert len(response.votes_cast) == 1
     assert response.votes_cast[0].vote == VoteType.AGAINST
-    
+
     # Verify strategic briefing was generated
     mock_ai_service.generate_strategic_briefing.assert_called_once()
-    
+
     # Verify voting history was loaded
     assert mock_state_manager.load_state.called
-    
+
     # Verify AI used strategic context
     mock_ai_service.make_strategic_decision.assert_called_with(
         proposals=proposals,
@@ -486,15 +493,15 @@ async def test_voting_history_updated_after_run():
 # Enhance existing execute_agent_run method
 async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
     # ... existing setup code ...
-    
+
     # Load voting history (limited to 10)
     voting_history = await self.get_voting_history()
-    
+
     # Generate strategic briefing
     briefing = await self.ai_service.generate_strategic_briefing(
         filtered_proposals, user_preferences, voting_history
     )
-    
+
     # Log strategic briefing for Pearl compliance
     self.logger.info(
         "Generated strategic briefing",
@@ -504,7 +511,7 @@ async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
             "history_size": len(voting_history)
         }
     )
-    
+
     # Enhanced decision making with tools and briefing
     vote_decisions = await self.ai_service.make_strategic_decision(
         proposals=filtered_proposals,
@@ -512,14 +519,14 @@ async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         briefing=briefing,
         voting_history=voting_history
     )
-    
+
     # Execute votes (if not dry run)
     if not request.dry_run:
         # ... existing voting code ...
-    
+
     # Update voting history with new decisions
     await self.save_voting_decisions(vote_decisions)
-    
+
     # ... rest of response building ...
 ```
 
@@ -539,15 +546,15 @@ async def make_strategic_decision(
         "proposals_map": {p.id: p for p in proposals},
         "voting_history": voting_history
     })
-    
+
     # Enhanced prompt with briefing
     prompt = self._build_strategic_prompt(
         proposals, user_preferences, briefing
     )
-    
+
     # Run agent with tools
     result = await agent.run(prompt)
-    
+
     return result.data  # List of VoteDecisions
 ```
 
@@ -557,7 +564,7 @@ async def make_strategic_decision(
 
 **StateManager Integration:**
 - Use existing checkpoint system in AgentRunService
-- Extend existing `get_recent_decisions()` method 
+- Extend existing `get_recent_decisions()` method
 - Leverage existing `save_checkpoint_state()` pattern
 
 **AIService Enhancement:**
@@ -574,7 +581,7 @@ async def make_strategic_decision(
 
 **Reuse Existing Models:**
 - `VoteDecision` - already tracks voting history
-- `UserPreferences` - already contains strategy preferences  
+- `UserPreferences` - already contains strategy preferences
 - `Proposal` - existing proposal structure
 - `AgentRunRequest/Response` - existing workflow models
 
@@ -612,13 +619,13 @@ class ProposalEvaluation(BaseModel):
 
 ## Implementation Sequence (TDD Approach)
 
-### Step 1: Voting History Foundation (Start Here)
+### Step 1: Voting History Foundation ✅ COMPLETED
 **Why First:** This is the simplest, most self-contained component that other features depend on.
 
-1. **Write tests** for voting history persistence (`test_agent_run_voting_history.py`)
-2. **Implement** `get_voting_history()` and `save_voting_decisions()` with 10-item limit
-3. **Verify** StateManager integration works correctly
-4. **Run tests** to ensure functionality
+1. ✅ **Write tests** for voting history persistence (`test_agent_run_voting_history.py`)
+2. ✅ **Implement** `get_voting_history()` and `save_voting_decisions()` with 10-item limit
+3. ✅ **Verify** StateManager integration works correctly
+4. ✅ **Run tests** to ensure functionality - All 6 tests passing
 
 ### Step 2: Proposal Evaluation Tools
 **Why Second:** These tools are independent services that will be used by the AI agent.
