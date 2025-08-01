@@ -2,7 +2,8 @@
 
 import asyncio
 import json
-from typing import Dict, List, Any
+from dataclasses import dataclass
+from typing import Dict, List, Any, Optional
 
 from pydantic_ai import Agent, NativeOutput
 from pydantic_ai.models.openai import OpenAIModel
@@ -21,7 +22,10 @@ from models import (
     VotingStrategy,
     RiskLevel,
     AiVoteResponse,
+    UserPreferences,
 )
+from services.snapshot_service import SnapshotService
+from services.state_manager import StateManager
 
 # Constants for AI response parsing
 DEFAULT_VOTE_FALLBACK = "ABSTAIN"
@@ -30,6 +34,186 @@ DEFAULT_REASONING_FALLBACK = "No reasoning provided"
 DEFAULT_RISK_LEVEL_FALLBACK = "MEDIUM"
 VALID_VOTE_TYPES = ["FOR", "AGAINST", "ABSTAIN"]
 VALID_RISK_LEVELS = ["LOW", "MEDIUM", "HIGH"]
+
+
+@dataclass
+class VotingDependencies:
+    """Dependency injection container for VotingAgent tools."""
+
+    snapshot_service: SnapshotService
+    user_preferences: UserPreferences
+    state_manager: Optional[StateManager] = None
+
+    def __post_init__(self):
+        """Runtime assertions for dependency validation."""
+        assert self.snapshot_service is not None, "SnapshotService required"
+        assert self.user_preferences is not None, "UserPreferences required"
+
+
+class VotingAgent:
+    """Pydantic AI Agent for autonomous voting decisions."""
+
+    # Model configuration constants
+    GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
+
+    def __init__(self):
+        """Initialize the VotingAgent with model, agent, and tools."""
+        self.logger = setup_pearl_logger(__name__)
+        self.model = self._create_model()
+        self.agent = self._create_agent()
+        self.response_processor = AIResponseProcessor()
+        self._register_tools()
+
+    def _create_model(self) -> Any:
+        """Create the AI model with OpenRouter configuration."""
+        self.logger.info("Creating AI model for VotingAgent")
+
+        # Runtime assertion: validate API key configuration
+        assert settings.openrouter_api_key, "OpenRouter API key is not configured"
+        assert isinstance(
+            settings.openrouter_api_key, str
+        ), f"API key must be string, got {type(settings.openrouter_api_key)}"
+
+        try:
+            # Create OpenRouter provider
+            provider = OpenRouterProvider(api_key=settings.openrouter_api_key)
+
+            # Create model with provider
+            model = OpenAIModel(self.GEMINI_MODEL_NAME, provider=provider)
+
+            # Get model type name for logging
+            model_type_name = type(model).__name__
+            self.logger.info(
+                "Successfully created OpenRouter model for VotingAgent, model_type=%s",
+                model_type_name,
+            )
+
+            # Runtime assertion: validate model creation
+            assert model is not None, "OpenRouter model creation returned None"
+            assert hasattr(model, "__class__"), "Model must be a valid object instance"
+
+            return model
+        except Exception as e:
+            error_message = str(e)
+            error_type = type(e).__name__
+            self.logger.error(
+                "Failed to create OpenRouter model for VotingAgent, error=%s, error_type=%s",
+                error_message,
+                error_type,
+            )
+            raise
+
+    def _create_agent(self) -> Agent:
+        """Create and configure the Pydantic AI agent."""
+        # Runtime assertion: validate preconditions
+        assert self.model is not None, "Model must be initialized before creating agent"
+        assert hasattr(
+            self, "model"
+        ), "Model attribute must exist before agent creation"
+
+        try:
+            # Extract model information for logging
+            model_type_name = type(self.model).__name__
+            model_value = str(self.model)
+
+            self.logger.info(
+                "Creating Pydantic AI VotingAgent, model_type=%s, model_value=%s",
+                model_type_name,
+                model_value,
+            )
+
+            # Create agent with configuration
+            system_prompt = self._get_base_system_prompt()
+            output_config = NativeOutput(AiVoteResponse, strict=False)
+
+            agent = Agent(
+                model=self.model,
+                system_prompt=system_prompt,
+                output_type=output_config,
+            )
+
+            # Extract agent type for logging
+            agent_type_name = type(agent).__name__
+            self.logger.info(
+                "Successfully created Pydantic AI VotingAgent, agent_type=%s",
+                agent_type_name,
+            )
+
+            # Runtime assertion: validate agent creation
+            assert agent is not None, "Agent creation returned None"
+            assert hasattr(agent, "run"), "Agent must have run method"
+
+            return agent
+        except Exception as e:
+            error_message = str(e)
+            error_type = type(e).__name__
+            model_type_name = type(self.model).__name__
+
+            self.logger.error(
+                "Failed to create Pydantic AI VotingAgent, error=%s, error_type=%s, model_type=%s",
+                error_message,
+                error_type,
+                model_type_name,
+            )
+            raise
+
+    def _get_base_system_prompt(self) -> str:
+        """Get the base system prompt for the AI agent."""
+        return """
+        You are an expert DAO governance analyst specializing in autonomous voting decisions.
+
+        Your role is to make voting decisions on behalf of autonomous agents using
+        specified strategies (conservative, balanced, or aggressive). Consider proposal
+        content, risk factors, and strategic alignment when deciding.
+
+        Always:
+        - Be objective, factual, and consider both benefits and potential drawbacks
+        - Use clear reasoning that explains your decision
+        - Provide confidence scores that reflect the certainty of your analysis
+        - Consider the voting strategy when making decisions
+        """
+
+    def _get_system_prompt_for_strategy(self, strategy: VotingStrategy) -> str:
+        """Get the strategy-specific system prompt for the given voting strategy."""
+        base_prompt = self._get_base_system_prompt()
+
+        strategy_prompts = {
+            VotingStrategy.CONSERVATIVE: """
+            Conservative Strategy Guidelines:
+            - Prioritize safety and stability of the protocol
+            - Vote AGAINST proposals with high risk or uncertain outcomes
+            - Support only well-tested, incremental improvements
+            - Require strong evidence and community consensus
+            - Favor proposals that protect existing stakeholders
+            """,
+            VotingStrategy.BALANCED: """
+            Balanced Strategy Guidelines:
+            - Weigh risks and benefits equally
+            - Support proposals with reasonable risk-reward ratios
+            - Consider both short-term impact and long-term vision
+            - Look for proposals with broad community support
+            - Balance innovation with stability
+            """,
+            VotingStrategy.AGGRESSIVE: """
+            Aggressive Strategy Guidelines:
+            - Focus on growth and innovation opportunities
+            - Accept higher risks for potentially higher rewards
+            - Support proposals that drive adoption and expansion
+            - Favor bold changes that could provide competitive advantages
+            - Prioritize long-term growth over short-term stability
+            """,
+        }
+
+        return (
+            base_prompt
+            + "\n\n"
+            + strategy_prompts.get(strategy, strategy_prompts[VotingStrategy.BALANCED])
+        )
+
+    def _register_tools(self):
+        """Register agent tools for Snapshot integration."""
+        # Tool registration will be implemented in Task 2
+        pass
 
 
 class AIResponseProcessor:
@@ -194,6 +378,10 @@ class AIService:
             len(settings.openrouter_api_key.strip()) > 0
         ), "OpenRouter API key cannot be empty"
 
+        # Initialize VotingAgent for refactored architecture
+        self.voting_agent = VotingAgent()
+
+        # Maintain backward compatibility with existing model/agent
         self.model = self._create_model()
         self.agent = self._create_agent()
         # Cache service removed for autonomous voting focus

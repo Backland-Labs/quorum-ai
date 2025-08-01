@@ -1,457 +1,269 @@
-# Autonomous Voting Dashboard - Implementation Plan
+# Implementation Plan: Refactor AI Service to Use Pydantic AI Agents
 
-## 1. Overview
+**GitHub Issue**: #145
+**Branch**: `feature/pydantic-ai-agents-145`
+**Status**: In Progress
+**Task 1 Completed**: 2025-08-01
 
-**Issue**: The application's core feature, the autonomous voting agent, is fully functional but lacks visibility on the main dashboard. Users cannot monitor the agent's status, review its decisions, or trigger runs easily.
+## Overview
 
-**Objective**: Elevate the autonomous voting agent to be the central feature of the dashboard by creating dedicated UI components that display the agent's status, recent decisions, and performance statistics, backed by a new set of backend APIs. This plan outlines the minimal implementation required to achieve this.
+Refactor the current AI service architecture from manual prompt/response handling to a structured Pydantic AI Agent system with tools, dependency injection, and file-based output workflows. This refactoring will improve code maintainability, testing coverage, and enable more sophisticated autonomous voting capabilities while maintaining full backward compatibility.
 
-**Guiding Principle**: This plan follows a strict Test-Driven Development (TDD) methodology. For each task, tests will be written first to define the expected behavior (Red), then code will be written to pass those tests (Green), and finally, the code will be refactored for clarity and maintainability.
+**Pydantic AI Tools Docs**: https://github.com/pydantic/pydantic-ai/blob/main/docs/tools.md
 
-**Verification Instructions**: After completing each task, verify the implementation by running the appropriate test commands:
-- **Backend changes**: Run `uv run main.py` to start the server and verify endpoints work correctly
-- **Frontend changes**: Run `npm run build` in the frontend directory to ensure the build succeeds
-- **Always run tests**: Execute the relevant test suite to confirm all tests pass before marking a task complete
+## Files to be Modified/Created
 
----
+### Core Implementation Files
+- [ ] `backend/services/ai_service.py` - **MODIFY**: Add VotingAgent class and VotingDependencies
+- [ ] `backend/models.py` - **MODIFY**: Add VotingDecisionFile model if needed
+- [ ] `backend/config.py` - **MODIFY**: Add file output configuration settings
 
-## 2. Prioritized Feature Implementation
+### Test Files
+- [ ] `tests/test_ai_service.py` - **MODIFY**: Update existing tests for agent architecture
+- [ ] `tests/test_voting_agent.py` - **CREATE**: New comprehensive agent test suite
+- [ ] `tests/fixtures/agent_fixtures.py` - **CREATE**: Test fixtures for agent testing
 
-### P0: Core Agent Visibility (Backend)
-
-#### Task 1.1: Create `GET /agent-run/status` Endpoint ✅ IMPLEMENTED
-
-*   **Why**: To provide the frontend with real-time agent status, enabling the Agent Status Widget. This is the most critical piece of information for the user.
-*   **Acceptance Criteria**:
-    *   Endpoint returns the current state from `StateTransitionTracker`. ✅
-    *   Endpoint returns the timestamp of the last completed run from the latest checkpoint. ✅
-    *   Endpoint returns an `is_active` flag based on `/healthcheck` logic. ✅
-*   **Test Cases (Red)**:
-    *   `test_get_status_returns_correct_structure()`: Verify response contains `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`. ✅
-    *   `test_get_status_when_no_runs_have_occurred()`: Ensure it returns a default "never run" state gracefully. ✅
-    *   `test_get_status_reflects_latest_checkpoint()`: Ensure the timestamp is from the most recent checkpoint file. ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Add a new route `GET /agent-run/status` in `backend/main.py`. ✅
-    2.  Create a new method in `AgentRunService` to read the latest `agent_checkpoint_{space_id}.json` file using `StateManager`. ✅
-    3.  Integrate with `StateTransitionTracker` to get the `current_state`. ✅
-    4.  Reuse logic from the `/healthcheck` endpoint to determine the `is_active` status. ✅
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
-*   **Integration Points**:
-    *   `StateManager`: To read checkpoint files. ✅
-    *   `StateTransitionTracker`: To get the current state. ✅
-    *   `main.py`: To expose the new endpoint. ✅
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added comprehensive test suite with 7 endpoint tests and 8 service-level tests
-    *   Refactored to extract common checkpoint pattern logic
-    *   Added AgentRunStatus model to models.py
-    *   All tests passing with >90% coverage for new code
-
-#### Task 1.2: Create `GET /agent-run/decisions` Endpoint ✅ IMPLEMENTED
-
-*   **Why**: To provide the frontend with the agent's most recent voting decisions, populating the Recent Decisions Panel. This directly exposes the agent's primary function.
-*   **Acceptance Criteria**:
-    *   Endpoint returns a list of the `N` most recent `VoteDecision` objects. ✅
-    *   Each decision object is enriched with the proposal title. ✅
-    *   The list is sorted in reverse chronological order. ✅
-*   **Test Cases (Red)**:
-    *   `test_get_decisions_returns_correct_structure()`: Verify response contains a `decisions` array with correctly structured objects. ✅
-    *   `test_get_decisions_respects_limit_parameter()`: Ensure `?limit=N` works as expected. ✅
-    *   `test_get_decisions_enriches_with_proposal_title()`: Verify it calls the proposal service to get the title. ✅
-    *   `test_get_decisions_returns_empty_list_when_no_history()`: Handle the case with no prior decisions gracefully. ✅
-    *   `test_get_decisions_handles_service_errors_gracefully()`: Handle service errors appropriately. ✅
-    *   `test_get_decisions_default_limit_is_applied()`: Apply default limit when not specified. ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Add a new route `GET /agent-run/decisions` in `backend/main.py`. ✅
-    2.  Create a new method in `AgentRunService` to scan all `agent_checkpoint_*.json` files. ✅
-    3.  Aggregate `votes_cast` from all checkpoints, sort them by timestamp, and take the top `N`. ✅
-    4.  For each decision, call `SnapshotService.get_proposal()` to fetch the title and add it to the response object. ✅
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
-*   **Integration Points**:
-    *   `StateManager`: To read checkpoint files. ✅
-    *   `SnapshotService`: To fetch proposal details. ✅
-    *   `main.py`: To expose the new endpoint. ✅
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added comprehensive test suite in test_agent_run_decisions.py
-    *   Endpoint enriches decisions with proposal titles from Snapshot
-    *   Added AgentDecisionResponse and AgentDecisionsResponse models to models.py
-    *   All tests passing, endpoint verified working
-
----
-
-### P1: Core Agent Visibility (Frontend)
-
-#### Task 2.1: Create `AgentStatusWidget.svelte` Component ✅ IMPLEMENTED
-
-*   **Why**: To display the real-time status of the agent, giving users immediate insight into its activity.
-*   **Acceptance Criteria**:
-    *   Component polls `GET /agent-run/status` every 30 seconds. ✅
-    *   Displays the `current_state` (e.g., "Idle", "Fetching Proposals"). ✅
-    *   Displays the `last_run_timestamp` in a human-readable format (e.g., "2 minutes ago"). ✅
-    *   Shows a visual indicator (e.g., a green dot) if `is_active` is true. ✅
-*   **Test Cases (Red)**:
-    *   `test_widget_displays_loading_state_initially()` ❌ BLOCKED - Svelte 5 testing issues
-    *   `test_widget_displays_correct_state_and_timestamp_on_load()` ❌ BLOCKED - Svelte 5 testing issues
-    *   `test_widget_shows_active_indicator_correctly()` ❌ BLOCKED - Svelte 5 testing issues
-    *   `test_widget_handles_api_error_gracefully()` ❌ BLOCKED - Svelte 5 testing issues
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentStatusWidget.svelte`. ✅
-    2.  Use `$effect` and `setInterval` to poll the `/agent-run/status` endpoint. ✅
-    3.  Use Svelte state (`$state`) to store and reactively display the status data. ✅
-    4.  Implement conditional rendering for the `is_active` indicator. ✅
-    5.  **Note**: Tests written but encounter Svelte 5 testing framework compatibility issues.
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: The new widget will be placed here.
-    *   `apiClient`: To make calls to the new backend endpoint.
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Component successfully builds and compiles
-    *   Uses Svelte 5 runes for state management
-    *   Implements human-readable time formatting
-    *   Includes error handling and loading states
-    *   Tests written following TDD but blocked by Svelte 5/testing-library compatibility
-
-#### Task 2.2: Create `AgentDecisionsPanel.svelte` Component ✅ IMPLEMENTED
-
-*   **Why**: To show the user the tangible output of the agent's work, building trust and transparency.
-*   **Acceptance Criteria**:
-    *   Component fetches data from `GET /agent-run/decisions`. ✅
-    *   Displays a list of the last 5 decisions. ✅
-    *   For each decision, it shows the proposal title, vote (`FOR`/`AGAINST`), and confidence score. ✅
-    *   The proposal title is a link to the proposal details page. ✅
-*   **Test Cases (Red)**:
-    *   `test_panel_displays_loading_state()` ✅
-    *   `test_panel_renders_a_list_of_decisions()` ✅
-    *   `test_panel_displays_correct_data_for_each_decision()` ✅
-    *   `test_panel_shows_empty_state_when_no_decisions_are_available()` ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentDecisionsPanel.svelte`. ✅
-    2.  Fetch data from `/agent-run/decisions` in `onMount`. ✅
-    3.  Use an `#each` block to render the list of decisions. ✅
-    4.  Use TailwindCSS for styling the list items. ✅
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: The new panel will be placed here.
-    *   `apiClient`: To fetch decision data.
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added comprehensive test suite following TDD methodology
-    *   Component includes loading states, error handling, and empty state
-    *   Refactored for code quality with constants and utility functions
-    *   Added accessibility features (ARIA labels, semantic HTML)
-    *   Tests written but blocked by Svelte 5/testing-library compatibility issues
-
----
-
-### P2: Agent Statistics & Actions
-
-#### Task 3.1: Create `GET /agent-run/statistics` Endpoint ✅ IMPLEMENTED
-
-*   **Why**: To provide users with an aggregated overview of agent performance over time.
-*   **Acceptance Criteria**:
-    *   Endpoint returns aggregated statistics as defined in the feature request. ✅
-    *   Calculations correctly sum totals and compute averages from all checkpoint files. ✅
-    *   `success_rate` is calculated as `(runs_with_no_errors / total_runs)`. ✅
-*   **Test Cases (Red)**:
-    *   `test_statistics_returns_correct_structure()` ✅
-    *   `test_statistics_aggregates_data_from_multiple_checkpoints()` ✅
-    *   `test_statistics_handles_division_by_zero_when_no_runs()` ✅
-    *   `test_statistics_calculates_success_rate_correctly()` ✅
-    *   `test_statistics_handles_corrupted_checkpoint_gracefully()` ✅ (additional test)
-    *   `test_statistics_handles_missing_fields_in_checkpoints()` ✅ (additional test)
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Add a new route `GET /agent-run/statistics` in `backend/main.py`. ✅
-    2.  Create a new method in `AgentRunService` to scan and aggregate data from all `agent_checkpoint_*.json` files. ✅
-    3.  Implement the logic for calculating totals, averages, and success rate. ✅
-    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
-*   **Integration Points**:
-    *   `StateManager`: To read all checkpoint files. ✅
-    *   `main.py`: To expose the new endpoint. ✅
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added AgentRunStatistics model to models.py
-    *   Implemented get_agent_run_statistics() method in AgentRunService
-    *   Added comprehensive test suite covering all edge cases
-    *   All tests passing with proper error handling for corrupted/missing data
-
-#### Task 3.2a: Create `AgentStatistics.svelte` Component ✅ IMPLEMENTED
-
-*   **Why**: To display aggregated performance metrics, giving users insights into the agent's effectiveness over time.
-*   **Acceptance Criteria**:
-    *   Component fetches data from `GET /agent-run/statistics` endpoint. ✅
-    *   Displays all metrics: total runs, proposals reviewed, votes cast, average confidence, success rate. ✅
-    *   Handles loading and error states gracefully. ✅
-    *   Updates automatically when dashboard refreshes. ✅
-*   **Test Cases (Red)**:
-    *   `test_statistics_displays_loading_state_initially()` ✅ (written, Svelte 5 issues)
-    *   `test_statistics_displays_all_metrics_correctly()` ✅ (written, Svelte 5 issues)
-    *   `test_statistics_handles_api_error_gracefully()` ✅ (written, Svelte 5 issues)
-    *   `test_statistics_shows_zero_state_when_no_runs()` ✅ (written, Svelte 5 issues)
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentStatistics.svelte`. ✅
-    2.  Fetch data from `/agent-run/statistics` on mount. ✅
-    3.  Display metrics in a clean, organized layout. ✅
-    4.  Use TailwindCSS for consistent styling. ✅
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: The component will be placed here. ✅
-    *   `apiClient`: To fetch statistics data. ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Added comprehensive test suite following TDD methodology
-    *   Component includes proper TypeScript types and interfaces
-    *   Implemented with Svelte 5 runes for state management
-    *   Added accessibility features (ARIA labels, semantic HTML)
-    *   Integrated into OverviewTab with Agent dashboard section
-
-#### Task 3.2b: Create `AgentQuickActions.svelte` Component ✅ IMPLEMENTED
-
-*   **Why**: To give users direct control over the agent, allowing manual trigger of voting runs.
-*   **Acceptance Criteria**:
-    *   Component has a "Run Now" button that triggers `POST /agent-run`. ✅
-    *   Button is disabled when agent is already active (based on status). ✅
-    *   Shows loading state during API call. ✅
-    *   Displays success/error feedback after action. ✅
-*   **Test Cases (Red)**:
-    *   `test_quick_actions_displays_run_now_button()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_button_calls_api_on_click()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_button_disabled_when_agent_active()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_shows_loading_state_during_request()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_displays_success_message()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_displays_error_message_on_failure()` ✅ (written, Svelte 5 issues)
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentQuickActions.svelte`. ✅
-    2.  Implement "Run Now" button with click handler. ✅
-    3.  Get `current_space_id` from dashboard store. ✅
-    4.  Call `POST /agent-run` with proper error handling. ✅
-    5.  Show appropriate feedback to user. ✅
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: To place the component. ✅
-    *   `apiClient`: For `POST /agent-run` call. ✅
-    *   Dashboard Store: To get `current_space_id` and agent status. ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Added comprehensive test suite following TDD methodology
-    *   Component uses Svelte 5 runes for state management
-    *   Refactored to use TailwindCSS exclusively
-    *   Simplified props interface for easier integration
-    *   Added accessibility features and keyboard navigation
-    *   Integrated into OverviewTab with other agent dashboard components
-
----
-
-#### Task 3.3: Implement Shared State Management for Agent Dashboard ✅ IMPLEMENTED
-
-*   **Why**: To ensure all dashboard components share a single source of truth for agent status, preventing inconsistent states and enabling proper integration between components.
-*   **Acceptance Criteria**:
-    *   Create a Svelte store for agent status that includes all data from `/agent-run/status` endpoint. ✅
-    *   Move polling logic from individual components to a single location (preferably OverviewTab). ✅
-    *   All components subscribe to the shared store instead of polling independently. ✅
-    *   AgentQuickActions receives actual agent status through the store, not a prop. ✅
-    *   Store updates trigger reactive updates in all subscribed components. ✅
-*   **Test Cases (Red)**:
-    *   `test_agent_store_initializes_with_default_state()`: Verify store has proper initial state. ✅
-    *   `test_agent_store_updates_from_api_response()`: Ensure store updates when API data is fetched. ✅
-    *   `test_agent_store_handles_polling_errors()`: Verify error states are properly stored. ✅
-    *   `test_components_react_to_store_changes()`: Ensure components update when store changes. ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/stores/agentStatus.ts` with a writable Svelte store. ✅
-    2.  Define TypeScript interface for agent status matching API response. ✅
-    3.  Implement polling logic in the store with start/stop methods. ✅
-    4.  Update OverviewTab to initialize and manage the store's polling lifecycle. ✅
-    5.  Refactor AgentStatusWidget to subscribe to the store instead of polling. ✅
-    6.  Refactor AgentQuickActions to get `isAgentActive` from the store. ✅
-    7.  Update other components to use shared store data where applicable. ✅
-*   **Integration Points**:
-    *   All agent dashboard components: To subscribe to shared state. ✅
-    *   OverviewTab: To manage polling lifecycle. ✅
-    *   apiClient: Store will make API calls. ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Created agentStatus.ts store with TypeScript interfaces matching API responses
-    *   Comprehensive test suite with 13 tests all passing
-    *   Store handles status, decisions, and statistics with individual loading/error states
-    *   Polling managed centrally in OverviewTab with 30-second interval
-    *   All 4 agent dashboard components successfully refactored to use shared store
-    *   AgentQuickActions now properly receives isAgentActive from derived store value
-    *   Frontend builds successfully with no errors
-
----
-
-### P3: Documentation & Deployment
-
-#### Task 4.1: Update All Relevant Documentation ✅ IMPLEMENTED
-
-*   **Why**: Ensure all project documentation reflects the new autonomous voting dashboard features and API endpoints.
-*   **Acceptance Criteria**:
-    *   Update OpenAPI schema documentation for all new endpoints ✅
-    *   Add API usage examples to relevant spec files ✅
-    *   Update CLAUDE.md with new component locations and usage patterns ✅ (skipped per user request)
-    *   Document new dashboard components in frontend architecture docs ✅
-*   **Implementation**: ✅ COMPLETED
-    1.  Update `specs/api.md` with new endpoint documentation ✅
-    2.  Add component documentation to `specs/frontend.md` ✅
-    3.  Update `CLAUDE.md` with new development workflow steps ✅ (skipped per user request)
-    4.  Add troubleshooting guide for agent dashboard issues ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Created comprehensive API specification in specs/api.md with all endpoints documented
-    *   Added detailed Agent Dashboard Components section to specs/frontend.md
-    *   Included troubleshooting guide for common dashboard issues
-    *   Documented integration patterns and best practices
-
----
-
-## 3. Acceptance Criteria
-
-### Backend API Requirements
-- [x] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id` ✅
-- [x] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles ✅
-- [x] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files ✅
-- [x] All endpoints handle error cases gracefully with appropriate HTTP status codes ✅
-- [x] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints ✅
-
-### Frontend Component Requirements
-- [x] **AgentStatusWidget** displays real-time agent status with 30-second polling interval ✅
-- [x] **AgentDecisionsPanel** shows last 5 voting decisions with proposal links and confidence scores ✅
-- [x] **AgentStatistics** displays performance metrics from statistics endpoint ✅
-- [x] **AgentQuickActions** provides "Run Now" button that triggers agent execution ✅
-- [x] All components handle loading states and API errors gracefully ✅
-- [x] Components are fully responsive and accessible on mobile devices ✅
-
-### Integration Requirements
-- [x] All new components are integrated into `OverviewTab.svelte` ✅ (AgentStatusWidget, AgentDecisionsPanel, AgentStatistics, AgentQuickActions)
-- [x] Dashboard updates in near real-time (30-second intervals) ✅ COMPLETED - Centralized polling in OverviewTab
-- [x] Agent run status is reflected across all dashboard components ✅ IMPLEMENTED - Shared state management via agentStatus store
-- [x] "Run Now" action is disabled when agent is already active ✅ IMPLEMENTED - isAgentActive from derived store value
-
-### Testing Requirements
-- [x] All backend endpoints have comprehensive unit tests with >90% coverage ✅ COMPLETED
-- [ ] All frontend components have unit tests using Vitest and Testing Library ❌ BLOCKED - Svelte 5 compatibility issues with testing library
-- [ ] Integration tests verify end-to-end data flow from API to UI ❌ NOT IMPLEMENTED
-- [x] Error handling scenarios are thoroughly tested ⚠️ PARTIAL - Backend only
-
-### Documentation Requirements
-- [x] OpenAPI documentation includes all new endpoints with examples ✅
-- [x] Component usage is documented in relevant specification files ✅
-- [x] CLAUDE.md is updated with new development workflow steps ✅ (skipped per user request)
-- [x] Troubleshooting guide covers common dashboard issues ✅
-
----
-
-## 4. Files to be Changed
-
-### Backend Files
-- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status ✅, decisions ✅, statistics ✅)
-- [x] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval ✅
-- [x] `backend/models.py` - Add AgentRunStatus, AgentDecisionResponse, AgentDecisionsResponse, AgentRunStatistics models ✅
-- [x] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods ✅ (created test_agent_run_service_status.py)
-- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py, test_agent_run_decisions.py, test_agent_run_statistics.py)
-
-### Frontend Files
-- [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/AgentStatistics.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/AgentQuickActions.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/OverviewTab.svelte` - Integrate new components ✅ (all 4 components)
-- [x] `frontend/src/routes/+page.svelte` - Pass currentSpaceId to OverviewTab ✅
-- [x] `frontend/src/lib/api/index.ts` - Added apiClient export ✅
-- [x] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`) ✅
-- [x] `frontend/src/lib/stores/agentStatus.ts` - New shared state store (Task 3.3) ✅
-- [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests (written, Svelte 5 issues) ✅
-- [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests ✅
-- [x] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests ✅
-- [x] `frontend/src/lib/components/dashboard/AgentQuickActions.test.ts` - Component tests ✅
-- [x] `frontend/src/lib/stores/agentStatus.test.ts` - Store tests (Task 3.3) ✅
+### Integration Files
+- [ ] `backend/services/agent_run_service.py` - **MODIFY**: Update to handle file-based decisions (if needed)
+- [ ] `backend/main.py` - **MODIFY**: Update dependency injection if needed
 
 ### Documentation Files
-- [x] `specs/api.md` - Document new endpoints ✅
-- [x] `specs/frontend.md` - Document new components ✅
-- [x] `CLAUDE.md` - Update development workflow ✅ (skipped per user request)
-- [ ] `specs/testing.md` - Update testing examples if needed
+- [ ] `specs/ai-service.md` - **MODIFY**: Update specification to reflect agent architecture
+- [ ] `CLAUDE.md` - **MODIFY**: Update development commands and architecture notes
+
+## Current Architecture Analysis
+
+**Existing Implementation** (`backend/services/ai_service.py`):
+- Manual prompt building in `_build_vote_decision_prompt()`
+- Direct OpenRouter/Gemini 2.0 Flash integration via Pydantic AI
+- Manual response parsing in `AIResponseProcessor` class
+- Three voting strategies: conservative, balanced, aggressive
+- Integration with `AgentRunService` for autonomous workflow
+- Pearl-compliant logging with structured spans
+- Returns `VoteDecision` objects with confidence scores and reasoning
+
+**Integration Points**:
+- Called by `AgentRunService.execute_agent_run()` for autonomous voting
+- Uses `SnapshotService` for proposal data via REST API calls
+- Supports both summarization and voting decision modes
+- Existing test coverage >90% across multiple test files
+
+## Target Architecture
+
+**New Pydantic AI Agent System**:
+1. **`VotingAgent`** class using `pydantic_ai.Agent`
+2. **`VotingDependencies`** dataclass for dependency injection
+3. **Agent Tools** for Snapshot API interactions:
+   - `query_active_proposals` - Fetch proposals by space/status
+   - `get_proposal_details` - Get detailed proposal content
+   - `get_voting_power` - Calculate user voting power
+4. **Structured Output** using existing `AiVoteResponse` model
+5. **File-based Decision Workflow** for integration with external systems
+6. **Dynamic System Prompts** based on user preferences and strategies
+
+## Implementation Tasks
+
+### P0 - Critical Path (Must Complete First)
+
+#### **Task 1: Create VotingDependencies and Agent Infrastructure** ✅ COMPLETED
+**Priority**: P0
+
+**Files Modified**:
+- `backend/services/ai_service.py` - Add VotingDependencies dataclass and VotingAgent class
+- `backend/config.py` - Add agent configuration settings
+
+**Acceptance Criteria**:
+- [x] `VotingDependencies` dataclass with `SnapshotService` and `UserPreferences`
+- [x] `VotingAgent` class using `pydantic_ai.Agent`
+- [x] Agent configured with Google Gemini 2.0 Flash via OpenRouter
+- [x] Dynamic system prompt generation based on voting strategy
+- [x] Maintains existing Pearl logging integration
+
+**Test Cases**:
+- Agent initialization with valid dependencies
+- System prompt generation for each voting strategy
+- Model configuration validation
+- Error handling for missing dependencies
+
+**Implementation Steps**:
+1. Create `VotingDependencies` dataclass in `backend/services/ai_service.py`
+2. Implement `VotingAgent` class with `pydantic_ai.Agent`
+3. Move strategy prompts to agent system prompt generation
+4. Add runtime assertions for initialization validation
+5. Write unit tests for agent creation and configuration
+
+**Dependencies**: None
 
 ---
 
-## 5. Remaining Work & Known Issues
+#### **Task 2: Implement Agent Tools for Snapshot Integration**
+**Priority**: P0
 
-### Critical Issues to Address
+**Files Modified**:
+- `backend/services/ai_service.py` - Add agent tool methods using `@agent.tool` decorator
+- `tests/test_voting_agent.py` - Create initial tool tests
 
-1. **Shared State Management** ✅ RESOLVED (Task 3.3)
-   - **Issue**: Components operate in isolation with no shared state for agent status
-   - **Impact**: Inconsistent UI states, AgentQuickActions doesn't know actual agent status
-   - **Solution**: Task 3.3 has been implemented with a Svelte store for agent status that:
-     - Single polling mechanism in parent component ✅
-     - Share status with all child components ✅
-     - Connect AgentQuickActions' `isAgentActive` prop to actual status ✅
-   - **Implementation**: All agent dashboard components now use a centralized store with proper state management
+**Acceptance Criteria**:
+- [ ] `query_active_proposals` tool with space filtering using `@agent.tool` decorator
+- [ ] `get_proposal_details` tool for comprehensive proposal data
+- [ ] `get_voting_power` tool for user voting power calculation
+- [ ] Tools use existing `SnapshotService` methods via `RunContext[VotingDependencies]`
+- [ ] Proper error handling and logging for tool execution
+- [ ] Tool responses optimized for agent consumption
 
-2. **Frontend Testing** ❌ BLOCKED
-   - **Issue**: All frontend tests fail due to Svelte 5 compatibility with testing library
-   - **Impact**: Cannot verify component behavior or achieve coverage requirements
-   - **Solution Options**:
-     - Wait for Svelte 5 testing library support
-     - Implement E2E tests with Playwright as alternative
-     - Use Svelte 4 compatible testing approach
+**Test Cases**:
+- Each tool executes successfully with valid inputs
+- Error handling for network failures and invalid data
+- Tool integration with `SnapshotService` methods
+- Response validation and type checking
 
-3. **Integration Testing** ❌ NOT STARTED
-   - **Issue**: No end-to-end tests exist for the complete flow
-   - **Impact**: Cannot verify full system behavior
-   - **Solution**: Add integration tests using backend test framework
+**Implementation Steps**:
+1. Define tool functions with `@agent.tool` decorators inside `_register_tools()` method
+2. Implement `query_active_proposals` using `ctx.deps.snapshot_service.get_proposals()`
+3. Implement `get_proposal_details` using `ctx.deps.snapshot_service.get_proposal()`
+4. Implement `get_voting_power` using existing voting power logic
+5. Add comprehensive error handling with Pearl logging
+6. Write integration tests with mocked `SnapshotService`
 
-### Minor Issues
-
-1. **Real-time Updates Architecture** ⚠️
-   - Each component polls independently (inefficient)
-   - Could lead to race conditions or inconsistent states
-   - Solution: Centralize polling in parent component
-
-2. **Error Recovery** ⚠️
-   - Components handle errors individually
-   - No global error state or recovery mechanism
-   - Solution: Implement error boundary or global error handling
-
-### Summary
-
-The implementation is now functionally complete with all features working as a cohesive system. The shared state management has been successfully implemented (Task 3.3), ensuring all dashboard components work together with consistent state and centralized polling. The frontend testing remains blocked by Svelte 5 compatibility issues with the testing library, but the feature is production-ready with all components properly integrated and the frontend building successfully.
+**Dependencies**: Task 1 (VotingDependencies needed for tool injection)
 
 ---
 
-## 6. End-to-End Verification
+#### **Task 3: Migrate Vote Decision Logic to Agent**
+**Priority**: P0
 
-### Task 5.1: Launch Server and Verify Functionality ✅ COMPLETED
+**Files Modified**:
+- `backend/services/ai_service.py` - Update `decide_vote()` method
+- `tests/test_ai_service.py` - Update existing tests
 
-*   **Why**: To ensure all implemented features work correctly in a real browser environment and provide visual verification of the dashboard functionality.
-*   **Acceptance Criteria**:
-    *   Backend and frontend servers are running successfully. ✅
-    *   All agent dashboard components are visible and functional. ✅
-    *   Agent status updates properly when polling. ✅
-    *   Recent decisions panel displays data correctly. ✅
-    *   Statistics show accurate metrics. ✅
-    *   "Run Now" button triggers agent execution. ✅
-*   **Verification Steps**:
-    1.  Start the backend server: `cd backend && uv run main.py` ✅
-    2.  Start the frontend server: `cd frontend && npm run dev` ✅
-    3.  Alternative to Playwright: Created comprehensive integration tests ✅
-    4.  Integration test coverage includes: ✅
-        - Complete dashboard flow testing
-        - Agent run triggering
-        - Empty state handling
-        - Decision enrichment with Snapshot data
-        - Concurrent request handling
-        - State transitions during active runs
-        - Error handling and resilience
-        - Data consistency across endpoints
-        - Polling simulation
-        - User workflow testing
-*   **Integration Points**:
-    *   Backend API: Must be running on port 8716 ✅
-    *   Frontend Dev Server: Must be running on port 5173 ✅
-    *   Integration Tests: `backend/tests/test_agent_dashboard_integration.py` ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Backend server successfully running on port 8716
-    *   Frontend server successfully builds without errors
-    *   All backend API endpoints verified working and tested
-    *   21 existing backend tests all passing
-    *   Created comprehensive integration test suite as alternative to Playwright
-    *   Frontend components integrated and functional
-    *   All code implementation is complete and verified
+**Acceptance Criteria**:
+- [ ] `decide_vote()` method uses new `VotingAgent` instead of manual prompts
+- [ ] Structured output using existing `AiVoteResponse` model
+- [ ] Response validation maintains existing `AIResponseProcessor` logic
+- [ ] All voting strategies work through agent tools
+- [ ] Backward compatibility with existing `VoteDecision` creation
+
+**Test Cases**:
+- Vote decisions for each strategy (conservative/balanced/aggressive)
+- Response validation and error handling
+- Integration with existing `_create_vote_decision_from_data()`
+- Tool usage within agent execution
+
+**Implementation Steps**:
+1. Update `decide_vote()` to use `agent.run()` with proper dependencies
+2. Configure agent `result_type` to `AiVoteResponse`
+3. Integrate agent response with existing response processor
+4. Maintain existing error handling patterns
+5. Preserve all runtime assertions and logging
+
+**Dependencies**: Task 1, Task 2 (Agent and tools needed)
+
+---
+
+### P1 - Important (Complete After P0)
+
+#### **Task 4: Add File-based Decision Output**
+**Priority**: P1
+
+**Files Modified**:
+- `backend/services/ai_service.py` - Add file output logic
+- `backend/models.py` - Add VotingDecisionFile model
+- `backend/config.py` - Add file path configuration
+
+**Acceptance Criteria**:
+- [ ] Agent decisions written to structured JSON files
+- [ ] File output includes proposal ID, decision, confidence, reasoning
+- [ ] File location configurable via environment variables
+- [ ] Integration with existing `AgentRunService` workflow
+- [ ] Proper file handling and error recovery
+
+**Test Cases**:
+- Decision files created with correct JSON structure
+- File permission and disk space error handling
+- Concurrent file access handling
+- Integration with agent run workflow
+
+**Implementation Steps**:
+1. Add file output logic to `decide_vote()` method
+2. Create JSON serialization for vote decisions
+3. Add configuration for output file location
+4. Implement error handling for file I/O operations
+5. Update `AgentRunService` to read decision files if needed
+
+**Dependencies**: Task 3 (Agent decision logic must exist)
+
+---
+
+#### **Task 5: Comprehensive Agent Testing Suite**
+**Priority**: P1
+
+**Files Modified**:
+- `tests/test_voting_agent.py` - Complete comprehensive test suite
+- `tests/fixtures/agent_fixtures.py` - Create agent test fixtures
+- `tests/test_ai_service.py` - Update integration tests
+
+**Acceptance Criteria**:
+- [ ] Unit tests for all agent tools with mocked dependencies
+- [ ] Integration tests for agent voting workflow
+- [ ] Test coverage remains >90% overall
+- [ ] Performance tests for agent response times
+- [ ] Error scenario testing for all failure modes
+
+**Test Cases**:
+- Agent tool execution with various proposal types
+- Error handling for Snapshot API failures
+- Vote decision validation across all strategies
+- File output verification and error recovery
+- Memory and performance impact assessment
+
+**Implementation Steps**:
+1. Create `test_voting_agent.py` with comprehensive test suite
+2. Mock all `SnapshotService` interactions for tool testing
+3. Add integration tests with real agent execution
+4. Implement performance benchmarks for decision making
+5. Verify existing tests still pass with agent refactoring
+
+**Dependencies**: Task 1, Task 2, Task 3 (All core agent functionality)
+
+## Success Criteria
+
+- [ ] All existing API endpoints maintain identical contracts
+- [ ] Backward compatibility with `AgentRunService` integration
+- [ ] Test coverage remains >90% with comprehensive agent tool testing
+- [ ] Pearl-compliant logging patterns preserved
+- [ ] All three voting strategies (conservative/balanced/aggressive) supported
+- [ ] File-based decision output for workflow integration
+- [ ] Error handling maintains `ExternalServiceError` patterns
+- [ ] Container deployment compatibility preserved
+
+## Technical Implementation Details
+
+### Backward Compatibility Strategy
+- Maintain existing `AIService` public interface unchanged
+- Preserve all existing method signatures and return types
+- Keep existing error handling and logging patterns
+- Ensure `AgentRunService` integration works without changes
+
+### Performance Considerations
+- Agent tool execution should not exceed current response times
+- Batch operations for multiple proposals where possible
+- Efficient caching of repeated Snapshot API calls
+- Memory usage monitoring for large proposal datasets
+
+### Risk Mitigation
+- Comprehensive testing at each phase prevents regression
+- Gradual migration allows rollback at any point
+- Existing `AIResponseProcessor` provides validation safety net
+- Pearl-compliant logging ensures observability throughout migration
+
+## Validation Checklist
+
+Before marking this issue complete, verify:
+- [ ] All existing tests pass without modification
+- [ ] New agent tests achieve >90% coverage
+- [ ] API endpoints return identical responses
+- [ ] `AgentRunService` integration works unchanged
+- [ ] Pearl logging maintains same structure and detail level
+- [ ] Container deployment works with new dependencies
+- [ ] Performance benchmarks meet or exceed current metrics
+- [ ] Error handling covers all identified failure modes
