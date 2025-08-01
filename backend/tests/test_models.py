@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from models import (
     Proposal,
     ProposalSummary,
-    ProposalFilters,
+    # ProposalFilters,  # Model not in models.py
     ProposalListResponse,
     SummarizeRequest,
     SummarizeResponse,

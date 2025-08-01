@@ -1,8 +1,12 @@
 """AI service for proposal analysis with dual functionality: summarization and autonomous voting."""
 
 import asyncio
+import hashlib
 import json
+import os
+import tempfile
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Any, Optional
 
 from pydantic_ai import Agent, NativeOutput, RunContext
@@ -23,6 +27,7 @@ from models import (
     RiskLevel,
     AiVoteResponse,
     UserPreferences,
+    VotingDecisionFile,
 )
 from services.snapshot_service import SnapshotService
 from services.state_manager import StateManager
@@ -37,6 +42,14 @@ VALID_RISK_LEVELS = ["LOW", "MEDIUM", "HIGH"]
 
 # Constants for tool optimization
 MAX_PROPOSAL_BODY_LENGTH = 500  # Characters to include in proposal summaries
+
+
+class DecisionFileError(Exception):
+    """Custom exception for decision file operations."""
+    
+    def __init__(self, message: str, file_path: Optional[str] = None):
+        self.file_path = file_path
+        super().__init__(message)
 
 
 @dataclass
@@ -706,7 +719,9 @@ class AIService:
     async def decide_vote(
         self,
         proposal: Proposal,
-        strategy: VotingStrategy,
+        strategy: Optional[VotingStrategy] = None,
+        user_preferences: Optional[UserPreferences] = None,
+        save_to_file: bool = True,
     ) -> VoteDecision:
         """Make a voting decision for a proposal using the specified strategy."""
         # Runtime assertion: validate input parameters
@@ -714,7 +729,13 @@ class AIService:
         assert isinstance(
             proposal, Proposal
         ), f"Expected Proposal object, got {type(proposal)}"
-        assert strategy is not None, "VotingStrategy cannot be None"
+        
+        # Determine strategy from user_preferences or parameter
+        if user_preferences:
+            strategy = user_preferences.voting_strategy
+        elif strategy is None:
+            strategy = VotingStrategy.BALANCED  # Default strategy
+            
         assert isinstance(
             strategy, VotingStrategy
         ), f"Expected VotingStrategy enum, got {type(strategy)}"
@@ -767,6 +788,26 @@ class AIService:
                 assert hasattr(
                     vote_decision, "vote"
                 ), "VoteDecision must have vote attribute"
+
+                # Save to file if requested
+                if save_to_file:
+                    decision_file = VotingDecisionFile(
+                        proposal_id=proposal.id,
+                        proposal_title=proposal.title,
+                        space_id=proposal.space_id or "unknown",
+                        vote=vote_decision.vote.value,
+                        confidence=vote_decision.confidence,
+                        risk_level=vote_decision.risk_assessment,
+                        reasoning=vote_decision.reasoning.split(". "),
+                        voting_strategy=strategy,
+                        dry_run=False  # Set based on context
+                    )
+                    
+                    try:
+                        await self.save_decision_file(decision_file)
+                    except DecisionFileError as e:
+                        # Log error but don't fail the decision
+                        logger.error(f"Failed to save decision file: {e}")
 
                 return vote_decision
 
@@ -1202,3 +1243,92 @@ class AIService:
         ), "Validated response must contain 'key_points' key"
 
         return validated_response
+
+    async def save_decision_file(
+        self,
+        decision: VotingDecisionFile,
+        base_path: Optional[Path] = None
+    ) -> Path:
+        """Save voting decision to file atomically."""
+        
+        # Prepare file path
+        output_dir = base_path or Path(settings.store_path or ".") / settings.decision_output_dir
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Generate filename with timestamp and proposal ID
+        timestamp = decision.timestamp.strftime("%Y%m%d_%H%M%S")
+        filename = f"decision_{timestamp}_{decision.proposal_id[:8]}.json"
+        final_path = output_dir / filename
+        
+        # Calculate checksum
+        decision_dict = decision.model_dump(exclude={"checksum"})
+        checksum = self._calculate_checksum(decision_dict)
+        decision.checksum = checksum
+        
+        # Atomic write using temporary file
+        temp_path = None
+        try:
+            temp_fd, temp_path = tempfile.mkstemp(dir=output_dir, suffix=".tmp")
+            with os.fdopen(temp_fd, "w") as f:
+                json.dump(decision.model_dump(), f, indent=2, default=str)
+            
+            # Atomic rename
+            Path(temp_path).replace(final_path)
+            
+            logger.info(f"Decision file saved: {final_path}")
+            return final_path
+            
+        except PermissionError as e:
+            # Clean up temp file on error
+            if temp_path and os.path.exists(temp_path):
+                os.unlink(temp_path)
+            raise DecisionFileError(
+                f"Permission denied saving decision file: {e}",
+                file_path=str(final_path)
+            )
+        except (OSError, IOError) as e:
+            # Clean up temp file on error
+            if temp_path and os.path.exists(temp_path):
+                os.unlink(temp_path)
+            raise DecisionFileError(
+                f"Failed to save decision file: {e}",
+                file_path=str(final_path)
+            )
+
+    def _calculate_checksum(self, data: Dict[str, Any]) -> str:
+        """Calculate SHA256 checksum for decision data."""
+        json_str = json.dumps(data, sort_keys=True, default=str)
+        return hashlib.sha256(json_str.encode()).hexdigest()
+
+    async def cleanup_old_decision_files(self, decisions_dir: Path) -> int:
+        """Remove old decision files exceeding max_decision_files limit."""
+        if not decisions_dir.exists():
+            return 0
+            
+        # Get all decision files sorted by modification time
+        decision_files = sorted(
+            decisions_dir.glob("decision_*.json"),
+            key=lambda f: f.stat().st_mtime
+        )
+        
+        # Calculate how many to remove
+        files_to_remove = len(decision_files) - settings.max_decision_files
+        if files_to_remove <= 0:
+            return 0
+            
+        # Remove oldest files
+        removed_count = 0
+        for file_path in decision_files[:files_to_remove]:
+            try:
+                file_path.unlink()
+                removed_count += 1
+            except Exception as e:
+                logger.error(f"Failed to remove old decision file {file_path}: {e}")
+                
+        retained_count = len(decision_files) - removed_count
+        logger.info(
+            f"[agent] Decision file cleanup: removed {removed_count} old files, "
+            f"retained {retained_count} recent files"
+        )
+        
+        return removed_count

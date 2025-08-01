@@ -163,6 +163,25 @@ class Settings(BaseSettings):
         description="Delay between retry attempts in seconds",
     )
 
+    # File output configuration
+    decision_output_dir: str = Field(
+        default="decisions",
+        alias="DECISION_OUTPUT_DIR",
+        description="Directory for voting decision files"
+    )
+    decision_file_format: str = Field(
+        default="json",
+        alias="DECISION_FILE_FORMAT", 
+        description="Format for decision files (json)"
+    )
+    max_decision_files: int = Field(
+        default=100,
+        ge=1,
+        le=1000,
+        alias="MAX_DECISION_FILES",
+        description="Maximum number of decision files to retain"
+    )
+
     # Health check configuration
     HEALTH_CHECK_PORT: int = Field(
         default=8716,
