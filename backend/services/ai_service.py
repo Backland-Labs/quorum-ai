@@ -555,7 +555,7 @@ class AIService:
     Supports multiple voting strategies and provides comprehensive proposal analysis.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, snapshot_service: Optional[SnapshotService] = None) -> None:
         """Initialize the AI service with configured model."""
         # Runtime assertion: validate initialization state
         assert (
@@ -565,6 +565,9 @@ class AIService:
             len(settings.openrouter_api_key.strip()) > 0
         ), "OpenRouter API key cannot be empty"
 
+        # Initialize services
+        self.snapshot_service = snapshot_service or SnapshotService()
+        
         # Initialize VotingAgent for refactored architecture
         self.voting_agent = VotingAgent()
 
@@ -799,33 +802,72 @@ class AIService:
         proposal: Proposal,
         strategy: VotingStrategy,
     ) -> Dict[str, Any]:
-        """Generate voting decision for a proposal using the specified strategy."""
-        prompt = self._build_vote_decision_prompt(proposal, strategy)
-        ai_response = await self._call_ai_model(
-            prompt
-        )  # Use legacy method for test compatibility
+        """Generate voting decision for a proposal using the specified strategy.
+        
+        This method uses the Pydantic AI VotingAgent to make autonomous voting
+        decisions based on the provided strategy and proposal details.
+        """
+        # Create dependencies for agent execution
+        deps = self._create_voting_dependencies(strategy)
+        
+        # Build strategy-specific prompt with proposal details
+        prompt = self._build_agent_prompt(proposal, strategy)
+        
+        # Execute agent with structured output
+        result = await self.voting_agent.agent.run(prompt, deps=deps)
+        
+        # Extract and format the structured response
+        formatted_response = self._format_agent_response(result.data)
 
-        # Handle both dict and object responses for compatibility
-        if isinstance(ai_response, dict):
-            # Already a dict, use as-is but rename 'vote' to 'vote_decision' for consistency
-            formatted_response = {
-                "vote": ai_response.get("vote", "ABSTAIN"),
-                "reasoning": ai_response.get("reasoning", "No reasoning provided"),
-                "confidence": ai_response.get("confidence", 0.5),
-                "risk_level": ai_response.get("risk_level", "MEDIUM"),
-            }
-        else:
-            # Object response, convert to dict
-            formatted_response = {
-                "vote": getattr(ai_response, "vote", "ABSTAIN"),
-                "reasoning": getattr(ai_response, "reasoning", "No reasoning provided"),
-                "confidence": getattr(ai_response, "confidence", 0.5),
-                "risk_level": getattr(ai_response, "risk_level", "MEDIUM"),
-            }
-
+        # Validate response through existing processor
         return self.response_processor.parse_and_validate_vote_response(
             formatted_response
         )
+    
+    def _create_voting_dependencies(self, strategy: VotingStrategy) -> VotingDependencies:
+        """Create VotingDependencies for agent execution with the given strategy."""
+        return VotingDependencies(
+            snapshot_service=self.snapshot_service,
+            user_preferences=UserPreferences(
+                voting_strategy=strategy,
+                confidence_threshold=0.7,
+                max_proposals_per_run=5,
+                blacklisted_proposers=[],
+                whitelisted_proposers=[],
+            )
+        )
+    
+    def _build_agent_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
+        """Build a comprehensive prompt for the voting agent."""
+        system_prompt = self.voting_agent._get_system_prompt_for_strategy(strategy)
+        
+        # Truncate body for token efficiency
+        truncated_body = proposal.body[:MAX_PROPOSAL_BODY_LENGTH]
+        if len(proposal.body) > MAX_PROPOSAL_BODY_LENGTH:
+            truncated_body += "..."
+        
+        proposal_details = [
+            f"Analyze proposal: {proposal.title}",
+            "",
+            "Proposal Details:",
+            f"- ID: {proposal.id}",
+            f"- Body: {truncated_body}",
+            f"- State: {proposal.state}",
+            f"- Choices: {', '.join(proposal.choices)}",
+            f"- Scores: {proposal.scores}",
+            f"- Author: {proposal.author}",
+        ]
+        
+        return f"{system_prompt}\n\n" + "\n".join(proposal_details)
+    
+    def _format_agent_response(self, ai_response: AiVoteResponse) -> Dict[str, Any]:
+        """Format the agent's structured response for the response processor."""
+        return {
+            "vote": ai_response.vote,
+            "reasoning": ai_response.reasoning,
+            "confidence": ai_response.confidence,
+            "risk_level": ai_response.risk_level,
+        }
 
     def _parse_vote_response(self, ai_response: Dict[str, Any]) -> Dict[str, Any]:
         """Parse and validate AI vote response.

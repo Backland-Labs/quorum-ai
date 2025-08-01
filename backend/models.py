@@ -498,6 +498,8 @@ class VoteDecision(BaseModel):
 class AiVoteResponse(BaseModel):
     vote: str = Field(description="Vote decision: FOR, AGAINST, or ABSTAIN")
     reasoning: str = Field(description="Reasoning for the vote decision")
+    confidence: float = Field(description="Confidence level in the decision (0.0 to 1.0)", ge=0.0, le=1.0)
+    risk_level: str = Field(description="Risk assessment: LOW, MEDIUM, or HIGH")
 
 
 class Space(BaseModel):
