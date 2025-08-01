@@ -36,7 +36,7 @@ describe('AgentStatusStore', () => {
        * and can handle the loading state properly.
        */
       const state = get(store);
-      
+
       expect(state).toEqual({
         status: null,
         decisions: [],
@@ -174,10 +174,10 @@ describe('AgentStatusStore', () => {
         data: mockStatus,
         error: null
       });
-      
+
       // Decisions fails
       mockApiClient.GET.mockRejectedValueOnce(new Error('Decisions error'));
-      
+
       // Statistics succeeds
       mockApiClient.GET.mockResolvedValueOnce({
         data: { total_runs: 5 },
@@ -202,7 +202,7 @@ describe('AgentStatusStore', () => {
        */
       // Clear any previous mock calls
       mockApiClient.GET.mockClear();
-      
+
       const mockData = {
         status: { current_state: 'idle', last_run_timestamp: '2025-07-30T10:00:00Z', is_active: false, current_space_id: 'test.eth' },
         decisions: { decisions: [] },
@@ -222,7 +222,7 @@ describe('AgentStatusStore', () => {
       // Test that polling starts
       const initialCount = callCount;
       store.startPolling(100); // Short interval for testing
-      
+
       // Wait for initial fetch
       await new Promise(resolve => setTimeout(resolve, 50));
       expect(callCount).toBe(initialCount + 3); // 3 API calls made
@@ -248,7 +248,7 @@ describe('AgentStatusStore', () => {
        * This is important for filtering data by the active space.
        */
       store.setCurrentSpaceId('test.eth');
-      
+
       const state = get(store);
       expect(state.currentSpaceId).toBe('test.eth');
     });
@@ -259,7 +259,7 @@ describe('AgentStatusStore', () => {
        * This ensures data is filtered to the correct DAO space.
        */
       store.setCurrentSpaceId('test.eth');
-      
+
       mockApiClient.GET.mockResolvedValue({
         data: { decisions: [] },
         error: null
@@ -287,7 +287,7 @@ describe('AgentStatusStore', () => {
        * This verifies the reactive nature of Svelte stores.
        */
       const stateChanges: AgentDashboardState[] = [];
-      
+
       // Subscribe to store changes
       const unsubscribe = store.subscribe(state => {
         stateChanges.push({ ...state });
@@ -298,7 +298,7 @@ describe('AgentStatusStore', () => {
 
       // Update status
       mockApiClient.GET.mockResolvedValueOnce({
-        data: { 
+        data: {
           current_state: 'voting',
           last_run_timestamp: '2025-07-30T10:00:00Z',
           is_active: true,
@@ -355,7 +355,7 @@ describe('AgentStatusStore', () => {
        * This helps users know when data was last updated.
        */
       const beforeRefresh = new Date();
-      
+
       mockApiClient.GET.mockResolvedValue({
         data: {},
         error: null
@@ -390,7 +390,7 @@ describe('AgentStatusStore', () => {
       });
 
       await store.fetchStatus();
-      
+
       // Check that isAgentActive is now true
       expect(get(store.isAgentActive)).toBe(true);
     });

@@ -98,8 +98,8 @@ The Agent Dashboard provides real-time visibility into the autonomous voting age
 ### Component Details
 
 #### AgentStatusWidget
-**Purpose**: Display real-time agent status and activity indicator  
-**Location**: `src/lib/components/dashboard/AgentStatusWidget.svelte`  
+**Purpose**: Display real-time agent status and activity indicator
+**Location**: `src/lib/components/dashboard/AgentStatusWidget.svelte`
 **Features**:
 - Polls `/agent-run/status` endpoint every 30 seconds
 - Shows current state (idle, fetching_proposals, analyzing, voting, error)
@@ -107,8 +107,8 @@ The Agent Dashboard provides real-time visibility into the autonomous voting age
 - Visual activity indicator (green dot when active)
 
 #### AgentDecisionsPanel
-**Purpose**: Show recent voting decisions made by the agent  
-**Location**: `src/lib/components/dashboard/AgentDecisionsPanel.svelte`  
+**Purpose**: Show recent voting decisions made by the agent
+**Location**: `src/lib/components/dashboard/AgentDecisionsPanel.svelte`
 **Features**:
 - Fetches last 5 decisions from `/agent-run/decisions`
 - Displays proposal title, vote choice (FOR/AGAINST), and confidence score
@@ -116,8 +116,8 @@ The Agent Dashboard provides real-time visibility into the autonomous voting age
 - Handles empty state gracefully
 
 #### AgentStatistics
-**Purpose**: Display aggregated performance metrics  
-**Location**: `src/lib/components/dashboard/AgentStatistics.svelte`  
+**Purpose**: Display aggregated performance metrics
+**Location**: `src/lib/components/dashboard/AgentStatistics.svelte`
 **Features**:
 - Shows total runs, proposals reviewed, votes cast
 - Displays average confidence and success rate
@@ -125,8 +125,8 @@ The Agent Dashboard provides real-time visibility into the autonomous voting age
 - Responsive grid layout for metrics
 
 #### AgentQuickActions
-**Purpose**: Provide manual control over agent execution  
-**Location**: `src/lib/components/dashboard/AgentQuickActions.svelte`  
+**Purpose**: Provide manual control over agent execution
+**Location**: `src/lib/components/dashboard/AgentQuickActions.svelte`
 **Features**:
 - "Run Now" button to trigger agent execution
 - Disabled state when agent is already active
@@ -141,7 +141,7 @@ The Agent Dashboard provides real-time visibility into the autonomous voting age
   import AgentDecisionsPanel from '$lib/components/dashboard/AgentDecisionsPanel.svelte';
   import AgentStatistics from '$lib/components/dashboard/AgentStatistics.svelte';
   import AgentQuickActions from '$lib/components/dashboard/AgentQuickActions.svelte';
-  
+
   // Props
   let currentSpaceId = $props<string>();
 </script>
@@ -217,7 +217,7 @@ describe('Component', () => {
 ### Agent Dashboard Issues
 
 #### Status Widget Not Updating
-**Problem**: Agent status remains stuck or doesn't refresh  
+**Problem**: Agent status remains stuck or doesn't refresh
 **Solutions**:
 1. Check browser console for API errors
 2. Verify backend is running on port 8716
@@ -225,7 +225,7 @@ describe('Component', () => {
 4. Check for CORS issues if frontend/backend on different ports
 
 #### "Run Now" Button Disabled
-**Problem**: Cannot trigger agent run manually  
+**Problem**: Cannot trigger agent run manually
 **Causes**:
 - Agent is already running (check status widget)
 - No space ID selected in dashboard
@@ -237,7 +237,7 @@ describe('Component', () => {
 3. Check network tab for failed API calls
 
 #### Empty Decisions Panel
-**Problem**: No voting decisions displayed  
+**Problem**: No voting decisions displayed
 **Causes**:
 - Agent hasn't run yet
 - No proposals met voting criteria
@@ -249,7 +249,7 @@ describe('Component', () => {
 3. Verify checkpoint files exist in backend
 
 #### Statistics Show Zeros
-**Problem**: All metrics display as 0  
+**Problem**: All metrics display as 0
 **Causes**:
 - No agent runs completed
 - Checkpoint aggregation failing
@@ -268,7 +268,7 @@ tail -f backend/log.txt
 ```
 
 #### Component Build Errors
-**Problem**: TypeScript errors after adding components  
+**Problem**: TypeScript errors after adding components
 **Solutions**:
 1. Regenerate API client: `npm run generate-api`
 2. Ensure all imports use correct paths
@@ -276,7 +276,7 @@ tail -f backend/log.txt
 4. Clear build cache: `rm -rf .svelte-kit`
 
 #### Polling Performance Issues
-**Problem**: Browser becomes slow with polling  
+**Problem**: Browser becomes slow with polling
 **Solutions**:
 1. Increase polling interval (default 30s)
 2. Implement visibility API to pause when hidden

@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Linear Issue**: BAC-185 - User Configuration System  
+**Linear Issue**: BAC-185 - User Configuration System
 **Objective**: Add basic preference management for the autonomous voting agent
 
 ## Scope (Minimal Requirements Only)

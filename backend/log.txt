@@ -7804,3 +7804,191 @@ confidence
 [2025-07-29 21:28:43,247] [INFO] [agent] Completed save_service_states successfully in 0.002s
 [2025-07-29 21:28:43,247] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
 [2025-07-29 21:28:43,247] [INFO] [agent] Application shutdown completed
+[2025-07-31 21:42:09,458] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:42:09,667] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:42:10,260] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:32,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:32,540] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:33,058] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:33,065] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,077] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,077] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,077] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=MagicMock
+[2025-07-31 21:43:33,077] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,077] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,078] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,078] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=MagicMock
+[2025-07-31 21:43:33,078] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:33,078] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,079] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,079] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,079] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,079] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=MagicMock
+[2025-07-31 21:43:33,079] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,079] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,079] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,079] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=MagicMock
+[2025-07-31 21:43:33,080] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,080] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,080] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,080] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=MagicMock
+[2025-07-31 21:43:33,080] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,080] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,080] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,080] [ERROR] [agent] Failed to create Pydantic AI VotingAgent, error=Failed to create agent, error_type=Exception, model_type=OpenAIModel
+[2025-07-31 21:43:33,081] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,081] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,081] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,081] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=MagicMock
+[2025-07-31 21:43:33,082] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:33,082] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:33,082] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:33,082] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,082] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:43:33,082] [INFO] [agent] Creating AI model
+[2025-07-31 21:43:33,082] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:43:33,082] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:43:33,082] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:33,082] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:43:37,579] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:37,718] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:38,132] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:38,137] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:38,137] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:38,148] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:38,149] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:38,149] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:43:38,149] [INFO] [agent] Creating AI model
+[2025-07-31 21:43:38,149] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:43:38,149] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:43:38,149] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:38,149] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:43:38,150] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:43:38,150] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:43:38,150] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:43:38,150] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:38,150] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:43:38,150] [INFO] [agent] Creating AI model
+[2025-07-31 21:43:38,150] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:43:38,150] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:43:38,150] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:43:38,150] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:45:04,337] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:04,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:05,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:05,073] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:05,073] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:45:05,084] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:45:05,084] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:05,085] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:45:05,085] [INFO] [agent] Creating AI model
+[2025-07-31 21:45:05,085] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:45:05,085] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:45:05,085] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:05,085] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:45:05,086] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:05,086] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:45:05,086] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:45:05,086] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:05,086] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:45:05,086] [INFO] [agent] Creating AI model
+[2025-07-31 21:45:05,086] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:45:05,086] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:45:05,086] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:05,086] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:45:05,087] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:05,087] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:45:05,087] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:45:05,087] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:05,087] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:45:05,087] [INFO] [agent] Creating AI model
+[2025-07-31 21:45:05,087] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:45:05,087] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:45:05,087] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:05,087] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:45:19,919] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:20,110] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:20,660] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:20,664] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:20,664] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:45:20,676] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:45:20,676] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:20,677] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:45:20,677] [INFO] [agent] Creating AI model
+[2025-07-31 21:45:20,677] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:45:20,677] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:45:20,677] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:20,677] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:45:20,678] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:45:20,678] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:45:20,678] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:45:20,678] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:20,678] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:45:20,678] [INFO] [agent] Creating AI model
+[2025-07-31 21:45:20,678] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:45:20,678] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:45:20,678] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:45:20,679] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:46:24,628] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:46:24,818] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:46:25,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:46:25,373] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:46:25,373] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:46:25,377] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:46:25,377] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 21:46:25,377] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 21:46:25,377] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:46:25,377] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 21:46:25,378] [INFO] [agent] Creating AI model
+[2025-07-31 21:46:25,378] [INFO] [agent] Using OpenRouter
+[2025-07-31 21:46:25,378] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 21:46:25,378] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 21:46:25,378] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 21:56:39,384] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:56:39,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:56:40,159] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:58:48,064] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:58:48,255] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 21:58:48,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:00:07,412] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:00:07,599] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:00:08,123] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:01:13,007] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:01:13,195] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:01:13,721] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:02:12,606] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:02:12,821] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:02:13,390] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:28,031] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:28,257] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:28,871] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:34,374] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:34,563] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:35,086] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:35,108] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:35,108] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 22:03:35,168] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:35,168] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 22:03:35,168] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 22:03:35,168] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 22:03:35,169] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 22:03:35,170] [INFO] [agent] Creating AI model
+[2025-07-31 22:03:35,170] [INFO] [agent] Using OpenRouter
+[2025-07-31 22:03:35,171] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 22:03:35,171] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 22:03:35,171] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 22:03:47,461] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:47,648] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:48,170] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:48,191] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:48,191] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 22:03:48,196] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 22:03:48,196] [INFO] [agent] Creating AI model for VotingAgent
+[2025-07-31 22:03:48,196] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-07-31 22:03:48,196] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 22:03:48,197] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-07-31 22:03:48,198] [INFO] [agent] Creating AI model
+[2025-07-31 22:03:48,198] [INFO] [agent] Using OpenRouter
+[2025-07-31 22:03:48,198] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 22:03:48,198] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 22:03:48,198] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent

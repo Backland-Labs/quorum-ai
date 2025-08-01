@@ -228,7 +228,7 @@ The service template is a JSON configuration file required for Pearl integration
 
 #### Fund Requirements
 Define minimum balances for each token:
-- **Native token** (address: `0x0000...0000`): 
+- **Native token** (address: `0x0000...0000`):
   - `agent`: Funds for agent EOA (gas fees)
   - `safe`: Funds for agent Safe (business logic)
 - **ERC20 tokens**: Same structure with token contract address

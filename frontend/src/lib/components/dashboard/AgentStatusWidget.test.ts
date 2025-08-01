@@ -3,7 +3,7 @@
  * with the testing library. The component has been verified to work correctly
  * through manual testing and successful builds. Tests will be updated once
  * Svelte 5 testing support improves.
- * 
+ *
  * Component functionality verified:
  * - Displays loading state initially
  * - Shows agent status after API response
@@ -47,7 +47,7 @@ describe('AgentStatusWidget', () => {
     const { container } = render(AgentStatusWidget, {
       props: { testMode: true }
     });
-    
+
     const loadingElement = container.querySelector('[data-testid="loading-state"]');
     expect(loadingElement).toBeTruthy();
     expect(loadingElement?.textContent).toContain('Loading');

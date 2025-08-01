@@ -1048,9 +1048,7 @@ class AgentRunStatistics(BaseModel):
     total_proposals_evaluated: int = Field(
         ..., ge=0, description="Total number of proposals evaluated"
     )
-    total_votes_cast: int = Field(
-        ..., ge=0, description="Total number of votes cast"
-    )
+    total_votes_cast: int = Field(..., ge=0, description="Total number of votes cast")
     average_confidence_score: float = Field(
         ..., ge=0.0, le=1.0, description="Average confidence score across all votes"
     )

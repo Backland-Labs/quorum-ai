@@ -44,15 +44,15 @@ export function createAgentStatusStore() {
   let pollInterval: NodeJS.Timeout | null = null;
 
   const fetchStatus = async () => {
-    update(state => ({ 
-      ...state, 
+    update(state => ({
+      ...state,
       loading: { ...state.loading, status: true },
       errors: { ...state.errors, status: null }
     }));
 
     try {
       const { data, error } = await apiClient.GET('/agent-run/status');
-      
+
       if (error) {
         throw new Error(error.message || 'Failed to fetch status');
       }
@@ -72,8 +72,8 @@ export function createAgentStatusStore() {
   };
 
   const fetchDecisions = async () => {
-    update(state => ({ 
-      ...state, 
+    update(state => ({
+      ...state,
       loading: { ...state.loading, decisions: true },
       errors: { ...state.errors, decisions: null }
     }));
@@ -96,7 +96,7 @@ export function createAgentStatusStore() {
       }
 
       const { data, error } = await apiClient.GET('/agent-run/decisions', { params });
-      
+
       if (error) {
         throw new Error(error.message || 'Failed to fetch decisions');
       }
@@ -116,15 +116,15 @@ export function createAgentStatusStore() {
   };
 
   const fetchStatistics = async () => {
-    update(state => ({ 
-      ...state, 
+    update(state => ({
+      ...state,
       loading: { ...state.loading, statistics: true },
       errors: { ...state.errors, statistics: null }
     }));
 
     try {
       const { data, error } = await apiClient.GET('/agent-run/statistics');
-      
+
       if (error) {
         throw new Error(error.message || 'Failed to fetch statistics');
       }
@@ -149,17 +149,17 @@ export function createAgentStatusStore() {
       fetchDecisions(),
       fetchStatistics()
     ]);
-    
+
     update(state => ({ ...state, lastRefresh: new Date() }));
   };
 
   const startPolling = (interval: number = 30000) => {
     // Stop any existing polling
     stopPolling();
-    
+
     // Fetch immediately
     fetchAll();
-    
+
     // Set up interval
     pollInterval = setInterval(() => {
       fetchAll();

@@ -41,11 +41,11 @@
 
     <div class="space-y-6">
       {#each getDisplayProposals() as proposal}
-        <ProposalCard 
-          {proposal} 
+        <ProposalCard
+          {proposal}
           summary={proposalSummaries.get(proposal.id)}
           onClick={() => onProposalClick(proposal.id)}
-          variant="detailed" 
+          variant="detailed"
         />
       {/each}
     </div>

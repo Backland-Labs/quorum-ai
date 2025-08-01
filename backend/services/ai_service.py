@@ -5,7 +5,7 @@ import json
 from dataclasses import dataclass
 from typing import Dict, List, Any, Optional
 
-from pydantic_ai import Agent, NativeOutput
+from pydantic_ai import Agent, NativeOutput, RunContext
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
@@ -34,6 +34,9 @@ DEFAULT_REASONING_FALLBACK = "No reasoning provided"
 DEFAULT_RISK_LEVEL_FALLBACK = "MEDIUM"
 VALID_VOTE_TYPES = ["FOR", "AGAINST", "ABSTAIN"]
 VALID_RISK_LEVELS = ["LOW", "MEDIUM", "HIGH"]
+
+# Constants for tool optimization
+MAX_PROPOSAL_BODY_LENGTH = 500  # Characters to include in proposal summaries
 
 
 @dataclass
@@ -210,10 +213,194 @@ class VotingAgent:
             + strategy_prompts.get(strategy, strategy_prompts[VotingStrategy.BALANCED])
         )
 
+    def _proposal_to_dict(self, proposal: Proposal, include_full_body: bool = False) -> Dict[str, Any]:
+        """Convert a Proposal object to a dictionary optimized for agent consumption.
+        
+        Args:
+            proposal: The Proposal object to convert
+            include_full_body: Whether to include the full proposal body
+            
+        Returns:
+            Dictionary representation of the proposal
+        """
+        body = proposal.body
+        if not include_full_body and len(body) > MAX_PROPOSAL_BODY_LENGTH:
+            body = body[:MAX_PROPOSAL_BODY_LENGTH] + "..."
+            
+        return {
+            'id': proposal.id,
+            'title': proposal.title,
+            'body': body,
+            'choices': proposal.choices,
+            'author': proposal.author,
+            'start': proposal.start,
+            'end': proposal.end,
+            'state': getattr(proposal, 'state', None),
+            'space': getattr(proposal, 'space', None),
+            'type': getattr(proposal, 'type', None),
+            'scores': proposal.scores,
+            'scores_total': proposal.scores_total,
+            'votes': proposal.votes,
+            'created': getattr(proposal, 'created', None),
+            'updated': getattr(proposal, 'updated', None),
+            'snapshot': getattr(proposal, 'snapshot', None),
+            'privacy': getattr(proposal, 'privacy', None),
+            'link': getattr(proposal, 'link', None)
+        }
+
     def _register_tools(self):
         """Register agent tools for Snapshot integration."""
-        # Tool registration will be implemented in Task 2
-        pass
+        
+        @self.agent.tool
+        async def query_active_proposals(
+            ctx: RunContext[VotingDependencies], 
+            space_id: str
+        ) -> List[Dict[str, Any]]:
+            """Fetch active proposals for a given space.
+            
+            Args:
+                ctx: Agent runtime context with dependencies
+                space_id: The ID of the Snapshot space to query
+                
+            Returns:
+                List of proposal dictionaries with key fields
+            """
+            self.logger.debug(
+                "query_active_proposals tool called, space_id=%s", space_id
+            )
+            
+            # Runtime assertions
+            assert ctx.deps is not None, "Dependencies must be available"
+            assert ctx.deps.snapshot_service is not None, "SnapshotService must be available"
+            assert space_id, "space_id must not be empty"
+            
+            try:
+                # Use the injected SnapshotService to fetch proposals
+                proposals = await ctx.deps.snapshot_service.get_proposals(
+                    space_id=space_id, 
+                    state="active"
+                )
+                
+                # Convert proposals to dictionaries optimized for agent consumption
+                result = [self._proposal_to_dict(proposal) for proposal in proposals]
+                
+                self.logger.info(
+                    "query_active_proposals returned %d proposals for space_id=%s",
+                    len(result),
+                    space_id
+                )
+                return result
+                
+            except Exception as e:
+                self.logger.error(
+                    "Error in query_active_proposals tool, space_id=%s, error=%s",
+                    space_id,
+                    str(e)
+                )
+                raise
+        
+        @self.agent.tool
+        async def get_proposal_details(
+            ctx: RunContext[VotingDependencies],
+            proposal_id: str
+        ) -> Dict[str, Any]:
+            """Get comprehensive details for a specific proposal.
+            
+            Args:
+                ctx: Agent runtime context with dependencies
+                proposal_id: The ID of the proposal to fetch
+                
+            Returns:
+                Dictionary with comprehensive proposal data
+            """
+            self.logger.debug(
+                "get_proposal_details tool called, proposal_id=%s", proposal_id
+            )
+            
+            # Runtime assertions
+            assert ctx.deps is not None, "Dependencies must be available"
+            assert ctx.deps.snapshot_service is not None, "SnapshotService must be available"
+            assert proposal_id, "proposal_id must not be empty"
+            
+            try:
+                # Fetch the proposal using SnapshotService
+                proposal = await ctx.deps.snapshot_service.get_proposal(proposal_id)
+                
+                # Return comprehensive proposal data with full body
+                result = self._proposal_to_dict(proposal, include_full_body=True)
+                
+                self.logger.info(
+                    "get_proposal_details returned data for proposal_id=%s",
+                    proposal_id
+                )
+                return result
+                
+            except Exception as e:
+                self.logger.error(
+                    "Error in get_proposal_details tool, proposal_id=%s, error=%s", 
+                    proposal_id,
+                    str(e)
+                )
+                raise
+        
+        @self.agent.tool
+        async def get_voting_power(
+            ctx: RunContext[VotingDependencies],
+            address: str,
+            space_id: str
+        ) -> float:
+            """Calculate voting power for an address in a space.
+            
+            Args:
+                ctx: Agent runtime context with dependencies
+                address: The blockchain address to check
+                space_id: The Snapshot space ID
+                
+            Returns:
+                Float representing the voting power
+            """
+            self.logger.debug(
+                "get_voting_power tool called, address=%s, space_id=%s",
+                address,
+                space_id
+            )
+            
+            # Runtime assertions
+            assert ctx.deps is not None, "Dependencies must be available"
+            assert address, "address must not be empty"
+            assert space_id, "space_id must not be empty"
+            
+            try:
+                # For now, use a simple implementation
+                # In future, this would integrate with actual voting power calculation
+                if hasattr(ctx.deps.snapshot_service, 'calculate_voting_power'):
+                    power = await ctx.deps.snapshot_service.calculate_voting_power(
+                        address=address,
+                        space_id=space_id
+                    )
+                else:
+                    # Default implementation if method doesn't exist
+                    self.logger.warning(
+                        "SnapshotService.calculate_voting_power not implemented, returning default"
+                    )
+                    power = 0.0
+                
+                self.logger.info(
+                    "get_voting_power returned %f for address=%s in space_id=%s",
+                    power,
+                    address,
+                    space_id
+                )
+                return power
+                
+            except Exception as e:
+                self.logger.error(
+                    "Error in get_voting_power tool, address=%s, space_id=%s, error=%s",
+                    address,
+                    space_id,
+                    str(e)
+                )
+                raise
 
 
 class AIResponseProcessor:

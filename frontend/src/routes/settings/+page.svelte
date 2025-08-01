@@ -20,7 +20,7 @@
 
     try {
       const response = await apiClient.GET('/user-preferences');
-      
+
       if (response.error) {
         if (response.error.status === 404) {
           // Redirect new users to setup
@@ -86,8 +86,8 @@
         <p class="text-green-800">{successMessage}</p>
       </div>
     {/if}
-    
-    <PreferenceForm 
+
+    <PreferenceForm
       initialValues={preferences}
       onSubmit={handleSave}
     />

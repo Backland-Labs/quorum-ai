@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { VotingStrategy } from '$lib/types/preferences';
-	
+
 	interface Props {
 		initialValues?: {
 			voting_strategy: VotingStrategy;
@@ -17,9 +17,9 @@
 			whitelisted_proposers: string[];
 		}) => void | Promise<void>;
 	}
-	
+
 	let { initialValues, onSubmit }: Props = $props();
-	
+
 	// Default configuration values
 	const DEFAULT_VOTING_STRATEGY: VotingStrategy = 'balanced';
 	const DEFAULT_CONFIDENCE_THRESHOLD = 0.7;
@@ -28,19 +28,19 @@
 	const MAX_CONFIDENCE_THRESHOLD = 1;
 	const MIN_PROPOSALS_PER_RUN = 1;
 	const MAX_PROPOSALS_PER_RUN = 10;
-	
+
 	// Form state with defaults
 	let votingStrategy = $state<VotingStrategy>(initialValues?.voting_strategy || DEFAULT_VOTING_STRATEGY);
 	let confidenceThreshold = $state(initialValues?.confidence_threshold || DEFAULT_CONFIDENCE_THRESHOLD);
 	let maxProposalsPerRun = $state(initialValues?.max_proposals_per_run || DEFAULT_MAX_PROPOSALS_PER_RUN);
 	let blacklistedProposers = $state(initialValues?.blacklisted_proposers?.join('\n') || '');
 	let whitelistedProposers = $state(initialValues?.whitelisted_proposers?.join('\n') || '');
-	
+
 	// Form validation state
 	let confidenceError = $state('');
 	let maxProposalsError = $state('');
 	let isSubmitting = $state(false);
-	
+
 	// Validation functions
 	const validateConfidence = () => {
 		if (confidenceThreshold < MIN_CONFIDENCE_THRESHOLD || confidenceThreshold > MAX_CONFIDENCE_THRESHOLD) {
@@ -49,7 +49,7 @@
 			confidenceError = '';
 		}
 	};
-	
+
 	const validateMaxProposals = () => {
 		if (maxProposalsPerRun < MIN_PROPOSALS_PER_RUN || maxProposalsPerRun > MAX_PROPOSALS_PER_RUN) {
 			maxProposalsError = `Maximum proposals must be between ${MIN_PROPOSALS_PER_RUN} and ${MAX_PROPOSALS_PER_RUN}`;
@@ -57,7 +57,7 @@
 			maxProposalsError = '';
 		}
 	};
-	
+
 	// Parse address lists
 	const parseAddressList = (text: string): string[] => {
 		return text
@@ -65,24 +65,24 @@
 			.map(addr => addr.trim())
 			.filter(addr => addr.length > 0);
 	};
-	
+
 	// Handle form submission
 	const handleSubmit = async (e: Event) => {
 		e.preventDefault();
-		
+
 		// Validate all fields
 		validateConfidence();
 		validateMaxProposals();
-		
+
 		// Check for errors
 		if (confidenceError || maxProposalsError) {
 			return;
 		}
-		
+
 		if (!onSubmit) return;
-		
+
 		isSubmitting = true;
-		
+
 		try {
 			await onSubmit({
 				voting_strategy: votingStrategy,
@@ -117,7 +117,7 @@
 			Determines how the agent evaluates proposal risk
 		</p>
 	</div>
-	
+
 	<!-- Confidence Threshold -->
 	<div>
 		<label for="confidence-threshold" class="block text-sm font-medium text-gray-700 mb-2">
@@ -142,7 +142,7 @@
 			Minimum confidence score (0-1) required to cast a vote
 		</p>
 	</div>
-	
+
 	<!-- Max Proposals -->
 	<div>
 		<label for="max-proposals" class="block text-sm font-medium text-gray-700 mb-2">
@@ -166,7 +166,7 @@
 			How many proposals to analyze in each agent run
 		</p>
 	</div>
-	
+
 	<!-- Blacklisted Proposers -->
 	<div>
 		<label for="blacklisted-proposers" class="block text-sm font-medium text-gray-700 mb-2">
@@ -184,7 +184,7 @@
 			Proposals from these addresses will be automatically rejected
 		</p>
 	</div>
-	
+
 	<!-- Whitelisted Proposers -->
 	<div>
 		<label for="whitelisted-proposers" class="block text-sm font-medium text-gray-700 mb-2">
@@ -202,7 +202,7 @@
 			Proposals from these addresses will receive priority consideration
 		</p>
 	</div>
-	
+
 	<!-- Submit Button -->
 	<div class="pt-4">
 		<button

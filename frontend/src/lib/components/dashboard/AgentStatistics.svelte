@@ -21,8 +21,8 @@
   };
 </script>
 
-<section 
-  class="bg-white dark:bg-gray-800 shadow rounded-lg p-3 sm:p-4" 
+<section
+  class="bg-white dark:bg-gray-800 shadow rounded-lg p-3 sm:p-4"
   aria-labelledby="statistics-heading"
   role="region"
   aria-label="Agent Statistics"
@@ -30,7 +30,7 @@
   <h3 id="statistics-heading" data-testid="statistics-title" class="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
     Agent Statistics
   </h3>
-  
+
   {#if storeState.loading.statistics}
     <div data-testid="loading-state" class="text-center p-4 sm:p-6" role="status" aria-live="polite">
       <p class="text-gray-500 dark:text-gray-400 text-sm">Loading statistics...</p>

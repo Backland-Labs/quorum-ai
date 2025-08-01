@@ -279,3 +279,203 @@ class TestVotingAgentIntegration:
         ai_service = AIService()
         assert hasattr(ai_service, 'voting_agent')
         assert isinstance(ai_service.voting_agent, VotingAgent)
+
+
+class TestVotingAgentTools:
+    """Test suite for VotingAgent tools functionality - Task 2 implementation."""
+    
+    @pytest.fixture
+    def mock_snapshot_service(self):
+        """Create a mock SnapshotService for testing."""
+        service = MagicMock(spec=SnapshotService)
+        service.get_proposals = AsyncMock()
+        service.get_proposal = AsyncMock()
+        service.calculate_voting_power = AsyncMock()
+        return service
+    
+    @pytest.fixture
+    def voting_dependencies(self, mock_snapshot_service):
+        """Create VotingDependencies for testing."""
+        user_prefs = UserPreferences(
+            voting_strategy=VotingStrategy.BALANCED,
+            confidence_threshold=0.7,
+            max_proposals_per_run=5,
+            blacklisted_proposers=["0xBadActor"],
+            whitelisted_proposers=["0xTrusted"]
+        )
+        return VotingDependencies(
+            snapshot_service=mock_snapshot_service,
+            user_preferences=user_prefs
+        )
+    
+    @patch('services.ai_service.setup_pearl_logger')
+    @patch('services.ai_service.settings')
+    def test_query_active_proposals_tool_exists(self, mock_settings, mock_logger):
+        """Test that the query_active_proposals tool is registered on the agent.
+        
+        Why this test is important:
+        - Verifies that agent tools are properly registered during initialization
+        - Ensures the query_active_proposals tool is available for fetching proposals
+        - Validates the tool registration follows Pydantic AI patterns
+        """
+        # Arrange
+        mock_settings.openrouter_api_key = "test_api_key"
+        
+        # Act
+        agent = VotingAgent()
+        
+        # Assert - Tool registration should happen in _register_function_tools
+        # Check if tools are registered
+        assert hasattr(agent.agent, '_function_tools'), "Agent should have _function_tools attribute"
+        tool_names = list(agent.agent._function_tools.keys()) if hasattr(agent.agent, '_function_tools') else []
+        assert 'query_active_proposals' in tool_names, "query_active_proposals tool should be registered"
+    
+    @patch('services.ai_service.setup_pearl_logger')
+    @patch('services.ai_service.settings')
+    def test_get_proposal_details_tool_exists(self, mock_settings, mock_logger):
+        """Test that the get_proposal_details tool is registered on the agent.
+        
+        Why this test is important:
+        - Ensures the tool for fetching detailed proposal data is available
+        - Validates comprehensive proposal information can be accessed
+        - Confirms tool naming follows the planned architecture
+        """
+        # Arrange
+        mock_settings.openrouter_api_key = "test_api_key"
+        
+        # Act
+        agent = VotingAgent()
+        
+        # Assert
+        tool_names = list(agent.agent._function_tools.keys()) if hasattr(agent.agent, '_function_tools') else []
+        assert 'get_proposal_details' in tool_names, "get_proposal_details tool should be registered"
+    
+    @patch('services.ai_service.setup_pearl_logger')
+    @patch('services.ai_service.settings')
+    def test_get_voting_power_tool_exists(self, mock_settings, mock_logger):
+        """Test that the get_voting_power tool is registered on the agent.
+        
+        Why this test is important:
+        - Verifies voting power calculation is available as an agent tool
+        - Ensures the agent can assess user influence in DAOs
+        - Validates the tool is properly integrated with the agent
+        """
+        # Arrange
+        mock_settings.openrouter_api_key = "test_api_key"
+        
+        # Act
+        agent = VotingAgent()
+        
+        # Assert
+        tool_names = list(agent.agent._function_tools.keys()) if hasattr(agent.agent, '_function_tools') else []
+        assert 'get_voting_power' in tool_names, "get_voting_power tool should be registered"
+    
+    @pytest.mark.asyncio
+    @patch('services.ai_service.setup_pearl_logger')
+    @patch('services.ai_service.settings')
+    async def test_query_active_proposals_tool_functionality(self, mock_settings, mock_logger, voting_dependencies):
+        """Test that query_active_proposals tool correctly fetches proposals.
+        
+        Why this test is important:
+        - Validates the tool properly integrates with SnapshotService
+        - Ensures active proposals are filtered correctly
+        - Confirms the tool returns data in the expected format for AI processing
+        """
+        # Arrange
+        from datetime import datetime, timezone
+        sample_proposals = [
+            Proposal(
+                id="proposal-1",
+                title="Enable Treasury Diversification",
+                body="This proposal aims to diversify the DAO treasury...",
+                choices=["For", "Against", "Abstain"],
+                state="active",
+                start=int(datetime.now(timezone.utc).timestamp() - 86400),
+                end=int(datetime.now(timezone.utc).timestamp() + 86400),
+                snapshot="17890123",
+                author="0x1234567890123456789012345678901234567890",
+                space={"id": "test.eth", "name": "Test DAO"},
+                type="single-choice",
+                privacy="",
+                validation={"name": "basic"},
+                strategies=[],
+                scores=[5000.0, 2000.0, 1000.0],
+                scores_total=8000.0,
+                created=int(datetime.now(timezone.utc).timestamp() - 172800),
+                updated=int(datetime.now(timezone.utc).timestamp() - 86400),
+                votes=0,
+                link=f"https://snapshot.org/#/test.eth/proposal/proposal-1"
+            )
+        ]
+        voting_dependencies.snapshot_service.get_proposals.return_value = sample_proposals
+        mock_settings.openrouter_api_key = "test_api_key"
+        
+        # Create agent and verify tool functionality
+        agent = VotingAgent()
+        
+        # Find the tool (this will fail until implementation)
+        query_tool = None
+        if hasattr(agent.agent, '_function_tools'):
+            tool_obj = agent.agent._function_tools.get('query_active_proposals')
+            if tool_obj:
+                query_tool = tool_obj.function
+        
+        assert query_tool is not None, "query_active_proposals tool should exist"
+        
+        # Create a mock context with dependencies
+        from pydantic_ai import RunContext
+        ctx = MagicMock(spec=RunContext)
+        ctx.deps = voting_dependencies
+        
+        # Execute the tool
+        result = await query_tool(ctx, space_id="test.eth")
+        
+        # Verify the tool called the service correctly
+        voting_dependencies.snapshot_service.get_proposals.assert_called_once_with(
+            space_id="test.eth", 
+            state="active"
+        )
+        
+        # Verify the result
+        assert len(result) == 1
+        assert result[0]['id'] == "proposal-1"
+        assert result[0]['title'] == "Enable Treasury Diversification"
+    
+    @pytest.mark.asyncio
+    @patch('services.ai_service.setup_pearl_logger')
+    @patch('services.ai_service.settings')
+    async def test_function_tools_error_handling(self, mock_settings, mock_logger, voting_dependencies):
+        """Test that tools handle service errors gracefully.
+        
+        Why this test is important:
+        - Ensures tools don't crash when external services fail
+        - Validates error messages are informative for debugging
+        - Confirms Pearl-compliant logging captures errors appropriately
+        """
+        # Arrange
+        voting_dependencies.snapshot_service.get_proposals.side_effect = Exception(
+            "Snapshot API unavailable"
+        )
+        mock_settings.openrouter_api_key = "test_api_key"
+        
+        agent = VotingAgent()
+        
+        # Find the query tool
+        query_tool = None
+        if hasattr(agent.agent, '_function_tools'):
+            tool_obj = agent.agent._function_tools.get('query_active_proposals')
+            if tool_obj:
+                query_tool = tool_obj.function
+        
+        assert query_tool is not None
+        
+        # Create context
+        from pydantic_ai import RunContext
+        ctx = MagicMock(spec=RunContext)
+        ctx.deps = voting_dependencies
+        
+        # Execute and expect error handling
+        with pytest.raises(Exception) as exc_info:
+            await query_tool(ctx, space_id="test.eth")
+        
+        assert "Snapshot API unavailable" in str(exc_info.value)
