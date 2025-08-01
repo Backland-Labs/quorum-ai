@@ -4,7 +4,7 @@ import glob
 import os
 import re
 import time
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict, Any
 
 from datetime import datetime, timezone
 from logging_config import setup_pearl_logger, log_span
@@ -17,6 +17,7 @@ from models import (
     VoteType,
     UserPreferences,
     EASAttestationData,
+    VotingStrategy,
 )
 from services.snapshot_service import SnapshotService
 from services.ai_service import AIService
@@ -217,6 +218,9 @@ class AgentRunService:
                 # Save checkpoint state if state manager available
                 if self.state_manager:
                     await self._save_checkpoint_state(response)
+                    # Save voting decisions to history
+                    if final_decisions:
+                        await self.save_voting_decisions(final_decisions)
 
                 # Log completion summary
                 self.logger.log_agent_completion(response)
@@ -400,36 +404,225 @@ class AgentRunService:
 
         return vote_decisions, final_decisions, errors
 
+    async def _fetch_active_proposals(
+        self, space_id: str, max_proposals: int
+    ) -> List[Proposal]:
+        """Fetch active proposals from Snapshot service.
+
+        Args:
+            space_id: The Snapshot space ID
+            max_proposals: Maximum number of proposals to process
+
+        Returns:
+            List of active proposals
+
+        Raises:
+            ProposalFetchError: If fetching proposals fails
+        """
+        try:
+            self.pearl_logger.info(f"Fetching active proposals for space {space_id}")
+            proposals = await self.snapshot_service.get_proposals(
+                space_id, state="active", limit=max_proposals * 2
+            )
+
+            if not proposals:
+                self.pearl_logger.warning(f"No active proposals found for {space_id}")
+                return []
+
+            self.pearl_logger.info(
+                f"Fetched {len(proposals)} active proposals for {space_id}"
+            )
+            return proposals
+
+        except Exception as e:
+            self.pearl_logger.error(f"Error fetching proposals: {e}")
+            raise ProposalFetchError(f"Failed to fetch proposals: {str(e)}")
+
+    async def _filter_and_rank_proposals(
+        self, proposals: List[Proposal], user_preferences: UserPreferences
+    ) -> List[Proposal]:
+        """Filter and rank proposals based on user preferences.
+
+        Args:
+            proposals: List of proposals to filter
+            user_preferences: User preferences for filtering
+
+        Returns:
+            Filtered and ranked list of proposals
+        """
+        proposal_filter = ProposalFilter(user_preferences)
+        filtered_proposals = proposal_filter.filter_proposals(proposals)
+
+        # Limit to max proposals per run
+        if (
+            user_preferences.max_proposals_per_run
+            and len(filtered_proposals) > user_preferences.max_proposals_per_run
+        ):
+            filtered_proposals = filtered_proposals[
+                : user_preferences.max_proposals_per_run
+            ]
+
+        self.pearl_logger.info(
+            f"Filtered {len(proposals)} proposals to {len(filtered_proposals)}"
+        )
+        return filtered_proposals
+
+    async def _make_voting_decisions(
+        self, proposals: List[Proposal], user_preferences: UserPreferences
+    ) -> List[VoteDecision]:
+        """Make voting decisions using AI service.
+
+        Args:
+            proposals: Proposals to analyze
+            user_preferences: User preferences for decision making
+
+        Returns:
+            List of voting decisions
+
+        Raises:
+            VotingDecisionError: If making decisions fails
+        """
+        try:
+            self.pearl_logger.info(f"Making voting decisions for {len(proposals)} proposals")
+            decisions = await self.ai_service.decide_votes(proposals, user_preferences)
+
+            # Validate decisions match proposals
+            if len(decisions) != len(proposals):
+                raise VotingDecisionError(
+                    f"Decision count mismatch: {len(decisions)} decisions for {len(proposals)} proposals"
+                )
+
+            self.pearl_logger.info(f"Made {len(decisions)} voting decisions")
+            return decisions
+
+        except Exception as e:
+            self.pearl_logger.error(f"Error making voting decisions: {e}")
+            raise VotingDecisionError(f"Failed to make voting decisions: {str(e)}")
+
+    async def _execute_votes(
+        self,
+        vote_decisions: List[VoteDecision],
+        space_id: str,
+        dry_run: bool,
+        run_id: str,
+    ) -> List[VoteDecision]:
+        """Execute voting decisions.
+
+        Args:
+            vote_decisions: Decisions to execute
+            space_id: The space ID for the votes
+            dry_run: Whether to simulate or actually vote
+            run_id: The current run ID
+
+        Returns:
+            List of executed decisions
+
+        Raises:
+            VoteExecutionError: If vote execution fails
+        """
+        executed_decisions = []
+
+        for decision in vote_decisions:
+            try:
+                # Track voting state
+                self.state_tracker.transition(
+                    AgentState.VOTING,
+                    {
+                        "run_id": run_id,
+                        "proposal_id": decision.proposal_id,
+                        "vote": decision.vote.value,
+                        "dry_run": dry_run,
+                    },
+                )
+
+                if dry_run:
+                    self.logger.log_dry_run_vote(decision)
+                    executed_decisions.append(decision)
+                else:
+                    # Execute actual vote
+                    success = await self._execute_single_vote(decision, space_id)
+                    if success:
+                        self.logger.log_vote_execution(decision, space_id, success)
+                        executed_decisions.append(decision)
+                        # Add space_id to decision for attestation tracking
+                        decision.space_id = space_id
+                    else:
+                        self.logger.log_vote_execution(decision, space_id, success)
+
+            except Exception as e:
+                self.pearl_logger.error(
+                    f"Error executing vote for proposal {decision.proposal_id}: {e}"
+                )
+                # Continue with other votes
+
+        return executed_decisions
+
+    async def _execute_single_vote(
+        self, decision: VoteDecision, space_id: str
+    ) -> bool:
+        """Execute a single vote.
+
+        Args:
+            decision: The voting decision
+            space_id: The space ID
+
+        Returns:
+            True if vote was successful, False otherwise
+        """
+        try:
+            # Map vote type to choice index
+            choice = VOTE_CHOICE_MAPPING.get(decision.vote, 1)
+            
+            # Get Safe address for this space
+            safe_addresses = self.safe_service.get_safe_addresses()
+            if not safe_addresses:
+                self.pearl_logger.error("No Safe addresses configured")
+                return False
+                
+            safe_address = safe_addresses[0]  # Use first Safe for now
+            
+            result = await self.voting_service.cast_vote(
+                safe_address=safe_address,
+                space=space_id,
+                proposal=decision.proposal_id,
+                choice=choice,
+            )
+            
+            return result is not None
+            
+        except Exception as e:
+            self.pearl_logger.error(f"Failed to execute vote: {e}")
+            return False
+
     def _create_agent_response(
         self,
         space_id: str,
-        filtered_proposals: List[Proposal],
-        vote_decisions: List[VoteDecision],
-        user_preferences_applied: bool,
+        proposals: List[Proposal],
+        decisions: List[VoteDecision],
+        preferences_applied: bool,
         execution_time: float,
         errors: List[str],
     ) -> AgentRunResponse:
-        """Create the agent run response.
+        """Create agent run response object.
 
         Args:
             space_id: The space ID
-            filtered_proposals: Proposals that were analyzed
-            vote_decisions: Voting decisions made
-            user_preferences_applied: Whether user preferences were applied
+            proposals: Proposals that were analyzed
+            decisions: Voting decisions that were made
+            preferences_applied: Whether user preferences were applied
             execution_time: Total execution time
-            errors: List of errors encountered
+            errors: Any errors that occurred
 
         Returns:
-            AgentRunResponse with all results
+            AgentRunResponse object
         """
         return AgentRunResponse(
             space_id=space_id,
-            proposals_analyzed=len(filtered_proposals),
-            votes_cast=vote_decisions,
-            user_preferences_applied=user_preferences_applied,
+            proposals_analyzed=len(proposals),
+            votes_cast=decisions,
+            user_preferences_applied=preferences_applied,
             execution_time=execution_time,
             errors=errors,
-            next_check_time=None,  # Could be implemented for scheduling
         )
 
     def _handle_unexpected_error(
@@ -437,523 +630,111 @@ class AgentRunService:
         error: Exception,
         space_id: str,
         start_time: float,
-        user_preferences_applied: bool,
+        preferences_applied: bool,
     ) -> AgentRunResponse:
-        """Handle unexpected errors during agent run.
+        """Handle unexpected errors gracefully.
 
         Args:
             error: The exception that occurred
             space_id: The space ID
-            start_time: When the agent run started
-            user_preferences_applied: Whether user preferences were applied
+            start_time: Run start time
+            preferences_applied: Whether preferences were applied
 
         Returns:
             AgentRunResponse with error information
         """
-        error_msg = f"Unexpected error during agent run: {str(error)}"
-        self.pearl_logger.error(f"Unexpected agent run error: {str(error)}")
-        execution_time = time.time() - start_time
-
+        self.pearl_logger.error(f"Unexpected error in agent run: {error}", exc_info=True)
+        
         return AgentRunResponse(
             space_id=space_id,
             proposals_analyzed=0,
             votes_cast=[],
-            user_preferences_applied=user_preferences_applied,
-            execution_time=execution_time,
-            errors=[error_msg],
-            next_check_time=None,
+            user_preferences_applied=preferences_applied,
+            execution_time=time.time() - start_time,
+            errors=[f"Unexpected error: {str(error)}"],
         )
 
-    async def _fetch_active_proposals(
-        self, space_id: str, limit: int
-    ) -> List[Proposal]:
-        """Fetch active proposals from the specified Snapshot space.
-
-        Args:
-            space_id: Snapshot space identifier
-            limit: Maximum number of proposals to fetch
-
-        Returns:
-            List of active Proposal objects
-
-        Raises:
-            ProposalFetchError: When fetching proposals fails
-        """
-        # Runtime assertions for critical method validation
-        assert isinstance(
-            space_id, str
-        ), f"Space ID must be string, got {type(space_id)}"
-        assert space_id.strip(), "Space ID must be non-empty string"
-        assert isinstance(limit, int), f"Limit must be integer, got {type(limit)}"
-        assert limit > 0, "Limit must be positive integer"
-
-        with log_span(
-            self.pearl_logger, "fetch_active_proposals", space_id=space_id, limit=limit
-        ) as span_data:
-            try:
-                self.pearl_logger.info(
-                    f"Fetching active proposals (space_id={space_id}, limit={limit})"
-                )
-
-                # Fetch proposals from Snapshot service
-                proposals = await self.snapshot_service.get_proposals(
-                    space_ids=[space_id], state="active", first=limit
-                )
-
-                span_data["proposal_count"] = len(proposals)
-                self.pearl_logger.info(
-                    f"Successfully fetched active proposals (space_id={space_id}, proposal_count={len(proposals)})"
-                )
-
-                # Runtime assertion: validate output
-                assert isinstance(
-                    proposals, list
-                ), f"Expected list of proposals, got {type(proposals)}"
-                assert all(
-                    isinstance(p, Proposal) for p in proposals
-                ), "All items must be Proposal objects"
-
-                return proposals
-
-            except Exception as e:
-                self.pearl_logger.error(
-                    f"Failed to fetch active proposals (space_id={space_id}, limit={limit}, error={str(e)})"
-                )
-                raise ProposalFetchError(
-                    f"Failed to fetch active proposals from {space_id}: {str(e)}"
-                ) from e
-
-    async def _filter_and_rank_proposals(
-        self, proposals: List[Proposal], preferences: UserPreferences
-    ) -> List[Proposal]:
-        """Filter and rank proposals based on user preferences and urgency.
-
-        Args:
-            proposals: List of Proposal objects to filter and rank
-            preferences: User preferences for filtering and ranking
-
-        Returns:
-            List of filtered and ranked Proposal objects
-
-        Raises:
-            AgentRunServiceError: When filtering or ranking proposals fails
-        """
-        # Runtime assertions for critical method validation
-        assert isinstance(
-            proposals, list
-        ), f"Proposals must be a list, got {type(proposals)}"
-        assert isinstance(
-            preferences, UserPreferences
-        ), f"Preferences must be UserPreferences, got {type(preferences)}"
-        assert all(
-            isinstance(p, Proposal) for p in proposals
-        ), "All proposals must be Proposal objects"
-
-        if not proposals:
-            return []
-
-        with log_span(
-            self.pearl_logger,
-            "filter_and_rank_proposals",
-            proposal_count=len(proposals),
-        ) as span_data:
-            try:
-                self.pearl_logger.info(
-                    f"Starting proposal filtering and ranking (proposal_count={len(proposals)}, "
-                    f"blacklisted_count={len(preferences.blacklisted_proposers)}, "
-                    f"whitelisted_count={len(preferences.whitelisted_proposers)}, "
-                    f"max_proposals_per_run={preferences.max_proposals_per_run})"
-                )
-
-                # Initialize proposal filter with user preferences
-                proposal_filter = ProposalFilter(preferences)
-
-                # Step 1: Filter proposals based on user preferences
-                filtered_proposals = proposal_filter.filter_proposals(proposals)
-
-                self.pearl_logger.info(
-                    f"Proposals filtered (original_count={len(proposals)}, "
-                    f"filtered_count={len(filtered_proposals)})"
-                )
-
-                # Step 2: Rank filtered proposals by importance and urgency
-                ranked_proposals = proposal_filter.rank_proposals(filtered_proposals)
-
-                self.pearl_logger.info(
-                    f"Proposals ranked (ranked_count={len(ranked_proposals)})"
-                )
-
-                # Step 3: Limit to max_proposals_per_run if specified
-                if preferences.max_proposals_per_run > 0:
-                    final_proposals = ranked_proposals[
-                        : preferences.max_proposals_per_run
-                    ]
-                    self.pearl_logger.info(
-                        f"Proposals limited to max per run (original_ranked_count={len(ranked_proposals)}, "
-                        f"final_count={len(final_proposals)}, "
-                        f"max_proposals_per_run={preferences.max_proposals_per_run})"
-                    )
-                else:
-                    final_proposals = ranked_proposals
-
-                # Get filtering metrics for logging
-                filtering_metrics = proposal_filter.get_filtering_metrics(
-                    proposals, filtered_proposals
-                )
-
-                # Format filtering metrics as string
-                metrics_str = ", ".join(
-                    f"{k}={v}" for k, v in filtering_metrics.items()
-                )
-                self.pearl_logger.info(
-                    f"Filtering and ranking completed ({metrics_str}, "
-                    f"final_proposal_count={len(final_proposals)})"
-                )
-
-                # Runtime assertion: validate output
-                assert isinstance(
-                    final_proposals, list
-                ), f"Expected list of proposals, got {type(final_proposals)}"
-                assert all(
-                    isinstance(p, Proposal) for p in final_proposals
-                ), "All filtered proposals must be Proposal objects"
-                assert len(final_proposals) <= len(
-                    proposals
-                ), "Filtered count cannot exceed original count"
-
-                return final_proposals
-
-            except Exception as e:
-                self.pearl_logger.error(
-                    f"Failed to filter and rank proposals (proposal_count={len(proposals)}, "
-                    f"error={str(e)})"
-                )
-                raise AgentRunServiceError(
-                    f"Failed to filter and rank proposals: {str(e)}"
-                ) from e
-
-    async def _make_voting_decisions(
-        self, proposals: List[Proposal], preferences: UserPreferences
-    ) -> List[VoteDecision]:
-        """Make voting decisions for the given proposals using AI and user preferences.
-
-        Args:
-            proposals: List of Proposal objects to analyze
-            preferences: User preferences for voting strategy and filters
-
-        Returns:
-            List of VoteDecision objects that meet confidence threshold
-
-        Raises:
-            VotingDecisionError: When making voting decisions fails
-        """
-        # Runtime assertions for critical method validation
-        assert isinstance(
-            proposals, list
-        ), f"Proposals must be a list, got {type(proposals)}"
-        assert isinstance(
-            preferences, UserPreferences
-        ), f"Preferences must be UserPreferences, got {type(preferences)}"
-        assert all(
-            isinstance(p, Proposal) for p in proposals
-        ), "All proposals must be Proposal objects"
-
-        if not proposals:
-            return []
-
-        with log_span(
-            self.pearl_logger, "make_voting_decisions", proposal_count=len(proposals)
-        ) as span_data:
-            try:
-                self.pearl_logger.info(
-                    f"Making voting decisions (proposal_count={len(proposals)}, "
-                    f"voting_strategy={preferences.voting_strategy.value}, "
-                    f"confidence_threshold={preferences.confidence_threshold})"
-                )
-
-                vote_decisions = []
-
-                for proposal in proposals:
-                    # Make voting decision using AI
-                    decision = await self.ai_service.decide_vote(
-                        proposal=proposal, strategy=preferences.voting_strategy
-                    )
-
-                    # Filter by confidence threshold
-                    if decision.confidence >= preferences.confidence_threshold:
-                        vote_decisions.append(decision)
-                        self.pearl_logger.info(
-                            f"Vote decision accepted (proposal_id={proposal.id}, "
-                            f"vote={decision.vote.value}, confidence={decision.confidence})"
-                        )
-                    else:
-                        self.pearl_logger.info(
-                            f"Vote decision rejected due to low confidence "
-                            f"(proposal_id={proposal.id}, confidence={decision.confidence}, "
-                            f"threshold={preferences.confidence_threshold})"
-                        )
-
-                self.pearl_logger.info(
-                    f"Voting decisions completed (total_proposals={len(proposals)}, "
-                    f"accepted_decisions={len(vote_decisions)})"
-                )
-
-                # Runtime assertion: validate output
-                assert isinstance(
-                    vote_decisions, list
-                ), f"Expected list of vote decisions, got {type(vote_decisions)}"
-                assert all(
-                    isinstance(d, VoteDecision) for d in vote_decisions
-                ), "All decisions must be VoteDecision objects"
-
-                return vote_decisions
-
-            except Exception as e:
-                self.pearl_logger.error(
-                    f"Failed to make voting decisions (proposal_count={len(proposals)}, "
-                    f"error={str(e)})"
-                )
-                raise VotingDecisionError(
-                    f"Failed to make voting decisions: {str(e)}"
-                ) from e
-
-    async def _execute_votes(
-        self, decisions: List[VoteDecision], space_id: str, dry_run: bool, run_id: str
-    ) -> List[VoteDecision]:
-        """Execute votes for the given decisions.
-
-        Args:
-            decisions: List of VoteDecision objects to execute
-            space_id: The space ID where votes will be cast
-            dry_run: If True, simulate voting without actual execution
-
-        Returns:
-            List of VoteDecision objects (same as input for now)
-
-        Raises:
-            VoteExecutionError: When executing votes fails
-        """
-        # Runtime assertions for critical method validation
-        assert isinstance(
-            decisions, list
-        ), f"Decisions must be a list, got {type(decisions)}"
-        assert (
-            isinstance(space_id, str) and space_id.strip()
-        ), f"Space ID must be non-empty string, got {space_id}"
-        assert isinstance(
-            dry_run, bool
-        ), f"Dry run must be boolean, got {type(dry_run)}"
-        assert all(
-            isinstance(d, VoteDecision) for d in decisions
-        ), "All decisions must be VoteDecision objects"
-
-        if not decisions:
-            return []
-
-        with log_span(
-            self.pearl_logger,
-            "execute_votes",
-            space_id=space_id,
-            decision_count=len(decisions),
-            dry_run=dry_run,
-        ) as span_data:
-            try:
-                self.pearl_logger.info(
-                    f"Executing votes (space_id={space_id}, decision_count={len(decisions)}, dry_run={dry_run})"
-                )
-
-                if dry_run:
-                    self.pearl_logger.info("Dry run mode - simulating vote execution")
-                    # In dry run, we skip actual submission but still return decisions
-                    return decisions
-
-                # Execute actual votes
-                executed_decisions = []
-
-                for decision in decisions:
-                    try:
-                        # Track vote submission state
-                        self.state_tracker.transition(
-                            AgentState.SUBMITTING_VOTE,
-                            {
-                                "run_id": run_id,
-                                "proposal_id": decision.proposal_id,
-                                "vote_type": decision.vote.value,
-                            },
-                        )
-
-                        # Convert VoteType to Snapshot choice format
-                        vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
-
-                        # Execute vote through voting service
-                        vote_result = await self.voting_service.vote_on_proposal(
-                            space=space_id,
-                            proposal=decision.proposal_id,
-                            choice=vote_choice,
-                        )
-
-                        if vote_result.get("success"):
-                            executed_decisions.append(decision)
-                            self.logger.log_vote_execution(decision, True)
-
-                            # Queue attestation for successful vote
-                            await self._queue_attestation(decision, space_id, run_id)
-                        else:
-                            self.logger.log_vote_execution(
-                                decision, False, vote_result.get("error")
-                            )
-
-                    except Exception as e:
-                        self.logger.log_vote_execution(decision, False, str(e))
-                        # Continue with other votes
-                        continue
-
-                self.pearl_logger.info(
-                    f"Vote execution completed (total_decisions={len(decisions)}, "
-                    f"successful_executions={len(executed_decisions)})"
-                )
-
-                # Runtime assertion: validate output
-                assert isinstance(
-                    executed_decisions, list
-                ), f"Expected list of executed decisions, got {type(executed_decisions)}"
-                assert all(
-                    isinstance(d, VoteDecision) for d in executed_decisions
-                ), "All executed decisions must be VoteDecision objects"
-
-                return executed_decisions
-
-            except Exception as e:
-                self.pearl_logger.error(
-                    f"Failed to execute votes (decision_count={len(decisions)}, "
-                    f"dry_run={dry_run}, error={str(e)})"
-                )
-                raise VoteExecutionError(f"Failed to execute votes: {str(e)}") from e
-
-    async def close(self) -> None:
-        """Close service resources."""
-        if hasattr(self.snapshot_service, "close"):
-            await self.snapshot_service.close()
-
-        self.pearl_logger.info("AgentRunService resources closed")
-
-    async def __aenter__(self) -> "AgentRunService":
-        """Async context manager entry."""
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        """Async context manager exit with proper resource cleanup."""
-        await self.close()
-
-    async def shutdown(self) -> None:
-        """Implement shutdown method required by ShutdownService protocol.
-
-        This method is called during graceful shutdown to clean up resources
-        and save any pending state.
-        """
-        self.pearl_logger.info("Agent run service shutdown initiated")
-
-        # If there's an active run, try to save its state
-        if self._active_run and self._current_run_data:
-            try:
+    async def cleanup(self):
+        """Cleanup resources and save shutdown state."""
+        try:
+            self.pearl_logger.info("Starting AgentRunService cleanup")
+
+            # Save any active run state for recovery
+            if self._active_run:
                 await self._save_shutdown_state()
-            except Exception as e:
-                self.pearl_logger.error(f"Failed to save shutdown state: {e}")
 
-        # Close resources
-        await self.close()
+            # Finalize state tracker
+            if hasattr(self, "state_tracker"):
+                await self.state_tracker.finalize()
 
-        self.pearl_logger.info("Agent run service shutdown completed")
+            self.pearl_logger.info("AgentRunService cleanup completed")
 
-    async def save_service_state(self) -> None:
-        """Save current service state for recovery."""
-        if not self.state_manager:
+        except Exception as e:
+            self.pearl_logger.error(f"Error during cleanup: {e}")
+
+    async def _save_shutdown_state(self) -> None:
+        """Save state during shutdown for recovery."""
+        if not self.state_manager or not self._current_run_data:
             return
 
-        state_data = {
-            "active_run": self._active_run,
-            "current_run_data": self._current_run_data,
-            "last_checkpoint": datetime.utcnow().isoformat(),
+        shutdown_data = {
+            **self._current_run_data,
+            "shutdown_time": datetime.utcnow().isoformat(),
+            "reason": "graceful_shutdown",
         }
 
         await self.state_manager.save_state(
-            "agent_run_service", state_data, sensitive=False
+            "agent_shutdown_state", shutdown_data, sensitive=False
         )
 
-    async def stop(self) -> None:
-        """Stop the service gracefully."""
-        self._active_run = False
-        await self.save_state()
+        self.pearl_logger.info("Saved shutdown state for recovery")
 
     async def _process_pending_attestations(self, space_id: str) -> None:
-        """Process any pending attestations from previous runs.
-
-        Args:
-            space_id: The space ID to process attestations for
-        """
+        """Process any pending attestations from previous runs."""
         if not self.state_manager:
             return
 
         try:
-            # Load checkpoint with any pending attestations
-            checkpoint = await self.state_manager.load_checkpoint(
+            # Load checkpoint to get pending attestations
+            checkpoint = await self.state_manager.load_state(
                 f"agent_checkpoint_{space_id}"
             )
             if not checkpoint or "pending_attestations" not in checkpoint:
                 return
 
-            pending_attestations = checkpoint["pending_attestations"]
+            pending_attestations = checkpoint.get("pending_attestations", [])
             if not pending_attestations:
                 return
 
             self.pearl_logger.info(
-                f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
+                f"Processing {len(pending_attestations)} pending attestations"
             )
 
-            processed_attestations = []
             remaining_attestations = []
-
-            for attestation in pending_attestations:
-                # Check retry count
-                retry_count = attestation.get("retry_count", 0)
-                if retry_count >= MAX_ATTESTATION_RETRIES:
-                    self.pearl_logger.warning(
-                        f"Attestation for proposal {attestation['proposal_id']} exceeded max retries, dropping"
-                    )
-                    continue
-
+            for attestation_data in pending_attestations:
                 try:
-                    # Create EAS attestation data
-                    eas_data = EASAttestationData(
-                        proposal_id=attestation["proposal_id"],
-                        space_id=space_id,
-                        voter_address=attestation["voter_address"],
-                        choice=attestation["vote_choice"],
-                        vote_tx_hash=attestation.get("vote_tx_hash", "unknown"),
-                        timestamp=datetime.fromisoformat(attestation["timestamp"])
-                        if isinstance(attestation["timestamp"], str)
-                        else attestation["timestamp"],
-                        retry_count=attestation.get("retry_count", 0),
+                    # Reconstruct VoteDecision and attestation data
+                    vote_decision = VoteDecision(**attestation_data["vote_decision"])
+                    eas_data = EASAttestationData(**attestation_data["eas_data"])
+
+                    # Retry attestation
+                    success = await self._retry_attestation(
+                        vote_decision, eas_data, attestation_data.get("retry_count", 0)
                     )
 
-                    # Submit attestation
-                    result = await self.safe_service.create_eas_attestation(eas_data)
-
-                    self.pearl_logger.info(
-                        f"Successfully created attestation for proposal {attestation['proposal_id']}: "
-                        f"tx_hash={result.get('tx_hash')}, uid={result.get('attestation_uid')}"
-                    )
-
-                    processed_attestations.append(attestation["proposal_id"])
+                    if not success:
+                        # Keep for next run if still failing
+                        attestation_data["retry_count"] = (
+                            attestation_data.get("retry_count", 0) + 1
+                        )
+                        remaining_attestations.append(attestation_data)
 
                 except Exception as e:
                     self.pearl_logger.error(
-                        f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
+                        f"Error processing pending attestation: {e}"
                     )
-
-                    # Increment retry count and keep in queue
-                    attestation["retry_count"] = retry_count + 1
-                    remaining_attestations.append(attestation)
+                    # Keep for next run
+                    remaining_attestations.append(attestation_data)
 
             # Update checkpoint with remaining attestations
             checkpoint["pending_attestations"] = remaining_attestations
@@ -961,73 +742,83 @@ class AgentRunService:
                 f"agent_checkpoint_{space_id}", checkpoint
             )
 
-            if processed_attestations:
-                self.pearl_logger.info(
-                    f"Processed {len(processed_attestations)} attestations successfully"
-                )
-
-        except Exception as e:
-            self.pearl_logger.error(
-                f"Error processing pending attestations for space {space_id}: {str(e)}"
+            self.pearl_logger.info(
+                f"Processed pending attestations, {len(remaining_attestations)} remaining"
             )
 
-    async def _queue_attestation(
-        self, decision: VoteDecision, space_id: str, run_id: str
-    ) -> None:
-        """Queue an attestation for a successful vote.
+        except Exception as e:
+            self.pearl_logger.error(f"Error processing pending attestations: {e}")
 
-        Args:
-            decision: The vote decision that was executed
-            space_id: The space ID where the vote was cast
-            run_id: The current agent run ID
-        """
+    async def _retry_attestation(
+        self, vote_decision: VoteDecision, eas_data: EASAttestationData, retry_count: int
+    ) -> bool:
+        """Retry a failed attestation."""
+        if retry_count >= MAX_ATTESTATION_RETRIES:
+            self.pearl_logger.warning(
+                f"Attestation for {vote_decision.proposal_id} exceeded max retries"
+            )
+            return True  # Remove from pending
+
+        try:
+            # Get Safe address
+            safe_addresses = self.safe_service.get_safe_addresses()
+            if not safe_addresses:
+                return False
+
+            safe_address = safe_addresses[0]
+
+            # Create attestation with EAS data
+            tx_hash = await self.safe_service.create_attestation_with_eas(
+                vote_decision, safe_address, eas_data
+            )
+
+            if tx_hash:
+                self.pearl_logger.info(
+                    f"Successfully created attestation on retry: {tx_hash}"
+                )
+                return True
+
+            return False
+
+        except Exception as e:
+            self.pearl_logger.error(f"Error retrying attestation: {e}")
+            return False
+
+    async def track_attestation_checkpoint(
+        self, run_id: str, vote_decision: VoteDecision, eas_data: EASAttestationData
+    ) -> None:
+        """Track failed attestation for retry in next run."""
         if not self.state_manager:
-            self.pearl_logger.warning("No state manager, skipping attestation queue")
             return
 
         try:
             # Load current checkpoint
-            checkpoint = await self.state_manager.load_checkpoint(f"run_{run_id}")
-            if checkpoint is None:
+            checkpoint = await self.state_manager.load_state(f"run_{run_id}")
+            if not checkpoint:
                 checkpoint = {}
 
-            # Initialize pending_attestations if not present
-            if "pending_attestations" not in checkpoint:
-                checkpoint["pending_attestations"] = []
-
-            # Get voter address from voting service account
-            voter_address = self.voting_service.account.address
-
-            # For now, use the same address as delegate (can be configured later)
-            delegate_address = voter_address
-
-            # Create attestation data
-            attestation_data = {
-                "proposal_id": decision.proposal_id,
-                "vote_choice": VOTE_CHOICE_MAPPING[
-                    decision.vote
-                ],  # Convert VoteType to choice number
-                "voter_address": voter_address,
-                "delegate_address": delegate_address,
-                "reasoning": decision.reasoning,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "retry_count": 0,
-            }
-
             # Add to pending attestations
-            checkpoint["pending_attestations"].append(attestation_data)
+            pending = checkpoint.get("pending_attestations", [])
+            pending.append(
+                {
+                    "vote_decision": vote_decision.model_dump(mode="json"),
+                    "eas_data": eas_data.model_dump(mode="json"),
+                    "retry_count": 0,
+                    "timestamp": datetime.utcnow().isoformat(),
+                }
+            )
+
+            checkpoint["pending_attestations"] = pending
 
             # Save updated checkpoint
             await self.state_manager.save_checkpoint(f"run_{run_id}", checkpoint)
 
             self.pearl_logger.info(
-                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: run_{run_id}"
+                f"Tracked failed attestation for {vote_decision.proposal_id}"
             )
 
         except Exception as e:
-            self.pearl_logger.error(
-                f"Failed to queue attestation for proposal {decision.proposal_id}: {str(e)}"
-            )
+            self.pearl_logger.error(f"Error tracking attestation checkpoint: {e}")
             # Don't raise - attestation failures should not block voting
 
     async def _save_checkpoint_state(self, response: AgentRunResponse) -> None:
@@ -1334,9 +1125,9 @@ class AgentRunService:
                 "total_runs": total_runs,
                 "total_proposals_evaluated": total_proposals_evaluated,
                 "total_votes_cast": total_votes_cast,
-                "average_confidence_score": round(average_confidence_score, 3),
-                "success_rate": round(success_rate, 3),
-                "average_runtime_seconds": round(average_runtime_seconds, 2),
+                "average_confidence_score": average_confidence_score,
+                "success_rate": success_rate,
+                "average_runtime_seconds": average_runtime_seconds,
             }
 
         except Exception as e:
@@ -1348,4 +1139,143 @@ class AgentRunService:
                 "average_confidence_score": 0.0,
                 "success_rate": 0.0,
                 "average_runtime_seconds": 0.0,
+            }
+
+    async def get_voting_history(self, limit: int = 10) -> List[VoteDecision]:
+        """Get recent voting history from state manager (max 10).
+        
+        Args:
+            limit: Maximum number of decisions to return (default and max: 10)
+            
+        Returns:
+            List of VoteDecision objects representing recent votes
+        """
+        if not self.state_manager:
+            return []
+            
+        # Enforce maximum limit of 10
+        limit = min(limit, 10)
+        
+        try:
+            # Load voting history from state
+            state = await self.state_manager.load_state("voting_history")
+            
+            if not state or "voting_history" not in state:
+                return []
+                
+            history_data = state["voting_history"]
+            
+            # Convert to VoteDecision objects, filtering invalid entries
+            decisions = []
+            for item in history_data:
+                try:
+                    # Ensure all required fields are present
+                    if not isinstance(item, dict):
+                        continue
+                        
+                    # Set defaults for missing optional fields
+                    if "confidence" not in item:
+                        item["confidence"] = 0.0
+                    if "strategy_used" not in item:
+                        item["strategy_used"] = VotingStrategy.BALANCED.value
+                    if "reasoning" not in item or len(item.get("reasoning", "")) < 10:
+                        item["reasoning"] = "Decision made based on available information"
+                        
+                    decision = VoteDecision(**item)
+                    decisions.append(decision)
+                except Exception as e:
+                    self.pearl_logger.warning(f"Skipping invalid vote decision: {e}")
+                    continue
+                    
+            # Return only the most recent N decisions
+            return decisions[-limit:]
+            
+        except Exception as e:
+            self.pearl_logger.error(f"Error loading voting history: {e}")
+            return []
+
+    async def save_voting_decisions(self, decisions: List[VoteDecision]) -> None:
+        """Save new voting decisions and maintain 10-item history.
+        
+        Args:
+            decisions: List of new VoteDecision objects to save
+        """
+        if not self.state_manager:
+            return
+            
+        try:
+            # Load existing history
+            state = await self.state_manager.load_state("voting_history")
+            existing_history = []
+            
+            if state and "voting_history" in state:
+                existing_history = state["voting_history"]
+            
+            # Convert new decisions to dict format
+            new_history_items = []
+            for decision in decisions:
+                decision_dict = decision.model_dump(mode="json")
+                new_history_items.append(decision_dict)
+            
+            # Combine and prune to keep only 10 most recent
+            combined_history = existing_history + new_history_items
+            pruned_history = combined_history[-10:]  # Keep only last 10
+            
+            # Save updated history
+            await self.state_manager.save_state(
+                "voting_history",
+                {"voting_history": pruned_history},
+                sensitive=False
+            )
+            
+            self.pearl_logger.info(
+                f"Saved {len(decisions)} new decisions, "
+                f"maintaining history of {len(pruned_history)} items"
+            )
+            
+        except Exception as e:
+            self.pearl_logger.error(f"Error saving voting decisions: {e}")
+            # Don't raise - voting history failures should not block voting
+
+    async def get_voting_patterns(self) -> Dict[str, Any]:
+        """Analyze voting patterns from history.
+        
+        Returns:
+            Dictionary containing:
+            - vote_distribution: Count of each vote type
+            - average_confidence: Average confidence score
+            - total_votes: Total number of votes in history
+        """
+        try:
+            history = await self.get_voting_history()
+            
+            if not history:
+                return {
+                    "vote_distribution": {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0},
+                    "average_confidence": 0.0,
+                    "total_votes": 0
+                }
+            
+            # Calculate vote distribution
+            vote_distribution = {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0}
+            confidence_sum = 0.0
+            
+            for decision in history:
+                vote_distribution[decision.vote.value] += 1
+                confidence_sum += decision.confidence
+            
+            average_confidence = confidence_sum / len(history) if history else 0.0
+            
+            return {
+                "vote_distribution": vote_distribution,
+                "average_confidence": average_confidence,
+                "total_votes": len(history)
+            }
+            
+        except Exception as e:
+            self.pearl_logger.error(f"Error analyzing voting patterns: {e}")
+            return {
+                "vote_distribution": {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0},
+                "average_confidence": 0.0,
+                "total_votes": 0
             }

@@ -1,457 +1,729 @@
-# Autonomous Voting Dashboard - Implementation Plan
+# Minimal MVP Implementation Plan: Proactive AI Agent Enhancement (Issue #142)
 
-## 1. Overview
+## Summary
 
-**Issue**: The application's core feature, the autonomous voting agent, is fully functional but lacks visibility on the main dashboard. Users cannot monitor the agent's status, review its decisions, or trigger runs easily.
+Transform the AI agent from passive to proactive governance decision-making by adding strategic briefing capabilities, persistent voting history, and proposal evaluation tools. This MVP focuses on the core functionality needed to make the agent autonomous and intelligent in its decision-making process.
 
-**Objective**: Elevate the autonomous voting agent to be the central feature of the dashboard by creating dedicated UI components that display the agent's status, recent decisions, and performance statistics, backed by a new set of backend APIs. This plan outlines the minimal implementation required to achieve this.
+## Current State Analysis
 
-**Guiding Principle**: This plan follows a strict Test-Driven Development (TDD) methodology. For each task, tests will be written first to define the expected behavior (Red), then code will be written to pass those tests (Green), and finally, the code will be refactored for clarity and maintainability.
+**Existing Architecture:**
+- AIService with Pydantic AI using Google Gemini 2.0 Flash via OpenRouter
+- AgentRunService orchestrating voting workflow
+- StateManager for persistent storage (already implemented)
+- Service-oriented async/await architecture
+- Pearl-compliant logging system
 
-**Verification Instructions**: After completing each task, verify the implementation by running the appropriate test commands:
-- **Backend changes**: Run `uv run main.py` to start the server and verify endpoints work correctly
-- **Frontend changes**: Run `npm run build` in the frontend directory to ensure the build succeeds
-- **Always run tests**: Execute the relevant test suite to confirm all tests pass before marking a task complete
+**Key Services to Enhance:**
+- `/Users/max/code/quorum-ai/backend/services/ai_service.py` - Core AI decision making
+- `/Users/max/code/quorum-ai/backend/services/agent_run_service.py` - Workflow orchestration
+- StateManager integration for voting history persistence
 
----
+## Development Approach
 
-## 2. Prioritized Feature Implementation
+**Test-Driven Development (TDD):**
+- Write tests first for each component before implementation
+- Focus on behavior and expected outcomes
+- Use existing test patterns and fixtures
+- Target >90% test coverage for new code
 
-### P0: Core Agent Visibility (Backend)
+## MVP Implementation Plan
 
-#### Task 1.1: Create `GET /agent-run/status` Endpoint ✅ IMPLEMENTED
+### Phase 1: Strategic Briefing System (Core Enhancement)
 
-*   **Why**: To provide the frontend with real-time agent status, enabling the Agent Status Widget. This is the most critical piece of information for the user.
-*   **Acceptance Criteria**:
-    *   Endpoint returns the current state from `StateTransitionTracker`. ✅
-    *   Endpoint returns the timestamp of the last completed run from the latest checkpoint. ✅
-    *   Endpoint returns an `is_active` flag based on `/healthcheck` logic. ✅
-*   **Test Cases (Red)**:
-    *   `test_get_status_returns_correct_structure()`: Verify response contains `current_state`, `last_run_timestamp`, `is_active`, `current_space_id`. ✅
-    *   `test_get_status_when_no_runs_have_occurred()`: Ensure it returns a default "never run" state gracefully. ✅
-    *   `test_get_status_reflects_latest_checkpoint()`: Ensure the timestamp is from the most recent checkpoint file. ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Add a new route `GET /agent-run/status` in `backend/main.py`. ✅
-    2.  Create a new method in `AgentRunService` to read the latest `agent_checkpoint_{space_id}.json` file using `StateManager`. ✅
-    3.  Integrate with `StateTransitionTracker` to get the `current_state`. ✅
-    4.  Reuse logic from the `/healthcheck` endpoint to determine the `is_active` status. ✅
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
-*   **Integration Points**:
-    *   `StateManager`: To read checkpoint files. ✅
-    *   `StateTransitionTracker`: To get the current state. ✅
-    *   `main.py`: To expose the new endpoint. ✅
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added comprehensive test suite with 7 endpoint tests and 8 service-level tests
-    *   Refactored to extract common checkpoint pattern logic
-    *   Added AgentRunStatus model to models.py
-    *   All tests passing with >90% coverage for new code
+**Goal:** Add contextual briefing capabilities to the AI agent
 
-#### Task 1.2: Create `GET /agent-run/decisions` Endpoint ✅ IMPLEMENTED
+**Test First (TDD):**
+```python
+# backend/tests/test_ai_service_strategic.py
+import pytest
+from backend.services.ai_service import AIService
+from backend.models import Proposal, UserPreferences, VoteDecision, VotingStrategy
 
-*   **Why**: To provide the frontend with the agent's most recent voting decisions, populating the Recent Decisions Panel. This directly exposes the agent's primary function.
-*   **Acceptance Criteria**:
-    *   Endpoint returns a list of the `N` most recent `VoteDecision` objects. ✅
-    *   Each decision object is enriched with the proposal title. ✅
-    *   The list is sorted in reverse chronological order. ✅
-*   **Test Cases (Red)**:
-    *   `test_get_decisions_returns_correct_structure()`: Verify response contains a `decisions` array with correctly structured objects. ✅
-    *   `test_get_decisions_respects_limit_parameter()`: Ensure `?limit=N` works as expected. ✅
-    *   `test_get_decisions_enriches_with_proposal_title()`: Verify it calls the proposal service to get the title. ✅
-    *   `test_get_decisions_returns_empty_list_when_no_history()`: Handle the case with no prior decisions gracefully. ✅
-    *   `test_get_decisions_handles_service_errors_gracefully()`: Handle service errors appropriately. ✅
-    *   `test_get_decisions_default_limit_is_applied()`: Apply default limit when not specified. ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Add a new route `GET /agent-run/decisions` in `backend/main.py`. ✅
-    2.  Create a new method in `AgentRunService` to scan all `agent_checkpoint_*.json` files. ✅
-    3.  Aggregate `votes_cast` from all checkpoints, sort them by timestamp, and take the top `N`. ✅
-    4.  For each decision, call `SnapshotService.get_proposal()` to fetch the title and add it to the response object. ✅
-    5.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
-*   **Integration Points**:
-    *   `StateManager`: To read checkpoint files. ✅
-    *   `SnapshotService`: To fetch proposal details. ✅
-    *   `main.py`: To expose the new endpoint. ✅
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added comprehensive test suite in test_agent_run_decisions.py
-    *   Endpoint enriches decisions with proposal titles from Snapshot
-    *   Added AgentDecisionResponse and AgentDecisionsResponse models to models.py
-    *   All tests passing, endpoint verified working
+@pytest.mark.asyncio
+async def test_generate_strategic_briefing():
+    """Test that strategic briefing incorporates preferences and history."""
+    ai_service = AIService()
+    
+    # Setup test data
+    proposals = [Proposal(id="0x1", title="Test Proposal")]
+    preferences = UserPreferences(
+        strategy=VotingStrategy.BALANCED,
+        participation_rate=0.5
+    )
+    history = [
+        VoteDecision(
+            proposal_id="0x0",
+            vote=VoteType.FOR,
+            confidence=0.9,
+            reasoning="Previous vote"
+        )
+    ]
+    
+    # Generate briefing
+    briefing = await ai_service.generate_strategic_briefing(
+        proposals, preferences, history
+    )
+    
+    # Verify briefing contains key elements
+    assert "voting strategy: BALANCED" in briefing.lower()
+    assert "recent voting history" in briefing.lower()
+    assert "1 active proposal" in briefing.lower()
 
----
+@pytest.mark.asyncio
+async def test_strategic_system_prompt_includes_briefing():
+    """Test that system prompt properly includes strategic briefing."""
+    ai_service = AIService()
+    briefing = "Strategic context: Conservative approach needed"
+    
+    prompt = ai_service._get_strategic_system_prompt(
+        briefing, VotingStrategy.CONSERVATIVE
+    )
+    
+    assert briefing in prompt
+    assert "conservative" in prompt.lower()
+```
 
-### P1: Core Agent Visibility (Frontend)
+**Implementation:**
+1. **Enhance AIService with Strategic Context**
+   - Modify existing `_get_system_prompt()` method to include strategic briefing
+   - Add `generate_strategic_briefing()` method to AIService
+   - Integrate user preferences and voting history into prompts
 
-#### Task 2.1: Create `AgentStatusWidget.svelte` Component ✅ IMPLEMENTED
+**Files to Modify:**
+- `/Users/max/code/quorum-ai/backend/services/ai_service.py`
+- `/Users/max/code/quorum-ai/backend/tests/test_ai_service_strategic.py` (new)
 
-*   **Why**: To display the real-time status of the agent, giving users immediate insight into its activity.
-*   **Acceptance Criteria**:
-    *   Component polls `GET /agent-run/status` every 30 seconds. ✅
-    *   Displays the `current_state` (e.g., "Idle", "Fetching Proposals"). ✅
-    *   Displays the `last_run_timestamp` in a human-readable format (e.g., "2 minutes ago"). ✅
-    *   Shows a visual indicator (e.g., a green dot) if `is_active` is true. ✅
-*   **Test Cases (Red)**:
-    *   `test_widget_displays_loading_state_initially()` ❌ BLOCKED - Svelte 5 testing issues
-    *   `test_widget_displays_correct_state_and_timestamp_on_load()` ❌ BLOCKED - Svelte 5 testing issues
-    *   `test_widget_shows_active_indicator_correctly()` ❌ BLOCKED - Svelte 5 testing issues
-    *   `test_widget_handles_api_error_gracefully()` ❌ BLOCKED - Svelte 5 testing issues
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentStatusWidget.svelte`. ✅
-    2.  Use `$effect` and `setInterval` to poll the `/agent-run/status` endpoint. ✅
-    3.  Use Svelte state (`$state`) to store and reactively display the status data. ✅
-    4.  Implement conditional rendering for the `is_active` indicator. ✅
-    5.  **Note**: Tests written but encounter Svelte 5 testing framework compatibility issues.
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: The new widget will be placed here.
-    *   `apiClient`: To make calls to the new backend endpoint.
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Component successfully builds and compiles
-    *   Uses Svelte 5 runes for state management
-    *   Implements human-readable time formatting
-    *   Includes error handling and loading states
-    *   Tests written following TDD but blocked by Svelte 5/testing-library compatibility
+**Key Changes:**
+```python
+# Add strategic briefing method to AIService
+async def generate_strategic_briefing(
+    self,
+    proposals: List[Proposal],
+    user_preferences: UserPreferences,
+    voting_history: List[VoteDecision]
+) -> StrategicBriefing:
+    """Generate strategic briefing based on context."""
+    # Analyze recent voting patterns
+    # Summarize current governance landscape
+    # Provide strategic recommendations
 
-#### Task 2.2: Create `AgentDecisionsPanel.svelte` Component ✅ IMPLEMENTED
+# Enhance system prompt to include briefing context
+def _get_strategic_system_prompt(
+    self,
+    briefing: StrategicBriefing,
+    strategy: VotingStrategy
+) -> str:
+    """Enhanced system prompt with strategic context."""
+```
 
-*   **Why**: To show the user the tangible output of the agent's work, building trust and transparency.
-*   **Acceptance Criteria**:
-    *   Component fetches data from `GET /agent-run/decisions`. ✅
-    *   Displays a list of the last 5 decisions. ✅
-    *   For each decision, it shows the proposal title, vote (`FOR`/`AGAINST`), and confidence score. ✅
-    *   The proposal title is a link to the proposal details page. ✅
-*   **Test Cases (Red)**:
-    *   `test_panel_displays_loading_state()` ✅
-    *   `test_panel_renders_a_list_of_decisions()` ✅
-    *   `test_panel_displays_correct_data_for_each_decision()` ✅
-    *   `test_panel_shows_empty_state_when_no_decisions_are_available()` ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentDecisionsPanel.svelte`. ✅
-    2.  Fetch data from `/agent-run/decisions` in `onMount`. ✅
-    3.  Use an `#each` block to render the list of decisions. ✅
-    4.  Use TailwindCSS for styling the list items. ✅
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: The new panel will be placed here.
-    *   `apiClient`: To fetch decision data.
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added comprehensive test suite following TDD methodology
-    *   Component includes loading states, error handling, and empty state
-    *   Refactored for code quality with constants and utility functions
-    *   Added accessibility features (ARIA labels, semantic HTML)
-    *   Tests written but blocked by Svelte 5/testing-library compatibility issues
+### Phase 2: Persistent Voting History (Foundation)
 
----
+**Goal:** Track and persist voting decisions for strategic analysis (limit to 10 most recent)
 
-### P2: Agent Statistics & Actions
+**Test First (TDD):**
+```python
+# backend/tests/test_agent_run_voting_history.py
+import pytest
+from unittest.mock import AsyncMock, MagicMock
+from backend.services.agent_run_service import AgentRunService
+from backend.models import VoteDecision, VoteType, VotingStrategy
 
-#### Task 3.1: Create `GET /agent-run/statistics` Endpoint ✅ IMPLEMENTED
+@pytest.mark.asyncio
+async def test_voting_history_limited_to_10():
+    """Test that voting history is limited to 10 most recent decisions."""
+    mock_state_manager = MagicMock()
+    existing_history = [
+        {"proposal_id": f"0x{i}", "vote": "FOR", "confidence": 0.8}
+        for i in range(15)
+    ]
+    mock_state_manager.load_state = AsyncMock(return_value={
+        "voting_history": existing_history
+    })
+    mock_state_manager.save_state = AsyncMock()
+    
+    service = AgentRunService(state_manager=mock_state_manager)
+    
+    # Get voting history
+    history = await service.get_voting_history()
+    
+    # Should only return 10 most recent
+    assert len(history) == 10
+    assert history[0].proposal_id == "0x5"  # Oldest in the 10
+    assert history[-1].proposal_id == "0x14"  # Most recent
 
-*   **Why**: To provide users with an aggregated overview of agent performance over time.
-*   **Acceptance Criteria**:
-    *   Endpoint returns aggregated statistics as defined in the feature request. ✅
-    *   Calculations correctly sum totals and compute averages from all checkpoint files. ✅
-    *   `success_rate` is calculated as `(runs_with_no_errors / total_runs)`. ✅
-*   **Test Cases (Red)**:
-    *   `test_statistics_returns_correct_structure()` ✅
-    *   `test_statistics_aggregates_data_from_multiple_checkpoints()` ✅
-    *   `test_statistics_handles_division_by_zero_when_no_runs()` ✅
-    *   `test_statistics_calculates_success_rate_correctly()` ✅
-    *   `test_statistics_handles_corrupted_checkpoint_gracefully()` ✅ (additional test)
-    *   `test_statistics_handles_missing_fields_in_checkpoints()` ✅ (additional test)
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Add a new route `GET /agent-run/statistics` in `backend/main.py`. ✅
-    2.  Create a new method in `AgentRunService` to scan and aggregate data from all `agent_checkpoint_*.json` files. ✅
-    3.  Implement the logic for calculating totals, averages, and success rate. ✅
-    4.  **Regenerate OpenAPI Client**: Run `cd frontend && npm run generate-api` to update TypeScript client with new endpoint. ✅
-*   **Integration Points**:
-    *   `StateManager`: To read all checkpoint files. ✅
-    *   `main.py`: To expose the new endpoint. ✅
-*   **Implementation Date**: 2025-07-29
-*   **Implementation Notes**:
-    *   Added AgentRunStatistics model to models.py
-    *   Implemented get_agent_run_statistics() method in AgentRunService
-    *   Added comprehensive test suite covering all edge cases
-    *   All tests passing with proper error handling for corrupted/missing data
+@pytest.mark.asyncio
+async def test_voting_history_persistence():
+    """Test that new votes are added and history is pruned."""
+    mock_state_manager = MagicMock()
+    existing = [{"proposal_id": f"0x{i}", "vote": "FOR"} for i in range(8)]
+    mock_state_manager.load_state = AsyncMock(return_value={
+        "voting_history": existing
+    })
+    mock_state_manager.save_state = AsyncMock()
+    
+    service = AgentRunService(state_manager=mock_state_manager)
+    
+    # Add new decisions
+    new_decisions = [
+        VoteDecision(proposal_id=f"0xnew{i}", vote=VoteType.FOR, 
+                    confidence=0.9, reasoning="New vote")
+        for i in range(3)
+    ]
+    
+    await service.save_voting_decisions(new_decisions)
+    
+    # Verify save was called with 10 items (8 existing + 3 new - 1 pruned)
+    saved_data = mock_state_manager.save_state.call_args[0][1]
+    assert len(saved_data["voting_history"]) == 10
+    assert saved_data["voting_history"][-1]["proposal_id"] == "0xnew2"
+```
 
-#### Task 3.2a: Create `AgentStatistics.svelte` Component ✅ IMPLEMENTED
+**Implementation:**
+1. **Extend Existing StateManager Integration**
+   - AgentRunService already has StateManager integration
+   - Enhance existing checkpoint system to include voting history aggregation
+   - Add voting history retrieval methods with 10-item limit
+   - Implement automatic pruning on save
 
-*   **Why**: To display aggregated performance metrics, giving users insights into the agent's effectiveness over time.
-*   **Acceptance Criteria**:
-    *   Component fetches data from `GET /agent-run/statistics` endpoint. ✅
-    *   Displays all metrics: total runs, proposals reviewed, votes cast, average confidence, success rate. ✅
-    *   Handles loading and error states gracefully. ✅
-    *   Updates automatically when dashboard refreshes. ✅
-*   **Test Cases (Red)**:
-    *   `test_statistics_displays_loading_state_initially()` ✅ (written, Svelte 5 issues)
-    *   `test_statistics_displays_all_metrics_correctly()` ✅ (written, Svelte 5 issues)
-    *   `test_statistics_handles_api_error_gracefully()` ✅ (written, Svelte 5 issues)
-    *   `test_statistics_shows_zero_state_when_no_runs()` ✅ (written, Svelte 5 issues)
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentStatistics.svelte`. ✅
-    2.  Fetch data from `/agent-run/statistics` on mount. ✅
-    3.  Display metrics in a clean, organized layout. ✅
-    4.  Use TailwindCSS for consistent styling. ✅
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: The component will be placed here. ✅
-    *   `apiClient`: To fetch statistics data. ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Added comprehensive test suite following TDD methodology
-    *   Component includes proper TypeScript types and interfaces
-    *   Implemented with Svelte 5 runes for state management
-    *   Added accessibility features (ARIA labels, semantic HTML)
-    *   Integrated into OverviewTab with Agent dashboard section
+**Files to Modify:**
+- `/Users/max/code/quorum-ai/backend/services/agent_run_service.py` (enhance existing methods)
+- `/Users/max/code/quorum-ai/backend/tests/test_agent_run_voting_history.py` (new)
 
-#### Task 3.2b: Create `AgentQuickActions.svelte` Component ✅ IMPLEMENTED
+**Key Changes:**
+```python
+# Enhance existing methods in AgentRunService
+async def get_voting_history(self, limit: int = 10) -> List[VoteDecision]:
+    """Get recent voting history from checkpoints (max 10)."""
+    # Load from StateManager
+    # Convert to VoteDecision objects
+    # Return only the most recent 10
 
-*   **Why**: To give users direct control over the agent, allowing manual trigger of voting runs.
-*   **Acceptance Criteria**:
-    *   Component has a "Run Now" button that triggers `POST /agent-run`. ✅
-    *   Button is disabled when agent is already active (based on status). ✅
-    *   Shows loading state during API call. ✅
-    *   Displays success/error feedback after action. ✅
-*   **Test Cases (Red)**:
-    *   `test_quick_actions_displays_run_now_button()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_button_calls_api_on_click()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_button_disabled_when_agent_active()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_shows_loading_state_during_request()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_displays_success_message()` ✅ (written, Svelte 5 issues)
-    *   `test_quick_actions_displays_error_message_on_failure()` ✅ (written, Svelte 5 issues)
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/components/dashboard/AgentQuickActions.svelte`. ✅
-    2.  Implement "Run Now" button with click handler. ✅
-    3.  Get `current_space_id` from dashboard store. ✅
-    4.  Call `POST /agent-run` with proper error handling. ✅
-    5.  Show appropriate feedback to user. ✅
-*   **Integration Points**:
-    *   `OverviewTab.svelte`: To place the component. ✅
-    *   `apiClient`: For `POST /agent-run` call. ✅
-    *   Dashboard Store: To get `current_space_id` and agent status. ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Added comprehensive test suite following TDD methodology
-    *   Component uses Svelte 5 runes for state management
-    *   Refactored to use TailwindCSS exclusively
-    *   Simplified props interface for easier integration
-    *   Added accessibility features and keyboard navigation
-    *   Integrated into OverviewTab with other agent dashboard components
+async def save_voting_decisions(self, decisions: List[VoteDecision]) -> None:
+    """Save new voting decisions and maintain 10-item history."""
+    # Load existing history
+    # Append new decisions
+    # Prune to keep only 10 most recent
+    # Save back to StateManager
 
----
+async def get_voting_patterns(self) -> Dict[str, Any]:
+    """Analyze voting patterns from history."""
+    # Use the 10 most recent votes for pattern analysis
+```
 
-#### Task 3.3: Implement Shared State Management for Agent Dashboard ✅ IMPLEMENTED
+### Phase 3: Proposal Evaluation Tools (Intelligence Layer) ✅ IMPLEMENTED
 
-*   **Why**: To ensure all dashboard components share a single source of truth for agent status, preventing inconsistent states and enabling proper integration between components.
-*   **Acceptance Criteria**:
-    *   Create a Svelte store for agent status that includes all data from `/agent-run/status` endpoint. ✅
-    *   Move polling logic from individual components to a single location (preferably OverviewTab). ✅
-    *   All components subscribe to the shared store instead of polling independently. ✅
-    *   AgentQuickActions receives actual agent status through the store, not a prop. ✅
-    *   Store updates trigger reactive updates in all subscribed components. ✅
-*   **Test Cases (Red)**:
-    *   `test_agent_store_initializes_with_default_state()`: Verify store has proper initial state. ✅
-    *   `test_agent_store_updates_from_api_response()`: Ensure store updates when API data is fetched. ✅
-    *   `test_agent_store_handles_polling_errors()`: Verify error states are properly stored. ✅
-    *   `test_components_react_to_store_changes()`: Ensure components update when store changes. ✅
-*   **Implementation (Green)**: ✅ COMPLETED
-    1.  Create `src/lib/stores/agentStatus.ts` with a writable Svelte store. ✅
-    2.  Define TypeScript interface for agent status matching API response. ✅
-    3.  Implement polling logic in the store with start/stop methods. ✅
-    4.  Update OverviewTab to initialize and manage the store's polling lifecycle. ✅
-    5.  Refactor AgentStatusWidget to subscribe to the store instead of polling. ✅
-    6.  Refactor AgentQuickActions to get `isAgentActive` from the store. ✅
-    7.  Update other components to use shared store data where applicable. ✅
-*   **Integration Points**:
-    *   All agent dashboard components: To subscribe to shared state. ✅
-    *   OverviewTab: To manage polling lifecycle. ✅
-    *   apiClient: Store will make API calls. ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Created agentStatus.ts store with TypeScript interfaces matching API responses
-    *   Comprehensive test suite with 13 tests all passing
-    *   Store handles status, decisions, and statistics with individual loading/error states
-    *   Polling managed centrally in OverviewTab with 30-second interval
-    *   All 4 agent dashboard components successfully refactored to use shared store
-    *   AgentQuickActions now properly receives isAgentActive from derived store value
-    *   Frontend builds successfully with no errors
+**Goal:** Add intelligent proposal analysis tools using Pydantic AI's tool decorator
 
----
+**Status:** ✅ Implemented on 2025-08-01
+- Created ProposalEvaluationService with 5 core evaluation tools
+- All tests passing with comprehensive coverage
+- Ready for integration with AIService
 
-### P3: Documentation & Deployment
+**Test First (TDD):**
+```python
+# backend/tests/test_proposal_evaluation_service.py
+import pytest
+from backend.services.proposal_evaluation_service import ProposalEvaluationService
+from backend.models import Proposal, VoteDecision
+import re
 
-#### Task 4.1: Update All Relevant Documentation ✅ IMPLEMENTED
+@pytest.mark.asyncio
+async def test_analyze_proposal_impact():
+    """Test proposal impact analysis tool."""
+    service = ProposalEvaluationService()
+    proposal = Proposal(
+        id="0x1",
+        title="Increase Treasury Allocation",
+        body="Allocate 500,000 USDC for development",
+        choices=["For", "Against"]
+    )
+    
+    impact = await service.analyze_proposal_impact(proposal)
+    
+    assert impact["has_financial_impact"] is True
+    assert impact["estimated_amount"] == 500000
+    assert impact["impact_level"] in ["high", "medium", "low"]
 
-*   **Why**: Ensure all project documentation reflects the new autonomous voting dashboard features and API endpoints.
-*   **Acceptance Criteria**:
-    *   Update OpenAPI schema documentation for all new endpoints ✅
-    *   Add API usage examples to relevant spec files ✅
-    *   Update CLAUDE.md with new component locations and usage patterns ✅ (skipped per user request)
-    *   Document new dashboard components in frontend architecture docs ✅
-*   **Implementation**: ✅ COMPLETED
-    1.  Update `specs/api.md` with new endpoint documentation ✅
-    2.  Add component documentation to `specs/frontend.md` ✅
-    3.  Update `CLAUDE.md` with new development workflow steps ✅ (skipped per user request)
-    4.  Add troubleshooting guide for agent dashboard issues ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Created comprehensive API specification in specs/api.md with all endpoints documented
-    *   Added detailed Agent Dashboard Components section to specs/frontend.md
-    *   Included troubleshooting guide for common dashboard issues
-    *   Documented integration patterns and best practices
+@pytest.mark.asyncio
+async def test_assess_treasury_implications():
+    """Test treasury impact assessment with regex patterns."""
+    service = ProposalEvaluationService()
+    
+    # Test various financial patterns
+    test_cases = [
+        ("Request 1,000,000 DAI", {"amount": 1000000, "currency": "DAI"}),
+        ("Allocate $2.5M USDC", {"amount": 2500000, "currency": "USDC"}),
+        ("Transfer 50 ETH", {"amount": 50, "currency": "ETH"}),
+        ("No financial impact", None)
+    ]
+    
+    for body, expected in test_cases:
+        proposal = Proposal(id="0x1", title="Test", body=body)
+        result = await service.assess_treasury_implications(proposal)
+        
+        if expected is None:
+            assert result["treasury_impact"] is None
+        else:
+            assert result["treasury_impact"]["amount"] == expected["amount"]
+            assert result["treasury_impact"]["currency"] == expected["currency"]
 
----
+@pytest.mark.asyncio
+async def test_check_proposal_precedent():
+    """Test precedent checking against voting history."""
+    service = ProposalEvaluationService()
+    proposal = Proposal(id="0x1", title="Treasury Allocation")
+    
+    history = [
+        VoteDecision(
+            proposal_id="0x0",
+            vote=VoteType.FOR,
+            confidence=0.9,
+            reasoning="Supported similar treasury proposal"
+        )
+    ]
+    
+    precedent = await service.check_proposal_precedent(proposal, history)
+    
+    assert precedent["has_precedent"] is True
+    assert precedent["similar_votes"] == 1
+    assert precedent["historical_stance"] == "supportive"
+```
 
-## 3. Acceptance Criteria
+**Implementation:**
+1. **Create Evaluation Tools Module**
+   - New service: `ProposalEvaluationService`
+   - Implement 5 core evaluation tools
+   - Tools will be integrated into AIService agent
 
-### Backend API Requirements
-- [x] **GET /agent-run/status** endpoint returns structured JSON with `current_state`, `last_run_timestamp`, `is_active`, `current_space_id` ✅
-- [x] **GET /agent-run/decisions** endpoint returns paginated list of recent voting decisions with proposal titles ✅
-- [x] **GET /agent-run/statistics** endpoint returns aggregated performance metrics from all checkpoint files ✅
-- [x] All endpoints handle error cases gracefully with appropriate HTTP status codes ✅
-- [x] OpenAPI schema is updated and TypeScript client regenerated for all new endpoints ✅
+**New Files:**
+- `/Users/max/code/quorum-ai/backend/services/proposal_evaluation_service.py`
+- `/Users/max/code/quorum-ai/backend/tests/test_proposal_evaluation_service.py`
 
-### Frontend Component Requirements
-- [x] **AgentStatusWidget** displays real-time agent status with 30-second polling interval ✅
-- [x] **AgentDecisionsPanel** shows last 5 voting decisions with proposal links and confidence scores ✅
-- [x] **AgentStatistics** displays performance metrics from statistics endpoint ✅
-- [x] **AgentQuickActions** provides "Run Now" button that triggers agent execution ✅
-- [x] All components handle loading states and API errors gracefully ✅
-- [x] Components are fully responsive and accessible on mobile devices ✅
+**Key Tools Implementation:**
+```python
+# backend/services/proposal_evaluation_service.py
+from typing import Dict, Any, List, Optional
+import re
+from backend.models import Proposal, VoteDecision
 
-### Integration Requirements
-- [x] All new components are integrated into `OverviewTab.svelte` ✅ (AgentStatusWidget, AgentDecisionsPanel, AgentStatistics, AgentQuickActions)
-- [x] Dashboard updates in near real-time (30-second intervals) ✅ COMPLETED - Centralized polling in OverviewTab
-- [x] Agent run status is reflected across all dashboard components ✅ IMPLEMENTED - Shared state management via agentStatus store
-- [x] "Run Now" action is disabled when agent is already active ✅ IMPLEMENTED - isAgentActive from derived store value
+class ProposalEvaluationService:
+    """Service for evaluating governance proposals."""
+    
+    async def analyze_proposal_impact(self, proposal: Proposal) -> Dict[str, Any]:
+        """Analyze potential impact of proposal."""
+        # Check for financial keywords
+        # Assess governance changes
+        # Return impact assessment
+    
+    async def assess_treasury_implications(self, proposal: Proposal) -> Dict[str, Any]:
+        """Assess treasury and financial impact using regex."""
+        # Pattern matching for amounts and currencies
+        # Support multiple formats (1M, 1,000,000, etc.)
+        patterns = [
+            r'(\d+(?:,\d{3})*(?:\.\d+)?)\s*([A-Z]{3,4})',  # 1,000,000 USDC
+            r'\$(\d+(?:\.\d+)?)[MK]?\s*([A-Z]{3,4})',      # $2.5M USDC
+            r'(\d+(?:\.\d+)?)[MK]\s*([A-Z]{3,4})',         # 1M DAI
+        ]
+    
+    async def evaluate_governance_risk(self, proposal: Proposal) -> Dict[str, Any]:
+        """Evaluate governance and protocol risks."""
+        # Check for parameter changes
+        # Assess voting power implications
+        # Return risk assessment
+    
+    async def check_proposal_precedent(
+        self, proposal: Proposal, history: List[VoteDecision]
+    ) -> Dict[str, Any]:
+        """Check against voting history precedents."""
+        # Find similar proposals in history
+        # Analyze voting patterns
+        # Return precedent analysis
+    
+    async def analyze_community_sentiment(self, proposal: Proposal) -> Dict[str, Any]:
+        """Analyze voting patterns and community response."""
+        # Check current voting status
+        # Analyze participation rate
+        # Return sentiment analysis
+```
 
-### Testing Requirements
-- [x] All backend endpoints have comprehensive unit tests with >90% coverage ✅ COMPLETED
-- [ ] All frontend components have unit tests using Vitest and Testing Library ❌ BLOCKED - Svelte 5 compatibility issues with testing library
-- [ ] Integration tests verify end-to-end data flow from API to UI ❌ NOT IMPLEMENTED
-- [x] Error handling scenarios are thoroughly tested ⚠️ PARTIAL - Backend only
+**Integration with AIService:**
+```python
+# Modification to ai_service.py
+from backend.services.proposal_evaluation_service import ProposalEvaluationService
 
-### Documentation Requirements
-- [x] OpenAPI documentation includes all new endpoints with examples ✅
-- [x] Component usage is documented in relevant specification files ✅
-- [x] CLAUDE.md is updated with new development workflow steps ✅ (skipped per user request)
-- [x] Troubleshooting guide covers common dashboard issues ✅
+class AIService:
+    def __init__(self):
+        # ... existing init ...
+        self.evaluation_service = ProposalEvaluationService()
+    
+    def _create_agent_with_tools(self, context: Dict[str, Any]) -> Agent:
+        """Create agent with evaluation tools."""
+        # Tool wrapper functions for Pydantic AI
+        async def analyze_impact(proposal_id: str) -> Dict[str, Any]:
+            proposal = context["proposals_map"].get(proposal_id)
+            return await self.evaluation_service.analyze_proposal_impact(proposal)
+        
+        # Register tools with agent
+        tools = [analyze_impact, ...]  # Add all wrapped tools
+```
 
----
+### Phase 4: Integration and Enhancement
 
-## 4. Files to be Changed
+**Goal:** Connect all components into cohesive proactive system
 
-### Backend Files
-- [x] `backend/main.py` - Add new API routes for status, decisions, and statistics (status ✅, decisions ✅, statistics ✅)
-- [x] `backend/services/agent_run_service.py` - Add methods for checkpoint aggregation and status retrieval ✅
-- [x] `backend/models.py` - Add AgentRunStatus, AgentDecisionResponse, AgentDecisionsResponse, AgentRunStatistics models ✅
-- [x] `backend/tests/test_agent_run_service.py` - Add comprehensive tests for new methods ✅ (created test_agent_run_service_status.py)
-- [x] `backend/tests/test_main.py` - Add API endpoint tests ✅ (created test_agent_run_status.py, test_agent_run_decisions.py, test_agent_run_statistics.py)
+**Test First (TDD):**
+```python
+# backend/tests/test_agent_run_integration.py
+import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
+from backend.services.agent_run_service import AgentRunService
+from backend.models import AgentRunRequest, Proposal, VoteDecision
 
-### Frontend Files
-- [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/AgentStatistics.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/AgentQuickActions.svelte` - New component ✅
-- [x] `frontend/src/lib/components/dashboard/OverviewTab.svelte` - Integrate new components ✅ (all 4 components)
-- [x] `frontend/src/routes/+page.svelte` - Pass currentSpaceId to OverviewTab ✅
-- [x] `frontend/src/lib/api/index.ts` - Added apiClient export ✅
-- [x] `frontend/src/lib/api/` - Generated OpenAPI client files (via `npm run generate-api`) ✅
-- [x] `frontend/src/lib/stores/agentStatus.ts` - New shared state store (Task 3.3) ✅
-- [x] `frontend/src/lib/components/dashboard/AgentStatusWidget.test.ts` - Component tests (written, Svelte 5 issues) ✅
-- [x] `frontend/src/lib/components/dashboard/AgentDecisionsPanel.test.ts` - Component tests ✅
-- [x] `frontend/src/lib/components/dashboard/AgentStatistics.test.ts` - Component tests ✅
-- [x] `frontend/src/lib/components/dashboard/AgentQuickActions.test.ts` - Component tests ✅
-- [x] `frontend/src/lib/stores/agentStatus.test.ts` - Store tests (Task 3.3) ✅
+@pytest.mark.asyncio
+async def test_proactive_workflow_integration():
+    """Test full proactive workflow with all components."""
+    # Mock dependencies
+    mock_state_manager = MagicMock()
+    mock_ai_service = MagicMock()
+    mock_snapshot_service = MagicMock()
+    
+    # Setup test data
+    proposals = [
+        Proposal(id="0x1", title="Treasury Proposal", 
+                body="Request 100,000 USDC", state="active")
+    ]
+    voting_history = [
+        VoteDecision(proposal_id="0x0", vote=VoteType.FOR, 
+                    confidence=0.8, reasoning="Previous decision")
+    ]
+    
+    # Mock methods
+    mock_snapshot_service.get_proposals = AsyncMock(return_value=proposals)
+    mock_state_manager.load_state = AsyncMock(return_value={
+        "voting_history": [vh.model_dump() for vh in voting_history]
+    })
+    
+    # Mock strategic briefing
+    mock_ai_service.generate_strategic_briefing = AsyncMock(
+        return_value=StrategicBriefing(
+            summary="Conservative approach recommended",
+            key_insights=["High treasury impact detected"],
+            historical_patterns={"treasury_votes": "cautious"},
+            recommendations=["Vote against high-value proposals"]
+        )
+    )
+    
+    # Mock AI decision with tools
+    mock_ai_service.make_strategic_decision = AsyncMock(
+        return_value=[
+            VoteDecision(
+                proposal_id="0x1",
+                vote=VoteType.AGAINST,
+                confidence=0.85,
+                reasoning="High treasury impact, following conservative strategy"
+            )
+        ]
+    )
+    
+    service = AgentRunService(
+        state_manager=mock_state_manager,
+        ai_service=mock_ai_service,
+        snapshot_service=mock_snapshot_service
+    )
+    
+    # Execute proactive run
+    request = AgentRunRequest(space_id="test.eth", dry_run=True)
+    response = await service.execute_agent_run(request)
+    
+    # Verify workflow
+    assert response.proposals_analyzed == 1
+    assert len(response.votes_cast) == 1
+    assert response.votes_cast[0].vote == VoteType.AGAINST
+    
+    # Verify strategic briefing was generated
+    mock_ai_service.generate_strategic_briefing.assert_called_once()
+    
+    # Verify voting history was loaded
+    assert mock_state_manager.load_state.called
+    
+    # Verify AI used strategic context
+    mock_ai_service.make_strategic_decision.assert_called_with(
+        proposals=proposals,
+        user_preferences=ANY,
+        briefing=ANY,
+        voting_history=voting_history
+    )
 
-### Documentation Files
-- [x] `specs/api.md` - Document new endpoints ✅
-- [x] `specs/frontend.md` - Document new components ✅
-- [x] `CLAUDE.md` - Update development workflow ✅ (skipped per user request)
-- [ ] `specs/testing.md` - Update testing examples if needed
+@pytest.mark.asyncio
+async def test_voting_history_updated_after_run():
+    """Test that voting history is updated after successful run."""
+    # Similar setup...
+    # Verify that new decisions are saved to voting history
+    # Verify pruning to 10 items
+```
 
----
+**Implementation:**
+1. **Enhance AgentRunService Workflow**
+   - Modify existing `execute_agent_run()` method
+   - Add strategic briefing step before proposal analysis
+   - Integrate evaluation tools into decision-making process
+   - Update voting history after decisions
 
-## 5. Remaining Work & Known Issues
+**Files to Modify:**
+- `/Users/max/code/quorum-ai/backend/services/agent_run_service.py`
+- `/Users/max/code/quorum-ai/backend/services/ai_service.py`
+- `/Users/max/code/quorum-ai/backend/tests/test_agent_run_integration.py` (new)
 
-### Critical Issues to Address
+**Key Enhancements:**
+```python
+# Enhance existing execute_agent_run method
+async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
+    # ... existing setup code ...
+    
+    # Load voting history (limited to 10)
+    voting_history = await self.get_voting_history()
+    
+    # Generate strategic briefing
+    briefing = await self.ai_service.generate_strategic_briefing(
+        filtered_proposals, user_preferences, voting_history
+    )
+    
+    # Log strategic briefing for Pearl compliance
+    self.logger.info(
+        "Generated strategic briefing",
+        extra={
+            "briefing_summary": briefing.summary,
+            "insights_count": len(briefing.key_insights),
+            "history_size": len(voting_history)
+        }
+    )
+    
+    # Enhanced decision making with tools and briefing
+    vote_decisions = await self.ai_service.make_strategic_decision(
+        proposals=filtered_proposals,
+        user_preferences=user_preferences,
+        briefing=briefing,
+        voting_history=voting_history
+    )
+    
+    # Execute votes (if not dry run)
+    if not request.dry_run:
+        # ... existing voting code ...
+    
+    # Update voting history with new decisions
+    await self.save_voting_decisions(vote_decisions)
+    
+    # ... rest of response building ...
+```
 
-1. **Shared State Management** ✅ RESOLVED (Task 3.3)
-   - **Issue**: Components operate in isolation with no shared state for agent status
-   - **Impact**: Inconsistent UI states, AgentQuickActions doesn't know actual agent status
-   - **Solution**: Task 3.3 has been implemented with a Svelte store for agent status that:
-     - Single polling mechanism in parent component ✅
-     - Share status with all child components ✅
-     - Connect AgentQuickActions' `isAgentActive` prop to actual status ✅
-   - **Implementation**: All agent dashboard components now use a centralized store with proper state management
+**AIService Enhancement:**
+```python
+# Add to ai_service.py
+async def make_strategic_decision(
+    self,
+    proposals: List[Proposal],
+    user_preferences: UserPreferences,
+    briefing: StrategicBriefing,
+    voting_history: List[VoteDecision]
+) -> List[VoteDecision]:
+    """Make voting decisions using strategic context and tools."""
+    # Create agent with tools
+    agent = self._create_agent_with_tools({
+        "proposals_map": {p.id: p for p in proposals},
+        "voting_history": voting_history
+    })
+    
+    # Enhanced prompt with briefing
+    prompt = self._build_strategic_prompt(
+        proposals, user_preferences, briefing
+    )
+    
+    # Run agent with tools
+    result = await agent.run(prompt)
+    
+    return result.data  # List of VoteDecisions
+```
 
-2. **Frontend Testing** ❌ BLOCKED
-   - **Issue**: All frontend tests fail due to Svelte 5 compatibility with testing library
-   - **Impact**: Cannot verify component behavior or achieve coverage requirements
-   - **Solution Options**:
-     - Wait for Svelte 5 testing library support
-     - Implement E2E tests with Playwright as alternative
-     - Use Svelte 4 compatible testing approach
+## Technical Implementation Details
 
-3. **Integration Testing** ❌ NOT STARTED
-   - **Issue**: No end-to-end tests exist for the complete flow
-   - **Impact**: Cannot verify full system behavior
-   - **Solution**: Add integration tests using backend test framework
+### Leveraging Existing Patterns
 
-### Minor Issues
+**StateManager Integration:**
+- Use existing checkpoint system in AgentRunService
+- Extend existing `get_recent_decisions()` method 
+- Leverage existing `save_checkpoint_state()` pattern
 
-1. **Real-time Updates Architecture** ⚠️
-   - Each component polls independently (inefficient)
-   - Could lead to race conditions or inconsistent states
-   - Solution: Centralize polling in parent component
+**AIService Enhancement:**
+- Build on existing Pydantic AI agent architecture
+- Use existing prompt building patterns
+- Extend existing `decide_vote()` method with strategic context
 
-2. **Error Recovery** ⚠️
-   - Components handle errors individually
-   - No global error state or recovery mechanism
-   - Solution: Implement error boundary or global error handling
+**Error Handling:**
+- Follow existing error handling patterns in AgentRunService
+- Use existing Pearl-compliant logging
+- Maintain existing graceful degradation approach
 
-### Summary
+### Data Models
 
-The implementation is now functionally complete with all features working as a cohesive system. The shared state management has been successfully implemented (Task 3.3), ensuring all dashboard components work together with consistent state and centralized polling. The frontend testing remains blocked by Svelte 5 compatibility issues with the testing library, but the feature is production-ready with all components properly integrated and the frontend building successfully.
+**Reuse Existing Models:**
+- `VoteDecision` - already tracks voting history
+- `UserPreferences` - already contains strategy preferences  
+- `Proposal` - existing proposal structure
+- `AgentRunRequest/Response` - existing workflow models
 
----
+**Minimal New Models:**
+```python
+# Add to existing models.py
+class StrategicBriefing(BaseModel):
+    """Strategic briefing for agent decision making."""
+    summary: str
+    key_insights: List[str]
+    historical_patterns: Dict[str, Any]
+    recommendations: List[str]
 
-## 6. End-to-End Verification
+class ProposalEvaluation(BaseModel):
+    """Comprehensive proposal evaluation."""
+    proposal_id: str
+    impact_score: float
+    risk_score: float
+    precedent_analysis: Dict[str, Any]
+    evaluation_summary: str
+```
 
-### Task 5.1: Launch Server and Verify Functionality ✅ COMPLETED
 
-*   **Why**: To ensure all implemented features work correctly in a real browser environment and provide visual verification of the dashboard functionality.
-*   **Acceptance Criteria**:
-    *   Backend and frontend servers are running successfully. ✅
-    *   All agent dashboard components are visible and functional. ✅
-    *   Agent status updates properly when polling. ✅
-    *   Recent decisions panel displays data correctly. ✅
-    *   Statistics show accurate metrics. ✅
-    *   "Run Now" button triggers agent execution. ✅
-*   **Verification Steps**:
-    1.  Start the backend server: `cd backend && uv run main.py` ✅
-    2.  Start the frontend server: `cd frontend && npm run dev` ✅
-    3.  Alternative to Playwright: Created comprehensive integration tests ✅
-    4.  Integration test coverage includes: ✅
-        - Complete dashboard flow testing
-        - Agent run triggering
-        - Empty state handling
-        - Decision enrichment with Snapshot data
-        - Concurrent request handling
-        - State transitions during active runs
-        - Error handling and resilience
-        - Data consistency across endpoints
-        - Polling simulation
-        - User workflow testing
-*   **Integration Points**:
-    *   Backend API: Must be running on port 8716 ✅
-    *   Frontend Dev Server: Must be running on port 5173 ✅
-    *   Integration Tests: `backend/tests/test_agent_dashboard_integration.py` ✅
-*   **Implementation Date**: 2025-07-30
-*   **Implementation Notes**:
-    *   Backend server successfully running on port 8716
-    *   Frontend server successfully builds without errors
-    *   All backend API endpoints verified working and tested
-    *   21 existing backend tests all passing
-    *   Created comprehensive integration test suite as alternative to Playwright
-    *   Frontend components integrated and functional
-    *   All code implementation is complete and verified
+## What's NOT Included in This MVP
+
+**Excluded Features (for future iterations):**
+- Advanced machine learning models for pattern recognition
+- Complex sentiment analysis beyond basic voting pattern analysis
+- Real-time proposal monitoring/alerts
+- Advanced risk scoring algorithms
+- Multi-space cross-analysis
+- Dashboard UI enhancements
+- Advanced reporting features
+- Complex governance simulation tools
+
+## Implementation Sequence (TDD Approach)
+
+### Step 1: Voting History Foundation (Start Here)
+**Why First:** This is the simplest, most self-contained component that other features depend on.
+
+1. **Write tests** for voting history persistence (`test_agent_run_voting_history.py`)
+2. **Implement** `get_voting_history()` and `save_voting_decisions()` with 10-item limit
+3. **Verify** StateManager integration works correctly
+4. **Run tests** to ensure functionality
+
+### Step 2: Proposal Evaluation Tools
+**Why Second:** These tools are independent services that will be used by the AI agent.
+
+1. **Write tests** for each evaluation tool (`test_proposal_evaluation_service.py`)
+2. **Create** ProposalEvaluationService class
+3. **Implement** the 5 core evaluation methods with treasury regex patterns
+4. **Test** each tool in isolation
+
+### Step 3: Strategic Briefing System
+**Why Third:** This builds on voting history and prepares context for the AI.
+
+1. **Write tests** for strategic briefing generation (`test_ai_service_strategic.py`)
+2. **Implement** `generate_strategic_briefing()` method
+3. **Enhance** system prompts to include briefing
+4. **Test** briefing incorporates history and preferences
+
+### Step 4: AI Tool Integration
+**Why Fourth:** Connect evaluation tools to the AI agent.
+
+1. **Write tests** for tool-enabled agent
+2. **Implement** `_create_agent_with_tools()` method
+3. **Create** tool wrapper functions for Pydantic AI
+4. **Test** agent can call tools during decision making
+
+### Step 5: Full Workflow Integration
+**Why Last:** This brings all components together.
+
+1. **Write integration tests** (`test_agent_run_integration.py`)
+2. **Enhance** `execute_agent_run()` with full proactive workflow
+3. **Implement** `make_strategic_decision()` in AIService
+4. **Run end-to-end tests** with all components
+
+## Risk Mitigation
+
+**Technical Risks:**
+- **Tool Integration Complexity:** Use Pydantic AI's built-in tool system following documentation
+- **State Management:** Leverage existing robust StateManager implementation
+
+**Implementation Risks:**
+- **Scope Creep:** Stick strictly to 5 core evaluation tools, basic briefing
+- **Over-Engineering:** Build on existing patterns, minimal new abstractions
+- **Testing Complexity:** Follow existing test patterns, focus on core functionality
+
+## Success Criteria
+
+**MVP Success Metrics:**
+1. Agent generates strategic briefings incorporating user preferences and last 10 votes
+2. Agent persists and retrieves exactly 10 most recent voting decisions
+3. Agent makes more informed decisions using evaluation tools
+4. All existing functionality continues to work without regression
+
+**Quality Gates:**
+- All existing tests pass (100% backwards compatibility)
+- New functionality has >90% test coverage (TDD approach)
+- Each component has comprehensive unit tests written before implementation
+- Integration tests verify full proactive workflow
+- Pearl-compliant logging shows strategic briefing and tool usage
+- State persistence correctly maintains 10-item voting history
+
+**Acceptance Testing:**
+1. **Voting History:** Verify only 10 most recent votes are persisted
+2. **Evaluation Tools:** Each tool correctly analyzes proposals
+3. **Strategic Briefing:** Incorporates history, preferences, and insights
+4. **Tool Usage:** AI agent successfully calls evaluation tools
+5. **End-to-End:** Complete workflow from briefing to vote execution
+
+## Testing Strategy (TDD Focus)
+
+**Test File Structure:**
+```
+backend/tests/
+├── test_agent_run_voting_history.py    # Step 1: Voting history tests
+├── test_proposal_evaluation_service.py  # Step 2: Evaluation tools tests
+├── test_ai_service_strategic.py        # Step 3: Strategic briefing tests
+├── test_agent_run_integration.py       # Step 5: Full integration tests
+└── conftest.py                         # Shared fixtures
+```
+
+**Test Coverage Requirements:**
+- Each new method must have tests written BEFORE implementation
+- Minimum 90% coverage for new code
+- Test both happy paths and edge cases
+- Mock external dependencies (Snapshot API, AI models)
+- Use existing test fixtures and patterns
+
+## Key Implementation Notes
+
+### Treasury Pattern Matching
+The treasury impact analysis must support multiple formats:
+- Standard: "500,000 USDC", "1,000,000 DAI"
+- Shorthand: "$2.5M USDC", "1M DAI", "500K USDC"
+- Simple: "50 ETH", "100 WETH"
+- Handle comma-separated numbers and decimal amounts
+
+### Voting History Constraints
+- Exactly 10 most recent decisions (not 100 as in original plan)
+- Pruning happens on every save operation
+- History includes: proposal_id, vote, confidence, reasoning, timestamp
+- Used for pattern analysis and precedent checking
+
+### Tool Integration Pattern
+- Tools are methods in ProposalEvaluationService
+- AIService wraps tools for Pydantic AI compatibility
+- Tools receive proposal context and return structured analysis
+- AI agent decides when and which tools to use
+
+## Dependencies
+
+- Existing codebase patterns (already implemented)
+- Pydantic AI tool system (already configured)
+- StateManager (already implemented)
+- No external API changes required
+
+This MVP provides a focused, test-driven approach to making the AI agent proactive while maintaining simplicity and leveraging existing architecture. The 10-vote history limit keeps the system lightweight while still providing sufficient context for strategic decision-making.

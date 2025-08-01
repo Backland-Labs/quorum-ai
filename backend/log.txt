@@ -7804,3 +7804,829 @@ confidence
 [2025-07-29 21:28:43,247] [INFO] [agent] Completed save_service_states successfully in 0.002s
 [2025-07-29 21:28:43,247] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
 [2025-07-29 21:28:43,247] [INFO] [agent] Application shutdown completed
+[2025-07-31 18:09:14,053] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:14,257] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:14,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,004] [INFO] [agent] Creating AI model
+[2025-07-31 18:09:15,004] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:09:15,015] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:09:15,016] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:09:15,016] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:09:15,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,017] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:09:15,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,017] [INFO] [agent] VotingService initialized
+[2025-07-31 18:09:15,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,019] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:09:15,019] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,019] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,019] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,019] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,019] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:09:15,019] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:09:15,020] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:09:15,087] [INFO] [agent] Creating AI model
+[2025-07-31 18:09:15,087] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:09:15,087] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:09:15,087] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:09:15,087] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:09:15,087] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:09:15,087] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,087] [INFO] [agent] VotingService initialized
+[2025-07-31 18:09:15,087] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,089] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:09:15,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,089] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:09:15,089] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:09:15,089] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:09:15,104] [INFO] [agent] Creating AI model
+[2025-07-31 18:09:15,104] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:09:15,104] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:09:15,104] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:09:15,104] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:09:15,104] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:09:15,105] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,105] [INFO] [agent] VotingService initialized
+[2025-07-31 18:09:15,105] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,106] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:09:15,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,107] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,107] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,107] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:09:15,108] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:09:15,123] [INFO] [agent] Creating AI model
+[2025-07-31 18:09:15,124] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:09:15,124] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:09:15,124] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:09:15,124] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:09:15,124] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:09:15,124] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,124] [INFO] [agent] VotingService initialized
+[2025-07-31 18:09:15,124] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,126] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:09:15,126] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,126] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,126] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,126] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,126] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:09:15,126] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:09:15,126] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:09:15,140] [INFO] [agent] Creating AI model
+[2025-07-31 18:09:15,140] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:09:15,140] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:09:15,140] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:09:15,141] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:09:15,141] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:09:15,141] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,141] [INFO] [agent] VotingService initialized
+[2025-07-31 18:09:15,141] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,143] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:09:15,143] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,143] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,143] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,143] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,143] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:09:15,143] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:09:15,143] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:09:15,159] [INFO] [agent] Creating AI model
+[2025-07-31 18:09:15,159] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:09:15,159] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:09:15,159] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:09:15,159] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:09:15,159] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:09:15,159] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,159] [INFO] [agent] VotingService initialized
+[2025-07-31 18:09:15,159] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,161] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:09:15,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:09:15,161] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:09:15,161] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:09:15,161] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:09:15,161] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:14:32,131] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,823] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,842] [INFO] [agent] Creating AI model
+[2025-07-31 18:14:32,842] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:14:32,853] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:14:32,853] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:14:32,854] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:14:32,854] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,854] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:14:32,855] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,855] [INFO] [agent] VotingService initialized
+[2025-07-31 18:14:32,855] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,857] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:14:32,857] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,857] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,857] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,857] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,857] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:14:32,857] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:14:32,857] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:14:32,870] [INFO] [agent] Creating AI model
+[2025-07-31 18:14:32,870] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:14:32,870] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:14:32,870] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:14:32,870] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:14:32,870] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:14:32,870] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,870] [INFO] [agent] VotingService initialized
+[2025-07-31 18:14:32,870] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,872] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:14:32,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,872] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:14:32,872] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:14:32,873] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:14:32,873] [INFO] [agent] Saved 3 new decisions, maintaining history of 10 items
+[2025-07-31 18:14:32,937] [INFO] [agent] Creating AI model
+[2025-07-31 18:14:32,937] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:14:32,937] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:14:32,937] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:14:32,938] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:14:32,938] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:14:32,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,938] [INFO] [agent] VotingService initialized
+[2025-07-31 18:14:32,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,940] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:14:32,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,940] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:14:32,940] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:14:32,940] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:14:32,955] [INFO] [agent] Creating AI model
+[2025-07-31 18:14:32,955] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:14:32,955] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:14:32,955] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:14:32,955] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:14:32,955] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:14:32,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,955] [INFO] [agent] VotingService initialized
+[2025-07-31 18:14:32,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,957] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:14:32,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,957] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:14:32,957] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:14:32,958] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:14:32,958] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:14:32,971] [INFO] [agent] Creating AI model
+[2025-07-31 18:14:32,971] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:14:32,971] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:14:32,971] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:14:32,972] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:14:32,972] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:14:32,972] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,972] [INFO] [agent] VotingService initialized
+[2025-07-31 18:14:32,972] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,974] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:14:32,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,974] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:14:32,974] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:14:32,974] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:14:32,974] [WARN] [agent] Skipping invalid vote decision: 2 validation errors for VoteDecision
+proposal_id
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+vote
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+[2025-07-31 18:14:32,988] [INFO] [agent] Creating AI model
+[2025-07-31 18:14:32,988] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:14:32,988] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:14:32,988] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:14:32,988] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:14:32,988] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:14:32,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,988] [INFO] [agent] VotingService initialized
+[2025-07-31 18:14:32,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,990] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:14:32,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:14:32,990] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:14:32,990] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:14:32,991] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:14:32,991] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:15:31,730] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:31,918] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,455] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,474] [INFO] [agent] Creating AI model
+[2025-07-31 18:15:32,474] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:15:32,485] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:15:32,485] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:15:32,486] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:15:32,486] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,487] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:15:32,487] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,487] [INFO] [agent] VotingService initialized
+[2025-07-31 18:15:32,487] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,489] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:15:32,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,489] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:15:32,489] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:15:32,489] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:15:32,502] [INFO] [agent] Creating AI model
+[2025-07-31 18:15:32,502] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:15:32,502] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:15:32,502] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:15:32,502] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:15:32,502] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:15:32,503] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,503] [INFO] [agent] VotingService initialized
+[2025-07-31 18:15:32,503] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,504] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:15:32,504] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,505] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:15:32,505] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:15:32,505] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:15:32,505] [INFO] [agent] Saved 3 new decisions, maintaining history of 10 items
+[2025-07-31 18:15:32,571] [INFO] [agent] Creating AI model
+[2025-07-31 18:15:32,571] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:15:32,571] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:15:32,571] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:15:32,571] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:15:32,571] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:15:32,571] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,571] [INFO] [agent] VotingService initialized
+[2025-07-31 18:15:32,571] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,573] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:15:32,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,573] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:15:32,575] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:15:32,575] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:15:32,588] [INFO] [agent] Creating AI model
+[2025-07-31 18:15:32,588] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:15:32,588] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:15:32,589] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:15:32,589] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:15:32,589] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:15:32,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,589] [INFO] [agent] VotingService initialized
+[2025-07-31 18:15:32,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,591] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:15:32,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,591] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:15:32,591] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:15:32,591] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:15:32,591] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:15:32,605] [INFO] [agent] Creating AI model
+[2025-07-31 18:15:32,605] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:15:32,605] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:15:32,605] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:15:32,605] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:15:32,605] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:15:32,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,605] [INFO] [agent] VotingService initialized
+[2025-07-31 18:15:32,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,607] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:15:32,607] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,607] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,607] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,608] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,608] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:15:32,608] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:15:32,608] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:15:32,609] [WARN] [agent] Skipping invalid vote decision: 2 validation errors for VoteDecision
+proposal_id
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+vote
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+[2025-07-31 18:15:32,621] [INFO] [agent] Creating AI model
+[2025-07-31 18:15:32,621] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:15:32,621] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:15:32,621] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:15:32,622] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:15:32,622] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:15:32,622] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,622] [INFO] [agent] VotingService initialized
+[2025-07-31 18:15:32,622] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,624] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:15:32,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:15:32,624] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:15:32,624] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:15:32,624] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:15:32,624] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:31,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,610] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:31,610] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:31,621] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:31,622] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:31,622] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:31,622] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,622] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:31,623] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,623] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:31,623] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,624] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:31,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,625] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:31,625] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:31,625] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:31,638] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:31,638] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:31,638] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:31,638] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:31,638] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:31,638] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:31,638] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,638] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:31,639] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,640] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:31,640] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,640] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,641] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,641] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,641] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:31,641] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:31,641] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:31,641] [INFO] [agent] Saved 3 new decisions, maintaining history of 10 items
+[2025-07-31 18:16:31,654] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:31,654] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:31,654] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:31,654] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:31,654] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:31,654] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:31,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,654] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:31,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,656] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:31,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,656] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,656] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:31,656] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:31,657] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:16:31,670] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:31,670] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:31,670] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:31,670] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:31,670] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:31,670] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:31,670] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,670] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:31,670] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,672] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:31,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,672] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:31,672] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:31,672] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:31,672] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:16:31,685] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:31,685] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:31,685] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:31,685] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:31,685] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:31,685] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:31,685] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,685] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:31,685] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,687] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:31,687] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,687] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,687] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,687] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,687] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:31,688] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:31,688] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:31,688] [WARN] [agent] Skipping invalid vote decision: 2 validation errors for VoteDecision
+proposal_id
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+vote
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+[2025-07-31 18:16:31,700] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:31,700] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:31,700] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:31,700] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:31,700] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:31,700] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:31,700] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,700] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:31,700] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,702] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:31,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,703] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:31,703] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:31,703] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:31,703] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:16:31,703] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,119] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,262] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,680] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,704] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:47,704] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:47,716] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:47,716] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:47,716] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:47,716] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,716] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:47,717] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,717] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:47,717] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,718] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,718] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,719] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,719] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,719] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:47,719] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,732] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:47,732] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:47,732] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:47,732] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:47,732] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:47,732] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:47,732] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,732] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:47,732] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,734] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,735] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,735] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:47,735] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,735] [INFO] [agent] Saved 3 new decisions, maintaining history of 10 items
+[2025-07-31 18:16:47,748] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:47,748] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:47,748] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:47,748] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:47,748] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:47,748] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:47,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,748] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:47,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,750] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,750] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,750] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,750] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,750] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,750] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,751] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,751] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:16:47,763] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:47,763] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:47,763] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:47,763] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:47,763] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:47,763] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:47,764] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,764] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:47,764] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,765] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,766] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,766] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,766] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,766] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:47,766] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,766] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:16:47,778] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:47,778] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:47,778] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:47,778] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:47,779] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:47,779] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:47,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,779] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:47,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,781] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,781] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,781] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:47,781] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,781] [WARN] [agent] Skipping invalid vote decision: 2 validation errors for VoteDecision
+proposal_id
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+vote
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+[2025-07-31 18:16:47,793] [INFO] [agent] Creating AI model
+[2025-07-31 18:16:47,793] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:16:47,793] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:16:47,793] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:16:47,794] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:16:47,794] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:16:47,794] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,794] [INFO] [agent] VotingService initialized
+[2025-07-31 18:16:47,794] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,795] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,796] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,796] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:16:47,796] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:16:47,796] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:16:47,798] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,800] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,800] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,800] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,801] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,801] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,802] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,804] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,804] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,862] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,864] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,864] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,864] [INFO] [agent] Fetching active proposals for space test-space
+[2025-07-31 18:16:47,864] [WARN] [agent] No active proposals found for test-space
+[2025-07-31 18:16:47,890] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,892] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,892] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,892] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,892] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,892] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,892] [INFO] [agent] Fetching active proposals for space test-space
+[2025-07-31 18:16:47,892] [ERROR] [agent] Error fetching proposals: Service error
+[2025-07-31 18:16:47,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,895] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,895] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,895] [INFO] [agent] Fetching active proposals for space test-space
+[2025-07-31 18:16:47,895] [WARN] [agent] No active proposals found for test-space
+[2025-07-31 18:16:47,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,938] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,938] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,938] [INFO] [agent] Making voting decisions for 0 proposals
+[2025-07-31 18:16:47,938] [ERROR] [agent] Error making voting decisions: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:16:47,949] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,951] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,951] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,957] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,957] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,961] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,963] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,963] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,964] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,964] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,977] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,979] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,979] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,979] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,979] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,979] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,979] [INFO] [agent] State transition: idle -> starting
+[2025-07-31 18:16:47,979] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-07-31 18:16:47,979] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-07-31 18:16:47,980] [INFO] [agent] Agent run started (run_id=test-space_1754007407, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-07-31 18:16:47,980] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-07-31 18:16:47,980] [INFO] [agent] Fetching active proposals for space test-space
+[2025-07-31 18:16:47,980] [WARN] [agent] No active proposals found for test-space
+[2025-07-31 18:16:47,980] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-07-31 18:16:47,980] [INFO] [agent] Agent run completed (run_id=test-space_1754007407, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.000, errors=[])
+[2025-07-31 18:16:47,980] [INFO] [agent] State transition: filtering_proposals -> completed
+[2025-07-31 18:16:47,980] [INFO] [agent] State transition: completed -> idle
+[2025-07-31 18:16:47,980] [INFO] [agent] Completed agent_run_execution successfully in 0.001s
+[2025-07-31 18:16:47,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,983] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,983] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,986] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:47,986] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,986] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,986] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:47,986] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:47,986] [INFO] [agent] Fetching active proposals for space 
+[2025-07-31 18:16:47,986] [ERROR] [agent] Error fetching proposals: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:16:48,010] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:48,011] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:16:48,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:48,012] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:48,012] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:16:48,012] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:16:48,012] [INFO] [agent] Fetching active proposals for space test-space
+[2025-07-31 18:16:48,012] [ERROR] [agent] Error fetching proposals: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:18:13,607] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:18:13,755] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:18:14,181] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:18:14,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:18:14,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:22:25,916] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:22:26,111] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:22:26,651] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:23:06,475] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:23:06,665] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:23:07,218] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:06,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:06,641] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:07,172] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:48,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:48,759] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:49,308] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:55,026] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:55,170] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:24:55,595] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:26,666] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:26,854] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:27,437] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:32,778] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:32,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:33,348] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:45,904] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:46,121] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:25:46,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:01,977] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:02,185] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:02,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:02,967] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:02,968] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:02,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:02,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:03,000] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:03,189] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,138] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,939] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,968] [INFO] [agent] Creating AI model
+[2025-07-31 18:26:10,968] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:26:10,981] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:26:10,981] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:26:10,981] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:26:10,982] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,982] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:26:10,982] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,982] [INFO] [agent] VotingService initialized
+[2025-07-31 18:26:10,982] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,985] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:26:10,985] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,985] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,985] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,985] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:10,985] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:26:10,985] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:26:10,985] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:26:10,999] [INFO] [agent] Creating AI model
+[2025-07-31 18:26:10,999] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:26:10,999] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:26:11,000] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:26:11,000] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:26:11,000] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:26:11,000] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,000] [INFO] [agent] VotingService initialized
+[2025-07-31 18:26:11,000] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,002] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:26:11,002] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,002] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,002] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,002] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,002] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:26:11,003] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:26:11,003] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:26:11,003] [INFO] [agent] Saved 3 new decisions, maintaining history of 10 items
+[2025-07-31 18:26:11,017] [INFO] [agent] Creating AI model
+[2025-07-31 18:26:11,017] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:26:11,017] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:26:11,017] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:26:11,017] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:26:11,018] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:26:11,018] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,018] [INFO] [agent] VotingService initialized
+[2025-07-31 18:26:11,018] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,020] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:26:11,020] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,020] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,020] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,020] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,020] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:26:11,020] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:26:11,020] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:26:11,037] [INFO] [agent] Creating AI model
+[2025-07-31 18:26:11,037] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:26:11,037] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:26:11,037] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:26:11,037] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:26:11,038] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:26:11,038] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,038] [INFO] [agent] VotingService initialized
+[2025-07-31 18:26:11,038] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,040] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:26:11,040] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,040] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,040] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,040] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,040] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:26:11,040] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:26:11,040] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:26:11,040] [INFO] [agent] Saved 1 new decisions, maintaining history of 1 items
+[2025-07-31 18:26:11,054] [INFO] [agent] Creating AI model
+[2025-07-31 18:26:11,054] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:26:11,054] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:26:11,054] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:26:11,054] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:26:11,055] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:26:11,055] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,055] [INFO] [agent] VotingService initialized
+[2025-07-31 18:26:11,055] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,057] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:26:11,057] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,057] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,057] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,057] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,057] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:26:11,057] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:26:11,057] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:26:11,058] [WARN] [agent] Skipping invalid vote decision: 2 validation errors for VoteDecision
+proposal_id
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+vote
+  Field required [type=missing, input_value={'invalid': 'data', 'conf... available information'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+[2025-07-31 18:26:11,071] [INFO] [agent] Creating AI model
+[2025-07-31 18:26:11,071] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:26:11,072] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:26:11,072] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:26:11,072] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:26:11,072] [INFO] [agent] KeyManager initialized
+[2025-07-31 18:26:11,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,072] [INFO] [agent] VotingService initialized
+[2025-07-31 18:26:11,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,074] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-07-31 18:26:11,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,075] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,075] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:26:11,075] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-07-31 18:26:11,075] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
+[2025-07-31 18:26:11,075] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
+[2025-07-31 18:26:11,075] [INFO] [agent] State tracker initialized with StateManager persistence
