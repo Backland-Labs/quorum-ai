@@ -8630,3 +8630,194 @@ vote
 [2025-07-31 18:26:11,075] [ERROR] [agent] Failed to load state from StateManager: 'current_state'
 [2025-07-31 18:26:11,075] [ERROR] [agent] Failed to persist state to StateManager: object MagicMock can't be used in 'await' expression
 [2025-07-31 18:26:11,075] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-07-31 18:30:14,103] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:30:14,321] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:30:14,896] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:30:14,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:30:14,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:06,393] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:06,533] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:06,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:06,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:06,957] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:06,971] [INFO] [agent] Creating AI model
+[2025-07-31 18:31:06,971] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:31:06,983] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:31:06,983] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:31:06,983] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:31:42,134] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:42,273] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:42,691] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:42,693] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:42,693] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:31:42,707] [INFO] [agent] Creating AI model
+[2025-07-31 18:31:42,707] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:31:42,719] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:31:42,719] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:31:42,720] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:39,414] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:39,568] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:40,015] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:40,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:40,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:40,032] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:40,032] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:40,044] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:40,044] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:40,044] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:40,103] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:40,103] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:40,104] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:40,104] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:40,104] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:40,110] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:40,111] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:40,111] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:40,111] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:40,111] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:40,118] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:40,118] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:40,118] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:40,118] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:40,118] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:40,120] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:40,120] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:40,120] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:40,120] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:40,120] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:40,127] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:40,127] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:40,127] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:40,127] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:40,127] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:51,876] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:52,028] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:52,459] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:52,461] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:52,461] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:34:52,475] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:52,475] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:52,487] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:52,487] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:52,488] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:52,542] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:52,542] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:52,542] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:52,542] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:52,542] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:52,543] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:52,543] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:52,543] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:52,543] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:52,543] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:52,546] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:52,546] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:52,546] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:52,546] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:52,546] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:52,546] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:52,546] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:52,546] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:52,546] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:52,547] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:34:52,547] [INFO] [agent] Creating AI model
+[2025-07-31 18:34:52,547] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:34:52,547] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:34:52,547] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:34:52,547] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:31,476] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:31,616] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:32,051] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:32,053] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:32,053] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:32,067] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:32,067] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:32,079] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:32,079] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:32,080] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:42,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:43,009] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:43,436] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:43,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:43,439] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:35:43,452] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:43,453] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:43,464] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:43,464] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:43,465] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:43,466] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:43,466] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:43,466] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:43,466] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:43,466] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:43,467] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:43,467] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:43,467] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:43,467] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:43,467] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:43,467] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:43,467] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:43,467] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:43,467] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:43,468] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:43,468] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:43,468] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:43,468] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:43,468] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:43,468] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:35:43,469] [INFO] [agent] Creating AI model
+[2025-07-31 18:35:43,469] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:35:43,469] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:35:43,469] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:35:43,469] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:18,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:18,793] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:19,327] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:47,119] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:47,261] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:47,683] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:47,689] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:47,689] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:47,701] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:47,701] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:47,701] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:47,702] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:47,702] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:47,702] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:47,702] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:47,702] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:54,025] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:54,173] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:54,634] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:54,636] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:54,636] [INFO] [agent] Pearl logger initialized successfully
+[2025-07-31 18:36:54,651] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:54,652] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:54,664] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:54,664] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:54,664] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:54,667] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:54,667] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:54,667] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:54,667] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:54,667] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:54,668] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:54,668] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:54,668] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:54,668] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:54,668] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:54,669] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:54,669] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:54,669] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:54,669] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:54,669] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:54,669] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:54,669] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:54,670] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:54,670] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:54,670] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-07-31 18:36:54,670] [INFO] [agent] Creating AI model
+[2025-07-31 18:36:54,670] [INFO] [agent] Using OpenRouter
+[2025-07-31 18:36:54,670] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-07-31 18:36:54,670] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-07-31 18:36:54,671] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent

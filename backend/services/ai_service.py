@@ -21,6 +21,8 @@ from models import (
     VotingStrategy,
     RiskLevel,
     AiVoteResponse,
+    StrategicBriefing,
+    UserPreferences,
 )
 
 # Constants for AI response parsing
@@ -785,3 +787,279 @@ class AIService:
         ), "Validated response must contain 'key_points' key"
 
         return validated_response
+    
+    async def generate_strategic_briefing(
+        self,
+        proposals: List[Proposal],
+        user_preferences: UserPreferences,
+        voting_history: List[VoteDecision],
+    ) -> StrategicBriefing:
+        """Generate a strategic briefing based on current context.
+        
+        Analyzes user preferences, voting history, and active proposals to
+        create a comprehensive briefing that will guide the AI agent's
+        decision-making process.
+        
+        Args:
+            proposals: List of active proposals to analyze
+            user_preferences: User's voting preferences and strategy
+            voting_history: Recent voting decisions (up to 10)
+            
+        Returns:
+            StrategicBriefing with insights and recommendations
+        """
+        # Runtime assertions
+        assert proposals is not None, "Proposals list cannot be None"
+        assert user_preferences is not None, "User preferences cannot be None"
+        assert voting_history is not None, "Voting history cannot be None"
+        assert isinstance(proposals, list), f"Expected list of proposals, got {type(proposals)}"
+        assert user_preferences.__class__.__name__ == "UserPreferences", f"Expected UserPreferences, got {type(user_preferences)}"
+        assert isinstance(voting_history, list), f"Expected list of VoteDecision, got {type(voting_history)}"
+        
+        # Analyze voting history patterns
+        historical_patterns = self._analyze_voting_patterns(voting_history)
+        
+        # Generate summary based on context
+        summary = self._create_strategic_summary(
+            proposals, user_preferences, historical_patterns
+        )
+        
+        # Extract key insights
+        key_insights = self._extract_key_insights(
+            proposals, user_preferences, voting_history, historical_patterns
+        )
+        
+        # Generate recommendations
+        recommendations = self._generate_recommendations(
+            proposals, user_preferences, historical_patterns
+        )
+        
+        return StrategicBriefing(
+            summary=summary,
+            key_insights=key_insights,
+            historical_patterns=historical_patterns,
+            recommendations=recommendations,
+        )
+    
+    def _analyze_voting_patterns(self, voting_history: List[VoteDecision]) -> Dict[str, Any]:
+        """Analyze voting history to identify patterns."""
+        if not voting_history:
+            return {
+                "total_votes": 0,
+                "for_votes": 0,
+                "against_votes": 0,
+                "abstain_votes": 0,
+                "average_confidence": 0.0,
+                "risk_distribution": {"LOW": 0, "MEDIUM": 0, "HIGH": 0},
+                "voting_pattern": "No history available",
+            }
+        
+        # Count vote types
+        vote_counts = {"FOR": 0, "AGAINST": 0, "ABSTAIN": 0}
+        risk_counts = {"LOW": 0, "MEDIUM": 0, "HIGH": 0}
+        total_confidence = 0.0
+        
+        for decision in voting_history:
+            vote_counts[decision.vote.value] += 1
+            risk_counts[decision.risk_assessment.value] += 1
+            total_confidence += decision.confidence
+        
+        # Analyze patterns
+        total_votes = len(voting_history)
+        patterns = {
+            "total_votes": total_votes,
+            "for_votes": vote_counts["FOR"],
+            "against_votes": vote_counts["AGAINST"],
+            "abstain_votes": vote_counts["ABSTAIN"],
+            "average_confidence": round(total_confidence / total_votes, 3) if total_votes > 0 else 0.0,
+            "risk_distribution": risk_counts,
+        }
+        
+        # Determine voting pattern
+        if vote_counts["FOR"] > vote_counts["AGAINST"] * 2:
+            patterns["voting_pattern"] = "Generally supportive"
+        elif vote_counts["AGAINST"] > vote_counts["FOR"] * 2:
+            patterns["voting_pattern"] = "Generally cautious"
+        else:
+            patterns["voting_pattern"] = "Balanced approach"
+        
+        # Check for treasury-related patterns
+        treasury_votes = [d for d in voting_history if "treasury" in d.reasoning.lower()]
+        if treasury_votes:
+            treasury_against = sum(1 for d in treasury_votes if d.vote == VoteType.AGAINST)
+            patterns["treasury_stance"] = "cautious" if treasury_against > len(treasury_votes) / 2 else "supportive"
+        
+        return patterns
+    
+    def _create_strategic_summary(
+        self,
+        proposals: List[Proposal],
+        user_preferences: UserPreferences,
+        historical_patterns: Dict[str, Any],
+    ) -> str:
+        """Create a comprehensive strategic summary."""
+        proposal_count = len(proposals)
+        strategy = user_preferences.voting_strategy.value
+        
+        # Base summary components
+        summary_parts = [
+            f"Strategic briefing for {proposal_count} active proposal{'s' if proposal_count != 1 else ''}",
+            f"using {strategy} voting strategy.",
+        ]
+        
+        # Add preference details
+        summary_parts.append(
+            f"Confidence threshold: {user_preferences.confidence_threshold}"
+        )
+        
+        # Add historical context
+        if historical_patterns["total_votes"] > 0:
+            summary_parts.append(
+                f"Recent voting history shows {historical_patterns['voting_pattern'].lower()} "
+                f"with {historical_patterns['total_votes']} votes cast."
+            )
+        else:
+            summary_parts.append("No voting history available - new agent deployment.")
+        
+        return " ".join(summary_parts)
+    
+    def _extract_key_insights(
+        self,
+        proposals: List[Proposal],
+        user_preferences: UserPreferences,
+        voting_history: List[VoteDecision],
+        historical_patterns: Dict[str, Any],
+    ) -> List[str]:
+        """Extract key insights from current context."""
+        insights = []
+        
+        # Insight about voting history
+        if historical_patterns["total_votes"] > 0:
+            avg_confidence = historical_patterns["average_confidence"]
+            if avg_confidence > 0.8:
+                insights.append("Recent votes show high confidence in decisions")
+            elif avg_confidence < 0.6:
+                insights.append("Recent votes show lower confidence, suggesting complex proposals")
+            
+            # Risk pattern insight
+            risk_dist = historical_patterns["risk_distribution"]
+            if risk_dist["HIGH"] > risk_dist["LOW"] + risk_dist["MEDIUM"]:
+                insights.append("Recent proposals have been high-risk")
+            elif risk_dist["LOW"] > risk_dist["MEDIUM"] + risk_dist["HIGH"]:
+                insights.append("Recent proposals have been low-risk")
+        else:
+            insights.append("No historical voting data to analyze patterns")
+        
+        # Insights about current proposals
+        if user_preferences.blacklisted_proposers:
+            blacklisted_proposals = [
+                p for p in proposals if p.author in user_preferences.blacklisted_proposers
+            ]
+            if blacklisted_proposals:
+                insights.append(
+                    f"{len(blacklisted_proposals)} proposal(s) from blacklisted authors detected"
+                )
+        
+        if user_preferences.whitelisted_proposers:
+            whitelisted_proposals = [
+                p for p in proposals if p.author in user_preferences.whitelisted_proposers
+            ]
+            if whitelisted_proposals:
+                insights.append(
+                    f"{len(whitelisted_proposals)} proposal(s) from whitelisted authors available"
+                )
+        
+        # Treasury pattern insight
+        if "treasury_stance" in historical_patterns:
+            insights.append(
+                f"Historical treasury proposal stance: {historical_patterns['treasury_stance']}"
+            )
+        
+        # Strategy-specific insights
+        if user_preferences.voting_strategy == VotingStrategy.CONSERVATIVE:
+            insights.append("Conservative strategy prioritizes risk mitigation")
+        elif user_preferences.voting_strategy == VotingStrategy.AGGRESSIVE:
+            insights.append("Aggressive strategy favors growth opportunities")
+        else:
+            insights.append("Balanced strategy seeks optimal risk-reward ratio")
+        
+        return insights
+    
+    def _generate_recommendations(
+        self,
+        proposals: List[Proposal],
+        user_preferences: UserPreferences,
+        historical_patterns: Dict[str, Any],
+    ) -> List[str]:
+        """Generate strategic recommendations based on analysis."""
+        recommendations = []
+        
+        # Recommendation based on voting strategy
+        if user_preferences.voting_strategy == VotingStrategy.CONSERVATIVE:
+            recommendations.append("Maintain conservative stance on treasury proposals")
+            recommendations.append("Prioritize proposals with proven track records")
+        elif user_preferences.voting_strategy == VotingStrategy.AGGRESSIVE:
+            recommendations.append("Consider innovative proposals for growth potential")
+            recommendations.append("Accept higher risk for potential rewards")
+        else:
+            recommendations.append("Evaluate each proposal on merit and alignment")
+            recommendations.append("Balance risk and reward in voting decisions")
+        
+        # Recommendations based on preferences
+        if user_preferences.whitelisted_proposers:
+            recommendations.append("Prioritize proposals from whitelisted authors")
+        
+        if user_preferences.blacklisted_proposers:
+            recommendations.append("Avoid proposals from blacklisted authors")
+        
+        # Recommendations based on history
+        if historical_patterns["total_votes"] > 0:
+            if historical_patterns["average_confidence"] < 0.7:
+                recommendations.append(
+                    "Consider more thorough analysis for complex proposals"
+                )
+            
+            if "treasury_stance" in historical_patterns and historical_patterns["treasury_stance"] == "cautious":
+                recommendations.append("Continue cautious approach to treasury requests")
+        
+        # Confidence threshold recommendation
+        recommendations.append(
+            f"Only vote on proposals with confidence above {user_preferences.confidence_threshold}"
+        )
+        
+        return recommendations
+    
+    def _get_strategic_system_prompt(
+        self, briefing: StrategicBriefing, strategy: VotingStrategy
+    ) -> str:
+        """Get enhanced system prompt including strategic briefing.
+        
+        Creates a comprehensive system prompt that includes the base agent
+        instructions, strategy-specific guidance, and the strategic briefing
+        context for improved decision-making.
+        """
+        # Get base system prompt
+        base_prompt = self._get_system_prompt()
+        
+        # Get strategy-specific prompt
+        strategy_prompt = self._get_strategy_prompt(strategy)
+        
+        # Format briefing content
+        briefing_content = f"""
+STRATEGIC BRIEFING:
+{briefing.summary}
+
+KEY INSIGHTS:
+{chr(10).join(f"- {insight}" for insight in briefing.key_insights)}
+
+RECOMMENDATIONS:
+{chr(10).join(f"- {rec}" for rec in briefing.recommendations)}
+
+HISTORICAL PATTERNS:
+- Total votes analyzed: {briefing.historical_patterns.get('total_votes', 0)}
+- Average confidence: {briefing.historical_patterns.get('average_confidence', 0):.2f}
+- Voting pattern: {briefing.historical_patterns.get('voting_pattern', 'No pattern available')}
+"""
+        
+        # Combine all prompts
+        return f"{base_prompt}\n\n{strategy_prompt}\n\n{briefing_content}"

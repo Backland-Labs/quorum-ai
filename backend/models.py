@@ -1063,3 +1063,82 @@ class AgentRunStatistics(BaseModel):
     average_runtime_seconds: float = Field(
         ..., ge=0.0, description="Average runtime per run in seconds"
     )
+
+
+class StrategicBriefing(BaseModel):
+    """Strategic briefing for agent decision making.
+    
+    Provides contextual information including user preferences, voting history
+    analysis, and strategic recommendations to enhance AI decision-making.
+    """
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    summary: str = Field(
+        ..., description="Comprehensive summary of the strategic context"
+    )
+    key_insights: List[str] = Field(
+        ..., description="List of key insights from analysis"
+    )
+    historical_patterns: Dict[str, Any] = Field(
+        ..., description="Analyzed patterns from voting history"
+    )
+    recommendations: List[str] = Field(
+        ..., description="Strategic recommendations for voting decisions"
+    )
+
+    @field_validator("summary")
+    @classmethod
+    def validate_summary(cls, v: str) -> str:
+        """Validate summary is meaningful text."""
+        return ModelValidationHelper.validate_meaningful_text(
+            v, min_length=20, field_name="summary"
+        )
+
+    @field_validator("key_insights")
+    @classmethod
+    def validate_key_insights(cls, v: List[str]) -> List[str]:
+        """Validate key insights list."""
+        if not isinstance(v, list):
+            raise ValueError("Key insights must be a list")
+        if len(v) == 0:
+            raise ValueError("Key insights cannot be empty")
+        
+        validated_insights = []
+        for i, insight in enumerate(v):
+            if not isinstance(insight, str):
+                raise ValueError(
+                    f"Key insight at index {i} must be string, got {type(insight)}"
+                )
+            cleaned = insight.strip()
+            if len(cleaned) < MIN_MEANINGFUL_TEXT_LENGTH:
+                raise ValueError(
+                    f"Key insight at index {i} must be at least {MIN_MEANINGFUL_TEXT_LENGTH} characters"
+                )
+            validated_insights.append(cleaned)
+        
+        return validated_insights
+
+    @field_validator("recommendations")
+    @classmethod
+    def validate_recommendations(cls, v: List[str]) -> List[str]:
+        """Validate recommendations list."""
+        if not isinstance(v, list):
+            raise ValueError("Recommendations must be a list")
+        if len(v) == 0:
+            raise ValueError("Recommendations cannot be empty")
+        
+        validated_recommendations = []
+        for i, recommendation in enumerate(v):
+            if not isinstance(recommendation, str):
+                raise ValueError(
+                    f"Recommendation at index {i} must be string, got {type(recommendation)}"
+                )
+            cleaned = recommendation.strip()
+            if len(cleaned) < MIN_MEANINGFUL_TEXT_LENGTH:
+                raise ValueError(
+                    f"Recommendation at index {i} must be at least {MIN_MEANINGFUL_TEXT_LENGTH} characters"
+                )
+            validated_recommendations.append(cleaned)
+        
+        return validated_recommendations
