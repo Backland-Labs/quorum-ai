@@ -9,14 +9,14 @@ from models import (
     Proposal,
     ProposalSummary,
     # ProposalFilters,  # Model not in models.py
-    ProposalListResponse,
+    # ProposalListResponse,  # Model not in models.py
     SummarizeRequest,
     SummarizeResponse,
     ProposalState,
     VoteType,
     Vote,
-    SortCriteria,
-    SortOrder,
+    # SortCriteria,  # Model not in models.py
+    # SortOrder,  # Model not in models.py
     ProposalVoter,
     ProposalTopVoters,
     VoteDecision,
