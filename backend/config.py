@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     app_name: str = "Quorum AI"
     debug: bool = False
     host: str = "0.0.0.0"
-    port: int = 8000
+    port: int = 8716
 
     # AI settings
     anthropic_api_key: Optional[str] = None

@@ -8,8 +8,9 @@ This application is an AI agent that will run on the Olas Pearl App store. Impor
 
 ### Backend (Python/FastAPI)
 - **Install dependencies**: `uv sync` (or `pip install -e .`)
-- **Run development server**: `uv run main.py`
+- **Run development server**: `uv run main.py` (uses port 8716 by default)
 - **Run production server**: `uv run uvicorn main:app --host 0.0.0.0 --port 8716`
+  - Note: The backend uses port 8716 (configured via HEALTH_CHECK_PORT environment variable)
 - **Run tests**: `uv run pytest`
 - **Run tests with coverage**: `uv run pytest --cov=. --cov-report=html`
 - **Run specific test**: `uv run pytest tests/test_models.py -v`

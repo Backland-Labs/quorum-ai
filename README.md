@@ -111,7 +111,7 @@ The application includes an autonomous voting agent that can analyze proposals a
 
 ```bash
 # Execute agent run via API
-curl -X POST http://localhost:8000/agent-run \
+curl -X POST http://localhost:8716/agent-run \
   -H "Content-Type: application/json" \
   -d '{
     "space_id": "yam.eth",
@@ -201,7 +201,7 @@ quorum-ai/
 |----------|-------------|---------|
 | `DEBUG` | Enable debug mode | `false` |
 | `HOST` | Server host | `0.0.0.0` |
-| `PORT` | Server port | `8000` |
+| `HEALTH_CHECK_PORT` | Server port | `8716` |
 | `LOG_LEVEL` | Pearl-compliant log level (DEBUG, INFO, WARNING, ERROR) | `INFO` |
 | `LOG_FILE_PATH` | Path to Pearl-compliant log file | `log.txt` |
 | `MONITORED_DAOS` | Comma-separated list of DAO spaces to monitor | - |
@@ -354,7 +354,7 @@ Quorum AI is designed specifically for deployment on the Olas Pearl App Store:
 
 ```bash
 docker build -t quorum-ai .
-docker run -p 8000:8000 -p 8716:8716 --env-file .env quorum-ai
+docker run -p 8716:8716 --env-file .env quorum-ai
 ```
 
 ### Docker Compose
@@ -395,7 +395,7 @@ docker-compose down
 The `startup.sh` script provides:
 
 - ✅ **Dependency Checking**: Verifies `uv` and `npm` are installed
-- ✅ **Port Availability**: Checks if ports 8000 and 5173 are free
+- ✅ **Port Availability**: Checks if ports 8716 and 5173 are free
 - ✅ **Graceful Shutdown**: Handles Ctrl+C to stop all services
 - ✅ **Process Monitoring**: Automatically restarts if services crash
 - ✅ **Logging**: Separate log files for backend and frontend
@@ -411,8 +411,8 @@ chmod +x startup.sh
 ./startup.sh
 
 # Services will be available at:
-# Backend API: http://localhost:8000
-# API Docs: http://localhost:8000/docs
+# Backend API: http://localhost:8716
+# API Docs: http://localhost:8716/docs
 # Frontend: http://localhost:5173
 ```
 

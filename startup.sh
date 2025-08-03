@@ -118,18 +118,29 @@ if ! command_exists npm; then
 fi
 
 # Check if ports are available
-if ! port_available 8000; then
-    print_error "Port 8000 is already in use. Please stop the service using this port."
+BACKEND_PORT=${HEALTH_CHECK_PORT:-8716}
+print_status "Checking if backend port $BACKEND_PORT is available..."
+if ! port_available $BACKEND_PORT; then
+    print_error "Port $BACKEND_PORT is already in use. Please stop the service using this port."
+    # Show what's using the port
+    print_warning "Process using port $BACKEND_PORT:"
+    lsof -i :$BACKEND_PORT || true
     exit 1
 fi
+print_success "Backend port $BACKEND_PORT is available"
 
+print_status "Checking if frontend port 5173 is available..."
 if ! port_available 5173; then
     print_error "Port 5173 is already in use. Please stop the service using this port."
+    # Show what's using the port
+    print_warning "Process using port 5173:"
+    lsof -i :5173 || true
     exit 1
 fi
+print_success "Frontend port 5173 is available"
 
 # Start Backend
-print_status "Starting backend server on port 8000..."
+print_status "Starting backend server on port $BACKEND_PORT..."
 cd backend
 if [ ! -f "main.py" ]; then
     print_error "Backend main.py not found. Make sure you're in the correct directory."
@@ -138,20 +149,33 @@ fi
 
 if [ "$BACKGROUND_MODE" = true ]; then
     # Start backend in background
+    print_status "Running: uv run --active main.py"
     uv run --active main.py > ../backend.log 2>&1 &
     BACKEND_PID=$!
     cd ..
 
     # Wait a moment for backend to start
+    print_status "Waiting for backend to start..."
     sleep 3
 
     # Check if backend started successfully
     if ! ps -p $BACKEND_PID > /dev/null; then
         print_error "Backend failed to start. Check backend.log for details."
+        print_warning "Last 20 lines of backend.log:"
+        tail -n 20 backend.log 2>/dev/null || print_error "Could not read backend.log"
         exit 1
     fi
 
-    print_success "Backend started successfully (PID: $BACKEND_PID)"
+    # Check if backend is actually listening on the port
+    if ! lsof -i :$BACKEND_PORT | grep -q LISTEN; then
+        print_error "Backend process is running but not listening on port $BACKEND_PORT"
+        print_warning "Last 20 lines of backend.log:"
+        tail -n 20 backend.log 2>/dev/null || print_error "Could not read backend.log"
+        cleanup
+        exit 1
+    fi
+
+    print_success "Backend started successfully (PID: $BACKEND_PID) on port $BACKEND_PORT"
 else
     # Start backend in foreground for log streaming
     print_status "Starting backend in foreground mode..."
@@ -189,6 +213,8 @@ if [ "$BACKGROUND_MODE" = true ]; then
     # Check if frontend started successfully
     if ! ps -p $FRONTEND_PID > /dev/null; then
         print_error "Frontend failed to start. Check frontend.log for details."
+        print_warning "Last 20 lines of frontend.log:"
+        tail -n 20 frontend.log 2>/dev/null || print_error "Could not read frontend.log"
         cleanup
         exit 1
     fi
@@ -223,8 +249,8 @@ echo ""
 print_success "🚀 Quorum AI services are running!"
 echo ""
 echo -e "${BLUE}Services:${NC}"
-echo -e "  🔧 Backend API:    ${GREEN}http://localhost:8000${NC}"
-echo -e "  📚 API Docs:       ${GREEN}http://localhost:8000/docs${NC}"
+echo -e "  🔧 Backend API:    ${GREEN}http://localhost:${BACKEND_PORT}${NC}"
+echo -e "  📚 API Docs:       ${GREEN}http://localhost:${BACKEND_PORT}/docs${NC}"
 echo -e "  🌐 Frontend App:   ${GREEN}http://localhost:5173${NC}"
 echo ""
 echo -e "${BLUE}Process IDs:${NC}"

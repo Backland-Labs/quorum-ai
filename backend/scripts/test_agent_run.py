@@ -17,14 +17,14 @@ from datetime import datetime
 class AgentRunTester:
     """Test harness for the agent-run endpoint."""
 
-    def __init__(self, api_url: str = "http://localhost:8000"):
+    def __init__(self, api_url: str = "http://localhost:8716"):
         self.api_url = api_url
         self.results = []
 
     def test_health(self) -> bool:
         """Check if the API is running."""
         try:
-            response = requests.get(f"{self.api_url}/health")
+            response = requests.get(f"{self.api_url}/healthcheck")
             return response.status_code == 200
         except:
             return False
@@ -208,7 +208,7 @@ def main():
     # Check if API is running
     print("🔌 Checking API connection...")
     if not tester.test_health():
-        print("❌ Cannot connect to API at http://localhost:8000")
+        print("❌ Cannot connect to API at http://localhost:8716")
         print("   Make sure the backend is running: uv run main.py")
         sys.exit(1)
 
