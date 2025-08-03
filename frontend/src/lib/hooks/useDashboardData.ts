@@ -1,24 +1,20 @@
 import { writable } from 'svelte/store';
 import apiClient from '$lib/api';
-import type { OrganizationWithProposals, Organization, TabType, ProposalDetails } from '$lib/types/dashboard.js';
+import type { TabType } from '$lib/types/dashboard.js';
 import { extractApiErrorMessage, selectDefaultOrganization } from '$lib/utils/api.js';
 import type { components } from '$lib/api/client';
 
 interface DashboardState {
-  organizationsWithProposals: OrganizationWithProposals[];
   loading: boolean;
   error: string | null;
   activeTab: TabType;
-  selectedOrganization: Organization | null;
+  currentSpaceId: string;
   allProposals: components['schemas']['Proposal'][];
   proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
   proposalsLoading: boolean;
   proposalsError: string | null;
-  proposalsCursor: string | null;
   proposalFilters: {
     state?: components['schemas']['ProposalState'];
-    sortBy: components['schemas']['SortCriteria'];
-    sortOrder: components['schemas']['SortOrder'];
   };
 }
 
@@ -28,34 +24,41 @@ interface DashboardState {
  */
 export function createDashboardStore() {
   const initialState: DashboardState = {
-    organizationsWithProposals: [],
     loading: true,
     error: null,
     activeTab: 'overview',
-    selectedOrganization: null,
+    currentSpaceId: 'uniswapgovernance.eth', // Default Snapshot space - can be made configurable
     allProposals: [],
     proposalSummaries: new Map(),
     proposalsLoading: false,
     proposalsError: null,
-    proposalsCursor: null,
-    proposalFilters: {
-      sortBy: 'created_date',
-      sortOrder: 'desc'
-    }
+    proposalFilters: {}
   };
 
   const { subscribe, set, update } = writable(initialState);
 
   /**
-   * Loads organizations from API
+   * Loads proposals from API
    */
-  async function loadOrganizations(): Promise<void> {
+  async function loadProposals(): Promise<void> {
     console.assert(typeof apiClient.GET === 'function', 'API client should have GET method');
 
     try {
       update(state => ({ ...state, loading: true, error: null }));
 
-      const { data, error: apiError } = await apiClient.GET("/organizations");
+      let currentState: DashboardState = initialState;
+      const unsubscribe = subscribe(s => { currentState = s; });
+      unsubscribe();
+
+      const { data, error: apiError } = await apiClient.GET("/proposals", {
+        params: {
+          query: {
+            space_id: currentState.currentSpaceId,
+            state: currentState.proposalFilters.state,
+            limit: 20
+          }
+        }
+      });
 
       if (apiError) {
         const errorMessage = extractApiErrorMessage(apiError);
@@ -64,21 +67,41 @@ export function createDashboardStore() {
       }
 
       if (data) {
-        const organizations = data.organizations;
-        const defaultOrg = selectDefaultOrganization(organizations);
-
         update(state => ({
           ...state,
-          organizationsWithProposals: organizations,
-          selectedOrganization: state.selectedOrganization || defaultOrg,
+          allProposals: data.proposals,
           loading: false
         }));
+
+        // Load summaries for proposals
+        const proposalIds = data.proposals.map(p => p.id);
+        if (proposalIds.length > 0) {
+          const { data: summaryData } = await apiClient.POST("/proposals/summarize", {
+            body: {
+              proposal_ids: proposalIds,
+              include_risk_assessment: true,
+              include_recommendations: true
+            }
+          });
+
+          if (summaryData) {
+            const newSummaries = new Map<string, components['schemas']['ProposalSummary']>();
+            summaryData.summaries.forEach(summary => {
+              newSummaries.set(summary.proposal_id, summary);
+            });
+
+            update(s => ({
+              ...s,
+              proposalSummaries: newSummaries
+            }));
+          }
+        }
       }
     } catch (err) {
-      console.error('Failed to load organizations:', err);
+      console.error('Failed to load proposals:', err);
       update(state => ({
         ...state,
-        error: 'Failed to load organizations',
+        error: 'Failed to load proposals',
         loading: false
       }));
     }
@@ -96,111 +119,22 @@ export function createDashboardStore() {
   }
 
   /**
-   * Changes selected organization
-   * @param organization - New organization
+   * Changes Snapshot space
+   * @param spaceId - New Snapshot space ID
    */
-  function changeOrganization(organization: Organization): void {
-    console.assert(organization !== null, 'Organization should not be null');
-    console.assert(typeof organization === 'object', 'Organization should be an object');
+  function changeSpace(spaceId: string): void {
+    console.assert(spaceId !== null, 'Space ID should not be null');
+    console.assert(typeof spaceId === 'string', 'Space ID should be a string');
 
     update(state => ({
       ...state,
-      selectedOrganization: organization,
-      allProposals: [],
-      proposalsCursor: null
+      currentSpaceId: spaceId,
+      allProposals: []
     }));
 
-    if (organization) {
-      loadProposals(true);
-    }
+    loadProposals();
   }
 
-  /**
-   * Loads all proposals for selected organization
-   * @param refresh - Whether to refresh from first page
-   */
-  async function loadProposals(refresh = false): Promise<void> {
-    let state: DashboardState = initialState;
-
-    const unsubscribe = subscribe(s => { state = s; });
-    unsubscribe();
-
-    if (!state.selectedOrganization) return;
-
-    console.assert(state.selectedOrganization.id, 'Organization should have an ID');
-
-    try {
-      update(s => ({ ...s, proposalsLoading: true, proposalsError: null }));
-
-      const cursor = refresh ? undefined : state.proposalsCursor;
-
-      const { data, error: apiError } = await apiClient.GET(
-        "/organizations/{org_id}/proposals",
-        {
-          params: {
-            path: { org_id: state.selectedOrganization.id },
-            query: {
-              state: state.proposalFilters.state,
-              sort_by: state.proposalFilters.sortBy,
-              sort_order: state.proposalFilters.sortOrder,
-              limit: 20,
-              after_cursor: cursor || undefined
-            }
-          }
-        }
-      );
-
-      if (apiError) {
-        const errorMessage = extractApiErrorMessage(apiError);
-        update(s => ({ ...s, proposalsError: errorMessage, proposalsLoading: false }));
-        return;
-      }
-
-      if (data) {
-        const proposals = refresh ? data.proposals : [...state.allProposals, ...data.proposals];
-
-        const proposalIds = data.proposals
-          .filter(p => !state.proposalSummaries.has(p.id))
-          .map(p => p.id);
-
-        if (proposalIds.length > 0) {
-          const { data: summaryData } = await apiClient.POST("/proposals/summarize", {
-            body: {
-              proposal_ids: proposalIds,
-              include_risk_assessment: true,
-              include_recommendations: true
-            }
-          });
-
-          if (summaryData) {
-            const newSummaries = new Map(state.proposalSummaries);
-            summaryData.summaries.forEach(summary => {
-              newSummaries.set(summary.proposal_id, summary);
-            });
-
-            update(s => ({
-              ...s,
-              proposalSummaries: newSummaries
-            }));
-          }
-        }
-
-        update(s => ({
-          ...s,
-          allProposals: proposals,
-          proposalsCursor: data.next_cursor || null,
-          proposalsLoading: false
-        }));
-      }
-    } catch (err) {
-      console.error('Failed to load proposals:', err);
-      update(s => ({
-        ...s,
-        proposalsError: 'Failed to load proposals',
-        proposalsLoading: false
-      }));
-    }
-  }
 
   /**
    * Updates proposal filters
@@ -212,19 +146,17 @@ export function createDashboardStore() {
     update(state => ({
       ...state,
       proposalFilters: { ...state.proposalFilters, ...filters },
-      allProposals: [],
-      proposalsCursor: null
+      allProposals: []
     }));
 
-    loadProposals(true);
+    loadProposals();
   }
 
   return {
     subscribe,
-    loadOrganizations,
-    changeTab,
-    changeOrganization,
     loadProposals,
+    changeTab,
+    changeSpace,
     updateProposalFilters
   };
 }

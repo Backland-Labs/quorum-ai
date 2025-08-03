@@ -1,49 +1,102 @@
 <script lang="ts">
-  import type { OrganizationWithProposals } from '$lib/types/dashboard.js';
-  import OrganizationStats from './OrganizationStats.svelte';
+  import type { components } from '$lib/api/client';
+  import ProposalStats from './ProposalStats.svelte';
   import RecentProposals from './RecentProposals.svelte';
   import EmptyState from './EmptyState.svelte';
+  import AgentStatusWidget from './AgentStatusWidget.svelte';
+  import AgentDecisionsPanel from './AgentDecisionsPanel.svelte';
+  import AgentStatistics from './AgentStatistics.svelte';
+  import AgentQuickActions from './AgentQuickActions.svelte';
+  import { agentStatusStore } from '$lib/stores/agentStatus';
+  import { onMount, onDestroy } from 'svelte';
 
   interface Props {
-    currentOrgData: OrganizationWithProposals | null;
-    onOrganizationClick: (orgId: string) => void;
+    proposals: components['schemas']['Proposal'][];
+    proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
+    onProposalClick: (proposalId: string) => void;
     onViewAllProposals: () => void;
+    currentSpaceId?: string | null;
   }
 
-  let { currentOrgData, onOrganizationClick, onViewAllProposals }: Props = $props();
+  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals, currentSpaceId = null }: Props = $props();
 
   function validateProps(): void {
-    console.assert(typeof onOrganizationClick === 'function', 'onOrganizationClick must be a function');
+    console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
     console.assert(typeof onViewAllProposals === 'function', 'onViewAllProposals must be a function');
   }
 
-  function hasOrganizationData(): boolean {
-    console.assert(currentOrgData === null || typeof currentOrgData === 'object', 'Organization data should be null or object');
+  function hasProposals(): boolean {
+    console.assert(Array.isArray(proposals), 'Proposals should be an array');
 
-    return currentOrgData !== null;
+    return proposals.length > 0;
   }
 
   validateProps();
+
+  // Update store with current space ID when it changes
+  $effect(() => {
+    if (currentSpaceId) {
+      agentStatusStore.setCurrentSpaceId(currentSpaceId);
+    }
+  });
+
+  // Start polling when component mounts
+  onMount(() => {
+    agentStatusStore.startPolling(30000); // 30 second interval
+  });
+
+  // Stop polling when component unmounts
+  onDestroy(() => {
+    agentStatusStore.stopPolling();
+  });
 </script>
 
 <div id="tab-panel-overview" role="tabpanel" aria-labelledby="tab-overview">
-  {#if hasOrganizationData() && currentOrgData}
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <OrganizationStats
-        organization={currentOrgData.organization}
-        onViewDetails={onOrganizationClick}
-      />
+  <!-- Autonomous Voting Agent Section -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Autonomous Voting Agent</h2>
 
-      <RecentProposals
-        organizationData={currentOrgData}
-        onViewAllProposals={onViewAllProposals}
-      />
+    <!-- Agent Status and Statistics Row -->
+    <div class="grid gap-6 mb-6 lg:grid-cols-2">
+      <AgentStatusWidget />
+      <AgentStatistics />
     </div>
-  {:else}
-    <EmptyState
-      title="No organization selected"
-      description="Choose an organization from the dropdown to view its overview."
-      icon="organization"
-    />
-  {/if}
+
+    <!-- Agent Quick Actions -->
+    <div class="mb-6">
+      <AgentQuickActions />
+    </div>
+
+    <!-- Agent Decisions Panel -->
+    <div class="mb-6">
+      <AgentDecisionsPanel />
+    </div>
+  </div>
+
+  <!-- Proposals Section -->
+  <div>
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Proposals Overview</h2>
+
+    {#if hasProposals()}
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ProposalStats
+          {proposals}
+          onViewDetails={onViewAllProposals}
+        />
+
+        <RecentProposals
+          {proposals}
+          {proposalSummaries}
+          {onProposalClick}
+          {onViewAllProposals}
+        />
+      </div>
+    {:else}
+      <EmptyState
+        title="No proposals found"
+        description="This Snapshot space doesn't have any proposals yet."
+        icon="document"
+      />
+    {/if}
+  </div>
 </div>

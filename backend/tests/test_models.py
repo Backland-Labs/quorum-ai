@@ -6,21 +6,62 @@ from typing import List
 from pydantic import ValidationError
 
 from models import (
-    DAO,
     Proposal,
     ProposalSummary,
-    ProposalFilters,
-    ProposalListResponse,
+    # ProposalFilters,  # Model not in models.py
+    # ProposalListResponse,  # Model not in models.py
     SummarizeRequest,
     SummarizeResponse,
     ProposalState,
     VoteType,
     Vote,
-    SortCriteria,
-    SortOrder,
+    # SortCriteria,  # Model not in models.py
+    # SortOrder,  # Model not in models.py
     ProposalVoter,
     ProposalTopVoters,
+    VoteDecision,
+    RiskLevel,
+    ModelValidationHelper,
+    VotingStrategy,
 )
+
+# Test constants
+TEST_GAS_COSTS = [0.001, 0.005, 0.01, 0.1]
+
+# Test helper functions
+def create_test_data_with_boundary_values(base_data: dict, field_name: str, 
+                                        invalid_low: float, invalid_high: float,
+                                        valid_low: float, valid_high: float) -> None:
+    """Helper function to test boundary validation for numeric fields."""
+    # Test invalid values
+    test_data = base_data.copy()
+    test_data[field_name] = invalid_high
+    with pytest.raises(ValidationError):
+        yield test_data, "high"
+    
+    test_data[field_name] = invalid_low
+    with pytest.raises(ValidationError):
+        yield test_data, "low"
+    
+    # Test valid boundary values
+    test_data[field_name] = valid_low
+    yield test_data, "valid_low"
+    
+    test_data[field_name] = valid_high
+    yield test_data, "valid_high"
+
+def assert_non_negative_field_validation(model_class, base_data: dict, field_name: str) -> None:
+    """Helper function to validate non-negative numeric fields."""
+    # Test negative value
+    test_data = base_data.copy()
+    test_data[field_name] = -1
+    with pytest.raises(ValidationError):
+        model_class(**test_data)
+    
+    # Test valid boundary values
+    test_data[field_name] = 0
+    instance = model_class(**test_data)
+    assert getattr(instance, field_name) == 0
 
 
 class TestProposalState:
@@ -29,22 +70,16 @@ class TestProposalState:
     def test_proposal_state_values_are_valid(self) -> None:
         """Test that all proposal state values are correctly defined."""
         expected_states = {
-            "ACTIVE",
-            "CANCELED",
-            "CROSSCHAINEXECUTED",
-            "DEFEATED",
-            "EXECUTED",
-            "EXPIRED",
-            "PENDING",
-            "QUEUED",
-            "SUCCEEDED",
+            "pending",
+            "active", 
+            "closed",
         }
         actual_states = {state.value for state in ProposalState}
         assert actual_states == expected_states
 
     def test_proposal_state_can_be_created_from_string(self) -> None:
         """Test that ProposalState can be created from string values."""
-        state = ProposalState("ACTIVE")
+        state = ProposalState("active")
         assert state == ProposalState.ACTIVE
 
 
@@ -69,86 +104,67 @@ class TestVote:
     def test_vote_creation_with_all_fields(self) -> None:
         """Test successful Vote creation with all fields."""
         vote = Vote(
-            voter="0x123", support=VoteType.FOR, weight="1000", reason="Good proposal"
+            id="vote-123",
+            voter="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            choice=1,
+            created=1698768000,
+            vp=1000.0,
+            vp_by_strategy=[1000.0],
+            reason="Good proposal"
         )
-        assert vote.voter == "0x123"
-        assert vote.support == VoteType.FOR
-        assert vote.weight == "1000"
+        assert vote.id == "vote-123"
+        assert vote.voter == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        assert vote.choice == 1
+        assert vote.created == 1698768000
+        assert vote.vp == 1000.0
+        assert vote.vp_by_strategy == [1000.0]
         assert vote.reason == "Good proposal"
 
     def test_vote_creation_without_reason(self) -> None:
         """Test Vote creation without optional reason field."""
-        vote = Vote(voter="0x123", support=VoteType.AGAINST, weight="500")
+        vote = Vote(
+            id="vote-456",
+            voter="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            choice=2,
+            created=1698768000,
+            vp=500.0,
+            vp_by_strategy=[500.0]
+        )
         assert vote.reason is None
 
     def test_vote_creation_with_invalid_support_type(self) -> None:
-        """Test that Vote creation fails with invalid support type."""
+        """Test that Vote creation fails with invalid choice type."""
         with pytest.raises(ValidationError):
-            Vote(voter="0x123", support="INVALID", weight="1000")  # type: ignore
-
-
-class TestDAO:
-    """Test cases for DAO model."""
-
-    def _create_valid_dao_data(self) -> dict:
-        """Create valid DAO data for testing."""
-        return {
-            "id": "dao-123",
-            "name": "Test DAO",
-            "slug": "test-dao",
-            "organization_id": "org-456",
-        }
-
-    def test_dao_creation_with_required_fields(self) -> None:
-        """Test DAO creation with only required fields."""
-        dao_data = self._create_valid_dao_data()
-        dao = DAO(**dao_data)
-
-        assert dao.id == "dao-123"
-        assert dao.name == "Test DAO"
-        assert dao.slug == "test-dao"
-        assert dao.organization_id == "org-456"
-        assert dao.description is None
-        assert dao.active_proposals_count == 0
-        assert dao.total_proposals_count == 0
-
-    def test_dao_creation_with_all_fields(self) -> None:
-        """Test DAO creation with all fields."""
-        dao_data = self._create_valid_dao_data()
-        dao_data.update(
-            {
-                "description": "A test DAO",
-                "active_proposals_count": 5,
-                "total_proposals_count": 20,
-            }
-        )
-
-        dao = DAO(**dao_data)
-        assert dao.description == "A test DAO"
-        assert dao.active_proposals_count == 5
-        assert dao.total_proposals_count == 20
-
-    def test_dao_creation_fails_with_missing_required_fields(self) -> None:
-        """Test that DAO creation fails when required fields are missing."""
-        with pytest.raises(ValidationError):
-            DAO(name="Test DAO")  # Missing other required fields
+            Vote(
+                id="vote-invalid",
+                voter="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+                choice=True,  # Boolean is not a valid choice type
+                created=1698768000,
+                vp=500.0,
+                vp_by_strategy=[500.0]
+            )  # type: ignore
 
 
 class TestProposal:
     """Test cases for Proposal model."""
 
     def _create_valid_proposal_data(self) -> dict:
-        """Create valid proposal data for testing."""
+        """Create valid proposal data for testing (Snapshot structure)."""
         return {
             "id": "prop-123",
             "title": "Test Proposal",
-            "description": "A test proposal description",
-            "state": ProposalState.ACTIVE,
-            "created_at": datetime.now(),
-            "start_block": 1000,
-            "end_block": 2000,
-            "dao_id": "dao-123",
-            "dao_name": "Test DAO",
+            "choices": ["For", "Against"],
+            "start": 1698768000,
+            "end": 1699372800,
+            "state": "active",
+            "author": "0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            "network": "1",
+            "symbol": "TEST",
+            "scores": [1000.0, 500.0],
+            "scores_total": 1500.0,
+            "votes": 25,
+            "created": 1698681600,
+            "quorum": 100.0,
         }
 
     def test_proposal_creation_with_required_fields(self) -> None:
@@ -158,31 +174,36 @@ class TestProposal:
 
         assert proposal.id == "prop-123"
         assert proposal.title == "Test Proposal"
-        assert proposal.state == ProposalState.ACTIVE
-        assert proposal.votes_for == "0"
-        assert proposal.votes_against == "0"
-        assert proposal.votes_abstain == "0"
-        assert proposal.url is None
+        assert proposal.state == "active"
+        assert proposal.choices == ["For", "Against"]
+        assert proposal.scores == [1000.0, 500.0]
+        assert proposal.scores_total == 1500.0
+        assert proposal.votes == 25
+        assert proposal.author == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
 
     def test_proposal_creation_with_vote_counts(self) -> None:
         """Test Proposal creation with vote counts."""
         proposal_data = self._create_valid_proposal_data()
-        proposal_data.update(
-            {"votes_for": "1000", "votes_against": "500", "votes_abstain": "100"}
-        )
+        proposal_data.update({
+            "scores": [1000.0, 500.0, 100.0],
+            "choices": ["For", "Against", "Abstain"],
+            "votes": 50,
+            "scores_total": 1600.0
+        })
 
         proposal = Proposal(**proposal_data)
-        assert proposal.votes_for == "1000"
-        assert proposal.votes_against == "500"
-        assert proposal.votes_abstain == "100"
+        assert proposal.scores == [1000.0, 500.0, 100.0]
+        assert proposal.choices == ["For", "Against", "Abstain"]
+        assert proposal.votes == 50
+        assert proposal.scores_total == 1600.0
 
     def test_proposal_creation_with_url(self) -> None:
-        """Test Proposal creation with URL."""
+        """Test Proposal creation with discussion URL."""
         proposal_data = self._create_valid_proposal_data()
-        proposal_data["url"] = "https://tally.xyz/proposal/123"
+        proposal_data["discussion"] = "https://forum.example.com/proposal/123"
 
         proposal = Proposal(**proposal_data)
-        assert proposal.url == "https://tally.xyz/proposal/123"
+        assert proposal.discussion == "https://forum.example.com/proposal/123"
 
 
 class TestProposalSummary:
@@ -343,13 +364,18 @@ class TestProposalListResponse:
             Proposal(
                 id="prop-1",
                 title="Test 1",
-                description="Desc 1",
-                state=ProposalState.ACTIVE,
-                created_at=datetime.now(),
-                start_block=1000,
-                end_block=2000,
-                dao_id="dao-1",
-                dao_name="DAO 1",
+                choices=["For", "Against"],
+                start=1698768000,
+                end=1699372800,
+                state="active",
+                author="0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+                network="1",
+                symbol="TEST",
+                scores=[100.0, 50.0],
+                scores_total=150.0,
+                votes=10,
+                created=1698681600,
+                quorum=50.0,
             )
         ]
 
@@ -385,129 +411,6 @@ class TestSummarizeResponse:
         assert response.model_used == "gpt-4o-mini"
 
 
-class TestOrganizationOverviewResponse:
-    """Test cases for OrganizationOverviewResponse model."""
-
-    def _create_valid_overview_data(self) -> dict:
-        """Create valid organization overview data for testing."""
-        return {
-            "organization_id": "org-123",
-            "organization_name": "Test DAO",
-            "organization_slug": "test-dao",
-            "description": "A test DAO organization",
-            "delegate_count": 150,
-            "token_holder_count": 1000,
-            "total_proposals_count": 50,
-            "proposal_counts_by_status": {
-                "ACTIVE": 5,
-                "SUCCEEDED": 25,
-                "DEFEATED": 10,
-                "PENDING": 3,
-                "EXECUTED": 7,
-            },
-            "recent_activity_count": 15,
-            "governance_participation_rate": 0.75,
-        }
-
-    def test_organization_overview_response_creation_with_all_fields(self) -> None:
-        """Test OrganizationOverviewResponse creation with all fields."""
-        from models import OrganizationOverviewResponse
-
-        overview_data = self._create_valid_overview_data()
-        response = OrganizationOverviewResponse(**overview_data)
-
-        assert response.organization_id == "org-123"
-        assert response.organization_name == "Test DAO"
-        assert response.organization_slug == "test-dao"
-        assert response.description == "A test DAO organization"
-        assert response.delegate_count == 150
-        assert response.token_holder_count == 1000
-        assert response.total_proposals_count == 50
-        assert response.proposal_counts_by_status["ACTIVE"] == 5
-        assert response.recent_activity_count == 15
-        assert response.governance_participation_rate == 0.75
-
-    def test_organization_overview_response_creation_with_required_fields_only(
-        self,
-    ) -> None:
-        """Test OrganizationOverviewResponse creation with only required fields."""
-        from models import OrganizationOverviewResponse
-
-        minimal_data = {
-            "organization_id": "org-123",
-            "organization_name": "Test DAO",
-            "organization_slug": "test-dao",
-            "delegate_count": 150,
-            "token_holder_count": 1000,
-            "total_proposals_count": 50,
-            "proposal_counts_by_status": {},
-            "recent_activity_count": 15,
-            "governance_participation_rate": 0.75,
-        }
-
-        response = OrganizationOverviewResponse(**minimal_data)
-        assert response.organization_id == "org-123"
-        assert response.description is None
-        assert response.proposal_counts_by_status == {}
-
-    def test_organization_overview_response_participation_rate_validation(self) -> None:
-        """Test that governance_participation_rate is validated to be between 0 and 1."""
-        from models import OrganizationOverviewResponse
-
-        overview_data = self._create_valid_overview_data()
-
-        # Test invalid participation rate > 1
-        overview_data["governance_participation_rate"] = 1.5
-        with pytest.raises(ValidationError):
-            OrganizationOverviewResponse(**overview_data)
-
-        # Test invalid participation rate < 0
-        overview_data["governance_participation_rate"] = -0.1
-        with pytest.raises(ValidationError):
-            OrganizationOverviewResponse(**overview_data)
-
-        # Test valid boundary values
-        overview_data["governance_participation_rate"] = 0.0
-        response = OrganizationOverviewResponse(**overview_data)
-        assert response.governance_participation_rate == 0.0
-
-        overview_data["governance_participation_rate"] = 1.0
-        response = OrganizationOverviewResponse(**overview_data)
-        assert response.governance_participation_rate == 1.0
-
-    def test_organization_overview_response_negative_counts_validation(self) -> None:
-        """Test that count fields are validated to be non-negative."""
-        from models import OrganizationOverviewResponse
-
-        overview_data = self._create_valid_overview_data()
-
-        # Test negative delegate_count
-        overview_data["delegate_count"] = -1
-        with pytest.raises(ValidationError):
-            OrganizationOverviewResponse(**overview_data)
-
-        overview_data = self._create_valid_overview_data()
-        # Test negative token_holder_count
-        overview_data["token_holder_count"] = -5
-        with pytest.raises(ValidationError):
-            OrganizationOverviewResponse(**overview_data)
-
-        overview_data = self._create_valid_overview_data()
-        # Test negative total_proposals_count
-        overview_data["total_proposals_count"] = -10
-        with pytest.raises(ValidationError):
-            OrganizationOverviewResponse(**overview_data)
-
-    def test_organization_overview_response_creation_fails_with_missing_required_fields(
-        self,
-    ) -> None:
-        """Test that OrganizationOverviewResponse creation fails when required fields are missing."""
-        from models import OrganizationOverviewResponse
-
-        with pytest.raises(ValidationError):
-            OrganizationOverviewResponse(organization_name="Test DAO")
-
-
 class TestProposalVoter:
     """Test cases for ProposalVoter model."""
 
@@ -526,7 +429,7 @@ class TestProposalVoter:
     def test_proposal_voter_creation_with_against_vote(self) -> None:
         """Test ProposalVoter creation with AGAINST vote."""
         voter = ProposalVoter(
-            address="0x123abc", amount="500000000000000000", vote_type=VoteType.AGAINST
+            address="0x123abc456def789012345678901234567890abcd", amount="500000000000000000", vote_type=VoteType.AGAINST
         )
 
         assert voter.vote_type == VoteType.AGAINST
@@ -534,7 +437,7 @@ class TestProposalVoter:
     def test_proposal_voter_creation_with_abstain_vote(self) -> None:
         """Test ProposalVoter creation with ABSTAIN vote."""
         voter = ProposalVoter(
-            address="0xdef456", amount="250000000000000000", vote_type=VoteType.ABSTAIN
+            address="0xdef456789abc012345678901234567890abcdef", amount="250000000000000000", vote_type=VoteType.ABSTAIN
         )
 
         assert voter.vote_type == VoteType.ABSTAIN
@@ -543,7 +446,7 @@ class TestProposalVoter:
         """Test ProposalVoter creation fails with invalid vote type."""
         with pytest.raises(ValidationError):
             ProposalVoter(
-                address="0x123abc",
+                address="0x123abc456def789012345678901234567890abcd",
                 amount="1000000000000000000",
                 vote_type="INVALID",  # type: ignore
             )
@@ -551,7 +454,7 @@ class TestProposalVoter:
     def test_proposal_voter_creation_with_missing_fields_fails(self) -> None:
         """Test ProposalVoter creation fails when required fields are missing."""
         with pytest.raises(ValidationError):
-            ProposalVoter(address="0x123abc")  # type: ignore
+            ProposalVoter(address="0x123abc456def789012345678901234567890abcd")  # type: ignore
 
 
 class TestProposalTopVoters:
@@ -566,7 +469,7 @@ class TestProposalTopVoters:
                 vote_type=VoteType.FOR,
             ),
             ProposalVoter(
-                address="0x123abc456def789",
+                address="0x123abc456def789012345678901234567890abcd",
                 amount="500000000000000000",
                 vote_type=VoteType.AGAINST,
             ),
@@ -638,3 +541,340 @@ class TestProposalTopVoters:
 
         assert len(top_voters.voters) == 1
         assert top_voters.voters[0] == voter
+
+
+class TestVoteDecision:
+    """Test cases for VoteDecision model."""
+
+    def _create_valid_vote_decision_data(self) -> dict:
+        """Create valid vote decision data for testing."""
+        return {
+            "proposal_id": "prop-123",
+            "vote": VoteType.FOR,
+            "confidence": 0.85,
+            "reasoning": "The proposal aligns with our governance strategy",
+            "strategy_used": VotingStrategy.BALANCED,
+        }
+
+    def test_vote_decision_creation_with_required_fields(self) -> None:
+        """Test VoteDecision creation with required fields."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision = VoteDecision(**decision_data)
+
+        assert decision.proposal_id == "prop-123"
+        assert decision.vote == VoteType.FOR
+        assert decision.confidence == 0.85
+        assert decision.reasoning == "The proposal aligns with our governance strategy"
+        assert decision.risk_assessment == RiskLevel.MEDIUM  # default value
+        assert decision.estimated_gas_cost == 0.005  # default value
+
+    def test_vote_decision_creation_with_all_fields(self) -> None:
+        """Test VoteDecision creation with all fields."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data.update({
+            "risk_assessment": RiskLevel.HIGH,
+            "estimated_gas_cost": 0.012,
+        })
+
+        decision = VoteDecision(**decision_data)
+        assert decision.risk_assessment == RiskLevel.HIGH
+        assert decision.estimated_gas_cost == 0.012
+
+    def test_vote_decision_with_against_vote(self) -> None:
+        """Test VoteDecision creation with AGAINST vote."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["vote"] = VoteType.AGAINST
+        decision_data["reasoning"] = "The proposal has significant risks"
+
+        decision = VoteDecision(**decision_data)
+        assert decision.vote == VoteType.AGAINST
+        assert decision.reasoning == "The proposal has significant risks"
+
+    def test_vote_decision_with_abstain_vote(self) -> None:
+        """Test VoteDecision creation with ABSTAIN vote."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["vote"] = VoteType.ABSTAIN
+        decision_data["reasoning"] = "Insufficient information to make a decision"
+
+        decision = VoteDecision(**decision_data)
+        assert decision.vote == VoteType.ABSTAIN
+
+    def test_vote_decision_confidence_validation(self) -> None:
+        """Test that confidence is validated to be between 0 and 1."""
+        decision_data = self._create_valid_vote_decision_data()
+
+        # Test invalid confidence > 1
+        decision_data["confidence"] = 1.5
+        with pytest.raises(ValidationError):
+            VoteDecision(**decision_data)
+
+        # Test invalid confidence < 0
+        decision_data["confidence"] = -0.1
+        with pytest.raises(ValidationError):
+            VoteDecision(**decision_data)
+
+        # Test valid boundary values
+        decision_data["confidence"] = 0.0
+        decision = VoteDecision(**decision_data)
+        assert decision.confidence == 0.0
+
+        decision_data["confidence"] = 1.0
+        decision = VoteDecision(**decision_data)
+        assert decision.confidence == 1.0
+
+    def test_vote_decision_confidence_rounding(self) -> None:
+        """Test that confidence is rounded to 3 decimal places."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["confidence"] = 0.123456789
+
+        decision = VoteDecision(**decision_data)
+        assert decision.confidence == 0.123
+
+    def test_vote_decision_creation_with_invalid_vote_type_fails(self) -> None:
+        """Test VoteDecision creation fails with invalid vote type."""
+        decision_data = self._create_valid_vote_decision_data()
+        decision_data["vote"] = "INVALID"
+
+        with pytest.raises(ValidationError):
+            VoteDecision(**decision_data)
+
+    def test_vote_decision_creation_fails_with_missing_required_fields(self) -> None:
+        """Test that VoteDecision creation fails when required fields are missing."""
+        with pytest.raises(ValidationError):
+            VoteDecision(proposal_id="prop-123")  # Missing other required fields
+
+    def test_vote_decision_with_different_risk_assessments(self) -> None:
+        """Test VoteDecision with different risk assessment values."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        for risk_level in [RiskLevel.LOW, RiskLevel.MEDIUM, RiskLevel.HIGH]:
+            decision_data["risk_assessment"] = risk_level
+            decision = VoteDecision(**decision_data)
+            assert decision.risk_assessment == risk_level
+
+    def test_vote_decision_with_various_gas_costs(self) -> None:
+        """Test VoteDecision with various gas cost values."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test different gas costs
+        for gas_cost in TEST_GAS_COSTS:
+            decision_data["estimated_gas_cost"] = gas_cost
+            decision = VoteDecision(**decision_data)
+            assert decision.estimated_gas_cost == gas_cost
+
+    def test_vote_decision_proposal_id_validation_with_assertions(self) -> None:
+        """Test VoteDecision proposal_id validation with runtime assertions."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test empty proposal_id
+        decision_data["proposal_id"] = ""
+        with pytest.raises(ValidationError, match="Proposal ID cannot be empty"):
+            VoteDecision(**decision_data)
+        
+        # Test whitespace-only proposal_id
+        decision_data["proposal_id"] = "   "
+        with pytest.raises(ValidationError, match="Proposal ID cannot be empty"):
+            VoteDecision(**decision_data)
+        
+        # Test too short proposal_id
+        decision_data["proposal_id"] = "ab"
+        with pytest.raises(ValidationError, match="Proposal ID too short"):
+            VoteDecision(**decision_data)
+
+    def test_vote_decision_reasoning_validation_with_assertions(self) -> None:
+        """Test VoteDecision reasoning validation with runtime assertions."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test empty reasoning
+        decision_data["reasoning"] = ""
+        with pytest.raises(ValidationError, match="reasoning cannot be empty"):
+            VoteDecision(**decision_data)
+        
+        # Test too short reasoning
+        decision_data["reasoning"] = "short"
+        with pytest.raises(ValidationError, match="reasoning too short"):
+            VoteDecision(**decision_data)
+
+    def test_vote_decision_gas_cost_validation_with_assertions(self) -> None:
+        """Test VoteDecision gas cost validation with runtime assertions."""
+        decision_data = self._create_valid_vote_decision_data()
+        
+        # Test negative gas cost
+        decision_data["estimated_gas_cost"] = -0.1
+        with pytest.raises(ValidationError, match="Gas cost cannot be negative"):
+            VoteDecision(**decision_data)
+        
+        # Test unreasonably high gas cost
+        decision_data["estimated_gas_cost"] = 1001.0
+        with pytest.raises(ValidationError, match="Gas cost seems unreasonably high"):
+            VoteDecision(**decision_data)
+
+
+class TestModelValidationHelper:
+    """Test cases for ModelValidationHelper utility class."""
+
+    def test_validate_staking_consistency_with_consistent_data(self) -> None:
+        """Test staking consistency validation with consistent data."""
+        # Test consistent staking state
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=1000.0, rewards_earned=50.0
+        )
+        assert len(warnings) == 0
+
+        # Test consistent non-staking state
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=False, stake_amount=0.0, rewards_earned=0.0
+        )
+        assert len(warnings) == 0
+
+    def test_validate_staking_consistency_with_inconsistent_staking(self) -> None:
+        """Test staking consistency validation with inconsistent staking state."""
+        # Test inconsistent state: marked as staked but no stake amount
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=0.0, rewards_earned=0.0
+        )
+        assert len(warnings) == 1
+        assert "marked as staked but has zero" in warnings[0]
+
+    def test_validate_staking_consistency_with_negative_rewards(self) -> None:
+        """Test staking consistency validation with negative rewards."""
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=False, stake_amount=0.0, rewards_earned=-10.0
+        )
+        assert len(warnings) == 1
+        assert "Negative staking rewards" in warnings[0]
+
+    def test_validate_staking_consistency_with_multiple_issues(self) -> None:
+        """Test staking consistency validation with multiple issues."""
+        warnings = ModelValidationHelper.validate_staking_consistency(
+            is_staked=True, stake_amount=0.0, rewards_earned=-5.0
+        )
+        assert len(warnings) == 2
+
+    def test_validate_staking_consistency_type_assertions_still_work(self) -> None:
+        """Test that type assertions still work in staking consistency validation."""
+        # Type errors should still be assertion errors, not warnings
+        with pytest.raises(AssertionError, match="is_staked must be bool"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked="true",  # type: ignore
+                stake_amount=100.0,
+                rewards_earned=10.0
+            )
+
+        with pytest.raises(AssertionError, match="stake_amount must be numeric"):
+            ModelValidationHelper.validate_staking_consistency(
+                is_staked=True,
+                stake_amount="100",  # type: ignore
+                rewards_earned=10.0
+            )
+
+    def test_validate_blockchain_address_with_valid_addresses(self) -> None:
+        """Test blockchain address validation with valid addresses."""
+        valid_addresses = [
+            "0x742d35cc6835c0532021efc598c51ddc1d8b4b21",
+            "0x123abc456def789012345678901234567890abcd",
+            "some_long_enough_address_format",
+        ]
+        
+        for address in valid_addresses:
+            result = ModelValidationHelper.validate_blockchain_address(address)
+            assert result == address
+
+    def test_validate_blockchain_address_with_invalid_addresses(self) -> None:
+        """Test blockchain address validation with invalid addresses."""
+        invalid_addresses = [
+            "",  # empty
+            "   ",  # whitespace only
+            "short",  # too short
+        ]
+        
+        for address in invalid_addresses:
+            with pytest.raises(AssertionError):
+                ModelValidationHelper.validate_blockchain_address(address)
+                
+        # Test that addresses with leading/trailing spaces are correctly cleaned
+        leading_space = " 0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        result = ModelValidationHelper.validate_blockchain_address(leading_space)
+        assert result == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+        
+        trailing_space = "0x742d35cc6835c0532021efc598c51ddc1d8b4b21 "
+        result = ModelValidationHelper.validate_blockchain_address(trailing_space)
+        assert result == "0x742d35cc6835c0532021efc598c51ddc1d8b4b21"
+
+    def test_validate_positive_amount_with_valid_amounts(self) -> None:
+        """Test positive amount validation with valid amounts."""
+        valid_amounts = ["0", "1", "100.5", "999999999999999999999"]
+        
+        for amount in valid_amounts:
+            result = ModelValidationHelper.validate_positive_amount(amount)
+            assert result == amount
+
+    def test_validate_positive_amount_with_invalid_amounts(self) -> None:
+        """Test positive amount validation with invalid amounts."""
+        invalid_amounts = [
+            "",  # empty
+            "   ",  # whitespace only
+            "-1",  # negative
+            "abc",  # non-numeric
+            "inf",  # infinite
+        ]
+        
+        for amount in invalid_amounts:
+            with pytest.raises((AssertionError, ValueError)):
+                ModelValidationHelper.validate_positive_amount(amount)
+
+    def test_validate_meaningful_text_with_valid_text(self) -> None:
+        """Test meaningful text validation with valid text."""
+        valid_texts = ["This is meaningful text", "Short but ok"]
+        
+        for text in valid_texts:
+            result = ModelValidationHelper.validate_meaningful_text(text)
+            assert result == text
+
+    def test_validate_meaningful_text_with_invalid_text(self) -> None:
+        """Test meaningful text validation with invalid text."""
+        invalid_texts = [
+            "",  # empty
+            "   ",  # whitespace only
+            "short",  # too short (< 10 chars by default)
+            "1234567890",  # only digits
+            "                    ",  # mostly spaces
+        ]
+        
+        for text in invalid_texts:
+            with pytest.raises(AssertionError):
+                ModelValidationHelper.validate_meaningful_text(text)
+
+    def test_validate_staking_consistency_with_valid_states(self) -> None:
+        """Test staking consistency validation with various valid states."""
+        valid_states = [
+            (True, 100.0, 10.0),  # Staked with positive amounts
+            (False, 0.0, 0.0),    # Not staked with zero amounts
+            (True, 500.0, 0.0),   # Staked but no rewards yet
+        ]
+        
+        for is_staked, stake_amount, rewards_earned in valid_states:
+            warnings = ModelValidationHelper.validate_staking_consistency(
+                is_staked, stake_amount, rewards_earned
+            )
+            assert len(warnings) == 0
+
+    def test_validate_staking_consistency_with_invalid_states(self) -> None:
+        """Test staking consistency validation with various invalid states."""
+        # Test business rule violations that should return warnings
+        business_rule_violations = [
+            (True, 0.0, 10.0),   # Staked but no stake amount
+            (False, 100.0, -5.0), # Not staked with negative rewards
+        ]
+        
+        for is_staked, stake_amount, rewards_earned in business_rule_violations:
+            warnings = ModelValidationHelper.validate_staking_consistency(
+                is_staked, stake_amount, rewards_earned
+            )
+            assert len(warnings) > 0
+            
+        # Test type validation failure (should raise AssertionError)
+        with pytest.raises(AssertionError, match="stake_amount must be numeric"):
+            ModelValidationHelper.validate_staking_consistency(
+                True, "invalid", 5.0  # type: ignore
+            )

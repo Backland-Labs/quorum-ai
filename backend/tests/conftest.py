@@ -1,346 +1,110 @@
 """Pytest configuration and fixtures for the test suite."""
 
+import os
+import sys
+from pathlib import Path
+
+# Add backend directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import pytest
 from datetime import datetime
+from unittest.mock import patch
+from httpx import AsyncClient
 
-from models import (
-    Proposal,
-    ProposalState,
-    DAO,
-)
-from services.ai_service import AIService
-from services.tally_service import TallyService
+# Set test environment variables before imports
+os.environ.setdefault("OPENROUTER_API_KEY", "test-key")
 
 
 @pytest.fixture
-def ai_service() -> AIService:
+def mock_web3():
+    """Create a mock Web3 instance for testing."""
+    from unittest.mock import MagicMock
+    return MagicMock()
+
+
+@pytest.fixture
+def mock_safe_instance():
+    """Create a mock Safe instance for testing."""
+    from unittest.mock import MagicMock
+    return MagicMock()
+
+
+@pytest.fixture
+async def async_client():
+    """Create an async FastAPI test client."""
+    from httpx import ASGITransport
+    from unittest.mock import Mock, AsyncMock
+    from main import app
+    import main
+    from services.agent_run_service import AgentRunService
+    from services.snapshot_service import SnapshotService
+    
+    # Initialize global services for testing
+    if not hasattr(main, 'agent_run_service') or main.agent_run_service is None:
+        main.agent_run_service = Mock(spec=AgentRunService)
+    if not hasattr(main, 'snapshot_service') or main.snapshot_service is None:
+        main.snapshot_service = Mock(spec=SnapshotService)
+    
+    # Ensure get_recent_decisions is an async mock
+    main.agent_run_service.get_recent_decisions = AsyncMock()
+    # Ensure get_proposal is an async mock  
+    main.snapshot_service.get_proposal = AsyncMock()
+    
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        yield ac
+
+
+@pytest.fixture
+def ai_service():
     """Create an AIService instance for testing."""
+    from services.ai_service import AIService
     return AIService()
 
 
 @pytest.fixture
-def tally_service() -> TallyService:
-    """Create a TallyService instance for testing."""
-    return TallyService()
-
-
-@pytest.fixture
-def sample_proposal() -> Proposal:
+def sample_proposal():
     """Create a sample proposal for testing."""
+    from models import Proposal, ProposalState
+    import time
+    
+    current_time = int(time.time())
     return Proposal(
         id="prop-123",
-        title="Increase Treasury Allocation for Development",
-        description="""
-        This proposal suggests increasing the treasury allocation for development
-        activities from 10% to 15% of total funds. The additional 5% will be used
-        to hire more developers and accelerate the roadmap implementation.
-
-        Key benefits:
-        - Faster development cycles
-        - More robust security audits
-        - Enhanced user experience
-
-        Risks:
-        - Reduced funds for other activities
-        - Potential for scope creep
-        """,
+        title="Sample Proposal",
+        body="This is a test proposal",
+        start=current_time - 3600,  # Started 1 hour ago
+        end=current_time + 3600,    # Ends in 1 hour
         state=ProposalState.ACTIVE,
-        created_at=datetime.now(),
-        start_block=1000,
-        end_block=2000,
-        votes_for="1000000",
-        votes_against="250000",
-        votes_abstain="50000",
-        dao_id="dao-123",
-        dao_name="Test DAO",
+        choices=["For", "Against", "Abstain"],
+        votes=100,
+        author="0x1234567890123456789012345678901234567890",
+        created=current_time - 7200,  # Created 2 hours ago
+        scores_total=100.0,
+        scores=[60.0, 30.0, 10.0]
     )
 
 
 @pytest.fixture
-def complex_proposal() -> Proposal:
-    """Create a complex proposal for testing edge cases."""
+def complex_proposal():
+    """Create a complex proposal for testing."""
+    from models import Proposal, ProposalState
+    import time
+    
+    current_time = int(time.time())
     return Proposal(
         id="prop-456",
-        title="Multi-Phase Protocol Upgrade with Governance Changes",
-        description="""
-        This comprehensive proposal outlines a multi-phase protocol upgrade that includes:
-
-        Phase 1: Smart Contract Upgrades
-        - Upgrade core protocol contracts to v2.0
-        - Implement new fee structure
-        - Add support for cross-chain transactions
-
-        Phase 2: Governance Mechanism Changes
-        - Reduce proposal threshold from 100,000 to 50,000 tokens
-        - Implement quadratic voting for certain proposal types
-        - Add time-locked voting for critical proposals
-
-        Phase 3: Economic Model Adjustments
-        - Modify tokenomics to include staking rewards
-        - Implement burn mechanism for excess tokens
-        - Introduce liquidity mining incentives
-
-        Timeline: 6 months total
-        Budget: 2.5M tokens
-        Team: 15 developers, 3 auditors, 2 project managers
-
-        Technical Requirements:
-        - Solidity 0.8.19+
-        - Multi-signature wallet support
-        - Integration with existing DeFi protocols
-
-        Risk Assessment:
-        - High technical complexity
-        - Potential for smart contract vulnerabilities
-        - Community resistance to governance changes
-        - Market volatility impact on budget
-        """,
+        title="Complex Proposal",
+        body="This is a more complex test proposal with multiple aspects",
+        start=current_time - 3600,
+        end=current_time + 3600,
         state=ProposalState.ACTIVE,
-        created_at=datetime.now(),
-        start_block=2000,
-        end_block=3000,
-        votes_for="5000000",
-        votes_against="1200000",
-        votes_abstain="300000",
-        dao_id="dao-456",
-        dao_name="Complex DAO",
+        choices=["For", "Against", "Abstain"],
+        votes=500,
+        author="0x4567890123456789012345678901234567890123",
+        created=current_time - 7200,
+        scores_total=500.0,
+        scores=[300.0, 150.0, 50.0]
     )
-
-
-@pytest.fixture
-def sample_dao() -> DAO:
-    """Create a sample DAO for testing."""
-    return DAO(
-        id="dao-123",
-        name="Test DAO",
-        slug="test-dao",
-        description="A test DAO for unit testing",
-        organization_id="org-123",
-        active_proposals_count=3,
-        total_proposals_count=10,
-    )
-
-
-@pytest.fixture
-def mock_dao_response() -> dict:
-    """Mock response data for DAO API calls."""
-    return {
-        "data": {
-            "governors": {
-                "nodes": [
-                    {
-                        "id": "dao-1",
-                        "name": "Test DAO 1",
-                        "slug": "test-dao-1",
-                        "metadata": {"description": "A test DAO"},
-                        "organization": {"id": "org-1"},
-                        "proposalStats": {"total": 10, "active": 3},
-                    },
-                    {
-                        "id": "dao-2",
-                        "name": "Test DAO 2",
-                        "slug": "test-dao-2",
-                        "metadata": {"description": None},
-                        "organization": {"id": "org-2"},
-                        "proposalStats": {"total": 5, "active": 1},
-                    },
-                ],
-                "pageInfo": {"lastCursor": None},
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_single_dao_response() -> dict:
-    """Mock response data for single DAO API call."""
-    return {
-        "data": {
-            "governor": {
-                "id": "dao-1",
-                "name": "Test DAO",
-                "slug": "test-dao",
-                "metadata": {"description": "A test DAO"},
-                "organization": {"id": "org-1"},
-                "proposalStats": {"total": 10, "active": 3},
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_proposals_response() -> dict:
-    """Mock response data for proposals API calls."""
-    return {
-        "data": {
-            "proposals": {
-                "nodes": [
-                    {
-                        "id": "prop-1",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-01T00:00:00Z",
-                        "metadata": {
-                            "title": "Test Proposal 1",
-                            "description": "Test description 1",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "1000000"},
-                            {"type": "AGAINST", "votesCount": "250000"},
-                            {"type": "ABSTAIN", "votesCount": "50000"},
-                        ],
-                    },
-                    {
-                        "id": "prop-2",
-                        "status": "SUCCEEDED",
-                        "createdAt": "2024-01-02T00:00:00Z",
-                        "metadata": {
-                            "title": "Test Proposal 2",
-                            "description": "Test description 2",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "2000000"},
-                            {"type": "AGAINST", "votesCount": "100000"},
-                            {"type": "ABSTAIN", "votesCount": "25000"},
-                        ],
-                    },
-                ],
-                "pageInfo": {"lastCursor": None},
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_single_proposal_response() -> dict:
-    """Mock response data for single proposal API call."""
-    return {
-        "data": {
-            "proposal": {
-                "id": "prop-1",
-                "status": "ACTIVE",
-                "createdAt": "2024-01-01T00:00:00Z",
-                "metadata": {
-                    "title": "Test Proposal",
-                    "description": "Test description",
-                },
-                "governor": {"id": "dao-1", "name": "Test DAO"},
-                "voteStats": [
-                    {"type": "FOR", "votesCount": "1000000"},
-                    {"type": "AGAINST", "votesCount": "250000"},
-                    {"type": "ABSTAIN", "votesCount": "50000"},
-                ],
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_proposals_with_vote_counts_response() -> dict:
-    """Mock response for proposals sorted by vote count."""
-    return {
-        "data": {
-            "proposals": {
-                "nodes": [
-                    {
-                        "id": "prop-high-votes",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-01T00:00:00Z",
-                        "metadata": {
-                            "title": "High Vote Proposal",
-                            "description": "This proposal has the most votes",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "5000000"},
-                            {"type": "AGAINST", "votesCount": "500000"},
-                            {"type": "ABSTAIN", "votesCount": "100000"},
-                        ],
-                    },
-                    {
-                        "id": "prop-medium-votes",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-02T00:00:00Z",
-                        "metadata": {
-                            "title": "Medium Vote Proposal",
-                            "description": "This proposal has medium votes",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "2000000"},
-                            {"type": "AGAINST", "votesCount": "300000"},
-                            {"type": "ABSTAIN", "votesCount": "50000"},
-                        ],
-                    },
-                    {
-                        "id": "prop-low-votes",
-                        "status": "ACTIVE",
-                        "createdAt": "2024-01-03T00:00:00Z",
-                        "metadata": {
-                            "title": "Low Vote Proposal",
-                            "description": "This proposal has the least votes",
-                        },
-                        "governor": {"id": "dao-1", "name": "Test DAO"},
-                        "voteStats": [
-                            {"type": "FOR", "votesCount": "100000"},
-                            {"type": "AGAINST", "votesCount": "50000"},
-                            {"type": "ABSTAIN", "votesCount": "10000"},
-                        ],
-                    },
-                ],
-                "pageInfo": {"lastCursor": None},
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_organization_overview_response() -> dict:
-    """Mock response data for organization overview API call."""
-    return {
-        "data": {
-            "organization": {
-                "id": "org-123",
-                "name": "Test DAO",
-                "slug": "test-dao",
-                "metadata": {"description": "A test DAO organization"},
-                "delegatesCount": 150,
-                "tokenOwnersCount": 1000,
-                "proposalsCount": 50,
-                "hasActiveProposals": True,
-                "chainIds": ["1"],
-                "tokenIds": ["token-123"],
-                "governorIds": ["gov-123"],
-                "delegatesVotesCount": "1500000",
-            }
-        }
-    }
-
-
-@pytest.fixture
-def mock_proposal_votes_response() -> dict:
-    """Mock response data for proposal votes API call."""
-    return {
-        "data": {
-            "votes": {
-                "nodes": [
-                    {
-                        "amount": "1000000",
-                        "type": "FOR",
-                        "voter": {"address": "0x123...abc"},
-                    },
-                    {
-                        "amount": "750000",
-                        "type": "FOR",
-                        "voter": {"address": "0x456...def"},
-                    },
-                    {
-                        "amount": "500000",
-                        "type": "AGAINST",
-                        "voter": {"address": "0x789...ghi"},
-                    },
-                ]
-            }
-        }
-    }
