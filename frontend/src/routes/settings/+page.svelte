@@ -3,6 +3,7 @@
   import apiClient from '$lib/api';
   import PreferenceForm from '$lib/components/setup/PreferenceForm.svelte';
   import type { components } from '$lib/api/client';
+  import { hasApiError, getApiErrorStatus } from '$lib/utils/api';
   import { onMount } from 'svelte';
 
   let preferences = $state<components['schemas']['UserPreferences'] | null>(null);
@@ -20,17 +21,17 @@
 
     try {
       const response = await apiClient.GET('/user-preferences');
-      
-      if (response.error) {
-        if (response.error.status === 404) {
+
+      if (hasApiError(response)) {
+        if (getApiErrorStatus(response) === 404) {
           // Redirect new users to setup
           await goto('/setup');
           return;
         }
-        throw new Error(response.error.message || 'Failed to load preferences');
+        throw new Error('Failed to load preferences');
       }
 
-      preferences = response.data;
+      preferences = response.data || null;
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load preferences';
     } finally {
@@ -47,11 +48,11 @@
         body: data
       });
 
-      if (response.error) {
-        throw new Error(response.error.message || 'Failed to save preferences');
+      if (hasApiError(response)) {
+        throw new Error('Failed to save preferences');
       }
 
-      preferences = response.data;
+      preferences = response.data || null;
       successMessage = 'Preferences saved successfully';
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to save preferences';
@@ -86,8 +87,8 @@
         <p class="text-green-800">{successMessage}</p>
       </div>
     {/if}
-    
-    <PreferenceForm 
+
+    <PreferenceForm
       initialValues={preferences}
       onSubmit={handleSave}
     />

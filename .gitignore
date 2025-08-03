@@ -208,3 +208,10 @@ cython_debug/
 .fridayrules
 .cursor/
 .claude/settings.local.json
+
+# Test artifacts
+backend/MagicMock/
+backend/decisions/
+backend/agent_state.json
+backend/shutdown_state.json
+agent_state/

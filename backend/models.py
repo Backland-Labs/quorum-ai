@@ -1,6 +1,6 @@
 """Pydantic models for DAO and proposal data structures."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, List, Optional
@@ -498,6 +498,8 @@ class VoteDecision(BaseModel):
 class AiVoteResponse(BaseModel):
     vote: str = Field(description="Vote decision: FOR, AGAINST, or ABSTAIN")
     reasoning: str = Field(description="Reasoning for the vote decision")
+    confidence: float = Field(description="Confidence level in the decision (0.0 to 1.0)", ge=0.0, le=1.0)
+    risk_level: str = Field(description="Risk assessment: LOW, MEDIUM, or HIGH")
 
 
 class Space(BaseModel):
@@ -1048,9 +1050,7 @@ class AgentRunStatistics(BaseModel):
     total_proposals_evaluated: int = Field(
         ..., ge=0, description="Total number of proposals evaluated"
     )
-    total_votes_cast: int = Field(
-        ..., ge=0, description="Total number of votes cast"
-    )
+    total_votes_cast: int = Field(..., ge=0, description="Total number of votes cast")
     average_confidence_score: float = Field(
         ..., ge=0.0, le=1.0, description="Average confidence score across all votes"
     )
@@ -1063,3 +1063,44 @@ class AgentRunStatistics(BaseModel):
     average_runtime_seconds: float = Field(
         ..., ge=0.0, description="Average runtime per run in seconds"
     )
+
+
+class VotingDecisionFile(BaseModel):
+    """Model for file-based voting decision output."""
+    
+    # Metadata
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    version: str = Field(default="1.0.0")
+    run_id: Optional[str] = None
+    
+    # Proposal identification
+    proposal_id: str = Field(min_length=MIN_PROPOSAL_ID_LENGTH)
+    proposal_title: str
+    space_id: str
+    
+    # Decision data
+    vote: str  # "FOR", "AGAINST", "ABSTAIN"
+    confidence: float = Field(ge=0.0, le=1.0)
+    risk_level: RiskLevel
+    
+    # Reasoning and context
+    reasoning: List[str] = Field(min_items=1)
+    key_factors: List[str] = Field(default_factory=list)
+    voting_strategy: VotingStrategy
+    
+    # Execution metadata
+    dry_run: bool = False
+    executed: bool = False
+    transaction_hash: Optional[str] = None
+    
+    # File integrity
+    checksum: Optional[str] = None
+
+    @field_validator("vote")
+    @classmethod
+    def validate_vote(cls, v: str) -> str:
+        """Validate vote value."""
+        valid_votes = {"FOR", "AGAINST", "ABSTAIN"}
+        if v not in valid_votes:
+            raise ValueError(f"Vote must be one of {valid_votes}")
+        return v

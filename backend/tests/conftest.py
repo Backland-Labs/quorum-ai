@@ -55,3 +55,56 @@ async def async_client():
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         yield ac
+
+
+@pytest.fixture
+def ai_service():
+    """Create an AIService instance for testing."""
+    from services.ai_service import AIService
+    return AIService()
+
+
+@pytest.fixture
+def sample_proposal():
+    """Create a sample proposal for testing."""
+    from models import Proposal, ProposalState
+    import time
+    
+    current_time = int(time.time())
+    return Proposal(
+        id="prop-123",
+        title="Sample Proposal",
+        body="This is a test proposal",
+        start=current_time - 3600,  # Started 1 hour ago
+        end=current_time + 3600,    # Ends in 1 hour
+        state=ProposalState.ACTIVE,
+        choices=["For", "Against", "Abstain"],
+        votes=100,
+        author="0x1234567890123456789012345678901234567890",
+        created=current_time - 7200,  # Created 2 hours ago
+        scores_total=100.0,
+        scores=[60.0, 30.0, 10.0]
+    )
+
+
+@pytest.fixture
+def complex_proposal():
+    """Create a complex proposal for testing."""
+    from models import Proposal, ProposalState
+    import time
+    
+    current_time = int(time.time())
+    return Proposal(
+        id="prop-456",
+        title="Complex Proposal",
+        body="This is a more complex test proposal with multiple aspects",
+        start=current_time - 3600,
+        end=current_time + 3600,
+        state=ProposalState.ACTIVE,
+        choices=["For", "Against", "Abstain"],
+        votes=500,
+        author="0x4567890123456789012345678901234567890123",
+        created=current_time - 7200,
+        scores_total=500.0,
+        scores=[300.0, 150.0, 50.0]
+    )

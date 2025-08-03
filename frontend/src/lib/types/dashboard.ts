@@ -53,6 +53,37 @@ export interface ProposalDetails extends Proposal {
   url?: string;
 }
 
+// Extended Proposal type that includes additional properties used in components
+export interface ExtendedProposal {
+  id: string;
+  title: string;
+  body: string;
+  state: string;
+  author: string;
+  created: number;
+  start: number;
+  end: number;
+  votes: number;
+  scores_total: number;
+  choices?: string[];
+  scores?: number[];
+  snapshot?: string | null;
+  discussion?: string | null;
+  ipfs?: string | null;
+  space_id?: string | null;
+  is_active: boolean;
+  time_remaining?: string | null;
+  vote_choices?: any[];
+  // Additional properties used by components
+  votes_for?: string;
+  votes_against?: string;
+  votes_abstain?: string;
+  end_block?: number;
+  url?: string;
+  dao_name?: string;
+  created_at?: string;
+}
+
 export interface DashboardState {
   activeTab: TabType;
   selectedOrganization: Organization | null;

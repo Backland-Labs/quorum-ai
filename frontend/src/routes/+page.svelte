@@ -9,6 +9,12 @@
   import ActivityTab from "$lib/components/dashboard/ActivityTab.svelte";
   import { createDashboardStore } from "$lib/hooks/useDashboardData.js";
   import type { TabType, Tab } from "$lib/types/dashboard.js";
+  import apiClient from "$lib/api";
+
+  interface Space {
+    id: string;
+    name: string;
+  }
 
   const dashboardStore = createDashboardStore();
   const dashboardState = $state(dashboardStore);
@@ -20,6 +26,20 @@
   ];
 
   let mounted = $state(false);
+  let spaces = $state<Space[]>([]);
+  let spacesLoading = $state(true);
+
+  // Fallback spaces for when API is unavailable
+  const FALLBACK_SPACES: Space[] = [
+    { id: 'uniswapgovernance.eth', name: 'Uniswapgovernance' },
+    { id: 'aave.eth', name: 'Aave' },
+    { id: 'compound-governance.eth', name: 'Compound Governance' },
+    { id: 'ens.eth', name: 'Ens' },
+    { id: 'nounsdao.eth', name: 'Nounsdao' },
+    { id: 'arbitrum-odyssey.eth', name: 'Arbitrum Odyssey' },
+    { id: 'balancer.eth', name: 'Balancer' },
+    { id: 'gitcoindao.eth', name: 'Gitcoindao' }
+  ];
 
   $effect(() => {
     if (!mounted) {
@@ -28,11 +48,35 @@
     }
   });
 
-  function initializeDashboard(): void {
+  async function fetchMonitoredDaos(): Promise<void> {
+    try {
+      spacesLoading = true;
+      const { data, error } = await apiClient.GET("/config/monitored-daos");
+      
+      if (error || !data) {
+        console.error('Failed to fetch monitored DAOs:', error);
+        spaces = FALLBACK_SPACES;
+      } else {
+        // @ts-ignore - The response type is unknown but we know the structure
+        spaces = data.spaces || FALLBACK_SPACES;
+      }
+    } catch (err) {
+      console.error('Error fetching monitored DAOs:', err);
+      spaces = FALLBACK_SPACES;
+    } finally {
+      spacesLoading = false;
+    }
+  }
+
+  async function initializeDashboard(): Promise<void> {
     console.assert(typeof dashboardStore.loadProposals === 'function', 'Dashboard store should have loadProposals method');
     console.assert(!mounted, 'Dashboard should only initialize once');
 
-    dashboardStore.loadProposals();
+    // Fetch spaces and proposals in parallel
+    await Promise.all([
+      fetchMonitoredDaos(),
+      dashboardStore.loadProposals()
+    ]);
   }
 
   function handleTabChange(tabId: TabType): void {
@@ -75,7 +119,8 @@
 <div class="space-y-6">
   <DashboardHeader
     spaceId={currentSpaceId}
-    loading={$dashboardState.loading}
+    loading={$dashboardState.loading || spacesLoading}
+    spaces={spaces}
     onSpaceChange={handleSpaceChange}
   />
 
@@ -100,10 +145,10 @@
           {currentSpaceId}
         />
       {:else if $dashboardState.activeTab === 'proposals'}
-        <ProposalsTab 
-          {proposals} 
+        <ProposalsTab
+          {proposals}
           proposalSummaries={$dashboardState.proposalSummaries}
-          {dashboardStore} 
+          {dashboardStore}
         />
       {:else if $dashboardState.activeTab === 'activity'}
         <ActivityTab />

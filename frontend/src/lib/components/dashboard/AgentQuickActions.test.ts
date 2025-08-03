@@ -215,7 +215,7 @@ describe('AgentQuickActions Component', () => {
     });
 
     const onRunCompleteSpy = vi.fn();
-    
+
     render(AgentQuickActions, {
       props: {
         ...defaultProps,
@@ -248,7 +248,7 @@ describe('AgentQuickActions Component', () => {
 
     const button = screen.getByRole('button', { name: /run agent now/i });
     button.focus();
-    
+
     // Test Enter key
     await fireEvent.keyDown(button, { key: 'Enter' });
     expect(mockPost).toHaveBeenCalledTimes(1);

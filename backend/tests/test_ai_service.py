@@ -52,7 +52,7 @@ class TestAIServiceSummarizeProposal:
             assert result.proposal_id == "prop-123"
             assert "development funding" in result.summary
             assert len(result.key_points) == 3
-            assert result.risk_level == "MEDIUM"
+            assert result.risk_assessment == RiskLevel.MEDIUM
 
     @pytest.mark.asyncio
     async def test_summarize_proposal_handles_ai_error(
@@ -97,18 +97,18 @@ class TestAIServiceSummarizeMultipleProposals:
                     title="Sample Title",
                     summary="Simple proposal summary",
                     key_points=["Point 1"],
-                    risk_level="LOW",
+                    risk_assessment=RiskLevel.LOW,
                     recommendation="APPROVE",
-                    confidence_score=0.8,
+                    confidence=0.8,
                 ),
                 ProposalSummary(
                     proposal_id="prop-456",
                     title="Complex Title", 
                     summary="Complex proposal summary",
                     key_points=["Point 1", "Point 2"],
-                    risk_level="HIGH",
+                    risk_assessment=RiskLevel.HIGH,
                     recommendation="REVIEW",
-                    confidence_score=0.9,
+                    confidence=0.9,
                 ),
             ]
 
@@ -290,3 +290,82 @@ class TestAIServiceCallModelForSummary:
 
             with pytest.raises(Exception, match="AI model error"):
                 await ai_service._call_ai_model_for_summary("test prompt")
+
+
+class TestAIServiceSummaryProcessing:
+    """Test AI service summary processing methods."""
+
+    def test_process_summary_ai_result_with_output_attribute(
+        self, ai_service: AIService
+    ) -> None:
+        """Test _process_summary_ai_result with result having output attribute."""
+        # Mock result with output attribute containing JSON string
+        mock_result = type("MockResult", (), {})()
+        mock_result.output = '{"summary": "Test", "key_points": ["Point 1"], "risk_level": "LOW"}'
+        
+        result = ai_service._process_summary_ai_result(mock_result)
+        
+        assert isinstance(result, dict)
+        assert result["summary"] == "Test"
+        assert result["key_points"] == ["Point 1"]
+        assert result["risk_level"] == "LOW"
+
+    def test_process_summary_ai_result_with_dict_output(
+        self, ai_service: AIService
+    ) -> None:
+        """Test _process_summary_ai_result with result having dict output."""
+        # Mock result with output attribute containing dict
+        mock_result = type("MockResult", (), {})()
+        mock_result.output = {
+            "summary": "Test dict", 
+            "key_points": ["Point 1"], 
+            "risk_level": "MEDIUM"
+        }
+        
+        result = ai_service._process_summary_ai_result(mock_result)
+        
+        assert isinstance(result, dict)
+        assert result["summary"] == "Test dict"
+        assert result["key_points"] == ["Point 1"]
+        assert result["risk_level"] == "MEDIUM"
+
+    def test_process_summary_ai_result_with_json_string(
+        self, ai_service: AIService
+    ) -> None:
+        """Test _process_summary_ai_result with JSON string result."""
+        json_string = '{"summary": "String test", "key_points": ["Point 1"], "risk_level": "HIGH"}'
+        
+        result = ai_service._process_summary_ai_result(json_string)
+        
+        assert isinstance(result, dict)
+        assert result["summary"] == "String test"
+        assert result["key_points"] == ["Point 1"]
+        assert result["risk_level"] == "HIGH"
+
+    def test_process_summary_ai_result_with_invalid_json(
+        self, ai_service: AIService
+    ) -> None:
+        """Test _process_summary_ai_result with invalid JSON string."""
+        invalid_json = "This is not valid JSON"
+        
+        result = ai_service._process_summary_ai_result(invalid_json)
+        
+        assert isinstance(result, dict)
+        assert result["summary"] == "Unable to generate structured summary from AI response"
+        assert "AI response processing failed" in result["key_points"]
+        assert result["risk_level"] == "MEDIUM"
+
+    def test_create_summary_fallback_response(
+        self, ai_service: AIService
+    ) -> None:
+        """Test _create_summary_fallback_response creates proper fallback."""
+        raw_output = "Some unparseable output"
+        
+        result = ai_service._create_summary_fallback_response(raw_output)
+        
+        assert isinstance(result, dict)
+        assert "summary" in result
+        assert "key_points" in result
+        assert "risk_level" in result
+        assert "recommendation" in result
+        assert result["risk_level"] == "MEDIUM"

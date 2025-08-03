@@ -3,7 +3,7 @@
  * with the testing library. The component has been verified to work correctly
  * through manual testing and successful builds. Tests will be updated once
  * Svelte 5 testing support improves.
- * 
+ *
  * Component functionality verified:
  * - Displays loading state initially
  * - Shows all metrics correctly

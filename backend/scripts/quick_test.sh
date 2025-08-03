@@ -5,7 +5,7 @@ echo "🚀 Quorum AI Agent Test Runner"
 echo "=============================="
 
 # Check if backend is running
-if ! curl -s http://localhost:8000/health > /dev/null; then
+if ! curl -s http://localhost:8716/healthcheck > /dev/null; then
     echo "❌ Backend is not running!"
     echo "   Please start it with: uv run main.py"
     exit 1
@@ -18,7 +18,7 @@ test_space() {
     local space_id=$1
     echo -e "\n🔍 Testing $space_id..."
 
-    curl -X POST http://localhost:8000/agent-run \
+    curl -X POST http://localhost:8716/agent-run \
         -H "Content-Type: application/json" \
         -d "{\"space_id\": \"$space_id\", \"dry_run\": true}" \
         -s | python3 -m json.tool

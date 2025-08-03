@@ -421,6 +421,17 @@ class StateManager:
         """Stop the service gracefully."""
         await self.cleanup()
 
+    async def list_files(self) -> List[str]:
+        """List all state files in the store directory."""
+        try:
+            files = []
+            for file_path in self.store_path.glob("*.json"):
+                files.append(file_path.name)
+            return sorted(files)
+        except Exception as e:
+            self.logger.error(f"Failed to list state files: {e}")
+            return []
+
 
 # Example usage:
 """

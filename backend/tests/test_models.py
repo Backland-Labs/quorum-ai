@@ -8,15 +8,15 @@ from pydantic import ValidationError
 from models import (
     Proposal,
     ProposalSummary,
-    ProposalFilters,
-    ProposalListResponse,
+    # ProposalFilters,  # Model not in models.py
+    # ProposalListResponse,  # Model not in models.py
     SummarizeRequest,
     SummarizeResponse,
     ProposalState,
     VoteType,
     Vote,
-    SortCriteria,
-    SortOrder,
+    # SortCriteria,  # Model not in models.py
+    # SortOrder,  # Model not in models.py
     ProposalVoter,
     ProposalTopVoters,
     VoteDecision,

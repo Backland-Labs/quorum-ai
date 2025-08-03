@@ -13,9 +13,9 @@
 			</svg>
 			Back to Dashboard
 		</button>
-		
+
 		<h1 class="text-3xl font-bold text-gray-900 mb-8">Quorum AI Documentation</h1>
-		
+
 		<div class="bg-white shadow rounded-lg p-6 space-y-6">
 			<section>
 				<h2 class="text-xl font-semibold text-gray-900 mb-4">User Preferences</h2>
@@ -26,21 +26,21 @@
 						<li><strong>Balanced:</strong> Consider both risk and potential reward. The default strategy for most users.</li>
 						<li><strong>Aggressive:</strong> Vote on high-impact proposals even if they carry higher risk. For users seeking maximum participation.</li>
 					</ul>
-					
+
 					<h3 class="text-lg font-medium mb-2 mt-6">Confidence Threshold</h3>
 					<p>The minimum confidence score (0.0 to 1.0) required for the AI to cast a vote. Higher values mean the AI will only vote when it's very confident in its decision.</p>
-					
+
 					<h3 class="text-lg font-medium mb-2 mt-6">Maximum Proposals per Run</h3>
 					<p>Limits how many proposals the agent will analyze in a single run. This helps manage gas costs and processing time.</p>
-					
+
 					<h3 class="text-lg font-medium mb-2 mt-6">Blacklisted Proposers</h3>
 					<p>Wallet addresses whose proposals will be automatically rejected. Use this to filter out known bad actors or proposals you never want to support.</p>
-					
+
 					<h3 class="text-lg font-medium mb-2 mt-6">Whitelisted Proposers</h3>
 					<p>Wallet addresses whose proposals receive priority consideration. The AI will still analyze these proposals but may apply a lower confidence threshold.</p>
 				</div>
 			</section>
-			
+
 			<section class="border-t pt-6">
 				<h2 class="text-xl font-semibold text-gray-900 mb-4">Getting Started</h2>
 				<ol class="list-decimal pl-5 space-y-2 text-gray-700">

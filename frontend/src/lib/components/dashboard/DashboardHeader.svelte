@@ -1,24 +1,22 @@
 <script lang="ts">
+  interface Space {
+    id: string;
+    name: string;
+  }
+
   interface Props {
     spaceId: string;
     loading: boolean;
+    spaces: Space[];
     onSpaceChange: (spaceId: string) => void;
   }
 
   let {
     spaceId,
     loading,
+    spaces,
     onSpaceChange
   }: Props = $props();
-
-  // Predefined list of Snapshot spaces - extracted as configuration
-  const SNAPSHOT_SPACES = [
-    { id: 'uniswapgovernance.eth', name: 'Uniswap' },
-    { id: 'aave.eth', name: 'Aave' },
-    { id: 'compound-governance.eth', name: 'Compound' },
-    { id: 'snapshot.dcl.eth', name: 'Decentraland' },
-    { id: 'gitcoindao.eth', name: 'Gitcoin' }
-  ] as const;
 
   function handleSpaceSelect(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -40,7 +38,7 @@
         onchange={handleSpaceSelect}
         class="px-4 py-2 border border-secondary-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
       >
-        {#each SNAPSHOT_SPACES as space}
+        {#each spaces as space}
           <option value={space.id}>{space.name}</option>
         {/each}
       </select>

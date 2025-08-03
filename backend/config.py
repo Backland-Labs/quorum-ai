@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     app_name: str = "Quorum AI"
     debug: bool = False
     host: str = "0.0.0.0"
-    port: int = 8000
+    port: int = 8716
 
     # AI settings
     anthropic_api_key: Optional[str] = None
@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     # OpenRouter configuration
     openrouter_api_key: Optional[str] = None
 
+    # Snapshot API configuration
+    snapshot_graphql_endpoint: str = Field(
+        default="https://hub.snapshot.org/graphql",
+        alias="SNAPSHOT_GRAPHQL_ENDPOINT",
+        description="Snapshot GraphQL API endpoint"
+    )
+
     # Top voters endpoint settings
     DEFAULT_TOP_VOTERS_LIMIT: ClassVar[int] = 10
     MAX_TOP_VOTERS_LIMIT: ClassVar[int] = 50
@@ -68,12 +75,8 @@ class Settings(BaseSettings):
         default=None, description="The agent's EOA address"
     )
 
-    # DAO monitoring
-    monitored_daos: List[str] = Field(
-        default_factory=list,
-        alias="MONITORED_DAOS",
-        description="From MONITORED_DAOS env var",
-    )
+    # DAO monitoring - removed from Pydantic fields to avoid JSON parsing issues
+    # Use the monitored_daos_list property instead
     vote_confidence_threshold: float = Field(
         default=0.6, ge=0.0, le=1.0, description="Vote confidence threshold"
     )
@@ -161,6 +164,25 @@ class Settings(BaseSettings):
         default=5,
         gt=0,
         description="Delay between retry attempts in seconds",
+    )
+
+    # File output configuration
+    decision_output_dir: str = Field(
+        default="decisions",
+        alias="DECISION_OUTPUT_DIR",
+        description="Directory for voting decision files"
+    )
+    decision_file_format: str = Field(
+        default="json",
+        alias="DECISION_FILE_FORMAT", 
+        description="Format for decision files (json)"
+    )
+    max_decision_files: int = Field(
+        default=100,
+        ge=1,
+        le=1000,
+        alias="MAX_DECISION_FILES",
+        description="Maximum number of decision files to retain"
     )
 
     # Health check configuration
@@ -273,17 +295,6 @@ class Settings(BaseSettings):
             return v.strip()
         return cls.DEFAULT_LOG_FILE_PATH
 
-    @field_validator("monitored_daos", mode="before")
-    @classmethod
-    def parse_monitored_daos(cls, v):
-        """Parse monitored DAOs from comma-separated string."""
-        if isinstance(v, str):
-            if not v.strip():
-                return []
-            return [dao.strip() for dao in v.split(",") if dao.strip()]
-        elif isinstance(v, list):
-            return v
-        return v or []
 
     @field_validator("HEALTH_CHECK_PORT", mode="before")
     @classmethod
