@@ -17542,3 +17542,840 @@ AssertionError: AI result must be a dictionary
 [2025-08-03 10:35:32,449] [ERROR] [agent] Failed generate_proposal_summaries after 2.203s: AI result must be a dictionary
 [2025-08-03 10:35:32,449] [ERROR] [agent] Failed summarize_proposals after 2.585s: AI result must be a dictionary
 [2025-08-03 10:35:32,449] [ERROR] [agent] Failed to summarize proposals error=AI result must be a dictionary exception_type=AssertionError proposal_ids=['0x6175261050aeccdd3d541cb4eb2b58c9fde747bfda509896586df5a62e1295d4']
+[2025-08-03 10:47:38,013] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,241] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,797] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,799] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,799] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,840] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,843] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,843] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,900] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,900] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:47:38,911] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:47:38,911] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:47:38,912] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:47:38,914] [INFO] [agent] Creating AI model
+[2025-08-03 10:47:38,914] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:47:38,914] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:47:38,914] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:47:38,914] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:47:38,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,938] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:47:38,938] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:47:38,938] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:47:38,938] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:47:38,939] [INFO] [agent] Creating AI model
+[2025-08-03 10:47:38,939] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:47:38,939] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:47:38,939] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:47:38,939] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:47:38,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,942] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:47:38,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,942] [INFO] [agent] VotingService initialized
+[2025-08-03 10:47:38,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,944] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:47:38,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,944] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:47:38,944] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,946] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:47:38,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,946] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:47:38,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,946] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:47:38,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,946] [INFO] [agent] VotingService initialized
+[2025-08-03 10:47:38,958] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:47:38,958] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,958] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:47:38,958] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:47:38,958] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:47:38,958] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:47:38,958] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:47:38,958] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:47:38,958] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:47:38,959] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:47:38,959] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:48:39,526] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 10:48:39,527] [INFO] [agent] Returning monitored DAOs count=0
+[2025-08-03 10:48:39,527] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 10:49:08,141] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,336] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,811] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,842] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,842] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,895] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:49:08,907] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:49:08,907] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:49:08,908] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:49:08,909] [INFO] [agent] Creating AI model
+[2025-08-03 10:49:08,909] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:49:08,909] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:49:08,909] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:49:08,909] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:49:08,933] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,933] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:49:08,933] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:49:08,933] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:49:08,933] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:49:08,934] [INFO] [agent] Creating AI model
+[2025-08-03 10:49:08,934] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:49:08,934] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:49:08,934] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:49:08,935] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:49:08,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,935] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:49:08,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,935] [INFO] [agent] VotingService initialized
+[2025-08-03 10:49:08,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,938] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:49:08,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,938] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:49:08,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,940] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:49:08,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,940] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:49:08,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,940] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:49:08,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,940] [INFO] [agent] VotingService initialized
+[2025-08-03 10:49:08,951] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:49:08,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:49:08,952] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:49:08,952] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:49:08,952] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:49:08,952] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:49:08,952] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:49:08,952] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:49:08,952] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:49:08,952] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:49:08,952] [INFO] [agent] Application shutdown initiated
+[2025-08-03 10:49:08,952] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 10:49:08,952] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 10:49:08,952] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 10:49:08,952] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:49:08,952] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:49:08,952] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 10:49:08,952] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:49:08,952] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:49:08,952] [INFO] [agent] Starting save_service_states
+[2025-08-03 10:49:08,954] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 10:49:08,954] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 10:49:08,954] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 10:49:08,954] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 10:49:08,954] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 10:49:08,954] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 10:49:08,954] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 10:49:08,954] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-08-03 10:49:08,954] [INFO] [agent] Application shutdown completed
+[2025-08-03 10:49:20,741] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 10:49:20,741] [INFO] [agent] Returning monitored DAOs count=0
+[2025-08-03 10:49:20,741] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 10:50:20,042] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-08-03 10:50:20,042] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 10:50:20,042] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 10:50:20,042] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 10:50:20,042] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:50:20,043] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:50:20,043] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 10:50:20,043] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:50:20,043] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:50:20,043] [INFO] [agent] Starting save_service_states
+[2025-08-03 10:50:20,044] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 10:50:20,044] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 10:50:20,044] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 10:50:20,044] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 10:50:20,044] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 10:50:20,044] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 10:50:20,044] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 10:50:20,044] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-08-03 10:51:45,704] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:45,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,390] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,393] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,393] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,429] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,429] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,481] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,481] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:51:46,492] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:51:46,493] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:51:46,493] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:51:46,495] [INFO] [agent] Creating AI model
+[2025-08-03 10:51:46,495] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:51:46,495] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:51:46,495] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:51:46,495] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:51:46,518] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,518] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:51:46,518] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:51:46,518] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:51:46,518] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:51:46,519] [INFO] [agent] Creating AI model
+[2025-08-03 10:51:46,519] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:51:46,519] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:51:46,519] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:51:46,519] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:51:46,520] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,520] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:51:46,520] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,520] [INFO] [agent] VotingService initialized
+[2025-08-03 10:51:46,520] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,522] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:51:46,522] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,522] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,522] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,522] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,522] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:51:46,522] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,524] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:51:46,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,524] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:51:46,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,524] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:51:46,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,524] [INFO] [agent] VotingService initialized
+[2025-08-03 10:51:46,536] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:51:46,536] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,536] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:51:46,536] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:51:46,536] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:51:46,536] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:51:46,536] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:51:46,536] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:51:46,536] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:51:46,536] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 10:51:46,536] [INFO] [agent] Recovering state from 2025-08-03T16:50:20.043074
+[2025-08-03 10:51:46,536] [INFO] [agent] Recovered state from previous run: 2025-08-03T16:50:20.043074
+[2025-08-03 10:51:46,536] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:51:46,536] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:54:23,657] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:23,851] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,356] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,356] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,390] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,392] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,393] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,446] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:54:24,457] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:54:24,457] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:24,458] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:54:24,460] [INFO] [agent] Creating AI model
+[2025-08-03 10:54:24,460] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:54:24,460] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:54:24,460] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:24,460] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:54:24,484] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,484] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:54:24,484] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:54:24,484] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:24,484] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:54:24,485] [INFO] [agent] Creating AI model
+[2025-08-03 10:54:24,485] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:54:24,485] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:54:24,485] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:24,485] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:54:24,485] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,485] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:54:24,486] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,486] [INFO] [agent] VotingService initialized
+[2025-08-03 10:54:24,486] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,488] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:54:24,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,488] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:54:24,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,490] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:54:24,490] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,490] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:54:24,490] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,490] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:54:24,490] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,490] [INFO] [agent] VotingService initialized
+[2025-08-03 10:54:24,501] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:54:24,502] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,502] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:24,502] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:54:24,502] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:54:24,502] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:54:24,502] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:54:24,502] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:54:24,502] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:54:24,502] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 10:54:24,502] [INFO] [agent] Recovering state from 2025-08-03T16:50:20.043074
+[2025-08-03 10:54:24,502] [INFO] [agent] Recovered state from previous run: 2025-08-03T16:50:20.043074
+[2025-08-03 10:54:24,502] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:54:24,502] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:54:31,091] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 10:54:31,092] [INFO] [agent] Returning monitored DAOs count=3
+[2025-08-03 10:54:31,092] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 10:54:54,757] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:54,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,436] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,463] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,466] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,466] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,519] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,519] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:54:55,530] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:54:55,530] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:55,531] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:54:55,532] [INFO] [agent] Creating AI model
+[2025-08-03 10:54:55,532] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:54:55,532] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:54:55,532] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:55,533] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:54:55,556] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,556] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:54:55,556] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:54:55,556] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:55,556] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:54:55,557] [INFO] [agent] Creating AI model
+[2025-08-03 10:54:55,557] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:54:55,557] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:54:55,557] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:54:55,557] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:54:55,558] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,558] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:54:55,558] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,558] [INFO] [agent] VotingService initialized
+[2025-08-03 10:54:55,558] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,560] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:54:55,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,560] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:54:55,560] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,562] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:54:55,562] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,562] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:54:55,562] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,562] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:54:55,562] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,562] [INFO] [agent] VotingService initialized
+[2025-08-03 10:54:55,574] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:54:55,574] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,574] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:54:55,574] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:54:55,574] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:54:55,574] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:54:55,574] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:54:55,574] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:54:55,574] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:54:55,574] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 10:54:55,574] [INFO] [agent] Recovering state from 2025-08-03T16:50:20.043074
+[2025-08-03 10:54:55,574] [INFO] [agent] Recovered state from previous run: 2025-08-03T16:50:20.043074
+[2025-08-03 10:54:55,574] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:54:55,574] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:54:55,575] [INFO] [agent] Application shutdown initiated
+[2025-08-03 10:54:55,575] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 10:54:55,575] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 10:54:55,575] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 10:54:55,575] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:54:55,575] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:54:55,575] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 10:54:55,575] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:54:55,575] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:54:55,575] [INFO] [agent] Starting save_service_states
+[2025-08-03 10:54:55,576] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 10:54:55,577] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 10:54:55,577] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 10:54:55,577] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 10:54:55,577] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 10:54:55,577] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 10:54:55,577] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 10:54:55,577] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-08-03 10:54:55,577] [INFO] [agent] Application shutdown completed
+[2025-08-03 10:55:01,300] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 10:55:01,300] [INFO] [agent] Returning monitored DAOs count=3
+[2025-08-03 10:55:01,300] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 10:55:05,757] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-08-03 10:55:05,758] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 10:55:05,758] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 10:55:05,758] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 10:55:05,758] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:55:05,758] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:55:05,758] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 10:55:05,758] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:55:05,758] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:55:05,758] [INFO] [agent] Starting save_service_states
+[2025-08-03 10:55:05,759] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 10:55:05,759] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 10:55:05,759] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 10:55:05,759] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 10:55:05,759] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 10:55:05,759] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 10:55:05,759] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 10:55:05,760] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-08-03 10:55:05,760] [WARN] [agent] Shutdown already in progress, ignoring signal
+[2025-08-03 10:55:30,495] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:30,690] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,179] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,182] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,182] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,210] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,271] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,272] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:55:31,283] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:55:31,283] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:31,284] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:55:31,285] [INFO] [agent] Creating AI model
+[2025-08-03 10:55:31,285] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:55:31,285] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:55:31,285] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:31,285] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:55:31,309] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,309] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:55:31,309] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:55:31,309] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:31,309] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:55:31,310] [INFO] [agent] Creating AI model
+[2025-08-03 10:55:31,310] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:55:31,310] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:55:31,310] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:31,310] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:55:31,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,310] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:55:31,311] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,311] [INFO] [agent] VotingService initialized
+[2025-08-03 10:55:31,311] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,313] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:55:31,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,313] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:55:31,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,315] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:55:31,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,315] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:55:31,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,315] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:55:31,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,315] [INFO] [agent] VotingService initialized
+[2025-08-03 10:55:31,326] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:55:31,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:31,327] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:55:31,327] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:55:31,327] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:55:31,327] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:55:31,327] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:55:31,327] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:55:31,327] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 10:55:31,327] [INFO] [agent] Recovering state from 2025-08-03T16:55:05.758184
+[2025-08-03 10:55:31,327] [INFO] [agent] Recovered state from previous run: 2025-08-03T16:55:05.758184
+[2025-08-03 10:55:31,327] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:55:31,327] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:55:31,327] [INFO] [agent] Application shutdown initiated
+[2025-08-03 10:55:31,327] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 10:55:31,327] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 10:55:31,327] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 10:55:31,327] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:55:31,327] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:55:31,327] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 10:55:31,328] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:55:31,328] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:55:31,328] [INFO] [agent] Starting save_service_states
+[2025-08-03 10:55:31,329] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 10:55:31,329] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 10:55:31,329] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 10:55:31,329] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 10:55:31,329] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 10:55:31,329] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 10:55:31,329] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-08-03 10:55:31,329] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-08-03 10:55:31,329] [INFO] [agent] Application shutdown completed
+[2025-08-03 10:55:42,644] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:42,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,319] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,319] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,345] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,347] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,347] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,400] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,400] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:55:43,412] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:55:43,412] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:43,413] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:55:43,414] [INFO] [agent] Creating AI model
+[2025-08-03 10:55:43,414] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:55:43,414] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:55:43,414] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:43,415] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:55:43,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,438] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:55:43,438] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:55:43,438] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:43,438] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:55:43,439] [INFO] [agent] Creating AI model
+[2025-08-03 10:55:43,439] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:55:43,439] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:55:43,439] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:55:43,439] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:55:43,440] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,440] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:55:43,440] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,440] [INFO] [agent] VotingService initialized
+[2025-08-03 10:55:43,440] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,442] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:55:43,442] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,442] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,442] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,442] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,442] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:55:43,442] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,444] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:55:43,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,444] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:55:43,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,444] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:55:43,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,444] [INFO] [agent] VotingService initialized
+[2025-08-03 10:55:43,456] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:55:43,456] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,456] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:55:43,456] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:55:43,456] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:55:43,456] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:55:43,457] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:55:43,457] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:55:43,457] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:55:43,457] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 10:55:43,457] [INFO] [agent] Recovering state from 2025-08-03T16:55:31.328032
+[2025-08-03 10:55:43,457] [INFO] [agent] Recovered state from previous run: 2025-08-03T16:55:31.328032
+[2025-08-03 10:55:43,457] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:55:43,457] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 10:55:43,457] [INFO] [agent] Application shutdown initiated
+[2025-08-03 10:55:43,457] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 10:55:43,457] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 10:55:43,457] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 10:55:43,457] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:55:43,457] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 10:55:43,457] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 10:55:43,457] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:55:43,457] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 10:55:43,457] [INFO] [agent] Starting save_service_states
+[2025-08-03 10:55:43,458] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 10:55:43,458] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 10:55:43,458] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 10:55:43,458] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 10:55:43,458] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 10:55:43,459] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 10:55:43,459] [INFO] [agent] Completed save_service_states successfully in 0.001s
+[2025-08-03 10:55:43,459] [INFO] [agent] Completed coordinated_shutdown successfully in 0.001s
+[2025-08-03 10:55:43,459] [INFO] [agent] Application shutdown completed
+[2025-08-03 10:55:49,347] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 10:55:49,347] [INFO] [agent] Returning monitored DAOs count=3
+[2025-08-03 10:55:49,347] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 10:56:13,382] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:13,576] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,048] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,050] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,050] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,075] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,077] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,077] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,128] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,128] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:56:14,140] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:56:14,140] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:56:14,140] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:56:14,142] [INFO] [agent] Creating AI model
+[2025-08-03 10:56:14,142] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:56:14,142] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:56:14,142] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:56:14,142] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:56:14,165] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,166] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 10:56:14,166] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 10:56:14,166] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:56:14,166] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 10:56:14,167] [INFO] [agent] Creating AI model
+[2025-08-03 10:56:14,167] [INFO] [agent] Using OpenRouter
+[2025-08-03 10:56:14,167] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 10:56:14,167] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 10:56:14,167] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 10:56:14,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,167] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:56:14,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,167] [INFO] [agent] VotingService initialized
+[2025-08-03 10:56:14,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,169] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:56:14,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,169] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 10:56:14,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,171] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 10:56:14,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,171] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 10:56:14,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,171] [INFO] [agent] KeyManager initialized
+[2025-08-03 10:56:14,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,171] [INFO] [agent] VotingService initialized
+[2025-08-03 10:56:14,183] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 10:56:14,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 10:56:14,183] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 10:56:14,183] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 10:56:14,183] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 10:56:14,183] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 10:56:14,183] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 10:56:14,183] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 10:56:14,184] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 10:56:14,184] [INFO] [agent] Recovering state from 2025-08-03T16:55:43.457784
+[2025-08-03 10:56:14,184] [INFO] [agent] Recovered state from previous run: 2025-08-03T16:55:43.457784
+[2025-08-03 10:56:14,184] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 10:56:14,184] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 14:15:12,799] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:13,124] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:13,958] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:13,961] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:13,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,013] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,101] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,102] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 14:15:14,122] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 14:15:14,122] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:15:14,123] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 14:15:14,126] [INFO] [agent] Creating AI model
+[2025-08-03 14:15:14,126] [INFO] [agent] Using OpenRouter
+[2025-08-03 14:15:14,126] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 14:15:14,126] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:15:14,126] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 14:15:14,168] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,168] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 14:15:14,168] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 14:15:14,168] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:15:14,168] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 14:15:14,170] [INFO] [agent] Creating AI model
+[2025-08-03 14:15:14,170] [INFO] [agent] Using OpenRouter
+[2025-08-03 14:15:14,170] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 14:15:14,170] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:15:14,170] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 14:15:14,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,171] [INFO] [agent] KeyManager initialized
+[2025-08-03 14:15:14,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,171] [INFO] [agent] VotingService initialized
+[2025-08-03 14:15:14,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,174] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 14:15:14,174] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,175] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 14:15:14,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,178] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 14:15:14,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,178] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 14:15:14,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,178] [INFO] [agent] KeyManager initialized
+[2025-08-03 14:15:14,178] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,178] [INFO] [agent] VotingService initialized
+[2025-08-03 14:15:14,199] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 14:15:14,199] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,199] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:15:14,200] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 14:15:14,200] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 14:15:14,200] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 14:15:14,200] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 14:15:14,200] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 14:15:14,200] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 14:15:14,200] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 14:15:14,200] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 14:16:51,669] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 14:16:51,669] [INFO] [agent] Returning monitored DAOs count=3
+[2025-08-03 14:16:51,669] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 14:17:10,879] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-08-03 14:17:10,880] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 14:17:10,880] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 14:17:10,880] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 14:17:10,880] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 14:17:10,880] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 14:17:10,880] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 14:17:10,880] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 14:17:10,880] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 14:17:10,880] [INFO] [agent] Starting save_service_states
+[2025-08-03 14:17:10,882] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 14:17:10,882] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 14:17:10,882] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 14:17:10,882] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 14:17:10,882] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 14:17:10,882] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 14:17:10,882] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 14:17:10,882] [INFO] [agent] Completed coordinated_shutdown successfully in 0.003s
+[2025-08-03 14:17:10,882] [WARN] [agent] Shutdown already in progress, ignoring signal
+[2025-08-03 14:17:27,791] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,091] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,842] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,842] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,880] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,884] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,884] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:28,962] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 14:17:28,983] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 14:17:28,983] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:28,984] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 14:17:28,986] [INFO] [agent] Creating AI model
+[2025-08-03 14:17:28,986] [INFO] [agent] Using OpenRouter
+[2025-08-03 14:17:28,987] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 14:17:28,987] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:28,987] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 14:17:29,028] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,028] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 14:17:29,028] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 14:17:29,028] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:29,029] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 14:17:29,030] [INFO] [agent] Creating AI model
+[2025-08-03 14:17:29,030] [INFO] [agent] Using OpenRouter
+[2025-08-03 14:17:29,030] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 14:17:29,030] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:29,030] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 14:17:29,031] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,032] [INFO] [agent] KeyManager initialized
+[2025-08-03 14:17:29,032] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,032] [INFO] [agent] VotingService initialized
+[2025-08-03 14:17:29,032] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,035] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 14:17:29,035] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,035] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,036] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,036] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,036] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 14:17:29,036] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,039] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 14:17:29,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,039] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 14:17:29,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,039] [INFO] [agent] KeyManager initialized
+[2025-08-03 14:17:29,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,039] [INFO] [agent] VotingService initialized
+[2025-08-03 14:17:29,060] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 14:17:29,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:29,061] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 14:17:29,061] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 14:17:29,061] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 14:17:29,061] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 14:17:29,061] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 14:17:29,061] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 14:17:29,061] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 14:17:29,061] [INFO] [agent] Recovering state from 2025-08-03T20:17:10.880252
+[2025-08-03 14:17:29,061] [INFO] [agent] Recovered state from previous run: 2025-08-03T20:17:10.880252
+[2025-08-03 14:17:29,061] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 14:17:29,061] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 14:17:29,062] [INFO] [agent] Application shutdown initiated
+[2025-08-03 14:17:29,062] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 14:17:29,062] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 14:17:29,062] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 14:17:29,062] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 14:17:29,062] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 14:17:29,062] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 14:17:29,062] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 14:17:29,062] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 14:17:29,062] [INFO] [agent] Starting save_service_states
+[2025-08-03 14:17:29,063] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 14:17:29,063] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 14:17:29,063] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 14:17:29,063] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 14:17:29,063] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 14:17:29,064] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 14:17:29,064] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 14:17:29,064] [INFO] [agent] Completed coordinated_shutdown successfully in 0.002s
+[2025-08-03 14:17:29,064] [INFO] [agent] Application shutdown completed
+[2025-08-03 14:17:46,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:47,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:47,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:47,954] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:47,955] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,002] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,007] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,007] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,084] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,085] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 14:17:48,105] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 14:17:48,105] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:48,106] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 14:17:48,109] [INFO] [agent] Creating AI model
+[2025-08-03 14:17:48,109] [INFO] [agent] Using OpenRouter
+[2025-08-03 14:17:48,109] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 14:17:48,109] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:48,109] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 14:17:48,150] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,150] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 14:17:48,150] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 14:17:48,150] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:48,151] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 14:17:48,152] [INFO] [agent] Creating AI model
+[2025-08-03 14:17:48,152] [INFO] [agent] Using OpenRouter
+[2025-08-03 14:17:48,152] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 14:17:48,152] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 14:17:48,152] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 14:17:48,153] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,154] [INFO] [agent] KeyManager initialized
+[2025-08-03 14:17:48,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,154] [INFO] [agent] VotingService initialized
+[2025-08-03 14:17:48,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,157] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 14:17:48,157] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,157] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,157] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,158] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,158] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 14:17:48,158] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,161] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 14:17:48,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,161] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 14:17:48,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,161] [INFO] [agent] KeyManager initialized
+[2025-08-03 14:17:48,161] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,161] [INFO] [agent] VotingService initialized
+[2025-08-03 14:17:48,181] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 14:17:48,182] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,182] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 14:17:48,182] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 14:17:48,182] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 14:17:48,182] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 14:17:48,182] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 14:17:48,182] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 14:17:48,182] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 14:17:48,182] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 14:17:48,182] [INFO] [agent] Recovering state from 2025-08-03T20:17:29.062332
+[2025-08-03 14:17:48,182] [INFO] [agent] Recovered state from previous run: 2025-08-03T20:17:29.062332
+[2025-08-03 14:17:48,183] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 14:17:48,183] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 14:18:08,854] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 14:18:08,854] [INFO] [agent] Returning monitored DAOs count=8
+[2025-08-03 14:18:08,854] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 14:23:20,147] [INFO] [agent] Starting get_monitored_daos
+[2025-08-03 14:23:20,147] [INFO] [agent] Returning monitored DAOs count=8
+[2025-08-03 14:23:20,147] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s

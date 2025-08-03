@@ -16,6 +16,27 @@ export function extractApiErrorMessage(apiError: unknown): string {
 }
 
 /**
+ * Check if an API response has an error
+ * @param response - The API response from openapi-fetch
+ * @returns True if the response has an error
+ */
+export function hasApiError(response: any): boolean {
+  return response && response.error !== undefined;
+}
+
+/**
+ * Get the status code from an API error response
+ * @param response - The API response from openapi-fetch
+ * @returns The status code or 500 as default
+ */
+export function getApiErrorStatus(response: any): number {
+  if (response && response.response && response.response.status) {
+    return response.response.status;
+  }
+  return 500;
+}
+
+/**
  * Selects the default organization from API response
  * @param organizations - Array of organizations with proposals
  * @returns First organization or null if empty

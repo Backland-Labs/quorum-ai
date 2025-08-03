@@ -832,6 +832,46 @@ async def update_user_preferences(preferences: UserPreferences):
             )
 
 
+@app.get("/config/monitored-daos")
+async def get_monitored_daos():
+    """Get the list of monitored DAO spaces from configuration.
+    
+    Returns the spaces configured via MONITORED_DAOS environment variable.
+    This provides the frontend with the list of available DAO spaces for monitoring.
+    """
+    try:
+        with log_span(logger, "get_monitored_daos"):
+            # Convert space IDs to objects with display names
+            spaces = []
+            for space_id in settings.monitored_daos_list:
+                # For now, use space_id as display name
+                # Future enhancement: fetch actual space names from Snapshot
+                display_name = space_id.replace(".eth", "").replace("-", " ").title()
+                spaces.append({
+                    "id": space_id,
+                    "name": display_name
+                })
+            
+            response = {
+                "spaces": spaces,
+                "total": len(spaces)
+            }
+            
+            # Cache for 1 hour since config doesn't change often
+            headers = {"Cache-Control": "public, max-age=3600"}
+            
+            logger.info(f"Returning monitored DAOs count={len(spaces)}")
+            
+            return JSONResponse(content=response, headers=headers)
+            
+    except Exception as e:
+        logger.error(f"Failed to fetch monitored DAOs error={str(e)}")
+        raise HTTPException(
+            status_code=500, 
+            detail="Failed to fetch monitored DAO configuration"
+        )
+
+
 # Development server
 if __name__ == "__main__":
     import uvicorn

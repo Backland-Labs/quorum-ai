@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import PreferenceForm from '$lib/components/setup/PreferenceForm.svelte';
 	import type { UserPreferences } from '$lib/types/preferences';
-	import { extractApiErrorMessage } from '$lib/utils/api';
+	import { extractApiErrorMessage, hasApiError } from '$lib/utils/api';
 	import apiClient from '$lib/api';
 
 	let errorMessage = $state('');
@@ -18,8 +18,8 @@
 				body: data
 			});
 
-			if (response.error) {
-				throw new Error(response.error.message || 'Failed to save preferences');
+			if (hasApiError(response)) {
+				throw new Error('Failed to save preferences');
 			}
 
 			successMessage = 'Preferences saved successfully! Redirecting...';

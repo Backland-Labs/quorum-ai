@@ -68,12 +68,8 @@ class Settings(BaseSettings):
         default=None, description="The agent's EOA address"
     )
 
-    # DAO monitoring
-    monitored_daos: List[str] = Field(
-        default_factory=list,
-        alias="MONITORED_DAOS",
-        description="From MONITORED_DAOS env var",
-    )
+    # DAO monitoring - removed from Pydantic fields to avoid JSON parsing issues
+    # Use the monitored_daos_list property instead
     vote_confidence_threshold: float = Field(
         default=0.6, ge=0.0, le=1.0, description="Vote confidence threshold"
     )
@@ -292,17 +288,6 @@ class Settings(BaseSettings):
             return v.strip()
         return cls.DEFAULT_LOG_FILE_PATH
 
-    @field_validator("monitored_daos", mode="before")
-    @classmethod
-    def parse_monitored_daos(cls, v):
-        """Parse monitored DAOs from comma-separated string."""
-        if isinstance(v, str):
-            if not v.strip():
-                return []
-            return [dao.strip() for dao in v.split(",") if dao.strip()]
-        elif isinstance(v, list):
-            return v
-        return v or []
 
     @field_validator("HEALTH_CHECK_PORT", mode="before")
     @classmethod

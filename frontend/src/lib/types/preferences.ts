@@ -25,10 +25,10 @@ export interface UserPreferences {
 	/**
 	 * List of wallet addresses whose proposals should be automatically rejected
 	 */
-	blacklisted_proposers: string[];
+	blacklisted_proposers?: string[];
 
 	/**
 	 * List of wallet addresses whose proposals should receive priority consideration
 	 */
-	whitelisted_proposers: string[];
+	whitelisted_proposers?: string[];
 }

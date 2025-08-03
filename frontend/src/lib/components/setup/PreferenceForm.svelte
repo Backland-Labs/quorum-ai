@@ -6,8 +6,8 @@
 			voting_strategy: VotingStrategy;
 			confidence_threshold: number;
 			max_proposals_per_run: number;
-			blacklisted_proposers: string[];
-			whitelisted_proposers: string[];
+			blacklisted_proposers?: string[];
+			whitelisted_proposers?: string[];
 		};
 		onSubmit?: (data: {
 			voting_strategy: VotingStrategy;

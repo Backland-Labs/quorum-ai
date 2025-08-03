@@ -1,5 +1,6 @@
 <script lang="ts">
   import { apiClient } from '$lib/api';
+  import { hasApiError } from '$lib/utils/api';
   import { agentStatusStore } from '$lib/stores/agentStatus';
 
   interface Props {
@@ -10,7 +11,7 @@
 
   // Get data from the store
   const storeState = $state($agentStatusStore);
-  const isAgentActive = $state($agentStatusStore.isAgentActive);
+  const isAgentActive = $derived(storeState.status?.is_active || false);
   const currentSpaceId = $derived(storeState.currentSpaceId);
 
   // Constants
@@ -59,8 +60,8 @@
       }
     });
 
-    if (error) {
-      showMessage('error', `Failed to trigger agent run: ${error.message || 'Unknown error'}`);
+    if (hasApiError({ error })) {
+      showMessage('error', 'Failed to trigger agent run');
     } else {
       showMessage('success', 'Agent run triggered successfully!');
       // Refresh the store to get the latest status

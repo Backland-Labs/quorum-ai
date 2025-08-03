@@ -5,6 +5,7 @@
   import VotingIndicator from '$lib/components/dashboard/VotingIndicator.svelte';
   import { parseProposalSummary, cleanProposalTitle } from '$lib/utils/proposals.js';
   import type { components } from '$lib/api/client.js';
+  import type { ExtendedProposal } from '$lib/types/dashboard.js';
 
   // Constants
   const TOP_VOTERS_LIMIT = 10;
@@ -31,7 +32,7 @@
   type Proposal = components['schemas']['Proposal'];
 
   let proposalId = $page.params.id;
-  let proposal = $state<Proposal | null>(null);
+  let proposal = $state<ExtendedProposal | null>(null);
   let loading = $state(true);
   let error = $state<string | null>(null);
 
@@ -55,7 +56,7 @@
         throw new Error(errorMessage);
       }
 
-      proposal = data;
+      proposal = data as ExtendedProposal;
     } catch (err) {
       console.error('Error fetching proposal:', err);
       error = err instanceof Error ? err.message : 'Failed to load proposal';
@@ -64,12 +65,19 @@
     }
   }
 
-  function formatDate(dateString: string): string {
+  function formatDate(dateInput: string | number): string {
     // Runtime assertions for formatDate
-    console.assert(typeof dateString === 'string', 'dateString must be a string');
-    console.assert(dateString.length > 0, 'dateString cannot be empty');
-
-    const date = new Date(dateString);
+    console.assert(typeof dateInput === 'string' || typeof dateInput === 'number', 'dateInput must be a string or number');
+    
+    let date: Date;
+    if (typeof dateInput === 'number') {
+      // Assume timestamp is in seconds, convert to milliseconds if needed
+      date = new Date(dateInput > 1e10 ? dateInput : dateInput * 1000);
+    } else {
+      console.assert(dateInput.length > 0, 'dateString cannot be empty');
+      date = new Date(dateInput);
+    }
+    
     return date.toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
   }
 
@@ -154,9 +162,11 @@
               {cleanProposalTitle(proposal.title)}
             </h1>
             <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-              <span>{proposal.dao_name}</span>
-              <span>•</span>
-              <span>Created {formatDate(proposal.created_at)}</span>
+              {#if proposal.dao_name}
+                <span>{proposal.dao_name}</span>
+                <span>•</span>
+              {/if}
+              <span>Created {formatDate(proposal.created_at || proposal.created)}</span>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -199,9 +209,9 @@
           <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Voting Results</h2>
             <VotingIndicator
-              votesFor={proposal.votes_for}
-              votesAgainst={proposal.votes_against}
-              votesAbstain={proposal.votes_abstain}
+              votesFor={proposal.votes_for || '0'}
+              votesAgainst={proposal.votes_against || '0'}
+              votesAbstain={proposal.votes_abstain || '0'}
               state={proposal.state}
               endBlock={proposal.end_block}
             />
@@ -217,7 +227,7 @@
                 rel="noopener noreferrer"
                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                View on {proposal.dao_name}
+                View on {proposal.dao_name || 'Snapshot'}
                 <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>

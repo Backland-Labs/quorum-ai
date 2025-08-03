@@ -56,8 +56,8 @@
       <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Proposals reviewed">
         <div data-testid="stat-content" class="flex flex-col space-y-1">
           <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Proposals Reviewed</dt>
-          <dd data-testid="stat-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Proposals reviewed: {storeState.statistics.total_proposals_reviewed}">
-            {storeState.statistics.total_proposals_reviewed}
+          <dd data-testid="stat-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Proposals reviewed: {storeState.statistics.total_proposals_evaluated}">
+            {storeState.statistics.total_proposals_evaluated}
           </dd>
         </div>
       </div>
@@ -76,8 +76,8 @@
       <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Average confidence">
         <div data-testid="stat-content" class="flex flex-col space-y-1">
           <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Avg Confidence</dt>
-          <dd data-testid="stat-value percentage-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums font-mono" aria-label="Average confidence: {formatPercentage(storeState.statistics.average_confidence, hasData(storeState.statistics))}">
-            {formatPercentage(storeState.statistics.average_confidence, hasData(storeState.statistics))}
+          <dd data-testid="stat-value percentage-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums font-mono" aria-label="Average confidence: {formatPercentage(storeState.statistics.average_confidence_score, hasData(storeState.statistics))}">
+            {formatPercentage(storeState.statistics.average_confidence_score, hasData(storeState.statistics))}
           </dd>
         </div>
       </div>

@@ -257,6 +257,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/config/monitored-daos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Monitored Daos
+         * @description Get the list of monitored DAO spaces from configuration.
+         *
+         *     Returns the spaces configured via MONITORED_DAOS environment variable.
+         *     This provides the frontend with the list of available DAO spaces for monitoring.
+         */
+        get: operations["get_monitored_daos_config_monitored_daos_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -808,6 +831,15 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
+
+// Export commonly used types
+export type AgentRunStatus = components['schemas']['AgentRunStatus'];
+export type AgentDecisionResponse = components['schemas']['AgentDecisionResponse'];
+export type AgentRunStatistics = components['schemas']['AgentRunStatistics'];
+export type UserPreferences = components['schemas']['UserPreferences'];
+export type Proposal = components['schemas']['Proposal'];
+export type ProposalSummary = components['schemas']['ProposalSummary'];
+
 export interface operations {
     healthcheck_healthcheck_get: {
         parameters: {
@@ -1115,6 +1147,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_monitored_daos_config_monitored_daos_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };
