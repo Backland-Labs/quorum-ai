@@ -299,9 +299,39 @@ else
     (cd frontend && npm run dev 2>&1 | sed 's/^/[FRONTEND] /') &
     FRONTEND_PID=$!
 
-    # Wait for both processes
+    # Stream Pearl log.txt file if it exists, create it if it doesn't
+    PEARL_LOG_FILE="backend/log.txt"
+    if [ ! -f "$PEARL_LOG_FILE" ]; then
+        print_status "Creating Pearl log file: $PEARL_LOG_FILE"
+        mkdir -p "$(dirname "$PEARL_LOG_FILE")"
+        touch "$PEARL_LOG_FILE"
+    fi
+    
+    # Stream the Pearl log file with prefix
+    tail -f "$PEARL_LOG_FILE" 2>/dev/null | sed 's/^/[PEARL] /' &
+    PEARL_LOG_PID=$!
+
+    # Function to cleanup all processes including Pearl log tail
+    cleanup_with_pearl() {
+        print_status "Shutting down all services and log streams..."
+        if [[ -n $BACKEND_PID ]]; then
+            kill $BACKEND_PID 2>/dev/null || true
+        fi
+        if [[ -n $FRONTEND_PID ]]; then
+            kill $FRONTEND_PID 2>/dev/null || true
+        fi
+        if [[ -n $PEARL_LOG_PID ]]; then
+            kill $PEARL_LOG_PID 2>/dev/null || true
+        fi
+        exit 0
+    }
+
+    # Override the cleanup function for foreground mode
+    trap cleanup_with_pearl SIGINT SIGTERM
+
+    # Wait for both main processes (Pearl log will continue until killed)
     wait $BACKEND_PID $FRONTEND_PID
-    exit 0
+    cleanup_with_pearl
 fi
 
 # Display service information
