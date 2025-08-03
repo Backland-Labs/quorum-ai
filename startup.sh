@@ -89,6 +89,7 @@ trap cleanup SIGINT SIGTERM
 STREAM_LOGS=false
 BACKGROUND_MODE=true
 FORCE_KILL=true
+CLAUDE_CODE_MODE=false
 
 for arg in "$@"; do
     case "$arg" in
@@ -103,6 +104,11 @@ for arg in "$@"; do
         --no-kill)
             FORCE_KILL=false
             ;;
+        --claude-code)
+            CLAUDE_CODE_MODE=true
+            BACKGROUND_MODE=true
+            STREAM_LOGS=false
+            ;;
         --help|-h)
             echo "Usage: $0 [options]"
             echo ""
@@ -110,12 +116,14 @@ for arg in "$@"; do
             echo "  --logs        Stream logs to terminal (services run in foreground)"
             echo "  --background  Run services in background with log files (default)"
             echo "  --no-kill     Don't kill existing processes on ports (exit if ports are in use)"
+            echo "  --claude-code Start services and exit immediately (for Claude Code)"
             echo "  --help, -h    Show this help message"
             echo ""
             echo "Examples:"
             echo "  $0                    # Run in background mode, kill existing processes"
             echo "  $0 --logs             # Stream logs to terminal"
             echo "  $0 --no-kill          # Exit if ports are already in use"
+            echo "  $0 --claude-code      # Start services and exit (for Claude Code)"
             echo "  $0 --logs --no-kill   # Stream logs, don't kill existing processes"
             exit 0
             ;;
@@ -385,6 +393,13 @@ echo -e "  Backend:  tail -f backend.log"
 echo -e "  Frontend: tail -f frontend.log"
 echo ""
 echo -e "${YELLOW}Press Ctrl+C to stop all services${NC}"
+
+# Exit immediately if in Claude Code mode
+if [ "$CLAUDE_CODE_MODE" = true ]; then
+    print_success "Services started successfully in Claude Code mode"
+    print_status "To stop services later, run: kill $BACKEND_PID $FRONTEND_PID"
+    exit 0
+fi
 
 # Only run the monitoring loop in background mode
 if [ "$BACKGROUND_MODE" = true ]; then

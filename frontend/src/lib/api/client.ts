@@ -831,15 +831,6 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-
-// Export commonly used types
-export type AgentRunStatus = components['schemas']['AgentRunStatus'];
-export type AgentDecisionResponse = components['schemas']['AgentDecisionResponse'];
-export type AgentRunStatistics = components['schemas']['AgentRunStatistics'];
-export type UserPreferences = components['schemas']['UserPreferences'];
-export type Proposal = components['schemas']['Proposal'];
-export type ProposalSummary = components['schemas']['ProposalSummary'];
-
 export interface operations {
     healthcheck_healthcheck_get: {
         parameters: {
