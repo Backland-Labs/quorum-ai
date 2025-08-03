@@ -511,7 +511,7 @@ class SnapshotService:
             if proposal_data is None:
                 return None
 
-            return Proposal(**result["proposal"])
+            return Proposal(**proposal_data)
 
     async def get_proposals(
         self,

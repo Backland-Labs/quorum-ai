@@ -586,7 +586,7 @@ async def get_agent_run_decisions(limit: int = Query(5, ge=1, le=100)):
                         vote_decision.proposal_id
                     )
                     proposal_title = (
-                        proposal.get("title", "Unknown Proposal")
+                        proposal.title
                         if proposal
                         else "Unknown Proposal"
                     )
