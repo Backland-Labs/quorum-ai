@@ -11,7 +11,7 @@
   // Subscribe to the store
   const storeState = $state($agentStatusStore);
 
-  // Format timestamp to human-readable format
+  // Format timestamp to human-readable format with local time
   function formatTimestamp(timestamp: string | null): string {
     if (!timestamp) return 'Never';
 
@@ -23,10 +23,16 @@
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    return `${days} day${days > 1 ? 's' : ''} ago`;
+    // Format local datetime
+    const localTime = date.toLocaleString();
+
+    let relativeTime: string;
+    if (minutes < 1) relativeTime = 'Just now';
+    else if (minutes < 60) relativeTime = `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    else if (hours < 24) relativeTime = `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    else relativeTime = `${days} day${days > 1 ? 's' : ''} ago`;
+
+    return `${relativeTime} (${localTime})`;
   }
 
   // Format state to human-readable format
