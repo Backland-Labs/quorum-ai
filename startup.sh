@@ -56,11 +56,27 @@ load_env() {
 cleanup() {
     print_status "Shutting down services..."
     if [[ -n $BACKEND_PID ]]; then
-        kill $BACKEND_PID 2>/dev/null || true
+        print_status "Stopping backend service (PID: $BACKEND_PID)..."
+        kill -TERM $BACKEND_PID 2>/dev/null || true
+        # Wait a bit for graceful shutdown
+        sleep 2
+        # Force kill if still running
+        if ps -p $BACKEND_PID > /dev/null 2>&1; then
+            print_status "Force killing backend service..."
+            kill -KILL $BACKEND_PID 2>/dev/null || true
+        fi
         print_status "Backend service stopped"
     fi
     if [[ -n $FRONTEND_PID ]]; then
-        kill $FRONTEND_PID 2>/dev/null || true
+        print_status "Stopping frontend service (PID: $FRONTEND_PID)..."
+        kill -TERM $FRONTEND_PID 2>/dev/null || true
+        # Wait a bit for graceful shutdown
+        sleep 2
+        # Force kill if still running
+        if ps -p $FRONTEND_PID > /dev/null 2>&1; then
+            print_status "Force killing frontend service..."
+            kill -KILL $FRONTEND_PID 2>/dev/null || true
+        fi
         print_status "Frontend service stopped"
     fi
     exit 0
@@ -315,14 +331,31 @@ else
     cleanup_with_pearl() {
         print_status "Shutting down all services and log streams..."
         if [[ -n $BACKEND_PID ]]; then
-            kill $BACKEND_PID 2>/dev/null || true
+            print_status "Stopping backend service (PID: $BACKEND_PID)..."
+            kill -TERM $BACKEND_PID 2>/dev/null || true
+            # Wait a bit for graceful shutdown
+            sleep 2
+            # Force kill if still running
+            if ps -p $BACKEND_PID > /dev/null 2>&1; then
+                print_status "Force killing backend service..."
+                kill -KILL $BACKEND_PID 2>/dev/null || true
+            fi
         fi
         if [[ -n $FRONTEND_PID ]]; then
-            kill $FRONTEND_PID 2>/dev/null || true
+            print_status "Stopping frontend service (PID: $FRONTEND_PID)..."
+            kill -TERM $FRONTEND_PID 2>/dev/null || true
+            # Wait a bit for graceful shutdown
+            sleep 2
+            # Force kill if still running
+            if ps -p $FRONTEND_PID > /dev/null 2>&1; then
+                print_status "Force killing frontend service..."
+                kill -KILL $FRONTEND_PID 2>/dev/null || true
+            fi
         fi
         if [[ -n $PEARL_LOG_PID ]]; then
-            kill $PEARL_LOG_PID 2>/dev/null || true
+            kill -TERM $PEARL_LOG_PID 2>/dev/null || true
         fi
+        print_status "All services stopped"
         exit 0
     }
 
