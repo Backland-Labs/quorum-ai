@@ -1,5 +1,7 @@
 # Quorum AI
 
+**⚠️ IMPORTANT: This application currently only supports Base network due to the Ethereum Attestation Service (EAS) integration being locked to Base. All voting attestations will be recorded on Base, regardless of which network the DAO operates on.**
+
 A sophisticated autonomous voting agent for DAO governance on the Olas Pearl platform. This full-stack application enables automated participation in decentralized governance through AI-powered proposal analysis and voting decisions, featuring integration with Snapshot and Google Gemini 2.0 Flash.
 
 ## Quick Start

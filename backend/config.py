@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     # OpenRouter configuration
     openrouter_api_key: Optional[str] = None
 
+    # Snapshot API configuration
+    snapshot_graphql_endpoint: str = Field(
+        default="https://hub.snapshot.org/graphql",
+        alias="SNAPSHOT_GRAPHQL_ENDPOINT",
+        description="Snapshot GraphQL API endpoint"
+    )
+
     # Top voters endpoint settings
     DEFAULT_TOP_VOTERS_LIMIT: ClassVar[int] = 10
     MAX_TOP_VOTERS_LIMIT: ClassVar[int] = 50

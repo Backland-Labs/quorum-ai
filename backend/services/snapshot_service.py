@@ -32,9 +32,6 @@ class GraphQLError(SnapshotServiceError):
 
 
 # Constants for better code clarity and maintainability
-SNAPSHOT_GRAPHQL_ENDPOINT = (
-    "https://hub.snapshot.org/graphql"  # Snapshot GraphQL API endpoint
-)
 DEFAULT_CONTENT_TYPE = "application/json"
 DEFAULT_USER_AGENT_PREFIX = "QuorumAI"
 DEFAULT_ACCEPT_TYPE = "application/json"
@@ -56,7 +53,7 @@ class SnapshotService:
     def __init__(self) -> None:
         """Initialize SnapshotService with required configuration and validation."""
 
-        self.base_url = SNAPSHOT_GRAPHQL_ENDPOINT
+        self.base_url = settings.snapshot_graphql_endpoint
         self.timeout = settings.request_timeout
 
         # Configure default headers for GraphQL requests

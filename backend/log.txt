@@ -18379,3 +18379,548 @@ AssertionError: AI result must be a dictionary
 [2025-08-03 14:23:20,147] [INFO] [agent] Starting get_monitored_daos
 [2025-08-03 14:23:20,147] [INFO] [agent] Returning monitored DAOs count=8
 [2025-08-03 14:23:20,147] [INFO] [agent] Completed get_monitored_daos successfully in 0.000s
+[2025-08-03 15:00:32,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:32,776] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,632] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,635] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,635] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,684] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,688] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,688] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,768] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,768] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 15:00:33,789] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 15:00:33,789] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:00:33,790] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 15:00:33,793] [INFO] [agent] Creating AI model
+[2025-08-03 15:00:33,793] [INFO] [agent] Using OpenRouter
+[2025-08-03 15:00:33,793] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 15:00:33,793] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:00:33,793] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 15:00:33,834] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,834] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 15:00:33,835] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 15:00:33,835] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:00:33,835] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 15:00:33,836] [INFO] [agent] Creating AI model
+[2025-08-03 15:00:33,836] [INFO] [agent] Using OpenRouter
+[2025-08-03 15:00:33,836] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 15:00:33,836] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:00:33,836] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 15:00:33,837] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,837] [INFO] [agent] KeyManager initialized
+[2025-08-03 15:00:33,837] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,837] [INFO] [agent] VotingService initialized
+[2025-08-03 15:00:33,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,841] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 15:00:33,841] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,841] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,841] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,841] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,841] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 15:00:33,841] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,844] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 15:00:33,844] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,844] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 15:00:33,845] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,845] [INFO] [agent] KeyManager initialized
+[2025-08-03 15:00:33,845] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,845] [INFO] [agent] VotingService initialized
+[2025-08-03 15:00:33,865] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 15:00:33,865] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,865] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:00:33,866] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 15:00:33,866] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 15:00:33,866] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 15:00:33,866] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 15:00:33,866] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 15:00:33,866] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 15:00:33,866] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 15:00:33,866] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 15:00:33,868] [INFO] [agent] Application shutdown initiated
+[2025-08-03 15:00:33,868] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 15:00:33,869] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 15:00:33,869] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 15:00:33,869] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 15:00:33,869] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 15:00:33,869] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 15:00:33,869] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 15:00:33,869] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 15:00:33,869] [INFO] [agent] Starting save_service_states
+[2025-08-03 15:00:33,872] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 15:00:33,872] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 15:00:33,872] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 15:00:33,872] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 15:00:33,872] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 15:00:33,872] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 15:00:33,872] [INFO] [agent] Completed save_service_states successfully in 0.004s
+[2025-08-03 15:00:33,872] [INFO] [agent] Completed coordinated_shutdown successfully in 0.004s
+[2025-08-03 15:00:33,872] [INFO] [agent] Application shutdown completed
+[2025-08-03 15:00:40,138] [INFO] [agent] Received SIGTERM, initiating graceful shutdown
+[2025-08-03 15:00:40,139] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 15:00:40,139] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 15:00:40,139] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 15:00:40,140] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 15:00:40,140] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 15:00:40,140] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 15:00:40,140] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 15:00:40,140] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 15:00:40,140] [INFO] [agent] Starting save_service_states
+[2025-08-03 15:00:40,144] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 15:00:40,144] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 15:00:40,144] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 15:00:40,144] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 15:00:40,144] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 15:00:40,145] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 15:00:40,145] [INFO] [agent] Completed save_service_states successfully in 0.005s
+[2025-08-03 15:00:40,145] [INFO] [agent] Completed coordinated_shutdown successfully in 0.006s
+[2025-08-03 15:02:09,350] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:09,718] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,527] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,530] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,531] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,572] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,576] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,576] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,657] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,657] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 15:02:10,677] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 15:02:10,677] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:10,678] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 15:02:10,681] [INFO] [agent] Creating AI model
+[2025-08-03 15:02:10,681] [INFO] [agent] Using OpenRouter
+[2025-08-03 15:02:10,681] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 15:02:10,681] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:10,681] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 15:02:10,722] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,722] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 15:02:10,722] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 15:02:10,722] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:10,723] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 15:02:10,724] [INFO] [agent] Creating AI model
+[2025-08-03 15:02:10,724] [INFO] [agent] Using OpenRouter
+[2025-08-03 15:02:10,724] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 15:02:10,724] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:10,724] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 15:02:10,725] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,726] [INFO] [agent] KeyManager initialized
+[2025-08-03 15:02:10,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,726] [INFO] [agent] VotingService initialized
+[2025-08-03 15:02:10,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,729] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 15:02:10,729] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,729] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,730] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,730] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,730] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 15:02:10,730] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,733] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 15:02:10,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,733] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 15:02:10,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,733] [INFO] [agent] KeyManager initialized
+[2025-08-03 15:02:10,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,733] [INFO] [agent] VotingService initialized
+[2025-08-03 15:02:10,753] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 15:02:10,754] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,754] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:10,754] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 15:02:10,754] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 15:02:10,754] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 15:02:10,754] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 15:02:10,754] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 15:02:10,754] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 15:02:10,754] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 15:02:10,754] [INFO] [agent] Recovering state from 2025-08-03T21:00:40.140444
+[2025-08-03 15:02:10,754] [INFO] [agent] Recovered state from previous run: 2025-08-03T21:00:40.140444
+[2025-08-03 15:02:10,754] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 15:02:10,754] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 15:02:10,755] [INFO] [agent] Application shutdown initiated
+[2025-08-03 15:02:10,755] [INFO] [agent] Starting coordinated_shutdown
+[2025-08-03 15:02:10,755] [INFO] [agent] Starting coordinated shutdown
+[2025-08-03 15:02:10,755] [INFO] [agent] Starting agent_service_stop
+[2025-08-03 15:02:10,755] [ERROR] [agent] Failed agent_service_stop after 0.000s: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 15:02:10,755] [ERROR] [agent] Error stopping agent service: 'AgentRunService' object has no attribute 'save_state'
+[2025-08-03 15:02:10,755] [INFO] [agent] Starting handle_active_votes
+[2025-08-03 15:02:10,755] [ERROR] [agent] Failed handle_active_votes after 0.000s: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 15:02:10,755] [ERROR] [agent] Error handling active votes: 'VotingService' object has no attribute '_active_votes'
+[2025-08-03 15:02:10,755] [INFO] [agent] Starting save_service_states
+[2025-08-03 15:02:10,757] [INFO] [agent] Successfully saved state: agent_run_service
+[2025-08-03 15:02:10,757] [INFO] [agent] Saved state for service 'agent'
+[2025-08-03 15:02:10,757] [INFO] [agent] Saved state for service 'voting'
+[2025-08-03 15:02:10,757] [INFO] [agent] Saved state for service 'user_preferences'
+[2025-08-03 15:02:10,757] [INFO] [agent] Saved state for service 'state_manager'
+[2025-08-03 15:02:10,758] [INFO] [agent] Saved shutdown state to shutdown_state.json
+[2025-08-03 15:02:10,758] [INFO] [agent] Completed save_service_states successfully in 0.002s
+[2025-08-03 15:02:10,758] [INFO] [agent] Completed coordinated_shutdown successfully in 0.003s
+[2025-08-03 15:02:10,758] [INFO] [agent] Application shutdown completed
+[2025-08-03 15:02:18,159] [WARN] [agent] Shutdown already in progress, ignoring signal
+[2025-08-03 15:02:30,922] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:31,221] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:31,987] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:31,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:31,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,028] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,032] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,032] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,109] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,109] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 15:02:32,130] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 15:02:32,130] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:32,131] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 15:02:32,133] [INFO] [agent] Creating AI model
+[2025-08-03 15:02:32,134] [INFO] [agent] Using OpenRouter
+[2025-08-03 15:02:32,134] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 15:02:32,134] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:32,134] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 15:02:32,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,175] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-03 15:02:32,176] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-03 15:02:32,176] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:32,176] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-03 15:02:32,177] [INFO] [agent] Creating AI model
+[2025-08-03 15:02:32,177] [INFO] [agent] Using OpenRouter
+[2025-08-03 15:02:32,177] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-03 15:02:32,177] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-03 15:02:32,177] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-03 15:02:32,179] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,179] [INFO] [agent] KeyManager initialized
+[2025-08-03 15:02:32,179] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,179] [INFO] [agent] VotingService initialized
+[2025-08-03 15:02:32,179] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,182] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 15:02:32,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,183] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-03 15:02:32,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,186] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-03 15:02:32,186] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,186] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-03 15:02:32,186] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,186] [INFO] [agent] KeyManager initialized
+[2025-08-03 15:02:32,186] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,186] [INFO] [agent] VotingService initialized
+[2025-08-03 15:02:32,207] [INFO] [agent] WithdrawalService initialized
+[2025-08-03 15:02:32,207] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,207] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-03 15:02:32,207] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-03 15:02:32,207] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-03 15:02:32,207] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-03 15:02:32,207] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-03 15:02:32,207] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-03 15:02:32,207] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-03 15:02:32,208] [INFO] [agent] Found recent shutdown state, checking for recovery
+[2025-08-03 15:02:32,208] [INFO] [agent] Recovering state from 2025-08-03T21:02:10.755790
+[2025-08-03 15:02:32,208] [INFO] [agent] Recovered state from previous run: 2025-08-03T21:02:10.755790
+[2025-08-03 15:02:32,208] [INFO] [agent] Application started version=0.1.0
+[2025-08-03 15:02:32,208] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-03 15:04:48,959] [INFO] [agent] Starting get_proposals (space_id=sharingblock.eth, state=None, limit=1)
+[2025-08-03 15:04:48,960] [INFO] [agent] Starting get_proposals (space_ids=['sharingblock.eth'], state=None, first=1, skip=0)
+[2025-08-03 15:04:48,960] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-08-03 15:04:48,960] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-08-03 15:04:49,320] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:04:49,321] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=752
+[2025-08-03 15:04:49,321] [INFO] [agent] Completed snapshot_api_request successfully in 0.360s
+[2025-08-03 15:04:49,321] [INFO] [agent] Completed get_proposals successfully in 0.361s
+[2025-08-03 15:04:49,322] [INFO] [agent] Completed get_proposals successfully in 0.363s
+[2025-08-03 15:06:00,696] [INFO] [agent] Starting agent_run (space_id=sharingblock.eth, dry_run=True)
+[2025-08-03 15:06:00,697] [INFO] [agent] State transition: idle -> starting
+[2025-08-03 15:06:00,697] [INFO] [agent] Starting agent_run_execution (space_id=sharingblock.eth, dry_run=True)
+[2025-08-03 15:06:00,697] [ERROR] [agent] Error processing pending attestations for space sharingblock.eth: 'StateManager' object has no attribute 'load_checkpoint'
+[2025-08-03 15:06:00,697] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-08-03 15:06:00,697] [INFO] [agent] User preferences loaded successfully, preferences_file=user_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-08-03 15:06:00,697] [INFO] [agent] Agent run started (run_id=sharingblock.eth_1754255160, space_id=sharingblock.eth, dry_run=True, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-03 15:06:00,697] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-08-03 15:06:00,697] [INFO] [agent] Starting fetch_active_proposals (space_id=sharingblock.eth, limit=3)
+[2025-08-03 15:06:00,697] [INFO] [agent] Fetching active proposals (space_id=sharingblock.eth, limit=3)
+[2025-08-03 15:06:00,697] [INFO] [agent] Starting get_proposals (space_ids=['sharingblock.eth'], state=active, first=3, skip=0)
+[2025-08-03 15:06:00,697] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-08-03 15:06:00,697] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-08-03 15:06:01,140] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:06:01,140] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=861
+[2025-08-03 15:06:01,140] [INFO] [agent] Completed snapshot_api_request successfully in 0.443s
+[2025-08-03 15:06:01,140] [INFO] [agent] Completed get_proposals successfully in 0.443s
+[2025-08-03 15:06:01,141] [INFO] [agent] Successfully fetched active proposals (space_id=sharingblock.eth, proposal_count=1)
+[2025-08-03 15:06:01,141] [INFO] [agent] Completed fetch_active_proposals successfully in 0.444s (proposal_count=1)
+[2025-08-03 15:06:01,141] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-08-03 15:06:01,141] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-08-03 15:06:01,141] [INFO] [agent] ProposalFilter initialized
+[2025-08-03 15:06:01,141] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-08-03 15:06:01,141] [INFO] [agent] Starting proposal filtering
+[2025-08-03 15:06:01,141] [INFO] [agent] Proposal filtering completed
+[2025-08-03 15:06:01,141] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-08-03 15:06:01,142] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-08-03 15:06:01,142] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-08-03 15:06:01,142] [INFO] [agent] Starting proposal ranking
+[2025-08-03 15:06:01,142] [INFO] [agent] Starting calculate_proposal_score (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:06:01,142] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-08-03 15:06:01,142] [INFO] [agent] Proposal ranking completed
+[2025-08-03 15:06:01,142] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-08-03 15:06:01,142] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-08-03 15:06:01,142] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-08-03 15:06:01,142] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-08-03 15:06:01,142] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.001s
+[2025-08-03 15:06:01,142] [INFO] [agent] Proposals fetched and filtered (run_id=sharingblock.eth_1754255160, total_proposals=1, filtered_proposals=1, proposal_ids=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:06:01,142] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-08-03 15:06:01,143] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-08-03 15:06:01,143] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-08-03 15:06:01,143] [INFO] [agent] Starting ai_vote_decision (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, strategy=balanced)
+[2025-08-03 15:06:01,143] [INFO] [agent] Starting vote decision making, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, strategy=balanced, model_type=OpenAIModel
+[2025-08-03 15:06:02,956] [INFO] [agent] Successfully generated vote decision, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote=FOR, confidence=0.75, risk_level=MEDIUM
+[2025-08-03 15:06:02,959] [INFO] [agent] Decision file saved: decisions/decision_20250803_210602_0x1c20f5.json
+[2025-08-03 15:06:02,959] [INFO] [agent] Completed ai_vote_decision successfully in 1.816s
+[2025-08-03 15:06:02,959] [INFO] [agent] Vote decision accepted (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote=FOR, confidence=0.75)
+[2025-08-03 15:06:02,959] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-08-03 15:06:02,959] [INFO] [agent] Completed make_voting_decisions successfully in 1.817s
+[2025-08-03 15:06:02,959] [INFO] [agent] State transition: filtering_proposals -> analyzing_proposal
+[2025-08-03 15:06:02,959] [INFO] [agent] Proposal analyzed (run_id=sharingblock.eth_1754255160, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, vote_choice=VoteType.FOR, confidence=0.75, risk_level=MEDIUM)
+[2025-08-03 15:06:02,959] [INFO] [agent] State transition: analyzing_proposal -> deciding_vote
+[2025-08-03 15:06:02,959] [INFO] [agent] Starting execute_votes (space_id=sharingblock.eth, decision_count=1, dry_run=True)
+[2025-08-03 15:06:02,959] [INFO] [agent] Executing votes (space_id=sharingblock.eth, decision_count=1, dry_run=True)
+[2025-08-03 15:06:02,959] [INFO] [agent] Dry run mode - simulating vote execution
+[2025-08-03 15:06:02,960] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-08-03 15:06:02,962] [INFO] [agent] Successfully saved state: agent_checkpoint_sharingblock.eth
+[2025-08-03 15:06:02,963] [INFO] [agent] Saved checkpoint state for space sharingblock.eth
+[2025-08-03 15:06:02,963] [INFO] [agent] Agent run completed (run_id=sharingblock.eth_1754255160, space_id=sharingblock.eth, proposals_analyzed=1, votes_cast=1, successful_votes=1, failed_votes=0, execution_time=2.266, errors=[])
+[2025-08-03 15:06:02,963] [INFO] [agent] State transition: deciding_vote -> completed
+[2025-08-03 15:06:02,963] [INFO] [agent] State transition: completed -> idle
+[2025-08-03 15:06:02,963] [INFO] [agent] Completed agent_run_execution successfully in 2.266s
+[2025-08-03 15:06:02,963] [INFO] [agent] Agent run completed space_id=sharingblock.eth proposals_analyzed=1 votes_cast=1 execution_time=2.263056993484497 errors=[] dry_run=True
+[2025-08-03 15:06:02,963] [INFO] [agent] Completed agent_run successfully in 2.267s
+[2025-08-03 15:06:21,017] [INFO] [agent] Starting get_proposals (space_id=sharingblock.eth, state=None, limit=1)
+[2025-08-03 15:06:21,017] [INFO] [agent] Starting get_proposals (space_ids=['sharingblock.eth'], state=None, first=1, skip=0)
+[2025-08-03 15:06:21,017] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-08-03 15:06:21,017] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-08-03 15:06:21,299] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:06:21,299] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=752
+[2025-08-03 15:06:21,299] [INFO] [agent] Completed snapshot_api_request successfully in 0.282s
+[2025-08-03 15:06:21,299] [INFO] [agent] Completed get_proposals successfully in 0.282s
+[2025-08-03 15:06:21,299] [INFO] [agent] Completed get_proposals successfully in 0.283s
+[2025-08-03 15:06:27,561] [INFO] [agent] Starting agent_run (space_id=sharingblock.eth, dry_run=False)
+[2025-08-03 15:06:27,561] [INFO] [agent] State transition: idle -> starting
+[2025-08-03 15:06:27,562] [INFO] [agent] Starting agent_run_execution (space_id=sharingblock.eth, dry_run=False)
+[2025-08-03 15:06:27,562] [ERROR] [agent] Error processing pending attestations for space sharingblock.eth: 'StateManager' object has no attribute 'load_checkpoint'
+[2025-08-03 15:06:27,562] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-08-03 15:06:27,562] [INFO] [agent] User preferences loaded successfully, preferences_file=user_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-08-03 15:06:27,562] [INFO] [agent] Agent run started (run_id=sharingblock.eth_1754255187, space_id=sharingblock.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-03 15:06:27,562] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-08-03 15:06:27,562] [INFO] [agent] Starting fetch_active_proposals (space_id=sharingblock.eth, limit=3)
+[2025-08-03 15:06:27,562] [INFO] [agent] Fetching active proposals (space_id=sharingblock.eth, limit=3)
+[2025-08-03 15:06:27,562] [INFO] [agent] Starting get_proposals (space_ids=['sharingblock.eth'], state=active, first=3, skip=0)
+[2025-08-03 15:06:27,562] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-08-03 15:06:27,562] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-08-03 15:06:27,850] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:06:27,851] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=861
+[2025-08-03 15:06:27,851] [INFO] [agent] Completed snapshot_api_request successfully in 0.289s
+[2025-08-03 15:06:27,851] [INFO] [agent] Completed get_proposals successfully in 0.289s
+[2025-08-03 15:06:27,851] [INFO] [agent] Successfully fetched active proposals (space_id=sharingblock.eth, proposal_count=1)
+[2025-08-03 15:06:27,852] [INFO] [agent] Completed fetch_active_proposals successfully in 0.290s (proposal_count=1)
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-08-03 15:06:27,852] [INFO] [agent] ProposalFilter initialized
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting proposal filtering
+[2025-08-03 15:06:27,852] [INFO] [agent] Proposal filtering completed
+[2025-08-03 15:06:27,852] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-08-03 15:06:27,852] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting proposal ranking
+[2025-08-03 15:06:27,852] [INFO] [agent] Starting calculate_proposal_score (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:06:27,852] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-08-03 15:06:27,852] [INFO] [agent] Proposal ranking completed
+[2025-08-03 15:06:27,852] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-08-03 15:06:27,852] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-08-03 15:06:27,853] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-08-03 15:06:27,853] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-08-03 15:06:27,853] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.001s
+[2025-08-03 15:06:27,853] [INFO] [agent] Proposals fetched and filtered (run_id=sharingblock.eth_1754255187, total_proposals=1, filtered_proposals=1, proposal_ids=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:06:27,853] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-08-03 15:06:27,853] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-08-03 15:06:27,853] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-08-03 15:06:27,853] [INFO] [agent] Starting ai_vote_decision (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, strategy=balanced)
+[2025-08-03 15:06:27,853] [INFO] [agent] Starting vote decision making, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, strategy=balanced, model_type=OpenAIModel
+[2025-08-03 15:06:29,427] [INFO] [agent] Successfully generated vote decision, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote=ABSTAIN, confidence=0.75, risk_level=MEDIUM
+[2025-08-03 15:06:29,432] [INFO] [agent] Decision file saved: decisions/decision_20250803_210629_0x1c20f5.json
+[2025-08-03 15:06:29,433] [INFO] [agent] Completed ai_vote_decision successfully in 1.580s
+[2025-08-03 15:06:29,433] [INFO] [agent] Vote decision accepted (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote=ABSTAIN, confidence=0.75)
+[2025-08-03 15:06:29,433] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-08-03 15:06:29,433] [INFO] [agent] Completed make_voting_decisions successfully in 1.580s
+[2025-08-03 15:06:29,433] [INFO] [agent] State transition: filtering_proposals -> analyzing_proposal
+[2025-08-03 15:06:29,433] [INFO] [agent] Proposal analyzed (run_id=sharingblock.eth_1754255187, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, vote_choice=VoteType.ABSTAIN, confidence=0.75, risk_level=MEDIUM)
+[2025-08-03 15:06:29,433] [INFO] [agent] State transition: analyzing_proposal -> deciding_vote
+[2025-08-03 15:06:29,433] [INFO] [agent] Starting execute_votes (space_id=sharingblock.eth, decision_count=1, dry_run=False)
+[2025-08-03 15:06:29,434] [INFO] [agent] Executing votes (space_id=sharingblock.eth, decision_count=1, dry_run=False)
+[2025-08-03 15:06:29,434] [INFO] [agent] State transition: deciding_vote -> submitting_vote
+[2025-08-03 15:06:29,434] [INFO] [agent] Starting voting_service.vote_on_proposal (space=sharingblock.eth, proposal=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, choice=3)
+[2025-08-03 15:06:29,434] [INFO] [agent] Starting vote on proposal 0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0 in space sharingblock.eth
+[2025-08-03 15:06:29,434] [ERROR] [agent] Key file has insecure permissions
+[2025-08-03 15:06:29,434] [ERROR] [agent] Failed voting_service.vote_on_proposal after 0.000s: Key file has insecure permissions. File must have 600 permissions (read by owner only).
+[2025-08-03 15:06:29,434] [ERROR] [agent] Vote execution failed (run_id=sharingblock.eth_1754255187, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote_choice=VoteType.ABSTAIN, confidence=0.75, error=Key file has insecure permissions. File must have 600 permissions (read by owner only).)
+[2025-08-03 15:06:29,434] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=0)
+[2025-08-03 15:06:29,434] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-08-03 15:06:29,438] [INFO] [agent] Successfully saved state: agent_checkpoint_sharingblock.eth
+[2025-08-03 15:06:29,438] [INFO] [agent] Saved checkpoint state for space sharingblock.eth
+[2025-08-03 15:06:29,438] [INFO] [agent] Agent run completed (run_id=sharingblock.eth_1754255187, space_id=sharingblock.eth, proposals_analyzed=1, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=1.876, errors=[])
+[2025-08-03 15:06:29,438] [INFO] [agent] State transition: submitting_vote -> completed
+[2025-08-03 15:06:29,438] [INFO] [agent] State transition: completed -> idle
+[2025-08-03 15:06:29,438] [INFO] [agent] Completed agent_run_execution successfully in 1.876s
+[2025-08-03 15:06:29,438] [INFO] [agent] Agent run completed space_id=sharingblock.eth proposals_analyzed=1 votes_cast=0 execution_time=1.8729228973388672 errors=[] dry_run=False
+[2025-08-03 15:06:29,438] [INFO] [agent] Completed agent_run successfully in 1.877s
+[2025-08-03 15:06:44,920] [INFO] [agent] Received summarize request proposal_ids=['0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0'] proposal_count=1
+[2025-08-03 15:06:44,920] [INFO] [agent] Starting summarize_proposals (proposal_count=1)
+[2025-08-03 15:06:44,920] [INFO] [agent] Fetching proposals for summarization
+[2025-08-03 15:06:44,920] [INFO] [agent] Starting fetch_proposals_for_summarization
+[2025-08-03 15:06:44,920] [INFO] [agent] Starting get_proposal (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:06:44,920] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposal($id: String!) {
+        proposal(id: $id) {
+            id
+            title
+..., has_variables=True)
+[2025-08-03 15:06:44,920] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=368, has_variables=True
+[2025-08-03 15:06:45,092] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:06:45,092] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposal'], response_size=858
+[2025-08-03 15:06:45,092] [INFO] [agent] Completed snapshot_api_request successfully in 0.172s
+[2025-08-03 15:06:45,092] [INFO] [agent] Completed get_proposal successfully in 0.172s
+[2025-08-03 15:06:45,092] [INFO] [agent] Fetched proposals for summarization count=1
+[2025-08-03 15:06:45,092] [INFO] [agent] Completed fetch_proposals_for_summarization successfully in 0.172s
+[2025-08-03 15:06:45,092] [INFO] [agent] Successfully fetched 1 proposals
+[2025-08-03 15:06:45,092] [INFO] [agent] Starting AI summarization
+[2025-08-03 15:06:45,092] [INFO] [agent] Starting generate_proposal_summaries
+[2025-08-03 15:06:45,092] [INFO] [agent] Starting ai_multiple_proposal_summaries (proposal_count=1)
+[2025-08-03 15:06:45,092] [INFO] [agent] Starting multiple proposal summarization, proposal_count=1, model_type=OpenAIModel
+[2025-08-03 15:06:45,092] [INFO] [agent] Starting ai_proposal_summary (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:06:45,092] [INFO] [agent] Starting proposal summarization, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, model_type=OpenAIModel
+[2025-08-03 15:06:45,093] [INFO] [agent] Calling AI model for summarization, prompt_length=1166
+[2025-08-03 15:06:46,399] [ERROR] [agent] AI model call failed for summarization, error=AI result must be a dictionary
+[2025-08-03 15:06:46,399] [ERROR] [agent] Failed ai_proposal_summary after 1.307s: AI result must be a dictionary
+[2025-08-03 15:06:46,399] [ERROR] [agent] Failed to summarize proposal, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, error=AI result must be a dictionary, error_type=AssertionError
+[2025-08-03 15:06:46,399] [ERROR] [agent] Errors occurred during summarization: [AssertionError('AI result must be a dictionary')]
+[2025-08-03 15:06:46,400] [ERROR] [agent] Failed ai_multiple_proposal_summaries after 1.307s: AI result must be a dictionary
+[2025-08-03 15:06:46,403] [ERROR] [agent] Failed to summarize multiple proposals, proposal_count=1, error=AI result must be a dictionary, error_type=AssertionError
+Traceback:
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/services/ai_service.py", line 1127, in summarize_multiple_proposals
+    raise errors[0]
+  File "/Users/max/code/quorum-ai/backend/services/ai_service.py", line 1066, in summarize_proposal
+    raise e
+  File "/Users/max/code/quorum-ai/backend/services/ai_service.py", line 1019, in summarize_proposal
+    summary_data = await self._generate_proposal_summary(proposal)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/services/ai_service.py", line 1173, in _generate_proposal_summary
+    ai_response = await self._call_ai_model_for_summary(prompt)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/services/ai_service.py", line 1193, in _call_ai_model_for_summary
+    assert isinstance(processed_result, dict), "AI result must be a dictionary"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AI result must be a dictionary
+
+[2025-08-03 15:06:46,403] [ERROR] [agent] Failed generate_proposal_summaries after 1.311s: AI result must be a dictionary
+[2025-08-03 15:06:46,403] [ERROR] [agent] Failed summarize_proposals after 1.483s: AI result must be a dictionary
+[2025-08-03 15:06:46,403] [ERROR] [agent] Failed to summarize proposals error=AI result must be a dictionary exception_type=AssertionError proposal_ids=['0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0']
+[2025-08-03 15:07:15,793] [INFO] [agent] Starting agent_run (space_id=sharingblock.eth, dry_run=True)
+[2025-08-03 15:07:15,794] [INFO] [agent] State transition: idle -> starting
+[2025-08-03 15:07:15,794] [INFO] [agent] Starting agent_run_execution (space_id=sharingblock.eth, dry_run=True)
+[2025-08-03 15:07:15,794] [ERROR] [agent] Error processing pending attestations for space sharingblock.eth: 'StateManager' object has no attribute 'load_checkpoint'
+[2025-08-03 15:07:15,794] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-08-03 15:07:15,794] [INFO] [agent] User preferences loaded successfully, preferences_file=user_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-08-03 15:07:15,795] [INFO] [agent] Agent run started (run_id=sharingblock.eth_1754255235, space_id=sharingblock.eth, dry_run=True, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-03 15:07:15,795] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-08-03 15:07:15,795] [INFO] [agent] Starting fetch_active_proposals (space_id=sharingblock.eth, limit=3)
+[2025-08-03 15:07:15,795] [INFO] [agent] Fetching active proposals (space_id=sharingblock.eth, limit=3)
+[2025-08-03 15:07:15,795] [INFO] [agent] Starting get_proposals (space_ids=['sharingblock.eth'], state=active, first=3, skip=0)
+[2025-08-03 15:07:15,795] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-08-03 15:07:15,795] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-08-03 15:07:16,199] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:07:16,199] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=861
+[2025-08-03 15:07:16,199] [INFO] [agent] Completed snapshot_api_request successfully in 0.404s
+[2025-08-03 15:07:16,199] [INFO] [agent] Completed get_proposals successfully in 0.405s
+[2025-08-03 15:07:16,199] [INFO] [agent] Successfully fetched active proposals (space_id=sharingblock.eth, proposal_count=1)
+[2025-08-03 15:07:16,199] [INFO] [agent] Completed fetch_active_proposals successfully in 0.405s (proposal_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting filter_and_rank_proposals (proposal_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting proposal filtering and ranking (proposal_count=1, blacklisted_count=0, whitelisted_count=0, max_proposals_per_run=3)
+[2025-08-03 15:07:16,200] [INFO] [agent] ProposalFilter initialized
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting filter_proposals (proposal_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting proposal filtering
+[2025-08-03 15:07:16,200] [INFO] [agent] Proposal filtering completed
+[2025-08-03 15:07:16,200] [INFO] [agent] Completed filter_proposals successfully in 0.000s
+[2025-08-03 15:07:16,200] [INFO] [agent] Proposals filtered (original_count=1, filtered_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting rank_proposals (proposal_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting proposal ranking
+[2025-08-03 15:07:16,200] [INFO] [agent] Starting calculate_proposal_score (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:07:16,200] [INFO] [agent] Completed calculate_proposal_score successfully in 0.000s
+[2025-08-03 15:07:16,200] [INFO] [agent] Proposal ranking completed
+[2025-08-03 15:07:16,200] [INFO] [agent] Completed rank_proposals successfully in 0.000s
+[2025-08-03 15:07:16,200] [INFO] [agent] Proposals ranked (ranked_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Proposals limited to max per run (original_ranked_count=1, final_count=1, max_proposals_per_run=3)
+[2025-08-03 15:07:16,200] [INFO] [agent] Filtering and ranking completed (original_count=1, filtered_count=1, blacklisted_count=0, whitelist_filtered_count=0, filter_efficiency=1.0, blacklisted_proposers=0, whitelisted_proposers=0, has_whitelist=False, has_blacklist=False, final_proposal_count=1)
+[2025-08-03 15:07:16,200] [INFO] [agent] Completed filter_and_rank_proposals successfully in 0.001s
+[2025-08-03 15:07:16,201] [INFO] [agent] Proposals fetched and filtered (run_id=sharingblock.eth_1754255235, total_proposals=1, filtered_proposals=1, proposal_ids=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0)
+[2025-08-03 15:07:16,201] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-08-03 15:07:16,201] [INFO] [agent] Starting make_voting_decisions (proposal_count=1)
+[2025-08-03 15:07:16,201] [INFO] [agent] Making voting decisions (proposal_count=1, voting_strategy=balanced, confidence_threshold=0.7)
+[2025-08-03 15:07:16,201] [INFO] [agent] Starting ai_vote_decision (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, strategy=balanced)
+[2025-08-03 15:07:16,201] [INFO] [agent] Starting vote decision making, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, strategy=balanced, model_type=OpenAIModel
+[2025-08-03 15:07:18,990] [INFO] [agent] Successfully generated vote decision, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote=ABSTAIN, confidence=0.75, risk_level=MEDIUM
+[2025-08-03 15:07:18,993] [INFO] [agent] Decision file saved: decisions/decision_20250803_210718_0x1c20f5.json
+[2025-08-03 15:07:18,993] [INFO] [agent] Completed ai_vote_decision successfully in 2.792s
+[2025-08-03 15:07:18,993] [INFO] [agent] Vote decision accepted (proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, vote=ABSTAIN, confidence=0.75)
+[2025-08-03 15:07:18,993] [INFO] [agent] Voting decisions completed (total_proposals=1, accepted_decisions=1)
+[2025-08-03 15:07:18,993] [INFO] [agent] Completed make_voting_decisions successfully in 2.792s
+[2025-08-03 15:07:18,993] [INFO] [agent] State transition: filtering_proposals -> analyzing_proposal
+[2025-08-03 15:07:18,993] [INFO] [agent] Proposal analyzed (run_id=sharingblock.eth_1754255235, proposal_id=0x1c20f578264987325d833ec5629f6af4bd1b5bfac6dcec48d2ed348e3f78e8b0, proposal_title=Expand Sharingblock's Collateral Types to Include Agricultural Land, vote_choice=VoteType.ABSTAIN, confidence=0.75, risk_level=MEDIUM)
+[2025-08-03 15:07:18,993] [INFO] [agent] State transition: analyzing_proposal -> deciding_vote
+[2025-08-03 15:07:18,993] [INFO] [agent] Starting execute_votes (space_id=sharingblock.eth, decision_count=1, dry_run=True)
+[2025-08-03 15:07:18,993] [INFO] [agent] Executing votes (space_id=sharingblock.eth, decision_count=1, dry_run=True)
+[2025-08-03 15:07:18,993] [INFO] [agent] Dry run mode - simulating vote execution
+[2025-08-03 15:07:18,993] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-08-03 15:07:18,997] [INFO] [agent] Successfully saved state: agent_checkpoint_sharingblock.eth
+[2025-08-03 15:07:18,997] [INFO] [agent] Saved checkpoint state for space sharingblock.eth
+[2025-08-03 15:07:18,997] [INFO] [agent] Agent run completed (run_id=sharingblock.eth_1754255235, space_id=sharingblock.eth, proposals_analyzed=1, votes_cast=1, successful_votes=1, failed_votes=0, execution_time=3.202, errors=[])
+[2025-08-03 15:07:18,997] [INFO] [agent] State transition: deciding_vote -> completed
+[2025-08-03 15:07:18,997] [INFO] [agent] State transition: completed -> idle
+[2025-08-03 15:07:18,997] [INFO] [agent] Completed agent_run_execution successfully in 3.203s
+[2025-08-03 15:07:18,997] [INFO] [agent] Agent run completed space_id=sharingblock.eth proposals_analyzed=1 votes_cast=1 execution_time=3.199836015701294 errors=[] dry_run=True
+[2025-08-03 15:07:18,997] [INFO] [agent] Completed agent_run successfully in 3.204s
+[2025-08-03 15:07:24,610] [INFO] [agent] Starting agent_run (space_id=arbitrum.eth, dry_run=True)
+[2025-08-03 15:07:24,610] [INFO] [agent] State transition: idle -> starting
+[2025-08-03 15:07:24,610] [INFO] [agent] Starting agent_run_execution (space_id=arbitrum.eth, dry_run=True)
+[2025-08-03 15:07:24,610] [ERROR] [agent] Error processing pending attestations for space arbitrum.eth: 'StateManager' object has no attribute 'load_checkpoint'
+[2025-08-03 15:07:24,610] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-08-03 15:07:24,610] [INFO] [agent] User preferences loaded successfully, preferences_file=user_preferences.txt, voting_strategy=balanced, confidence_threshold=0.7, max_proposals_per_run=3
+[2025-08-03 15:07:24,610] [INFO] [agent] Agent run started (run_id=arbitrum.eth_1754255244, space_id=arbitrum.eth, dry_run=True, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-03 15:07:24,610] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-08-03 15:07:24,610] [INFO] [agent] Starting fetch_active_proposals (space_id=arbitrum.eth, limit=3)
+[2025-08-03 15:07:24,610] [INFO] [agent] Fetching active proposals (space_id=arbitrum.eth, limit=3)
+[2025-08-03 15:07:24,610] [INFO] [agent] Starting get_proposals (space_ids=['arbitrum.eth'], state=active, first=3, skip=0)
+[2025-08-03 15:07:24,610] [INFO] [agent] Starting snapshot_api_request (query=
+    query GetProposals($spaces: [String!]!, $state: String, $first: Int, $skip: Int) {
+        prop..., has_variables=True)
+[2025-08-03 15:07:24,610] [INFO] [agent] Sending GraphQL request to Snapshot API, endpoint=https://testnet.hub.snapshot.org/graphql, query_length=522, has_variables=True
+[2025-08-03 15:07:24,945] [INFO] [agent] Received HTTP response from Snapshot API, status_code=200, content_type=application/json; charset=utf-8
+[2025-08-03 15:07:24,947] [INFO] [agent] Snapshot GraphQL query completed successfully, data_keys=['proposals'], response_size=17
+[2025-08-03 15:07:24,947] [INFO] [agent] Completed snapshot_api_request successfully in 0.337s
+[2025-08-03 15:07:24,948] [INFO] [agent] Completed get_proposals successfully in 0.337s
+[2025-08-03 15:07:24,948] [INFO] [agent] Successfully fetched active proposals (space_id=arbitrum.eth, proposal_count=0)
+[2025-08-03 15:07:24,948] [INFO] [agent] Completed fetch_active_proposals successfully in 0.338s (proposal_count=0)
+[2025-08-03 15:07:24,948] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-08-03 15:07:24,950] [INFO] [agent] Successfully saved state: agent_checkpoint_arbitrum.eth
+[2025-08-03 15:07:24,950] [INFO] [agent] Saved checkpoint state for space arbitrum.eth
+[2025-08-03 15:07:24,950] [INFO] [agent] Agent run completed (run_id=arbitrum.eth_1754255244, space_id=arbitrum.eth, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.340, errors=[])
+[2025-08-03 15:07:24,950] [INFO] [agent] State transition: filtering_proposals -> completed
+[2025-08-03 15:07:24,950] [INFO] [agent] State transition: completed -> idle
+[2025-08-03 15:07:24,950] [INFO] [agent] Completed agent_run_execution successfully in 0.340s
+[2025-08-03 15:07:24,950] [INFO] [agent] Agent run completed space_id=arbitrum.eth proposals_analyzed=0 votes_cast=0 execution_time=0.338346004486084 errors=[] dry_run=True
+[2025-08-03 15:07:24,950] [INFO] [agent] Completed agent_run successfully in 0.341s
