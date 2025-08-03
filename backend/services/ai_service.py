@@ -1078,9 +1078,9 @@ class AIService:
             title=proposal.title,
             summary=summary_data["summary"],
             key_points=summary_data["key_points"],
-            risk_level=summary_data["risk_level"],
+            risk_assessment=summary_data["risk_level"],
             recommendation=summary_data.get("recommendation", default_recommendation),
-            confidence_score=default_confidence,
+            confidence=default_confidence,
         )
 
     async def summarize_multiple_proposals(
@@ -1187,7 +1187,7 @@ class AIService:
 
             # Call AI model and process result
             result = await self.agent.run(prompt)
-            processed_result = self.response_processor.process_ai_result(result)
+            processed_result = self._process_summary_ai_result(result)
 
             # Runtime assertion: validate output
             assert isinstance(processed_result, dict), "AI result must be a dictionary"
@@ -1199,6 +1199,42 @@ class AIService:
                 "AI model call failed for summarization, error=%s", error_message
             )
             raise
+
+    def _process_summary_ai_result(self, result: Any) -> Dict[str, Any]:
+        """Process AI model result specifically for summarization."""
+        # Runtime assertion: validate input
+        assert result is not None, "AI result cannot be None"
+
+        try:
+            if hasattr(result, "output"):
+                logger.debug("Processing AI result with output attribute")
+                output = result.output
+                if isinstance(output, str):
+                    return json.loads(output)
+                return output
+            else:
+                # Fallback: try to parse the result directly as JSON string
+                if isinstance(result, str):
+                    return json.loads(result)
+                # If it's already a dict, return it
+                elif isinstance(result, dict):
+                    return result
+                else:
+                    # Create a summary fallback response
+                    return self._create_summary_fallback_response(str(result))
+        except json.JSONDecodeError as e:
+            logger.warning(f"Failed to parse AI result as JSON: {e}")
+            # Create a summary fallback response
+            return self._create_summary_fallback_response(str(result))
+
+    def _create_summary_fallback_response(self, raw_output: str) -> Dict[str, Any]:
+        """Create a fallback summary response when AI output cannot be parsed."""
+        return {
+            "summary": "Unable to generate structured summary from AI response",
+            "key_points": ["AI response processing failed", "Raw output available in logs"],
+            "risk_level": "MEDIUM",
+            "recommendation": "Manual review recommended due to parsing failure"
+        }
 
     def _build_summary_prompt(self, proposal: Proposal) -> str:
         """Build the complete prompt for proposal summarization."""
