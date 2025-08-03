@@ -1,6 +1,6 @@
 {
   "current_state": "idle",
-  "last_transition_time": "2025-07-27T12:20:19.385648",
+  "last_transition_time": "2025-08-01T07:54:45.207360",
   "transition_history": [
     {
       "from_state": "idle",
@@ -59,6 +59,124 @@
       "timestamp": "2025-07-27T12:20:19.385648",
       "metadata": {
         "run_id": "run_test-space_1753640419"
+      }
+    },
+    {
+      "from_state": "idle",
+      "to_state": "starting",
+      "timestamp": "2025-08-01T07:54:20.428078",
+      "metadata": {
+        "run_id": "run_test-space_1754056460",
+        "spaces": [
+          "test-space"
+        ]
+      }
+    },
+    {
+      "from_state": "starting",
+      "to_state": "loading_preferences",
+      "timestamp": "2025-08-01T07:54:20.431226",
+      "metadata": {
+        "run_id": "run_test-space_1754056460"
+      }
+    },
+    {
+      "from_state": "loading_preferences",
+      "to_state": "fetching_proposals",
+      "timestamp": "2025-08-01T07:54:20.431578",
+      "metadata": {
+        "run_id": "run_test-space_1754056460",
+        "spaces": [
+          "test-space"
+        ]
+      }
+    },
+    {
+      "from_state": "fetching_proposals",
+      "to_state": "filtering_proposals",
+      "timestamp": "2025-08-01T07:54:20.431997",
+      "metadata": {
+        "run_id": "run_test-space_1754056460",
+        "total_proposals": 0,
+        "filtered_proposals": 0
+      }
+    },
+    {
+      "from_state": "filtering_proposals",
+      "to_state": "completed",
+      "timestamp": "2025-08-01T07:54:20.432296",
+      "metadata": {
+        "run_id": "run_test-space_1754056460",
+        "total_duration": 0.004151105880737305,
+        "proposals_analyzed": 0,
+        "votes_cast": 0
+      }
+    },
+    {
+      "from_state": "completed",
+      "to_state": "idle",
+      "timestamp": "2025-08-01T07:54:20.432527",
+      "metadata": {
+        "run_id": "run_test-space_1754056460"
+      }
+    },
+    {
+      "from_state": "idle",
+      "to_state": "starting",
+      "timestamp": "2025-08-01T07:54:45.205330",
+      "metadata": {
+        "run_id": "run_test-space_1754056485",
+        "spaces": [
+          "test-space"
+        ]
+      }
+    },
+    {
+      "from_state": "starting",
+      "to_state": "loading_preferences",
+      "timestamp": "2025-08-01T07:54:45.205730",
+      "metadata": {
+        "run_id": "run_test-space_1754056485"
+      }
+    },
+    {
+      "from_state": "loading_preferences",
+      "to_state": "fetching_proposals",
+      "timestamp": "2025-08-01T07:54:45.206075",
+      "metadata": {
+        "run_id": "run_test-space_1754056485",
+        "spaces": [
+          "test-space"
+        ]
+      }
+    },
+    {
+      "from_state": "fetching_proposals",
+      "to_state": "filtering_proposals",
+      "timestamp": "2025-08-01T07:54:45.206509",
+      "metadata": {
+        "run_id": "run_test-space_1754056485",
+        "total_proposals": 0,
+        "filtered_proposals": 0
+      }
+    },
+    {
+      "from_state": "filtering_proposals",
+      "to_state": "completed",
+      "timestamp": "2025-08-01T07:54:45.206917",
+      "metadata": {
+        "run_id": "run_test-space_1754056485",
+        "total_duration": 0.0015330314636230469,
+        "proposals_analyzed": 0,
+        "votes_cast": 0
+      }
+    },
+    {
+      "from_state": "completed",
+      "to_state": "idle",
+      "timestamp": "2025-08-01T07:54:45.207360",
+      "metadata": {
+        "run_id": "run_test-space_1754056485"
       }
     }
   ]

@@ -72,34 +72,44 @@ trap cleanup SIGINT SIGTERM
 # Parse command line arguments
 STREAM_LOGS=false
 BACKGROUND_MODE=true
+FORCE_KILL=true
 
-case "${1:-}" in
-    --logs)
-        STREAM_LOGS=true
-        BACKGROUND_MODE=false
-        ;;
-    --background)
-        STREAM_LOGS=false
-        BACKGROUND_MODE=true
-        ;;
-    --help|-h)
-        echo "Usage: $0 [--logs|--background]"
-        echo ""
-        echo "Options:"
-        echo "  --logs        Stream logs to terminal (services run in foreground)"
-        echo "  --background  Run services in background with log files (default)"
-        echo "  --help, -h    Show this help message"
-        exit 0
-        ;;
-    "")
-        # Default behavior
-        ;;
-    *)
-        print_error "Unknown option: $1"
-        echo "Use --help for usage information"
-        exit 1
-        ;;
-esac
+for arg in "$@"; do
+    case "$arg" in
+        --logs)
+            STREAM_LOGS=true
+            BACKGROUND_MODE=false
+            ;;
+        --background)
+            STREAM_LOGS=false
+            BACKGROUND_MODE=true
+            ;;
+        --no-kill)
+            FORCE_KILL=false
+            ;;
+        --help|-h)
+            echo "Usage: $0 [options]"
+            echo ""
+            echo "Options:"
+            echo "  --logs        Stream logs to terminal (services run in foreground)"
+            echo "  --background  Run services in background with log files (default)"
+            echo "  --no-kill     Don't kill existing processes on ports (exit if ports are in use)"
+            echo "  --help, -h    Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0                    # Run in background mode, kill existing processes"
+            echo "  $0 --logs             # Stream logs to terminal"
+            echo "  $0 --no-kill          # Exit if ports are already in use"
+            echo "  $0 --logs --no-kill   # Stream logs, don't kill existing processes"
+            exit 0
+            ;;
+        *)
+            print_error "Unknown option: $arg"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
 print_status "Starting Quorum AI services..."
 
@@ -117,27 +127,77 @@ if ! command_exists npm; then
     exit 1
 fi
 
-# Check if ports are available
-BACKEND_PORT=${HEALTH_CHECK_PORT:-8716}
-print_status "Checking if backend port $BACKEND_PORT is available..."
-if ! port_available $BACKEND_PORT; then
-    print_error "Port $BACKEND_PORT is already in use. Please stop the service using this port."
-    # Show what's using the port
-    print_warning "Process using port $BACKEND_PORT:"
-    lsof -i :$BACKEND_PORT || true
-    exit 1
-fi
-print_success "Backend port $BACKEND_PORT is available"
+# Function to kill processes on a specific port
+kill_port_process() {
+    local port=$1
+    local pids=$(lsof -ti :$port 2>/dev/null)
+    
+    if [ -n "$pids" ]; then
+        print_warning "Killing processes on port $port..."
+        for pid in $pids; do
+            local process_info=$(ps -p $pid -o comm= 2>/dev/null || echo "unknown")
+            print_status "  Killing process $pid ($process_info)"
+            kill -9 $pid 2>/dev/null || true
+        done
+        sleep 1  # Give processes time to die
+        return 0
+    fi
+    return 1
+}
 
-print_status "Checking if frontend port 5173 is available..."
-if ! port_available 5173; then
-    print_error "Port 5173 is already in use. Please stop the service using this port."
-    # Show what's using the port
-    print_warning "Process using port 5173:"
-    lsof -i :5173 || true
-    exit 1
+# Check and clean up ports
+BACKEND_PORT=${HEALTH_CHECK_PORT:-8716}
+print_status "Checking backend port $BACKEND_PORT..."
+if ! port_available $BACKEND_PORT; then
+    if [ "$FORCE_KILL" = true ]; then
+        print_warning "Port $BACKEND_PORT is in use. Attempting to free it..."
+        # Show what's using the port
+        print_status "Process using port $BACKEND_PORT:"
+        lsof -i :$BACKEND_PORT 2>/dev/null || true
+        
+        # Kill the process
+        if kill_port_process $BACKEND_PORT; then
+            print_success "Port $BACKEND_PORT has been freed"
+        else
+            print_error "Failed to free port $BACKEND_PORT"
+            exit 1
+        fi
+    else
+        print_error "Port $BACKEND_PORT is already in use. Please stop the service using this port."
+        print_warning "Process using port $BACKEND_PORT:"
+        lsof -i :$BACKEND_PORT 2>/dev/null || true
+        print_status "Use --help to see options for killing existing processes"
+        exit 1
+    fi
+else
+    print_success "Backend port $BACKEND_PORT is available"
 fi
-print_success "Frontend port 5173 is available"
+
+print_status "Checking frontend port 5173..."
+if ! port_available 5173; then
+    if [ "$FORCE_KILL" = true ]; then
+        print_warning "Port 5173 is in use. Attempting to free it..."
+        # Show what's using the port
+        print_status "Process using port 5173:"
+        lsof -i :5173 2>/dev/null || true
+        
+        # Kill the process
+        if kill_port_process 5173; then
+            print_success "Port 5173 has been freed"
+        else
+            print_error "Failed to free port 5173"
+            exit 1
+        fi
+    else
+        print_error "Port 5173 is already in use. Please stop the service using this port."
+        print_warning "Process using port 5173:"
+        lsof -i :5173 2>/dev/null || true
+        print_status "Use --help to see options for killing existing processes"
+        exit 1
+    fi
+else
+    print_success "Frontend port 5173 is available"
+fi
 
 # Start Backend
 print_status "Starting backend server on port $BACKEND_PORT..."
