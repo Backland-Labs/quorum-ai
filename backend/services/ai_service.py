@@ -7,7 +7,7 @@ import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 
 from pydantic_ai import Agent, NativeOutput, RunContext
 from pydantic_ai.models.openai import OpenAIModel
@@ -15,9 +15,6 @@ from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from config import settings
 from logging_config import setup_pearl_logger, log_span
-
-# Initialize Pearl-compliant logger
-logger = setup_pearl_logger(__name__)
 from models import (
     Proposal,
     ProposalSummary,
@@ -31,6 +28,9 @@ from models import (
 )
 from services.snapshot_service import SnapshotService
 from services.state_manager import StateManager
+
+# Initialize Pearl-compliant logger
+logger = setup_pearl_logger(__name__)
 
 # Constants for AI response parsing
 DEFAULT_VOTE_FALLBACK = "ABSTAIN"
@@ -46,7 +46,7 @@ MAX_PROPOSAL_BODY_LENGTH = 500  # Characters to include in proposal summaries
 
 class DecisionFileError(Exception):
     """Custom exception for decision file operations."""
-    
+
     def __init__(self, message: str, file_path: Optional[str] = None):
         self.file_path = file_path
         super().__init__(message)
@@ -70,17 +70,17 @@ class VotingAgent:
     """Pydantic AI Agent for autonomous voting decisions."""
 
     # Model configuration constants
-    GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
+    GEMINI_MODEL_NAME: str = "google/gemini-2.0-flash-001"
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the VotingAgent with model, agent, and tools."""
         self.logger = setup_pearl_logger(__name__)
-        self.model = self._create_model()
-        self.agent = self._create_agent()
-        self.response_processor = AIResponseProcessor()
+        self.model: OpenAIModel = self._create_model()
+        self.agent: Agent[VotingDependencies, AiVoteResponse] = self._create_agent()
+        self.response_processor: AIResponseProcessor = AIResponseProcessor()
         self._register_tools()
 
-    def _create_model(self) -> Any:
+    def _create_model(self) -> OpenAIModel:
         """Create the AI model with OpenRouter configuration."""
         self.logger.info("Creating AI model for VotingAgent")
 
@@ -117,9 +117,9 @@ class VotingAgent:
                 error_message,
                 error_type,
             )
-            raise
+            raise e
 
-    def _create_agent(self) -> Agent:
+    def _create_agent(self) -> Agent[VotingDependencies, AiVoteResponse]:
         """Create and configure the Pydantic AI agent."""
         # Runtime assertion: validate preconditions
         assert self.model is not None, "Model must be initialized before creating agent"
@@ -142,10 +142,11 @@ class VotingAgent:
             system_prompt = self._get_base_system_prompt()
             output_config = NativeOutput(AiVoteResponse, strict=False)
 
-            agent = Agent(
+            agent = Agent[VotingDependencies, AiVoteResponse](
                 model=self.model,
                 system_prompt=system_prompt,
                 output_type=output_config,
+                deps_type=VotingDependencies,
             )
 
             # Extract agent type for logging
@@ -171,7 +172,7 @@ class VotingAgent:
                 error_type,
                 model_type_name,
             )
-            raise
+            raise e
 
     def _get_base_system_prompt(self) -> str:
         """Get the base system prompt for the AI agent."""
@@ -226,200 +227,195 @@ class VotingAgent:
             + strategy_prompts.get(strategy, strategy_prompts[VotingStrategy.BALANCED])
         )
 
-    def _proposal_to_dict(self, proposal: Proposal, include_full_body: bool = False) -> Dict[str, Any]:
+    def _proposal_to_dict(
+        self, proposal: Proposal, include_full_body: bool = False
+    ) -> Dict[str, Any]:
         """Convert a Proposal object to a dictionary optimized for agent consumption.
-        
+
         Args:
             proposal: The Proposal object to convert
             include_full_body: Whether to include the full proposal body
-            
+
         Returns:
             Dictionary representation of the proposal
         """
         body = proposal.body
         if not include_full_body and len(body) > MAX_PROPOSAL_BODY_LENGTH:
             body = body[:MAX_PROPOSAL_BODY_LENGTH] + "..."
-            
+
         return {
-            'id': proposal.id,
-            'title': proposal.title,
-            'body': body,
-            'choices': proposal.choices,
-            'author': proposal.author,
-            'start': proposal.start,
-            'end': proposal.end,
-            'state': getattr(proposal, 'state', None),
-            'space': getattr(proposal, 'space', None),
-            'type': getattr(proposal, 'type', None),
-            'scores': proposal.scores,
-            'scores_total': proposal.scores_total,
-            'votes': proposal.votes,
-            'created': getattr(proposal, 'created', None),
-            'updated': getattr(proposal, 'updated', None),
-            'snapshot': getattr(proposal, 'snapshot', None),
-            'privacy': getattr(proposal, 'privacy', None),
-            'link': getattr(proposal, 'link', None)
+            "id": proposal.id,
+            "title": proposal.title,
+            "body": body,
+            "choices": proposal.choices,
+            "author": proposal.author,
+            "start": proposal.start,
+            "end": proposal.end,
+            "state": proposal.state,
+            "space": proposal.space_id,
+            "type": getattr(proposal, "type", None),
+            "scores": proposal.scores,
+            "scores_total": proposal.scores_total,
+            "votes": proposal.votes,
+            "created": getattr(proposal, "created", None),
+            "updated": getattr(proposal, "updated", None),
+            "snapshot": getattr(proposal, "snapshot", None),
+            "privacy": getattr(proposal, "privacy", None),
+            "link": getattr(proposal, "link", None),
         }
 
-    def _register_tools(self):
+    def _register_tools(self) -> None:
         """Register agent tools for Snapshot integration."""
-        
+
         @self.agent.tool
         async def query_active_proposals(
-            ctx: RunContext[VotingDependencies], 
-            space_id: str
+            ctx: RunContext[VotingDependencies], space_id: str
         ) -> List[Dict[str, Any]]:
             """Fetch active proposals for a given space.
-            
+
             Args:
                 ctx: Agent runtime context with dependencies
                 space_id: The ID of the Snapshot space to query
-                
+
             Returns:
                 List of proposal dictionaries with key fields
             """
             self.logger.debug(
                 "query_active_proposals tool called, space_id=%s", space_id
             )
-            
+
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
-            assert ctx.deps.snapshot_service is not None, "SnapshotService must be available"
+            assert (
+                ctx.deps.snapshot_service is not None
+            ), "SnapshotService must be available"
             assert space_id, "space_id must not be empty"
-            
+
             try:
                 # Use the injected SnapshotService to fetch proposals
                 proposals = await ctx.deps.snapshot_service.get_proposals(
-                    space_id=space_id, 
-                    state="active"
+                    space_ids=[space_id], state="active"
                 )
-                
+
                 # Convert proposals to dictionaries optimized for agent consumption
                 result = [self._proposal_to_dict(proposal) for proposal in proposals]
-                
+
                 self.logger.info(
                     "query_active_proposals returned %d proposals for space_id=%s",
                     len(result),
-                    space_id
+                    space_id,
                 )
                 return result
-                
+
             except Exception as e:
                 self.logger.error(
                     "Error in query_active_proposals tool, space_id=%s, error=%s",
                     space_id,
-                    str(e)
+                    str(e),
                 )
-                raise
-        
+                raise e
+
         @self.agent.tool
         async def get_proposal_details(
-            ctx: RunContext[VotingDependencies],
-            proposal_id: str
+            ctx: RunContext[VotingDependencies], proposal_id: str
         ) -> Dict[str, Any]:
             """Get comprehensive details for a specific proposal.
-            
+
             Args:
                 ctx: Agent runtime context with dependencies
                 proposal_id: The ID of the proposal to fetch
-                
+
             Returns:
                 Dictionary with comprehensive proposal data
             """
             self.logger.debug(
                 "get_proposal_details tool called, proposal_id=%s", proposal_id
             )
-            
+
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
-            assert ctx.deps.snapshot_service is not None, "SnapshotService must be available"
+            assert (
+                ctx.deps.snapshot_service is not None
+            ), "SnapshotService must be available"
             assert proposal_id, "proposal_id must not be empty"
-            
+
             try:
                 # Fetch the proposal using SnapshotService
                 proposal = await ctx.deps.snapshot_service.get_proposal(proposal_id)
-                
+
+                # Check if proposal was found
+                if proposal is None:
+                    raise ValueError(f"Proposal not found: {proposal_id}")
+
                 # Return comprehensive proposal data with full body
                 result = self._proposal_to_dict(proposal, include_full_body=True)
-                
+
                 self.logger.info(
-                    "get_proposal_details returned data for proposal_id=%s",
-                    proposal_id
+                    "get_proposal_details returned data for proposal_id=%s", proposal_id
                 )
                 return result
-                
+
             except Exception as e:
                 self.logger.error(
-                    "Error in get_proposal_details tool, proposal_id=%s, error=%s", 
+                    "Error in get_proposal_details tool, proposal_id=%s, error=%s",
                     proposal_id,
-                    str(e)
+                    str(e),
                 )
-                raise
-        
+                raise e
+
         @self.agent.tool
         async def get_voting_power(
-            ctx: RunContext[VotingDependencies],
-            address: str,
-            space_id: str
+            ctx: RunContext[VotingDependencies], address: str, space_id: str
         ) -> float:
             """Calculate voting power for an address in a space.
-            
+
             Args:
                 ctx: Agent runtime context with dependencies
                 address: The blockchain address to check
                 space_id: The Snapshot space ID
-                
+
             Returns:
                 Float representing the voting power
             """
             self.logger.debug(
                 "get_voting_power tool called, address=%s, space_id=%s",
                 address,
-                space_id
+                space_id,
             )
-            
+
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
             assert address, "address must not be empty"
             assert space_id, "space_id must not be empty"
-            
+
             try:
-                # For now, use a simple implementation
-                # In future, this would integrate with actual voting power calculation
-                if hasattr(ctx.deps.snapshot_service, 'calculate_voting_power'):
-                    power = await ctx.deps.snapshot_service.calculate_voting_power(
-                        address=address,
-                        space_id=space_id
-                    )
-                else:
-                    # Default implementation if method doesn't exist
-                    self.logger.warning(
-                        "SnapshotService.calculate_voting_power not implemented, returning default"
-                    )
-                    power = 0.0
-                
+                # Use the SnapshotService get_voting_power method
+                power = await ctx.deps.snapshot_service.get_voting_power(
+                    space_id=space_id, voter_address=address
+                )
+
                 self.logger.info(
                     "get_voting_power returned %f for address=%s in space_id=%s",
                     power,
                     address,
-                    space_id
+                    space_id,
                 )
                 return power
-                
+
             except Exception as e:
                 self.logger.error(
                     "Error in get_voting_power tool, address=%s, space_id=%s, error=%s",
                     address,
                     space_id,
-                    str(e)
+                    str(e),
                 )
-                raise
+                raise e
 
 
 class AIResponseProcessor:
     """Cohesive class for handling AI response processing and validation."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the response processor."""
         # Runtime assertion: validate constants are properly configured
         assert VALID_VOTE_TYPES, "Valid vote types must be configured"
@@ -580,7 +576,7 @@ class AIService:
 
         # Initialize services
         self.snapshot_service = snapshot_service or SnapshotService()
-        
+
         # Initialize VotingAgent for refactored architecture
         self.voting_agent = VotingAgent()
 
@@ -590,7 +586,7 @@ class AIService:
         # Cache service removed for autonomous voting focus
         self.response_processor = AIResponseProcessor()
 
-    def _create_model(self) -> Any:
+    def _create_model(self) -> Union[OpenAIModel, str]:
         """Create the AI model with OpenRouter configuration."""
         # Constants for model configuration
         GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
@@ -635,12 +631,12 @@ class AIService:
                     error_message,
                     error_type,
                 )
-                raise
+                raise e
         else:
             logger.warning("No AI API keys configured, using default model")
             return DEFAULT_MODEL_FALLBACK  # TODO: need to fix how this is handled
 
-    def _create_agent(self) -> Any:
+    def _create_agent(self) -> Agent[None, AiVoteResponse]:
         """Create and configure the Pydantic AI agent."""
         # Runtime assertion: validate preconditions
         assert self.model is not None, "Model must be initialized before creating agent"
@@ -691,7 +687,7 @@ class AIService:
                 error_type,
                 model_type_name,
             )
-            raise
+            raise e
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI agent."""
@@ -730,13 +726,13 @@ class AIService:
         assert isinstance(
             proposal, Proposal
         ), f"Expected Proposal object, got {type(proposal)}"
-        
+
         # Determine strategy from user_preferences or parameter
         if user_preferences:
             strategy = user_preferences.voting_strategy
         elif strategy is None:
             strategy = VotingStrategy.BALANCED  # Default strategy
-            
+
         assert isinstance(
             strategy, VotingStrategy
         ), f"Expected VotingStrategy enum, got {type(strategy)}"
@@ -801,9 +797,9 @@ class AIService:
                         risk_level=vote_decision.risk_assessment,
                         reasoning=vote_decision.reasoning.split(". "),
                         voting_strategy=strategy,
-                        dry_run=False  # Set based on context
+                        dry_run=False,  # Set based on context
                     )
-                    
+
                     try:
                         await self.save_decision_file(decision_file)
                     except DecisionFileError as e:
@@ -837,6 +833,11 @@ class AIService:
             reasoning=decision_data["reasoning"],
             risk_assessment=RiskLevel(decision_data["risk_level"]),
             strategy_used=strategy,
+            space_id=None,  # Set to None by default, can be updated later
+            attestation_status=None,  # Optional attestation tracking
+            attestation_tx_hash=None,  # Optional attestation tracking
+            attestation_uid=None,  # Optional attestation tracking
+            attestation_error=None,  # Optional attestation tracking
         )
 
     async def _generate_vote_decision(
@@ -845,28 +846,30 @@ class AIService:
         strategy: VotingStrategy,
     ) -> Dict[str, Any]:
         """Generate voting decision for a proposal using the specified strategy.
-        
+
         This method uses the Pydantic AI VotingAgent to make autonomous voting
         decisions based on the provided strategy and proposal details.
         """
         # Create dependencies for agent execution
         deps = self._create_voting_dependencies(strategy)
-        
+
         # Build strategy-specific prompt with proposal details
         prompt = self._build_agent_prompt(proposal, strategy)
-        
+
         # Execute agent with structured output
         result = await self.voting_agent.agent.run(prompt, deps=deps)
-        
+
         # Extract and format the structured response
-        formatted_response = self._format_agent_response(result.data)
+        formatted_response = self._format_agent_response(result.output)
 
         # Validate response through existing processor
         return self.response_processor.parse_and_validate_vote_response(
             formatted_response
         )
-    
-    def _create_voting_dependencies(self, strategy: VotingStrategy) -> VotingDependencies:
+
+    def _create_voting_dependencies(
+        self, strategy: VotingStrategy
+    ) -> VotingDependencies:
         """Create VotingDependencies for agent execution with the given strategy."""
         return VotingDependencies(
             snapshot_service=self.snapshot_service,
@@ -876,18 +879,18 @@ class AIService:
                 max_proposals_per_run=5,
                 blacklisted_proposers=[],
                 whitelisted_proposers=[],
-            )
+            ),
         )
-    
+
     def _build_agent_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
         """Build a comprehensive prompt for the voting agent."""
         system_prompt = self.voting_agent._get_system_prompt_for_strategy(strategy)
-        
+
         # Truncate body for token efficiency
         truncated_body = proposal.body[:MAX_PROPOSAL_BODY_LENGTH]
         if len(proposal.body) > MAX_PROPOSAL_BODY_LENGTH:
             truncated_body += "..."
-        
+
         proposal_details = [
             f"Analyze proposal: {proposal.title}",
             "",
@@ -899,9 +902,9 @@ class AIService:
             f"- Scores: {proposal.scores}",
             f"- Author: {proposal.author}",
         ]
-        
+
         return f"{system_prompt}\n\n" + "\n".join(proposal_details)
-    
+
     def _format_agent_response(self, ai_response: AiVoteResponse) -> Dict[str, Any]:
         """Format the agent's structured response for the response processor."""
         return {
@@ -965,7 +968,7 @@ class AIService:
 
     def _get_proposal_description(self, proposal: Proposal) -> str:
         """Get proposal description with fallback."""
-        return getattr(proposal, "body", "No description available")
+        return proposal.body or "No description available"
 
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt."""
@@ -990,7 +993,7 @@ class AIService:
         except Exception as e:
             error_message = str(e)
             logger.error("AI model call failed, error=%s", error_message)
-            raise
+            raise e
 
     async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
         """Generate a summary for a single proposal."""
@@ -1099,11 +1102,13 @@ class AIService:
             # Extract context for logging
             proposal_count = len(proposals)
             model_type_name = type(self.model).__name__
-            
+
             # Check if API key is configured
             if not settings.openrouter_api_key:
                 logger.error("OpenRouter API key is not configured")
-                raise ValueError("OpenRouter API key is not configured. Please set OPENROUTER_API_KEY environment variable.")
+                raise ValueError(
+                    "OpenRouter API key is not configured. Please set OPENROUTER_API_KEY environment variable."
+                )
 
             with log_span(
                 logger, "ai_multiple_proposal_summaries", proposal_count=proposal_count
@@ -1117,18 +1122,22 @@ class AIService:
                 # Create tasks for concurrent processing
                 logger.debug("Creating summary tasks for concurrent processing")
                 summary_tasks = self._create_summary_tasks(proposals)
-                
+
                 logger.debug(f"Executing {len(summary_tasks)} concurrent summary tasks")
-                summaries = await asyncio.gather(*summary_tasks, return_exceptions=True)
-                
+                results = await asyncio.gather(*summary_tasks, return_exceptions=True)
+
                 # Check for any exceptions in the results
-                errors = [s for s in summaries if isinstance(s, Exception)]
+                errors = [r for r in results if isinstance(r, Exception)]
                 if errors:
                     logger.error(f"Errors occurred during summarization: {errors}")
                     raise errors[0]
-                
-                # Filter out any None values
-                summaries = [s for s in summaries if s is not None]
+
+                # Filter out exceptions and None values, ensure type safety
+                summaries: List[ProposalSummary] = [
+                    r
+                    for r in results
+                    if isinstance(r, ProposalSummary) and r is not None
+                ]
 
                 # Extract summary count for validation
                 summary_count = len(summaries)
@@ -1153,7 +1162,8 @@ class AIService:
             error_message = str(e)
             error_type = type(e).__name__
             import traceback
-            tb_str = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
+
+            tb_str = "".join(traceback.format_exception(type(e), e, e.__traceback__))
 
             logger.error(
                 "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s\nTraceback:\n%s",
@@ -1164,7 +1174,7 @@ class AIService:
             )
             raise e
 
-    def _create_summary_tasks(self, proposals: List[Proposal]) -> List:
+    def _create_summary_tasks(self, proposals: List[Proposal]) -> List[Any]:
         """Create async tasks for summarizing proposals."""
         return [self.summarize_proposal(proposal) for proposal in proposals]
 
@@ -1199,7 +1209,7 @@ class AIService:
             logger.error(
                 "AI model call failed for summarization, error=%s", error_message
             )
-            raise
+            raise e
 
     def _process_summary_ai_result(self, result: Any) -> Dict[str, Any]:
         """Process AI model result specifically for summarization."""
@@ -1230,11 +1240,17 @@ class AIService:
 
     def _create_summary_fallback_response(self, raw_output: str) -> Dict[str, Any]:
         """Create a fallback summary response when AI output cannot be parsed."""
+        logger.debug(
+            f"Creating fallback response for raw output: {raw_output[:100]}..."
+        )
         return {
             "summary": "Unable to generate structured summary from AI response",
-            "key_points": ["AI response processing failed", "Raw output available in logs"],
+            "key_points": [
+                "AI response processing failed",
+                "Raw output available in logs",
+            ],
             "risk_level": "MEDIUM",
-            "recommendation": "Manual review recommended due to parsing failure"
+            "recommendation": "Manual review recommended due to parsing failure",
         }
 
     def _build_summary_prompt(self, proposal: Proposal) -> str:
@@ -1302,54 +1318,53 @@ class AIService:
         return validated_response
 
     async def save_decision_file(
-        self,
-        decision: VotingDecisionFile,
-        base_path: Optional[Path] = None
+        self, decision: VotingDecisionFile, base_path: Optional[Path] = None
     ) -> Path:
         """Save voting decision to file atomically."""
-        
+
         # Prepare file path
-        output_dir = base_path or Path(settings.store_path or ".") / settings.decision_output_dir
+        output_dir = (
+            base_path or Path(settings.store_path or ".") / settings.decision_output_dir
+        )
         output_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Generate filename with timestamp and proposal ID
         timestamp = decision.timestamp.strftime("%Y%m%d_%H%M%S")
         filename = f"decision_{timestamp}_{decision.proposal_id[:8]}.json"
         final_path = output_dir / filename
-        
+
         # Calculate checksum
         decision_dict = decision.model_dump(exclude={"checksum"})
         checksum = self._calculate_checksum(decision_dict)
         decision.checksum = checksum
-        
+
         # Atomic write using temporary file
         temp_path = None
         try:
             temp_fd, temp_path = tempfile.mkstemp(dir=output_dir, suffix=".tmp")
             with os.fdopen(temp_fd, "w") as f:
                 json.dump(decision.model_dump(), f, indent=2, default=str)
-            
+
             # Atomic rename
             Path(temp_path).replace(final_path)
-            
+
             logger.info(f"Decision file saved: {final_path}")
             return final_path
-            
+
         except PermissionError as e:
             # Clean up temp file on error
             if temp_path and os.path.exists(temp_path):
                 os.unlink(temp_path)
             raise DecisionFileError(
                 f"Permission denied saving decision file: {e}",
-                file_path=str(final_path)
+                file_path=str(final_path),
             )
         except (OSError, IOError) as e:
             # Clean up temp file on error
             if temp_path and os.path.exists(temp_path):
                 os.unlink(temp_path)
             raise DecisionFileError(
-                f"Failed to save decision file: {e}",
-                file_path=str(final_path)
+                f"Failed to save decision file: {e}", file_path=str(final_path)
             )
 
     def _calculate_checksum(self, data: Dict[str, Any]) -> str:
@@ -1361,18 +1376,17 @@ class AIService:
         """Remove old decision files exceeding max_decision_files limit."""
         if not decisions_dir.exists():
             return 0
-            
+
         # Get all decision files sorted by modification time
         decision_files = sorted(
-            decisions_dir.glob("decision_*.json"),
-            key=lambda f: f.stat().st_mtime
+            decisions_dir.glob("decision_*.json"), key=lambda f: f.stat().st_mtime
         )
-        
+
         # Calculate how many to remove
         files_to_remove = len(decision_files) - settings.max_decision_files
         if files_to_remove <= 0:
             return 0
-            
+
         # Remove oldest files
         removed_count = 0
         for file_path in decision_files[:files_to_remove]:
@@ -1381,11 +1395,11 @@ class AIService:
                 removed_count += 1
             except Exception as e:
                 logger.error(f"Failed to remove old decision file {file_path}: {e}")
-                
+
         retained_count = len(decision_files) - removed_count
         logger.info(
             f"[agent] Decision file cleanup: removed {removed_count} old files, "
             f"retained {retained_count} recent files"
         )
-        
+
         return removed_count
