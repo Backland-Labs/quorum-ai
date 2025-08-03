@@ -1,13 +1,16 @@
 """Agent Run Service for executing autonomous voting decisions."""
 
 import glob
+import json
 import os
 import re
 import time
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 from datetime import datetime, timezone
 from logging_config import setup_pearl_logger, log_span
+from config import settings
 
 from models import (
     AgentRunRequest,
@@ -1166,7 +1169,7 @@ class AgentRunService:
     async def get_recent_decisions(
         self, limit: int = 5
     ) -> List[Tuple[VoteDecision, str]]:
-        """Get recent voting decisions from all checkpoint files.
+        """Get recent voting decisions from decision files.
 
         Args:
             limit: Maximum number of decisions to return
@@ -1174,65 +1177,57 @@ class AgentRunService:
         Returns:
             List of tuples containing (VoteDecision, timestamp)
         """
-        if not self.state_manager:
-            return []
-
         all_decisions = []
 
         try:
-            # List all checkpoint files
-            checkpoint_files = await self.state_manager.list_files()
-            checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")
+            # Get the decisions directory path
+            decisions_dir = Path(settings.decision_output_dir)
+            if not decisions_dir.exists():
+                self.pearl_logger.warning(f"Decisions directory does not exist: {decisions_dir}")
+                return []
 
-            # Filter for checkpoint files
-            checkpoint_files = [
-                f for f in checkpoint_files if checkpoint_pattern.match(f)
-            ]
+            # Get all decision files and sort by modification time (most recent first)
+            decision_files = list(decisions_dir.glob("decision_*.json"))
+            decision_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
 
-            # Load and aggregate decisions from each checkpoint
-            for checkpoint_file in checkpoint_files:
+            # Load and parse decision files
+            for decision_file in decision_files[:limit]:
                 try:
-                    # Remove .json extension to get the key name
-                    checkpoint_key = checkpoint_file.replace(".json", "")
-                    checkpoint_data = await self.state_manager.load_state(
-                        checkpoint_key, allow_recovery=True
-                    )
+                    with open(decision_file, 'r') as f:
+                        decision_data = json.load(f)
 
-                    if checkpoint_data and "votes_cast" in checkpoint_data:
-                        votes = checkpoint_data["votes_cast"]
+                    # Extract the timestamp
+                    timestamp = decision_data.get("timestamp", "")
 
-                        # Handle both old format (count) and new format (list of decisions)
-                        if isinstance(votes, list):
-                            for vote_data in votes:
-                                try:
-                                    # Create a copy to avoid modifying the original
-                                    vote_data_copy = vote_data.copy()
+                    # Map the decision file data to VoteDecision model format
+                    vote_data = {
+                        "proposal_id": decision_data.get("proposal_id"),
+                        "vote": decision_data.get("vote"),
+                        "confidence": decision_data.get("confidence"),
+                        "reasoning": " ".join(decision_data.get("reasoning", [])) if isinstance(decision_data.get("reasoning"), list) else decision_data.get("reasoning", ""),
+                        "risk_assessment": decision_data.get("risk_level", "MEDIUM"),
+                        "strategy_used": decision_data.get("voting_strategy", "balanced"),
+                        "space_id": decision_data.get("space_id"),
+                        "attestation_status": None,  # Not in decision files
+                        "estimated_gas_cost": 0.002,  # Default value
+                        "run_id": decision_data.get("run_id"),
+                        "proposal_title": decision_data.get("proposal_title"),
+                        "dry_run": decision_data.get("dry_run", False),
+                        "executed": decision_data.get("executed", False),
+                        "transaction_hash": decision_data.get("transaction_hash"),
+                        "key_factors": decision_data.get("key_factors", [])
+                    }
 
-                                    # Extract timestamp before creating VoteDecision
-                                    timestamp = vote_data_copy.pop(
-                                        "timestamp",
-                                        checkpoint_data.get("timestamp", ""),
-                                    )
-
-                                    # Create VoteDecision from the data
-                                    vote_decision = VoteDecision(**vote_data_copy)
-                                    all_decisions.append((vote_decision, timestamp))
-                                except Exception as e:
-                                    self.pearl_logger.warning(
-                                        f"Skipping invalid vote decision: {e}"
-                                    )
-
+                    # Create VoteDecision from the mapped data
+                    vote_decision = VoteDecision(**vote_data)
+                    all_decisions.append((vote_decision, timestamp))
+                    
                 except Exception as e:
                     self.pearl_logger.warning(
-                        f"Error loading checkpoint {checkpoint_file}: {e}"
+                        f"Skipping invalid decision file {decision_file}: {e}"
                     )
-                    continue
 
-            # Sort by timestamp (most recent first)
-            all_decisions.sort(key=lambda x: x[1], reverse=True)
-
-            # Apply limit
-            return all_decisions[:limit]
+            return all_decisions
 
         except Exception as e:
             self.pearl_logger.error(f"Error retrieving recent decisions: {e}")
@@ -1269,6 +1264,18 @@ class AgentRunService:
         total_runtime_seconds = 0.0
 
         try:
+            # Check if list_files method exists
+            if not hasattr(self.state_manager, 'list_files'):
+                self.pearl_logger.warning("StateManager missing list_files method, returning empty statistics")
+                return {
+                    "total_runs": 0,
+                    "total_proposals_evaluated": 0,
+                    "total_votes_cast": 0,
+                    "average_confidence_score": 0.0,
+                    "success_rate": 0.0,
+                    "average_runtime_seconds": 0.0,
+                }
+            
             # List all checkpoint files
             checkpoint_files = await self.state_manager.list_files()
             checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")
