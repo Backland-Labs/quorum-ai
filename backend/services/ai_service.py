@@ -722,6 +722,7 @@ class AIService:
         strategy: Optional[VotingStrategy] = None,
         user_preferences: Optional[UserPreferences] = None,
         save_to_file: bool = True,
+        space_id: Optional[str] = None,
     ) -> VoteDecision:
         """Make a voting decision for a proposal using the specified strategy."""
         # Runtime assertion: validate input parameters
@@ -794,7 +795,7 @@ class AIService:
                     decision_file = VotingDecisionFile(
                         proposal_id=proposal.id,
                         proposal_title=proposal.title,
-                        space_id=proposal.space_id or "unknown",
+                        space_id=space_id or "unknown",
                         vote=vote_decision.vote.value,
                         confidence=vote_decision.confidence,
                         risk_level=vote_decision.risk_assessment,

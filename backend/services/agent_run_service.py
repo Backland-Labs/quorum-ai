@@ -353,7 +353,7 @@ class AgentRunService:
         if proposals:
             try:
                 vote_decisions = await self._make_voting_decisions(
-                    proposals, user_preferences
+                    proposals, user_preferences, space_id
                 )
                 # Log individual proposal analysis
                 for proposal, decision in zip(proposals, vote_decisions):
@@ -633,13 +633,14 @@ class AgentRunService:
                 ) from e
 
     async def _make_voting_decisions(
-        self, proposals: List[Proposal], preferences: UserPreferences
+        self, proposals: List[Proposal], preferences: UserPreferences, space_id: str
     ) -> List[VoteDecision]:
         """Make voting decisions for the given proposals using AI and user preferences.
 
         Args:
             proposals: List of Proposal objects to analyze
             preferences: User preferences for voting strategy and filters
+            space_id: The space identifier for the proposals
 
         Returns:
             List of VoteDecision objects that meet confidence threshold
@@ -676,7 +677,7 @@ class AgentRunService:
                 for proposal in proposals:
                     # Make voting decision using AI
                     decision = await self.ai_service.decide_vote(
-                        proposal=proposal, strategy=preferences.voting_strategy
+                        proposal=proposal, strategy=preferences.voting_strategy, space_id=space_id
                     )
 
                     # Filter by confidence threshold
