@@ -942,7 +942,7 @@ class AIService:
         proposal_description = self._get_proposal_description(proposal)
 
         return f"""**Proposal Title:** {proposal.title}
-        **Network:** {proposal.network} ({proposal.symbol})
+        **Space:** {proposal.space_id}
         **Current Status:** {proposal.state}
 
         **Voting Results:**
@@ -1098,6 +1098,11 @@ class AIService:
             # Extract context for logging
             proposal_count = len(proposals)
             model_type_name = type(self.model).__name__
+            
+            # Check if API key is configured
+            if not settings.openrouter_api_key:
+                logger.error("OpenRouter API key is not configured")
+                raise ValueError("OpenRouter API key is not configured. Please set OPENROUTER_API_KEY environment variable.")
 
             with log_span(
                 logger, "ai_multiple_proposal_summaries", proposal_count=proposal_count
@@ -1109,8 +1114,20 @@ class AIService:
                 )
 
                 # Create tasks for concurrent processing
+                logger.debug("Creating summary tasks for concurrent processing")
                 summary_tasks = self._create_summary_tasks(proposals)
-                summaries = await asyncio.gather(*summary_tasks)
+                
+                logger.debug(f"Executing {len(summary_tasks)} concurrent summary tasks")
+                summaries = await asyncio.gather(*summary_tasks, return_exceptions=True)
+                
+                # Check for any exceptions in the results
+                errors = [s for s in summaries if isinstance(s, Exception)]
+                if errors:
+                    logger.error(f"Errors occurred during summarization: {errors}")
+                    raise errors[0]
+                
+                # Filter out any None values
+                summaries = [s for s in summaries if s is not None]
 
                 # Extract summary count for validation
                 summary_count = len(summaries)
@@ -1134,12 +1151,15 @@ class AIService:
         except Exception as e:
             error_message = str(e)
             error_type = type(e).__name__
+            import traceback
+            tb_str = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
 
             logger.error(
-                "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s",
+                "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s\nTraceback:\n%s",
                 len(proposals),
                 error_message,
                 error_type,
+                tb_str,
             )
             raise e
 

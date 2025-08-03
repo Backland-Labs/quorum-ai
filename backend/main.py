@@ -176,9 +176,34 @@ app.add_middleware(
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     """Handle general exceptions."""
-    logger.error(f"Unhandled exception error={str(exc)} path={str(request.url)}")
+    import traceback
+    
+    # Get the full traceback
+    tb_str = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+    
+    # Log the full exception details
+    logger.error(
+        f"Unhandled exception error={str(exc)} path={str(request.url)} "
+        f"method={request.method} exception_type={type(exc).__name__}\n"
+        f"Traceback:\n{tb_str}"
+    )
+    
+    # In debug mode, return the full error details
+    if settings.debug:
+        return JSONResponse(
+            status_code=500, 
+            content={
+                "error": "Internal server error", 
+                "message": str(exc),
+                "exception_type": type(exc).__name__,
+                "traceback": tb_str.split('\n')
+            }
+        )
+    
+    # In production, return a generic error message
     return JSONResponse(
-        status_code=500, content={"error": "Internal server error", "message": str(exc)}
+        status_code=500, 
+        content={"error": "Internal server error", "message": str(exc)}
     )
 
 
@@ -341,23 +366,41 @@ async def get_proposal_by_id(proposal_id: str):
 async def summarize_proposals(request: SummarizeRequest):
     """Summarize multiple proposals using AI."""
     start_time = time.time()
+    
+    # Log the incoming request
+    logger.info(
+        f"Received summarize request proposal_ids={request.proposal_ids} "
+        f"proposal_count={len(request.proposal_ids)}"
+    )
 
     try:
         with log_span(
             logger, "summarize_proposals", proposal_count=len(request.proposal_ids)
         ):
             # Fetch proposals
+            logger.info("Fetching proposals for summarization")
             proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
 
             if not proposals:
+                logger.warning(
+                    f"No proposals found for IDs: {request.proposal_ids}"
+                )
                 raise HTTPException(
                     status_code=404, detail="No proposals found for the provided IDs"
                 )
+            
+            logger.info(f"Successfully fetched {len(proposals)} proposals")
 
             # Generate summaries
+            logger.info("Starting AI summarization")
             summaries = await _generate_proposal_summaries(proposals)
 
             processing_time = time.time() - start_time
+            logger.info(
+                f"Successfully completed summarization "
+                f"summary_count={len(summaries)} "
+                f"processing_time={processing_time:.2f}s"
+            )
 
             return SummarizeResponse(
                 summaries=summaries,
@@ -368,7 +411,11 @@ async def summarize_proposals(request: SummarizeRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to summarize proposals error={str(e)}")
+        logger.error(
+            f"Failed to summarize proposals error={str(e)} "
+            f"exception_type={type(e).__name__} "
+            f"proposal_ids={request.proposal_ids}"
+        )
         raise HTTPException(
             status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
         )
