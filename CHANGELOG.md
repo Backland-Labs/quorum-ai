@@ -8,10 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive API documentation in specs/api.md for all agent dashboard endpoints
-- Agent Dashboard Components documentation in specs/frontend.md
-- Troubleshooting guide for common agent dashboard issues
-- Detailed endpoint documentation for /agent-run/status, /agent-run/decisions, and /agent-run/statistics
+- Pydantic AI Agents integration with Google Gemini 2.0 Flash via OpenRouter (#146)
+- VotingAgent class with agent tools for Snapshot integration (query_active_proposals, get_proposal_details, get_voting_power)
+- File-based decision output system with atomic writes and automatic cleanup
+- Comprehensive agent testing suite with 30+ test cases and performance benchmarks
+- Autonomous voting dashboard with real-time status monitoring (#143)
+- Agent dashboard API endpoints: /agent-run/status, /agent-run/decisions, /agent-run/statistics
+- Frontend components: AgentStatusWidget, AgentDecisionsPanel, AgentStatistics, AgentQuickActions
+- Shared state management for agent dashboard with Svelte stores
+- Dynamic MONITORED_DAOS configuration from backend API
+- Pearl log streaming in startup.sh --logs mode
+
+### Changed
+- Refactored AI Service to use Pydantic AI Agents architecture
+- Migrated vote decision logic to use VotingAgent with structured outputs
+- Enhanced error handling and logging throughout AI service
+- Improved startup.sh with graceful shutdown and better error handling
+- Updated agent dashboard with responsive design and accessibility features
+- Standardized application to use port 8716 consistently across all services
+
+### Fixed
+- AI service summarization errors with proper fallback responses
+- Proposal title display showing 'Unknown Proposal' in dashboard
+- Decision file reading in get_recent_decisions method
+- Type annotations and Pylance errors in ai_service.py
+- Snapshot API integration issues with space_id handling
 
 ## [0.5.0] - 2025-07-23
 ### Added
