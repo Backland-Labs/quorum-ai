@@ -21,7 +21,7 @@ class ActivityService:
     def __init__(self):
         """Initialize activity service with persistent state."""
         # Initialize Pearl-compliant logger
-        self.logger = setup_pearl_logger(__name__)
+        self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
         self.last_activity_date: Optional[date] = None
         self.last_tx_hash: Optional[str] = None

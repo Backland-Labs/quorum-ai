@@ -13,8 +13,9 @@ from pathlib import Path
 from typing import Optional
 
 from logging_config import setup_pearl_logger
+from config import settings
 
-logger = setup_pearl_logger(__name__)
+logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
 # Constants
 KEY_FILE_NAME = "ethereum_private_key.txt"

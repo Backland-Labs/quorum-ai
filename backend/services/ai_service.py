@@ -30,7 +30,7 @@ from services.snapshot_service import SnapshotService
 from services.state_manager import StateManager
 
 # Initialize Pearl-compliant logger
-logger = setup_pearl_logger(__name__)
+logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
 # Constants for AI response parsing
 DEFAULT_VOTE_FALLBACK = "ABSTAIN"
@@ -74,7 +74,7 @@ class VotingAgent:
 
     def __init__(self) -> None:
         """Initialize the VotingAgent with model, agent, and tools."""
-        self.logger = setup_pearl_logger(__name__)
+        self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
         self.model: OpenAIModel = self._create_model()
         self.agent: Agent[VotingDependencies, AiVoteResponse] = self._create_agent()
         self.response_processor: AIResponseProcessor = AIResponseProcessor()

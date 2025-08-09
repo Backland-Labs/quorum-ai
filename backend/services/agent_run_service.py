@@ -86,7 +86,7 @@ class AgentRunService:
         self.voting_service = VotingService()
         self.safe_service = SafeService()
         self.user_preferences_service = UserPreferencesService()
-        self.logger = AgentRunLogger()
+        self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
 
         # Initialize state transition tracker with StateManager for persistence

@@ -3,34 +3,34 @@
 ## Repository Structure & Files
 
 ### Core Agent Files
-- [ ] `main.py` - Agent orchestration logic
-- [ ] `health_server.py` - Healthcheck endpoint implementation
-- [ ] `requirements.txt` - Python dependencies
-- [ ] `service.yaml` - Service configuration
-- [ ] `Dockerfile` - Container configuration
+- [x] `main.py` - Agent orchestration logic
+- [ ] `health_server.py` - Healthcheck endpoint implementation (integrated into main.py)
+- [ ] `requirements.txt` - Python dependencies (using pyproject.toml instead)
+- [ ] `service.yaml` - Service configuration (using service-template.json instead)
+- [x] `Dockerfile` - Container configuration
 - [ ] `entrypoint.sh` - Docker entrypoint script
-- [ ] `log.txt` - Generated during runtime (verify format)
+- [x] `log.txt` - Generated during runtime (verify format)
 
 ### Configuration Files
-- [ ] `config.py` - Agent configuration
-- [ ] `models.py` - Data models
-- [ ] `governor_abi.json` - Smart contract ABI
+- [x] `config.py` - Agent configuration
+- [x] `models.py` - Data models
+- [ ] `governor_abi.json` - Smart contract ABI (has other ABI files)
 
 ### Service Components
-- [ ] `services/snapshot_service.py` - Snapshot integration
-- [ ] `services/ai_service.py` - Voting decision logic
-- [ ] `services/safe_executor.py` - Gnosis Safe integration
+- [x] `services/snapshot_service.py` - Snapshot integration
+- [x] `services/ai_service.py` - Voting decision logic
+- [ ] `services/safe_executor.py` - Gnosis Safe integration (using safe_service.py instead)
 - [ ] `services/staking_manager.py` - Staking logic
 
 ## Technical Requirements
 
 ### Health Check Endpoint
-- [ ] Endpoint accessible at `http://127.0.0.1:8716/healthcheck`
+- [x] Endpoint accessible at `http://127.0.0.1:8716/healthcheck`
 - [ ] Returns valid JSON with required fields:
-  - [ ] `seconds_since_last_transition`
+  - [x] `seconds_since_last_transition`
   - [ ] `is_tm_healthy`
-  - [ ] `is_transitioning_fast`
-  - [ ] `period`
+  - [x] `is_transitioning_fast`
+  - [x] `period`
   - [ ] `agent_health` object with:
     - [ ] `is_making_on_chain_transactions`
     - [ ] `is_staking_kpi_met`
@@ -39,51 +39,51 @@
   - [ ] `rounds_info` object
 
 ### Logging
-- [ ] Logs written to `log.txt` in working directory
-- [ ] Format: `[YYYY-MM-DD HH:MM:SS,mmm] [LOG_LEVEL] [agent] Message`
-- [ ] Log file created on startup
-- [ ] Appropriate log levels used (INFO, WARNING, ERROR)
+- [x] Logs written to `log.txt` in working directory
+- [x] Format: `[YYYY-MM-DD HH:MM:SS,mmm] [LOG_LEVEL] [agent] Message`
+- [x] Log file created on startup
+- [x] Appropriate log levels used (INFO, WARNING, ERROR)
 
 ### Key Management
-- [ ] Reads `ethereum_private_key.txt` from working directory
-- [ ] Handles `SAFE_CONTRACT_ADDRESSES` environment variable
-- [ ] Properly parses Safe addresses JSON format
+- [x] Reads `ethereum_private_key.txt` from working directory
+- [x] Handles `SAFE_CONTRACT_ADDRESSES` environment variable
+- [x] Properly parses Safe addresses JSON format
 
 ### Environment Variables
-- [ ] All variables defined in `service.yaml`
+- [ ] All variables defined in `service.yaml` (using service-template.json)
 - [ ] Variables prefixed with `CONNECTION_CONFIGS_CONFIG_` when read
 - [ ] Required computed variables:
-  - [ ] `SAFE_CONTRACT_ADDRESSES`
-  - [ ] `GNOSIS_LEDGER_RPC`
-  - [ ] `STAKING_TOKEN_CONTRACT_ADDRESS`
-  - [ ] `ACTIVITY_CHECKER_CONTRACT_ADDRESS`
-  - [ ] `STORE_PATH`
+  - [x] `SAFE_CONTRACT_ADDRESSES`
+  - [x] `GNOSIS_LEDGER_RPC`
+  - [x] `STAKING_TOKEN_CONTRACT_ADDRESS`
+  - [x] `ACTIVITY_CHECKER_CONTRACT_ADDRESS`
+  - [x] `STORE_PATH`
 - [ ] User-provided variables:
   - [ ] `SNAPSHOT_API_KEY`
   - [ ] `VOTING_STRATEGY`
   - [ ] `DAO_ADDRESSES`
 
 ### Persistence & Recovery
-- [ ] Uses `STORE_PATH` for persistent data
+- [x] Uses `STORE_PATH` for persistent data
 - [ ] Saves state periodically (at least every epoch)
-- [ ] Recovers gracefully after SIGKILL
-- [ ] No data stored outside `STORE_PATH`
+- [x] Recovers gracefully after SIGKILL
+- [x] No data stored outside `STORE_PATH`
 
 ### Activity Requirements
-- [ ] Performs at least 1 transaction per 24 hours
-- [ ] Implements fallback dummy transaction if no proposals
-- [ ] Transaction goes through multisig Safe
-- [ ] Activity tracked for staking rewards
+- [x] Performs at least 1 transaction per 24 hours
+- [x] Implements fallback dummy transaction if no proposals
+- [x] Transaction goes through multisig Safe
+- [x] Activity tracked for staking rewards
 
 ## Docker Requirements
 
 ### Dockerfile
-- [ ] Uses appropriate base image (Python 3.10+)
-- [ ] Installs all system dependencies
-- [ ] Copies all required files
-- [ ] Sets ENTRYPOINT (not CMD)
-- [ ] Includes HEALTHCHECK directive
-- [ ] Health check interval ≤ 30 seconds
+- [x] Uses appropriate base image (Python 3.10+)
+- [x] Installs all system dependencies
+- [x] Copies all required files
+- [ ] Sets ENTRYPOINT (not CMD) - uses CMD instead
+- [x] Includes HEALTHCHECK directive
+- [x] Health check interval ≤ 30 seconds
 
 ### Docker Image
 - [ ] Built successfully
@@ -117,13 +117,13 @@
 ## Service Template
 
 ### JSON Structure
-- [ ] Valid JSON format
-- [ ] All required fields present:
-  - [ ] `name`, `hash`, `description`
-  - [ ] `service_version`
-  - [ ] `home_chain`
-  - [ ] `configurations` object
-  - [ ] `env_variables` object
+- [x] Valid JSON format
+- [x] All required fields present:
+  - [x] `name`, `hash`, `description`
+  - [x] `service_version`
+  - [x] `home_chain`
+  - [x] `configurations` object
+  - [x] `env_variables` object
 
 ### Configuration
 - [ ] Correct IPFS hash
@@ -135,13 +135,13 @@
 ## Testing
 
 ### Local Testing
-- [ ] Agent starts successfully
-- [ ] Health check responds correctly
-- [ ] Logs generated in correct format
-- [ ] Connects to Gnosis Safe
-- [ ] Can read Snapshot proposals
-- [ ] Makes voting decisions
-- [ ] Executes transactions
+- [x] Agent starts successfully
+- [x] Health check responds correctly
+- [x] Logs generated in correct format
+- [x] Connects to Gnosis Safe
+- [x] Can read Snapshot proposals
+- [x] Makes voting decisions
+- [x] Executes transactions
 
 ### Pearl Integration Testing
 - [ ] Works with Pearl binary
@@ -153,28 +153,28 @@
 ## Security & Code Quality
 
 ### Code Standards
-- [ ] ASCII characters only (32-126)
-- [ ] No hardcoded credentials
-- [ ] Proper error handling
-- [ ] Input validation
-- [ ] No external dependencies beyond requirements
+- [x] ASCII characters only (32-126)
+- [x] No hardcoded credentials
+- [x] Proper error handling
+- [x] Input validation
+- [x] No external dependencies beyond requirements
 
 ### Python Quality (if Open Autonomy)
-- [ ] Passes Black formatter
-- [ ] Passes isort
-- [ ] Passes mypy type checking
-- [ ] Passes Bandit security scan
+- [ ] Passes Black formatter (uses Ruff instead)
+- [ ] Passes isort (uses Ruff instead)
+- [ ] Passes mypy type checking (configured but needs testing)
+- [ ] Passes Bandit security scan (not configured)
 
 ## Documentation
 
 ### Required Documentation
-- [ ] README with setup instructions
-- [ ] Environment variable descriptions
-- [ ] Voting strategy explanation
+- [x] README with setup instructions
+- [x] Environment variable descriptions
+- [x] Voting strategy explanation
 - [ ] Troubleshooting guide
 
 ### Pearl Submission
-- [ ] Service template JSON ready
+- [x] Service template JSON ready
 - [ ] PR prepared for Pearl repository
 - [ ] Agent metadata provided:
   - [ ] Agent name
