@@ -79,3 +79,353 @@
 [2025-08-09 14:07:56,624] [INFO] [agent] Pearl logger initialized successfully
 [2025-08-09 14:07:56,629] [INFO] [agent] Pearl logger initialized successfully
 [2025-08-09 14:07:56,629] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:10,624] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:11,110] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,398] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,407] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,407] [INFO] [agent] HealthCheckService initialized cache_ttl=15s
+[2025-08-09 23:36:16,407] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,407] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:16,408] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,408] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:16,408] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:16,408] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:16,408] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,408] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:16,408] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:16,408] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:16,408] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:16,408] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:16,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:16,409] [INFO] [agent] HealthCheckService initialized cache_ttl=1s
+[2025-08-09 23:36:16,409] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:16,409] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,519] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,520] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.001s
+[2025-08-09 23:36:17,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,523] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,523] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,523] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,525] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,525] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,525] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,526] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,526] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,526] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,526] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,528] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,528] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,528] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,528] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,529] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,529] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,529] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,529] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,530] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,530] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,530] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,530] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,531] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,531] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,531] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,532] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,533] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,533] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,533] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,533] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,533] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,534] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,534] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,534] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,534] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,534] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,534] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,535] [ERROR] [agent] Error getting basic status: State tracker error
+[2025-08-09 23:36:17,535] [ERROR] [agent] Error checking TM health: State tracker error
+[2025-08-09 23:36:17,535] [ERROR] [agent] Error checking on-chain transactions: Activity service error
+[2025-08-09 23:36:17,535] [ERROR] [agent] Error checking required funds: Safe service error
+[2025-08-09 23:36:17,535] [ERROR] [agent] Error building rounds from transitions: 'Mock' object is not subscriptable
+[2025-08-09 23:36:17,535] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.001s
+[2025-08-09 23:36:17,536] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,536] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,536] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,536] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,537] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:17,537] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:36:17,537] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,537] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:17,537] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:36:17,537] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:36:21,503] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:21,695] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:22,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:22,173] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:22,173] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:22,204] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,204] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:22,206] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,207] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,208] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,209] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,209] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,210] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,211] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,213] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,213] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,214] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,214] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,215] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,215] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,216] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,216] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,216] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,217] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,219] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,219] [ERROR] [agent] Error in fallback healthcheck: Tracker error
+[2025-08-09 23:36:22,220] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,277] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,278] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:22,279] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,227] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:59,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:59,870] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:59,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:59,872] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:59,882] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:36:59,884] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,885] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,886] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,887] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,888] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,889] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,890] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,893] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,893] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,893] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,893] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,894] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,894] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,894] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,894] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,894] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,894] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,898] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,898] [ERROR] [agent] Error in fallback healthcheck: Tracker error
+[2025-08-09 23:36:59,899] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,900] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,901] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,902] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,903] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:36:59,903] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:37:07,742] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:37:07,930] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:37:08,364] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:37:08,365] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:37:08,366] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:31,674] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:31,818] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,236] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,298] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,298] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,304] [INFO] [agent] HealthCheckService initialized cache_ttl=15s
+[2025-08-09 23:38:32,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,305] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:32,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,305] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:32,305] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:32,305] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:32,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,305] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:32,305] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:32,306] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:32,306] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:32,306] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:32,306] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:32,306] [INFO] [agent] HealthCheckService initialized cache_ttl=1s
+[2025-08-09 23:38:32,306] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:32,306] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,412] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,413] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,415] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,415] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,415] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,416] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,417] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,417] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,417] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,417] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,419] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,419] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,419] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,419] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,421] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,421] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,421] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,421] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,422] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,422] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,422] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,424] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,424] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,424] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,424] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,425] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,425] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,425] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,425] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,426] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,426] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,426] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,427] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,427] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,427] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,428] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,428] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,428] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,428] [ERROR] [agent] Error getting basic status: State tracker error
+[2025-08-09 23:38:33,428] [ERROR] [agent] Error checking TM health: State tracker error
+[2025-08-09 23:38:33,428] [ERROR] [agent] Error checking on-chain transactions: Activity service error
+[2025-08-09 23:38:33,428] [ERROR] [agent] Error checking required funds: Safe service error
+[2025-08-09 23:38:33,428] [ERROR] [agent] Error building rounds from transitions: 'Mock' object is not subscriptable
+[2025-08-09 23:38:33,428] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,429] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,429] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,429] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,429] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,430] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,430] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:38:33,430] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,431] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,431] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:38:33,431] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:38:33,440] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,441] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:38:33,443] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,445] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,447] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,448] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,449] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,450] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,452] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,455] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,455] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,456] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,457] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,457] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,458] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,458] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,459] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,459] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,460] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,462] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,462] [ERROR] [agent] Error in fallback healthcheck: Tracker error
+[2025-08-09 23:38:33,463] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,464] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,466] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,467] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,468] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:38:33,469] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:40:35,992] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,162] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,581] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,586] [INFO] [agent] HealthCheckService initialized cache_ttl=15s
+[2025-08-09 23:40:36,587] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,587] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:36,587] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,587] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:36,587] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:36,587] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:36,588] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,588] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:36,588] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:36,588] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:36,588] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:36,588] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:36,588] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:36,588] [INFO] [agent] HealthCheckService initialized cache_ttl=1s
+[2025-08-09 23:40:36,588] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:36,588] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,698] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,699] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.001s
+[2025-08-09 23:40:37,703] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,703] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,703] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,703] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,705] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,705] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,705] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,705] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,707] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,707] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,708] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,709] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,709] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,709] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,709] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,710] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,710] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,710] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,710] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,711] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,712] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,712] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,713] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,713] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,713] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,713] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,714] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,714] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,714] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,714] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,715] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,715] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,715] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,715] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,716] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,716] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,716] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,716] [ERROR] [agent] Error getting basic status: State tracker error
+[2025-08-09 23:40:37,716] [ERROR] [agent] Error checking TM health: State tracker error
+[2025-08-09 23:40:37,716] [ERROR] [agent] Error checking on-chain transactions: Activity service error
+[2025-08-09 23:40:37,716] [ERROR] [agent] Error checking required funds: Safe service error
+[2025-08-09 23:40:37,716] [ERROR] [agent] Error building rounds from transitions: 'Mock' object is not subscriptable
+[2025-08-09 23:40:37,716] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,717] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,717] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,717] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,717] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,718] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:37,718] [INFO] [agent] HealthCheckService initialized cache_ttl=10s
+[2025-08-09 23:40:37,718] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,718] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:37,718] [INFO] [agent] Starting health_check_service.get_complete_health_status
+[2025-08-09 23:40:37,718] [INFO] [agent] Completed health_check_service.get_complete_health_status successfully in 0.000s
+[2025-08-09 23:40:42,160] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:42,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:42,724] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:42,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:42,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:47,753] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:47,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:48,321] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:48,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:48,323] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:40:48,336] [ERROR] [agent] Error in healthcheck endpoint: name 'health_check_service' is not defined
+[2025-08-09 23:40:48,336] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:00,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:01,079] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:01,462] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:01,464] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:01,464] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:02,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:02,079] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-09 23:41:02,079] [INFO] [agent] Pearl logger initialized successfully
