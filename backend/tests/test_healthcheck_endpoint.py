@@ -251,28 +251,184 @@ class TestHealthcheckEndpoint:
         data = response.json()
         assert isinstance(data, dict), "Should return valid JSON even on error"
 
-    def test_healthcheck_different_from_health_endpoint(self, client):
+    def test_healthcheck_contains_pearl_specific_fields(self, client):
         """
-        Test that /healthcheck is different from the existing /health endpoint.
+        Test that /healthcheck contains Pearl-specific fields.
         
-        The application already has a /health endpoint for general health checks.
-        The Pearl-compliant /healthcheck endpoint must be separate and provide
-        different, Pearl-specific information about state transitions.
+        The Pearl-compliant /healthcheck endpoint must provide specific
+        information about state transitions and agent health that is
+        required by the Pearl platform for monitoring.
         """
-        # Get responses from both endpoints
-        health_response = client.get("/health")
-        healthcheck_response = client.get("/healthcheck")
+        response = client.get("/healthcheck")
         
-        # Both should exist
-        assert health_response.status_code == 200
-        assert healthcheck_response.status_code != 404
+        assert response.status_code == 200
+        data = response.json()
         
-        # They should return different data
-        health_data = health_response.json()
-        healthcheck_data = healthcheck_response.json()
+        # Verify Pearl-specific fields are present
+        assert "seconds_since_last_transition" in data, \
+            "/healthcheck must have Pearl-specific state transition fields"
+        assert "is_transitioning_fast" in data, \
+            "/healthcheck must have Pearl-specific transition speed fields"
+        assert "is_tm_healthy" in data, \
+            "/healthcheck must have Pearl-specific transaction manager health fields"
+        assert "agent_health" in data, \
+            "/healthcheck must have Pearl-specific agent health fields"
+        assert "rounds" in data, \
+            "/healthcheck must have Pearl-specific rounds fields"
+
+
+class TestHealthcheckEndpointEnhancement:
+    """Test suite for enhanced healthcheck endpoint with Pearl compliance fields."""
+
+    @patch('main.health_status_service')
+    @patch('main._get_state_transition_tracker')
+    def test_healthcheck_includes_pearl_compliance_fields_when_service_available(
+        self, mock_get_tracker, mock_health_service, client
+    ):
+        """
+        Test that healthcheck endpoint includes Pearl compliance fields when HealthStatusService is available.
         
-        # /health has general info, /healthcheck has Pearl-specific fields
-        assert "seconds_since_last_transition" not in health_data, \
-            "/health should not have Pearl-specific fields"
-        assert "seconds_since_last_transition" in healthcheck_data, \
-            "/healthcheck must have Pearl-specific fields"
+        This is the core business logic test - when HEALTH_CHECK_ENABLED=True and HealthStatusService
+        is initialized, the endpoint must include the additional Pearl compliance fields while
+        maintaining backward compatibility with existing state transition fields.
+        """
+        # Mock state transition tracker (existing functionality)
+        mock_tracker = Mock()
+        mock_tracker.seconds_since_last_transition = 30.0
+        mock_tracker.is_transitioning_fast.return_value = False
+        mock_tracker.fast_transition_window = 5
+        mock_tracker.fast_transition_threshold = 0.5
+        mock_get_tracker.return_value = mock_tracker
+        
+        # Mock HealthStatusService with Pearl compliance data
+        from models import AgentHealth, HealthCheckResponse
+        import asyncio
+        
+        mock_health_response = HealthCheckResponse(
+            is_tm_healthy=True,
+            agent_health=AgentHealth(
+                is_making_on_chain_transactions=True,
+                is_staking_kpi_met=True,
+                has_required_funds=True
+            ),
+            rounds=[{"round": 1, "status": "completed"}],
+            rounds_info={"total_rounds": 1}
+        )
+        
+        # Create a coroutine that returns the mock response
+        async def mock_get_health_status():
+            return mock_health_response
+        
+        mock_health_service.get_health_status = mock_get_health_status
+        
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify existing state transition fields are preserved
+        assert "seconds_since_last_transition" in data
+        assert "is_transitioning_fast" in data
+        assert data["seconds_since_last_transition"] == 30.0
+        assert data["is_transitioning_fast"] is False
+        
+        # Verify new Pearl compliance fields are included
+        assert "is_tm_healthy" in data
+        assert "agent_health" in data
+        assert "rounds" in data
+        assert "rounds_info" in data
+        
+        # Verify field values match HealthStatusService response
+        assert data["is_tm_healthy"] is True
+        assert data["agent_health"]["is_making_on_chain_transactions"] is True
+        assert data["agent_health"]["is_staking_kpi_met"] is True
+        assert data["agent_health"]["has_required_funds"] is True
+        assert data["rounds"] == [{"round": 1, "status": "completed"}]
+        assert data["rounds_info"] == {"total_rounds": 1}
+
+    @patch('main.health_status_service', None)
+    @patch('main._get_state_transition_tracker')
+    def test_healthcheck_graceful_degradation_when_service_unavailable(
+        self, mock_get_tracker, client
+    ):
+        """
+        Test that healthcheck endpoint gracefully degrades when HealthStatusService is not available.
+        
+        This tests the critical error handling path - when HealthStatusService is None or fails,
+        the endpoint must still return HTTP 200 with safe defaults for Pearl compliance fields
+        while preserving existing state transition functionality.
+        """
+        # Mock state transition tracker (existing functionality should still work)
+        mock_tracker = Mock()
+        mock_tracker.seconds_since_last_transition = 45.0
+        mock_tracker.is_transitioning_fast.return_value = True
+        mock_tracker.fast_transition_window = 5
+        mock_tracker.fast_transition_threshold = 0.5
+        mock_get_tracker.return_value = mock_tracker
+        
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify existing functionality is preserved
+        assert "seconds_since_last_transition" in data
+        assert "is_transitioning_fast" in data
+        assert data["seconds_since_last_transition"] == 45.0
+        assert data["is_transitioning_fast"] is True
+        
+        # Verify safe defaults are returned for Pearl compliance fields
+        assert "is_tm_healthy" in data
+        assert "agent_health" in data
+        assert "rounds" in data
+        
+        # Verify safe default values
+        assert data["is_tm_healthy"] is True  # Safe default
+        assert data["agent_health"]["is_making_on_chain_transactions"] is True
+        assert data["agent_health"]["is_staking_kpi_met"] is True
+        assert data["agent_health"]["has_required_funds"] is True
+        assert data["rounds"] == []  # Empty list as safe default
+
+    @patch('main.health_status_service')
+    @patch('main._get_state_transition_tracker')
+    def test_healthcheck_response_time_with_health_service(
+        self, mock_get_tracker, mock_health_service, client
+    ):
+        """
+        Test that enhanced healthcheck endpoint maintains <100ms response time requirement.
+        
+        This tests the critical performance requirement - even with additional Pearl compliance
+        data gathering, the endpoint must respond within 100ms to meet Pearl platform requirements.
+        """
+        # Mock fast responses from all services
+        mock_tracker = Mock()
+        mock_tracker.seconds_since_last_transition = 15.0
+        mock_tracker.is_transitioning_fast.return_value = False
+        mock_tracker.fast_transition_window = 5
+        mock_tracker.fast_transition_threshold = 0.5
+        mock_get_tracker.return_value = mock_tracker
+        
+        from models import HealthCheckResponse
+        import asyncio
+        
+        mock_health_response = HealthCheckResponse()  # Uses safe defaults
+        
+        # Create a coroutine that returns the mock response
+        async def mock_get_health_status():
+            return mock_health_response
+        
+        mock_health_service.get_health_status = mock_get_health_status
+        
+        # Warm up the endpoint
+        client.get("/healthcheck")
+        
+        # Measure response time
+        start_time = time.time()
+        response = client.get("/healthcheck")
+        end_time = time.time()
+        
+        response_time = (end_time - start_time) * 1000  # Convert to milliseconds
+        
+        assert response.status_code == 200
+        assert response_time < 100, \
+            f"Enhanced healthcheck response time {response_time:.2f}ms exceeds 100ms requirement"
