@@ -40,6 +40,7 @@ from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
+from services.health_check_service import HealthCheckService
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -57,6 +58,7 @@ signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
+health_check_service: HealthCheckService
 
 
 @asynccontextmanager
@@ -75,7 +77,8 @@ async def lifespan(_app: FastAPI):
         signal_handler, \
         shutdown_coordinator, \
         withdrawal_service, \
-        state_transition_tracker
+        state_transition_tracker, \
+        health_check_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -95,6 +98,14 @@ async def lifespan(_app: FastAPI):
         state_manager=state_manager,
         safe_service=safe_service,
         snapshot_service=snapshot_service,
+    )
+
+    # Initialize health check service
+    health_check_service = HealthCheckService(
+        activity_service=activity_service,
+        safe_service=safe_service,
+        state_transition_tracker=state_transition_tracker,
+        cache_ttl_seconds=10,
     )
 
     # Initialize signal handling
@@ -237,18 +248,44 @@ def _get_state_transition_tracker():
 # Pearl-compliant health check endpoint
 @app.get("/healthcheck")
 async def healthcheck():
-    """Pearl-compliant health check endpoint for monitoring state transitions.
+    """Pearl-compliant health check endpoint for monitoring agent health.
 
-    Returns real-time information about agent state transitions to help
-    the Pearl platform monitor agent health and responsiveness.
+    Returns comprehensive health information required for Olas Pearl integration,
+    including transaction manager health, agent health status, and consensus rounds.
 
     Returns:
-        JSON with required fields:
+        JSON with required Pearl fields:
         - seconds_since_last_transition: Time since last state change (float)
         - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
+        - is_tm_healthy: Transaction manager health status (bool)
+        - agent_health: Object with transaction, staking, and fund status (dict)
+        - rounds: Array of recent consensus rounds (list)
+        - rounds_info: Metadata about consensus rounds (dict)
         - period: (optional) The time period used to determine if transitioning fast
         - reset_pause_duration: (optional) Time to wait before resetting transition tracking
     """
+    try:
+        # Use HealthCheckService for comprehensive status
+        global health_check_service
+        
+        if health_check_service is None:
+            # Fallback to basic implementation if service not initialized
+            logger.warning("HealthCheckService not initialized, using fallback")
+            return _get_basic_healthcheck_fallback()
+        
+        # Get complete health status from service
+        health_status = health_check_service.get_complete_health_status()
+        
+        return health_status
+
+    except Exception as e:
+        # Handle errors gracefully - return safe defaults
+        logger.error(f"Error in healthcheck endpoint: {str(e)}")
+        return _get_basic_healthcheck_fallback()
+
+
+def _get_basic_healthcheck_fallback():
+    """Fallback healthcheck implementation when service is unavailable."""
     try:
         # Get the tracker instance
         tracker = _get_state_transition_tracker()
@@ -289,16 +326,44 @@ async def healthcheck():
         else:
             response["reset_pause_duration"] = 0.5  # Default value
 
+        # Add missing Pearl fields with safe defaults
+        response.update({
+            "is_tm_healthy": False,
+            "agent_health": {
+                "is_making_on_chain_transactions": False,
+                "is_staking_kpi_met": False,
+                "has_required_funds": False,
+            },
+            "rounds": [],
+            "rounds_info": {
+                "total_rounds": 0,
+                "latest_round": None,
+                "average_round_duration": 0,
+            },
+        })
+
         return response
 
     except Exception as e:
-        # Handle errors gracefully - return safe defaults
-        logger.error(f"Error in healthcheck endpoint: {str(e)}")
+        # Ultimate fallback with safe defaults
+        logger.error(f"Error in fallback healthcheck: {str(e)}")
         return {
             "seconds_since_last_transition": -1,
             "is_transitioning_fast": False,
             "period": 5,
             "reset_pause_duration": 0.5,
+            "is_tm_healthy": False,
+            "agent_health": {
+                "is_making_on_chain_transactions": False,
+                "is_staking_kpi_met": False,
+                "has_required_funds": False,
+            },
+            "rounds": [],
+            "rounds_info": {
+                "total_rounds": 0,
+                "latest_round": None,
+                "average_round_duration": 0,
+            },
         }
 
 

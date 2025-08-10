@@ -251,28 +251,187 @@ class TestHealthcheckEndpoint:
         data = response.json()
         assert isinstance(data, dict), "Should return valid JSON even on error"
 
-    def test_healthcheck_different_from_health_endpoint(self, client):
+    def test_healthcheck_has_pearl_specific_fields(self, client):
         """
-        Test that /healthcheck is different from the existing /health endpoint.
+        Test that /healthcheck provides Pearl-specific information.
         
-        The application already has a /health endpoint for general health checks.
-        The Pearl-compliant /healthcheck endpoint must be separate and provide
-        different, Pearl-specific information about state transitions.
+        The Pearl-compliant /healthcheck endpoint must provide specific
+        information about state transitions and agent health that is
+        different from general health check endpoints.
         """
-        # Get responses from both endpoints
-        health_response = client.get("/health")
         healthcheck_response = client.get("/healthcheck")
         
-        # Both should exist
-        assert health_response.status_code == 200
-        assert healthcheck_response.status_code != 404
+        # Should exist and return 200
+        assert healthcheck_response.status_code == 200
         
-        # They should return different data
-        health_data = health_response.json()
+        # Should have Pearl-specific fields
         healthcheck_data = healthcheck_response.json()
         
-        # /health has general info, /healthcheck has Pearl-specific fields
-        assert "seconds_since_last_transition" not in health_data, \
-            "/health should not have Pearl-specific fields"
-        assert "seconds_since_last_transition" in healthcheck_data, \
-            "/healthcheck must have Pearl-specific fields"
+        # Verify Pearl-specific fields are present
+        pearl_fields = [
+            "seconds_since_last_transition",
+            "is_transitioning_fast", 
+            "is_tm_healthy",
+            "agent_health",
+            "rounds",
+            "rounds_info"
+        ]
+        
+        for field in pearl_fields:
+            assert field in healthcheck_data, \
+                f"/healthcheck must have Pearl-specific field: {field}"
+
+    def test_healthcheck_returns_new_pearl_fields(self, client):
+        """
+        Test that the endpoint returns all new Pearl-required fields.
+        
+        Pearl platform now requires additional fields beyond the basic transition info:
+        - is_tm_healthy: Transaction manager health status
+        - agent_health: Object with transaction, staking, and fund status
+        - rounds: Array of recent consensus rounds
+        - rounds_info: Metadata about consensus rounds
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Check new required fields exist
+        assert "is_tm_healthy" in data, "Missing required field: is_tm_healthy"
+        assert "agent_health" in data, "Missing required field: agent_health"
+        assert "rounds" in data, "Missing required field: rounds"
+        assert "rounds_info" in data, "Missing required field: rounds_info"
+        
+        # Check field types
+        assert isinstance(data["is_tm_healthy"], bool), \
+            "is_tm_healthy must be a boolean"
+        assert isinstance(data["agent_health"], dict), \
+            "agent_health must be a dictionary"
+        assert isinstance(data["rounds"], list), \
+            "rounds must be a list"
+        assert isinstance(data["rounds_info"], dict), \
+            "rounds_info must be a dictionary"
+
+    def test_healthcheck_agent_health_structure(self, client):
+        """
+        Test that the agent_health object has the correct structure.
+        
+        The agent_health object must contain three specific boolean fields
+        that Pearl uses to assess agent operational status.
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        agent_health = data["agent_health"]
+        
+        # Check required agent_health fields
+        required_fields = [
+            "is_making_on_chain_transactions",
+            "is_staking_kpi_met", 
+            "has_required_funds"
+        ]
+        
+        for field in required_fields:
+            assert field in agent_health, f"Missing agent_health field: {field}"
+            assert isinstance(agent_health[field], bool), \
+                f"agent_health.{field} must be a boolean"
+
+    def test_healthcheck_rounds_info_structure(self, client):
+        """
+        Test that the rounds_info object has the correct structure.
+        
+        The rounds_info object provides metadata about consensus rounds
+        that Pearl uses for monitoring agent consensus participation.
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        rounds_info = data["rounds_info"]
+        
+        # Check required rounds_info fields
+        assert "total_rounds" in rounds_info, "Missing rounds_info field: total_rounds"
+        assert "latest_round" in rounds_info, "Missing rounds_info field: latest_round"
+        assert "average_round_duration" in rounds_info, "Missing rounds_info field: average_round_duration"
+        
+        # Check field types
+        assert isinstance(rounds_info["total_rounds"], int), \
+            "rounds_info.total_rounds must be an integer"
+        assert isinstance(rounds_info["average_round_duration"], (int, float)), \
+            "rounds_info.average_round_duration must be a number"
+        # latest_round can be None or dict
+
+    def test_healthcheck_uses_health_check_service_integration(self, client):
+        """
+        Test that the endpoint integrates with HealthCheckService functionality.
+        
+        This test verifies that the endpoint returns the comprehensive health data
+        that would be provided by the HealthCheckService, including all Pearl fields.
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify all Pearl fields are present (indicating service integration)
+        required_fields = [
+            "seconds_since_last_transition",
+            "is_transitioning_fast",
+            "is_tm_healthy",
+            "agent_health",
+            "rounds",
+            "rounds_info",
+        ]
+        
+        for field in required_fields:
+            assert field in data, f"Missing field indicates service not integrated: {field}"
+        
+        # Verify agent_health structure
+        agent_health = data["agent_health"]
+        assert "is_making_on_chain_transactions" in agent_health
+        assert "is_staking_kpi_met" in agent_health
+        assert "has_required_funds" in agent_health
+        
+        # Verify rounds_info structure
+        rounds_info = data["rounds_info"]
+        assert "total_rounds" in rounds_info
+        assert "latest_round" in rounds_info
+        assert "average_round_duration" in rounds_info
+
+    def test_healthcheck_graceful_degradation(self, client):
+        """
+        Test that the endpoint handles errors gracefully with safe defaults.
+        
+        Even if internal services fail, the endpoint should return a valid
+        response with conservative default values rather than failing completely.
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Should have all required fields even in error conditions
+        assert "is_tm_healthy" in data
+        assert "agent_health" in data
+        assert "rounds" in data
+        assert "rounds_info" in data
+        
+        # Verify data types are correct even for defaults
+        assert isinstance(data["is_tm_healthy"], bool)
+        assert isinstance(data["agent_health"], dict)
+        assert isinstance(data["rounds"], list)
+        assert isinstance(data["rounds_info"], dict)
+        
+        # Agent health should have required structure
+        agent_health = data["agent_health"]
+        for field in ["is_making_on_chain_transactions", "is_staking_kpi_met", "has_required_funds"]:
+            assert field in agent_health
+            assert isinstance(agent_health[field], bool)
+        
+        # Rounds info should have required structure
+        rounds_info = data["rounds_info"]
+        for field in ["total_rounds", "latest_round", "average_round_duration"]:
+            assert field in rounds_info

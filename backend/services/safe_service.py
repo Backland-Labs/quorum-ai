@@ -583,3 +583,54 @@ class SafeService:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
 
         return Web3(Web3.HTTPProvider(rpc_url))
+
+    def has_sufficient_funds(self, minimum_balance_eth: float = 0.01) -> bool:
+        """Check if Safe addresses have sufficient funds for operations.
+        
+        Args:
+            minimum_balance_eth: Minimum balance required in ETH (default: 0.01)
+            
+        Returns:
+            True if at least one Safe has sufficient funds, False otherwise
+        """
+        try:
+            # Check balance across all configured Safe addresses
+            for chain, safe_address in self.safe_addresses.items():
+                try:
+                    # Get Web3 connection for this chain
+                    w3 = self.get_web3_connection(chain)
+                    
+                    # Get balance in Wei
+                    balance_wei = w3.eth.get_balance(Web3.to_checksum_address(safe_address))
+                    
+                    # Convert to ETH
+                    balance_eth = w3.from_wei(balance_wei, 'ether')
+                    
+                    self.logger.debug(
+                        f"Safe balance check chain={chain} address={safe_address} "
+                        f"balance={balance_eth} ETH minimum_required={minimum_balance_eth} ETH"
+                    )
+                    
+                    # If any Safe has sufficient funds, return True
+                    if balance_eth >= minimum_balance_eth:
+                        self.logger.info(
+                            f"Sufficient funds found chain={chain} balance={balance_eth} ETH"
+                        )
+                        return True
+                        
+                except Exception as e:
+                    self.logger.warning(
+                        f"Error checking balance for {chain} Safe {safe_address}: {e}"
+                    )
+                    continue
+            
+            # No Safe has sufficient funds
+            self.logger.warning(
+                f"No Safe addresses have sufficient funds minimum_required={minimum_balance_eth} ETH"
+            )
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error checking Safe balances: {e}")
+            # Return False on error to be conservative
+            return False

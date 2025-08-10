@@ -43,17 +43,85 @@ Currently, the API does not require authentication. Future iterations may add AP
 ### Health Check
 
 #### GET /healthcheck
-Returns the health status of the service.
+Returns comprehensive health status required for Olas Pearl integration.
+
+This endpoint provides real-time information about agent state transitions, transaction manager health, agent operational status, and consensus rounds to help the Pearl platform monitor agent health and responsiveness.
 
 **Response:**
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2025-01-30T10:00:00Z",
-  "agent_active": true,
-  "version": "1.0.0"
+  "seconds_since_last_transition": 42.5,
+  "is_transitioning_fast": false,
+  "period": 5,
+  "reset_pause_duration": 0.5,
+  "is_tm_healthy": true,
+  "agent_health": {
+    "is_making_on_chain_transactions": true,
+    "is_staking_kpi_met": true,
+    "has_required_funds": true
+  },
+  "rounds": [
+    {
+      "round_id": 1,
+      "from_state": "idle",
+      "to_state": "starting",
+      "timestamp": "2025-01-30T10:00:00.000Z",
+      "metadata": {}
+    }
+  ],
+  "rounds_info": {
+    "total_rounds": 1,
+    "latest_round": {
+      "round_id": 1,
+      "from_state": "idle",
+      "to_state": "starting",
+      "timestamp": "2025-01-30T10:00:00.000Z",
+      "metadata": {}
+    },
+    "average_round_duration": 10.5
+  }
 }
 ```
+
+**Field Descriptions:**
+
+**Basic State Transition Fields:**
+- `seconds_since_last_transition` (float): Time elapsed since the last state transition
+- `is_transitioning_fast` (boolean): Whether the agent is transitioning between states too rapidly
+- `period` (integer, optional): Time window in seconds used for fast transition detection
+- `reset_pause_duration` (float, optional): Threshold in seconds for considering transitions as "fast"
+
+**Transaction Manager Health:**
+- `is_tm_healthy` (boolean): Overall transaction manager health status based on recent activity and stability
+
+**Agent Health Object:**
+- `agent_health.is_making_on_chain_transactions` (boolean): Whether the agent has made recent on-chain transactions
+- `agent_health.is_staking_kpi_met` (boolean): Whether staking KPI requirements are being met (daily activity)
+- `agent_health.has_required_funds` (boolean): Whether the agent has sufficient funds in Safe addresses
+
+**Consensus Rounds:**
+- `rounds` (array): Recent state transitions formatted as consensus rounds
+  - `round_id` (integer): Sequential round identifier
+  - `from_state` (string): Previous agent state
+  - `to_state` (string): New agent state
+  - `timestamp` (string): ISO 8601 timestamp of the transition
+  - `metadata` (object): Additional transition metadata
+- `rounds_info` (object): Metadata about consensus rounds
+  - `total_rounds` (integer): Total number of recent rounds
+  - `latest_round` (object|null): Most recent round data, or null if no rounds
+  - `average_round_duration` (float): Average time between rounds in seconds
+
+**Performance Requirements:**
+- Response time must be under 100ms for real-time monitoring
+- Uses 10-second caching to optimize performance
+- Graceful error handling with safe default values
+
+**Error Handling:**
+If any component fails, the endpoint returns safe default values rather than failing:
+- `is_tm_healthy`: false
+- All `agent_health` fields: false  
+- `rounds`: empty array
+- `rounds_info`: zero/null values
 
 ---
 
