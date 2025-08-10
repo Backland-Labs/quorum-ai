@@ -6,6 +6,8 @@ from typing import ClassVar, Dict, List, Optional
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings
 
+from utils.env_helper import get_env_with_prefix
+
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
@@ -73,6 +75,18 @@ class Settings(BaseSettings):
         default="https://hub.snapshot.org/graphql",
         alias="SNAPSHOT_GRAPHQL_ENDPOINT",
         description="Snapshot GraphQL API endpoint",
+    )
+
+    # Olas-specific configuration fields
+    snapshot_api_key: Optional[str] = Field(
+        default=None, description="Snapshot API key for enhanced rate limits"
+    )
+    voting_strategy: str = Field(
+        default="balanced",
+        description="Voting strategy: balanced, conservative, or aggressive",
+    )
+    dao_addresses: List[str] = Field(
+        default_factory=list, description="List of DAO addresses to monitor"
     )
 
     # Top voters endpoint settings
@@ -394,6 +408,17 @@ class Settings(BaseSettings):
                 raise ValueError(f"Invalid threshold value: {v}")
             raise
 
+    @field_validator("voting_strategy")
+    @classmethod
+    def validate_voting_strategy(cls, v):
+        """Validate voting strategy is one of the allowed values."""
+        valid_strategies = ["balanced", "conservative", "aggressive"]
+        if v not in valid_strategies:
+            raise ValueError(
+                f"Invalid voting strategy: {v}. Must be one of {valid_strategies}"
+            )
+        return v
+
     @model_validator(mode="after")
     def parse_env_settings(self):
         """Parse environment-specific settings after model initialization."""
@@ -403,6 +428,7 @@ class Settings(BaseSettings):
         self._parse_intervals()
         self._parse_agent_run_config()
         self._parse_pearl_logging_config()
+        self._parse_olas_config()
         return self
 
     def _parse_safe_addresses(self):
@@ -706,6 +732,27 @@ class Settings(BaseSettings):
             )
 
         return True
+
+    def _parse_olas_config(self):
+        """Parse Olas-specific configuration from environment variables with prefix support."""
+        # Parse snapshot_api_key with prefix support
+        snapshot_api_key_env = get_env_with_prefix("SNAPSHOT_API_KEY")
+        if snapshot_api_key_env:
+            self.snapshot_api_key = snapshot_api_key_env
+
+        # Parse voting_strategy with prefix support
+        voting_strategy_env = get_env_with_prefix("VOTING_STRATEGY")
+        if voting_strategy_env:
+            self.voting_strategy = voting_strategy_env
+
+        # Parse dao_addresses with prefix support
+        dao_addresses_env = get_env_with_prefix("DAO_ADDRESSES")
+        if dao_addresses_env:
+            # Split comma-separated addresses and clean them
+            addresses = [
+                addr.strip() for addr in dao_addresses_env.split(",") if addr.strip()
+            ]
+            self.dao_addresses = addresses
 
 
 # Global settings instance

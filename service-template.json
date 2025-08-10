@@ -1,4 +1,5 @@
 {
+  "_comment": "Pearl Environment Variable Handling: Variables prefixed with CONNECTION_CONFIGS_CONFIG_ take precedence over non-prefixed versions. This provides backward compatibility while supporting Pearl's prefixing convention. Environment variables are cached by the application for performance.",
   "name": "Quorum AI Agent",
   "hash": "QmXwJ3VgFjQ2MNbkNYoCYqN4jCPdmngz3oYsRCcUi8GTAR",
   "description": "Autonomous DAO voting agent with AI-powered decision making",
@@ -61,6 +62,31 @@
       "description": "Debug mode flag",
       "provision_type": "fixed",
       "value": "false"
+    },
+    {
+      "name": "CONNECTION_CONFIGS_CONFIG_OPENROUTER_API_KEY",
+      "description": "OpenRouter API key for AI services (prefixed, takes precedence over OPENROUTER_API_KEY)",
+      "provision_type": "user",
+      "fallback": "OPENROUTER_API_KEY"
+    },
+    {
+      "name": "CONNECTION_CONFIGS_CONFIG_SNAPSHOT_API_KEY",
+      "description": "Snapshot API key for enhanced rate limits (prefixed, takes precedence over SNAPSHOT_API_KEY)",
+      "provision_type": "user",
+      "fallback": "SNAPSHOT_API_KEY"
+    },
+    {
+      "name": "CONNECTION_CONFIGS_CONFIG_VOTING_STRATEGY",
+      "description": "Voting strategy: balanced, conservative, or aggressive (prefixed, takes precedence over VOTING_STRATEGY)",
+      "provision_type": "user",
+      "default": "balanced",
+      "fallback": "VOTING_STRATEGY"
+    },
+    {
+      "name": "CONNECTION_CONFIGS_CONFIG_DAO_ADDRESSES",
+      "description": "Comma-separated list of DAO addresses to monitor (prefixed, takes precedence over DAO_ADDRESSES)",
+      "provision_type": "user",
+      "fallback": "DAO_ADDRESSES"
     }
   ]
 }
