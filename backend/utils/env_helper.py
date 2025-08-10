@@ -35,4 +35,7 @@ def get_env_with_prefix(
         'default'
     """
     prefixed_key = f"{prefix}{key}"
-    return os.getenv(prefixed_key) or os.getenv(key, default)
+    prefixed_value = os.getenv(prefixed_key)
+    if prefixed_value is not None:
+        return prefixed_value
+    return os.getenv(key, default)
