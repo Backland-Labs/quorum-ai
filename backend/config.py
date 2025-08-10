@@ -24,6 +24,24 @@ class Settings(BaseSettings):
     DEFAULT_LOG_LEVEL: ClassVar[str] = "INFO"
     DEFAULT_LOG_FILE_PATH: ClassVar[str] = "log.txt"
 
+    # Health check constants
+    HEALTH_CHECK_TIMEOUT: int = Field(
+        default=50,
+        ge=1,
+        alias="HEALTH_CHECK_TIMEOUT",
+        description="Health check timeout in milliseconds for Pearl compliance",
+    )
+    HEALTH_CHECK_ENABLED: bool = Field(
+        default=True,
+        alias="HEALTH_CHECK_ENABLED",
+        description="Enable health check functionality for Pearl compliance",
+    )
+    PEARL_LOG_FORMAT: str = Field(
+        default="[%Y-%m-%d %H:%M:%S,%f] [%levelname] [agent] %message",
+        alias="PEARL_LOG_FORMAT",
+        description="Pearl-compliant log format string",
+    )
+
     # Application settings
     app_name: str = "Quorum AI"
     debug: bool = False
@@ -308,6 +326,53 @@ class Settings(BaseSettings):
                 raise ValueError("Log file path cannot be empty")
             return v.strip()
         return cls.DEFAULT_LOG_FILE_PATH
+
+    @field_validator("HEALTH_CHECK_TIMEOUT", mode="before")
+    @classmethod
+    def validate_health_check_timeout(cls, v):
+        """Validate health check timeout is a positive integer."""
+        if v is None:
+            return 50  # Default value
+        try:
+            timeout = int(v)
+            if timeout <= 0:
+                raise ValueError(
+                    f"Health check timeout must be positive, got {timeout}"
+                )
+            return timeout
+        except (ValueError, TypeError):
+            if isinstance(v, str) and not v.isdigit():
+                raise ValueError(f"Invalid timeout value: {v}")
+            raise
+
+    @field_validator("HEALTH_CHECK_ENABLED", mode="before")
+    @classmethod
+    def validate_health_check_enabled(cls, v):
+        """Validate health check enabled is boolean type."""
+        if v is None:
+            return True  # Default value
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, str):
+            if v.lower() in ["true", "1", "yes"]:
+                return True
+            elif v.lower() in ["false", "0", "no"]:
+                return False
+        if isinstance(v, (int, float)):
+            return bool(v)
+        raise ValueError(f"Health check enabled must be boolean, got {type(v)}: {v}")
+
+    @field_validator("PEARL_LOG_FORMAT", mode="before")
+    @classmethod
+    def validate_pearl_log_format(cls, v):
+        """Validate Pearl log format is non-empty string."""
+        if v is None or (isinstance(v, str) and not v.strip()):
+            return (
+                "[%Y-%m-%d %H:%M:%S,%f] [%levelname] [agent] %message"  # Default value
+            )
+        if isinstance(v, str):
+            return v.strip()
+        raise ValueError(f"Pearl log format must be string, got {type(v)}: {v}")
 
     @field_validator("HEALTH_CHECK_PORT", mode="before")
     @classmethod
