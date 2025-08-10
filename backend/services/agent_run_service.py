@@ -680,7 +680,9 @@ class AgentRunService:
                 for proposal in proposals:
                     # Make voting decision using AI
                     decision = await self.ai_service.decide_vote(
-                        proposal=proposal, strategy=preferences.voting_strategy, space_id=space_id
+                        proposal=proposal,
+                        strategy=preferences.voting_strategy,
+                        space_id=space_id,
                     )
 
                     # Filter by confidence threshold
@@ -1183,7 +1185,9 @@ class AgentRunService:
             # Get the decisions directory path
             decisions_dir = Path(settings.decision_output_dir)
             if not decisions_dir.exists():
-                self.pearl_logger.warning(f"Decisions directory does not exist: {decisions_dir}")
+                self.pearl_logger.warning(
+                    f"Decisions directory does not exist: {decisions_dir}"
+                )
                 return []
 
             # Get all decision files and sort by modification time (most recent first)
@@ -1193,7 +1197,7 @@ class AgentRunService:
             # Load and parse decision files
             for decision_file in decision_files[:limit]:
                 try:
-                    with open(decision_file, 'r') as f:
+                    with open(decision_file, "r") as f:
                         decision_data = json.load(f)
 
                     # Extract the timestamp
@@ -1204,9 +1208,13 @@ class AgentRunService:
                         "proposal_id": decision_data.get("proposal_id"),
                         "vote": decision_data.get("vote"),
                         "confidence": decision_data.get("confidence"),
-                        "reasoning": " ".join(decision_data.get("reasoning", [])) if isinstance(decision_data.get("reasoning"), list) else decision_data.get("reasoning", ""),
+                        "reasoning": " ".join(decision_data.get("reasoning", []))
+                        if isinstance(decision_data.get("reasoning"), list)
+                        else decision_data.get("reasoning", ""),
                         "risk_assessment": decision_data.get("risk_level", "MEDIUM"),
-                        "strategy_used": decision_data.get("voting_strategy", "balanced"),
+                        "strategy_used": decision_data.get(
+                            "voting_strategy", "balanced"
+                        ),
                         "space_id": decision_data.get("space_id"),
                         "attestation_status": None,  # Not in decision files
                         "estimated_gas_cost": 0.002,  # Default value
@@ -1215,13 +1223,13 @@ class AgentRunService:
                         "dry_run": decision_data.get("dry_run", False),
                         "executed": decision_data.get("executed", False),
                         "transaction_hash": decision_data.get("transaction_hash"),
-                        "key_factors": decision_data.get("key_factors", [])
+                        "key_factors": decision_data.get("key_factors", []),
                     }
 
                     # Create VoteDecision from the mapped data
                     vote_decision = VoteDecision(**vote_data)
                     all_decisions.append((vote_decision, timestamp))
-                    
+
                 except Exception as e:
                     self.pearl_logger.warning(
                         f"Skipping invalid decision file {decision_file}: {e}"
@@ -1265,8 +1273,10 @@ class AgentRunService:
 
         try:
             # Check if list_files method exists
-            if not hasattr(self.state_manager, 'list_files'):
-                self.pearl_logger.warning("StateManager missing list_files method, returning empty statistics")
+            if not hasattr(self.state_manager, "list_files"):
+                self.pearl_logger.warning(
+                    "StateManager missing list_files method, returning empty statistics"
+                )
                 return {
                     "total_runs": 0,
                     "total_proposals_evaluated": 0,
@@ -1275,7 +1285,7 @@ class AgentRunService:
                     "success_rate": 0.0,
                     "average_runtime_seconds": 0.0,
                 }
-            
+
             # List all checkpoint files
             checkpoint_files = await self.state_manager.list_files()
             checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")
