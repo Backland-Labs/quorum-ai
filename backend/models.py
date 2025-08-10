@@ -1190,3 +1190,51 @@ class HealthCheckResponse(BaseModel):
         if not isinstance(v, list):
             raise ValueError("Rounds must be a list")
         return v
+
+
+# Custom Health Exceptions for Pearl Compliance
+class HealthCheckError(Exception):
+    """Base exception for health check failures.
+
+    This exception follows the ExternalServiceError pattern mentioned in the
+    error handling specification, providing proper error messages and context
+    for debugging health check failures.
+    """
+
+    def __init__(self, message: str, context: Optional[Dict[str, Any]] = None):
+        """Initialize HealthCheckError with message and optional context.
+
+        Args:
+            message: Error message describing the health check failure
+            context: Optional dictionary containing additional error context
+        """
+        self.context = context
+        super().__init__(message)
+
+
+class HealthServiceTimeoutError(HealthCheckError):
+    """Exception for health service timeout scenarios.
+
+    This exception provides specific timeout-related context, helping with
+    debugging timeout issues in health check operations. It inherits from
+    HealthCheckError to maintain the exception hierarchy.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        timeout_ms: Optional[int] = None,
+        operation: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ):
+        """Initialize HealthServiceTimeoutError with timeout information.
+
+        Args:
+            message: Error message describing the timeout
+            timeout_ms: Timeout value in milliseconds that was exceeded
+            operation: Name of the operation that timed out
+            context: Optional dictionary containing additional error context
+        """
+        self.timeout_ms = timeout_ms
+        self.operation = operation
+        super().__init__(message, context)
