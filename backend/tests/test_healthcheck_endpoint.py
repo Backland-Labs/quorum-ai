@@ -276,3 +276,236 @@ class TestHealthcheckEndpoint:
             "/health should not have Pearl-specific fields"
         assert "seconds_since_last_transition" in healthcheck_data, \
             "/healthcheck must have Pearl-specific fields"
+
+    def test_healthcheck_returns_new_pearl_fields(self, client):
+        """
+        Test that the endpoint returns all new Pearl-compliant fields.
+        
+        The enhanced healthcheck must include:
+        - is_tm_healthy: Transaction manager health status
+        - agent_health: Object with 3 boolean sub-fields
+        - rounds: Array of recent rounds
+        - rounds_info: Metadata about rounds
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Check new Pearl-compliant fields exist
+        assert "is_tm_healthy" in data, "Missing required field: is_tm_healthy"
+        assert "agent_health" in data, "Missing required field: agent_health"
+        assert "rounds" in data, "Missing required field: rounds"
+        assert "rounds_info" in data, "Missing required field: rounds_info"
+        
+        # Check field types
+        assert isinstance(data["is_tm_healthy"], bool), \
+            "is_tm_healthy must be a boolean"
+        assert isinstance(data["agent_health"], dict), \
+            "agent_health must be an object"
+        assert isinstance(data["rounds"], list), \
+            "rounds must be an array"
+        assert isinstance(data["rounds_info"], dict), \
+            "rounds_info must be an object"
+
+    def test_healthcheck_agent_health_structure(self, client):
+        """
+        Test that agent_health object has the correct 3 boolean sub-fields.
+        
+        The agent_health object must contain exactly these 3 boolean fields:
+        - is_making_on_chain_transactions
+        - is_staking_kpi_met
+        - has_required_funds
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        agent_health = data["agent_health"]
+        
+        # Check required sub-fields exist
+        assert "is_making_on_chain_transactions" in agent_health, \
+            "Missing agent_health field: is_making_on_chain_transactions"
+        assert "is_staking_kpi_met" in agent_health, \
+            "Missing agent_health field: is_staking_kpi_met"
+        assert "has_required_funds" in agent_health, \
+            "Missing agent_health field: has_required_funds"
+        
+        # Check field types are boolean
+        assert isinstance(agent_health["is_making_on_chain_transactions"], bool), \
+            "is_making_on_chain_transactions must be boolean"
+        assert isinstance(agent_health["is_staking_kpi_met"], bool), \
+            "is_staking_kpi_met must be boolean"
+        assert isinstance(agent_health["has_required_funds"], bool), \
+            "has_required_funds must be boolean"
+
+    def test_healthcheck_rounds_structure(self, client):
+        """
+        Test that rounds array contains properly structured round objects.
+        
+        Each round object should have:
+        - id: string identifier
+        - timestamp: ISO timestamp
+        - status: string status
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        rounds = data["rounds"]
+        
+        # Rounds can be empty, but if present should be properly structured
+        for round_obj in rounds:
+            assert "id" in round_obj, "Round object missing id field"
+            assert "timestamp" in round_obj, "Round object missing timestamp field"
+            assert "status" in round_obj, "Round object missing status field"
+            
+            assert isinstance(round_obj["id"], str), "Round id must be string"
+            assert isinstance(round_obj["timestamp"], str), "Round timestamp must be string"
+            assert isinstance(round_obj["status"], str), "Round status must be string"
+
+    def test_healthcheck_rounds_info_structure(self, client):
+        """
+        Test that rounds_info object has the correct metadata fields.
+        
+        The rounds_info object should contain:
+        - total_rounds: integer count
+        - last_round_timestamp: optional timestamp
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        rounds_info = data["rounds_info"]
+        
+        # Check required fields
+        assert "total_rounds" in rounds_info, \
+            "Missing rounds_info field: total_rounds"
+        assert "last_round_timestamp" in rounds_info, \
+            "Missing rounds_info field: last_round_timestamp"
+        
+        # Check field types
+        assert isinstance(rounds_info["total_rounds"], int), \
+            "total_rounds must be integer"
+        assert rounds_info["total_rounds"] >= 0, \
+            "total_rounds must be non-negative"
+        
+        # last_round_timestamp can be null or string
+        if rounds_info["last_round_timestamp"] is not None:
+            assert isinstance(rounds_info["last_round_timestamp"], str), \
+                "last_round_timestamp must be string or null"
+
+    def test_healthcheck_backward_compatibility(self, client):
+        """
+        Test that all existing fields are still present and unchanged.
+        
+        The enhanced endpoint must maintain backward compatibility by
+        including all original fields with the same structure and types.
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Check all original fields are still present
+        original_fields = [
+            "seconds_since_last_transition",
+            "is_transitioning_fast",
+            "period",
+            "reset_pause_duration"
+        ]
+        
+        for field in original_fields:
+            assert field in data, f"Backward compatibility broken: missing {field}"
+        
+        # Check original field types are unchanged
+        assert isinstance(data["seconds_since_last_transition"], (int, float)), \
+            "seconds_since_last_transition type changed"
+        assert isinstance(data["is_transitioning_fast"], bool), \
+            "is_transitioning_fast type changed"
+        
+        if data["period"] is not None:
+            assert isinstance(data["period"], (int, float)), \
+                "period type changed"
+        if data["reset_pause_duration"] is not None:
+            assert isinstance(data["reset_pause_duration"], (int, float)), \
+                "reset_pause_duration type changed"
+
+    @patch('main.get_tm_health_status')
+    @patch('main.get_agent_health')
+    @patch('main.get_recent_rounds')
+    @patch('main.get_rounds_info')
+    def test_healthcheck_health_function_integration(
+        self, mock_rounds_info, mock_recent_rounds, mock_agent_health, mock_tm_health, client
+    ):
+        """
+        Test that the endpoint properly integrates with all health functions.
+        
+        Verifies that the endpoint calls all the new health functions and
+        uses their return values in the response.
+        """
+        # Mock return values
+        mock_tm_health.return_value = True
+        mock_agent_health.return_value = {
+            "is_making_on_chain_transactions": True,
+            "is_staking_kpi_met": False,
+            "has_required_funds": True
+        }
+        mock_recent_rounds.return_value = [
+            {"id": "test_round", "timestamp": "2023-01-01T00:00:00Z", "status": "completed"}
+        ]
+        mock_rounds_info.return_value = {
+            "total_rounds": 1,
+            "last_round_timestamp": "2023-01-01T00:00:00Z"
+        }
+        
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify function calls
+        assert mock_tm_health.called, "get_tm_health_status should be called"
+        assert mock_agent_health.called, "get_agent_health should be called"
+        assert mock_recent_rounds.called, "get_recent_rounds should be called"
+        assert mock_rounds_info.called, "get_rounds_info should be called"
+        
+        # Verify response uses mocked values
+        assert data["is_tm_healthy"] is True
+        assert data["agent_health"]["is_making_on_chain_transactions"] is True
+        assert data["agent_health"]["is_staking_kpi_met"] is False
+        assert data["agent_health"]["has_required_funds"] is True
+        assert len(data["rounds"]) == 1
+        assert data["rounds"][0]["id"] == "test_round"
+        assert data["rounds_info"]["total_rounds"] == 1
+
+    def test_healthcheck_performance_with_new_fields(self, client):
+        """
+        Test that the enhanced endpoint still meets <100ms performance requirement.
+        
+        Even with additional health checks, the endpoint must respond quickly
+        for real-time monitoring by the Pearl platform.
+        """
+        # Warm up the endpoint
+        client.get("/healthcheck")
+        
+        # Measure response time for enhanced endpoint
+        start_time = time.time()
+        response = client.get("/healthcheck")
+        end_time = time.time()
+        
+        response_time = (end_time - start_time) * 1000  # Convert to milliseconds
+        
+        assert response.status_code == 200
+        assert response_time < 100, \
+            f"Enhanced endpoint response time {response_time:.2f}ms exceeds 100ms requirement"
+        
+        # Verify all new fields are present (ensuring we're testing the full endpoint)
+        data = response.json()
+        assert "is_tm_healthy" in data
+        assert "agent_health" in data
+        assert "rounds" in data
+        assert "rounds_info" in data

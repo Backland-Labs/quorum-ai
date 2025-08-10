@@ -1104,3 +1104,67 @@ class VotingDecisionFile(BaseModel):
         if v not in valid_votes:
             raise ValueError(f"Vote must be one of {valid_votes}")
         return v
+
+
+# Pearl-compliant healthcheck models
+class RoundInfo(BaseModel):
+    """Model for individual round information in healthcheck response."""
+    
+    id: str = Field(..., description="Unique identifier for the round")
+    timestamp: datetime = Field(..., description="When the round occurred")
+    status: str = Field(..., description="Status of the round (completed, failed, etc.)")
+
+
+class RoundsInfo(BaseModel):
+    """Model for rounds metadata in healthcheck response."""
+    
+    total_rounds: int = Field(..., ge=0, description="Total number of rounds executed")
+    last_round_timestamp: Optional[datetime] = Field(
+        default=None, description="Timestamp of the last completed round"
+    )
+
+
+class AgentHealthMetrics(BaseModel):
+    """Model for agent health metrics in healthcheck response."""
+    
+    is_making_on_chain_transactions: bool = Field(
+        ..., description="Whether agent has made on-chain transactions in last 24 hours"
+    )
+    is_staking_kpi_met: bool = Field(
+        ..., description="Whether minimum daily transaction requirement is met"
+    )
+    has_required_funds: bool = Field(
+        ..., description="Whether agent has sufficient funds for operations"
+    )
+
+
+class HealthCheckResponse(BaseModel):
+    """Complete Pearl-compliant healthcheck response model."""
+    
+    # Existing fields (backward compatibility)
+    seconds_since_last_transition: float = Field(
+        ..., description="Time since last state transition"
+    )
+    is_transitioning_fast: bool = Field(
+        ..., description="Whether transitions are happening rapidly"
+    )
+    period: Optional[float] = Field(
+        default=None, description="Time period for fast transition detection"
+    )
+    reset_pause_duration: Optional[float] = Field(
+        default=None, description="Duration to wait before resetting transition tracking"
+    )
+    
+    # New Pearl-compliant fields
+    is_tm_healthy: bool = Field(
+        ..., description="Transaction manager health status"
+    )
+    agent_health: AgentHealthMetrics = Field(
+        ..., description="Agent health metrics with 3 boolean sub-fields"
+    )
+    rounds: List[RoundInfo] = Field(
+        default_factory=list, description="Recent rounds information"
+    )
+    rounds_info: RoundsInfo = Field(
+        ..., description="Rounds metadata and statistics"
+    )
