@@ -1,6 +1,5 @@
 """Web3 connection and wallet management service."""
 
-import os
 import requests
 from web3 import Web3
 from eth_account.messages import encode_typed_data
@@ -12,14 +11,18 @@ from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
 import time
 
+from utils.env_helper import get_env_with_prefix
+
 # Load environment variables
 load_dotenv()
 
 # Get environment variables
-GNOSIS_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
-EOA_PRIVATE_KEY = os.getenv("EOA_PRIVATE_KEY")
-GNOSIS_SAFE_ADDRESS = os.getenv("GNOSIS_SAFE_ADDRESS")
-ETHEREUM_RPC_URL = f"https://base-mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}"
+GNOSIS_PRIVATE_KEY = get_env_with_prefix("EOA_PRIVATE_KEY")
+EOA_PRIVATE_KEY = get_env_with_prefix("EOA_PRIVATE_KEY")
+GNOSIS_SAFE_ADDRESS = get_env_with_prefix("GNOSIS_SAFE_ADDRESS")
+ETHEREUM_RPC_URL = (
+    f"https://base-mainnet.infura.io/v3/{get_env_with_prefix('INFURA_API_KEY')}"
+)
 
 # Safe transaction service URL for Base Mainnet
 SAFE_TRANSACTION_SERVICE_URL = "https://safe-transaction-base.safe.global/"

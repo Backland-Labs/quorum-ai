@@ -11,27 +11,29 @@ from safe_eth.safe.api import TransactionServiceApi
 from datetime import date
 import time
 
+from utils.env_helper import get_env_with_prefix
+
 # --- OLAS INTEGRATION: Read from OLAS-provided sources ---
 # OLAS provides private key in file
 with open("ethereum_private_key.txt", "r") as f:
     EOA_PRIVATE_KEY = f.read().strip()
 
 # OLAS provides Safe addresses as JSON environment variable
-SAFE_ADDRESSES = json.loads(os.getenv("SAFE_CONTRACT_ADDRESSES"))
+SAFE_ADDRESSES = json.loads(get_env_with_prefix("SAFE_CONTRACT_ADDRESSES", "{}"))
 
 # OLAS provides RPC endpoints for all supported chains
 RPC_ENDPOINTS = {
-    "ethereum": os.getenv("ETHEREUM_LEDGER_RPC"),
-    "gnosis": os.getenv("GNOSIS_LEDGER_RPC"),
-    "base": os.getenv("BASE_LEDGER_RPC"),
-    "celo": os.getenv("CELO_LEDGER_RPC"),
-    "mode": os.getenv("MODE_LEDGER_RPC"),
+    "ethereum": get_env_with_prefix("ETHEREUM_LEDGER_RPC"),
+    "gnosis": get_env_with_prefix("GNOSIS_LEDGER_RPC"),
+    "base": get_env_with_prefix("BASE_LEDGER_RPC"),
+    "celo": get_env_with_prefix("CELO_LEDGER_RPC"),
+    "mode": get_env_with_prefix("MODE_LEDGER_RPC"),
 }
 
 # OLAS provides staking and activity tracking configuration
-STAKING_TOKEN_CONTRACT = os.getenv("STAKING_TOKEN_CONTRACT_ADDRESS")
-ACTIVITY_CHECKER_CONTRACT = os.getenv("ACTIVITY_CHECKER_CONTRACT_ADDRESS")
-STORE_PATH = os.getenv("STORE_PATH")  # For persistent data storage
+STAKING_TOKEN_CONTRACT = get_env_with_prefix("STAKING_TOKEN_CONTRACT_ADDRESS")
+ACTIVITY_CHECKER_CONTRACT = get_env_with_prefix("ACTIVITY_CHECKER_CONTRACT_ADDRESS")
+STORE_PATH = get_env_with_prefix("STORE_PATH")  # For persistent data storage
 
 # Safe transaction service URLs for supported chains
 SAFE_SERVICE_URLS = {
