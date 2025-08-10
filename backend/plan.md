@@ -173,11 +173,53 @@ Implement proper handling of Olas Pearl environment variable prefixing conventio
 - [x] Helper function created in `backend/utils/env_helper.py` - **COMPLETED** (2025-08-09)
 - [x] Critical services (voter_olas.py, voter.py) updated to use helper function - **COMPLETED** (2025-08-09)
 - [x] New Olas-specific variables added to config with Pydantic built-in features - **COMPLETED** (2025-08-09)
-- [ ] Service template JSON updated with comprehensive structure - **DEFERRED TO PHASE 2**
+- [x] Service template JSON updated with comprehensive structure - **COMPLETED** (2025-08-09)
 - [x] Focused test coverage for core functionality - **COMPLETED** (2025-08-09)
 - [x] Backward compatibility maintained for all existing functionality - **COMPLETED** (2025-08-09)
 - [x] No regression in critical voting services - **COMPLETED** (2025-08-09)
 - [x] Pearl integration requirements satisfied with minimal changes - **COMPLETED** (2025-08-09)
+
+## Phase 2 Implementation Summary (COMPLETED - 2025-08-09)
+
+### What Was Implemented:
+1. **Service Template JSON Structure Update** (`service-template.json`):
+   - Added comprehensive environment variable structure for Pearl integration
+   - Included CONNECTION_CONFIGS_CONFIG_ prefix examples for all new variables
+   - Added conflict resolution documentation (prefixed takes precedence)
+   - Added performance note about environment variable caching
+   - Maintained backward compatibility with fallback variable names
+
+2. **New Environment Variables Added**:
+   - `CONNECTION_CONFIGS_CONFIG_OPENROUTER_API_KEY` (required, fallback to OPENROUTER_API_KEY)
+   - `CONNECTION_CONFIGS_CONFIG_SNAPSHOT_API_KEY` (optional, fallback to SNAPSHOT_API_KEY)
+   - `CONNECTION_CONFIGS_CONFIG_VOTING_STRATEGY` (optional, default: balanced, fallback to VOTING_STRATEGY)
+   - `CONNECTION_CONFIGS_CONFIG_DAO_ADDRESSES` (optional, fallback to DAO_ADDRESSES)
+
+3. **Comprehensive Test Coverage Verification**:
+   - Verified all existing tests pass (6/6 tests passing)
+   - Confirmed helper function behavior works correctly with existing test infrastructure
+   - Validated new Pydantic fields work with prefixed variables
+   - Tested critical services (voter_olas.py, voter.py) correctly use helper function
+   - Used existing fixtures and dependency injection patterns
+
+### Technical Decisions Made:
+- Adapted Pearl service template format to include prefixed environment variables
+- Added comprehensive documentation in JSON comments about conflict resolution
+- Maintained existing array-based env_variables structure for Pearl compatibility
+- Added fallback field to each prefixed variable for backward compatibility
+- Included provision_type and default values where appropriate
+
+### Verification Results:
+- Service template JSON is valid and properly formatted
+- All Phase 1 and Phase 2 tests pass (6/6)
+- Environment variable precedence works correctly (prefixed takes precedence)
+- New Pydantic fields load correctly from prefixed environment variables
+- Critical services import and use helper function successfully
+- No regression in existing functionality
+- JSON structure follows Pearl integration requirements
+
+### Files Modified:
+- `service-template.json` - **UPDATED** (added prefixed environment variables and documentation)
 
 ## Phase 1 Implementation Summary (COMPLETED - 2025-08-09)
 
