@@ -432,3 +432,225 @@ class TestHealthcheckEndpointEnhancement:
         assert response.status_code == 200
         assert response_time < 100, \
             f"Enhanced healthcheck response time {response_time:.2f}ms exceeds 100ms requirement"
+
+
+class TestHealthcheckEndpointPerformance:
+    """Comprehensive performance tests for the healthcheck endpoint."""
+
+    def test_healthcheck_endpoint_performance_under_load(self, client):
+        """
+        Test healthcheck endpoint performance under concurrent load.
+        
+        This test ensures that the endpoint can handle multiple concurrent requests
+        while maintaining the <100ms response time requirement, which is critical
+        for Pearl platform monitoring in production environments.
+        """
+        import threading
+        import time
+        
+        results = []
+        response_times = []
+        errors = []
+        
+        def make_timed_request():
+            try:
+                start_time = time.time()
+                response = client.get("/healthcheck")
+                end_time = time.time()
+                
+                response_time = (end_time - start_time) * 1000  # Convert to milliseconds
+                results.append(response.status_code)
+                response_times.append(response_time)
+            except Exception as e:
+                errors.append(e)
+        
+        # Launch 20 concurrent requests to simulate load
+        threads = []
+        for _ in range(20):
+            t = threading.Thread(target=make_timed_request)
+            threads.append(t)
+            t.start()
+        
+        # Wait for all threads to complete
+        for t in threads:
+            t.join()
+        
+        # Verify no errors occurred
+        assert len(errors) == 0, f"Concurrent requests caused errors: {errors}"
+        
+        # Verify all requests succeeded
+        assert all(status == 200 for status in results), \
+            f"Some requests failed: {results}"
+        
+        # Verify performance requirements
+        avg_response_time = sum(response_times) / len(response_times)
+        max_response_time = max(response_times)
+        
+        assert avg_response_time < 100, \
+            f"Average response time {avg_response_time:.2f}ms exceeds 100ms requirement"
+        assert max_response_time < 200, \
+            f"Maximum response time {max_response_time:.2f}ms exceeds 200ms tolerance"
+
+    def test_healthcheck_endpoint_sustained_performance(self, client):
+        """
+        Test healthcheck endpoint performance over sustained requests.
+        
+        This test verifies that the endpoint maintains consistent performance
+        over many sequential requests, ensuring no memory leaks or performance
+        degradation that could affect long-running Pearl monitoring.
+        """
+        response_times = []
+        
+        # Warm up the endpoint
+        for _ in range(5):
+            client.get("/healthcheck")
+        
+        # Measure performance over 100 requests
+        for i in range(100):
+            start_time = time.time()
+            response = client.get("/healthcheck")
+            end_time = time.time()
+            
+            response_time = (end_time - start_time) * 1000
+            response_times.append(response_time)
+            
+            assert response.status_code == 200, f"Request {i} failed with status {response.status_code}"
+        
+        # Calculate performance metrics
+        avg_time = sum(response_times) / len(response_times)
+        max_time = max(response_times)
+        min_time = min(response_times)
+        
+        # Performance assertions
+        assert avg_time < 50, f"Average response time {avg_time:.2f}ms exceeds 50ms target"
+        assert max_time < 100, f"Maximum response time {max_time:.2f}ms exceeds 100ms requirement"
+        assert min_time > 0, "Minimum response time should be positive"
+        
+        # Check for performance consistency (no significant degradation)
+        first_quarter = response_times[:25]
+        last_quarter = response_times[-25:]
+        
+        avg_first = sum(first_quarter) / len(first_quarter)
+        avg_last = sum(last_quarter) / len(last_quarter)
+        
+        # Last quarter should not be significantly slower than first quarter
+        degradation_ratio = avg_last / avg_first
+        assert degradation_ratio < 2.0, \
+            f"Performance degraded by {degradation_ratio:.2f}x over sustained requests"
+
+    @patch('main.health_status_service')
+    @patch('main._get_state_transition_tracker')
+    def test_healthcheck_endpoint_performance_with_slow_dependencies(
+        self, mock_get_tracker, mock_health_service, client
+    ):
+        """
+        Test healthcheck endpoint performance when dependencies are slow.
+        
+        This test ensures that even when underlying services are slow,
+        the endpoint still responds within acceptable time limits due to
+        proper timeout handling and parallel execution.
+        """
+        # Mock slow state transition tracker
+        mock_tracker = Mock()
+        mock_tracker.seconds_since_last_transition = 25.0
+        mock_tracker.is_transitioning_fast.return_value = False
+        mock_tracker.fast_transition_window = 5
+        mock_tracker.fast_transition_threshold = 0.5
+        mock_get_tracker.return_value = mock_tracker
+        
+        # Mock slow health service
+        from models import HealthCheckResponse
+        import asyncio
+        
+        async def slow_health_check():
+            await asyncio.sleep(0.08)  # 80ms delay - close to timeout
+            return HealthCheckResponse()
+        
+        mock_health_service.get_health_status = slow_health_check
+        
+        # Measure response time with slow dependencies
+        start_time = time.time()
+        response = client.get("/healthcheck")
+        end_time = time.time()
+        
+        response_time = (end_time - start_time) * 1000
+        
+        assert response.status_code == 200
+        assert response_time < 150, \
+            f"Response time {response_time:.2f}ms with slow dependencies exceeds 150ms tolerance"
+        
+        # Verify response contains expected fields
+        data = response.json()
+        assert "seconds_since_last_transition" in data
+        assert "is_transitioning_fast" in data
+        assert "is_tm_healthy" in data
+
+    def test_healthcheck_endpoint_memory_efficiency(self, client):
+        """
+        Test that healthcheck endpoint is memory efficient.
+        
+        This test ensures that repeated calls to the healthcheck endpoint
+        don't cause memory leaks or excessive object creation, which is
+        important for long-running Pearl monitoring processes.
+        """
+        import gc
+        
+        # Force garbage collection and measure initial memory
+        gc.collect()
+        initial_objects = len(gc.get_objects())
+        
+        # Make many requests to test for memory leaks
+        for _ in range(200):
+            response = client.get("/healthcheck")
+            assert response.status_code == 200
+        
+        # Force garbage collection and measure final memory
+        gc.collect()
+        final_objects = len(gc.get_objects())
+        
+        # Memory growth should be minimal
+        object_growth = final_objects - initial_objects
+        assert object_growth < 2000, \
+            f"Excessive memory growth: {object_growth} objects created during 200 requests"
+
+    def test_healthcheck_endpoint_response_size_efficiency(self, client):
+        """
+        Test that healthcheck endpoint returns efficiently sized responses.
+        
+        This test ensures that the response payload is not unnecessarily large,
+        which is important for network efficiency in Pearl monitoring.
+        """
+        response = client.get("/healthcheck")
+        
+        assert response.status_code == 200
+        
+        # Check response size
+        response_size = len(response.content)
+        assert response_size < 5000, \
+            f"Response size {response_size} bytes is too large for efficient monitoring"
+        
+        # Verify response is valid JSON
+        data = response.json()
+        assert isinstance(data, dict)
+        
+        # Check that response contains required fields without excessive data
+        required_fields = [
+            "seconds_since_last_transition",
+            "is_transitioning_fast",
+            "is_tm_healthy",
+            "agent_health",
+            "rounds"
+        ]
+        
+        for field in required_fields:
+            assert field in data, f"Required field {field} missing from response"
+        
+        # Verify agent_health structure is reasonable
+        if data.get("agent_health"):
+            agent_health = data["agent_health"]
+            assert len(agent_health) <= 10, "Agent health object has too many fields"
+        
+        # Verify rounds array is reasonable
+        if data.get("rounds"):
+            rounds = data["rounds"]
+            assert len(rounds) <= 100, "Rounds array is too large for efficient monitoring"

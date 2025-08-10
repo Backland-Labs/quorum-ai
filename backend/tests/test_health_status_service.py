@@ -405,3 +405,301 @@ class TestHealthStatusServiceHealthGathering:
             assert "to_state" in result.rounds[0]
             assert "timestamp" in result.rounds[0]
             assert "metadata" in result.rounds[0]
+
+
+class TestHealthStatusServicePerformance:
+    """Comprehensive performance tests for HealthStatusService."""
+
+    @pytest.mark.asyncio
+    async def test_health_status_gathering_performance_under_load(self):
+        """
+        Test health status gathering performance under concurrent load.
+        
+        This test ensures that the service maintains <100ms response time
+        even when multiple health checks are executed concurrently, which
+        is critical for Pearl platform monitoring requirements.
+        """
+        # Create mock dependencies with realistic delays
+        mock_safe_service = MagicMock()
+        mock_safe_service.select_optimal_chain = MagicMock(return_value="gnosis")
+        mock_web3 = MagicMock()
+        mock_web3.is_connected = MagicMock(return_value=True)
+        mock_safe_service.get_web3_connection = MagicMock(return_value=mock_web3)
+        
+        mock_activity_service = MagicMock()
+        mock_activity_service.is_daily_activity_needed = MagicMock(return_value=False)
+        mock_activity_service.get_activity_status = MagicMock(return_value={
+            "last_activity_date": datetime.now().date().isoformat()
+        })
+        
+        mock_state_tracker = MagicMock()
+        mock_state_tracker.get_recent_transitions = MagicMock(return_value=[])
+        
+        service = HealthStatusService(
+            safe_service=mock_safe_service,
+            activity_service=mock_activity_service,
+            state_transition_tracker=mock_state_tracker
+        )
+        
+        # Execute multiple concurrent health checks
+        async def single_health_check():
+            start_time = datetime.now()
+            result = await service.get_health_status()
+            execution_time = (datetime.now() - start_time).total_seconds() * 1000
+            return result, execution_time
+        
+        # Run 10 concurrent health checks
+        tasks = [single_health_check() for _ in range(10)]
+        results = await asyncio.gather(*tasks)
+        
+        # Verify all results and performance
+        for result, execution_time in results:
+            assert isinstance(result, HealthCheckResponse)
+            assert execution_time < 100, f"Health check took {execution_time:.2f}ms, exceeds 100ms requirement"
+            assert result.is_tm_healthy is True
+            assert result.agent_health is not None
+
+    @pytest.mark.asyncio
+    async def test_health_status_gathering_timeout_performance(self):
+        """
+        Test that individual health check timeouts don't exceed service limits.
+        
+        This test verifies that even when individual service calls timeout,
+        the overall health check completes within the required time bounds
+        due to proper timeout handling and parallel execution.
+        """
+        # Create mock services with controlled timeout scenarios
+        mock_safe_service = MagicMock()
+        
+        async def slow_chain_selection():
+            await asyncio.sleep(0.1)  # 100ms delay - should timeout
+            return "gnosis"
+        
+        mock_safe_service.select_optimal_chain = slow_chain_selection
+        
+        mock_activity_service = MagicMock()
+        mock_activity_service.is_daily_activity_needed = MagicMock(return_value=False)
+        mock_activity_service.get_activity_status = MagicMock(return_value={})
+        
+        mock_state_tracker = MagicMock()
+        mock_state_tracker.get_recent_transitions = MagicMock(return_value=[])
+        
+        service = HealthStatusService(
+            safe_service=mock_safe_service,
+            activity_service=mock_activity_service,
+            state_transition_tracker=mock_state_tracker
+        )
+        
+        # Measure total execution time
+        start_time = datetime.now()
+        result = await service.get_health_status()
+        execution_time = (datetime.now() - start_time).total_seconds() * 1000
+        
+        # Should complete quickly despite individual timeouts
+        assert execution_time < 100, f"Health check with timeouts took {execution_time:.2f}ms"
+        assert isinstance(result, HealthCheckResponse)
+        assert result.is_tm_healthy is True  # Safe default due to timeout
+
+    @pytest.mark.asyncio
+    async def test_health_status_memory_efficiency(self):
+        """
+        Test that health status gathering is memory efficient.
+        
+        This test ensures that the service doesn't create excessive objects
+        or hold unnecessary references during health gathering, which is
+        important for long-running agent processes.
+        """
+        import gc
+        import sys
+        
+        # Create minimal mock dependencies
+        mock_safe_service = MagicMock()
+        mock_safe_service.select_optimal_chain = MagicMock(return_value="gnosis")
+        mock_web3 = MagicMock()
+        mock_web3.is_connected = MagicMock(return_value=True)
+        mock_safe_service.get_web3_connection = MagicMock(return_value=mock_web3)
+        
+        service = HealthStatusService(safe_service=mock_safe_service)
+        
+        # Force garbage collection and measure initial memory
+        gc.collect()
+        initial_objects = len(gc.get_objects())
+        
+        # Execute health check multiple times
+        for _ in range(100):
+            result = await service.get_health_status()
+            assert isinstance(result, HealthCheckResponse)
+        
+        # Force garbage collection and measure final memory
+        gc.collect()
+        final_objects = len(gc.get_objects())
+        
+        # Memory growth should be reasonable (allow for logging and mock objects)
+        object_growth = final_objects - initial_objects
+        assert object_growth < 5000, f"Excessive memory growth: {object_growth} objects created"
+
+
+class TestHealthStatusServiceEdgeCases:
+    """Edge case tests for HealthStatusService to achieve >90% coverage."""
+
+    @pytest.mark.asyncio
+    async def test_agent_health_with_date_object_instead_of_string(self):
+        """
+        Test agent health check handles date objects correctly.
+        
+        This test covers the edge case where last_activity_date is already
+        a date object rather than a string, ensuring the service handles
+        both formats correctly.
+        """
+        mock_activity_service = MagicMock()
+        mock_activity_service.is_daily_activity_needed = MagicMock(return_value=False)
+        mock_activity_service.get_activity_status = MagicMock(return_value={
+            "last_activity_date": datetime.now().date()  # Date object, not string
+        })
+        
+        service = HealthStatusService(
+            safe_service=None,
+            activity_service=mock_activity_service,
+            state_transition_tracker=None
+        )
+        
+        result = await service.get_health_status()
+        
+        # Should handle date object correctly
+        assert result.agent_health is not None
+        assert result.agent_health.is_making_on_chain_transactions is True
+        assert result.agent_health.is_staking_kpi_met is True
+
+    @pytest.mark.asyncio
+    async def test_rounds_info_gathering_with_timeout_exception(self):
+        """
+        Test rounds info gathering handles timeout exceptions gracefully.
+        
+        This test covers the exception handling path in _get_rounds_info
+        to ensure proper error handling and safe defaults.
+        """
+        mock_state_tracker = MagicMock()
+        mock_state_tracker.get_recent_transitions = MagicMock(
+            side_effect=asyncio.TimeoutError("Timeout occurred")
+        )
+        
+        service = HealthStatusService(
+            safe_service=None,
+            activity_service=None,
+            state_transition_tracker=mock_state_tracker
+        )
+        
+        result = await service.get_health_status()
+        
+        # Should handle timeout gracefully with safe defaults
+        assert isinstance(result.rounds, list)
+        assert result.rounds == []  # Safe default
+        assert result.is_tm_healthy is True
+        assert result.agent_health is not None
+
+    @pytest.mark.asyncio
+    async def test_health_status_with_mixed_success_and_failure(self):
+        """
+        Test health status gathering with mixed success and failure scenarios.
+        
+        This test ensures that when some health checks succeed and others fail,
+        the service properly combines successful results with safe defaults
+        for failed checks.
+        """
+        # Mock safe service that succeeds
+        mock_safe_service = MagicMock()
+        mock_safe_service.select_optimal_chain = MagicMock(return_value="gnosis")
+        mock_web3 = MagicMock()
+        mock_web3.is_connected = MagicMock(return_value=True)
+        mock_safe_service.get_web3_connection = MagicMock(return_value=mock_web3)
+        
+        # Mock activity service that fails
+        mock_activity_service = MagicMock()
+        mock_activity_service.is_daily_activity_needed = MagicMock(
+            side_effect=Exception("Activity service error")
+        )
+        
+        # Mock state tracker that succeeds
+        mock_state_tracker = MagicMock()
+        mock_state_tracker.get_recent_transitions = MagicMock(return_value=[
+            {"from_state": "idle", "to_state": "active", "timestamp": datetime.now()}
+        ])
+        
+        service = HealthStatusService(
+            safe_service=mock_safe_service,
+            activity_service=mock_activity_service,
+            state_transition_tracker=mock_state_tracker
+        )
+        
+        result = await service.get_health_status()
+        
+        # Should combine successful and failed results appropriately
+        assert isinstance(result, HealthCheckResponse)
+        assert result.is_tm_healthy is True  # Safe service succeeded
+        assert result.agent_health is not None  # Safe default due to activity service failure
+        assert result.agent_health.is_making_on_chain_transactions is True  # Safe default
+        assert isinstance(result.rounds, list)  # State tracker succeeded
+
+    @pytest.mark.asyncio
+    async def test_comprehensive_performance_benchmark(self):
+        """
+        Comprehensive performance benchmark test for health status gathering.
+        
+        This test provides detailed performance metrics and ensures the service
+        meets all performance requirements under various load conditions.
+        """
+        # Create realistic mock dependencies
+        mock_safe_service = MagicMock()
+        mock_safe_service.select_optimal_chain = MagicMock(return_value="gnosis")
+        mock_web3 = MagicMock()
+        mock_web3.is_connected = MagicMock(return_value=True)
+        mock_safe_service.get_web3_connection = MagicMock(return_value=mock_web3)
+        
+        mock_activity_service = MagicMock()
+        mock_activity_service.is_daily_activity_needed = MagicMock(return_value=False)
+        mock_activity_service.get_activity_status = MagicMock(return_value={
+            "last_activity_date": datetime.now().date().isoformat()
+        })
+        
+        mock_state_tracker = MagicMock()
+        mock_state_tracker.get_recent_transitions = MagicMock(return_value=[
+            {"from_state": "idle", "to_state": "active", "timestamp": datetime.now()}
+        ])
+        
+        service = HealthStatusService(
+            safe_service=mock_safe_service,
+            activity_service=mock_activity_service,
+            state_transition_tracker=mock_state_tracker
+        )
+        
+        # Warm up the service
+        await service.get_health_status()
+        
+        # Benchmark multiple iterations
+        execution_times = []
+        for _ in range(50):
+            start_time = datetime.now()
+            result = await service.get_health_status()
+            execution_time = (datetime.now() - start_time).total_seconds() * 1000
+            execution_times.append(execution_time)
+            
+            # Verify result integrity
+            assert isinstance(result, HealthCheckResponse)
+            assert result.is_tm_healthy is True
+            assert result.agent_health is not None
+        
+        # Calculate performance metrics
+        avg_time = sum(execution_times) / len(execution_times)
+        max_time = max(execution_times)
+        min_time = min(execution_times)
+        
+        # Performance assertions
+        assert avg_time < 50, f"Average response time {avg_time:.2f}ms exceeds 50ms target"
+        assert max_time < 100, f"Maximum response time {max_time:.2f}ms exceeds 100ms requirement"
+        assert min_time > 0, "Minimum response time should be positive"
+        
+        # Log performance metrics for monitoring
+        print(f"\nPerformance Metrics:")
+        print(f"Average: {avg_time:.2f}ms")
+        print(f"Maximum: {max_time:.2f}ms")
+        print(f"Minimum: {min_time:.2f}ms")
