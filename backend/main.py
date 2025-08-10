@@ -40,6 +40,7 @@ from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
+from services.health_status_service import HealthStatusService
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -57,6 +58,7 @@ signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
+health_status_service: Optional[HealthStatusService] = None
 
 
 @asynccontextmanager
@@ -75,7 +77,8 @@ async def lifespan(_app: FastAPI):
         signal_handler, \
         shutdown_coordinator, \
         withdrawal_service, \
-        state_transition_tracker
+        state_transition_tracker, \
+        health_status_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -96,6 +99,21 @@ async def lifespan(_app: FastAPI):
         safe_service=safe_service,
         snapshot_service=snapshot_service,
     )
+
+    # Initialize HealthStatusService with dependency injection
+    try:
+        if settings.HEALTH_CHECK_ENABLED:
+            health_status_service = HealthStatusService(
+                safe_service=safe_service,
+                activity_service=activity_service,
+                state_transition_tracker=state_transition_tracker,
+            )
+            logger.info("HealthStatusService initialized successfully")
+        else:
+            logger.info("HealthStatusService disabled via HEALTH_CHECK_ENABLED=False")
+    except Exception as e:
+        logger.error(f"Failed to initialize HealthStatusService: {e}")
+        health_status_service = None
 
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -177,33 +195,32 @@ app.add_middleware(
 async def general_exception_handler(request, exc):
     """Handle general exceptions."""
     import traceback
-    
+
     # Get the full traceback
-    tb_str = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
-    
+    tb_str = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+
     # Log the full exception details
     logger.error(
         f"Unhandled exception error={str(exc)} path={str(request.url)} "
         f"method={request.method} exception_type={type(exc).__name__}\n"
         f"Traceback:\n{tb_str}"
     )
-    
+
     # In debug mode, return the full error details
     if settings.debug:
         return JSONResponse(
-            status_code=500, 
+            status_code=500,
             content={
-                "error": "Internal server error", 
+                "error": "Internal server error",
                 "message": str(exc),
                 "exception_type": type(exc).__name__,
-                "traceback": tb_str.split('\n')
-            }
+                "traceback": tb_str.split("\n"),
+            },
         )
-    
+
     # In production, return a generic error message
     return JSONResponse(
-        status_code=500, 
-        content={"error": "Internal server error", "message": str(exc)}
+        status_code=500, content={"error": "Internal server error", "message": str(exc)}
     )
 
 
@@ -234,6 +251,51 @@ def _get_state_transition_tracker():
     return state_transition_tracker
 
 
+async def _get_pearl_compliance_fields() -> dict:
+    """Get Pearl compliance fields with graceful degradation.
+
+    Returns Pearl platform required fields for healthcheck endpoint.
+    Uses HealthStatusService when available, otherwise returns safe defaults.
+
+    Returns:
+        dict: Pearl compliance fields with safe defaults on failure
+    """
+    # Safe defaults for Pearl compliance
+    safe_defaults = {
+        "is_tm_healthy": True,
+        "agent_health": {
+            "is_making_on_chain_transactions": True,
+            "is_staking_kpi_met": True,
+            "has_required_funds": True,
+        },
+        "rounds": [],
+        "rounds_info": None,
+    }
+
+    if health_status_service is None:
+        logger.debug("HealthStatusService not available, using safe defaults")
+        return safe_defaults
+
+    try:
+        health_data = await health_status_service.get_health_status()
+
+        # Extract Pearl compliance fields from HealthStatusService
+        return {
+            "is_tm_healthy": health_data.is_tm_healthy,
+            "agent_health": (
+                health_data.agent_health.model_dump()
+                if health_data.agent_health
+                else safe_defaults["agent_health"]
+            ),
+            "rounds": health_data.rounds,
+            "rounds_info": health_data.rounds_info,
+        }
+
+    except Exception as e:
+        logger.warning(f"HealthStatusService failed, using safe defaults: {e}")
+        return safe_defaults
+
+
 # Pearl-compliant health check endpoint
 @app.get("/healthcheck")
 async def healthcheck():
@@ -248,6 +310,12 @@ async def healthcheck():
         - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
         - period: (optional) The time period used to determine if transitioning fast
         - reset_pause_duration: (optional) Time to wait before resetting transition tracking
+
+        Enhanced Pearl compliance fields (when HealthStatusService is available):
+        - is_tm_healthy: Boolean indicating transaction manager health
+        - agent_health: Object with agent health details
+        - rounds: List of round information
+        - rounds_info: Additional round metadata
     """
     try:
         # Get the tracker instance
@@ -289,17 +357,29 @@ async def healthcheck():
         else:
             response["reset_pause_duration"] = 0.5  # Default value
 
+        # Add Pearl compliance fields
+        pearl_fields = await _get_pearl_compliance_fields()
+        response.update(pearl_fields)
+
         return response
 
     except Exception as e:
         # Handle errors gracefully - return safe defaults
         logger.error(f"Error in healthcheck endpoint: {str(e)}")
-        return {
+
+        # Get safe defaults for Pearl compliance fields
+        pearl_defaults = await _get_pearl_compliance_fields()
+
+        # Combine state transition defaults with Pearl compliance defaults
+        error_response = {
             "seconds_since_last_transition": -1,
             "is_transitioning_fast": False,
             "period": 5,
             "reset_pause_duration": 0.5,
         }
+        error_response.update(pearl_defaults)
+
+        return error_response
 
 
 # Proposal endpoints
@@ -366,7 +446,7 @@ async def get_proposal_by_id(proposal_id: str):
 async def summarize_proposals(request: SummarizeRequest):
     """Summarize multiple proposals using AI."""
     start_time = time.time()
-    
+
     # Log the incoming request
     logger.info(
         f"Received summarize request proposal_ids={request.proposal_ids} "
@@ -382,13 +462,11 @@ async def summarize_proposals(request: SummarizeRequest):
             proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
 
             if not proposals:
-                logger.warning(
-                    f"No proposals found for IDs: {request.proposal_ids}"
-                )
+                logger.warning(f"No proposals found for IDs: {request.proposal_ids}")
                 raise HTTPException(
                     status_code=404, detail="No proposals found for the provided IDs"
                 )
-            
+
             logger.info(f"Successfully fetched {len(proposals)} proposals")
 
             # Generate summaries
@@ -585,11 +663,7 @@ async def get_agent_run_decisions(limit: int = Query(5, ge=1, le=100)):
                     proposal = await snapshot_service.get_proposal(
                         vote_decision.proposal_id
                     )
-                    proposal_title = (
-                        proposal.title
-                        if proposal
-                        else "Unknown Proposal"
-                    )
+                    proposal_title = proposal.title if proposal else "Unknown Proposal"
                 except Exception as e:
                     logger.warning(
                         f"Error fetching proposal title for {vote_decision.proposal_id}: {e}"
@@ -835,7 +909,7 @@ async def update_user_preferences(preferences: UserPreferences):
 @app.get("/config/monitored-daos")
 async def get_monitored_daos():
     """Get the list of monitored DAO spaces from configuration.
-    
+
     Returns the spaces configured via MONITORED_DAOS environment variable.
     This provides the frontend with the list of available DAO spaces for monitoring.
     """
@@ -847,28 +921,21 @@ async def get_monitored_daos():
                 # For now, use space_id as display name
                 # Future enhancement: fetch actual space names from Snapshot
                 display_name = space_id.replace(".eth", "").replace("-", " ").title()
-                spaces.append({
-                    "id": space_id,
-                    "name": display_name
-                })
-            
-            response = {
-                "spaces": spaces,
-                "total": len(spaces)
-            }
-            
+                spaces.append({"id": space_id, "name": display_name})
+
+            response = {"spaces": spaces, "total": len(spaces)}
+
             # Cache for 1 hour since config doesn't change often
             headers = {"Cache-Control": "public, max-age=3600"}
-            
+
             logger.info(f"Returning monitored DAOs count={len(spaces)}")
-            
+
             return JSONResponse(content=response, headers=headers)
-            
+
     except Exception as e:
         logger.error(f"Failed to fetch monitored DAOs error={str(e)}")
         raise HTTPException(
-            status_code=500, 
-            detail="Failed to fetch monitored DAO configuration"
+            status_code=500, detail="Failed to fetch monitored DAO configuration"
         )
 
 

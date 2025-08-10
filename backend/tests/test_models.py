@@ -878,3 +878,166 @@ class TestModelValidationHelper:
             ModelValidationHelper.validate_staking_consistency(
                 True, "invalid", 5.0  # type: ignore
             )
+
+
+class TestAgentHealth:
+    """Test cases for AgentHealth model for Olas Pearl compliance."""
+
+    def test_agent_health_creation_with_defaults(self) -> None:
+        """
+        Test AgentHealth creation with default values.
+        
+        This test verifies that the AgentHealth model can be created with all default values,
+        which is important for backward compatibility and safe defaults for Pearl compliance.
+        """
+        from models import AgentHealth
+        
+        agent_health = AgentHealth()
+        
+        # All fields should have safe defaults of True for Pearl compliance
+        assert agent_health.is_making_on_chain_transactions is True
+        assert agent_health.is_staking_kpi_met is True
+        assert agent_health.has_required_funds is True
+
+    def test_agent_health_creation_with_explicit_values(self) -> None:
+        """
+        Test AgentHealth creation with explicit field values.
+        
+        This test ensures that all fields can be explicitly set and validates
+        the model accepts boolean values for all health indicators.
+        """
+        from models import AgentHealth
+        
+        agent_health = AgentHealth(
+            is_making_on_chain_transactions=False,
+            is_staking_kpi_met=True,
+            has_required_funds=False
+        )
+        
+        assert agent_health.is_making_on_chain_transactions is False
+        assert agent_health.is_staking_kpi_met is True
+        assert agent_health.has_required_funds is False
+
+    def test_agent_health_field_validation(self) -> None:
+        """
+        Test AgentHealth field validation for type safety.
+        
+        This test ensures that non-boolean values are properly rejected
+        to maintain data integrity for Pearl platform integration.
+        """
+        from models import AgentHealth
+        
+        # Test invalid types are rejected
+        with pytest.raises(ValidationError):
+            AgentHealth(is_making_on_chain_transactions="invalid")  # type: ignore
+            
+        with pytest.raises(ValidationError):
+            AgentHealth(is_staking_kpi_met=[1, 2, 3])  # type: ignore
+            
+        with pytest.raises(ValidationError):
+            AgentHealth(has_required_funds=None)  # type: ignore
+
+
+class TestHealthCheckResponse:
+    """Test cases for HealthCheckResponse model for Olas Pearl compliance."""
+
+    def test_health_check_response_creation_with_defaults(self) -> None:
+        """
+        Test HealthCheckResponse creation with default values.
+        
+        This test verifies that the HealthCheckResponse model maintains backward
+        compatibility by providing safe defaults for all new Pearl compliance fields.
+        """
+        from models import HealthCheckResponse
+        
+        response = HealthCheckResponse()
+        
+        # New Pearl compliance fields should have safe defaults
+        assert response.is_tm_healthy is True
+        assert response.agent_health is None  # Optional field
+        assert response.rounds == []  # Empty list default
+        assert response.rounds_info is None  # Optional field
+
+    def test_health_check_response_creation_with_agent_health(self) -> None:
+        """
+        Test HealthCheckResponse creation with AgentHealth included.
+        
+        This test validates the integration between HealthCheckResponse and AgentHealth
+        models for comprehensive Pearl platform health reporting.
+        """
+        from models import HealthCheckResponse, AgentHealth
+        
+        agent_health = AgentHealth(
+            is_making_on_chain_transactions=True,
+            is_staking_kpi_met=False,
+            has_required_funds=True
+        )
+        
+        response = HealthCheckResponse(
+            is_tm_healthy=False,
+            agent_health=agent_health,
+            rounds=[{"round": 1, "status": "active"}],
+            rounds_info={"current_round": 1, "total_rounds": 10}
+        )
+        
+        assert response.is_tm_healthy is False
+        assert response.agent_health is not None
+        assert response.agent_health.is_making_on_chain_transactions is True
+        assert response.agent_health.is_staking_kpi_met is False
+        assert response.agent_health.has_required_funds is True
+        assert response.rounds == [{"round": 1, "status": "active"}]
+        assert response.rounds_info == {"current_round": 1, "total_rounds": 10}
+
+    def test_health_check_response_backward_compatibility(self) -> None:
+        """
+        Test HealthCheckResponse maintains backward compatibility.
+        
+        This test ensures that existing API consumers can continue to work
+        without modification when the new Pearl compliance fields are added.
+        """
+        from models import HealthCheckResponse
+        
+        # Should be able to create with no arguments (all defaults)
+        response = HealthCheckResponse()
+        
+        # Should be able to serialize to dict without errors
+        response_dict = response.model_dump()
+        
+        # All new fields should be present with safe defaults
+        assert "is_tm_healthy" in response_dict
+        assert "agent_health" in response_dict
+        assert "rounds" in response_dict
+        assert "rounds_info" in response_dict
+        
+        # Values should match expected defaults
+        assert response_dict["is_tm_healthy"] is True
+        assert response_dict["agent_health"] is None
+        assert response_dict["rounds"] == []
+        assert response_dict["rounds_info"] is None
+
+    def test_health_check_response_field_validation(self) -> None:
+        """
+        Test HealthCheckResponse field validation for type safety.
+        
+        This test ensures proper validation of all fields to maintain
+        data integrity for Pearl platform integration.
+        """
+        from models import HealthCheckResponse
+        
+        # Test invalid types are rejected
+        with pytest.raises(ValidationError):
+            HealthCheckResponse(is_tm_healthy="invalid")  # type: ignore
+            
+        with pytest.raises(ValidationError):
+            HealthCheckResponse(rounds="not_a_list")  # type: ignore
+            
+        # Test valid types are accepted
+        response = HealthCheckResponse(
+            is_tm_healthy=False,
+            rounds=[{"test": "data"}],
+            rounds_info={"key": "value"}
+        )
+        
+        assert response.is_tm_healthy is False
+        assert response.rounds == [{"test": "data"}]
+        assert response.rounds_info == {"key": "value"}
