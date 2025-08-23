@@ -870,3 +870,173 @@ class TestActivityServicePearlLogging:
         finally:
             # Restore original handlers
             service.logger.handlers = original_handlers
+
+
+class TestIQuorumTracker:
+    """Test IQuorumTracker interface methods for OLAS staking contract compatibility.
+    
+    These tests verify that ActivityService correctly implements the IQuorumTracker
+    interface methods required by the Activity Checker contract for staking eligibility.
+    The interface methods must return data in exact format expected by the contract.
+    """
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_getMultisigNonces_returns_correct_format(self, mock_exists, mock_settings):
+        """Test getMultisigNonces returns array in expected contract format.
+        
+        Critical test: Verifies the IQuorumTracker interface returns nonces
+        in the exact order expected by the Activity Checker contract:
+        [multisig_activity, vote_attestations, voting_considered, no_voting]
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Initialize some nonces for testing
+        service.increment_multisig_activity("ethereum")  # Should be 1
+        service.increment_vote_attestation("ethereum")   # Should be 1
+        service.increment_voting_considered("ethereum")  # Should be 1
+        # no_voting stays 0
+        
+        # Test the interface method
+        nonces = service.getMultisigNonces("0x123")
+        
+        # Critical assertions: Array format and order must match contract interface
+        assert isinstance(nonces, list)
+        assert len(nonces) == 4
+        assert nonces[0] == 1  # multisig_activity
+        assert nonces[1] == 1  # vote_attestations
+        assert nonces[2] == 1  # voting_considered
+        assert nonces[3] == 0  # no_voting
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_getMultisigNonces_unknown_address_returns_zeros(self, mock_exists, mock_settings):
+        """Test getMultisigNonces returns [0,0,0,0] for unknown Safe addresses.
+        
+        This test ensures contract compatibility when queried with addresses
+        that are not configured in the service's Safe address mappings.
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Query with unknown address
+        nonces = service.getMultisigNonces("0x999unknown")
+        
+        # Should return all zeros for unknown address
+        assert nonces == [0, 0, 0, 0]
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_isRatioPass_basic_eligibility_check(self, mock_exists, mock_settings):
+        """Test isRatioPass correctly determines staking eligibility.
+        
+        Critical test: Verifies the core eligibility calculation that determines
+        if an agent meets the activity requirements for OLAS staking rewards.
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Set up activity: 5 multisig transactions
+        for _ in range(5):
+            service.increment_multisig_activity("ethereum")
+        
+        # Test eligibility with different ratios
+        # Formula: (activity_count * 1e18) / period_seconds >= liveness_ratio
+        # 5 transactions over 86400 seconds = 5 * 1e18 / 86400 = ~5.79e13
+        
+        low_requirement = 1e13   # Should pass
+        high_requirement = 1e15  # Should fail
+        
+        assert service.isRatioPass("0x123", low_requirement, 86400) is True
+        assert service.isRatioPass("0x123", high_requirement, 86400) is False
+
+
+class TestActivityRatio:
+    """Test activity ratio calculation logic for OLAS staking eligibility.
+    
+    These tests verify the mathematical correctness of activity ratio calculations
+    that determine whether an agent meets staking requirements. The ratio calculation
+    is critical for determining OLAS rewards eligibility.
+    """
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_calculate_activity_ratio_basic_math(self, mock_exists, mock_settings):
+        """Test _calculate_activity_ratio performs correct mathematical calculation.
+        
+        This test verifies the core formula: (activity_count * 1e18) / period_seconds
+        which determines the activity rate needed for staking eligibility.
+        """
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Test with known values for predictable results
+        nonces = [10, 5, 3, 2]  # [multisig_activity=10, ...]
+        period_seconds = 86400  # 24 hours
+        
+        ratio = service._calculate_activity_ratio(nonces, period_seconds)
+        
+        # Expected: (10 * 1e18) / 86400 = 1.157407407e14
+        expected_ratio = (10 * 10**18) / 86400
+        assert ratio == expected_ratio
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_calculate_activity_ratio_zero_period_handling(self, mock_exists, mock_settings):
+        """Test _calculate_activity_ratio handles zero period gracefully.
+        
+        This test ensures the service doesn't crash with division by zero
+        when period_seconds is 0, returning 0 ratio instead.
+        """
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        nonces = [5, 3, 2, 1]
+        
+        # Should return 0 for zero period to avoid division by zero
+        ratio = service._calculate_activity_ratio(nonces, 0)
+        assert ratio == 0
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")  
+    def test_get_chain_for_safe_address_resolution(self, mock_exists, mock_settings):
+        """Test _get_chain_for_safe correctly resolves Safe addresses to chains.
+        
+        This test verifies the address-to-chain mapping logic that enables
+        cross-chain nonce tracking using the configured Safe addresses.
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {
+            "ethereum": "0x123abc",
+            "gnosis": "0x456def",
+            "polygon": "0x789ghi"
+        }
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Test exact matches
+        assert service._get_chain_for_safe("0x123abc") == "ethereum"
+        assert service._get_chain_for_safe("0x456def") == "gnosis" 
+        assert service._get_chain_for_safe("0x789ghi") == "polygon"
+        
+        # Test case insensitive matching
+        assert service._get_chain_for_safe("0x123ABC") == "ethereum"
+        assert service._get_chain_for_safe("0X456DEF") == "gnosis"
+        
+        # Test unknown address
+        assert service._get_chain_for_safe("0x999unknown") is None

@@ -17,10 +17,10 @@ SAFE_TRANSACTION_ACTION = "safe_transaction"
 
 class NonceValidationError(Exception):
     """Exception for nonce validation failures."""
-    
+
     def __init__(self, chain: str, nonce_type: int, message: str):
         """Initialize NonceValidationError.
-        
+
         Args:
             chain: Chain name that caused the validation error
             nonce_type: Type of nonce that failed validation
@@ -28,7 +28,9 @@ class NonceValidationError(Exception):
         """
         self.chain = chain
         self.nonce_type = nonce_type
-        super().__init__(f"Invalid nonce operation on {chain} for type {nonce_type}: {message}")
+        super().__init__(
+            f"Invalid nonce operation on {chain} for type {nonce_type}: {message}"
+        )
 
 
 class ActivityService:
@@ -399,43 +401,43 @@ class ActivityService:
         }
 
     # Phase 2: Nonce Increment Logic Methods
-    
+
     @property
     def supported_chains(self) -> List[str]:
         """Get list of supported chains from Safe addresses.
-        
+
         Returns:
             List of chain names configured in Safe addresses
         """
-        return list(getattr(settings, 'safe_addresses', {}).keys())
-    
+        return list(getattr(settings, "safe_addresses", {}).keys())
+
     def _validate_chain(self, chain: str) -> None:
         """Validate chain is supported.
-        
+
         Args:
             chain: Chain name to validate
-            
+
         Raises:
             NonceValidationError: If chain is not configured in Safe addresses
         """
         if chain not in self.supported_chains:
             raise NonceValidationError(
-                chain, -1, f"Chain not configured in Safe addresses"
+                chain, -1, "Chain not configured in Safe addresses"
             )
-    
+
     def _increment_nonce(self, chain: str, nonce_type: int) -> None:
         """Internal helper method to increment a specific nonce type for a chain.
-        
+
         Args:
             chain: Chain name (e.g., "ethereum", "gnosis")
             nonce_type: Type of nonce to increment (0-3)
-            
+
         Raises:
             NonceValidationError: If chain is not supported
         """
         # Validate chain is supported
         self._validate_chain(chain)
-        
+
         # Initialize chain nonces if not exists
         if chain not in self.nonces:
             self.nonces[chain] = {
@@ -444,57 +446,148 @@ class ActivityService:
                 self.NONCE_VOTING_CONSIDERED: 0,
                 self.NONCE_NO_VOTING: 0,
             }
-        
+
         # Increment the specific nonce type
         self.nonces[chain][nonce_type] += 1
-        
+
         # Save state to persist changes
         self.save_state()
-    
+
     def increment_multisig_activity(self, chain: str) -> None:
         """Increment nonce for multisig transaction activity.
-        
+
         Args:
             chain: Chain name where multisig activity occurred
-            
+
         Raises:
             NonceValidationError: If chain is not supported
         """
         self._increment_nonce(chain, self.NONCE_MULTISIG_ACTIVITY)
         self.logger.info("Multisig activity incremented (chain=%s)", chain)
-    
+
     def increment_vote_attestation(self, chain: str) -> None:
         """Increment nonce for vote attestation.
-        
+
         Args:
             chain: Chain name where vote attestation occurred
-            
+
         Raises:
             NonceValidationError: If chain is not supported
         """
         self._increment_nonce(chain, self.NONCE_VOTE_ATTESTATIONS)
         self.logger.info("Vote attestation incremented (chain=%s)", chain)
-    
+
     def increment_voting_considered(self, chain: str) -> None:
         """Increment nonce when proposal considered but not voted.
-        
+
         Args:
             chain: Chain name where voting was considered
-            
+
         Raises:
             NonceValidationError: If chain is not supported
         """
         self._increment_nonce(chain, self.NONCE_VOTING_CONSIDERED)
         self.logger.info("Voting opportunity considered (chain=%s)", chain)
-    
+
     def increment_no_voting(self, chain: str) -> None:
         """Increment nonce when no voting opportunities available.
-        
+
         Args:
             chain: Chain name where no voting opportunities were found
-            
+
         Raises:
             NonceValidationError: If chain is not supported
         """
         self._increment_nonce(chain, self.NONCE_NO_VOTING)
         self.logger.info("No voting opportunity recorded (chain=%s)", chain)
+
+    # Phase 3: IQuorumTracker Interface Implementation Methods
+
+    def getMultisigNonces(self, multisig_address: str) -> List[int]:
+        """Get nonces for multisig address (IQuorumTracker interface).
+
+        Returns array: [multisig_activity, vote_attestations, voting_considered, no_voting]
+
+        Args:
+            multisig_address: Safe multisig address to get nonces for
+
+        Returns:
+            List of 4 nonce values in order: [multisig_activity, vote_attestations, voting_considered, no_voting]
+        """
+        # Use Safe address to determine chain
+        chain = self._get_chain_for_safe(multisig_address)
+        if chain is None or chain not in self.nonces:
+            return [0, 0, 0, 0]
+
+        chain_nonces = self.nonces[chain]
+        return [
+            chain_nonces.get(self.NONCE_MULTISIG_ACTIVITY, 0),
+            chain_nonces.get(self.NONCE_VOTE_ATTESTATIONS, 0),
+            chain_nonces.get(self.NONCE_VOTING_CONSIDERED, 0),
+            chain_nonces.get(self.NONCE_NO_VOTING, 0),
+        ]
+
+    def isRatioPass(
+        self, multisig_address: str, liveness_ratio: float, period_seconds: int
+    ) -> bool:
+        """Check if multisig passes activity ratio for staking eligibility.
+
+        Args:
+            multisig_address: Safe multisig address
+            liveness_ratio: Required tx/s ratio (with 18 decimals)
+            period_seconds: Time period to check
+
+        Returns:
+            True if activity ratio meets requirements
+        """
+        nonces = self.getMultisigNonces(multisig_address)
+        # Calculate actual ratio based on nonce differences
+        actual_ratio = self._calculate_activity_ratio(nonces, period_seconds)
+        return actual_ratio >= liveness_ratio
+
+    def _get_chain_for_safe(self, safe_address: str) -> Optional[str]:
+        """Determine chain from Safe address.
+
+        Args:
+            safe_address: Safe address to resolve to chain name
+
+        Returns:
+            Chain name if address found, None otherwise
+        """
+        safe_addresses = getattr(settings, "safe_addresses", {})
+        for chain, address in safe_addresses.items():
+            if address.lower() == safe_address.lower():
+                return chain
+        return None
+
+    def _calculate_activity_ratio(
+        self, nonces: List[int], period_seconds: int
+    ) -> float:
+        """Calculate activity ratio for staking eligibility.
+
+        Formula: (activity_count * 1e18) / period_seconds
+
+        Args:
+            nonces: List of nonce values [multisig_activity, vote_attestations, voting_considered, no_voting]
+            period_seconds: Time period in seconds
+
+        Returns:
+            Activity ratio as float
+        """
+        with log_span(self.logger, "activity_service.calculate_ratio") as span_data:
+            # For now, use multisig activity as primary metric
+            activity_count = nonces[self.NONCE_MULTISIG_ACTIVITY]
+            ratio = (
+                (activity_count * 10**18) / period_seconds if period_seconds > 0 else 0
+            )
+
+            self.logger.info(
+                "Activity ratio calculated (activity=%s, period=%s, ratio=%s)",
+                activity_count,
+                period_seconds,
+                ratio,
+            )
+            span_data.update(
+                {"activity": activity_count, "period": period_seconds, "ratio": ratio}
+            )
+            return ratio
