@@ -52,7 +52,7 @@
     try {
       spacesLoading = true;
       const { data, error } = await apiClient.GET("/config/monitored-daos");
-      
+
       if (error || !data) {
         console.error('Failed to fetch monitored DAOs:', error);
         spaces = FALLBACK_SPACES;

@@ -57,7 +57,7 @@ Create unified state schema that integrates OLAS compliance and nonce tracking i
 
 #### 1. ActivityService State Schema Update
 **File**: `backend/services/activity_service.py`
-**Changes**: 
+**Changes**:
 - Add nonce tracking data structures to class:
   ```python
   # Nonce type constants
@@ -65,7 +65,7 @@ Create unified state schema that integrates OLAS compliance and nonce tracking i
   NONCE_VOTE_ATTESTATIONS = 1
   NONCE_VOTING_CONSIDERED = 2
   NONCE_NO_VOTING = 3
-  
+
   # In __init__
   self.nonces: Dict[str, Dict[int, int]] = {}  # {chain: {nonce_type: value}}
   ```
@@ -94,7 +94,7 @@ Create unified state schema that integrates OLAS compliance and nonce tracking i
       voting_considered: int = Field(default=0, ge=0)
       no_voting: int = Field(default=0, ge=0)
       last_updated: datetime = Field(default_factory=datetime.utcnow)
-  
+
   class ActivityState(BaseModel):
       last_activity_date: Optional[date] = None
       last_tx_hash: Optional[str] = None
@@ -117,7 +117,7 @@ Create unified state schema that integrates OLAS compliance and nonce tracking i
 
 **Status**: ✅ **IMPLEMENTED** (2024-08-23)
 - Added nonce tracking data structures to ActivityService with IQuorumTracker interface constants
-- Updated _prepare_state_data() to include nonces in unified JSON format 
+- Updated _prepare_state_data() to include nonces in unified JSON format
 - Modified load_state() to handle unified schema with backwards compatibility
 - Added ChainNonces and ActivityState Pydantic models for type-safe validation
 - All tests passing with >90% coverage on new functionality
@@ -141,17 +141,17 @@ Implement logic to increment nonces based on agent activities and voting operati
       """Increment nonce for multisig transaction activity."""
       self._increment_nonce(chain, NONCE_MULTISIG_ACTIVITY)
       self.logger.info("Multisig activity incremented (chain=%s)", chain)
-  
+
   def increment_vote_attestation(self, chain: str) -> None:
       """Increment nonce for vote attestation."""
       self._increment_nonce(chain, NONCE_VOTE_ATTESTATIONS)
       self.logger.info("Vote attestation incremented (chain=%s)", chain)
-  
+
   def increment_voting_considered(self, chain: str) -> None:
       """Increment nonce when proposal considered but not voted."""
       self._increment_nonce(chain, NONCE_VOTING_CONSIDERED)
       self.logger.info("Voting opportunity considered (chain=%s)", chain)
-  
+
   def increment_no_voting(self, chain: str) -> None:
       """Increment nonce when no voting opportunities available."""
       self._increment_nonce(chain, NONCE_NO_VOTING)
@@ -180,7 +180,7 @@ Implement logic to increment nonces based on agent activities and voting operati
   def supported_chains(self) -> List[str]:
       """Get list of supported chains from Safe addresses."""
       return list(settings.safe_addresses.keys())
-  
+
   def _validate_chain(self, chain: str) -> None:
       """Validate chain is supported."""
       if chain not in self.supported_chains:
@@ -225,14 +225,14 @@ Implement the IQuorumTracker interface methods required by the Activity Checker 
   ```python
   def getMultisigNonces(self, multisig_address: str) -> List[int]:
       """Get nonces for multisig address (IQuorumTracker interface).
-      
+
       Returns array: [multisig_activity, vote_attestations, voting_considered, no_voting]
       """
       # Use Safe address to determine chain
       chain = self._get_chain_for_safe(multisig_address)
       if chain not in self.nonces:
           return [0, 0, 0, 0]
-      
+
       chain_nonces = self.nonces[chain]
       return [
           chain_nonces.get(NONCE_MULTISIG_ACTIVITY, 0),
@@ -249,12 +249,12 @@ Implement the IQuorumTracker interface methods required by the Activity Checker 
   ```python
   def isRatioPass(self, multisig_address: str, liveness_ratio: float, period_seconds: int) -> bool:
       """Check if multisig passes activity ratio for staking eligibility.
-      
+
       Args:
           multisig_address: Safe multisig address
           liveness_ratio: Required tx/s ratio (with 18 decimals)
           period_seconds: Time period to check
-      
+
       Returns:
           True if activity ratio meets requirements
       """
@@ -275,17 +275,17 @@ Implement the IQuorumTracker interface methods required by the Activity Checker 
           if address.lower() == safe_address.lower():
               return chain
       return None
-  
+
   def _calculate_activity_ratio(self, nonces: List[int], period_seconds: int) -> float:
       """Calculate activity ratio for staking eligibility.
-      
+
       Formula: (nonce_differences * 1e18) / period_seconds
       """
       with log_span(self.logger, "activity_service.calculate_ratio") as span_data:
           # For now, use multisig activity as primary metric
           activity_count = nonces[NONCE_MULTISIG_ACTIVITY]
           ratio = (activity_count * 10**18) / period_seconds if period_seconds > 0 else 0
-          
+
           self.logger.info(
               "Activity ratio calculated (activity=%s, period=%s, ratio=%s)",
               activity_count, period_seconds, ratio
@@ -348,7 +348,7 @@ Integrate nonce tracking with existing services to automatically increment count
           # No voting opportunities available
           self.activity_service.increment_no_voting(chain)
           return
-      
+
       for proposal in proposals:
           decision = await self.ai_service.decide_vote(proposal)
           if decision.should_vote:
@@ -439,10 +439,10 @@ Expose nonce tracking data and eligibility status through REST API endpoints.
       safe_address = settings.safe_addresses.get(chain)
       if not safe_address:
           raise HTTPException(404, detail={"error": "Chain not configured"})
-      
+
       is_eligible = activity_service.isRatioPass(safe_address, liveness_ratio, 86400)  # 24 hours
       nonces = activity_service.getMultisigNonces(safe_address)
-      
+
       return {
           "data": {
               "chain": chain,
@@ -456,7 +456,7 @@ Expose nonce tracking data and eligibility status through REST API endpoints.
 - Update `GET /activity/status` to include nonce summary:
   ```python
   status = activity_service.get_activity_status()
-  status["nonces"] = {chain: activity_service.getMultisigNonces(addr) 
+  status["nonces"] = {chain: activity_service.getMultisigNonces(addr)
                        for chain, addr in settings.safe_addresses.items()}
   ```
 
@@ -468,11 +468,11 @@ Expose nonce tracking data and eligibility status through REST API endpoints.
   class NonceData(BaseModel):
       address: str
       nonces: List[int]
-  
+
   class NonceResponse(BaseModel):
       data: Dict[str, NonceData]
       status: Literal["success"]
-  
+
   class EligibilityResponse(BaseModel):
       data: Dict[str, Any]
       status: Literal["success"]
@@ -481,15 +481,25 @@ Expose nonce tracking data and eligibility status through REST API endpoints.
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] API tests pass: `uv run pytest tests/test_main.py::TestNonceEndpoints -v`
-- [ ] Model validation tests pass: `uv run pytest tests/test_models.py -v`
-- [ ] Type checking passes: `cd frontend && npm run check`
+- [x] API tests pass: `uv run pytest tests/test_main.py::TestNonceEndpoints -v`
+- [x] Model validation tests pass: `uv run pytest tests/test_models.py -v`
+- [x] Type checking passes: `cd frontend && npm run check`
 
 #### Manual Verification:
-- [ ] API endpoints return correct nonce data
-- [ ] Eligibility endpoint calculates correctly
-- [ ] Swagger documentation updated
-- [ ] Response formats match specification
+- [x] API endpoints return correct nonce data
+- [x] Eligibility endpoint calculates correctly
+- [x] Swagger documentation updated
+- [x] Response formats match specification
+
+**Status**: ✅ **IMPLEMENTED** (2024-08-23)
+- Added NonceData, NonceResponse, and EligibilityResponse Pydantic models with proper validation
+- Implemented GET /activity/nonces endpoint returning nonce values for all configured chains
+- Implemented GET /activity/eligibility/{chain} endpoint with liveness ratio checking (default 5e15 for 5 tx/day)
+- Added GET /activity/status endpoint that includes nonces summary for all chains
+- All endpoints use proper error handling with HTTPException and specification-compliant responses
+- Pearl-compliant logging integrated throughout with log_span for traceability
+- OpenAPI documentation automatically generated via FastAPI decorators and response models
+- All edge cases handled: unknown chains (404), service errors (500), proper validation
 
 ---
 

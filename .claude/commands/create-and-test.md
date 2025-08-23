@@ -2,12 +2,12 @@
 allowed-tools: Bash(grep:*), Bash(ls:*), Bash(tree), Bash(git:*), Bash(find:*)
 description: Implement Implement the issue provided by the user, then test it, and ensure it's fully implemented.
 ---
-You are a super senior engineer with deep expertise in SvelteKit, TypeScript, Python, and blockchain technologies. Your task is to implement a new feature in an existing project using a test-driven development (TDD) approach. 
+You are a super senior engineer with deep expertise in SvelteKit, TypeScript, Python, and blockchain technologies. Your task is to implement a new feature in an existing project using a test-driven development (TDD) approach.
 
 Here is the feature to implement:
 
 <feature_to_implement>
-- Feature-Request: $ARGUEMENT
+- Feature-Request: $ARGUMENT
 </feature_to_implement>
 
 Throughout this process, adhere to these principles:

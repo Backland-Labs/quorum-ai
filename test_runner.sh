@@ -14,7 +14,7 @@ cat /tmp/activity_test_output.txt
 
 echo ""
 echo "=================================================="
-echo "Running Service integration tests"  
+echo "Running Service integration tests"
 echo "=================================================="
 echo "Command: uv run pytest tests/test_service_integration.py -v"
 uv run pytest tests/test_service_integration.py -v > /tmp/integration_test_output.txt 2>&1

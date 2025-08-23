@@ -187,7 +187,7 @@ describe('MetricCard', () => {
     render(MetricCard, {
       props: { title: 'Total Proposals', value: '150' }
     });
-    
+
     expect(screen.getByText('Total Proposals')).toBeInTheDocument();
     expect(screen.getByText('150')).toBeInTheDocument();
   });
