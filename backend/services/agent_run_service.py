@@ -828,7 +828,7 @@ class AgentRunService:
                         vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
 
                         # Execute vote through voting service (with default chain for nonce tracking)
-                        default_chain = "ethereum"
+                        default_chain = settings.default_chain
                         vote_result = await self.voting_service.vote_on_proposal(
                             space=space_id,
                             proposal=decision.proposal_id,

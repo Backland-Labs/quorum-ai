@@ -264,6 +264,13 @@ class Settings(BaseSettings):
         description="Celo chain RPC endpoint",
     )
 
+    # Default chain for nonce tracking and voting operations
+    default_chain: str = Field(
+        default="ethereum",
+        alias="DEFAULT_CHAIN", 
+        description="Default blockchain chain for nonce tracking and voting operations",
+    )
+
     # Legacy compatibility fields for existing tests
     chain_name: str = Field(
         default="celo",
