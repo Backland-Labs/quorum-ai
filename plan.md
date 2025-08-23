@@ -297,9 +297,9 @@ Implement the IQuorumTracker interface methods required by the Activity Checker 
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Interface tests pass: `uv run pytest tests/test_activity_service.py::TestIQuorumTracker -v`
-- [ ] Ratio calculation tests pass: `uv run pytest tests/test_activity_service.py::TestActivityRatio -v`
-- [ ] Integration tests pass: `uv run pytest tests/test_service_integration.py -v`
+- [x] Interface tests pass: `uv run pytest tests/test_activity_service.py::TestIQuorumTracker -v`
+- [x] Ratio calculation tests pass: `uv run pytest tests/test_activity_service.py::TestActivityRatio -v`
+- [x] Integration tests pass: `uv run pytest tests/test_service_integration.py -v`
 
 #### Manual Verification:
 - [x] Voting stats match expected format
@@ -375,15 +375,28 @@ Integrate nonce tracking with existing services to automatically increment count
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Integration tests pass: `uv run pytest tests/test_service_integration.py -v`
-- [ ] VotingService tests pass: `uv run pytest tests/test_voting_service.py -v`
-- [ ] AgentRunService tests pass: `uv run pytest tests/test_agent_run_service.py -v`
+- [x] Integration tests pass: `uv run pytest tests/test_service_integration.py -v`
+- [x] VotingService tests pass: `uv run pytest tests/test_voting_service.py -v`
+- [x] AgentRunService tests pass: `uv run pytest tests/test_agent_run_service.py -v`
 
 #### Manual Verification:
-- [ ] Nonces increment correctly after votes
-- [ ] Multisig activities tracked properly
-- [ ] No-voting scenarios recorded
-- [ ] Considered proposals tracked
+- [x] Nonces increment correctly after votes
+- [x] Multisig activities tracked properly
+- [x] No-voting scenarios recorded
+- [x] Considered proposals tracked
+
+**Status**: ✅ **IMPLEMENTED** (2024-08-23)
+- Added ActivityService integration to VotingService.__init__() method with nonce increment after successful votes
+- Added ActivityService integration to SafeService.__init__() method with nonce increment after successful Safe transactions
+- Added ActivityService integration to AgentRunService.__init__() method with comprehensive nonce tracking:
+  - increment_no_voting() when no proposals available
+  - increment_voting_considered() when proposals considered but not voted (low confidence)
+  - vote_attestation increment handled by VotingService for successful votes
+- Updated vote_on_proposal() method to include chain parameter for nonce tracking
+- Updated perform_activity_transaction() to increment multisig_activity nonce after successful transactions
+- All integrations include proper error handling and Pearl-compliant logging
+- Phase 4 integration verified with comprehensive test suite
+- Services maintain proper separation of concerns while enabling cross-service nonce tracking
 
 ---
 

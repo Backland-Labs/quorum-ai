@@ -61,13 +61,17 @@ class SafeService:
         self.account = Account.from_key(private_key)
         self._web3_connections = {}
 
+        # Initialize ActivityService for nonce tracking
+        from services.activity_service import ActivityService
+        self.activity_service = ActivityService()
+
         # Log initialization details
         eoa_address = self.account.address
         configured_safes = list(self.safe_addresses.keys())
         available_chains = list(self.rpc_endpoints.keys())
 
         self.logger.info(
-            f"SafeService initialized (eoa_address={eoa_address}, "
+            f"SafeService initialized with ActivityService integration (eoa_address={eoa_address}, "
             f"safe_addresses={configured_safes}, "
             f"available_chains={available_chains})"
         )
@@ -300,13 +304,23 @@ class SafeService:
             }
 
         # Use helper method to submit dummy transaction
-        return await self._submit_safe_transaction(
+        tx_result = await self._submit_safe_transaction(
             chain=chain,
             to=safe_address,  # Send to itself
             value=0,  # 0 ETH value
             data=b"",  # Empty data
             operation=SAFE_OPERATION_CALL,  # CALL operation
         )
+        
+        # Increment multisig activity nonce for successful transaction
+        if tx_result.get("success"):
+            try:
+                self.activity_service.increment_multisig_activity(chain)
+                self.logger.info(f"Incremented multisig activity nonce for chain {chain}")
+            except Exception as e:
+                self.logger.error(f"Failed to increment multisig activity nonce for chain {chain}: {e}")
+        
+        return tx_result
 
     async def perform_governor_vote(
         self,
