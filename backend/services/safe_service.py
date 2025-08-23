@@ -63,6 +63,7 @@ class SafeService:
 
         # Initialize ActivityService for nonce tracking
         from services.activity_service import ActivityService
+
         self.activity_service = ActivityService()
 
         # Log initialization details
@@ -311,15 +312,19 @@ class SafeService:
             data=b"",  # Empty data
             operation=SAFE_OPERATION_CALL,  # CALL operation
         )
-        
+
         # Increment multisig activity nonce for successful transaction
         if tx_result.get("success"):
             try:
                 self.activity_service.increment_multisig_activity(chain)
-                self.logger.info(f"Incremented multisig activity nonce for chain {chain}")
+                self.logger.info(
+                    f"Incremented multisig activity nonce for chain {chain}"
+                )
             except Exception as e:
-                self.logger.error(f"Failed to increment multisig activity nonce for chain {chain}: {e}")
-        
+                self.logger.error(
+                    f"Failed to increment multisig activity nonce for chain {chain}: {e}"
+                )
+
         return tx_result
 
     async def perform_governor_vote(

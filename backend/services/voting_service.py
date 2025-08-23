@@ -278,7 +278,12 @@ class VotingService:
                 return {"success": False, "error": str(e)}
 
     async def vote_on_proposal(
-        self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None, chain: str = "ethereum"
+        self,
+        space: str,
+        proposal: str,
+        choice: int,
+        timestamp: Optional[int] = None,
+        chain: str = "ethereum",
     ) -> Dict[str, Any]:
         """Complete workflow to vote on a Snapshot proposal.
 
@@ -333,9 +338,13 @@ class VotingService:
                 # Increment vote attestation nonce for successful vote
                 try:
                     self.activity_service.increment_vote_attestation(chain)
-                    self.logger.info(f"Incremented vote attestation nonce for chain {chain}")
+                    self.logger.info(
+                        f"Incremented vote attestation nonce for chain {chain}"
+                    )
                 except Exception as e:
-                    self.logger.error(f"Failed to increment vote attestation nonce for chain {chain}: {e}")
+                    self.logger.error(
+                        f"Failed to increment vote attestation nonce for chain {chain}: {e}"
+                    )
             else:
                 error_message = submission_result.get("error", "Unknown error")
                 self.logger.error(f"Vote workflow failed (error={error_message})")

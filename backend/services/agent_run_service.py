@@ -91,6 +91,7 @@ class AgentRunService:
 
         # Initialize ActivityService for nonce tracking
         from services.activity_service import ActivityService
+
         self.activity_service = ActivityService()
 
         # Initialize state transition tracker with StateManager for persistence
@@ -106,7 +107,9 @@ class AgentRunService:
 
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name="agent_run_service")
-        self.pearl_logger.info("AgentRunService initialized with all dependencies including ActivityService")
+        self.pearl_logger.info(
+            "AgentRunService initialized with all dependencies including ActivityService"
+        )
 
     async def initialize(self):
         """Initialize async components including state tracker."""
@@ -362,7 +365,9 @@ class AgentRunService:
                 # Default chain for nonce tracking when no proposals
                 default_chain = "ethereum"
                 self.activity_service.increment_no_voting(default_chain)
-                self.pearl_logger.info(f"No proposals available - incremented no_voting nonce for chain {default_chain}")
+                self.pearl_logger.info(
+                    f"No proposals available - incremented no_voting nonce for chain {default_chain}"
+                )
             except Exception as e:
                 self.pearl_logger.error(f"Failed to increment no_voting nonce: {e}")
             return vote_decisions, final_decisions, errors
@@ -716,11 +721,19 @@ class AgentRunService:
                         )
                         # Proposal was considered but not voted - increment voting_considered nonce
                         try:
-                            default_chain = "ethereum"  # Default chain for nonce tracking
-                            self.activity_service.increment_voting_considered(default_chain)
-                            self.pearl_logger.info(f"Incremented voting_considered nonce for rejected proposal {proposal.id}")
+                            default_chain = (
+                                "ethereum"  # Default chain for nonce tracking
+                            )
+                            self.activity_service.increment_voting_considered(
+                                default_chain
+                            )
+                            self.pearl_logger.info(
+                                f"Incremented voting_considered nonce for rejected proposal {proposal.id}"
+                            )
                         except Exception as e:
-                            self.pearl_logger.error(f"Failed to increment voting_considered nonce for proposal {proposal.id}: {e}")
+                            self.pearl_logger.error(
+                                f"Failed to increment voting_considered nonce for proposal {proposal.id}: {e}"
+                            )
 
                 self.pearl_logger.info(
                     f"Voting decisions completed (total_proposals={len(proposals)}, "
@@ -820,7 +833,7 @@ class AgentRunService:
                             space=space_id,
                             proposal=decision.proposal_id,
                             choice=vote_choice,
-                            chain=default_chain
+                            chain=default_chain,
                         )
 
                         if vote_result.get("success"):
