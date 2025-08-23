@@ -4,6 +4,7 @@ from datetime import date, datetime, timezone
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, List, Optional
+from typing_extensions import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -1331,3 +1332,55 @@ class ActivityState(BaseModel):
                 )
 
         return v
+
+
+# Phase 5: API Endpoints - Response Models for Activity Service Nonce Tracking
+class NonceData(BaseModel):
+    """Model for nonce data per chain with address and nonce values."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    address: str = Field(..., description="Safe multisig address")
+    nonces: List[int] = Field(..., description="List of 4 nonce values")
+
+    @field_validator("address")
+    @classmethod
+    def validate_address(cls, v: str) -> str:
+        """Validate Safe address format."""
+        return ModelValidationHelper.validate_blockchain_address(v)
+
+    @field_validator("nonces")
+    @classmethod
+    def validate_nonces(cls, v: List[int]) -> List[int]:
+        """Validate nonces list has exactly 4 non-negative integers."""
+        if not isinstance(v, list):
+            raise ValueError("Nonces must be a list")
+        if len(v) != 4:
+            raise ValueError("Nonces must contain exactly 4 values")
+        for i, nonce in enumerate(v):
+            if not isinstance(nonce, int):
+                raise ValueError(f"Nonce at index {i} must be an integer")
+            if nonce < 0:
+                raise ValueError(f"Nonce at index {i} must be non-negative")
+        return v
+
+
+class NonceResponse(BaseModel):
+    """Response model for /activity/nonces endpoint."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    data: Dict[str, NonceData] = Field(..., description="Nonce data by chain")
+    status: Literal["success"] = Field(..., description="Response status")
+
+
+class EligibilityResponse(BaseModel):
+    """Response model for /activity/eligibility/{chain} endpoint."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    data: Dict[str, Any] = Field(..., description="Eligibility data")
+    status: Literal["success"] = Field(..., description="Response status")
+
+
+# Phase 5: API Endpoints - Response Models for Activity Service Nonce Tracking
