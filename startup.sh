@@ -155,7 +155,7 @@ fi
 kill_port_process() {
     local port=$1
     local pids=$(lsof -ti :$port 2>/dev/null)
-    
+
     if [ -n "$pids" ]; then
         print_warning "Killing processes on port $port..."
         for pid in $pids; do
@@ -178,7 +178,7 @@ if ! port_available $BACKEND_PORT; then
         # Show what's using the port
         print_status "Process using port $BACKEND_PORT:"
         lsof -i :$BACKEND_PORT 2>/dev/null || true
-        
+
         # Kill the process
         if kill_port_process $BACKEND_PORT; then
             print_success "Port $BACKEND_PORT has been freed"
@@ -204,7 +204,7 @@ if ! port_available 5173; then
         # Show what's using the port
         print_status "Process using port 5173:"
         lsof -i :5173 2>/dev/null || true
-        
+
         # Kill the process
         if kill_port_process 5173; then
             print_success "Port 5173 has been freed"
@@ -330,7 +330,7 @@ else
         mkdir -p "$(dirname "$PEARL_LOG_FILE")"
         touch "$PEARL_LOG_FILE"
     fi
-    
+
     # Stream the Pearl log file with prefix
     tail -f "$PEARL_LOG_FILE" 2>/dev/null | sed 's/^/[PEARL] /' &
     PEARL_LOG_PID=$!

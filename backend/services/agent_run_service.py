@@ -89,6 +89,11 @@ class AgentRunService:
         self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
 
+        # Initialize ActivityService for nonce tracking
+        from services.activity_service import ActivityService
+
+        self.activity_service = ActivityService()
+
         # Initialize state transition tracker with StateManager for persistence
         self.state_tracker = StateTransitionTracker(
             state_manager=self.state_manager,
@@ -102,7 +107,9 @@ class AgentRunService:
 
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name="agent_run_service")
-        self.pearl_logger.info("AgentRunService initialized with all dependencies")
+        self.pearl_logger.info(
+            "AgentRunService initialized with all dependencies including ActivityService"
+        )
 
     async def initialize(self):
         """Initialize async components including state tracker."""
@@ -351,6 +358,19 @@ class AgentRunService:
         errors = []
         vote_decisions = []
         final_decisions = []
+
+        # Handle no proposals case - increment no_voting nonce
+        if not proposals:
+            try:
+                # Default chain for nonce tracking when no proposals
+                default_chain = "ethereum"
+                self.activity_service.increment_no_voting(default_chain)
+                self.pearl_logger.info(
+                    f"No proposals available - incremented no_voting nonce for chain {default_chain}"
+                )
+            except Exception as e:
+                self.pearl_logger.error(f"Failed to increment no_voting nonce: {e}")
+            return vote_decisions, final_decisions, errors
 
         # Make voting decisions
         if proposals:
@@ -685,19 +705,35 @@ class AgentRunService:
                         space_id=space_id,
                     )
 
-                    # Filter by confidence threshold
+                    # Filter by confidence threshold and track nonce appropriately
                     if decision.confidence >= preferences.confidence_threshold:
                         vote_decisions.append(decision)
                         self.pearl_logger.info(
                             f"Vote decision accepted (proposal_id={proposal.id}, "
                             f"vote={decision.vote.value}, confidence={decision.confidence})"
                         )
+                        # Note: vote_attestation nonce will be incremented by VotingService upon successful vote
                     else:
                         self.pearl_logger.info(
                             f"Vote decision rejected due to low confidence "
                             f"(proposal_id={proposal.id}, confidence={decision.confidence}, "
                             f"threshold={preferences.confidence_threshold})"
                         )
+                        # Proposal was considered but not voted - increment voting_considered nonce
+                        try:
+                            default_chain = (
+                                "ethereum"  # Default chain for nonce tracking
+                            )
+                            self.activity_service.increment_voting_considered(
+                                default_chain
+                            )
+                            self.pearl_logger.info(
+                                f"Incremented voting_considered nonce for rejected proposal {proposal.id}"
+                            )
+                        except Exception as e:
+                            self.pearl_logger.error(
+                                f"Failed to increment voting_considered nonce for proposal {proposal.id}: {e}"
+                            )
 
                 self.pearl_logger.info(
                     f"Voting decisions completed (total_proposals={len(proposals)}, "
@@ -791,11 +827,13 @@ class AgentRunService:
                         # Convert VoteType to Snapshot choice format
                         vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
 
-                        # Execute vote through voting service
+                        # Execute vote through voting service (with default chain for nonce tracking)
+                        default_chain = settings.default_chain
                         vote_result = await self.voting_service.vote_on_proposal(
                             space=space_id,
                             proposal=decision.proposal_id,
                             choice=vote_choice,
+                            chain=default_chain,
                         )
 
                         if vote_result.get("success"):

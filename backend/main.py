@@ -28,6 +28,9 @@ from models import (
     SummarizeRequest,
     SummarizeResponse,
     UserPreferences,
+    NonceResponse,
+    NonceData,
+    EligibilityResponse,
 )
 from services.ai_service import AIService
 from services.agent_run_service import AgentRunService
@@ -705,6 +708,142 @@ async def get_agent_run_statistics():
         logger.error(f"Error getting agent statistics: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to calculate agent statistics"
+        )
+
+
+# Activity Service Nonce Tracking Endpoints (Phase 5)
+@app.get("/activity/nonces", response_model=NonceResponse)
+async def get_all_nonces():
+    """Get nonce values for all configured chains.
+
+    Returns nonce values for each supported chain configured in safe_addresses.
+    Each chain returns an address and list of 4 nonce values:
+    [multisig_activity, vote_attestations, voting_considered, no_voting]
+
+    Returns:
+        NonceResponse with data containing nonce information by chain
+
+    Raises:
+        HTTPException: If internal server error occurs
+    """
+    try:
+        with log_span(logger, "get_all_nonces"):
+            nonces_data = {}
+            for chain in activity_service.supported_chains:
+                safe_address = settings.safe_addresses.get(chain)
+                if safe_address:
+                    nonces = activity_service.getMultisigNonces(safe_address)
+                    nonces_data[chain] = NonceData(address=safe_address, nonces=nonces)
+
+            logger.info(f"Retrieved nonces for {len(nonces_data)} chains")
+            return NonceResponse(data=nonces_data, status="success")
+
+    except Exception as e:
+        logger.error(f"Failed to get nonces error={str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail={"error": "Internal Server Error", "message": str(e)},
+        )
+
+
+@app.get("/activity/eligibility/{chain}", response_model=EligibilityResponse)
+async def check_eligibility(
+    chain: str,
+    liveness_ratio: float = Query(
+        5e15, description="Required tx/s ratio (5 tx per day default)"
+    ),
+):
+    """Check OLAS staking eligibility for a specific chain.
+
+    Checks if the multisig passes the activity ratio requirement for OLAS staking.
+    Uses isRatioPass() with 86400 seconds (24 hours) period.
+
+    Args:
+        chain: Chain name to check eligibility for
+        liveness_ratio: Required activity ratio (default: 5e15 for 5 tx per day)
+
+    Returns:
+        EligibilityResponse with eligibility status and nonce data
+
+    Raises:
+        HTTPException: If chain not configured or internal error occurs
+    """
+    try:
+        with log_span(
+            logger, "check_eligibility", chain=chain, liveness_ratio=liveness_ratio
+        ):
+            # Check if chain is configured
+            safe_address = settings.safe_addresses.get(chain)
+            if not safe_address:
+                logger.warning(f"Chain not configured: {chain}")
+                raise HTTPException(
+                    status_code=404, detail={"error": "Chain not configured"}
+                )
+
+            # Check eligibility using 24-hour period (86400 seconds)
+            is_eligible = activity_service.isRatioPass(
+                safe_address, liveness_ratio, 86400
+            )
+            nonces = activity_service.getMultisigNonces(safe_address)
+
+            response_data = {
+                "chain": chain,
+                "eligible": is_eligible,
+                "nonces": nonces,
+                "safe_address": safe_address,
+            }
+
+            logger.info(
+                f"Eligibility check completed (chain={chain}, eligible={is_eligible}, "
+                f"nonces={nonces}, liveness_ratio={liveness_ratio})"
+            )
+
+            return EligibilityResponse(data=response_data, status="success")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to check eligibility chain={chain} error={str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail={"error": "Internal Server Error", "message": str(e)},
+        )
+
+
+@app.get("/activity/status")
+async def get_activity_status():
+    """Get comprehensive activity status including nonces summary.
+
+    Returns the activity service status with nonce information for all chains.
+    This extends the basic activity status to include nonce tracking data.
+
+    Returns:
+        Dict containing activity status and nonces summary by chain
+
+    Raises:
+        HTTPException: If internal server error occurs
+    """
+    try:
+        with log_span(logger, "get_activity_status"):
+            # Get basic activity status
+            status = activity_service.get_activity_status()
+
+            # Add nonces summary for all configured chains
+            nonces_summary = {}
+            for chain, safe_address in settings.safe_addresses.items():
+                nonces_summary[chain] = activity_service.getMultisigNonces(safe_address)
+
+            status["nonces"] = nonces_summary
+
+            logger.info(
+                f"Activity status retrieved with nonces for {len(nonces_summary)} chains"
+            )
+            return status
+
+    except Exception as e:
+        logger.error(f"Failed to get activity status error={str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get activity status: {str(e)}"
         )
 
 

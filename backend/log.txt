@@ -1,0 +1,1062 @@
+[2025-08-23 10:09:19,600] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:09:19,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:09:21,296] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:09:21,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:09:21,304] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:18,221] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:18,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:19,379] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:19,389] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:19,389] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:23,717] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,016] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,837] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,843] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,843] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,851] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,851] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,852] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,852] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,856] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,856] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,863] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,864] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,865] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,865] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,866] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,867] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,868] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,981] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-23 10:11:24,982] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,990] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:24,991] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:11:24,992] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:24,992] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:11:28,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,235] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,949] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,953] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,963] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,965] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,966] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,967] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,969] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,970] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,972] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,973] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,973] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,974] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,975] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,976] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,977] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,977] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,978] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:29,980] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:29,992] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,002] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,012] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,014] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:30,015] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,017] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:30,018] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,019] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,019] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,021] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:11:30,022] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:11:30,023] [INFO] [agent] Successfully saved state: agent_state_transitions
+[2025-08-23 10:12:02,568] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:02,871] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:03,737] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:03,746] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:03,746] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:12:39,168] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:39,467] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:40,319] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:40,332] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:40,332] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:12:57,219] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:57,535] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:12:58,332] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:13:04,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:13:05,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:13:05,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:13:05,976] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:13:05,977] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:14:34,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:14:34,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:14:36,155] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:14:36,163] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:14:36,163] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:41,705] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:42,020] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:42,830] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:42,840] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:42,840] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:42,840] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:42,840] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:15:47,915] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,168] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,883] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,889] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,890] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,890] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:48,890] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:15:48,891] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,891] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,891] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:48,891] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:15:48,892] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,892] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,892] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:48,892] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:15:48,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,893] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,893] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:48,893] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:15:48,894] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,894] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,894] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:48,894] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:15:48,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,895] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,896] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,896] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:48,897] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:48,897] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:53,108] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:53,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,087] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,099] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,099] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,107] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,107] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,114] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,114] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,115] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,115] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,116] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,116] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,119] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,119] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,127] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,127] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,128] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,128] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,129] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,129] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,130] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,130] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,131] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,131] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,133] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,133] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,133] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:54,133] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:15:54,134] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,134] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,134] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:54,134] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:15:54,135] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,135] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,135] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:54,135] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:15:54,136] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,136] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,136] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:54,136] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:15:54,137] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,137] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,137] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:54,137] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:15:54,137] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,138] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,138] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,138] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,140] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,140] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,144] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,145] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,263] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,263] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-23 10:15:54,263] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,270] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,271] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:54,271] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:15:54,274] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:54,274] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:15:59,080] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:15:59,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,054] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,061] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,062] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,062] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:00,062] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:16:00,063] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,063] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,063] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:00,063] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:16:00,064] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,064] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,064] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:00,064] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:16:00,065] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,065] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,065] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:00,065] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:16:00,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,066] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,066] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:00,066] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:16:00,067] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,067] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,068] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,070] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,070] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:00,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:00,074] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:05,227] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:05,485] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:06,207] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:06,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:06,214] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:06,214] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:06,214] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:16:23,755] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:24,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:24,875] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:32,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:33,215] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:33,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:33,967] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:33,967] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:33,967] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:33,968] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:16:33,968] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:33,968] [INFO] [agent] Vote attestation incremented (chain=gnosis)
+[2025-08-23 10:16:53,808] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,110] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,959] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,968] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,968] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,968] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:54,968] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:16:54,969] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,969] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,970] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:54,970] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:16:54,970] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,970] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,971] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:54,971] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:16:54,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,971] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,972] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:54,972] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:16:54,972] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,972] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,972] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:16:54,972] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:16:54,973] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,973] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,974] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,975] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,975] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:16:54,979] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:16:54,979] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:17:00,458] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:00,755] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,483] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,491] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,491] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:17:01,492] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,492] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:17:01,493] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,493] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:17:01,494] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,494] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:17:01,499] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:17:01,499] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:45,314] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:45,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:46,527] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:46,538] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:46,538] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:46,538] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,539] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:46,539] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,539] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:19:46,539] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,539] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:19:46,540] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:46,540] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:46,541] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:46,541] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:46,541] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,541] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:46,541] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,541] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:46,541] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,541] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:46,541] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,541] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:46,541] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:46,541] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:46,541] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:46,541] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:46,541] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:46,541] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:46,541] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:46,542] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:50,528] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:50,784] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:51,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:51,514] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:51,514] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:51,514] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:51,514] [INFO] [agent] Activity ratio calculated (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:19:51,514] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:19:51,516] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:51,516] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:51,516] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:51,516] [INFO] [agent] Activity ratio calculated (activity=5, period=0, ratio=0)
+[2025-08-23 10:19:51,516] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=0, ratio=0)
+[2025-08-23 10:19:51,518] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:51,518] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:55,633] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:55,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,616] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,630] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,630] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,637] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,637] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,645] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,645] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,645] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,645] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,646] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,650] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,650] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,658] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,658] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,658] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,658] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,659] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,659] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,660] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,660] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,661] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,661] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,662] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,662] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,662] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,662] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,663] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,663] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,663] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,663] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:19:56,664] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,664] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,664] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,664] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:19:56,665] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,665] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,665] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,665] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:19:56,665] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,665] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,666] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,666] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:19:56,666] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,666] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,667] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,667] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,668] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,668] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,672] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,788] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,788] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-23 10:19:56,788] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,796] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,797] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,798] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,798] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,804] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,804] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,804] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,804] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,804] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:19:56,804] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,804] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:19:56,805] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,805] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,806] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,806] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,806] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,806] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,806] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,806] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,806] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,806] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,806] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,806] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,806] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:19:56,806] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:19:56,806] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:56,806] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:56,806] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:56,806] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:56,806] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:56,806] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:19:56,807] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,807] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,807] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:56,807] [INFO] [agent] Activity ratio calculated (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:19:56,807] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:19:56,808] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,808] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:19:56,808] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:19:56,808] [INFO] [agent] Activity ratio calculated (activity=5, period=0, ratio=0)
+[2025-08-23 10:19:56,808] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=0, ratio=0)
+[2025-08-23 10:19:56,809] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:19:56,809] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:18,859] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:19,183] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:19,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:19,976] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:19,976] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:28,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:28,994] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:29,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:29,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:29,915] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:29,915] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:29,917] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:29,917] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:20:29,917] [INFO] [agent] Activity ratio calculated (activity=1, period=86400, ratio=11574074074074.074)
+[2025-08-23 10:20:29,917] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=1, period=86400, ratio=11574074074074.074)
+[2025-08-23 10:20:55,597] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:55,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,853] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,862] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,862] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:56,862] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,862] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:56,862] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,862] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:20:56,862] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,862] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:20:56,864] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,864] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:56,865] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,865] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:56,865] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,865] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:56,865] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,865] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:56,865] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,865] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:56,865] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,865] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:56,865] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:20:56,865] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:20:56,865] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:20:56,865] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:20:56,865] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:20:56,865] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:20:56,865] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:20:56,865] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:20:56,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,866] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:56,866] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:20:56,866] [INFO] [agent] Activity ratio calculated (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:20:56,866] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:20:56,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,867] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:20:56,867] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:20:56,867] [INFO] [agent] Activity ratio calculated (activity=5, period=0, ratio=0)
+[2025-08-23 10:20:56,867] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=0, ratio=0)
+[2025-08-23 10:20:56,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:20:56,868] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:24:45,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:24:46,094] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:24:46,987] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:24:53,749] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:24:54,069] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:24:54,802] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:04,682] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:04,996] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,817] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,820] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,824] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,824] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,824] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,825] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,825] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:05,827] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,830] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,831] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,831] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,831] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,831] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,831] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,831] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,831] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,831] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:05,932] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,935] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,935] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,936] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,936] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,936] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:05,936] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-08-23 10:25:05,936] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-08-23 10:25:05,937] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-08-23 10:25:05,937] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-08-23 10:25:05,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,942] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,942] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,942] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,942] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,943] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,943] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:05,943] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-08-23 10:25:05,943] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-08-23 10:25:05,943] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=5, error=Service error)
+[2025-08-23 10:25:05,943] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: Service error
+[2025-08-23 10:25:05,946] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,949] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,949] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,949] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,950] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,950] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,950] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,950] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,950] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,950] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:05,950] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-08-23 10:25:05,950] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-08-23 10:25:05,950] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-08-23 10:25:05,950] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-08-23 10:25:05,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,987] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,987] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,987] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,987] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,988] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,988] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:05,996] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,999] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,999] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:05,999] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:05,999] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,999] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:05,999] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,000] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,000] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,000] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:06,008] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,011] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,011] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:06,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,011] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,012] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,012] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:06,019] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,023] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,023] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,023] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:06,023] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,023] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,023] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,023] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,024] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,024] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:06,046] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,049] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,049] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,049] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:06,049] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,050] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,050] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,050] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,050] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,050] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:06,050] [INFO] [agent] State transition: idle -> starting
+[2025-08-23 10:25:06,051] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-08-23 10:25:06,051] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-08-23 10:25:06,051] [INFO] [agent] Agent run started (run_id=test-space_1755969906, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-23 10:25:06,051] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-08-23 10:25:06,051] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-08-23 10:25:06,051] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-08-23 10:25:06,052] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-08-23 10:25:06,052] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s (proposal_count=0)
+[2025-08-23 10:25:06,052] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-08-23 10:25:06,052] [ERROR] [agent] Failed to increment no_voting nonce: Invalid nonce operation on ethereum for type -1: Chain not configured in Safe addresses
+[2025-08-23 10:25:06,052] [INFO] [agent] Agent run completed (run_id=test-space_1755969906, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.001, errors=[])
+[2025-08-23 10:25:06,052] [INFO] [agent] State transition: filtering_proposals -> completed
+[2025-08-23 10:25:06,052] [INFO] [agent] State transition: completed -> idle
+[2025-08-23 10:25:06,052] [INFO] [agent] Completed agent_run_execution successfully in 0.002s
+[2025-08-23 10:25:06,055] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,060] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,060] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:06,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,060] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,061] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,061] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:06,062] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,066] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,066] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:06,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,066] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,067] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,067] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:06,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,072] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,072] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:06,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,072] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:06,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:06,072] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:13,644] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:13,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,774] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,774] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,774] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:14,774] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:25:14,775] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,775] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,775] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:14,775] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:25:14,776] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,776] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,776] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:14,776] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:25:14,777] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,777] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,777] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:14,777] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:25:14,778] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,778] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,778] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:14,778] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:25:14,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,779] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,780] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,780] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:14,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:14,781] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:39,474] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:39,791] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,573] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,577] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,577] [INFO] [agent] KeyManager initialized
+[2025-08-23 10:25:40,577] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,577] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:40,577] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,577] [INFO] [agent] VotingService initialized with ActivityService integration
+[2025-08-23 10:25:40,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,646] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-23 10:25:40,666] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-23 10:25:40,666] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-23 10:25:40,668] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-23 10:25:40,670] [INFO] [agent] Creating AI model
+[2025-08-23 10:25:40,670] [INFO] [agent] Using OpenRouter
+[2025-08-23 10:25:40,671] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-23 10:25:40,671] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-23 10:25:40,671] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-23 10:25:40,671] [INFO] [agent] KeyManager initialized
+[2025-08-23 10:25:40,671] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,672] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:40,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,672] [INFO] [agent] VotingService initialized with ActivityService integration
+[2025-08-23 10:25:40,672] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,675] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,675] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:40,675] [INFO] [agent] SafeService initialized with ActivityService integration (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-23 10:25:40,675] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,676] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:40,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,676] [INFO] [agent] AgentRunService initialized with all dependencies including ActivityService
+[2025-08-23 10:25:40,677] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:25:40,677] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:25:40,677] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:40,677] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:25:40,677] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:40,677] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:25:40,677] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:40,677] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:25:40,677] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:25:40,677] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:26:11,731] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:12,078] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:12,883] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:38,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:38,808] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,681] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,695] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,695] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,703] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,710] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,710] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,711] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,712] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,712] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,715] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,715] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,723] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,723] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,724] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,724] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,726] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,727] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,727] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,728] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,728] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,730] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,730] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,730] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,730] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,731] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,731] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,731] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,731] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:26:39,732] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,732] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,732] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,732] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:26:39,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,733] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,733] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,733] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:26:39,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,734] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,734] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,734] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:26:39,734] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,734] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,735] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,736] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,736] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,740] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,740] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,859] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,859] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-23 10:26:39,859] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,866] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,866] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,868] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,868] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,873] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,873] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,873] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,873] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,873] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,873] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:26:39,873] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,873] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:26:39,874] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,874] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,875] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,875] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,875] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,875] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,875] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,875] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,875] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,875] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,875] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,875] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,875] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:26:39,875] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:26:39,875] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:26:39,875] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:26:39,875] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:26:39,875] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:26:39,875] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:26:39,875] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:26:39,876] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,876] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,876] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:26:39,876] [INFO] [agent] Activity ratio calculated (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:26:39,876] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:26:39,877] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,877] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:26:39,877] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:26:39,877] [INFO] [agent] Activity ratio calculated (activity=5, period=0, ratio=0)
+[2025-08-23 10:26:39,877] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=0, ratio=0)
+[2025-08-23 10:26:39,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:26:39,878] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:12,738] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:13,115] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,025] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,039] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,047] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,047] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,054] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,054] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,054] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,054] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,055] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,055] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,058] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,058] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,065] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,065] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,066] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,066] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,067] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,067] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,067] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,068] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,069] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,069] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,069] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,069] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,070] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,070] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,070] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,070] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:31:14,071] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,071] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,071] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,071] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:31:14,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,072] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,072] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,072] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 10:31:14,073] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,073] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,073] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,073] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 10:31:14,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,074] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,074] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,075] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,075] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,080] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,080] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,197] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,198] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-23 10:31:14,198] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,206] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,206] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,208] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,208] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,214] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,214] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,214] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,214] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,214] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,214] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 10:31:14,214] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,214] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 10:31:14,215] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,215] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,216] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,216] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,216] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,216] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,216] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,216] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,216] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,216] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,216] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,216] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,217] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 10:31:14,217] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 10:31:14,217] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:31:14,217] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:31:14,217] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:31:14,217] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:31:14,217] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:31:14,217] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 10:31:14,218] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,218] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,218] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:31:14,218] [INFO] [agent] Activity ratio calculated (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:31:14,218] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 10:31:14,219] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,219] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:14,219] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:31:14,219] [INFO] [agent] Activity ratio calculated (activity=5, period=0, ratio=0)
+[2025-08-23 10:31:14,219] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=0, ratio=0)
+[2025-08-23 10:31:14,220] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:14,220] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:25,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:25,467] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:26,246] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:26,249] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:26,253] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:40,374] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:40,692] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:41,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:41,450] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 10:31:41,450] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 10:31:41,450] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 10:31:41,450] [INFO] [agent] Activity ratio calculated (activity=0, period=86400, ratio=0.0)
+[2025-08-23 10:31:41,450] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=0, period=86400, ratio=0.0)
+[2025-08-23 11:14:29,651] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:29,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,483] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,492] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,492] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,496] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,496] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,500] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,500] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,500] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,500] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,501] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,501] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,503] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,503] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,506] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,506] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,507] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,507] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,507] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,507] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,508] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,508] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,509] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,509] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,509] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,509] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,509] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,509] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,509] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,509] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 11:14:30,510] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,510] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,510] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,510] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 11:14:30,510] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,510] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,510] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,510] [INFO] [agent] No voting opportunity recorded (chain=ethereum)
+[2025-08-23 11:14:30,511] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,511] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,511] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,511] [INFO] [agent] Multisig activity incremented (chain=gnosis)
+[2025-08-23 11:14:30,511] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,511] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,512] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,512] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,512] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,512] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,514] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,514] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,582] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,582] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-23 11:14:30,582] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,586] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,586] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,587] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,587] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,589] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,589] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,589] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,589] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,589] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,589] [INFO] [agent] Vote attestation incremented (chain=ethereum)
+[2025-08-23 11:14:30,589] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,589] [INFO] [agent] Voting opportunity considered (chain=ethereum)
+[2025-08-23 11:14:30,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,590] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,591] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,591] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,591] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,591] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,591] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,591] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,591] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,591] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,591] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,591] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-23 11:14:30,591] [INFO] [agent] Multisig activity incremented (chain=ethereum)
+[2025-08-23 11:14:30,591] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 11:14:30,591] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 11:14:30,591] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 11:14:30,591] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 11:14:30,591] [INFO] [agent] Activity ratio calculated (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 11:14:30,591] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=86400, ratio=57870370370370.37)
+[2025-08-23 11:14:30,592] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,592] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,592] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 11:14:30,592] [INFO] [agent] Activity ratio calculated (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 11:14:30,592] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=10, period=86400, ratio=115740740740740.73)
+[2025-08-23 11:14:30,592] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,592] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:30,592] [INFO] [agent] Starting activity_service.calculate_ratio
+[2025-08-23 11:14:30,592] [INFO] [agent] Activity ratio calculated (activity=5, period=0, ratio=0)
+[2025-08-23 11:14:30,592] [INFO] [agent] Completed activity_service.calculate_ratio successfully in 0.000s (activity=5, period=0, ratio=0)
+[2025-08-23 11:14:30,593] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:30,593] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-23 11:14:31,167] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:31,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-23 11:14:31,744] [INFO] [agent] Pearl logger initialized successfully

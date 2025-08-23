@@ -5,7 +5,7 @@ Quick reference for AI agents working with the Quorum AI service layer.
 ## Core Services
 
 - **snapshot_service.py** - Fetches DAO proposals from Snapshot GraphQL API
-- **ai_service.py** - AI-powered proposal analysis and voting decisions  
+- **ai_service.py** - AI-powered proposal analysis and voting decisions
 - **agent_run_service.py** - Orchestrates complete voting workflow
 - **voting_service.py** - EIP-712 signatures and vote submission
 - **state_manager.py** - Atomic state persistence with migrations
@@ -115,7 +115,7 @@ AgentRunService (orchestrator)
 - Implements retry logic
 - Caches with TTL
 
-**AIService**  
+**AIService**
 - Google Gemini 2.0 Flash via OpenRouter
 - Summarization + voting decisions
 - JSON audit trail

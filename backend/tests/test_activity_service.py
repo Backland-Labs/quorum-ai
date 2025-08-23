@@ -236,6 +236,99 @@ class TestActivityServiceActivityMarking:
         mock_file.assert_called_with("activity_tracker.json", 'w')
 
 
+class TestActivityServiceNonceTracking:
+    """Test ActivityService nonce tracking functionality (Phase 1)."""
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_nonce_tracking_initialization(self, mock_exists, mock_settings):
+        """Test nonces are initialized as empty dict for multi-chain tracking."""
+        # This test ensures the core nonce tracking data structure is properly initialized
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Critical assertion: nonces must be initialized as Dict[str, Dict[int, int]]
+        assert hasattr(service, 'nonces')
+        assert isinstance(service.nonces, dict)
+        assert service.nonces == {}
+        
+        # Verify nonce type constants are defined
+        assert hasattr(service, 'NONCE_MULTISIG_ACTIVITY')
+        assert hasattr(service, 'NONCE_VOTE_ATTESTATIONS')  
+        assert hasattr(service, 'NONCE_VOTING_CONSIDERED')
+        assert hasattr(service, 'NONCE_NO_VOTING')
+        
+        # Verify constant values match expected interface
+        assert service.NONCE_MULTISIG_ACTIVITY == 0
+        assert service.NONCE_VOTE_ATTESTATIONS == 1
+        assert service.NONCE_VOTING_CONSIDERED == 2
+        assert service.NONCE_NO_VOTING == 3
+        
+    @patch("services.activity_service.settings")
+    @patch("os.makedirs")
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_unified_state_data_includes_nonces(self, mock_exists, mock_file, mock_makedirs, mock_settings):
+        """Test _prepare_state_data includes nonces in unified format."""
+        # This test verifies the critical state persistence includes nonce data
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        service.last_activity_date = date(2024, 1, 15)
+        service.last_tx_hash = "0x123"
+        
+        # Set up nonce data for ethereum chain
+        service.nonces = {
+            "ethereum": {0: 5, 1: 3, 2: 10, 3: 2}
+        }
+        
+        # Reset mock to clear initialization calls
+        mock_file.reset_mock()
+        
+        service.save_state()
+        
+        # Verify file was written with unified state data
+        handle = mock_file()
+        all_written = ''.join(call[0][0] for call in handle.write.call_args_list)
+        json_start = all_written.find('{')
+        json_end = all_written.rfind('}') + 1
+        written_content = all_written[json_start:json_end]
+        parsed_data = json.loads(written_content)
+        
+        # Critical assertion: unified state includes both OLAS compliance and nonces
+        assert "last_activity_date" in parsed_data
+        assert "last_tx_hash" in parsed_data
+        assert "nonces" in parsed_data
+        assert "last_updated" in parsed_data
+        
+        # Verify nonce structure
+        assert parsed_data["nonces"]["ethereum"]["0"] == 5  # JSON keys are strings
+        assert parsed_data["nonces"]["ethereum"]["1"] == 3
+        
+    @patch("services.activity_service.settings")
+    @patch("services.activity_service.setup_pearl_logger")
+    @patch("builtins.open", new_callable=mock_open, read_data='{"last_activity_date": "2024-01-15", "last_tx_hash": "0x123", "nonces": {"ethereum": {"0": 5, "1": 3}}, "last_updated": "2024-01-15T10:30:00Z"}')
+    @patch("os.path.exists")
+    def test_load_state_handles_unified_schema(self, mock_exists, mock_file, mock_setup_logger, mock_settings):
+        """Test loading state with unified schema including nonces."""
+        # This test ensures backward compatibility and nonce loading works correctly
+        mock_settings.store_path = None
+        mock_exists.return_value = True
+        mock_setup_logger.return_value = get_mock_logger()
+        
+        service = ActivityService()
+        
+        # Critical assertions: both OLAS compliance and nonce data are loaded
+        assert service.last_activity_date == date(2024, 1, 15)
+        assert service.last_tx_hash == "0x123"
+        assert "ethereum" in service.nonces
+        assert service.nonces["ethereum"][0] == 5  # Converted from string keys
+        assert service.nonces["ethereum"][1] == 3
+
+
 class TestActivityServiceOLASCompliance:
     """Test ActivityService OLAS compliance checking."""
     
@@ -323,6 +416,174 @@ class TestActivityServiceIntegration:
         assert "olas_compliance" in summary
         assert summary["activity_status"]["last_activity_date"] == "2024-01-15"
         assert summary["olas_compliance"]["compliant"] is False  # Old date
+
+
+class TestActivityServicePhase2NonceIncrement:
+    """Test ActivityService Phase 2 nonce increment functionality."""
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_increment_multisig_activity(self, mock_exists, mock_settings):
+        """Test incrementing multisig activity nonce for a chain."""
+        # This test verifies that multisig activity nonces can be incremented correctly
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123", "gnosis": "0x456"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Critical assertion: increment method should exist and work
+        assert hasattr(service, 'increment_multisig_activity')
+        
+        # Initialize with some nonce data
+        service.nonces = {"ethereum": {0: 5, 1: 3, 2: 10, 3: 2}}
+        
+        service.increment_multisig_activity("ethereum")
+        
+        # Verify nonce was incremented
+        assert service.nonces["ethereum"][service.NONCE_MULTISIG_ACTIVITY] == 6
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_increment_vote_attestation(self, mock_exists, mock_settings):
+        """Test incrementing vote attestation nonce for a chain."""
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        service.nonces = {"ethereum": {0: 5, 1: 3, 2: 10, 3: 2}}
+        
+        service.increment_vote_attestation("ethereum")
+        
+        assert service.nonces["ethereum"][service.NONCE_VOTE_ATTESTATIONS] == 4
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_increment_voting_considered(self, mock_exists, mock_settings):
+        """Test incrementing voting considered nonce when proposal considered but not voted."""
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        service.nonces = {"ethereum": {0: 5, 1: 3, 2: 10, 3: 2}}
+        
+        service.increment_voting_considered("ethereum")
+        
+        assert service.nonces["ethereum"][service.NONCE_VOTING_CONSIDERED] == 11
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_increment_no_voting(self, mock_exists, mock_settings):
+        """Test incrementing no voting nonce when no voting opportunities available."""
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        service.nonces = {"ethereum": {0: 5, 1: 3, 2: 10, 3: 2}}
+        
+        service.increment_no_voting("ethereum")
+        
+        assert service.nonces["ethereum"][service.NONCE_NO_VOTING] == 3
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_increment_nonce_new_chain(self, mock_exists, mock_settings):
+        """Test incrementing nonce for a chain with no existing nonce data."""
+        # This test ensures new chains are properly initialized
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"gnosis": "0x789"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        service.increment_multisig_activity("gnosis")
+        
+        # Should initialize chain nonces and increment
+        assert "gnosis" in service.nonces
+        assert service.nonces["gnosis"][service.NONCE_MULTISIG_ACTIVITY] == 1
+        assert service.nonces["gnosis"][service.NONCE_VOTE_ATTESTATIONS] == 0
+        assert service.nonces["gnosis"][service.NONCE_VOTING_CONSIDERED] == 0
+        assert service.nonces["gnosis"][service.NONCE_NO_VOTING] == 0
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_nonce_validation_error_exception(self, mock_exists, mock_settings):
+        """Test NonceValidationError exception class exists with correct attributes."""
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Critical assertion: NonceValidationError should be importable from service module
+        from services.activity_service import NonceValidationError
+        
+        # Test exception attributes
+        error = NonceValidationError("ethereum", 0, "Test error")
+        assert error.chain == "ethereum"
+        assert error.nonce_type == 0
+        assert "ethereum" in str(error)
+        assert "Test error" in str(error)
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_chain_validation_unsupported_chain(self, mock_exists, mock_settings):
+        """Test that unsupported chains raise NonceValidationError."""
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}  # Only ethereum supported
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        from services.activity_service import NonceValidationError
+        
+        # Should raise error for unsupported chain
+        with pytest.raises(NonceValidationError) as exc_info:
+            service.increment_multisig_activity("polygon")
+        
+        assert exc_info.value.chain == "polygon"
+        assert "Chain not configured" in str(exc_info.value)
+        
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_supported_chains_property(self, mock_exists, mock_settings):
+        """Test supported_chains property returns chains from Safe addresses."""
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123", "gnosis": "0x456", "polygon": "0x789"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Critical assertion: supported_chains should return list of configured chains
+        assert hasattr(service, 'supported_chains')
+        supported = service.supported_chains
+        
+        assert isinstance(supported, list)
+        assert set(supported) == {"ethereum", "gnosis", "polygon"}
+        
+    @patch("services.activity_service.settings")
+    @patch("os.makedirs")
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_increment_saves_state(self, mock_exists, mock_file, mock_makedirs, mock_settings):
+        """Test that nonce increments trigger state persistence."""
+        # This test verifies that nonce changes are properly persisted
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Reset mock to clear initialization calls
+        mock_file.reset_mock()
+        
+        service.increment_multisig_activity("ethereum")
+        
+        # Verify save_state was called (file operations)
+        mock_file.assert_called_with("activity_tracker.json", 'w')
 
 
 class TestActivityServicePearlLogging:
@@ -609,3 +870,173 @@ class TestActivityServicePearlLogging:
         finally:
             # Restore original handlers
             service.logger.handlers = original_handlers
+
+
+class TestIQuorumTracker:
+    """Test IQuorumTracker interface methods for OLAS staking contract compatibility.
+    
+    These tests verify that ActivityService correctly implements the IQuorumTracker
+    interface methods required by the Activity Checker contract for staking eligibility.
+    The interface methods must return data in exact format expected by the contract.
+    """
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_getMultisigNonces_returns_correct_format(self, mock_exists, mock_settings):
+        """Test getMultisigNonces returns array in expected contract format.
+        
+        Critical test: Verifies the IQuorumTracker interface returns nonces
+        in the exact order expected by the Activity Checker contract:
+        [multisig_activity, vote_attestations, voting_considered, no_voting]
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Initialize some nonces for testing
+        service.increment_multisig_activity("ethereum")  # Should be 1
+        service.increment_vote_attestation("ethereum")   # Should be 1
+        service.increment_voting_considered("ethereum")  # Should be 1
+        # no_voting stays 0
+        
+        # Test the interface method
+        nonces = service.getMultisigNonces("0x123")
+        
+        # Critical assertions: Array format and order must match contract interface
+        assert isinstance(nonces, list)
+        assert len(nonces) == 4
+        assert nonces[0] == 1  # multisig_activity
+        assert nonces[1] == 1  # vote_attestations
+        assert nonces[2] == 1  # voting_considered
+        assert nonces[3] == 0  # no_voting
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_getMultisigNonces_unknown_address_returns_zeros(self, mock_exists, mock_settings):
+        """Test getMultisigNonces returns [0,0,0,0] for unknown Safe addresses.
+        
+        This test ensures contract compatibility when queried with addresses
+        that are not configured in the service's Safe address mappings.
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Query with unknown address
+        nonces = service.getMultisigNonces("0x999unknown")
+        
+        # Should return all zeros for unknown address
+        assert nonces == [0, 0, 0, 0]
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_isRatioPass_basic_eligibility_check(self, mock_exists, mock_settings):
+        """Test isRatioPass correctly determines staking eligibility.
+        
+        Critical test: Verifies the core eligibility calculation that determines
+        if an agent meets the activity requirements for OLAS staking rewards.
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {"ethereum": "0x123"}
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Set up activity: 5 multisig transactions
+        for _ in range(5):
+            service.increment_multisig_activity("ethereum")
+        
+        # Test eligibility with different ratios
+        # Formula: (activity_count * 1e18) / period_seconds >= liveness_ratio
+        # 5 transactions over 86400 seconds = 5 * 1e18 / 86400 = ~5.79e13
+        
+        low_requirement = 1e13   # Should pass
+        high_requirement = 1e15  # Should fail
+        
+        assert service.isRatioPass("0x123", low_requirement, 86400) is True
+        assert service.isRatioPass("0x123", high_requirement, 86400) is False
+
+
+class TestActivityRatio:
+    """Test activity ratio calculation logic for OLAS staking eligibility.
+    
+    These tests verify the mathematical correctness of activity ratio calculations
+    that determine whether an agent meets staking requirements. The ratio calculation
+    is critical for determining OLAS rewards eligibility.
+    """
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_calculate_activity_ratio_basic_math(self, mock_exists, mock_settings):
+        """Test _calculate_activity_ratio performs correct mathematical calculation.
+        
+        This test verifies the core formula: (activity_count * 1e18) / period_seconds
+        which determines the activity rate needed for staking eligibility.
+        """
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Test with known values for predictable results
+        nonces = [10, 5, 3, 2]  # [multisig_activity=10, ...]
+        period_seconds = 86400  # 24 hours
+        
+        ratio = service._calculate_activity_ratio(nonces, period_seconds)
+        
+        # Expected: (10 * 1e18) / 86400 = 1.157407407e14
+        expected_ratio = (10 * 10**18) / 86400
+        assert ratio == expected_ratio
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_calculate_activity_ratio_zero_period_handling(self, mock_exists, mock_settings):
+        """Test _calculate_activity_ratio handles zero period gracefully.
+        
+        This test ensures the service doesn't crash with division by zero
+        when period_seconds is 0, returning 0 ratio instead.
+        """
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        nonces = [5, 3, 2, 1]
+        
+        # Should return 0 for zero period to avoid division by zero
+        ratio = service._calculate_activity_ratio(nonces, 0)
+        assert ratio == 0
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")  
+    def test_get_chain_for_safe_address_resolution(self, mock_exists, mock_settings):
+        """Test _get_chain_for_safe correctly resolves Safe addresses to chains.
+        
+        This test verifies the address-to-chain mapping logic that enables
+        cross-chain nonce tracking using the configured Safe addresses.
+        """
+        mock_settings.store_path = None
+        mock_settings.safe_addresses = {
+            "ethereum": "0x123abc",
+            "gnosis": "0x456def",
+            "polygon": "0x789ghi"
+        }
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Test exact matches
+        assert service._get_chain_for_safe("0x123abc") == "ethereum"
+        assert service._get_chain_for_safe("0x456def") == "gnosis" 
+        assert service._get_chain_for_safe("0x789ghi") == "polygon"
+        
+        # Test case insensitive matching
+        assert service._get_chain_for_safe("0x123ABC") == "ethereum"
+        assert service._get_chain_for_safe("0X456DEF") == "gnosis"
+        
+        # Test unknown address
+        assert service._get_chain_for_safe("0x999unknown") is None

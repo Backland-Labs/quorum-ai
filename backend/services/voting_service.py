@@ -39,16 +39,23 @@ class VotingService:
         """
         # Initialize KeyManager
         from services.key_manager import KeyManager
+        from services.activity_service import ActivityService
 
         self.key_manager = key_manager or KeyManager()
 
         # Initialize account lazily
         self._account = None
 
+        # Initialize ActivityService for nonce tracking
+        self.activity_service = ActivityService()
+
+        # Track active votes for shutdown coordination
+        self._active_votes = []
+
         # Initialize Pearl-compliant logger
         self.logger = setup_pearl_logger(name="voting_service", level=logging.INFO)
 
-        self.logger.info("VotingService initialized")
+        self.logger.info("VotingService initialized with ActivityService integration")
 
     @property
     def account(self):
@@ -271,7 +278,12 @@ class VotingService:
                 return {"success": False, "error": str(e)}
 
     async def vote_on_proposal(
-        self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
+        self,
+        space: str,
+        proposal: str,
+        choice: int,
+        timestamp: Optional[int] = None,
+        chain: str = "ethereum",
     ) -> Dict[str, Any]:
         """Complete workflow to vote on a Snapshot proposal.
 
@@ -280,6 +292,7 @@ class VotingService:
             proposal: The proposal ID
             choice: Vote choice (1 = For, 2 = Against, 3 = Abstain)
             timestamp: Optional custom timestamp
+            chain: Blockchain network for nonce tracking (default: "ethereum")
 
         Returns:
             Dict containing complete voting workflow results
@@ -319,9 +332,19 @@ class VotingService:
                 "submission_result": submission_result,
             }
 
-            # Log result status
+            # Log result status and increment nonce for successful votes
             if submission_result["success"]:
                 self.logger.info("Vote workflow completed successfully")
+                # Increment vote attestation nonce for successful vote
+                try:
+                    self.activity_service.increment_vote_attestation(chain)
+                    self.logger.info(
+                        f"Incremented vote attestation nonce for chain {chain}"
+                    )
+                except Exception as e:
+                    self.logger.error(
+                        f"Failed to increment vote attestation nonce for chain {chain}: {e}"
+                    )
             else:
                 error_message = submission_result.get("error", "Unknown error")
                 self.logger.error(f"Vote workflow failed (error={error_message})")

@@ -1,9 +1,10 @@
 """Pydantic models for DAO and proposal data structures."""
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, List, Optional
+from typing_extensions import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -1238,3 +1239,147 @@ class HealthServiceTimeoutError(HealthCheckError):
         self.timeout_ms = timeout_ms
         self.operation = operation
         super().__init__(message, context)
+
+
+# ActivityService Nonce Tracking Models (Phase 1)
+class ChainNonces(BaseModel):
+    """Model for nonce tracking data per blockchain chain.
+
+    This model tracks the 4 nonce values required for OLAS staking contract interface:
+    - multisig_activity: Nonce for multisig transaction activity
+    - vote_attestations: Nonce for successful vote attestations
+    - voting_considered: Nonce for voting opportunities considered but not voted
+    - no_voting: Nonce for periods with no voting opportunities
+    """
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    multisig_activity: int = Field(
+        default=0, ge=0, description="Nonce for multisig transaction activity"
+    )
+    vote_attestations: int = Field(
+        default=0, ge=0, description="Nonce for successful vote attestations"
+    )
+    voting_considered: int = Field(
+        default=0, ge=0, description="Nonce for voting opportunities considered"
+    )
+    no_voting: int = Field(
+        default=0, ge=0, description="Nonce for periods with no voting opportunities"
+    )
+    last_updated: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        description="Last update timestamp",
+    )
+
+    @field_validator(
+        "multisig_activity", "vote_attestations", "voting_considered", "no_voting"
+    )
+    @classmethod
+    def validate_nonce_values(cls, v: int) -> int:
+        """Validate nonce values are non-negative integers."""
+        if not isinstance(v, int):
+            raise ValueError("Nonce values must be integers")
+        if v < 0:
+            raise ValueError("Nonce values must be non-negative")
+        return v
+
+
+class ActivityState(BaseModel):
+    """Model for unified activity state including OLAS compliance and nonce tracking.
+
+    This model combines existing OLAS compliance tracking with new nonce tracking
+    functionality in a unified state schema for ActivityService persistence.
+    """
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    last_activity_date: Optional[date] = Field(
+        default=None, description="Date of last recorded activity"
+    )
+    last_tx_hash: Optional[str] = Field(
+        default=None, description="Transaction hash of last activity"
+    )
+    nonces: Dict[str, ChainNonces] = Field(
+        default_factory=dict, description="Nonce tracking data per chain"
+    )
+
+    @field_validator("last_tx_hash")
+    @classmethod
+    def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
+        """Validate transaction hash format if provided."""
+        if v is None:
+            return None
+        if not isinstance(v, str):
+            raise ValueError("Transaction hash must be a string")
+        if len(v.strip()) == 0:
+            raise ValueError("Transaction hash cannot be empty")
+        return v.strip()
+
+    @field_validator("nonces")
+    @classmethod
+    def validate_nonces(cls, v: Dict[str, ChainNonces]) -> Dict[str, ChainNonces]:
+        """Validate nonces dictionary structure."""
+        if not isinstance(v, dict):
+            raise ValueError("Nonces must be a dictionary")
+
+        # Validate each chain name is a non-empty string
+        for chain_name, chain_nonces in v.items():
+            if not isinstance(chain_name, str) or len(chain_name.strip()) == 0:
+                raise ValueError(f"Chain name must be a non-empty string: {chain_name}")
+            if not isinstance(chain_nonces, ChainNonces):
+                raise ValueError(
+                    f"Chain nonces must be ChainNonces instance for {chain_name}"
+                )
+
+        return v
+
+
+class NonceData(BaseModel):
+    """Model for nonce data per chain with address and nonce values."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    address: str = Field(..., description="Safe multisig address")
+    nonces: List[int] = Field(..., description="List of 4 nonce values")
+
+    @field_validator("address")
+    @classmethod
+    def validate_address(cls, v: str) -> str:
+        """Validate Safe address format."""
+        return ModelValidationHelper.validate_blockchain_address(v)
+
+    @field_validator("nonces")
+    @classmethod
+    def validate_nonces(cls, v: List[int]) -> List[int]:
+        """Validate nonces list has exactly 4 non-negative integers."""
+        if not isinstance(v, list):
+            raise ValueError("Nonces must be a list")
+        if len(v) != 4:
+            raise ValueError("Nonces must contain exactly 4 values")
+        for i, nonce in enumerate(v):
+            if not isinstance(nonce, int):
+                raise ValueError(f"Nonce at index {i} must be an integer")
+            if nonce < 0:
+                raise ValueError(f"Nonce at index {i} must be non-negative")
+        return v
+
+
+class NonceResponse(BaseModel):
+    """Response model for /activity/nonces endpoint."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    data: Dict[str, NonceData] = Field(..., description="Nonce data by chain")
+    status: Literal["success"] = Field(..., description="Response status")
+
+
+class EligibilityResponse(BaseModel):
+    """Response model for /activity/eligibility/{chain} endpoint."""
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    data: Dict[str, Any] = Field(..., description="Eligibility data")
+    status: Literal["success"] = Field(..., description="Response status")
+
+
+# Phase 5: API Endpoints - Response Models for Activity Service Nonce Tracking
