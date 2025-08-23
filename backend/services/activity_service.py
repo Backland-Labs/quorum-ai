@@ -3,7 +3,7 @@
 import os
 import json
 from datetime import date, datetime, timezone
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 
 from config import settings
 from logging_config import setup_pearl_logger, log_span
@@ -13,6 +13,22 @@ ACTIVITY_TRACKER_FILENAME = "activity_tracker.json"
 DAILY_ACTIVITY_REQUIRED_MSG = "Daily activity required for OLAS staking"
 DAILY_ACTIVITY_COMPLETED_MSG = "Daily activity completed"
 SAFE_TRANSACTION_ACTION = "safe_transaction"
+
+
+class NonceValidationError(Exception):
+    """Exception for nonce validation failures."""
+    
+    def __init__(self, chain: str, nonce_type: int, message: str):
+        """Initialize NonceValidationError.
+        
+        Args:
+            chain: Chain name that caused the validation error
+            nonce_type: Type of nonce that failed validation
+            message: Descriptive error message
+        """
+        self.chain = chain
+        self.nonce_type = nonce_type
+        super().__init__(f"Invalid nonce operation on {chain} for type {nonce_type}: {message}")
 
 
 class ActivityService:
@@ -381,3 +397,104 @@ class ActivityService:
             "error": transaction_result.get("error"),
             "compliance_status": compliance_status,
         }
+
+    # Phase 2: Nonce Increment Logic Methods
+    
+    @property
+    def supported_chains(self) -> List[str]:
+        """Get list of supported chains from Safe addresses.
+        
+        Returns:
+            List of chain names configured in Safe addresses
+        """
+        return list(getattr(settings, 'safe_addresses', {}).keys())
+    
+    def _validate_chain(self, chain: str) -> None:
+        """Validate chain is supported.
+        
+        Args:
+            chain: Chain name to validate
+            
+        Raises:
+            NonceValidationError: If chain is not configured in Safe addresses
+        """
+        if chain not in self.supported_chains:
+            raise NonceValidationError(
+                chain, -1, f"Chain not configured in Safe addresses"
+            )
+    
+    def _increment_nonce(self, chain: str, nonce_type: int) -> None:
+        """Internal helper method to increment a specific nonce type for a chain.
+        
+        Args:
+            chain: Chain name (e.g., "ethereum", "gnosis")
+            nonce_type: Type of nonce to increment (0-3)
+            
+        Raises:
+            NonceValidationError: If chain is not supported
+        """
+        # Validate chain is supported
+        self._validate_chain(chain)
+        
+        # Initialize chain nonces if not exists
+        if chain not in self.nonces:
+            self.nonces[chain] = {
+                self.NONCE_MULTISIG_ACTIVITY: 0,
+                self.NONCE_VOTE_ATTESTATIONS: 0,
+                self.NONCE_VOTING_CONSIDERED: 0,
+                self.NONCE_NO_VOTING: 0,
+            }
+        
+        # Increment the specific nonce type
+        self.nonces[chain][nonce_type] += 1
+        
+        # Save state to persist changes
+        self.save_state()
+    
+    def increment_multisig_activity(self, chain: str) -> None:
+        """Increment nonce for multisig transaction activity.
+        
+        Args:
+            chain: Chain name where multisig activity occurred
+            
+        Raises:
+            NonceValidationError: If chain is not supported
+        """
+        self._increment_nonce(chain, self.NONCE_MULTISIG_ACTIVITY)
+        self.logger.info("Multisig activity incremented (chain=%s)", chain)
+    
+    def increment_vote_attestation(self, chain: str) -> None:
+        """Increment nonce for vote attestation.
+        
+        Args:
+            chain: Chain name where vote attestation occurred
+            
+        Raises:
+            NonceValidationError: If chain is not supported
+        """
+        self._increment_nonce(chain, self.NONCE_VOTE_ATTESTATIONS)
+        self.logger.info("Vote attestation incremented (chain=%s)", chain)
+    
+    def increment_voting_considered(self, chain: str) -> None:
+        """Increment nonce when proposal considered but not voted.
+        
+        Args:
+            chain: Chain name where voting was considered
+            
+        Raises:
+            NonceValidationError: If chain is not supported
+        """
+        self._increment_nonce(chain, self.NONCE_VOTING_CONSIDERED)
+        self.logger.info("Voting opportunity considered (chain=%s)", chain)
+    
+    def increment_no_voting(self, chain: str) -> None:
+        """Increment nonce when no voting opportunities available.
+        
+        Args:
+            chain: Chain name where no voting opportunities were found
+            
+        Raises:
+            NonceValidationError: If chain is not supported
+        """
+        self._increment_nonce(chain, self.NONCE_NO_VOTING)
+        self.logger.info("No voting opportunity recorded (chain=%s)", chain)
