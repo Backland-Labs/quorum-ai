@@ -2,7 +2,7 @@
 
 import os
 import json
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Dict, Optional, Any
 
 from config import settings
@@ -16,17 +16,39 @@ SAFE_TRANSACTION_ACTION = "safe_transaction"
 
 
 class ActivityService:
-    """Service for tracking daily activity requirements for OLAS staking compliance."""
+    """Service for tracking daily activity requirements for OLAS staking compliance.
+
+    This service provides two main functions:
+    1. OLAS compliance tracking - monitors daily activity requirements
+    2. Nonce tracking - tracks 4 nonce values for staking contract interface
+
+    The service persists all data in a unified JSON state file using atomic operations.
+    """
+
+    # Nonce type constants for IQuorumTracker interface compatibility
+    NONCE_MULTISIG_ACTIVITY = 0  # Multisig transaction activity nonce
+    NONCE_VOTE_ATTESTATIONS = 1  # Successful vote attestation nonce
+    NONCE_VOTING_CONSIDERED = 2  # Voting opportunities considered nonce
+    NONCE_NO_VOTING = 3  # No voting opportunities available nonce
 
     def __init__(self):
-        """Initialize activity service with persistent state."""
+        """Initialize activity service with persistent state.
+
+        Initializes both OLAS compliance tracking and nonce tracking functionality.
+        Loads existing state from persistent storage if available.
+        """
         # Initialize Pearl-compliant logger
         self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
+        # OLAS compliance tracking state
         self.last_activity_date: Optional[date] = None
         self.last_tx_hash: Optional[str] = None
-        self.persistent_file = self._get_persistent_file_path()
 
+        # Nonce tracking state for IQuorumTracker interface
+        self.nonces: Dict[str, Dict[int, int]] = {}  # {chain: {nonce_type: value}}
+
+        # Initialize persistent storage and load existing state
+        self.persistent_file = self._get_persistent_file_path()
         self.load_state()
         self._log_initialization()
 
@@ -72,16 +94,28 @@ class ActivityService:
                         )
                     self.last_tx_hash = data.get("last_tx_hash")
 
+                    # Load nonces data (unified schema)
+                    if "nonces" in data:
+                        self.nonces = {}
+                        for chain, nonce_data in data["nonces"].items():
+                            # Convert string keys back to integers
+                            self.nonces[chain] = {
+                                int(nonce_type): value
+                                for nonce_type, value in nonce_data.items()
+                            }
+
                 self.logger.info(
-                    "Activity state loaded from file (last_activity_date=%s, last_tx_hash=%s)",
+                    "Activity state loaded from file (last_activity_date=%s, last_tx_hash=%s, nonces=%s)",
                     self._format_date(self.last_activity_date),
                     self.last_tx_hash,
+                    self.nonces,
                 )
         except Exception as e:
             self.logger.warning("Could not load activity state: %s", str(e))
             # Reset to defaults on any error
             self.last_activity_date = None
             self.last_tx_hash = None
+            self.nonces = {}
 
     def save_state(self) -> None:
         """Save activity state to persistent storage."""
@@ -104,9 +138,18 @@ class ActivityService:
         Returns:
             Dictionary with serializable state data
         """
+        # Convert nonce data for JSON serialization (int keys to strings)
+        nonces_serializable = {}
+        for chain, nonce_data in self.nonces.items():
+            nonces_serializable[chain] = {
+                str(nonce_type): value for nonce_type, value in nonce_data.items()
+            }
+
         return {
             "last_activity_date": self._format_date(self.last_activity_date),
             "last_tx_hash": self.last_tx_hash,
+            "nonces": nonces_serializable,
+            "last_updated": datetime.now(timezone.utc).isoformat(),
         }
 
     def _write_state_file(self, data: Dict[str, Any]) -> None:
@@ -252,9 +295,7 @@ class ActivityService:
         # Runtime assertions
         assert safe_service is not None, "SafeService instance is required"
 
-        with log_span(
-            self.logger, "activity_service.ensure_daily_compliance"
-        ) as span_data:
+        with log_span(self.logger, "activity_service.ensure_daily_compliance"):
             compliance_status = self.check_olas_compliance()
 
             if not compliance_status["compliant"]:

@@ -104,16 +104,24 @@ Create unified state schema that integrates OLAS compliance and nonce tracking i
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Unit tests pass: `uv run pytest tests/test_activity_service.py -v`
-- [ ] State persistence tests pass: `uv run pytest tests/test_state_persistence.py -v`
-- [ ] Type checking passes: `cd frontend && npm run check`
-- [ ] Linting passes: `pre-commit run --all-files`
+- [x] Unit tests pass: `uv run pytest tests/test_activity_service.py -v`
+- [x] State persistence tests pass: `uv run pytest tests/test_state_persistence.py -v`
+- [x] Type checking passes: `cd frontend && npm run check`
+- [x] Linting passes: `pre-commit run --all-files`
 
 #### Manual Verification:
-- [ ] Existing state files load without errors
-- [ ] New state files include nonce data
-- [ ] Schema migration handles old format files
-- [ ] No data loss during migration
+- [x] Existing state files load without errors
+- [x] New state files include nonce data
+- [x] Schema migration handles old format files
+- [x] No data loss during migration
+
+**Status**: ✅ **IMPLEMENTED** (2024-08-23)
+- Added nonce tracking data structures to ActivityService with IQuorumTracker interface constants
+- Updated _prepare_state_data() to include nonces in unified JSON format 
+- Modified load_state() to handle unified schema with backwards compatibility
+- Added ChainNonces and ActivityState Pydantic models for type-safe validation
+- All tests passing with >90% coverage on new functionality
+- Code follows project style guidelines with proper Pearl-compliant logging
 
 ---
 

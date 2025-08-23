@@ -1041,3 +1041,68 @@ class TestHealthCheckResponse:
         assert response.is_tm_healthy is False
         assert response.rounds == [{"test": "data"}]
         assert response.rounds_info == {"key": "value"}
+
+
+class TestChainNoncesModel:
+    """Test ChainNonces model for nonce tracking (Phase 1)."""
+    
+    def test_chain_nonces_default_values(self):
+        """Test ChainNonces initializes with default values."""
+        # This test ensures the critical nonce model has correct defaults
+        from models import ChainNonces
+        
+        nonces = ChainNonces()
+        
+        # Critical assertions: all nonces default to 0
+        assert nonces.multisig_activity == 0
+        assert nonces.vote_attestations == 0  
+        assert nonces.voting_considered == 0
+        assert nonces.no_voting == 0
+        assert nonces.last_updated is not None
+        
+    def test_chain_nonces_validation_prevents_negative_values(self):
+        """Test ChainNonces validates non-negative nonce values."""
+        # This test ensures the critical validation prevents invalid nonce values
+        from models import ChainNonces
+        from pydantic import ValidationError
+        
+        # Critical validation: negative values should be rejected
+        with pytest.raises(ValidationError) as exc_info:
+            ChainNonces(multisig_activity=-1)
+        assert "greater than or equal to 0" in str(exc_info.value)
+        
+        with pytest.raises(ValidationError) as exc_info:
+            ChainNonces(vote_attestations=-5)
+        assert "greater than or equal to 0" in str(exc_info.value)
+
+
+class TestActivityStateModel:
+    """Test ActivityState model for unified state persistence (Phase 1)."""
+    
+    def test_activity_state_unified_schema(self):
+        """Test ActivityState combines OLAS compliance and nonce tracking."""
+        # This test ensures the critical unified model structure works correctly
+        from models import ActivityState, ChainNonces
+        from datetime import date
+        
+        # Create test nonce data
+        ethereum_nonces = ChainNonces(
+            multisig_activity=5,
+            vote_attestations=3,
+            voting_considered=10,
+            no_voting=2
+        )
+        
+        # Create unified activity state
+        state = ActivityState(
+            last_activity_date=date(2024, 1, 15),
+            last_tx_hash="0x123",
+            nonces={"ethereum": ethereum_nonces}
+        )
+        
+        # Critical assertions: unified schema includes both compliance and nonces
+        assert state.last_activity_date == date(2024, 1, 15)
+        assert state.last_tx_hash == "0x123"
+        assert "ethereum" in state.nonces
+        assert state.nonces["ethereum"].multisig_activity == 5
+        assert state.nonces["ethereum"].vote_attestations == 3

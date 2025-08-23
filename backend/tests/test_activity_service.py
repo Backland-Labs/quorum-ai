@@ -236,6 +236,99 @@ class TestActivityServiceActivityMarking:
         mock_file.assert_called_with("activity_tracker.json", 'w')
 
 
+class TestActivityServiceNonceTracking:
+    """Test ActivityService nonce tracking functionality (Phase 1)."""
+    
+    @patch("services.activity_service.settings")
+    @patch("os.path.exists")
+    def test_nonce_tracking_initialization(self, mock_exists, mock_settings):
+        """Test nonces are initialized as empty dict for multi-chain tracking."""
+        # This test ensures the core nonce tracking data structure is properly initialized
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        
+        # Critical assertion: nonces must be initialized as Dict[str, Dict[int, int]]
+        assert hasattr(service, 'nonces')
+        assert isinstance(service.nonces, dict)
+        assert service.nonces == {}
+        
+        # Verify nonce type constants are defined
+        assert hasattr(service, 'NONCE_MULTISIG_ACTIVITY')
+        assert hasattr(service, 'NONCE_VOTE_ATTESTATIONS')  
+        assert hasattr(service, 'NONCE_VOTING_CONSIDERED')
+        assert hasattr(service, 'NONCE_NO_VOTING')
+        
+        # Verify constant values match expected interface
+        assert service.NONCE_MULTISIG_ACTIVITY == 0
+        assert service.NONCE_VOTE_ATTESTATIONS == 1
+        assert service.NONCE_VOTING_CONSIDERED == 2
+        assert service.NONCE_NO_VOTING == 3
+        
+    @patch("services.activity_service.settings")
+    @patch("os.makedirs")
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_unified_state_data_includes_nonces(self, mock_exists, mock_file, mock_makedirs, mock_settings):
+        """Test _prepare_state_data includes nonces in unified format."""
+        # This test verifies the critical state persistence includes nonce data
+        mock_settings.store_path = None
+        mock_exists.return_value = False
+        
+        service = ActivityService()
+        service.last_activity_date = date(2024, 1, 15)
+        service.last_tx_hash = "0x123"
+        
+        # Set up nonce data for ethereum chain
+        service.nonces = {
+            "ethereum": {0: 5, 1: 3, 2: 10, 3: 2}
+        }
+        
+        # Reset mock to clear initialization calls
+        mock_file.reset_mock()
+        
+        service.save_state()
+        
+        # Verify file was written with unified state data
+        handle = mock_file()
+        all_written = ''.join(call[0][0] for call in handle.write.call_args_list)
+        json_start = all_written.find('{')
+        json_end = all_written.rfind('}') + 1
+        written_content = all_written[json_start:json_end]
+        parsed_data = json.loads(written_content)
+        
+        # Critical assertion: unified state includes both OLAS compliance and nonces
+        assert "last_activity_date" in parsed_data
+        assert "last_tx_hash" in parsed_data
+        assert "nonces" in parsed_data
+        assert "last_updated" in parsed_data
+        
+        # Verify nonce structure
+        assert parsed_data["nonces"]["ethereum"]["0"] == 5  # JSON keys are strings
+        assert parsed_data["nonces"]["ethereum"]["1"] == 3
+        
+    @patch("services.activity_service.settings")
+    @patch("services.activity_service.setup_pearl_logger")
+    @patch("builtins.open", new_callable=mock_open, read_data='{"last_activity_date": "2024-01-15", "last_tx_hash": "0x123", "nonces": {"ethereum": {"0": 5, "1": 3}}, "last_updated": "2024-01-15T10:30:00Z"}')
+    @patch("os.path.exists")
+    def test_load_state_handles_unified_schema(self, mock_exists, mock_file, mock_setup_logger, mock_settings):
+        """Test loading state with unified schema including nonces."""
+        # This test ensures backward compatibility and nonce loading works correctly
+        mock_settings.store_path = None
+        mock_exists.return_value = True
+        mock_setup_logger.return_value = get_mock_logger()
+        
+        service = ActivityService()
+        
+        # Critical assertions: both OLAS compliance and nonce data are loaded
+        assert service.last_activity_date == date(2024, 1, 15)
+        assert service.last_tx_hash == "0x123"
+        assert "ethereum" in service.nonces
+        assert service.nonces["ethereum"][0] == 5  # Converted from string keys
+        assert service.nonces["ethereum"][1] == 3
+
+
 class TestActivityServiceOLASCompliance:
     """Test ActivityService OLAS compliance checking."""
     
