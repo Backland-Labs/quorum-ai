@@ -545,6 +545,23 @@ class ActivityService:
         actual_ratio = self._calculate_activity_ratio(nonces, period_seconds)
         return actual_ratio >= liveness_ratio
 
+    def getVotingStats(self, multisig_address: str) -> List[int]:
+        """Get voting statistics for multisig address (IQuorumTracker interface compatibility).
+
+        Returns the last 3 nonce values: [vote_attestations, voting_considered, no_voting]
+        This method provides compatibility with IQuorumTracker interface by returning
+        indices 1, 2, 3 from the full nonce array.
+
+        Args:
+            multisig_address: Safe multisig address to get voting stats for
+
+        Returns:
+            List of 3 voting-related nonce values: [vote_attestations, voting_considered, no_voting]
+        """
+        nonces = self.getMultisigNonces(multisig_address)
+        # Return indices 1, 2, 3 (vote_attestations, voting_considered, no_voting)
+        return nonces[1:4]
+
     def _get_chain_for_safe(self, safe_address: str) -> Optional[str]:
         """Determine chain from Safe address.
 

@@ -1,0 +1,13 @@
+[
+  {
+    "type": "function",
+    "name": "getVotingStats",
+    "inputs": [
+      {"name": "multisig_address", "type": "address"}
+    ],
+    "outputs": [
+      {"name": "", "type": "uint256[]"}
+    ],
+    "stateMutability": "view"
+  }
+]
