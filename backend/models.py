@@ -1334,7 +1334,6 @@ class ActivityState(BaseModel):
         return v
 
 
-# Phase 5: API Endpoints - Response Models for Activity Service Nonce Tracking
 class NonceData(BaseModel):
     """Model for nonce data per chain with address and nonce values."""
 
