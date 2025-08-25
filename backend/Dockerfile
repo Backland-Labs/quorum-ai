@@ -23,6 +23,9 @@ COPY . .
 # Install the application
 RUN uv sync --frozen --no-dev
 
+# Make entrypoint script executable
+RUN chmod +x entrypoint.sh
+
 # Create non-root user for security with home directory
 RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m appuser
 RUN chown -R appuser:appuser /app
@@ -35,5 +38,5 @@ EXPOSE 8716
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8716/healthcheck || exit 1
 
-# Run the application
-CMD ["uv", "run", "main.py"]
+# Run the application using entrypoint script
+ENTRYPOINT ["./entrypoint.sh"]
