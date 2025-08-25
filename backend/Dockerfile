@@ -25,7 +25,11 @@ RUN uv sync --frozen --no-dev
 
 # Create non-root user for security with home directory
 RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m appuser
-RUN chown -R appuser:appuser /app
+
+# Make entrypoint script executable and set proper ownership
+RUN chmod +x entrypoint.sh && \
+    chown -R appuser:appuser /app
+
 USER appuser
 
 # Expose port
@@ -35,5 +39,5 @@ EXPOSE 8716
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8716/healthcheck || exit 1
 
-# Run the application
-CMD ["uv", "run", "main.py"]
+# Run the application using entrypoint script
+ENTRYPOINT ["./entrypoint.sh"]
