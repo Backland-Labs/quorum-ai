@@ -23,12 +23,13 @@ COPY . .
 # Install the application
 RUN uv sync --frozen --no-dev
 
-# Make entrypoint script executable
-RUN chmod +x entrypoint.sh
-
 # Create non-root user for security with home directory
 RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m appuser
-RUN chown -R appuser:appuser /app
+
+# Make entrypoint script executable and set proper ownership
+RUN chmod +x entrypoint.sh && \
+    chown -R appuser:appuser /app
+
 USER appuser
 
 # Expose port

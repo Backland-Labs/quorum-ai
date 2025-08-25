@@ -21,9 +21,6 @@ export PYTHONPATH=/app:$PYTHONPATH
 # Create logs directory if it doesn't exist
 mkdir -p /app/logs
 
-# Set proper permissions for logs directory
-chown -R "$(id -u):$(id -g)" /app/logs || true
-
 echo "Starting Quorum AI application..."
 echo "Environment: $(printenv | grep -E '^(DEBUG|HOST|HEALTH_CHECK_PORT|OPENROUTER_API_KEY)=' || echo 'No relevant env vars set')"
 
