@@ -10,10 +10,9 @@ import re
 import stat
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
-from logging_config import setup_pearl_logger
 from config import settings
+from logging_config import setup_pearl_logger
 
 logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
@@ -28,8 +27,6 @@ PRIVATE_KEY_PATTERN = re.compile(r"^(0x)?[a-fA-F0-9]{64}$")
 class KeyManagerError(Exception):
     """Base exception for KeyManager errors."""
 
-    pass
-
 
 class KeyManager:
     """Manages secure access to Ethereum private keys.
@@ -41,7 +38,7 @@ class KeyManager:
     - Secure error handling without exposing sensitive data
     """
 
-    def __init__(self, working_directory: Optional[str] = None):
+    def __init__(self, working_directory: str | None = None):
         """Initialize the KeyManager.
 
         Args:
@@ -49,8 +46,8 @@ class KeyManager:
         """
         self.working_directory = Path(working_directory or os.getcwd())
         self.key_file_path = self.working_directory / KEY_FILE_NAME
-        self._cached_key: Optional[str] = None
-        self._cache_timestamp: Optional[datetime] = None
+        self._cached_key: str | None = None
+        self._cache_timestamp: datetime | None = None
         logger.info(
             "KeyManager initialized",
             extra={"working_directory": str(self.working_directory)},
@@ -127,9 +124,8 @@ class KeyManager:
         """
         if not self.key_file_path.exists():
             logger.error("Key file not found")
-            raise KeyManagerError(
-                "Key file not found. Ensure the key file exists in the working directory."
-            )
+            msg = "Key file not found. Ensure the key file exists in the working directory."
+            raise KeyManagerError(msg)
 
     def _read_file_content(self) -> str:
         """Read and return the file content.
@@ -145,8 +141,9 @@ class KeyManager:
             logger.debug("Key file read successfully")
             return key_content
         except Exception as e:
-            logger.error(f"Failed to read key file: {type(e).__name__}")
-            raise KeyManagerError("Failed to read key file. Check file accessibility.")
+            logger.exception(f"Failed to read key file: {type(e).__name__}")
+            msg = "Failed to read key file. Check file accessibility."
+            raise KeyManagerError(msg)
 
     def _validate_file_permissions(self) -> None:
         """Validate that the key file has secure permissions.
@@ -160,17 +157,19 @@ class KeyManager:
 
             if file_mode != REQUIRED_PERMISSIONS:
                 logger.error("Key file has insecure permissions")
-                raise KeyManagerError(
+                msg = (
                     "Key file has insecure permissions. "
                     "File must have 600 permissions (read by owner only)."
                 )
+                raise KeyManagerError(msg)
 
             logger.debug("Key file permissions validated")
         except KeyManagerError:
             raise
         except Exception as e:
-            logger.error(f"Failed to check file permissions: {type(e).__name__}")
-            raise KeyManagerError("Failed to validate key file permissions.")
+            logger.exception(f"Failed to check file permissions: {type(e).__name__}")
+            msg = "Failed to validate key file permissions."
+            raise KeyManagerError(msg)
 
     def _validate_key_format(self, key: str) -> str:
         """Validate and normalize the private key format.
@@ -187,9 +186,8 @@ class KeyManager:
         # Check if key matches the expected format
         if not PRIVATE_KEY_PATTERN.match(key):
             logger.error("Invalid key format detected")
-            raise KeyManagerError(
-                "Invalid key format. Expected 64 hexadecimal characters."
-            )
+            msg = "Invalid key format. Expected 64 hexadecimal characters."
+            raise KeyManagerError(msg)
 
         # Normalize to include 0x prefix
         if not key.startswith("0x"):

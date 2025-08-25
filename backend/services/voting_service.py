@@ -1,14 +1,15 @@
 """Voting service for handling Snapshot DAO voting operations."""
 
-import time
 import logging
-from typing import Dict, Optional, Any, List
-from web3 import Web3
+import time
+from typing import Any
+
+import httpx
 from eth_account import Account
 from eth_account.messages import encode_typed_data
-import httpx
-from logging_config import setup_pearl_logger, log_span
+from web3 import Web3
 
+from logging_config import log_span, setup_pearl_logger
 
 # Constants for vote choices and API configuration
 VOTE_CHOICE_FOR = 1
@@ -38,8 +39,8 @@ class VotingService:
             key_manager: Optional KeyManager instance. If not provided, creates a new one.
         """
         # Initialize KeyManager
-        from services.key_manager import KeyManager
         from services.activity_service import ActivityService
+        from services.key_manager import KeyManager
 
         self.key_manager = key_manager or KeyManager()
 
@@ -69,8 +70,8 @@ class VotingService:
         return self._account
 
     def create_snapshot_vote_message(
-        self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
-    ) -> Dict[str, Any]:
+        self, space: str, proposal: str, choice: int, timestamp: int | None = None
+    ) -> dict[str, Any]:
         """Create a Snapshot vote message payload.
 
         Args:
@@ -117,7 +118,7 @@ class VotingService:
         proposal: str,
         choice: int,
         proposal_is_bytes32: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build the complete Snapshot message structure."""
         # Constants for empty values
         EMPTY_REASON = ""
@@ -164,7 +165,7 @@ class VotingService:
             },
         }
 
-    def sign_snapshot_message(self, snapshot_message: Dict[str, Any]) -> str:
+    def sign_snapshot_message(self, snapshot_message: dict[str, Any]) -> str:
         """Sign a Snapshot vote message with the EOA private key.
 
         Args:
@@ -200,8 +201,8 @@ class VotingService:
         return signature
 
     async def submit_vote_to_snapshot(
-        self, snapshot_message: Dict[str, Any], signature: str
-    ) -> Dict[str, Any]:
+        self, snapshot_message: dict[str, Any], signature: str
+    ) -> dict[str, Any]:
         """Send a signed vote to Snapshot Hub API.
 
         Args:
@@ -274,7 +275,7 @@ class VotingService:
                 }
 
             except Exception as e:
-                self.logger.error(f"Snapshot vote submission error: {e}")
+                self.logger.exception(f"Snapshot vote submission error: {e}")
                 return {"success": False, "error": str(e)}
 
     async def vote_on_proposal(
@@ -282,9 +283,9 @@ class VotingService:
         space: str,
         proposal: str,
         choice: int,
-        timestamp: Optional[int] = None,
+        timestamp: int | None = None,
         chain: str = "ethereum",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Complete workflow to vote on a Snapshot proposal.
 
         Args:
@@ -342,7 +343,7 @@ class VotingService:
                         f"Incremented vote attestation nonce for chain {chain}"
                     )
                 except Exception as e:
-                    self.logger.error(
+                    self.logger.exception(
                         f"Failed to increment vote attestation nonce for chain {chain}: {e}"
                     )
             else:
@@ -378,7 +379,7 @@ class VotingService:
         space: str = "spectradao.eth",
         proposal: str = "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237",
         choice: int = 1,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Test function for Snapshot voting workflow.
 
         Args:
@@ -445,13 +446,12 @@ class VotingService:
         """Save current service state for recovery."""
         # Voting service doesn't maintain persistent state
         # Votes are atomic operations that complete or fail
-        pass
 
     async def stop(self) -> None:
         """Stop the service gracefully."""
         # Clear any tracking of active votes
         self._active_votes.clear()
 
-    async def get_active_votes(self) -> List[Dict[str, Any]]:
+    async def get_active_votes(self) -> list[dict[str, Any]]:
         """Get list of active votes for shutdown coordination."""
         return self._active_votes.copy()

@@ -11,10 +11,11 @@ import json
 import os
 import shutil
 import tempfile
+from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 from logging_config import setup_pearl_logger
 
@@ -22,19 +23,13 @@ from logging_config import setup_pearl_logger
 class StateCorruptionError(Exception):
     """Raised when state file corruption is detected."""
 
-    pass
-
 
 class StateMigrationError(Exception):
     """Raised when state migration fails."""
 
-    pass
-
 
 class StatePermissionError(Exception):
     """Raised when file permissions are insufficient."""
-
-    pass
 
 
 @dataclass(frozen=True)
@@ -88,9 +83,9 @@ class StateVersion:
 class StateSchema:
     """Defines the schema for validating state data."""
 
-    required_fields: List[str]
-    field_types: Dict[str, type]
-    validators: Dict[str, Callable[[Any], bool]]
+    required_fields: list[str]
+    field_types: dict[str, type]
+    validators: dict[str, Callable[[Any], bool]]
 
 
 class StateManager:
@@ -116,13 +111,13 @@ class StateManager:
         self.backups_dir.mkdir(exist_ok=True)
 
         # Migration paths for legacy data
-        self._migration_paths: List[Path] = []
+        self._migration_paths: list[Path] = []
 
         # Registered migrations
-        self._migrations: Dict[Tuple[StateVersion, StateVersion], Callable] = {}
+        self._migrations: dict[tuple[StateVersion, StateVersion], Callable] = {}
 
         # File locks for concurrent access protection
-        self._locks: Dict[str, asyncio.Lock] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
 
         # Maximum number of backups to keep
         self.max_backups = 5
@@ -130,10 +125,10 @@ class StateManager:
     async def save_state(
         self,
         name: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         sensitive: bool = False,
-        schema: Optional[StateSchema] = None,
-        version: Optional[StateVersion] = None,
+        schema: StateSchema | None = None,
+        version: StateVersion | None = None,
     ) -> Path:
         """Save state data atomically."""
         # Validate schema if provided
@@ -154,7 +149,7 @@ class StateManager:
             # Prepare state data with metadata
             state_data = {
                 "version": str(version) if version else "1.0.0",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "data": data,
                 "checksum": self._calculate_checksum(data),
             }
@@ -174,7 +169,8 @@ class StateManager:
 
                 # Check if file is writable after creation
                 if not os.access(state_file, os.W_OK):
-                    raise PermissionError(f"State file {name} is not writable")
+                    msg = f"State file {name} is not writable"
+                    raise PermissionError(msg)
 
                 self.logger.info(f"Successfully saved state: {name}")
                 return state_file
@@ -183,17 +179,17 @@ class StateManager:
                 # Clean up temp file on error
                 if os.path.exists(temp_path):
                     os.unlink(temp_path)
-                self.logger.error(f"Failed to save state {name}: {e}")
+                self.logger.exception(f"Failed to save state {name}: {e}")
                 raise
 
     async def load_state(
         self,
         name: str,
         sensitive: bool = False,
-        schema: Optional[StateSchema] = None,
+        schema: StateSchema | None = None,
         allow_recovery: bool = False,
-        target_version: Optional[StateVersion] = None,
-    ) -> Optional[Dict[str, Any]]:
+        target_version: StateVersion | None = None,
+    ) -> dict[str, Any] | None:
         """Load state data with validation."""
         state_file = self.store_path / f"{name}.json"
 
@@ -217,16 +213,14 @@ class StateManager:
             return data
 
         except (json.JSONDecodeError, StateCorruptionError) as e:
-            self.logger.error(f"Failed to load state {name}: {e}")
+            self.logger.exception(f"Failed to load state {name}: {e}")
 
             if allow_recovery:
                 return await self._attempt_recovery(name)
 
             raise
 
-    async def _find_or_migrate_state(
-        self, name: str, state_file: Path
-    ) -> Optional[Path]:
+    async def _find_or_migrate_state(self, name: str, state_file: Path) -> Path | None:
         """Find state file or migrate from legacy location."""
         if state_file.exists():
             return state_file
@@ -244,15 +238,14 @@ class StateManager:
         stat_info = os.stat(state_file)
         permissions = stat_info.st_mode & 0o777
         if permissions != 0o600:
-            raise StatePermissionError(
-                f"State file {name} has insufficient permissions: {oct(permissions)}"
-            )
+            msg = f"State file {name} has insufficient permissions: {oct(permissions)}"
+            raise StatePermissionError(msg)
 
     async def _load_and_validate_state(
-        self, state_file: Path, name: str, target_version: Optional[StateVersion]
-    ) -> Dict[str, Any]:
+        self, state_file: Path, name: str, target_version: StateVersion | None
+    ) -> dict[str, Any]:
         """Load state data and validate integrity."""
-        with open(state_file, "r") as f:
+        with open(state_file) as f:
             state_data = json.load(f)
 
         # Verify checksum
@@ -260,7 +253,8 @@ class StateManager:
             expected_checksum = state_data["checksum"]
             actual_checksum = self._calculate_checksum(state_data["data"])
             if expected_checksum != actual_checksum:
-                raise StateCorruptionError(f"State file {name} has checksum mismatch")
+                msg = f"State file {name} has checksum mismatch"
+                raise StateCorruptionError(msg)
 
         data = state_data.get("data", state_data)  # Handle legacy format
 
@@ -274,7 +268,7 @@ class StateManager:
 
         return data
 
-    async def _attempt_recovery(self, name: str) -> Optional[Dict[str, Any]]:
+    async def _attempt_recovery(self, name: str) -> dict[str, Any] | None:
         """Attempt to recover from backup."""
         backups = await self.list_backups(name)
         if backups:
@@ -295,21 +289,20 @@ class StateManager:
         """Register a migration function between versions."""
         self._migrations[(from_version, to_version)] = migration_func
 
-    async def list_backups(self, name: str) -> List[Path]:
+    async def list_backups(self, name: str) -> list[Path]:
         """List available backups for a state file."""
         backup_pattern = f"{name}.*.backup"
-        backups = sorted(
+        return sorted(
             self.backups_dir.glob(backup_pattern),
             key=lambda p: p.stat().st_mtime,
             reverse=True,
         )
-        return backups
 
     async def restore_from_backup(
         self, _name: str, backup_path: Path
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Restore state from a specific backup."""
-        with open(backup_path, "r") as f:
+        with open(backup_path) as f:
             backup_data = json.load(f)
 
         # Verify backup integrity
@@ -317,7 +310,8 @@ class StateManager:
             expected_checksum = backup_data["checksum"]
             actual_checksum = self._calculate_checksum(backup_data["data"])
             if expected_checksum != actual_checksum:
-                raise StateCorruptionError(f"Backup {backup_path} is corrupted")
+                msg = f"Backup {backup_path} is corrupted"
+                raise StateCorruptionError(msg)
 
         return backup_data.get("data", backup_data)
 
@@ -326,38 +320,37 @@ class StateManager:
         # Release all locks
         self._locks.clear()
 
-    def _calculate_checksum(self, data: Dict[str, Any]) -> str:
+    def _calculate_checksum(self, data: dict[str, Any]) -> str:
         """Calculate SHA256 checksum of data."""
         json_str = json.dumps(data, sort_keys=True)
         return hashlib.sha256(json_str.encode()).hexdigest()
 
-    def _validate_schema(self, data: Dict[str, Any], schema: StateSchema) -> None:
+    def _validate_schema(self, data: dict[str, Any], schema: StateSchema) -> None:
         """Validate data against schema."""
         # Check required fields
         for field in schema.required_fields:
             if field not in data:
-                raise ValueError(
-                    f"Schema validation failed: missing required field '{field}'"
-                )
+                msg = f"Schema validation failed: missing required field '{field}'"
+                raise ValueError(msg)
 
         # Check field types
         for field, expected_type in schema.field_types.items():
             if field in data and not isinstance(data[field], expected_type):
-                raise ValueError(
+                msg = (
                     f"Schema validation failed: field '{field}' has wrong type. "
                     f"Expected {expected_type.__name__}, got {type(data[field]).__name__}"
                 )
+                raise ValueError(msg)
 
         # Run custom validators
         for field, validator in schema.validators.items():
             if field in data and not validator(data[field]):
-                raise ValueError(
-                    f"Schema validation failed: field '{field}' failed validation"
-                )
+                msg = f"Schema validation failed: field '{field}' failed validation"
+                raise ValueError(msg)
 
     async def _create_backup(self, name: str, state_file: Path) -> None:
         """Create a backup of the state file."""
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S_%f")
         backup_file = self.backups_dir / f"{name}.{timestamp}.backup"
 
         shutil.copy2(state_file, backup_file)
@@ -370,7 +363,7 @@ class StateManager:
 
     async def _migrate_legacy_file(self, legacy_file: Path, new_file: Path) -> None:
         """Migrate a legacy state file to the new format."""
-        with open(legacy_file, "r") as f:
+        with open(legacy_file) as f:
             data = json.load(f)
 
         # Save in new format
@@ -388,8 +381,8 @@ class StateManager:
         )
 
     async def _apply_migrations(
-        self, data: Dict[str, Any], from_version: StateVersion, to_version: StateVersion
-    ) -> Dict[str, Any]:
+        self, data: dict[str, Any], from_version: StateVersion, to_version: StateVersion
+    ) -> dict[str, Any]:
         """Apply migrations to upgrade data to target version."""
         current_data = data
 
@@ -415,13 +408,12 @@ class StateManager:
         """Save current service state (StateManager has no internal state to save)."""
         # StateManager itself doesn't maintain state that needs to be saved
         # It manages state for other services
-        pass
 
     async def stop(self) -> None:
         """Stop the service gracefully."""
         await self.cleanup()
 
-    async def list_files(self) -> List[str]:
+    async def list_files(self) -> list[str]:
         """List all state files in the store directory."""
         try:
             files = []
@@ -429,7 +421,7 @@ class StateManager:
                 files.append(file_path.name)
             return sorted(files)
         except Exception as e:
-            self.logger.error(f"Failed to list state files: {e}")
+            self.logger.exception(f"Failed to list state files: {e}")
             return []
 
 

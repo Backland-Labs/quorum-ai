@@ -7,11 +7,11 @@ against real Snapshot spaces with various configurations.
 """
 
 import json
-import time
 import sys
-from typing import Dict, List, Optional
-import requests
+import time
 from datetime import datetime
+
+import requests
 
 
 class AgentRunTester:
@@ -26,12 +26,12 @@ class AgentRunTester:
         try:
             response = requests.get(f"{self.api_url}/healthcheck")
             return response.status_code == 200
-        except:
+        except Exception:
             return False
 
     def test_agent_run(
         self, space_id: str, dry_run: bool = True, show_details: bool = True
-    ) -> Optional[Dict]:
+    ) -> dict | None:
         """Test the agent-run endpoint with a specific space."""
         print(f"\n{'='*60}")
         print("🔍 Testing Agent Run")
@@ -66,30 +66,29 @@ class AgentRunTester:
                 )
 
                 return data
-            else:
-                self._print_error_results(response, elapsed)
+            self._print_error_results(response, elapsed)
 
-                # Store error
-                self.results.append(
-                    {
-                        "space_id": space_id,
-                        "success": False,
-                        "error": response.text,
-                        "status_code": response.status_code,
-                        "elapsed": elapsed,
-                    }
-                )
+            # Store error
+            self.results.append(
+                {
+                    "space_id": space_id,
+                    "success": False,
+                    "error": response.text,
+                    "status_code": response.status_code,
+                    "elapsed": elapsed,
+                }
+            )
 
-                return None
+            return None
 
         except requests.exceptions.Timeout:
             print("❌ Request timed out after 60 seconds")
             return None
         except Exception as e:
-            print(f"❌ Error: {str(e)}")
+            print(f"❌ Error: {e!s}")
             return None
 
-    def _print_success_results(self, data: Dict, elapsed: float, show_details: bool):
+    def _print_success_results(self, data: dict, elapsed: float, show_details: bool):
         """Print successful test results."""
         print(f"\n✅ Success! (took {elapsed:.2f}s)")
         print("\n📊 Summary:")
@@ -139,10 +138,10 @@ class AgentRunTester:
                 print(f"   Error: {error_data['detail']}")
             else:
                 print(f"   Response: {json.dumps(error_data, indent=2)}")
-        except:
+        except Exception:
             print(f"   Response: {response.text}")
 
-    def test_multiple_spaces(self, spaces: List[str], dry_run: bool = True):
+    def test_multiple_spaces(self, spaces: list[str], dry_run: bool = True):
         """Test multiple spaces sequentially."""
         print(f"\n🚀 Testing {len(spaces)} spaces...")
 

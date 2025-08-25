@@ -1,20 +1,19 @@
 """Safe transaction service for handling multi-signature wallet operations."""
 
 import json
-from typing import Dict, Optional, Any
-from web3 import Web3
+from typing import Any
+
 from eth_account import Account
 from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
+from web3 import Web3
 
 from config import settings
-from utils.vote_encoder import encode_cast_vote, Support
-from services.governor_registry import get_governor, GovernorRegistryError
+from logging_config import log_span, setup_pearl_logger
 from models import EASAttestationData
-
-from logging_config import setup_pearl_logger, log_span
-
+from services.governor_registry import GovernorRegistryError, get_governor
+from utils.vote_encoder import Support, encode_cast_vote
 
 # Constants for Safe service URLs
 SAFE_SERVICE_URLS = {
@@ -55,7 +54,7 @@ class SafeService:
         }
 
         # Initialize account from private key
-        with open("ethereum_private_key.txt", "r") as f:
+        with open("ethereum_private_key.txt") as f:
             private_key = f.read().strip()
 
         self.account = Account.from_key(private_key)
@@ -95,11 +94,13 @@ class SafeService:
 
         rpc_url = self.rpc_endpoints.get(chain)
         if not rpc_url:
-            raise ValueError(f"No RPC endpoint configured for chain: {chain}")
+            msg = f"No RPC endpoint configured for chain: {chain}"
+            raise ValueError(msg)
 
         w3 = Web3(Web3.HTTPProvider(rpc_url))
         if not w3.is_connected():
-            raise ConnectionError(f"Failed to connect to {chain} network")
+            msg = f"Failed to connect to {chain} network"
+            raise ConnectionError(msg)
 
         self._web3_connections[chain] = w3
         return w3
@@ -126,15 +127,14 @@ class SafeService:
 
         # Fallback to first available
         available_chains = [
-            chain
-            for chain in self.safe_addresses.keys()
-            if chain in self.rpc_endpoints and self.rpc_endpoints[chain]
+            chain for chain in self.safe_addresses if self.rpc_endpoints.get(chain)
         ]
 
         if available_chains:
             return available_chains[0]
 
-        raise ValueError("No valid chain configuration found")
+        msg = "No valid chain configuration found"
+        raise ValueError(msg)
 
     async def _submit_safe_transaction(
         self,
@@ -144,7 +144,7 @@ class SafeService:
         value: int,
         data: bytes,
         operation: int = SAFE_OPERATION_CALL,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Submit a Safe transaction with the given parameters.
 
         Args:
@@ -173,7 +173,8 @@ class SafeService:
             try:
                 safe_address = self.safe_addresses.get(chain)
                 if not safe_address:
-                    raise ValueError(f"No Safe address configured for chain: {chain}")
+                    msg = f"No Safe address configured for chain: {chain}"
+                    raise ValueError(msg)
 
                 safe_address = Web3.to_checksum_address(safe_address)
 
@@ -187,9 +188,8 @@ class SafeService:
                 # Get Safe service for this chain
                 safe_service_url = SAFE_SERVICE_URLS.get(chain)
                 if not safe_service_url:
-                    raise ValueError(
-                        f"No Safe service URL configured for chain: {chain}"
-                    )
+                    msg = f"No Safe service URL configured for chain: {chain}"
+                    raise ValueError(msg)
 
                 safe_service = TransactionServiceApi(
                     network=chain,  # type: ignore
@@ -268,22 +268,21 @@ class SafeService:
                         "block_number": block_number,
                         "gas_used": gas_used,
                     }
-                else:
-                    self.logger.error(f"Transaction reverted (tx_hash={tx_hash_hex})")
-                    return {
-                        "success": False,
-                        "error": "Transaction reverted",
-                        "tx_hash": tx_hash_hex,
-                    }
+                self.logger.error(f"Transaction reverted (tx_hash={tx_hash_hex})")
+                return {
+                    "success": False,
+                    "error": "Transaction reverted",
+                    "tx_hash": tx_hash_hex,
+                }
 
             except Exception as e:
-                self.logger.error(f"Error creating Safe transaction: {str(e)}")
+                self.logger.exception(f"Error creating Safe transaction: {e!s}")
 
                 return {"success": False, "error": str(e)}
 
     async def perform_activity_transaction(
-        self, chain: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, chain: str | None = None
+    ) -> dict[str, Any]:
         """Perform Safe transaction for daily activity requirement.
 
         Creates a 0-ETH transaction from the Safe to itself to satisfy activity tracking.
@@ -321,7 +320,7 @@ class SafeService:
                     f"Incremented multisig activity nonce for chain {chain}"
                 )
             except Exception as e:
-                self.logger.error(
+                self.logger.exception(
                     f"Failed to increment multisig activity nonce for chain {chain}: {e}"
                 )
 
@@ -333,8 +332,8 @@ class SafeService:
         proposal_id: int,
         support: Support,
         reason: str = "",
-        chain: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        chain: str | None = None,
+    ) -> dict[str, Any]:
         """Cast a vote on a governor proposal via Safe multisig.
 
         Args:
@@ -389,7 +388,7 @@ class SafeService:
         except GovernorRegistryError as e:
             return {"success": False, "error": str(e)}
         except Exception as e:
-            self.logger.error(f"Error creating governor vote transaction: {e}")
+            self.logger.exception(f"Error creating governor vote transaction: {e}")
 
             return {"success": False, "error": str(e)}
 
@@ -409,7 +408,7 @@ class SafeService:
 
     async def build_safe_transaction(
         self, chain: str, to: str, value: int = 0, data: bytes = b"", operation: int = 0
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build a Safe transaction for execution.
 
         Args:
@@ -424,7 +423,8 @@ class SafeService:
         """
         safe_address = self.safe_addresses.get(chain)
         if not safe_address:
-            raise ValueError(f"No Safe address configured for chain: {chain}")
+            msg = f"No Safe address configured for chain: {chain}"
+            raise ValueError(msg)
 
         safe_address = Web3.to_checksum_address(safe_address)
         eth_client = EthereumClient(self.rpc_endpoints[chain])  # type: ignore
@@ -454,7 +454,7 @@ class SafeService:
 
     async def create_eas_attestation(
         self, attestation_data: EASAttestationData
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create an EAS attestation for a Snapshot vote.
 
         Args:
@@ -493,12 +493,12 @@ class SafeService:
             return {"success": True, "safe_tx_hash": result.get("hash")}
 
         except Exception as e:
-            self.logger.error(f"Failed to create EAS attestation: {str(e)}")
+            self.logger.exception(f"Failed to create EAS attestation: {e!s}")
             return {"success": False, "error": str(e)}
 
     def _build_eas_attestation_tx(
         self, attestation_data: EASAttestationData
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build EAS attestation transaction data.
 
         Args:
@@ -563,7 +563,7 @@ class SafeService:
         w3 = Web3()
 
         # Encode the attestation data
-        encoded = w3.codec.encode(
+        return w3.codec.encode(
             ["string", "string", "uint256", "bytes32"],
             [
                 attestation_data.proposal_id,
@@ -572,8 +572,6 @@ class SafeService:
                 Web3.to_bytes(hexstr=attestation_data.vote_tx_hash),
             ],
         )
-
-        return encoded
 
     def _load_eas_abi(self) -> list:
         """Load EAS contract ABI from file.
@@ -585,7 +583,7 @@ class SafeService:
 
         abi_path = os.path.join(os.path.dirname(__file__), "../abi/eas.json")
 
-        with open(abi_path, "r") as f:
+        with open(abi_path) as f:
             return json.load(f)
 
     def _get_web3_instance(self, chain: str) -> Web3:
@@ -599,6 +597,7 @@ class SafeService:
         """
         rpc_url = self.rpc_endpoints.get(chain)
         if not rpc_url:
-            raise ValueError(f"No RPC endpoint configured for chain: {chain}")
+            msg = f"No RPC endpoint configured for chain: {chain}"
+            raise ValueError(msg)
 
         return Web3(Web3.HTTPProvider(rpc_url))

@@ -5,31 +5,28 @@ import json
 import os
 import re
 import time
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import List, Optional, Tuple
 
-from datetime import datetime, timezone
-from logging_config import setup_pearl_logger, log_span
 from config import settings
-
+from logging_config import log_span, setup_pearl_logger
 from models import (
     AgentRunRequest,
     AgentRunResponse,
+    EASAttestationData,
     Proposal,
+    UserPreferences,
     VoteDecision,
     VoteType,
-    UserPreferences,
-    EASAttestationData,
 )
-from services.snapshot_service import SnapshotService
-from services.ai_service import AIService
-from services.voting_service import VotingService
-from services.safe_service import SafeService
-from services.user_preferences_service import UserPreferencesService
-from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
-from services.state_transition_tracker import StateTransitionTracker, AgentState
-
+from services.ai_service import AIService
+from services.proposal_filter import ProposalFilter
+from services.safe_service import SafeService
+from services.snapshot_service import SnapshotService
+from services.state_transition_tracker import AgentState, StateTransitionTracker
+from services.user_preferences_service import UserPreferencesService
+from services.voting_service import VotingService
 
 # Constants
 MAX_ATTESTATION_RETRIES = 3
@@ -39,25 +36,17 @@ MAX_ATTESTATION_RETRIES = 3
 class AgentRunServiceError(Exception):
     """Base exception for AgentRunService errors."""
 
-    pass
-
 
 class ProposalFetchError(AgentRunServiceError):
     """Raised when fetching active proposals fails."""
-
-    pass
 
 
 class VotingDecisionError(AgentRunServiceError):
     """Raised when making voting decisions fails."""
 
-    pass
-
 
 class VoteExecutionError(AgentRunServiceError):
     """Raised when executing votes fails."""
-
-    pass
 
 
 # Constants for better code clarity
@@ -97,7 +86,7 @@ class AgentRunService:
         # Initialize state transition tracker with StateManager for persistence
         self.state_tracker = StateTransitionTracker(
             state_manager=self.state_manager,
-            enable_state_manager=True if state_manager else False,
+            enable_state_manager=bool(state_manager),
             enable_pearl_logging=True,
         )
 
@@ -158,7 +147,7 @@ class AgentRunService:
             "agent_run_execution",
             space_id=request.space_id,
             dry_run=request.dry_run,
-        ) as span_data:
+        ):
             try:
                 # Process any pending attestations from previous runs
                 await self._process_pending_attestations(request.space_id)
@@ -272,7 +261,7 @@ class AgentRunService:
 
     async def _load_user_preferences(
         self, request: AgentRunRequest
-    ) -> Tuple[UserPreferences, Optional[str]]:
+    ) -> tuple[UserPreferences, str | None]:
         """Load user preferences with error handling.
 
         Args:
@@ -286,7 +275,7 @@ class AgentRunService:
             self.logger.log_agent_start(request, user_preferences)
             return user_preferences, None
         except Exception as e:
-            error_msg = f"Failed to load user preferences: {str(e)}"
+            error_msg = f"Failed to load user preferences: {e!s}"
             self.logger.log_error("load_preferences", e, space_id=request.space_id)
             # Use default preferences
             user_preferences = UserPreferences()
@@ -295,7 +284,7 @@ class AgentRunService:
 
     async def _fetch_and_process_proposals(
         self, space_id: str, user_preferences: UserPreferences
-    ) -> Tuple[List[Proposal], List[Proposal], List[str]]:
+    ) -> tuple[list[Proposal], list[Proposal], list[str]]:
         """Fetch and process proposals with filtering and ranking.
 
         Args:
@@ -315,7 +304,7 @@ class AgentRunService:
                 space_id, user_preferences.max_proposals_per_run
             )
         except Exception as e:
-            error_msg = f"Failed to fetch active proposals: {str(e)}"
+            error_msg = f"Failed to fetch active proposals: {e!s}"
             errors.append(error_msg)
             self.logger.log_error("fetch_proposals", e, space_id=space_id)
             return proposals, filtered_proposals, errors
@@ -328,7 +317,7 @@ class AgentRunService:
                 )
                 self.logger.log_proposals_fetched(proposals, len(filtered_proposals))
             except Exception as e:
-                error_msg = f"Failed to filter and rank proposals: {str(e)}"
+                error_msg = f"Failed to filter and rank proposals: {e!s}"
                 errors.append(error_msg)
                 self.logger.log_error("filter_proposals", e, space_id=space_id)
                 # Fall back to original proposals if filtering fails
@@ -338,12 +327,12 @@ class AgentRunService:
 
     async def _process_voting_decisions(
         self,
-        proposals: List[Proposal],
+        proposals: list[Proposal],
         user_preferences: UserPreferences,
         space_id: str,
         dry_run: bool,
         run_id: str,
-    ) -> Tuple[List[VoteDecision], List[VoteDecision], List[str]]:
+    ) -> tuple[list[VoteDecision], list[VoteDecision], list[str]]:
         """Make voting decisions and execute them.
 
         Args:
@@ -369,7 +358,7 @@ class AgentRunService:
                     f"No proposals available - incremented no_voting nonce for chain {default_chain}"
                 )
             except Exception as e:
-                self.pearl_logger.error(f"Failed to increment no_voting nonce: {e}")
+                self.pearl_logger.exception(f"Failed to increment no_voting nonce: {e}")
             return vote_decisions, final_decisions, errors
 
         # Make voting decisions
@@ -405,7 +394,7 @@ class AgentRunService:
                         },
                     )
             except Exception as e:
-                error_msg = f"Failed to make voting decisions: {str(e)}"
+                error_msg = f"Failed to make voting decisions: {e!s}"
                 errors.append(error_msg)
                 self.logger.log_error("make_decisions", e)
                 return vote_decisions, final_decisions, errors
@@ -417,7 +406,7 @@ class AgentRunService:
                     vote_decisions, space_id, dry_run, run_id
                 )
             except Exception as e:
-                error_msg = f"Failed to execute votes: {str(e)}"
+                error_msg = f"Failed to execute votes: {e!s}"
                 errors.append(error_msg)
                 self.logger.log_error("execute_votes", e)
 
@@ -426,11 +415,11 @@ class AgentRunService:
     def _create_agent_response(
         self,
         space_id: str,
-        filtered_proposals: List[Proposal],
-        vote_decisions: List[VoteDecision],
+        filtered_proposals: list[Proposal],
+        vote_decisions: list[VoteDecision],
         user_preferences_applied: bool,
         execution_time: float,
-        errors: List[str],
+        errors: list[str],
     ) -> AgentRunResponse:
         """Create the agent run response.
 
@@ -473,8 +462,8 @@ class AgentRunService:
         Returns:
             AgentRunResponse with error information
         """
-        error_msg = f"Unexpected error during agent run: {str(error)}"
-        self.pearl_logger.error(f"Unexpected agent run error: {str(error)}")
+        error_msg = f"Unexpected error during agent run: {error!s}"
+        self.pearl_logger.error(f"Unexpected agent run error: {error!s}")
         execution_time = time.time() - start_time
 
         return AgentRunResponse(
@@ -489,7 +478,7 @@ class AgentRunService:
 
     async def _fetch_active_proposals(
         self, space_id: str, limit: int
-    ) -> List[Proposal]:
+    ) -> list[Proposal]:
         """Fetch active proposals from the specified Snapshot space.
 
         Args:
@@ -539,16 +528,15 @@ class AgentRunService:
                 return proposals
 
             except Exception as e:
-                self.pearl_logger.error(
-                    f"Failed to fetch active proposals (space_id={space_id}, limit={limit}, error={str(e)})"
+                self.pearl_logger.exception(
+                    f"Failed to fetch active proposals (space_id={space_id}, limit={limit}, error={e!s})"
                 )
-                raise ProposalFetchError(
-                    f"Failed to fetch active proposals from {space_id}: {str(e)}"
-                ) from e
+                msg = f"Failed to fetch active proposals from {space_id}: {e!s}"
+                raise ProposalFetchError(msg) from e
 
     async def _filter_and_rank_proposals(
-        self, proposals: List[Proposal], preferences: UserPreferences
-    ) -> List[Proposal]:
+        self, proposals: list[Proposal], preferences: UserPreferences
+    ) -> list[Proposal]:
         """Filter and rank proposals based on user preferences and urgency.
 
         Args:
@@ -579,7 +567,7 @@ class AgentRunService:
             self.pearl_logger,
             "filter_and_rank_proposals",
             proposal_count=len(proposals),
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Starting proposal filtering and ranking (proposal_count={len(proposals)}, "
@@ -647,17 +635,16 @@ class AgentRunService:
                 return final_proposals
 
             except Exception as e:
-                self.pearl_logger.error(
+                self.pearl_logger.exception(
                     f"Failed to filter and rank proposals (proposal_count={len(proposals)}, "
-                    f"error={str(e)})"
+                    f"error={e!s})"
                 )
-                raise AgentRunServiceError(
-                    f"Failed to filter and rank proposals: {str(e)}"
-                ) from e
+                msg = f"Failed to filter and rank proposals: {e!s}"
+                raise AgentRunServiceError(msg) from e
 
     async def _make_voting_decisions(
-        self, proposals: List[Proposal], preferences: UserPreferences, space_id: str
-    ) -> List[VoteDecision]:
+        self, proposals: list[Proposal], preferences: UserPreferences, space_id: str
+    ) -> list[VoteDecision]:
         """Make voting decisions for the given proposals using AI and user preferences.
 
         Args:
@@ -687,7 +674,7 @@ class AgentRunService:
 
         with log_span(
             self.pearl_logger, "make_voting_decisions", proposal_count=len(proposals)
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Making voting decisions (proposal_count={len(proposals)}, "
@@ -731,7 +718,7 @@ class AgentRunService:
                                 f"Incremented voting_considered nonce for rejected proposal {proposal.id}"
                             )
                         except Exception as e:
-                            self.pearl_logger.error(
+                            self.pearl_logger.exception(
                                 f"Failed to increment voting_considered nonce for proposal {proposal.id}: {e}"
                             )
 
@@ -751,17 +738,16 @@ class AgentRunService:
                 return vote_decisions
 
             except Exception as e:
-                self.pearl_logger.error(
+                self.pearl_logger.exception(
                     f"Failed to make voting decisions (proposal_count={len(proposals)}, "
-                    f"error={str(e)})"
+                    f"error={e!s})"
                 )
-                raise VotingDecisionError(
-                    f"Failed to make voting decisions: {str(e)}"
-                ) from e
+                msg = f"Failed to make voting decisions: {e!s}"
+                raise VotingDecisionError(msg) from e
 
     async def _execute_votes(
-        self, decisions: List[VoteDecision], space_id: str, dry_run: bool, run_id: str
-    ) -> List[VoteDecision]:
+        self, decisions: list[VoteDecision], space_id: str, dry_run: bool, run_id: str
+    ) -> list[VoteDecision]:
         """Execute votes for the given decisions.
 
         Args:
@@ -798,7 +784,7 @@ class AgentRunService:
             space_id=space_id,
             decision_count=len(decisions),
             dry_run=dry_run,
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Executing votes (space_id={space_id}, decision_count={len(decisions)}, dry_run={dry_run})"
@@ -868,11 +854,12 @@ class AgentRunService:
                 return executed_decisions
 
             except Exception as e:
-                self.pearl_logger.error(
+                self.pearl_logger.exception(
                     f"Failed to execute votes (decision_count={len(decisions)}, "
-                    f"dry_run={dry_run}, error={str(e)})"
+                    f"dry_run={dry_run}, error={e!s})"
                 )
-                raise VoteExecutionError(f"Failed to execute votes: {str(e)}") from e
+                msg = f"Failed to execute votes: {e!s}"
+                raise VoteExecutionError(msg) from e
 
     async def close(self) -> None:
         """Close service resources."""
@@ -902,7 +889,7 @@ class AgentRunService:
             try:
                 await self._save_shutdown_state()
             except Exception as e:
-                self.pearl_logger.error(f"Failed to save shutdown state: {e}")
+                self.pearl_logger.exception(f"Failed to save shutdown state: {e}")
 
         # Close resources
         await self.close()
@@ -991,8 +978,8 @@ class AgentRunService:
                     processed_attestations.append(attestation["proposal_id"])
 
                 except Exception as e:
-                    self.pearl_logger.error(
-                        f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
+                    self.pearl_logger.exception(
+                        f"Failed to process attestation for proposal {attestation['proposal_id']}: {e!s}"
                     )
 
                     # Increment retry count and keep in queue
@@ -1011,8 +998,8 @@ class AgentRunService:
                 )
 
         except Exception as e:
-            self.pearl_logger.error(
-                f"Error processing pending attestations for space {space_id}: {str(e)}"
+            self.pearl_logger.exception(
+                f"Error processing pending attestations for space {space_id}: {e!s}"
             )
 
     async def _queue_attestation(
@@ -1054,7 +1041,7 @@ class AgentRunService:
                 "voter_address": voter_address,
                 "delegate_address": delegate_address,
                 "reasoning": decision.reasoning,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "retry_count": 0,
             }
 
@@ -1069,8 +1056,8 @@ class AgentRunService:
             )
 
         except Exception as e:
-            self.pearl_logger.error(
-                f"Failed to queue attestation for proposal {decision.proposal_id}: {str(e)}"
+            self.pearl_logger.exception(
+                f"Failed to queue attestation for proposal {decision.proposal_id}: {e!s}"
             )
             # Don't raise - attestation failures should not block voting
 
@@ -1131,7 +1118,7 @@ class AgentRunService:
         """
         return os.path.join(self.state_manager.store_path, "agent_checkpoint_*.json")
 
-    async def get_latest_checkpoint(self) -> Optional[dict]:
+    async def get_latest_checkpoint(self) -> dict | None:
         """Get the most recent checkpoint across all spaces.
 
         Returns:
@@ -1183,7 +1170,7 @@ class AgentRunService:
         """
         return self._active_run or self.state_tracker.current_state != AgentState.IDLE
 
-    async def get_all_checkpoint_data(self) -> List[dict]:
+    async def get_all_checkpoint_data(self) -> list[dict]:
         """Get data from all checkpoint files.
 
         Returns:
@@ -1208,7 +1195,7 @@ class AgentRunService:
 
     async def get_recent_decisions(
         self, limit: int = 5
-    ) -> List[Tuple[VoteDecision, str]]:
+    ) -> list[tuple[VoteDecision, str]]:
         """Get recent voting decisions from decision files.
 
         Args:
@@ -1235,7 +1222,7 @@ class AgentRunService:
             # Load and parse decision files
             for decision_file in decision_files[:limit]:
                 try:
-                    with open(decision_file, "r") as f:
+                    with open(decision_file) as f:
                         decision_data = json.load(f)
 
                     # Extract the timestamp
@@ -1276,7 +1263,7 @@ class AgentRunService:
             return all_decisions
 
         except Exception as e:
-            self.pearl_logger.error(f"Error retrieving recent decisions: {e}")
+            self.pearl_logger.exception(f"Error retrieving recent decisions: {e}")
             return []
 
     async def get_agent_run_statistics(self) -> dict:
@@ -1396,7 +1383,7 @@ class AgentRunService:
             }
 
         except Exception as e:
-            self.pearl_logger.error(f"Error calculating agent statistics: {e}")
+            self.pearl_logger.exception(f"Error calculating agent statistics: {e}")
             return {
                 "total_runs": 0,
                 "total_proposals_evaluated": 0,

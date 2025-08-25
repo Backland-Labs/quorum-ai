@@ -13,7 +13,7 @@ import threading
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -40,7 +40,7 @@ class StateTransition(BaseModel):
     from_state: AgentState
     to_state: AgentState
     timestamp: datetime
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class StateTransitionTracker:
@@ -101,10 +101,10 @@ class StateTransitionTracker:
         self,
         state_file_path: str = "agent_state.json",
         enable_pearl_logging: bool = False,
-        max_history_size: Optional[int] = 100,
+        max_history_size: int | None = 100,
         fast_transition_threshold: float = 0.5,
         fast_transition_window: int = 5,
-        state_manager: Optional[Any] = None,
+        state_manager: Any | None = None,
         enable_state_manager: bool = False,
         migrate_from_file: bool = False,
     ):
@@ -158,7 +158,7 @@ class StateTransitionTracker:
             self._load_or_initialize_state()
 
     def _log_state_transition_fallback(
-        self, from_state: str, to_state: str, metadata: Dict[str, Any]
+        self, from_state: str, to_state: str, metadata: dict[str, Any]
     ):
         """Fallback method for logging state transitions when PearlLogger is not available."""
         self.pearl_logger.info(
@@ -170,7 +170,7 @@ class StateTransitionTracker:
         """Load state from file or initialize with defaults."""
         if self.state_file_path.exists():
             try:
-                with open(self.state_file_path, "r") as f:
+                with open(self.state_file_path) as f:
                     data = json.load(f)
 
                 # Restore state
@@ -180,7 +180,7 @@ class StateTransitionTracker:
                 )
 
                 # Restore transition history
-                self.transition_history: List[StateTransition] = []
+                self.transition_history: list[StateTransition] = []
                 for transition_data in data.get("transition_history", []):
                     transition = StateTransition(
                         from_state=AgentState(transition_data["from_state"]),
@@ -199,12 +199,12 @@ class StateTransitionTracker:
         """Initialize tracker with default values."""
         self.current_state = AgentState.IDLE
         self.last_transition_time = datetime.now()
-        self.transition_history: List[StateTransition] = []
+        self.transition_history: list[StateTransition] = []
 
     def record_transition(
         self,
         new_state: AgentState,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
         validate_transition: bool = False,
     ):
         """
@@ -224,9 +224,8 @@ class StateTransitionTracker:
                 if self.current_state in self.VALID_TRANSITIONS:
                     allowed_states = self.VALID_TRANSITIONS[self.current_state]
                     if new_state not in allowed_states:
-                        raise ValueError(
-                            f"Invalid state transition: {self.current_state.value} -> {new_state.value}"
-                        )
+                        msg = f"Invalid state transition: {self.current_state.value} -> {new_state.value}"
+                        raise ValueError(msg)
 
             # Create transition record
             transition = StateTransition(
@@ -311,7 +310,7 @@ class StateTransitionTracker:
 
         return True
 
-    def get_recent_transitions(self, seconds: float) -> List[StateTransition]:
+    def get_recent_transitions(self, seconds: float) -> list[StateTransition]:
         """
         Get transitions that occurred within the specified time window.
 
@@ -338,14 +337,14 @@ class StateTransitionTracker:
         """Get the number of times the agent has entered an error state."""
         return sum(1 for t in self.transition_history if t.to_state == AgentState.ERROR)
 
-    def get_state_durations(self) -> Dict[AgentState, float]:
+    def get_state_durations(self) -> dict[AgentState, float]:
         """
         Calculate how long the agent spent in each state.
 
         Returns:
             Dictionary mapping states to total duration in seconds
         """
-        durations: Dict[AgentState, float] = {}
+        durations: dict[AgentState, float] = {}
 
         for i in range(len(self.transition_history)):
             transition = self.transition_history[i]
@@ -365,7 +364,7 @@ class StateTransitionTracker:
 
         return durations
 
-    def get_transition_statistics(self) -> Dict[str, Any]:
+    def get_transition_statistics(self) -> dict[str, Any]:
         """
         Get comprehensive statistics about state transitions.
 
@@ -379,8 +378,8 @@ class StateTransitionTracker:
         }
 
         # Count occurrences of each state
-        state_counts: Dict[AgentState, int] = {}
-        transition_pairs: Dict[tuple, int] = {}
+        state_counts: dict[AgentState, int] = {}
+        transition_pairs: dict[tuple, int] = {}
 
         for transition in self.transition_history:
             # Count destination states
@@ -401,9 +400,7 @@ class StateTransitionTracker:
 
         return stats
 
-    def transition(
-        self, new_state: AgentState, metadata: Optional[Dict[str, Any]] = None
-    ):
+    def transition(self, new_state: AgentState, metadata: dict[str, Any] | None = None):
         """
         Synchronous wrapper for record_transition for backward compatibility.
 
@@ -472,7 +469,9 @@ class StateTransitionTracker:
                 return True
         except Exception as e:
             if self.pearl_logger:
-                self.pearl_logger.error(f"Failed to load state from StateManager: {e}")
+                self.pearl_logger.exception(
+                    f"Failed to load state from StateManager: {e}"
+                )
 
         return False
 
@@ -495,7 +494,7 @@ class StateTransitionTracker:
                 )
         except Exception as e:
             if self.pearl_logger:
-                self.pearl_logger.error(f"Failed to migrate state: {e}")
+                self.pearl_logger.exception(f"Failed to migrate state: {e}")
             self._initialize_defaults()
 
     async def _persist_to_state_manager(self):
@@ -518,12 +517,14 @@ class StateTransitionTracker:
             await self.state_manager.save_state("agent_state_transitions", state_data)
         except Exception as e:
             if self.pearl_logger:
-                self.pearl_logger.error(f"Failed to persist state to StateManager: {e}")
+                self.pearl_logger.exception(
+                    f"Failed to persist state to StateManager: {e}"
+                )
 
     async def async_record_transition(
         self,
         new_state: AgentState,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
         validate_transition: bool = False,
     ):
         """
@@ -546,9 +547,8 @@ class StateTransitionTracker:
                 if self.current_state in self.VALID_TRANSITIONS:
                     allowed_states = self.VALID_TRANSITIONS[self.current_state]
                     if new_state not in allowed_states:
-                        raise ValueError(
-                            f"Invalid state transition: {self.current_state.value} -> {new_state.value}"
-                        )
+                        msg = f"Invalid state transition: {self.current_state.value} -> {new_state.value}"
+                        raise ValueError(msg)
 
             # Create transition record
             transition = StateTransition(

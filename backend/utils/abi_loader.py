@@ -12,10 +12,10 @@ Future work will use this loader when constructing on-chain vote transactions
 for governor contracts like Compound Bravo, OpenZeppelin Governor, etc.
 """
 
+import json
 from functools import lru_cache
 from pathlib import Path
-import json
-from typing import List, Dict, Any
+from typing import Any
 
 
 class ABILoaderError(Exception):
@@ -27,21 +27,25 @@ class ABILoader:
         self.abi_dir = Path(__file__).resolve().parent.parent / "abi"
 
     @lru_cache(maxsize=32)
-    def load(self, name: str) -> List[Dict[str, Any]]:
+    def load(self, name: str) -> list[dict[str, Any]]:
         abi_path = self.abi_dir / f"{name}.json"
 
         if not abi_path.exists():
-            raise ABILoaderError(f"ABI '{name}' not found")
+            msg = f"ABI '{name}' not found"
+            raise ABILoaderError(msg)
 
         try:
-            with open(abi_path, "r") as f:
+            with open(abi_path) as f:
                 abi = json.load(f)
 
             if not isinstance(abi, list):
-                raise ABILoaderError(f"Invalid ABI format for '{name}': expected list")
+                msg = f"Invalid ABI format for '{name}': expected list"
+                raise ABILoaderError(msg)
 
             return abi
         except json.JSONDecodeError as e:
-            raise ABILoaderError(f"Invalid JSON in ABI '{name}': {e}")
+            msg = f"Invalid JSON in ABI '{name}': {e}"
+            raise ABILoaderError(msg)
         except Exception as e:
-            raise ABILoaderError(f"Error loading ABI '{name}': {e}")
+            msg = f"Error loading ABI '{name}': {e}"
+            raise ABILoaderError(msg)

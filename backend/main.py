@@ -4,46 +4,45 @@ import hashlib
 import os
 import time
 from contextlib import asynccontextmanager
-from typing import List, Optional, Any
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from logging_config import setup_pearl_logger, log_span
-
 from config import settings
+from logging_config import log_span, setup_pearl_logger
 from models import (
-    AgentRunRequest,
-    AgentRunResponse,
-    AgentRunStatus,
     AgentDecisionResponse,
     AgentDecisionsResponse,
+    AgentRunRequest,
+    AgentRunResponse,
     AgentRunStatistics,
+    AgentRunStatus,
+    EligibilityResponse,
+    NonceData,
+    NonceResponse,
     Proposal,
     ProposalTopVoters,
     ProposalVoter,
-    Vote,
-    VoteType,
     SummarizeRequest,
     SummarizeResponse,
     UserPreferences,
-    NonceResponse,
-    NonceData,
-    EligibilityResponse,
+    Vote,
+    VoteType,
 )
-from services.ai_service import AIService
-from services.agent_run_service import AgentRunService
-from services.safe_service import SafeService
 from services.activity_service import ActivityService
-from services.user_preferences_service import UserPreferencesService
-from services.voting_service import VotingService
+from services.agent_run_service import AgentRunService
+from services.ai_service import AIService
+from services.health_status_service import HealthStatusService
+from services.safe_service import SafeService
+from services.signal_handler import ShutdownCoordinator, SignalHandler
 from services.snapshot_service import SnapshotService
 from services.state_manager import StateManager
-from services.signal_handler import SignalHandler, ShutdownCoordinator
-from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
-from services.health_status_service import HealthStatusService
+from services.user_preferences_service import UserPreferencesService
+from services.voting_service import VotingService
+from services.withdrawal_service import WithdrawalService
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -60,8 +59,8 @@ state_manager: StateManager
 signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
-state_transition_tracker: Optional[StateTransitionTracker] = None
-health_status_service: Optional[HealthStatusService] = None
+state_transition_tracker: StateTransitionTracker | None = None
+health_status_service: HealthStatusService | None = None
 
 
 @asynccontextmanager
@@ -115,7 +114,7 @@ async def lifespan(_app: FastAPI):
         else:
             logger.info("HealthStatusService disabled via HEALTH_CHECK_ENABLED=False")
     except Exception as e:
-        logger.error(f"Failed to initialize HealthStatusService: {e}")
+        logger.exception(f"Failed to initialize HealthStatusService: {e}")
         health_status_service = None
 
     # Initialize signal handling
@@ -143,7 +142,7 @@ async def lifespan(_app: FastAPI):
             state = await shutdown_coordinator.recover_state()
             logger.info(f"Recovered state from previous run: {state['timestamp']}")
         except Exception as e:
-            logger.error(f"Failed to recover state: {e}")
+            logger.exception(f"Failed to recover state: {e}")
 
     logger.info("Application started version=0.1.0")
 
@@ -153,7 +152,7 @@ async def lifespan(_app: FastAPI):
         try:
             await withdrawal_service.run_withdrawal_process()
         except Exception as e:
-            logger.error(f"Withdrawal process failed: {e}")
+            logger.exception(f"Withdrawal process failed: {e}")
     else:
         # Normal operation mode - run agent if configured
         logger.info("Normal operation mode - agent runs will proceed as configured")
@@ -167,7 +166,7 @@ async def lifespan(_app: FastAPI):
     try:
         await shutdown_coordinator.shutdown()
     except Exception as e:
-        logger.error(f"Error during graceful shutdown: {e}")
+        logger.exception(f"Error during graceful shutdown: {e}")
 
     # Cleanup state manager
     await state_manager.cleanup()
@@ -204,7 +203,7 @@ async def general_exception_handler(request, exc):
 
     # Log the full exception details
     logger.error(
-        f"Unhandled exception error={str(exc)} path={str(request.url)} "
+        f"Unhandled exception error={exc!s} path={request.url!s} "
         f"method={request.method} exception_type={type(exc).__name__}\n"
         f"Traceback:\n{tb_str}"
     )
@@ -368,7 +367,7 @@ async def healthcheck():
 
     except Exception as e:
         # Handle errors gracefully - return safe defaults
-        logger.error(f"Error in healthcheck endpoint: {str(e)}")
+        logger.exception(f"Error in healthcheck endpoint: {e!s}")
 
         # Get safe defaults for Pearl compliance fields
         pearl_defaults = await _get_pearl_compliance_fields()
@@ -389,7 +388,7 @@ async def healthcheck():
 @app.get("/proposals")
 async def get_proposals(
     space_id: str = Query(..., description="Snapshot space ID to fetch proposals from"),
-    state: Optional[str] = Query(default=None),
+    state: str | None = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     skip: int = Query(default=0, ge=0, description="Number of proposals to skip"),
 ):
@@ -413,10 +412,8 @@ async def get_proposals(
             }
 
     except Exception as e:
-        logger.error(f"Failed to fetch proposals error={str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch proposals: {str(e)}"
-        )
+        logger.exception(f"Failed to fetch proposals error={e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch proposals: {e!s}")
 
 
 @app.get("/proposals/{proposal_id}", response_model=Proposal)
@@ -436,12 +433,10 @@ async def get_proposal_by_id(proposal_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(
-            f"Failed to fetch proposal proposal_id={proposal_id} error={str(e)}"
+        logger.exception(
+            f"Failed to fetch proposal proposal_id={proposal_id} error={e!s}"
         )
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch proposal: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to fetch proposal: {e!s}")
 
 
 # AI Summarization endpoints
@@ -492,13 +487,13 @@ async def summarize_proposals(request: SummarizeRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(
-            f"Failed to summarize proposals error={str(e)} "
+        logger.exception(
+            f"Failed to summarize proposals error={e!s} "
             f"exception_type={type(e).__name__} "
             f"proposal_ids={request.proposal_ids}"
         )
         raise HTTPException(
-            status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
+            status_code=500, detail=f"Failed to summarize proposals: {e!s}"
         )
 
 
@@ -538,11 +533,11 @@ async def get_proposal_top_voters(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(
-            f"Failed to fetch proposal top voters proposal_id={proposal_id} error={str(e)}"
+        logger.exception(
+            f"Failed to fetch proposal top voters proposal_id={proposal_id} error={e!s}"
         )
         raise HTTPException(
-            status_code=500, detail=f"Failed to fetch proposal top voters: {str(e)}"
+            status_code=500, detail=f"Failed to fetch proposal top voters: {e!s}"
         )
 
 
@@ -591,11 +586,11 @@ async def agent_run(request: AgentRunRequest):
             return response
 
     except Exception as e:
-        logger.error(
-            f"Failed to execute agent run space_id={request.space_id} error={str(e)}"
+        logger.exception(
+            f"Failed to execute agent run space_id={request.space_id} error={e!s}"
         )
         raise HTTPException(
-            status_code=500, detail=f"Failed to execute agent run: {str(e)}"
+            status_code=500, detail=f"Failed to execute agent run: {e!s}"
         )
 
 
@@ -634,7 +629,7 @@ async def get_agent_run_status():
             )
 
     except Exception as e:
-        logger.error(f"Error getting agent run status: {str(e)}")
+        logger.exception(f"Error getting agent run status: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -688,7 +683,7 @@ async def get_agent_run_decisions(limit: int = Query(5, ge=1, le=100)):
             return AgentDecisionsResponse(decisions=enriched_decisions)
 
     except Exception as e:
-        logger.error(f"Error getting agent decisions: {e}")
+        logger.exception(f"Error getting agent decisions: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to retrieve agent decisions"
         )
@@ -705,7 +700,7 @@ async def get_agent_run_statistics():
         stats = await agent_run_service.get_agent_run_statistics()
         return AgentRunStatistics(**stats)
     except Exception as e:
-        logger.error(f"Error getting agent statistics: {e}")
+        logger.exception(f"Error getting agent statistics: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to calculate agent statistics"
         )
@@ -739,7 +734,7 @@ async def get_all_nonces():
             return NonceResponse(data=nonces_data, status="success")
 
     except Exception as e:
-        logger.error(f"Failed to get nonces error={str(e)}")
+        logger.exception(f"Failed to get nonces error={e!s}")
         raise HTTPException(
             status_code=500,
             detail={"error": "Internal Server Error", "message": str(e)},
@@ -803,7 +798,7 @@ async def check_eligibility(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to check eligibility chain={chain} error={str(e)}")
+        logger.exception(f"Failed to check eligibility chain={chain} error={e!s}")
         raise HTTPException(
             status_code=500,
             detail={"error": "Internal Server Error", "message": str(e)},
@@ -841,9 +836,9 @@ async def get_activity_status():
             return status
 
     except Exception as e:
-        logger.error(f"Failed to get activity status error={str(e)}")
+        logger.exception(f"Failed to get activity status error={e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get activity status: {str(e)}"
+            status_code=500, detail=f"Failed to get activity status: {e!s}"
         )
 
 
@@ -887,7 +882,7 @@ def _build_cache_headers(proposal: Proposal, response_data: ProposalTopVoters) -
     return headers
 
 
-def _transform_snapshot_votes_to_voters(votes: List[Vote]) -> List[ProposalVoter]:
+def _transform_snapshot_votes_to_voters(votes: list[Vote]) -> list[ProposalVoter]:
     """Transform Snapshot Vote objects to ProposalVoter objects."""
     voters = []
     for vote in votes:
@@ -910,9 +905,8 @@ def _map_snapshot_choice_to_vote_type(choice: Any) -> VoteType:
 
     if isinstance(choice, int):
         return SNAPSHOT_CHOICE_MAP.get(choice, DEFAULT_VOTE_TYPE)
-    else:
-        # If choice is not an int, default to FOR
-        return DEFAULT_VOTE_TYPE
+    # If choice is not an int, default to FOR
+    return DEFAULT_VOTE_TYPE
 
 
 def _convert_voting_power_to_wei(voting_power: float) -> str:
@@ -924,7 +918,7 @@ def _convert_voting_power_to_wei(voting_power: float) -> str:
 # Private helper functions
 
 
-async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:
+async def _fetch_proposals_for_summarization(proposal_ids: list[str]) -> list[Proposal]:
     """Fetch proposals for summarization using Snapshot."""
     with log_span(logger, "fetch_proposals_for_summarization"):
         proposals = []
@@ -941,7 +935,7 @@ async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Pr
         return proposals
 
 
-async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
+async def _generate_proposal_summaries(proposals: list[Proposal]) -> list:
     """Generate AI summaries for proposals."""
     with log_span(logger, "generate_proposal_summaries"):
         summaries = await ai_service.summarize_multiple_proposals(proposals)
@@ -1006,9 +1000,9 @@ async def get_user_preferences():
         except HTTPException:
             raise
         except Exception as e:
-            logger.error(f"Failed to load user preferences error={str(e)}")
+            logger.exception(f"Failed to load user preferences error={e!s}")
             raise HTTPException(
-                status_code=500, detail=f"Failed to load user preferences: {str(e)}"
+                status_code=500, detail=f"Failed to load user preferences: {e!s}"
             )
 
 
@@ -1039,9 +1033,9 @@ async def update_user_preferences(preferences: UserPreferences):
             return preferences
 
         except Exception as e:
-            logger.error(f"Failed to save user preferences error={str(e)}")
+            logger.exception(f"Failed to save user preferences error={e!s}")
             raise HTTPException(
-                status_code=500, detail=f"Failed to save user preferences: {str(e)}"
+                status_code=500, detail=f"Failed to save user preferences: {e!s}"
             )
 
 
@@ -1072,7 +1066,7 @@ async def get_monitored_daos():
             return JSONResponse(content=response, headers=headers)
 
     except Exception as e:
-        logger.error(f"Failed to fetch monitored DAOs error={str(e)}")
+        logger.exception(f"Failed to fetch monitored DAOs error={e!s}")
         raise HTTPException(
             status_code=500, detail="Failed to fetch monitored DAO configuration"
         )

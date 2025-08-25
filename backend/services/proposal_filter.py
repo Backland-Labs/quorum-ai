@@ -7,9 +7,9 @@ make intelligent decisions about which proposals to analyze and vote on.
 
 import math
 import time
-from typing import List, Dict, Any
+from typing import Any
 
-from logging_config import setup_pearl_logger, log_span
+from logging_config import log_span, setup_pearl_logger
 from models import Proposal, UserPreferences
 
 # Setup Pearl logger for this module
@@ -18,8 +18,6 @@ logger = setup_pearl_logger(__name__)
 
 class ProposalFilterError(Exception):
     """Base exception for ProposalFilter errors."""
-
-    pass
 
 
 class ProposalFilter:
@@ -56,7 +54,7 @@ class ProposalFilter:
             },
         )
 
-    def filter_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
+    def filter_proposals(self, proposals: list[Proposal]) -> list[Proposal]:
         """Filter proposals based on user preferences.
 
         This method applies user-defined filtering criteria:
@@ -147,7 +145,7 @@ class ProposalFilter:
 
             return filtered_proposals
 
-    def rank_proposals(self, proposals: List[Proposal]) -> List[Proposal]:
+    def rank_proposals(self, proposals: list[Proposal]) -> list[Proposal]:
         """Rank proposals by importance and urgency.
 
         This method ranks proposals based on:
@@ -333,7 +331,7 @@ class ProposalFilter:
             Float voting power factor (normalized)
         """
         # Runtime assertion: validate input
-        assert isinstance(scores_total, (int, float)), "Scores total must be numeric"
+        assert isinstance(scores_total, int | float), "Scores total must be numeric"
         assert scores_total >= 0.0, "Scores total cannot be negative"
 
         # Normalize voting power using logarithmic scale
@@ -391,8 +389,8 @@ class ProposalFilter:
         return participation_factor
 
     def get_filtering_metrics(
-        self, original_proposals: List[Proposal], filtered_proposals: List[Proposal]
-    ) -> Dict[str, Any]:
+        self, original_proposals: list[Proposal], filtered_proposals: list[Proposal]
+    ) -> dict[str, Any]:
         """Get metrics about the filtering process for response inclusion.
 
         Args:
@@ -439,7 +437,7 @@ class ProposalFilter:
         # Runtime assertion: validate output
         assert isinstance(metrics, dict), "Metrics must be a dictionary"
         assert all(
-            isinstance(k, str) for k in metrics.keys()
+            isinstance(k, str) for k in metrics
         ), "All metric keys must be strings"
 
         return metrics

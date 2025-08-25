@@ -1,7 +1,7 @@
 """Configuration management following 12-factor app principles."""
 
 import os
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     }
 
     # Pearl logging constants
-    VALID_LOG_LEVELS: ClassVar[List[str]] = ["DEBUG", "INFO", "WARNING", "ERROR"]
+    VALID_LOG_LEVELS: ClassVar[list[str]] = ["DEBUG", "INFO", "WARNING", "ERROR"]
     DEFAULT_LOG_LEVEL: ClassVar[str] = "INFO"
     DEFAULT_LOG_FILE_PATH: ClassVar[str] = "log.txt"
 
@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    anthropic_api_key: Optional[str] = None
+    anthropic_api_key: str | None = None
     ai_model: str = "openai:gpt-4o-mini"
 
     # Pearl logging settings
@@ -68,7 +68,7 @@ class Settings(BaseSettings):
     request_timeout: int = 30
 
     # OpenRouter configuration
-    openrouter_api_key: Optional[str] = None
+    openrouter_api_key: str | None = None
 
     # Snapshot API configuration
     snapshot_graphql_endpoint: str = Field(
@@ -78,14 +78,14 @@ class Settings(BaseSettings):
     )
 
     # Olas-specific configuration fields
-    snapshot_api_key: Optional[str] = Field(
+    snapshot_api_key: str | None = Field(
         default=None, description="Snapshot API key for enhanced rate limits"
     )
     voting_strategy: str = Field(
         default="balanced",
         description="Voting strategy: balanced, conservative, or aggressive",
     )
-    dao_addresses: List[str] = Field(
+    dao_addresses: list[str] = Field(
         default_factory=list, description="List of DAO addresses to monitor"
     )
 
@@ -100,10 +100,10 @@ class Settings(BaseSettings):
     # Safe wallet configuration
     # the safe_addresses come from the pearl runtime env
     # the agent_address comes from The private key is stored in a file called ethereum_private_key.txt in the agent's working directory
-    safe_addresses: Dict[str, str] = Field(
+    safe_addresses: dict[str, str] = Field(
         default_factory=dict, description="Parsed from SAFE_CONTRACT_ADDRESSES"
     )
-    agent_address: Optional[str] = Field(
+    agent_address: str | None = Field(
         default=None, description="The agent's EOA address"
     )
 
@@ -135,17 +135,17 @@ class Settings(BaseSettings):
     )
 
     # Staking contracts (from Olas env vars)
-    staking_token_contract_address: Optional[str] = Field(
+    staking_token_contract_address: str | None = Field(
         default=None,
         alias="STAKING_TOKEN_CONTRACT_ADDRESS",
         description="Olas staking token contract",
     )
-    activity_checker_contract_address: Optional[str] = Field(
+    activity_checker_contract_address: str | None = Field(
         default=None,
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
         description="Olas activity checker contract",
     )
-    service_registry_token_utility_contract: Optional[str] = Field(
+    service_registry_token_utility_contract: str | None = Field(
         default=None,
         alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
         description="Olas service registry contract",
@@ -157,7 +157,7 @@ class Settings(BaseSettings):
         alias="SAFE_CONTRACT_ADDRESSES",
         description="JSON string of Safe addresses by chain",
     )
-    store_path: Optional[str] = Field(
+    store_path: str | None = Field(
         default=None,
         alias="STORE_PATH",
         description="Path for persistent data storage",
@@ -238,27 +238,27 @@ class Settings(BaseSettings):
     )
 
     # RPC endpoints for multiple chains
-    ethereum_ledger_rpc: Optional[str] = Field(
+    ethereum_ledger_rpc: str | None = Field(
         default=None,
         alias="ETHEREUM_LEDGER_RPC",
         description="Ethereum RPC endpoint",
     )
-    gnosis_ledger_rpc: Optional[str] = Field(
+    gnosis_ledger_rpc: str | None = Field(
         default=None,
         alias="GNOSIS_LEDGER_RPC",
         description="Gnosis chain RPC endpoint",
     )
-    base_ledger_rpc: Optional[str] = Field(
+    base_ledger_rpc: str | None = Field(
         default=None,
         alias="BASE_LEDGER_RPC",
         description="Base chain RPC endpoint",
     )
-    mode_ledger_rpc: Optional[str] = Field(
+    mode_ledger_rpc: str | None = Field(
         default=None,
         alias="MODE_LEDGER_RPC",
         description="Mode chain RPC endpoint",
     )
-    celo_ledger_rpc: Optional[str] = Field(
+    celo_ledger_rpc: str | None = Field(
         default=None,
         alias="CELO_LEDGER_RPC",
         description="Celo chain RPC endpoint",
@@ -267,7 +267,7 @@ class Settings(BaseSettings):
     # Default chain for nonce tracking and voting operations
     default_chain: str = Field(
         default="ethereum",
-        alias="DEFAULT_CHAIN", 
+        alias="DEFAULT_CHAIN",
         description="Default blockchain chain for nonce tracking and voting operations",
     )
 
@@ -286,22 +286,22 @@ class Settings(BaseSettings):
         return self.celo_ledger_rpc or ""
 
     # EAS (Ethereum Attestation Service) configuration
-    eas_contract_address: Optional[str] = Field(
+    eas_contract_address: str | None = Field(
         default=None,
         alias="EAS_CONTRACT_ADDRESS",
         description="EAS contract address on Base network",
     )
-    eas_schema_uid: Optional[str] = Field(
+    eas_schema_uid: str | None = Field(
         default=None,
         alias="EAS_SCHEMA_UID",
         description="EAS schema UID for vote attestations",
     )
-    base_safe_address: Optional[str] = Field(
+    base_safe_address: str | None = Field(
         default=None,
         alias="BASE_SAFE_ADDRESS",
         description="Agent's Gnosis Safe address on Base network",
     )
-    base_rpc_url: Optional[str] = Field(
+    base_rpc_url: str | None = Field(
         default=None,
         alias="BASE_RPC_URL",
         description="Base network RPC endpoint (alternative to BASE_LEDGER_RPC)",
@@ -316,9 +316,8 @@ class Settings(BaseSettings):
         if isinstance(v, str):
             v = v.upper().strip()
             if v not in cls.VALID_LOG_LEVELS:
-                raise ValueError(
-                    f"Invalid log level: {v}. Must be one of {cls.VALID_LOG_LEVELS}"
-                )
+                msg = f"Invalid log level: {v}. Must be one of {cls.VALID_LOG_LEVELS}"
+                raise ValueError(msg)
             return v
         return cls.DEFAULT_LOG_LEVEL
 
@@ -330,7 +329,8 @@ class Settings(BaseSettings):
             return cls.DEFAULT_LOG_FILE_PATH
         if isinstance(v, str):
             if v.strip().lower() == "none":
-                raise ValueError("Log file path cannot be empty")
+                msg = "Log file path cannot be empty"
+                raise ValueError(msg)
             return v.strip()
         return cls.DEFAULT_LOG_FILE_PATH
 
@@ -343,13 +343,13 @@ class Settings(BaseSettings):
         try:
             timeout = int(v)
             if timeout <= 0:
-                raise ValueError(
-                    f"Health check timeout must be positive, got {timeout}"
-                )
+                msg = f"Health check timeout must be positive, got {timeout}"
+                raise ValueError(msg)
             return timeout
         except (ValueError, TypeError):
             if isinstance(v, str) and not v.isdigit():
-                raise ValueError(f"Invalid timeout value: {v}")
+                msg = f"Invalid timeout value: {v}"
+                raise ValueError(msg)
             raise
 
     @field_validator("HEALTH_CHECK_ENABLED", mode="before")
@@ -363,11 +363,12 @@ class Settings(BaseSettings):
         if isinstance(v, str):
             if v.lower() in ["true", "1", "yes"]:
                 return True
-            elif v.lower() in ["false", "0", "no"]:
+            if v.lower() in ["false", "0", "no"]:
                 return False
-        if isinstance(v, (int, float)):
+        if isinstance(v, int | float):
             return bool(v)
-        raise ValueError(f"Health check enabled must be boolean, got {type(v)}: {v}")
+        msg = f"Health check enabled must be boolean, got {type(v)}: {v}"
+        raise ValueError(msg)
 
     @field_validator("PEARL_LOG_FORMAT", mode="before")
     @classmethod
@@ -379,7 +380,8 @@ class Settings(BaseSettings):
             )
         if isinstance(v, str):
             return v.strip()
-        raise ValueError(f"Pearl log format must be string, got {type(v)}: {v}")
+        msg = f"Pearl log format must be string, got {type(v)}: {v}"
+        raise ValueError(msg)
 
     @field_validator("HEALTH_CHECK_PORT", mode="before")
     @classmethod
@@ -390,11 +392,13 @@ class Settings(BaseSettings):
         try:
             port = int(v)
             if not (1 <= port <= 65535):
-                raise ValueError(f"Port must be between 1 and 65535, got {port}")
+                msg = f"Port must be between 1 and 65535, got {port}"
+                raise ValueError(msg)
             return port
         except (ValueError, TypeError):
             if isinstance(v, str) and not v.isdigit():
-                raise ValueError(f"Invalid port value: {v}")
+                msg = f"Invalid port value: {v}"
+                raise ValueError(msg)
             raise
 
     @field_validator("FAST_TRANSITION_THRESHOLD", mode="before")
@@ -406,13 +410,13 @@ class Settings(BaseSettings):
         try:
             threshold = int(v)
             if threshold <= 0:
-                raise ValueError(
-                    f"Fast transition threshold must be positive, got {threshold}"
-                )
+                msg = f"Fast transition threshold must be positive, got {threshold}"
+                raise ValueError(msg)
             return threshold
         except (ValueError, TypeError):
             if isinstance(v, str) and not v.isdigit():
-                raise ValueError(f"Invalid threshold value: {v}")
+                msg = f"Invalid threshold value: {v}"
+                raise ValueError(msg)
             raise
 
     @field_validator("voting_strategy")
@@ -421,9 +425,8 @@ class Settings(BaseSettings):
         """Validate voting strategy is one of the allowed values."""
         valid_strategies = ["balanced", "conservative", "aggressive"]
         if v not in valid_strategies:
-            raise ValueError(
-                f"Invalid voting strategy: {v}. Must be one of {valid_strategies}"
-            )
+            msg = f"Invalid voting strategy: {v}. Must be one of {valid_strategies}"
+            raise ValueError(msg)
         return v
 
     @model_validator(mode="after")
@@ -464,9 +467,8 @@ class Settings(BaseSettings):
         if vote_threshold_env:
             threshold = float(vote_threshold_env)
             if not (0.0 <= threshold <= 1.0):
-                raise ValueError(
-                    f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
-                )
+                msg = f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
+                raise ValueError(msg)
             self.vote_confidence_threshold = threshold
 
     def _parse_intervals(self):
@@ -481,9 +483,8 @@ class Settings(BaseSettings):
         if activity_interval_env:
             interval = int(activity_interval_env)
             if interval <= 0:
-                raise ValueError(
-                    f"activity_check_interval must be positive, got {interval}"
-                )
+                msg = f"activity_check_interval must be positive, got {interval}"
+                raise ValueError(msg)
             self.activity_check_interval = interval
 
     def _parse_proposal_interval(self):
@@ -492,9 +493,8 @@ class Settings(BaseSettings):
         if proposal_interval_env:
             interval = int(proposal_interval_env)
             if interval <= 0:
-                raise ValueError(
-                    f"proposal_check_interval must be positive, got {interval}"
-                )
+                msg = f"proposal_check_interval must be positive, got {interval}"
+                raise ValueError(msg)
             self.proposal_check_interval = interval
 
     def _parse_deadline_time(self):
@@ -503,9 +503,8 @@ class Settings(BaseSettings):
         if deadline_time_env:
             time_val = int(deadline_time_env)
             if time_val <= 0:
-                raise ValueError(
-                    f"min_time_before_deadline must be positive, got {time_val}"
-                )
+                msg = f"min_time_before_deadline must be positive, got {time_val}"
+                raise ValueError(msg)
             self.min_time_before_deadline = time_val
 
     def _parse_agent_run_config(self):
@@ -523,9 +522,8 @@ class Settings(BaseSettings):
         if max_proposals_env:
             max_proposals = int(max_proposals_env)
             if not (1 <= max_proposals <= 10):
-                raise ValueError(
-                    f"max_proposals_per_run must be between 1 and 10, got {max_proposals}"
-                )
+                msg = f"max_proposals_per_run must be between 1 and 10, got {max_proposals}"
+                raise ValueError(msg)
             self.max_proposals_per_run = max_proposals
 
     def _parse_agent_confidence_threshold(self):
@@ -534,9 +532,8 @@ class Settings(BaseSettings):
         if confidence_threshold_env:
             threshold = float(confidence_threshold_env)
             if not (0.0 <= threshold <= 1.0):
-                raise ValueError(
-                    f"agent_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
-                )
+                msg = f"agent_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
+                raise ValueError(msg)
             self.agent_confidence_threshold = threshold
 
     def _parse_proposal_fetch_timeout(self):
@@ -545,9 +542,8 @@ class Settings(BaseSettings):
         if timeout_env:
             timeout = int(timeout_env)
             if timeout <= 0:
-                raise ValueError(
-                    f"proposal_fetch_timeout must be positive, got {timeout}"
-                )
+                msg = f"proposal_fetch_timeout must be positive, got {timeout}"
+                raise ValueError(msg)
             self.proposal_fetch_timeout = timeout
 
     def _parse_vote_execution_timeout(self):
@@ -556,9 +552,8 @@ class Settings(BaseSettings):
         if timeout_env:
             timeout = int(timeout_env)
             if timeout <= 0:
-                raise ValueError(
-                    f"vote_execution_timeout must be positive, got {timeout}"
-                )
+                msg = f"vote_execution_timeout must be positive, got {timeout}"
+                raise ValueError(msg)
             self.vote_execution_timeout = timeout
 
     def _parse_max_retry_attempts(self):
@@ -567,9 +562,8 @@ class Settings(BaseSettings):
         if max_retry_env:
             max_retry = int(max_retry_env)
             if not (0 <= max_retry <= 10):
-                raise ValueError(
-                    f"max_retry_attempts must be between 0 and 10, got {max_retry}"
-                )
+                msg = f"max_retry_attempts must be between 0 and 10, got {max_retry}"
+                raise ValueError(msg)
             self.max_retry_attempts = max_retry
 
     def _parse_retry_delay_seconds(self):
@@ -578,11 +572,12 @@ class Settings(BaseSettings):
         if delay_env:
             delay = int(delay_env)
             if delay <= 0:
-                raise ValueError(f"retry_delay_seconds must be positive, got {delay}")
+                msg = f"retry_delay_seconds must be positive, got {delay}"
+                raise ValueError(msg)
             self.retry_delay_seconds = delay
 
     @property
-    def monitored_daos_list(self) -> List[str]:
+    def monitored_daos_list(self) -> list[str]:
         """Parse comma-separated DAO list from environment."""
         daos_env = os.getenv("MONITORED_DAOS", "")
         default_monitored_daos = "compound.eth,nouns.eth,arbitrum.eth"
@@ -592,7 +587,7 @@ class Settings(BaseSettings):
         return [dao.strip() for dao in daos_env.split(",") if dao.strip()]
 
     @property
-    def safe_addresses_dict(self) -> Dict[str, str]:
+    def safe_addresses_dict(self) -> dict[str, str]:
         """Parse safe addresses from environment variable."""
         safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
         if not safe_addresses_env:
@@ -621,7 +616,7 @@ class Settings(BaseSettings):
         # Re-validate the configuration after reloading
         self.model_validate(self.model_dump())
 
-    def get_agent_run_config(self) -> Dict[str, any]:
+    def get_agent_run_config(self) -> dict[str, any]:
         """Get agent run configuration as a dictionary.
 
         Returns:
@@ -642,9 +637,8 @@ class Settings(BaseSettings):
         if log_level_env:
             level = log_level_env.upper()
             if level not in self.VALID_LOG_LEVELS:
-                raise ValueError(
-                    f"Invalid log level: {level}. Must be one of {self.VALID_LOG_LEVELS}"
-                )
+                msg = f"Invalid log level: {level}. Must be one of {self.VALID_LOG_LEVELS}"
+                raise ValueError(msg)
             self.log_level = level
 
         log_file_path_env = os.getenv("LOG_FILE_PATH")
@@ -653,10 +647,11 @@ class Settings(BaseSettings):
                 not log_file_path_env.strip()
                 or log_file_path_env.strip().lower() == "none"
             ):
-                raise ValueError("Log file path cannot be empty")
+                msg = "Log file path cannot be empty"
+                raise ValueError(msg)
             self.log_file_path = log_file_path_env.strip()
 
-    def get_pearl_logging_config(self) -> Dict[str, str]:
+    def get_pearl_logging_config(self) -> dict[str, str]:
         """Get Pearl logging configuration as a dictionary.
 
         Returns:
@@ -667,7 +662,7 @@ class Settings(BaseSettings):
             "log_file_path": self.log_file_path,
         }
 
-    def get_base_rpc_endpoint(self) -> Optional[str]:
+    def get_base_rpc_endpoint(self) -> str | None:
         """Get Base network RPC endpoint.
 
         Returns:
@@ -710,33 +705,37 @@ class Settings(BaseSettings):
 
         if missing_vars:
             missing_vars_str = ", ".join(missing_vars)
-            raise ValueError(
+            msg = (
                 f"Missing required environment variables for vote attestation system: {missing_vars_str}. "
                 f"Please configure these variables in your .env file. See .env.example for reference."
             )
+            raise ValueError(msg)
 
         # Validate EAS contract address format (should be a valid Ethereum address)
         if self.eas_contract_address and not self.eas_contract_address.startswith("0x"):
-            raise ValueError(
+            msg = (
                 f"Invalid EAS_CONTRACT_ADDRESS format: {self.eas_contract_address}. "
                 f"Must be a valid Ethereum address starting with '0x'."
             )
+            raise ValueError(msg)
 
         # Validate EAS schema UID format (should be a 32-byte hex string with 0x prefix)
         if self.eas_schema_uid and not (
             self.eas_schema_uid.startswith("0x") and len(self.eas_schema_uid) == 66
         ):
-            raise ValueError(
+            msg = (
                 f"Invalid EAS_SCHEMA_UID format: {self.eas_schema_uid}. "
                 f"Must be a 32-byte hex string with '0x' prefix (66 characters total)."
             )
+            raise ValueError(msg)
 
         # Validate Base Safe address format
         if self.base_safe_address and not self.base_safe_address.startswith("0x"):
-            raise ValueError(
+            msg = (
                 f"Invalid BASE_SAFE_ADDRESS format: {self.base_safe_address}. "
                 f"Must be a valid Ethereum address starting with '0x'."
             )
+            raise ValueError(msg)
 
         return True
 

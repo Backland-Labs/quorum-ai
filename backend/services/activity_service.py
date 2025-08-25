@@ -1,12 +1,12 @@
 """Activity tracking service for OLAS compliance monitoring."""
 
-import os
 import json
-from datetime import date, datetime, timezone
-from typing import Dict, Optional, Any, List
+import os
+from datetime import UTC, date, datetime
+from typing import Any
 
 from config import settings
-from logging_config import setup_pearl_logger, log_span
+from logging_config import log_span, setup_pearl_logger
 
 # Constants for repeated strings
 ACTIVITY_TRACKER_FILENAME = "activity_tracker.json"
@@ -59,11 +59,11 @@ class ActivityService:
         self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
         # OLAS compliance tracking state
-        self.last_activity_date: Optional[date] = None
-        self.last_tx_hash: Optional[str] = None
+        self.last_activity_date: date | None = None
+        self.last_tx_hash: str | None = None
 
         # Nonce tracking state for IQuorumTracker interface
-        self.nonces: Dict[str, Dict[int, int]] = {}  # {chain: {nonce_type: value}}
+        self.nonces: dict[str, dict[int, int]] = {}  # {chain: {nonce_type: value}}
 
         # Initialize persistent storage and load existing state
         self.persistent_file = self._get_persistent_file_path()
@@ -89,7 +89,7 @@ class ActivityService:
             self.is_daily_activity_needed(),
         )
 
-    def _format_date(self, date_obj: Optional[date]) -> Optional[str]:
+    def _format_date(self, date_obj: date | None) -> str | None:
         """Format a date object to ISO string.
 
         Args:
@@ -104,7 +104,7 @@ class ActivityService:
         """Load activity state from persistent storage."""
         try:
             if os.path.exists(self.persistent_file):
-                with open(self.persistent_file, "r") as f:
+                with open(self.persistent_file) as f:
                     data = json.load(f)
                     if data.get("last_activity_date"):
                         self.last_activity_date = date.fromisoformat(
@@ -150,7 +150,7 @@ class ActivityService:
         directory_path = os.path.dirname(self.persistent_file)
         os.makedirs(directory_path, exist_ok=True)
 
-    def _prepare_state_data(self) -> Dict[str, Any]:
+    def _prepare_state_data(self) -> dict[str, Any]:
         """Prepare state data for persistence.
 
         Returns:
@@ -167,10 +167,10 @@ class ActivityService:
             "last_activity_date": self._format_date(self.last_activity_date),
             "last_tx_hash": self.last_tx_hash,
             "nonces": nonces_serializable,
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
         }
 
-    def _write_state_file(self, data: Dict[str, Any]) -> None:
+    def _write_state_file(self, data: dict[str, Any]) -> None:
         """Write state data to file.
 
         Args:
@@ -194,8 +194,7 @@ class ActivityService:
             True if daily activity is required, False if already completed today
         """
         today = date.today()
-        activity_needed = self.last_activity_date != today
-        return activity_needed
+        return self.last_activity_date != today
 
     def mark_activity_completed(self, tx_hash: str) -> None:
         """Mark daily activity as completed for OLAS tracking.
@@ -217,7 +216,7 @@ class ActivityService:
             date.today().isoformat(),
         )
 
-    def get_activity_status(self) -> Dict[str, Any]:
+    def get_activity_status(self) -> dict[str, Any]:
         """Get current activity status for monitoring.
 
         Returns:
@@ -232,7 +231,7 @@ class ActivityService:
             "days_since_activity": days_since,
         }
 
-    def _calculate_days_since_activity(self) -> Optional[int]:
+    def _calculate_days_since_activity(self) -> int | None:
         """Calculate days since last activity.
 
         Returns:
@@ -241,10 +240,9 @@ class ActivityService:
         if not self.last_activity_date:
             return None
 
-        days_elapsed = (date.today() - self.last_activity_date).days
-        return days_elapsed
+        return (date.today() - self.last_activity_date).days
 
-    def check_olas_compliance(self) -> Dict[str, Any]:
+    def check_olas_compliance(self) -> dict[str, Any]:
         """Check OLAS staking compliance requirements.
 
         Returns:
@@ -256,9 +254,7 @@ class ActivityService:
             return self._build_non_compliant_status(last_activity)
         return self._build_compliant_status(last_activity)
 
-    def _build_non_compliant_status(
-        self, last_activity: Optional[str]
-    ) -> Dict[str, Any]:
+    def _build_non_compliant_status(self, last_activity: str | None) -> dict[str, Any]:
         """Build non-compliant status response.
 
         Args:
@@ -274,7 +270,7 @@ class ActivityService:
             "last_activity": last_activity,
         }
 
-    def _build_compliant_status(self, last_activity: Optional[str]) -> Dict[str, Any]:
+    def _build_compliant_status(self, last_activity: str | None) -> dict[str, Any]:
         """Build compliant status response.
 
         Args:
@@ -290,7 +286,7 @@ class ActivityService:
             "last_activity": last_activity,
         }
 
-    def get_compliance_summary(self) -> Dict[str, Any]:
+    def get_compliance_summary(self) -> dict[str, Any]:
         """Get comprehensive compliance summary for reporting.
 
         Returns:
@@ -301,7 +297,7 @@ class ActivityService:
             "olas_compliance": self.check_olas_compliance(),
         }
 
-    async def ensure_daily_compliance(self, safe_service) -> Dict[str, Any]:
+    async def ensure_daily_compliance(self, safe_service) -> dict[str, Any]:
         """Ensure daily OLAS compliance by triggering Safe transaction if needed.
 
         Args:
@@ -324,8 +320,8 @@ class ActivityService:
             return self._handle_compliant_state(compliance_status)
 
     async def _handle_non_compliant_state(
-        self, safe_service, compliance_status: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, safe_service, compliance_status: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle non-compliant state by requesting Safe transaction.
 
         Args:
@@ -345,8 +341,8 @@ class ActivityService:
         return self._build_failure_response(transaction_result, compliance_status)
 
     def _handle_compliant_state(
-        self, compliance_status: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, compliance_status: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle already compliant state.
 
         Args:
@@ -364,8 +360,8 @@ class ActivityService:
         }
 
     def _build_success_response(
-        self, transaction_result: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction_result: dict[str, Any]
+    ) -> dict[str, Any]:
         """Build successful transaction response.
 
         Args:
@@ -382,8 +378,8 @@ class ActivityService:
         }
 
     def _build_failure_response(
-        self, transaction_result: Dict[str, Any], compliance_status: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction_result: dict[str, Any], compliance_status: dict[str, Any]
+    ) -> dict[str, Any]:
         """Build failed transaction response.
 
         Args:
@@ -403,7 +399,7 @@ class ActivityService:
     # Phase 2: Nonce Increment Logic Methods
 
     @property
-    def supported_chains(self) -> List[str]:
+    def supported_chains(self) -> list[str]:
         """Get list of supported chains from Safe addresses.
 
         Returns:
@@ -503,7 +499,7 @@ class ActivityService:
 
     # Phase 3: IQuorumTracker Interface Implementation Methods
 
-    def getMultisigNonces(self, multisig_address: str) -> List[int]:
+    def getMultisigNonces(self, multisig_address: str) -> list[int]:
         """Get nonces for multisig address (IQuorumTracker interface).
 
         Returns array: [multisig_activity, vote_attestations, voting_considered, no_voting]
@@ -545,7 +541,7 @@ class ActivityService:
         actual_ratio = self._calculate_activity_ratio(nonces, period_seconds)
         return actual_ratio >= liveness_ratio
 
-    def getVotingStats(self, multisig_address: str) -> List[int]:
+    def getVotingStats(self, multisig_address: str) -> list[int]:
         """Get voting statistics for multisig address (IQuorumTracker interface compatibility).
 
         Returns the last 3 nonce values: [vote_attestations, voting_considered, no_voting]
@@ -562,7 +558,7 @@ class ActivityService:
         # Return indices 1, 2, 3 (vote_attestations, voting_considered, no_voting)
         return nonces[1:4]
 
-    def _get_chain_for_safe(self, safe_address: str) -> Optional[str]:
+    def _get_chain_for_safe(self, safe_address: str) -> str | None:
         """Determine chain from Safe address.
 
         Args:
@@ -578,7 +574,7 @@ class ActivityService:
         return None
 
     def _calculate_activity_ratio(
-        self, nonces: List[int], period_seconds: int
+        self, nonces: list[int], period_seconds: int
     ) -> float:
         """Calculate activity ratio for staking eligibility.
 
