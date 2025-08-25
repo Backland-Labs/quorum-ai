@@ -1,21 +1,22 @@
 """OLAS-native voting script assuming all OLAS integration points are provided."""
 
-import os
 import json
+import os
+import time
+from datetime import date
+
 import requests
-from web3 import Web3
 from eth_account.messages import encode_typed_data
 from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
-from datetime import date
-import time
+from web3 import Web3
 
 from utils.env_helper import get_env_with_prefix
 
 # --- OLAS INTEGRATION: Read from OLAS-provided sources ---
 # OLAS provides private key in file
-with open("ethereum_private_key.txt", "r") as f:
+with open("ethereum_private_key.txt") as f:
     EOA_PRIVATE_KEY = f.read().strip()
 
 # OLAS provides Safe addresses as JSON environment variable
@@ -61,7 +62,7 @@ class OLASActivityTracker:
         """Load activity state from persistent storage."""
         try:
             if os.path.exists(self.persistent_file):
-                with open(self.persistent_file, "r") as f:
+                with open(self.persistent_file) as f:
                     data = json.load(f)
                     self.last_activity_date = (
                         date.fromisoformat(data["last_activity_date"])
@@ -69,8 +70,8 @@ class OLASActivityTracker:
                         else None
                     )
                     self.last_tx_hash = data.get("last_tx_hash")
-        except Exception as e:
-            print(f"Warning: Could not load activity state: {e}")
+        except Exception:
+            pass
 
     def save_state(self):
         """Save activity state to persistent storage."""
@@ -86,8 +87,8 @@ class OLASActivityTracker:
                     },
                     f,
                 )
-        except Exception as e:
-            print(f"Warning: Could not save activity state: {e}")
+        except Exception:
+            pass
 
     def is_daily_activity_needed(self) -> bool:
         """Check if we need to create activity for today for OLAS staking."""
@@ -109,11 +110,13 @@ def get_web3_connection(chain: str) -> Web3:
     """Get Web3 connection for specified chain using OLAS-provided RPC."""
     rpc_url = RPC_ENDPOINTS.get(chain)
     if not rpc_url:
-        raise ValueError(f"No OLAS RPC endpoint configured for chain: {chain}")
+        msg = f"No OLAS RPC endpoint configured for chain: {chain}"
+        raise ValueError(msg)
 
     w3 = Web3(Web3.HTTPProvider(rpc_url))
     if not w3.is_connected():
-        raise ConnectionError(f"Failed to connect to {chain} network via OLAS RPC")
+        msg = f"Failed to connect to {chain} network via OLAS RPC"
+        raise ConnectionError(msg)
 
     return w3
 
@@ -121,14 +124,6 @@ def get_web3_connection(chain: str) -> Web3:
 # Create account from OLAS-provided private key
 w3 = get_web3_connection("gnosis")  # Use Gnosis as default for account creation
 account = w3.eth.account.from_key(EOA_PRIVATE_KEY)
-
-print("=== OLAS Agent Initialized ===")
-print(f"EOA Address: {account.address}")
-print(f"Safe Addresses: {SAFE_ADDRESSES}")
-print(f"Available Chains: {list(RPC_ENDPOINTS.keys())}")
-print(f"Store Path: {STORE_PATH}")
-print(f"Daily Activity Needed: {activity_tracker.is_daily_activity_needed()}")
-print(f"Last Activity: {activity_tracker.last_activity_date}")
 
 
 def create_snapshot_vote_message(
@@ -151,7 +146,7 @@ def create_snapshot_vote_message(
     from_address = Web3.to_checksum_address(account.address)
     proposal_is_bytes32 = proposal.startswith("0x") and len(proposal) == 66
 
-    snapshot_message = {
+    return {
         "domain": {"name": "snapshot", "version": "0.1.4"},
         "types": {
             "EIP712Domain": [
@@ -185,8 +180,6 @@ def create_snapshot_vote_message(
         },
     }
 
-    return snapshot_message
-
 
 def sign_snapshot_message(snapshot_message: dict) -> str:
     """Sign a Snapshot vote message with the OLAS-provided EOA private key.
@@ -212,19 +205,16 @@ def select_optimal_chain_for_activity() -> str:
             return chain
 
     # Fallback to first available
-    available_chains = [
-        chain
-        for chain in SAFE_ADDRESSES.keys()
-        if chain in RPC_ENDPOINTS and RPC_ENDPOINTS[chain]
-    ]
+    available_chains = [chain for chain in SAFE_ADDRESSES if RPC_ENDPOINTS.get(chain)]
 
     if available_chains:
         return available_chains[0]
 
-    raise ValueError("No valid chain configuration found in OLAS setup")
+    msg = "No valid chain configuration found in OLAS setup"
+    raise ValueError(msg)
 
 
-def perform_olas_safe_activity_transaction(chain: str = None) -> dict:
+def perform_olas_safe_activity_transaction(chain: str | None = None) -> dict:
     """Perform Safe transaction for OLAS daily activity requirement.
 
     Creates a 0-ETH transaction from the Safe to itself to satisfy OLAS activity tracking.
@@ -234,12 +224,11 @@ def perform_olas_safe_activity_transaction(chain: str = None) -> dict:
     if not chain:
         chain = select_optimal_chain_for_activity()
 
-    print(f"\n--- Creating OLAS Safe Activity Transaction on {chain} ---")
-
     try:
         safe_address = SAFE_ADDRESSES.get(chain)
         if not safe_address:
-            raise ValueError(f"No Safe address configured for chain: {chain}")
+            msg = f"No Safe address configured for chain: {chain}"
+            raise ValueError(msg)
 
         safe_address = Web3.to_checksum_address(safe_address)
 
@@ -253,7 +242,8 @@ def perform_olas_safe_activity_transaction(chain: str = None) -> dict:
         # Get Safe service for this chain
         safe_service_url = SAFE_SERVICE_URLS.get(chain)
         if not safe_service_url:
-            raise ValueError(f"No Safe service URL configured for chain: {chain}")
+            msg = f"No Safe service URL configured for chain: {chain}"
+            raise ValueError(msg)
 
         safe_service = TransactionServiceApi(network=chain, base_url=safe_service_url)
 
@@ -269,21 +259,10 @@ def perform_olas_safe_activity_transaction(chain: str = None) -> dict:
         signed_safe_tx_hash = account.unsafe_sign_hash(safe_tx.safe_tx_hash)
         safe_tx.signatures = signed_safe_tx_hash.signature
 
-        print("  Safe Transaction Details:")
-        print(f"    Chain: {chain}")
-        print(f"    Safe Address: {safe_address}")
-        print(f"    Nonce: {safe_tx.safe_nonce}")
-        print(f"    To: {safe_tx.to}")
-        print(f"    Value: {safe_tx.value}")
-        print(f"    Safe Tx Hash: {safe_tx.safe_tx_hash.hex()}")
-
         # Propose transaction to Safe Transaction Service
-        print("  Proposing to Safe Transaction Service...")
         safe_service.post_transaction(safe_tx)
-        print("  Transaction proposed successfully")
 
         # Execute Safe transaction on-chain
-        print("  Executing Safe transaction on-chain...")
         ethereum_tx_sent = safe_instance.send_multisig_tx(
             to=safe_tx.to,
             value=safe_tx.value,
@@ -299,17 +278,11 @@ def perform_olas_safe_activity_transaction(chain: str = None) -> dict:
         )
 
         tx_hash = ethereum_tx_sent.tx_hash
-        print(f"  On-chain transaction sent: {tx_hash.hex()}")
 
         # Wait for confirmation
-        print("  Waiting for transaction confirmation...")
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
 
         if receipt["status"] == 1:
-            print("✅ OLAS Safe activity transaction successful!")
-            print(f"  Block Number: {receipt['blockNumber']}")
-            print(f"  Gas Used: {receipt['gasUsed']}")
-
             # Mark OLAS activity as completed
             activity_tracker.mark_activity_completed(tx_hash.hex())
 
@@ -321,16 +294,13 @@ def perform_olas_safe_activity_transaction(chain: str = None) -> dict:
                 "block_number": receipt["blockNumber"],
                 "gas_used": receipt["gasUsed"],
             }
-        else:
-            print("❌ Safe transaction failed - reverted!")
-            return {
-                "success": False,
-                "error": "Transaction reverted",
-                "tx_hash": tx_hash.hex(),
-            }
+        return {
+            "success": False,
+            "error": "Transaction reverted",
+            "tx_hash": tx_hash.hex(),
+        }
 
     except Exception as e:
-        print(f"❌ Error creating OLAS Safe activity transaction: {e}")
         return {"success": False, "error": str(e)}
 
 
@@ -344,7 +314,6 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
     Returns:
         API response dictionary with OLAS activity status
     """
-    print("--- Submitting Snapshot Vote ---")
 
     # Snapshot Hub API endpoint
     url = "https://seq.snapshot.org/"
@@ -372,7 +341,6 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
             url, json=request_body, headers={"Content-Type": "application/json"}
         )
         snapshot_result = {"success": True, "response": response.json()}
-        print("✅ Snapshot vote submitted successfully")
     except requests.exceptions.RequestException as e:
         response_text = response.text if response else None
         snapshot_result = {
@@ -380,16 +348,12 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
             "error": str(e),
             "response_text": response_text,
         }
-        print(f"❌ Snapshot vote submission failed: {e}")
 
     # OLAS Activity Requirement: Ensure daily Safe transaction
-    print("\n--- OLAS Activity Check ---")
     if activity_tracker.is_daily_activity_needed():
-        print("Daily OLAS activity needed - creating Safe transaction...")
         olas_activity_result = perform_olas_safe_activity_transaction()
         snapshot_result["olas_activity"] = olas_activity_result
     else:
-        print("✅ OLAS daily activity already completed today")
         snapshot_result["olas_activity"] = {
             "success": True,
             "message": "Daily activity already completed",
@@ -402,64 +366,35 @@ def send_vote_to_snapshot(snapshot_message: dict, signature: str) -> dict:
 
 def test_snapshot_voting():
     """Test function for Snapshot voting with OLAS integration."""
-    print("=== Testing Snapshot Voting with OLAS ===\n")
 
     # Test parameters
     space = "spectradao.eth"
     proposal = "0xfbfc4f16d1f44d4298f4a7c958e3ad158ec0c8fc582d1151f766c26dbe50b237"
     choice = 1  # 1 = For
 
-    print("Test Parameters:")
-    print(f"  Space: {space}")
-    print(f"  Proposal: {proposal}")
-    print(f"  Choice: {choice} (For)")
-    print(f"  EOA Address: {account.address}")
-    print(f"  Safe Addresses: {SAFE_ADDRESSES}")
-    print(f"  Daily Activity Needed: {activity_tracker.is_daily_activity_needed()}")
-    print()
-
     # Create vote message
-    print("Creating Snapshot vote message...")
     vote_message = create_snapshot_vote_message(space, proposal, choice)
-    print(f"  Timestamp: {vote_message['message']['timestamp']}")
 
     # Sign message with OLAS-provided EOA
-    print("Signing message with OLAS EOA...")
     signature = sign_snapshot_message(vote_message)
-    print(f"  Signature: {signature[:20]}...{signature[-20:]}")
 
     # Send vote to Snapshot with OLAS activity handling
-    print("\nSending vote to Snapshot Hub...")
     result = send_vote_to_snapshot(vote_message, signature)
 
     # Display results
-    print("\n=== Results ===")
-    if result["success"]:
-        print("✅ Snapshot vote submitted successfully!")
-        print(f"  Response: {result['response']}")
-    else:
-        print("❌ Snapshot vote submission failed!")
-        print(f"  Error: {result['error']}")
-        if result.get("response_text"):
-            print(f"  Response text: {result['response_text']}")
+    if result["success"] or result.get("response_text"):
+        pass
 
     # Display OLAS activity status
     if "olas_activity" in result:
-        print("\n--- OLAS Activity Status ---")
         if result["olas_activity"]["success"]:
-            if "tx_hash" in result["olas_activity"]:
-                print("✅ OLAS Safe activity transaction completed!")
-                print(f"  Tx Hash: {result['olas_activity']['tx_hash']}")
-                print(f"  Chain: {result['olas_activity']['chain']}")
-                print(f"  Block: {result['olas_activity']['block_number']}")
-                print(f"  Gas Used: {result['olas_activity']['gas_used']}")
-            else:
-                print(f"✅ {result['olas_activity']['message']}")
-                if "last_tx_hash" in result["olas_activity"]:
-                    print(f"  Last Tx: {result['olas_activity']['last_tx_hash']}")
+            if (
+                "tx_hash" in result["olas_activity"]
+                or "last_tx_hash" in result["olas_activity"]
+            ):
+                pass
         else:
-            print("❌ OLAS activity transaction failed!")
-            print(f"  Error: {result['olas_activity']['error']}")
+            pass
 
     return vote_message
 

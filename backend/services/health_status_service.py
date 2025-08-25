@@ -1,12 +1,12 @@
 """Health Status Service for Olas Pearl compliance."""
 
 import asyncio
-from typing import Optional, Dict, Any, List
+from typing import Any
 
-from logging_config import setup_pearl_logger, log_span
+from logging_config import log_span, setup_pearl_logger
 from models import AgentHealth, HealthCheckResponse
-from services.safe_service import SafeService
 from services.activity_service import ActivityService
+from services.safe_service import SafeService
 from services.state_transition_tracker import StateTransitionTracker
 
 
@@ -22,9 +22,9 @@ class HealthStatusService:
 
     def __init__(
         self,
-        safe_service: Optional[SafeService] = None,
-        activity_service: Optional[ActivityService] = None,
-        state_transition_tracker: Optional[StateTransitionTracker] = None,
+        safe_service: SafeService | None = None,
+        activity_service: ActivityService | None = None,
+        state_transition_tracker: StateTransitionTracker | None = None,
     ):
         """
         Initialize HealthStatusService with dependency injection.
@@ -99,7 +99,7 @@ class HealthStatusService:
                 return response
 
             except Exception as e:
-                self.logger.error("Health status gathering failed: %s", str(e))
+                self.logger.exception("Health status gathering failed: %s", str(e))
                 # Return safe defaults on complete failure
                 return HealthCheckResponse(
                     is_tm_healthy=True, agent_health=AgentHealth(), rounds=[]
@@ -199,7 +199,7 @@ class HealthStatusService:
             self.logger.warning("Agent health check failed: %s", str(e))
             return AgentHealth()  # Safe defaults
 
-    async def _get_rounds_info(self) -> List[Dict[str, Any]]:
+    async def _get_rounds_info(self) -> list[dict[str, Any]]:
         """
         Get basic round data from StateTransitionTracker.
 

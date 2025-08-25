@@ -7,11 +7,11 @@ producing log.txt file in the exact format required for agent monitoring and deb
 
 import logging
 import logging.handlers
-from datetime import datetime
-from contextlib import contextmanager
-from typing import Optional, Any, Dict, Tuple
 import os
 import re
+from contextlib import contextmanager
+from datetime import datetime
+from typing import Any
 
 
 class PearlFormatter(logging.Formatter):
@@ -69,7 +69,7 @@ class StructuredAdapter(logging.LoggerAdapter):
     while maintaining Pearl format compatibility.
     """
 
-    def __init__(self, logger: logging.Logger, extra: Optional[Dict[str, Any]] = None):
+    def __init__(self, logger: logging.Logger, extra: dict[str, Any] | None = None):
         """
         Initialize structured adapter.
 
@@ -79,7 +79,7 @@ class StructuredAdapter(logging.LoggerAdapter):
         """
         super().__init__(logger, extra or {})
 
-    def process(self, msg: str, kwargs: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+    def process(self, msg: str, kwargs: dict[str, Any]) -> tuple[str, dict[str, Any]]:
         """
         Process log message with additional context.
 
@@ -98,8 +98,8 @@ class StructuredAdapter(logging.LoggerAdapter):
 def setup_pearl_logger(
     name: str = "agent",
     level: int = logging.INFO,
-    log_file_path: Optional[str] = None,
-    store_path: Optional[str] = None,
+    log_file_path: str | None = None,
+    store_path: str | None = None,
 ) -> logging.Logger:
     """
     Configure logging for Pearl platform compliance.
@@ -190,8 +190,8 @@ def log_span(logger: logging.Logger, operation: str, **context):
     except Exception as e:
         # Log failure
         duration = (datetime.now() - start_time).total_seconds()
-        error_msg = f"Failed {operation} after {duration:.3f}s: {str(e)}"
-        logger.error(error_msg)
+        error_msg = f"Failed {operation} after {duration:.3f}s: {e!s}"
+        logger.exception(error_msg)
         raise
 
 
@@ -233,5 +233,8 @@ def ensure_log_file_exists(log_file_path: str = "log.txt") -> bool:
             f.write(f"[{timestamp}] [INFO] [agent] Log file initialized\n")
         return True
     except Exception as e:
-        print(f"Failed to initialize log file {log_file_path}: {e}")
+        # Fallback to stderr if logging isn't set up yet
+        import sys
+
+        sys.stderr.write(f"Failed to initialize log file {log_file_path}: {e}\n")
         return False

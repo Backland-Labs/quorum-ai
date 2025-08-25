@@ -1,12 +1,12 @@
 """Service for interacting with the Snapshot API."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
 from config import settings
-from logging_config import setup_pearl_logger, log_span
-from models import Space, Proposal, Vote
+from logging_config import log_span, setup_pearl_logger
+from models import Proposal, Space, Vote
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -16,19 +16,13 @@ logger = setup_pearl_logger(__name__)
 class SnapshotServiceError(Exception):
     """Base exception for SnapshotService errors."""
 
-    pass
-
 
 class NetworkError(SnapshotServiceError):
     """Raised when network operations fail."""
 
-    pass
-
 
 class GraphQLError(SnapshotServiceError):
     """Raised when GraphQL operations fail."""
-
-    pass
 
 
 # Constants for better code clarity and maintainability
@@ -114,7 +108,7 @@ class SnapshotService:
             return query[:MAX_LOG_QUERY_LENGTH] + QUERY_TRUNCATION_SUFFIX
         return query
 
-    def _extract_response_text(self, response: Optional[httpx.Response]) -> str:
+    def _extract_response_text(self, response: httpx.Response | None) -> str:
         """Extract response text safely with fallback."""
         if response is None:
             return "No response available"
@@ -128,7 +122,7 @@ class SnapshotService:
         log_parts = [
             f"Network error: {error_type}",
             f"endpoint={self.base_url}",
-            f"error={str(exception)}",
+            f"error={exception!s}",
         ]
 
         # Add context-specific fields
@@ -141,26 +135,21 @@ class SnapshotService:
         logger.error(log_message)
 
         if isinstance(exception, httpx.TimeoutException):
-            raise NetworkError(
-                f"Network timeout connecting to Snapshot API ({self.base_url}): {str(exception)}"
-            ) from exception
-        elif isinstance(exception, httpx.ConnectError):
-            raise NetworkError(
-                f"Cannot connect to Snapshot API ({self.base_url}): {str(exception)}"
-            ) from exception
-        elif isinstance(exception, httpx.HTTPStatusError):
+            msg = f"Network timeout connecting to Snapshot API ({self.base_url}): {exception!s}"
+            raise NetworkError(msg) from exception
+        if isinstance(exception, httpx.ConnectError):
+            msg = f"Cannot connect to Snapshot API ({self.base_url}): {exception!s}"
+            raise NetworkError(msg) from exception
+        if isinstance(exception, httpx.HTTPStatusError):
             response_text = self._extract_response_text(exception.response)
-            raise NetworkError(
-                f"Snapshot API HTTP {exception.response.status_code} error: {str(exception)}. Response: {response_text[:200]}"
-            ) from exception
-        else:
-            # Fallback for any other httpx exception types
-            raise NetworkError(
-                f"Network error during Snapshot API call: {str(exception)}"
-            ) from exception
+            msg = f"Snapshot API HTTP {exception.response.status_code} error: {exception!s}. Response: {response_text[:200]}"
+            raise NetworkError(msg) from exception
+        # Fallback for any other httpx exception types
+        msg = f"Network error during Snapshot API call: {exception!s}"
+        raise NetworkError(msg) from exception
 
     def _validate_query_inputs(
-        self, query: str, variables: Optional[Dict[str, Any]]
+        self, query: str, variables: dict[str, Any] | None
     ) -> None:
         """Validate query inputs with comprehensive runtime assertions."""
         assert query and query.strip(), "GraphQL query cannot be empty or whitespace"
@@ -171,15 +160,15 @@ class SnapshotService:
             ), f"Variables must be dict or None, got {type(variables)}"
 
     def _prepare_graphql_payload(
-        self, query: str, variables: Optional[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, query: str, variables: dict[str, Any] | None
+    ) -> dict[str, Any]:
         """Prepare GraphQL request payload."""
-        payload: Dict[str, Any] = {"query": query}
+        payload: dict[str, Any] = {"query": query}
         if variables:
             payload["variables"] = variables
         return payload
 
-    async def _send_graphql_request(self, payload: Dict[str, Any]) -> httpx.Response:
+    async def _send_graphql_request(self, payload: dict[str, Any]) -> httpx.Response:
         """Send GraphQL request and return raw HTTP response."""
         # Extract query metadata for cleaner logging
         query = payload.get("query", "")
@@ -205,23 +194,22 @@ class SnapshotService:
         response.raise_for_status()
         return response
 
-    def _parse_json_response(self, response: httpx.Response) -> Dict[str, Any]:
+    def _parse_json_response(self, response: httpx.Response) -> dict[str, Any]:
         """Parse JSON response with error handling."""
         try:
             return response.json()
         except Exception as e:
-            logger.error(
+            logger.exception(
                 "Failed to parse JSON response from Snapshot API, response_text=%s, error=%s",
                 response.text[:MAX_LOG_RESPONSE_LENGTH],
                 str(e),
             )
-            raise SnapshotServiceError(
-                f"Snapshot API returned invalid JSON response: {str(e)}"
-            ) from e
+            msg = f"Snapshot API returned invalid JSON response: {e!s}"
+            raise SnapshotServiceError(msg) from e
 
     def _validate_graphql_response(
-        self, response_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, response_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Validate GraphQL response structure and handle errors."""
         # Runtime assertions for critical validation
         assert isinstance(response_data, dict), "Response data must be a dictionary"
@@ -248,7 +236,8 @@ class SnapshotService:
                 "Snapshot API response missing 'data' field, response_keys=%s",
                 str(response_keys),
             )
-            raise SnapshotServiceError("Snapshot API response missing 'data' field")
+            msg = "Snapshot API response missing 'data' field"
+            raise SnapshotServiceError(msg)
 
         data_result = response_data.get("data", {})
         data_keys_for_logging = self._extract_data_keys_for_logging(data_result)
@@ -269,8 +258,8 @@ class SnapshotService:
         return "non-dict-data"
 
     async def execute_query(
-        self, query: str, variables: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, query: str, variables: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Execute a GraphQL query against the Snapshot API.
 
         Args:
@@ -317,15 +306,14 @@ class SnapshotService:
                     response_text=response_text[:MAX_LOG_RESPONSE_LENGTH],
                 )
             except Exception as e:
-                logger.error(
+                logger.exception(
                     "Unexpected error during Snapshot API interaction, endpoint=%s, error=%s, error_type=%s",
                     self.base_url,
                     str(e),
                     type(e).__name__,
                 )
-                raise SnapshotServiceError(
-                    f"Unexpected error during Snapshot API query execution: {str(e)}"
-                ) from e
+                msg = f"Unexpected error during Snapshot API query execution: {e!s}"
+                raise SnapshotServiceError(msg) from e
 
     # GraphQL Query Constants - Based on live API testing
     GET_SPACE_QUERY = """
@@ -446,7 +434,7 @@ class SnapshotService:
     """
 
     # Space Methods
-    async def get_space(self, space_id: str) -> Optional[Space]:
+    async def get_space(self, space_id: str) -> Space | None:
         """Get a single space by ID.
 
         Args:
@@ -471,7 +459,7 @@ class SnapshotService:
 
             return Space(**space_data)
 
-    async def get_spaces(self, space_ids: List[str]) -> List[Space]:
+    async def get_spaces(self, space_ids: list[str]) -> list[Space]:
         """Get multiple spaces by IDs.
 
         Args:
@@ -488,7 +476,7 @@ class SnapshotService:
             return [Space(**space_data) for space_data in result.get("spaces", [])]
 
     # Proposal Methods
-    async def get_proposal(self, proposal_id: str) -> Optional[Proposal]:
+    async def get_proposal(self, proposal_id: str) -> Proposal | None:
         """Get a single proposal by ID.
 
         Args:
@@ -515,11 +503,11 @@ class SnapshotService:
 
     async def get_proposals(
         self,
-        space_ids: List[str],
-        state: Optional[str] = None,
+        space_ids: list[str],
+        state: str | None = None,
         first: int = DEFAULT_PROPOSALS_LIMIT,
         skip: int = DEFAULT_PAGINATION_SKIP,
-    ) -> List[Proposal]:
+    ) -> list[Proposal]:
         """Get proposals for given spaces with optional filtering and pagination.
 
         Args:
@@ -558,7 +546,7 @@ class SnapshotService:
         proposal_id: str,
         first: int = DEFAULT_VOTES_LIMIT,
         skip: int = DEFAULT_PAGINATION_SKIP,
-    ) -> List[Vote]:
+    ) -> list[Vote]:
         """Get votes for a proposal with pagination.
 
         Args:

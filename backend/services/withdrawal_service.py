@@ -7,15 +7,14 @@ Safe contracts.
 """
 
 import os
-from decimal import Decimal
-from typing import Dict, List
 from datetime import datetime
+from decimal import Decimal
 
-from models import InvestedPosition, WithdrawalTransaction, WithdrawalStatus
-from services.state_manager import StateManager
+from logging_config import setup_pearl_logger
+from models import InvestedPosition, WithdrawalStatus, WithdrawalTransaction
 from services.safe_service import SafeService
 from services.snapshot_service import SnapshotService
-from logging_config import setup_pearl_logger
+from services.state_manager import StateManager
 
 logger = setup_pearl_logger(__name__)
 
@@ -45,7 +44,7 @@ class WithdrawalService:
 
         return is_active
 
-    async def list_invested_positions(self) -> List[InvestedPosition]:
+    async def list_invested_positions(self) -> list[InvestedPosition]:
         """List all invested positions from state."""
         state = await self.state_manager.load_state("withdrawal_service") or {}
         positions_data = state.get("invested_positions", [])
@@ -66,7 +65,7 @@ class WithdrawalService:
         logger.info(f"Found {len(positions)} invested positions")
         return positions
 
-    async def discover_onchain_positions(self) -> List[InvestedPosition]:
+    async def discover_onchain_positions(self) -> list[InvestedPosition]:
         """Discover positions directly from on-chain data."""
         positions = []
 
@@ -87,20 +86,21 @@ class WithdrawalService:
 
     async def _query_defi_positions(
         self, chain_id: int, safe_address: str
-    ) -> List[InvestedPosition]:
+    ) -> list[InvestedPosition]:
         """Query DeFi positions for a specific Safe on a chain."""
         # This would integrate with various DeFi protocols
         # For now, returning empty list as placeholder
-        _ = chain_id  # noqa: F841
-        _ = safe_address  # noqa: F841
+        _ = chain_id
+        _ = safe_address
         return []
 
     async def calculate_withdrawal_amounts(
-        self, positions: List[InvestedPosition], withdrawal_percentage: int = 100
-    ) -> List[Dict]:
+        self, positions: list[InvestedPosition], withdrawal_percentage: int = 100
+    ) -> list[dict]:
         """Calculate withdrawal amounts for positions."""
         if not 0 < withdrawal_percentage <= 100:
-            raise ValueError("Withdrawal percentage must be between 1 and 100")
+            msg = "Withdrawal percentage must be between 1 and 100"
+            raise ValueError(msg)
 
         withdrawals = []
 
@@ -127,13 +127,11 @@ class WithdrawalService:
         return withdrawals
 
     async def prioritize_withdrawals(
-        self, positions: List[InvestedPosition]
-    ) -> List[InvestedPosition]:
+        self, positions: list[InvestedPosition]
+    ) -> list[InvestedPosition]:
         """Prioritize withdrawals based on size and chain."""
         # Sort by amount (descending) and group by chain
-        sorted_positions = sorted(positions, key=lambda p: (p.chain_id, -p.amount))
-
-        return sorted_positions
+        return sorted(positions, key=lambda p: (p.chain_id, -p.amount))
 
     async def execute_withdrawal(
         self, position: InvestedPosition, amount: Decimal, max_retries: int = 1
@@ -182,11 +180,11 @@ class WithdrawalService:
             except Exception as e:
                 attempts += 1
                 last_error = str(e)
-                logger.error(f"Withdrawal attempt {attempts} failed: {e}")
+                logger.exception(f"Withdrawal attempt {attempts} failed: {e}")
 
                 if attempts >= max_retries:
                     # Create failed withdrawal record
-                    withdrawal = WithdrawalTransaction(
+                    return WithdrawalTransaction(
                         transaction_hash="0x" + "0" * 64,  # Placeholder
                         status=WithdrawalStatus.FAILED,
                         position_id=position.position_id,
@@ -195,9 +193,9 @@ class WithdrawalService:
                         timestamp=datetime.utcnow().isoformat(),
                         error_message=last_error,
                     )
-                    return withdrawal
 
-        raise Exception(f"All withdrawal attempts failed: {last_error}")
+        msg = f"All withdrawal attempts failed: {last_error}"
+        raise Exception(msg)
 
     async def _build_withdrawal_tx(
         self, position: InvestedPosition, amount: Decimal
@@ -205,8 +203,8 @@ class WithdrawalService:
         """Build withdrawal transaction data for the position."""
         # This would build protocol-specific withdrawal transaction
         # For now, returning empty data
-        _ = position  # noqa: F841
-        _ = amount  # noqa: F841
+        _ = position
+        _ = amount
         return "0x"
 
     async def _update_pending_withdrawal(self, withdrawal: WithdrawalTransaction):
@@ -263,7 +261,7 @@ class WithdrawalService:
         state["pending_withdrawals"] = updated_withdrawals
         await self.state_manager.save_state("withdrawal_service", state)
 
-    async def run_withdrawal_process(self) -> List[WithdrawalTransaction]:
+    async def run_withdrawal_process(self) -> list[WithdrawalTransaction]:
         """Run the complete withdrawal process."""
         if not await self.is_withdrawal_mode_active():
             logger.info("Withdrawal mode not active, skipping withdrawal process")
@@ -294,7 +292,7 @@ class WithdrawalService:
                 )
                 results.append(result)
             except Exception as e:
-                logger.error(
+                logger.exception(
                     f"Failed to execute withdrawal for {position.position_id}: {e}"
                 )
 
@@ -304,7 +302,7 @@ class WithdrawalService:
         logger.info(f"Withdrawal process completed with {len(results)} transactions")
         return results
 
-    async def get_withdrawal_progress(self) -> Dict:
+    async def get_withdrawal_progress(self) -> dict:
         """Get current withdrawal progress and status."""
         state = await self.state_manager.load_state("withdrawal_service") or {}
         progress = state.get("withdrawal_progress", {})

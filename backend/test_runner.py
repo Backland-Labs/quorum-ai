@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Test runner for ActivityService functional tests"""
 
+import os
 import subprocess
 import sys
-import os
 import time
 
 
@@ -23,6 +23,7 @@ def run_command(command, description):
             text=True,
             timeout=300,
             cwd="/Users/max/code/quorum-ai/backend",
+            check=False,
         )
         end_time = time.time()
         duration = end_time - start_time

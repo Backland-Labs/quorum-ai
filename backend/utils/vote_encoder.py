@@ -13,11 +13,11 @@ multisig transactions.
 """
 
 from enum import IntEnum
-from typing import Optional
-from web3 import Web3
-from eth_abi import encode
 
-from services.governor_registry import get_governor, GovernorRegistryError
+from eth_abi import encode
+from web3 import Web3
+
+from services.governor_registry import GovernorRegistryError, get_governor
 
 
 class VoteEncoderError(Exception):
@@ -32,18 +32,20 @@ class Support(IntEnum):
 
 def validate_proposal_id(proposal_id: int) -> int:
     if proposal_id < 0:
-        raise VoteEncoderError("Proposal ID must be non-negative")
+        msg = "Proposal ID must be non-negative"
+        raise VoteEncoderError(msg)
     return proposal_id
 
 
-def validate_reason_length(reason: Optional[str]) -> Optional[str]:
+def validate_reason_length(reason: str | None) -> str | None:
     if reason is not None and len(reason) > 256:
-        raise VoteEncoderError("Reason too long (max 256 characters)")
+        msg = "Reason too long (max 256 characters)"
+        raise VoteEncoderError(msg)
     return reason
 
 
 def encode_cast_vote(
-    governor_id: str, proposal_id: int, support: Support, reason: Optional[str] = None
+    governor_id: str, proposal_id: int, support: Support, reason: str | None = None
 ) -> str:
     try:
         validate_proposal_id(proposal_id)
@@ -65,7 +67,7 @@ def encode_cast_vote(
             function_selector = Web3.keccak(text="castVote(uint256,uint8)")[:4]
             encoded_params = encode(["uint256", "uint8"], [proposal_id, int(support)])
 
-        encoded_data = "0x" + (function_selector + encoded_params).hex()
-        return encoded_data
+        return "0x" + (function_selector + encoded_params).hex()
     except Exception as e:
-        raise VoteEncoderError(f"Failed to encode vote: {e}")
+        msg = f"Failed to encode vote: {e}"
+        raise VoteEncoderError(msg)

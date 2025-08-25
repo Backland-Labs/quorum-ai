@@ -1,12 +1,11 @@
 """Environment variable helper functions for Pearl integration."""
 
 import os
-from typing import Optional
 
 
 def get_env_with_prefix(
-    key: str, default: Optional[str] = None, prefix: str = "CONNECTION_CONFIGS_CONFIG_"
-) -> Optional[str]:
+    key: str, default: str | None = None, prefix: str = "CONNECTION_CONFIGS_CONFIG_"
+) -> str | None:
     """Get environment variable with prefix fallback.
 
     This function implements the Pearl environment variable prefixing convention.

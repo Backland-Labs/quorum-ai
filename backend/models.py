@@ -1,13 +1,11 @@
 """Pydantic models for DAO and proposal data structures."""
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, List, Optional
-from typing_extensions import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
-
 
 # Constants for VoteDecision model
 DEFAULT_ESTIMATED_GAS_COST = 0.005  # CELO
@@ -62,14 +60,16 @@ class ModelValidationHelper:
         """Common validation for string type and basic content."""
         # Type validation
         if not isinstance(value, str):
-            raise ValueError(f"{field_name} must be a string, got {type(value)}")
+            msg = f"{field_name} must be a string, got {type(value)}"
+            raise ValueError(msg)
 
         # Strip whitespace for consistent validation
         stripped = value.strip()
 
         # Content validation
         if not stripped:
-            raise ValueError(f"{field_name} cannot be empty or whitespace only")
+            msg = f"{field_name} cannot be empty or whitespace only"
+            raise ValueError(msg)
 
         return stripped
 
@@ -82,7 +82,9 @@ class ModelValidationHelper:
 
     @staticmethod
     def validate_meaningful_text(
-        value: str, min_length: int = MIN_MEANINGFUL_TEXT_LENGTH, field_name: str = None
+        value: str,
+        min_length: int = MIN_MEANINGFUL_TEXT_LENGTH,
+        field_name: str | None = None,
     ) -> str:
         """Validate text has meaningful content."""
         field_label = field_name or "Text"
@@ -91,9 +93,8 @@ class ModelValidationHelper:
         )
 
         if len(cleaned) < min_length:
-            raise ValueError(
-                f"{field_label} must be at least {min_length} characters, got {len(cleaned)}"
-            )
+            msg = f"{field_label} must be at least {min_length} characters, got {len(cleaned)}"
+            raise ValueError(msg)
 
         return cleaned
 
@@ -105,7 +106,8 @@ class ModelValidationHelper:
         )
 
         if len(cleaned) < MIN_BLOCKCHAIN_ADDRESS_LENGTH:
-            raise ValueError(f"Invalid blockchain address format: {cleaned}")
+            msg = f"Invalid blockchain address format: {cleaned}"
+            raise ValueError(msg)
 
         return cleaned
 
@@ -113,19 +115,22 @@ class ModelValidationHelper:
     def validate_positive_amount(value: str, field_name: str) -> str:
         """Validate string represents positive numeric amount."""
         if not isinstance(value, str):
-            raise ValueError(f"{field_name} must be a string, got {type(value)}")
+            msg = f"{field_name} must be a string, got {type(value)}"
+            raise ValueError(msg)
 
         try:
             amount = float(value)
             if amount < 0:
-                raise ValueError(f"{field_name} cannot be negative: {value}")
+                msg = f"{field_name} cannot be negative: {value}"
+                raise ValueError(msg)
         except ValueError:
-            raise ValueError(f"{field_name} must be numeric: {value}")
+            msg = f"{field_name} must be numeric: {value}"
+            raise ValueError(msg)
 
         return value
 
     @staticmethod
-    def validate_optional_url(value: Optional[str], field_name: str) -> Optional[str]:
+    def validate_optional_url(value: str | None, field_name: str) -> str | None:
         """Validate optional URL format."""
         if value is None:
             return None
@@ -135,12 +140,9 @@ class ModelValidationHelper:
         )
 
         # Basic URL validation
-        if not (
-            cleaned.startswith("http://")
-            or cleaned.startswith("https://")
-            or cleaned.startswith("ipfs://")
-        ):
-            raise ValueError(f"{field_name} must be a valid URL: {cleaned}")
+        if not (cleaned.startswith(("http://", "https://", "ipfs://"))):
+            msg = f"{field_name} must be a valid URL: {cleaned}"
+            raise ValueError(msg)
 
         return cleaned
 
@@ -152,32 +154,30 @@ class ModelValidationHelper:
         if isinstance(value, str):
             if value.lower() in ["true", "1", "yes"]:
                 return True
-            elif value.lower() in ["false", "0", "no"]:
+            if value.lower() in ["false", "0", "no"]:
                 return False
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return bool(value)
 
-        raise ValueError(
-            f"{field_name} must be convertible to boolean, got {type(value)}: {value}"
-        )
+        msg = f"{field_name} must be convertible to boolean, got {type(value)}: {value}"
+        raise ValueError(msg)
 
     @staticmethod
     def validate_non_negative_integer(value: Any, field_name: str) -> int:
         """Validate and convert to non-negative integer."""
         if isinstance(value, bool):
-            raise ValueError(
-                f"{field_name} cannot be boolean disguised as int, got {value}"
-            )
+            msg = f"{field_name} cannot be boolean disguised as int, got {value}"
+            raise ValueError(msg)
 
         try:
             int_value = int(value)
             if int_value < 0:
-                raise ValueError(f"{field_name} cannot be negative: {value}")
+                msg = f"{field_name} cannot be negative: {value}"
+                raise ValueError(msg)
             return int_value
         except (ValueError, TypeError):
-            raise ValueError(
-                f"{field_name} must be a non-negative integer, got {type(value)}: {value}"
-            )
+            msg = f"{field_name} must be a non-negative integer, got {type(value)}: {value}"
+            raise ValueError(msg)
 
 
 # Enum for vote types
@@ -224,25 +224,25 @@ class Proposal(BaseModel):
     scores_total: float = Field(default=0.0, description="Total voting score")
 
     # Choice fields
-    choices: List[str] = Field(
+    choices: list[str] = Field(
         default_factory=list, description="Voting choice options"
     )
-    scores: List[float] = Field(default_factory=list, description="Scores per choice")
+    scores: list[float] = Field(default_factory=list, description="Scores per choice")
 
     # Optional fields
-    snapshot: Optional[str] = Field(None, description="Blockchain snapshot identifier")
-    discussion: Optional[str] = Field(None, description="Discussion forum link")
-    ipfs: Optional[str] = Field(None, description="IPFS content hash")
-    space_id: Optional[str] = Field(None, description="Parent space identifier")
+    snapshot: str | None = Field(None, description="Blockchain snapshot identifier")
+    discussion: str | None = Field(None, description="Discussion forum link")
+    ipfs: str | None = Field(None, description="IPFS content hash")
+    space_id: str | None = Field(None, description="Parent space identifier")
 
     # Computed fields
     is_active: bool = Field(
         default=False, description="Whether voting is currently open"
     )
-    time_remaining: Optional[str] = Field(
+    time_remaining: str | None = Field(
         None, description="Human-readable time remaining"
     )
-    vote_choices: List[VoteChoice] = Field(
+    vote_choices: list[VoteChoice] = Field(
         default_factory=list, description="Processed voting choices with percentages"
     )
 
@@ -266,7 +266,7 @@ class Proposal(BaseModel):
 
     @field_validator("discussion")
     @classmethod
-    def validate_discussion_url(cls, v: Optional[str]) -> Optional[str]:
+    def validate_discussion_url(cls, v: str | None) -> str | None:
         """Validate discussion URL if provided."""
         return ModelValidationHelper.validate_optional_url(v, "discussion")
 
@@ -304,13 +304,11 @@ class ProposalSummary(BaseModel):
     proposal_id: str = Field(..., description="The proposal ID being summarized")
     title: str = Field(..., description="Original proposal title")
     summary: str = Field(..., description="AI-generated concise summary")
-    key_points: List[str] = Field(
+    key_points: list[str] = Field(
         ..., description="List of key points from the proposal"
     )
-    risk_assessment: Optional[RiskLevel] = Field(
-        None, description="Risk level assessment"
-    )
-    recommendation: Optional[str] = Field(
+    risk_assessment: RiskLevel | None = Field(None, description="Risk level assessment")
+    recommendation: str | None = Field(
         None, description="AI-generated voting recommendation"
     )
     confidence: float = Field(
@@ -321,7 +319,7 @@ class ProposalSummary(BaseModel):
 class SummarizeRequest(BaseModel):
     """Request model for proposal summarization."""
 
-    proposal_ids: List[str] = Field(..., min_length=1, max_length=50)
+    proposal_ids: list[str] = Field(..., min_length=1, max_length=50)
     include_risk_assessment: bool = Field(default=True)
     include_recommendations: bool = Field(default=True)
 
@@ -329,7 +327,7 @@ class SummarizeRequest(BaseModel):
 class SummarizeResponse(BaseModel):
     """Response model for proposal summarization."""
 
-    summaries: List[ProposalSummary] = Field(..., description="AI-generated summaries")
+    summaries: list[ProposalSummary] = Field(..., description="AI-generated summaries")
     processing_time: float = Field(..., description="Time taken to process in seconds")
     model_used: str = Field(..., description="AI model used for summarization")
 
@@ -368,20 +366,20 @@ class ProposalTopVoters(BaseModel):
     """
 
     proposal_id: str = Field(..., description="Unique proposal identifier")
-    voters: List[ProposalVoter] = Field(
+    voters: list[ProposalVoter] = Field(
         ..., description="List of top voters by voting power"
     )
 
     @field_validator("voters")
     @classmethod
-    def validate_voters_list(cls, v: List[ProposalVoter]) -> List[ProposalVoter]:
+    def validate_voters_list(cls, v: list[ProposalVoter]) -> list[ProposalVoter]:
         """Validate voters list constraints."""
         if not isinstance(v, list):
-            raise ValueError("Voters must be a list")
+            msg = "Voters must be a list"
+            raise ValueError(msg)
         if len(v) > MAX_VOTERS_LIST_SIZE:
-            raise ValueError(
-                f"Voters list cannot exceed {MAX_VOTERS_LIST_SIZE} entries"
-            )
+            msg = f"Voters list cannot exceed {MAX_VOTERS_LIST_SIZE} entries"
+            raise ValueError(msg)
         return v
 
 
@@ -408,19 +406,17 @@ class VoteDecision(BaseModel):
     )
 
     # Attestation tracking fields
-    space_id: Optional[str] = Field(
-        None, description="Snapshot space ID for attestation"
-    )
-    attestation_status: Optional[str] = Field(
+    space_id: str | None = Field(None, description="Snapshot space ID for attestation")
+    attestation_status: str | None = Field(
         None, description="Status: pending, success, failed"
     )
-    attestation_tx_hash: Optional[str] = Field(
+    attestation_tx_hash: str | None = Field(
         None, description="On-chain attestation transaction hash"
     )
-    attestation_uid: Optional[str] = Field(
+    attestation_uid: str | None = Field(
         None, description="EAS attestation unique identifier"
     )
-    attestation_error: Optional[str] = Field(
+    attestation_error: str | None = Field(
         None, description="Error message if attestation failed"
     )
 
@@ -448,7 +444,7 @@ class VoteDecision(BaseModel):
     def validate_gas_cost(cls, v: float) -> float:
         """Validate gas cost is reasonable."""
         # Runtime assertion: gas cost must be valid
-        assert isinstance(v, (int, float)), f"Gas cost must be numeric, got {type(v)}"
+        assert isinstance(v, int | float), f"Gas cost must be numeric, got {type(v)}"
         assert v >= 0.0, f"Gas cost cannot be negative: {v}"
         assert v <= MAX_REASONABLE_GAS_COST, f"Gas cost seems unreasonably high: {v}"
 
@@ -459,19 +455,22 @@ class VoteDecision(BaseModel):
     def validate_confidence(cls, v: float) -> float:
         """Ensure confidence is within valid range and precision."""
         # Runtime assertion: confidence must be a valid number
-        assert isinstance(v, (int, float)), f"Confidence must be numeric, got {type(v)}"
+        assert isinstance(v, int | float), f"Confidence must be numeric, got {type(v)}"
 
         # Check for NaN
         if v != v:  # NaN check
-            raise ValueError("Confidence cannot be NaN")
+            msg = "Confidence cannot be NaN"
+            raise ValueError(msg)
 
         # Check for infinite values
         if v == float("inf") or v == float("-inf"):
-            raise ValueError("Confidence cannot be infinite")
+            msg = "Confidence cannot be infinite"
+            raise ValueError(msg)
 
         # Check range constraints
         if v < 0.0 or v > 1.0:
-            raise ValueError(f"Confidence must be between 0.0 and 1.0, got {v}")
+            msg = f"Confidence must be between 0.0 and 1.0, got {v}"
+            raise ValueError(msg)
 
         return cls._round_confidence_to_precision(v)
 
@@ -480,7 +479,7 @@ class VoteDecision(BaseModel):
         """Round confidence value to the specified decimal places."""
         # Runtime assertion: validate input assumptions
         assert isinstance(
-            confidence, (int, float)
+            confidence, int | float
         ), f"Expected numeric confidence, got {type(confidence)}"
         assert (
             0.0 <= confidence <= 1.0
@@ -515,16 +514,16 @@ class Space(BaseModel):
     name: str = Field(..., description="Display name of the space")
     network: str = Field(..., description="Blockchain network identifier")
     symbol: str = Field(..., description="Token symbol for the space")
-    strategies: List[Dict[str, Any]] = Field(
+    strategies: list[dict[str, Any]] = Field(
         default_factory=list, description="Array of voting strategies"
     )
-    admins: List[str] = Field(
+    admins: list[str] = Field(
         default_factory=list, description="Array of admin addresses"
     )
-    moderators: List[str] = Field(
+    moderators: list[str] = Field(
         default_factory=list, description="Array of moderator addresses"
     )
-    members: List[str] = Field(
+    members: list[str] = Field(
         default_factory=list, description="Array of member addresses"
     )
     private: bool = Field(default=False, description="Whether space is private")
@@ -535,12 +534,12 @@ class Space(BaseModel):
     votesCount: int = Field(default=0, ge=0, description="Total vote count")
 
     # Optional fields
-    about: Optional[str] = Field(None, description="Description of the space")
-    avatar: Optional[str] = Field(None, description="Avatar image URL")
-    cover: Optional[str] = Field(None, description="Cover image URL")
-    website: Optional[str] = Field(None, description="Website URL")
-    twitter: Optional[str] = Field(None, description="Twitter handle")
-    github: Optional[str] = Field(None, description="GitHub username")
+    about: str | None = Field(None, description="Description of the space")
+    avatar: str | None = Field(None, description="Avatar image URL")
+    cover: str | None = Field(None, description="Cover image URL")
+    website: str | None = Field(None, description="Website URL")
+    twitter: str | None = Field(None, description="Twitter handle")
+    github: str | None = Field(None, description="GitHub username")
 
     @field_validator("id")
     @classmethod
@@ -568,19 +567,19 @@ class Space(BaseModel):
 
     @field_validator("avatar")
     @classmethod
-    def validate_avatar_url(cls, v: Optional[str]) -> Optional[str]:
+    def validate_avatar_url(cls, v: str | None) -> str | None:
         """Validate avatar URL format if provided."""
         return ModelValidationHelper.validate_optional_url(v, "avatar")
 
     @field_validator("cover")
     @classmethod
-    def validate_cover_url(cls, v: Optional[str]) -> Optional[str]:
+    def validate_cover_url(cls, v: str | None) -> str | None:
         """Validate cover URL format if provided."""
         return ModelValidationHelper.validate_optional_url(v, "cover")
 
     @field_validator("website")
     @classmethod
-    def validate_website_url(cls, v: Optional[str]) -> Optional[str]:
+    def validate_website_url(cls, v: str | None) -> str | None:
         """Validate website URL format if provided."""
         return ModelValidationHelper.validate_optional_url(v, "website")
 
@@ -666,17 +665,17 @@ class AgentRunResponse(BaseModel):
     proposals_analyzed: int = Field(
         ..., ge=0, description="Number of proposals analyzed"
     )
-    votes_cast: List[VoteDecision] = Field(
+    votes_cast: list[VoteDecision] = Field(
         ..., description="List of vote decisions made"
     )
     user_preferences_applied: bool = Field(
         ..., description="Whether user preferences were applied"
     )
     execution_time: float = Field(..., ge=0.0, description="Execution time in seconds")
-    errors: List[str] = Field(
+    errors: list[str] = Field(
         default_factory=list, description="List of errors encountered"
     )
-    next_check_time: Optional[datetime] = Field(
+    next_check_time: datetime | None = Field(
         None, description="Next scheduled check time"
     )
 
@@ -716,7 +715,7 @@ class AgentRunResponse(BaseModel):
         """Validate execution_time is non-negative float."""
         # Runtime assertion: value must be numeric type
         assert isinstance(
-            v, (int, float)
+            v, int | float
         ), f"Execution time must be numeric, got {type(v)}"
         assert v >= 0.0, f"Execution time cannot be negative: {v}"
 
@@ -733,11 +732,11 @@ class AgentRunStatus(BaseModel):
     current_state: str = Field(
         description="Current state of the agent (e.g., IDLE, FETCHING_PROPOSALS)"
     )
-    last_run_timestamp: Optional[str] = Field(
+    last_run_timestamp: str | None = Field(
         None, description="ISO timestamp of the last completed agent run"
     )
     is_active: bool = Field(description="Whether the agent is currently running")
-    current_space_id: Optional[str] = Field(
+    current_space_id: str | None = Field(
         None, description="Space ID of the current or last run"
     )
 
@@ -761,7 +760,7 @@ class AgentDecisionResponse(BaseModel):
 class AgentDecisionsResponse(BaseModel):
     """Response model for the agent decisions endpoint."""
 
-    decisions: List[AgentDecisionResponse] = Field(
+    decisions: list[AgentDecisionResponse] = Field(
         ..., description="List of recent voting decisions with enriched data"
     )
 
@@ -783,10 +782,10 @@ class UserPreferences(BaseModel):
     max_proposals_per_run: int = Field(
         default=3, ge=1, le=10, description="Maximum proposals to analyze per run"
     )
-    blacklisted_proposers: List[str] = Field(
+    blacklisted_proposers: list[str] = Field(
         default_factory=list, description="List of proposer addresses to avoid"
     )
-    whitelisted_proposers: List[str] = Field(
+    whitelisted_proposers: list[str] = Field(
         default_factory=list, description="List of trusted proposer addresses"
     )
 
@@ -796,22 +795,23 @@ class UserPreferences(BaseModel):
         """Validate confidence_threshold is between 0.0 and 1.0."""
         # Runtime assertion: value must be numeric type
         assert isinstance(
-            v, (int, float)
+            v, int | float
         ), f"Confidence threshold must be numeric, got {type(v)}"
 
         # Check for NaN
         if v != v:  # NaN check
-            raise ValueError("Confidence threshold cannot be NaN")
+            msg = "Confidence threshold cannot be NaN"
+            raise ValueError(msg)
 
         # Check for infinite values
         if v == float("inf") or v == float("-inf"):
-            raise ValueError("Confidence threshold cannot be infinite")
+            msg = "Confidence threshold cannot be infinite"
+            raise ValueError(msg)
 
         # Check range constraints
         if v < 0.0 or v > 1.0:
-            raise ValueError(
-                f"Confidence threshold must be between 0.0 and 1.0, got {v}"
-            )
+            msg = f"Confidence threshold must be between 0.0 and 1.0, got {v}"
+            raise ValueError(msg)
 
         return float(v)
 
@@ -834,7 +834,7 @@ class UserPreferences(BaseModel):
 
     @field_validator("blacklisted_proposers")
     @classmethod
-    def validate_blacklisted_proposers(cls, v: List[str]) -> List[str]:
+    def validate_blacklisted_proposers(cls, v: list[str]) -> list[str]:
         """Validate blacklisted_proposers is list of non-empty strings."""
         # Runtime assertion: value must be list
         assert isinstance(v, list), f"Blacklisted proposers must be list, got {type(v)}"
@@ -843,20 +843,18 @@ class UserPreferences(BaseModel):
         validated_addresses = []
         for i, address in enumerate(v):
             if not isinstance(address, str):
-                raise ValueError(
-                    f"Blacklisted proposer at index {i} must be string, got {type(address)}"
-                )
+                msg = f"Blacklisted proposer at index {i} must be string, got {type(address)}"
+                raise ValueError(msg)
             if not address.strip():
-                raise ValueError(
-                    f"Blacklisted proposer at index {i} cannot be empty or whitespace"
-                )
+                msg = f"Blacklisted proposer at index {i} cannot be empty or whitespace"
+                raise ValueError(msg)
             validated_addresses.append(address.strip())
 
         return validated_addresses
 
     @field_validator("whitelisted_proposers")
     @classmethod
-    def validate_whitelisted_proposers(cls, v: List[str]) -> List[str]:
+    def validate_whitelisted_proposers(cls, v: list[str]) -> list[str]:
         """Validate whitelisted_proposers is list of non-empty strings."""
         # Runtime assertion: value must be list
         assert isinstance(v, list), f"Whitelisted proposers must be list, got {type(v)}"
@@ -865,13 +863,11 @@ class UserPreferences(BaseModel):
         validated_addresses = []
         for i, address in enumerate(v):
             if not isinstance(address, str):
-                raise ValueError(
-                    f"Whitelisted proposer at index {i} must be string, got {type(address)}"
-                )
+                msg = f"Whitelisted proposer at index {i} must be string, got {type(address)}"
+                raise ValueError(msg)
             if not address.strip():
-                raise ValueError(
-                    f"Whitelisted proposer at index {i} cannot be empty or whitespace"
-                )
+                msg = f"Whitelisted proposer at index {i} cannot be empty or whitespace"
+                raise ValueError(msg)
             validated_addresses.append(address.strip())
 
         return validated_addresses
@@ -885,15 +881,15 @@ class Vote(BaseModel):
     choice: int = Field(..., description="Vote choice")
     created: int = Field(..., ge=0, description="Creation timestamp")
     vp: float = Field(..., ge=0, description="Total voting power")
-    vp_by_strategy: List[float] = Field(
+    vp_by_strategy: list[float] = Field(
         default_factory=list, description="Voting power by strategy"
     )
-    reason: Optional[str] = Field(None, description="Vote reason/comment")
-    ipfs: Optional[str] = Field(None, description="IPFS hash")
-    vp_state: Optional[str] = Field(None, description="Voting power state")
-    space: Optional[Dict[str, Any]] = Field(None, description="Space metadata")
-    proposal: Optional[Dict[str, Any]] = Field(None, description="Proposal metadata")
-    app: Optional[str] = Field(None, description="App used to vote")
+    reason: str | None = Field(None, description="Vote reason/comment")
+    ipfs: str | None = Field(None, description="IPFS hash")
+    vp_state: str | None = Field(None, description="Voting power state")
+    space: dict[str, Any] | None = Field(None, description="Space metadata")
+    proposal: dict[str, Any] | None = Field(None, description="Proposal metadata")
+    app: str | None = Field(None, description="App used to vote")
 
     @field_validator("id")
     @classmethod
@@ -917,9 +913,7 @@ class InvestedPosition(BaseModel):
     chain_id: int = Field(..., description="Blockchain chain ID")
     position_id: str = Field(..., description="Unique position identifier")
     timestamp: str = Field(..., description="Position creation timestamp")
-    contract_address: Optional[str] = Field(
-        None, description="Protocol contract address"
-    )
+    contract_address: str | None = Field(None, description="Protocol contract address")
 
     @field_validator("protocol")
     @classmethod
@@ -938,7 +932,8 @@ class InvestedPosition(BaseModel):
     def validate_amount(cls, v: Decimal) -> Decimal:
         """Validate amount is positive."""
         if v <= 0:
-            raise ValueError(f"Amount must be positive, got {v}")
+            msg = f"Amount must be positive, got {v}"
+            raise ValueError(msg)
         return v
 
     @field_validator("chain_id")
@@ -953,7 +948,8 @@ class InvestedPosition(BaseModel):
             34443,
         ]  # Ethereum, Optimism, Gnosis, Base, Mode
         if v not in valid_chains:
-            raise ValueError(f"Invalid chain_id: {v}")
+            msg = f"Invalid chain_id: {v}"
+            raise ValueError(msg)
         return v
 
 
@@ -961,22 +957,24 @@ class WithdrawalTransaction(BaseModel):
     """Represents a withdrawal transaction."""
 
     transaction_hash: str = Field(..., description="Blockchain transaction hash")
-    safe_tx_hash: Optional[str] = Field(None, description="Safe transaction hash")
+    safe_tx_hash: str | None = Field(None, description="Safe transaction hash")
     status: WithdrawalStatus = Field(..., description="Transaction status")
     position_id: str = Field(..., description="Related position ID")
     amount: Decimal = Field(..., description="Withdrawal amount")
     chain_id: int = Field(..., description="Blockchain chain ID")
-    timestamp: Optional[str] = Field(None, description="Transaction timestamp")
-    error_message: Optional[str] = Field(None, description="Error message if failed")
+    timestamp: str | None = Field(None, description="Transaction timestamp")
+    error_message: str | None = Field(None, description="Error message if failed")
 
     @field_validator("transaction_hash")
     @classmethod
     def validate_transaction_hash(cls, v: str) -> str:
         """Validate transaction hash format."""
         if not v.startswith("0x"):
-            raise ValueError("Transaction hash must start with 0x")
+            msg = "Transaction hash must start with 0x"
+            raise ValueError(msg)
         if len(v) != 66:  # 0x + 64 hex chars
-            raise ValueError("Transaction hash must be 66 characters")
+            msg = "Transaction hash must be 66 characters"
+            raise ValueError(msg)
         return v
 
 
@@ -997,16 +995,16 @@ class EASAttestationData(BaseModel):
     )
 
     # Optional fields for attestation results
-    attestation_tx_hash: Optional[str] = Field(
+    attestation_tx_hash: str | None = Field(
         None, description="On-chain attestation transaction hash"
     )
-    attestation_uid: Optional[str] = Field(
+    attestation_uid: str | None = Field(
         None, description="EAS attestation unique identifier"
     )
-    attestation_status: Optional[str] = Field(
+    attestation_status: str | None = Field(
         None, description="Status: pending, success, failed"
     )
-    attestation_error: Optional[str] = Field(
+    attestation_error: str | None = Field(
         None, description="Error message if attestation failed"
     )
 
@@ -1018,27 +1016,28 @@ class EASAttestationData(BaseModel):
 
     @field_validator("vote_tx_hash", "attestation_tx_hash")
     @classmethod
-    def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
+    def validate_tx_hash(cls, v: str | None) -> str | None:
         """Validate transaction hash format."""
         if v is None:
             return v
         if not v.startswith("0x"):
-            raise ValueError("Transaction hash must start with 0x")
+            msg = "Transaction hash must start with 0x"
+            raise ValueError(msg)
         if len(v) != 66:  # 0x + 64 hex chars
-            raise ValueError("Transaction hash must be 66 characters")
+            msg = "Transaction hash must be 66 characters"
+            raise ValueError(msg)
         return v
 
     @field_validator("attestation_status")
     @classmethod
-    def validate_attestation_status(cls, v: Optional[str]) -> Optional[str]:
+    def validate_attestation_status(cls, v: str | None) -> str | None:
         """Validate attestation status."""
         if v is None:
             return v
         valid_statuses = {"pending", "success", "failed"}
         if v not in valid_statuses:
-            raise ValueError(
-                f"Invalid attestation status: {v}. Must be one of {valid_statuses}"
-            )
+            msg = f"Invalid attestation status: {v}. Must be one of {valid_statuses}"
+            raise ValueError(msg)
         return v
 
 
@@ -1072,9 +1071,9 @@ class VotingDecisionFile(BaseModel):
     """Model for file-based voting decision output."""
 
     # Metadata
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     version: str = Field(default="1.0.0")
-    run_id: Optional[str] = None
+    run_id: str | None = None
 
     # Proposal identification
     proposal_id: str = Field(min_length=MIN_PROPOSAL_ID_LENGTH)
@@ -1087,17 +1086,17 @@ class VotingDecisionFile(BaseModel):
     risk_level: RiskLevel
 
     # Reasoning and context
-    reasoning: List[str] = Field(min_items=1)
-    key_factors: List[str] = Field(default_factory=list)
+    reasoning: list[str] = Field(min_items=1)
+    key_factors: list[str] = Field(default_factory=list)
     voting_strategy: VotingStrategy
 
     # Execution metadata
     dry_run: bool = False
     executed: bool = False
-    transaction_hash: Optional[str] = None
+    transaction_hash: str | None = None
 
     # File integrity
-    checksum: Optional[str] = None
+    checksum: str | None = None
 
     @field_validator("vote")
     @classmethod
@@ -1105,7 +1104,8 @@ class VotingDecisionFile(BaseModel):
         """Validate vote value."""
         valid_votes = {"FOR", "AGAINST", "ABSTAIN"}
         if v not in valid_votes:
-            raise ValueError(f"Vote must be one of {valid_votes}")
+            msg = f"Vote must be one of {valid_votes}"
+            raise ValueError(msg)
         return v
 
 
@@ -1168,13 +1168,13 @@ class HealthCheckResponse(BaseModel):
     is_tm_healthy: bool = Field(
         default=True, description="Whether the transaction manager is healthy"
     )
-    agent_health: Optional[AgentHealth] = Field(
+    agent_health: AgentHealth | None = Field(
         default=None, description="Detailed agent health status information"
     )
-    rounds: List[Dict[str, Any]] = Field(
+    rounds: list[dict[str, Any]] = Field(
         default_factory=list, description="List of round information for Pearl platform"
     )
-    rounds_info: Optional[Dict[str, Any]] = Field(
+    rounds_info: dict[str, Any] | None = Field(
         default=None, description="Additional round metadata for Pearl platform"
     )
 
@@ -1186,10 +1186,11 @@ class HealthCheckResponse(BaseModel):
 
     @field_validator("rounds")
     @classmethod
-    def validate_rounds(cls, v: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def validate_rounds(cls, v: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Validate rounds field is a list."""
         if not isinstance(v, list):
-            raise ValueError("Rounds must be a list")
+            msg = "Rounds must be a list"
+            raise ValueError(msg)
         return v
 
 
@@ -1202,7 +1203,7 @@ class HealthCheckError(Exception):
     for debugging health check failures.
     """
 
-    def __init__(self, message: str, context: Optional[Dict[str, Any]] = None):
+    def __init__(self, message: str, context: dict[str, Any] | None = None):
         """Initialize HealthCheckError with message and optional context.
 
         Args:
@@ -1224,9 +1225,9 @@ class HealthServiceTimeoutError(HealthCheckError):
     def __init__(
         self,
         message: str,
-        timeout_ms: Optional[int] = None,
-        operation: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
+        timeout_ms: int | None = None,
+        operation: str | None = None,
+        context: dict[str, Any] | None = None,
     ):
         """Initialize HealthServiceTimeoutError with timeout information.
 
@@ -1267,7 +1268,7 @@ class ChainNonces(BaseModel):
         default=0, ge=0, description="Nonce for periods with no voting opportunities"
     )
     last_updated: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="Last update timestamp",
     )
 
@@ -1278,9 +1279,11 @@ class ChainNonces(BaseModel):
     def validate_nonce_values(cls, v: int) -> int:
         """Validate nonce values are non-negative integers."""
         if not isinstance(v, int):
-            raise ValueError("Nonce values must be integers")
+            msg = "Nonce values must be integers"
+            raise ValueError(msg)
         if v < 0:
-            raise ValueError("Nonce values must be non-negative")
+            msg = "Nonce values must be non-negative"
+            raise ValueError(msg)
         return v
 
 
@@ -1293,43 +1296,46 @@ class ActivityState(BaseModel):
 
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
-    last_activity_date: Optional[date] = Field(
+    last_activity_date: date | None = Field(
         default=None, description="Date of last recorded activity"
     )
-    last_tx_hash: Optional[str] = Field(
+    last_tx_hash: str | None = Field(
         default=None, description="Transaction hash of last activity"
     )
-    nonces: Dict[str, ChainNonces] = Field(
+    nonces: dict[str, ChainNonces] = Field(
         default_factory=dict, description="Nonce tracking data per chain"
     )
 
     @field_validator("last_tx_hash")
     @classmethod
-    def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
+    def validate_tx_hash(cls, v: str | None) -> str | None:
         """Validate transaction hash format if provided."""
         if v is None:
             return None
         if not isinstance(v, str):
-            raise ValueError("Transaction hash must be a string")
+            msg = "Transaction hash must be a string"
+            raise ValueError(msg)
         if len(v.strip()) == 0:
-            raise ValueError("Transaction hash cannot be empty")
+            msg = "Transaction hash cannot be empty"
+            raise ValueError(msg)
         return v.strip()
 
     @field_validator("nonces")
     @classmethod
-    def validate_nonces(cls, v: Dict[str, ChainNonces]) -> Dict[str, ChainNonces]:
+    def validate_nonces(cls, v: dict[str, ChainNonces]) -> dict[str, ChainNonces]:
         """Validate nonces dictionary structure."""
         if not isinstance(v, dict):
-            raise ValueError("Nonces must be a dictionary")
+            msg = "Nonces must be a dictionary"
+            raise ValueError(msg)
 
         # Validate each chain name is a non-empty string
         for chain_name, chain_nonces in v.items():
             if not isinstance(chain_name, str) or len(chain_name.strip()) == 0:
-                raise ValueError(f"Chain name must be a non-empty string: {chain_name}")
+                msg = f"Chain name must be a non-empty string: {chain_name}"
+                raise ValueError(msg)
             if not isinstance(chain_nonces, ChainNonces):
-                raise ValueError(
-                    f"Chain nonces must be ChainNonces instance for {chain_name}"
-                )
+                msg = f"Chain nonces must be ChainNonces instance for {chain_name}"
+                raise ValueError(msg)
 
         return v
 
@@ -1340,7 +1346,7 @@ class NonceData(BaseModel):
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
     address: str = Field(..., description="Safe multisig address")
-    nonces: List[int] = Field(..., description="List of 4 nonce values")
+    nonces: list[int] = Field(..., description="List of 4 nonce values")
 
     @field_validator("address")
     @classmethod
@@ -1350,17 +1356,21 @@ class NonceData(BaseModel):
 
     @field_validator("nonces")
     @classmethod
-    def validate_nonces(cls, v: List[int]) -> List[int]:
+    def validate_nonces(cls, v: list[int]) -> list[int]:
         """Validate nonces list has exactly 4 non-negative integers."""
         if not isinstance(v, list):
-            raise ValueError("Nonces must be a list")
+            msg = "Nonces must be a list"
+            raise ValueError(msg)
         if len(v) != 4:
-            raise ValueError("Nonces must contain exactly 4 values")
+            msg = "Nonces must contain exactly 4 values"
+            raise ValueError(msg)
         for i, nonce in enumerate(v):
             if not isinstance(nonce, int):
-                raise ValueError(f"Nonce at index {i} must be an integer")
+                msg = f"Nonce at index {i} must be an integer"
+                raise ValueError(msg)
             if nonce < 0:
-                raise ValueError(f"Nonce at index {i} must be non-negative")
+                msg = f"Nonce at index {i} must be non-negative"
+                raise ValueError(msg)
         return v
 
 
@@ -1369,7 +1379,7 @@ class NonceResponse(BaseModel):
 
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
-    data: Dict[str, NonceData] = Field(..., description="Nonce data by chain")
+    data: dict[str, NonceData] = Field(..., description="Nonce data by chain")
     status: Literal["success"] = Field(..., description="Response status")
 
 
@@ -1378,7 +1388,7 @@ class EligibilityResponse(BaseModel):
 
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
-    data: Dict[str, Any] = Field(..., description="Eligibility data")
+    data: dict[str, Any] = Field(..., description="Eligibility data")
     status: Literal["success"] = Field(..., description="Response status")
 
 

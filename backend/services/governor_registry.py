@@ -16,7 +16,8 @@ Snapshot (off-chain) and traditional governor (on-chain) voting mechanisms.
 """
 
 from enum import Enum
-from typing import Dict, List, Any, Tuple
+from typing import Any
+
 from pydantic import BaseModel, Field, field_validator
 from web3 import Web3
 
@@ -46,10 +47,11 @@ class GovernorMeta(BaseModel):
         try:
             return Web3.to_checksum_address(v)
         except ValueError as e:
-            raise ValueError(f"Invalid Ethereum address: {e}")
+            msg = f"Invalid Ethereum address: {e}"
+            raise ValueError(msg)
 
 
-GOVERNORS: Dict[str, GovernorMeta] = {
+GOVERNORS: dict[str, GovernorMeta] = {
     "compound-mainnet": GovernorMeta(
         id="compound-mainnet",
         chain_id=1,
@@ -83,9 +85,10 @@ GOVERNORS: Dict[str, GovernorMeta] = {
 }
 
 
-def get_governor(governor_id: str) -> Tuple[GovernorMeta, List[Dict[str, Any]]]:
+def get_governor(governor_id: str) -> tuple[GovernorMeta, list[dict[str, Any]]]:
     if governor_id not in GOVERNORS:
-        raise GovernorRegistryError(f"Governor '{governor_id}' not found")
+        msg = f"Governor '{governor_id}' not found"
+        raise GovernorRegistryError(msg)
 
     meta = GOVERNORS[governor_id]
     abi_loader = ABILoader()

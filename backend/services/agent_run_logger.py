@@ -5,10 +5,11 @@ Provides Pearl-compliant structured logging for agent run operations with focus 
 and audit trail capabilities for autonomous AI agents on Pearl platform.
 """
 
+import logging
 import time
 from datetime import datetime
-from typing import List, Optional, Dict, Any
-import logging
+from typing import Any
+
 from models import (
     AgentRunRequest,
     AgentRunResponse,
@@ -24,12 +25,10 @@ class AgentRunLogger:
     # Security-sensitive keys to filter from logs
     SENSITIVE_KEYS = {"private_key", "api_key", "token", "secret", "password"}
 
-    def __init__(
-        self, log_file_path: Optional[str] = None, store_path: Optional[str] = None
-    ):
+    def __init__(self, log_file_path: str | None = None, store_path: str | None = None):
         """Initialize the Pearl-compliant agent run logger."""
-        self.start_time: Optional[float] = None
-        self.run_id: Optional[str] = None
+        self.start_time: float | None = None
+        self.run_id: str | None = None
 
         # Import logging_config to avoid circular imports
         from logging_config import setup_pearl_logger
@@ -42,7 +41,7 @@ class AgentRunLogger:
             store_path=store_path,
         )
 
-    def _format_structured_message(self, operation: str, params: Dict[str, Any]) -> str:
+    def _format_structured_message(self, operation: str, params: dict[str, Any]) -> str:
         """
         Format a structured log message with consistent parameter formatting.
 
@@ -65,10 +64,9 @@ class AgentRunLogger:
 
         if formatted_params:
             return f"{operation} ({', '.join(formatted_params)})"
-        else:
-            return operation
+        return operation
 
-    def _sanitize_details(self, details: Dict[str, Any]) -> Dict[str, Any]:
+    def _sanitize_details(self, details: dict[str, Any]) -> dict[str, Any]:
         """
         Remove sensitive information from log details.
 
@@ -103,7 +101,7 @@ class AgentRunLogger:
         self.logger.info(message)
 
     def log_proposals_fetched(
-        self, proposals: List[Proposal], filtered_count: int
+        self, proposals: list[Proposal], filtered_count: int
     ) -> None:
         """Log proposal fetching and filtering results."""
         proposal_ids = ",".join([p.id for p in proposals])
@@ -138,7 +136,7 @@ class AgentRunLogger:
         self.logger.info(message)
 
     def log_vote_execution(
-        self, decision: VoteDecision, success: bool, error: Optional[str] = None
+        self, decision: VoteDecision, success: bool, error: str | None = None
     ) -> None:
         """Log vote execution result with audit trail."""
         params = {

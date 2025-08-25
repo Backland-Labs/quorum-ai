@@ -4,7 +4,7 @@ repos:
     rev: v0.6.9
     hooks:
     -   id: ruff
-        args: ['--fix', '--extend-select=ARG,T201,C90']
+        args: ['--fix']
     -   id: ruff-format
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
@@ -20,4 +20,4 @@ repos:
   rev: v2.3.0
   hooks:
     - id: codespell
-      args: ["--write-changes"]
+      args: ["--write-changes", "--skip=*.lock,*package-lock.json"]

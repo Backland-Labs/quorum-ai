@@ -1,7 +1,7 @@
 """User preferences file management service."""
 
-import os
 import json
+import os
 import tempfile
 from typing import Any
 
@@ -65,7 +65,7 @@ class UserPreferencesService:
                 )
                 return UserPreferences()
 
-            with open(self.preferences_file, "r") as f:
+            with open(self.preferences_file) as f:
                 data = json.load(f)
 
             # Try to create UserPreferences from loaded data
@@ -124,7 +124,7 @@ class UserPreferencesService:
                 )
                 # Also save to file for backward compatibility
             except Exception as e:
-                self.logger.error(
+                self.logger.exception(
                     "Could not save to state manager, falling back to file, error=%s",
                     str(e),
                 )
@@ -160,7 +160,7 @@ class UserPreferencesService:
             )
 
         except (OSError, PermissionError) as e:
-            self.logger.error(
+            self.logger.exception(
                 "Could not save user preferences, preferences_file=%s, error=%s",
                 self.preferences_file,
                 str(e),
@@ -169,10 +169,10 @@ class UserPreferencesService:
             try:
                 if "temp_file_path" in locals():
                     os.unlink(temp_file_path)
-            except:
+            except OSError:
                 pass
         except Exception as e:
-            self.logger.error(
+            self.logger.exception(
                 "Unexpected error saving user preferences, preferences_file=%s, error=%s",
                 self.preferences_file,
                 str(e),
@@ -197,55 +197,52 @@ class UserPreferencesService:
                 try:
                     value = VotingStrategy(value)
                 except ValueError:
-                    raise ValueError(f"Invalid value for voting_strategy: {value}")
+                    msg = f"Invalid value for voting_strategy: {value}"
+                    raise ValueError(msg)
             elif not isinstance(value, VotingStrategy):
-                raise ValueError(
-                    f"Invalid value type for voting_strategy: {type(value)}"
-                )
+                msg = f"Invalid value type for voting_strategy: {type(value)}"
+                raise ValueError(msg)
             current_preferences.voting_strategy = value
 
         elif key == "confidence_threshold":
-            if not isinstance(value, (int, float)):
-                raise ValueError(
-                    f"Invalid value type for confidence_threshold: {type(value)}"
-                )
+            if not isinstance(value, int | float):
+                msg = f"Invalid value type for confidence_threshold: {type(value)}"
+                raise ValueError(msg)
             if not (0.0 <= value <= 1.0):
-                raise ValueError(
-                    f"Invalid value for confidence_threshold: {value}. Must be between 0.0 and 1.0"
-                )
+                msg = f"Invalid value for confidence_threshold: {value}. Must be between 0.0 and 1.0"
+                raise ValueError(msg)
             current_preferences.confidence_threshold = float(value)
 
         elif key == "max_proposals_per_run":
             if not isinstance(value, int):
-                raise ValueError(
-                    f"Invalid value type for max_proposals_per_run: {type(value)}"
-                )
+                msg = f"Invalid value type for max_proposals_per_run: {type(value)}"
+                raise ValueError(msg)
             if not (1 <= value <= 10):
-                raise ValueError(
-                    f"Invalid value for max_proposals_per_run: {value}. Must be between 1 and 10"
-                )
+                msg = f"Invalid value for max_proposals_per_run: {value}. Must be between 1 and 10"
+                raise ValueError(msg)
             current_preferences.max_proposals_per_run = value
 
         elif key == "blacklisted_proposers":
             if not isinstance(value, list):
-                raise ValueError(
-                    f"Invalid value type for blacklisted_proposers: {type(value)}"
-                )
+                msg = f"Invalid value type for blacklisted_proposers: {type(value)}"
+                raise ValueError(msg)
             if not all(isinstance(item, str) for item in value):
-                raise ValueError("All items in blacklisted_proposers must be strings")
+                msg = "All items in blacklisted_proposers must be strings"
+                raise ValueError(msg)
             current_preferences.blacklisted_proposers = value
 
         elif key == "whitelisted_proposers":
             if not isinstance(value, list):
-                raise ValueError(
-                    f"Invalid value type for whitelisted_proposers: {type(value)}"
-                )
+                msg = f"Invalid value type for whitelisted_proposers: {type(value)}"
+                raise ValueError(msg)
             if not all(isinstance(item, str) for item in value):
-                raise ValueError("All items in whitelisted_proposers must be strings")
+                msg = "All items in whitelisted_proposers must be strings"
+                raise ValueError(msg)
             current_preferences.whitelisted_proposers = value
 
         else:
-            raise ValueError(f"Invalid preference key: {key}")
+            msg = f"Invalid preference key: {key}"
+            raise ValueError(msg)
 
         # Save updated preferences
         await self.save_preferences(current_preferences)

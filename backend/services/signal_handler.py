@@ -14,12 +14,14 @@ Key features:
 """
 
 import asyncio
-import signal
 import json
 import os
+import signal
+from collections.abc import Callable
 from datetime import datetime
-from typing import Dict, List, Callable, Any, Optional, TypeVar, Protocol
-from logging_config import setup_pearl_logger, log_span
+from typing import Any, Protocol, TypeVar
+
+from logging_config import log_span, setup_pearl_logger
 
 # Type definitions
 T = TypeVar("T")
@@ -41,7 +43,7 @@ class ShutdownManagedService(Protocol):
 class VotingServiceProtocol(ShutdownManagedService, Protocol):
     """Protocol for voting service with additional methods."""
 
-    async def get_active_votes(self) -> List[Dict[str, Any]]:
+    async def get_active_votes(self) -> list[dict[str, Any]]:
         """Get list of active votes."""
         ...
 
@@ -57,8 +59,6 @@ class VotingServiceProtocol(ShutdownManagedService, Protocol):
 class GracefulShutdownError(Exception):
     """Raised when operations are attempted during shutdown."""
 
-    pass
-
 
 class SignalHandler:
     """Handles system signals and initiates graceful shutdown."""
@@ -73,7 +73,7 @@ class SignalHandler:
         self.logger = setup_pearl_logger()
         self.shutdown_timeout = shutdown_timeout
         self._shutting_down = False
-        self._shutdown_callbacks: List[Callable] = []
+        self._shutdown_callbacks: list[Callable] = []
         self._shutdown_event = asyncio.Event()
         self._original_handlers = {}
 
@@ -100,7 +100,7 @@ class SignalHandler:
     def _schedule_async_handler(self, signum: int) -> None:
         """Schedule async signal handler in the event loop."""
         try:
-            loop = asyncio.get_running_loop()
+            asyncio.get_running_loop()
             asyncio.create_task(self._async_handle_signal(signum))
         except RuntimeError:
             # No running loop, create one
@@ -127,7 +127,7 @@ class SignalHandler:
                 else:
                     callback()
             except Exception as e:
-                self.logger.error(f"Error in shutdown callback: {e}")
+                self.logger.exception(f"Error in shutdown callback: {e}")
 
     def register_shutdown_callback(self, callback: Callable) -> None:
         """Register a callback to be called during shutdown."""
@@ -143,8 +143,8 @@ class SignalHandler:
             await asyncio.wait_for(
                 self._execute_shutdown(), timeout=self.shutdown_timeout
             )
-        except asyncio.TimeoutError:
-            self.logger.error("Shutdown timeout exceeded, forcing exit")
+        except TimeoutError:
+            self.logger.exception("Shutdown timeout exceeded, forcing exit")
             raise
 
     async def _execute_shutdown(self) -> None:
@@ -165,7 +165,7 @@ class ShutdownCoordinator:
         """
         self.logger = setup_pearl_logger()
         self.state_file = state_file
-        self._services: Dict[str, Any] = {}
+        self._services: dict[str, Any] = {}
         self._shutting_down = False
         self._shutdown_lock = asyncio.Lock()
 
@@ -207,7 +207,7 @@ class ShutdownCoordinator:
                 await agent.stop()
                 self.logger.info("Agent service stopped")
         except Exception as e:
-            self.logger.error(f"Error stopping agent service: {e}")
+            self.logger.exception(f"Error stopping agent service: {e}")
 
     async def _handle_active_votes(self) -> None:
         """Handle any active votes during shutdown."""
@@ -229,7 +229,7 @@ class ShutdownCoordinator:
                         await voting.cancel_vote(vote["id"])
                         self.logger.info(f"Cancelled vote {vote['id']}")
         except Exception as e:
-            self.logger.error(f"Error handling active votes: {e}")
+            self.logger.exception(f"Error handling active votes: {e}")
 
     async def _save_all_service_states(self) -> None:
         """Save state for all registered services."""
@@ -246,14 +246,14 @@ class ShutdownCoordinator:
                         await service.save_service_state()
                         self.logger.info(f"Saved state for service '{name}'")
                     except Exception as e:
-                        self.logger.error(
+                        self.logger.exception(
                             f"Error saving state for service '{name}': {e}"
                         )
 
             # Save coordinator state
             await self.save_state(state_data)
 
-    async def save_state(self, state: Dict[str, Any]) -> None:
+    async def save_state(self, state: dict[str, Any]) -> None:
         """Save shutdown state to file."""
         try:
             # Atomic write using temporary file
@@ -265,7 +265,7 @@ class ShutdownCoordinator:
             os.replace(temp_file, self.state_file)
             self.logger.info(f"Saved shutdown state to {self.state_file}")
         except Exception as e:
-            self.logger.error(f"Failed to save shutdown state: {e}")
+            self.logger.exception(f"Failed to save shutdown state: {e}")
             raise
 
     async def check_recovery_needed(self) -> bool:
@@ -274,7 +274,7 @@ class ShutdownCoordinator:
             return False
 
         try:
-            with open(self.state_file, "r") as f:
+            with open(self.state_file) as f:
                 state = json.load(f)
 
             # Check if this was an unexpected shutdown
@@ -290,20 +290,20 @@ class ShutdownCoordinator:
                 return True
 
         except Exception as e:
-            self.logger.error(f"Error checking recovery state: {e}")
+            self.logger.exception(f"Error checking recovery state: {e}")
 
         return False
 
-    async def recover_state(self) -> Dict[str, Any]:
+    async def recover_state(self) -> dict[str, Any]:
         """Recover state from previous run."""
         try:
-            with open(self.state_file, "r") as f:
+            with open(self.state_file) as f:
                 state = json.load(f)
 
             self.logger.info(f"Recovering state from {state['timestamp']}")
             return state
         except Exception as e:
-            self.logger.error(f"Failed to recover state: {e}")
+            self.logger.exception(f"Failed to recover state: {e}")
             raise
 
     def begin_shutdown(self) -> None:
@@ -317,7 +317,8 @@ class ShutdownCoordinator:
     async def check_can_start_operation(self) -> None:
         """Check if new operations can be started."""
         if self._shutting_down:
-            raise GracefulShutdownError("Cannot start new operations during shutdown")
+            msg = "Cannot start new operations during shutdown"
+            raise GracefulShutdownError(msg)
 
     async def handle_signal(self, signum: int) -> None:
         """Handle a signal by initiating shutdown."""
@@ -330,8 +331,8 @@ class ShutdownCoordinator:
 
 
 # Global instance for application-wide signal handling
-_signal_handler: Optional[SignalHandler] = None
-_shutdown_coordinator: Optional[ShutdownCoordinator] = None
+_signal_handler: SignalHandler | None = None
+_shutdown_coordinator: ShutdownCoordinator | None = None
 
 
 def get_signal_handler() -> SignalHandler:
@@ -384,4 +385,4 @@ async def setup_signal_handling(
             # Recovery logic would be implemented by services
         except Exception as e:
             logger = setup_pearl_logger()
-            logger.error(f"Failed to recover state: {e}")
+            logger.exception(f"Failed to recover state: {e}")
