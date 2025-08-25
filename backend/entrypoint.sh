@@ -22,7 +22,7 @@ export PYTHONPATH=/app:$PYTHONPATH
 mkdir -p /app/logs
 
 echo "Starting Quorum AI application..."
-echo "Environment: $(printenv | grep -E '^(DEBUG|HOST|HEALTH_CHECK_PORT|OPENROUTER_API_KEY)=' || echo 'No relevant env vars set')"
+echo "Environment: $(printenv | grep -E '^(DEBUG|HOST|HEALTH_CHECK_PORT)=' || echo 'No relevant env vars set')"
 
 # Start the main application in the background
 uv run main.py &
