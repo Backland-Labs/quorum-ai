@@ -2,57 +2,67 @@
 pragma solidity 0.8.24;
 
 import {Script, console} from "forge-std/Script.sol";
-import {QuorumTracker} from "../src/QuorumTracker.sol";
+import {AttestationTracker} from "../src/AttestationTracker.sol";
 
 /**
  * @title DeployScript
- * @dev Deployment script for the QuorumTracker contract.
- * This script deploys the contract with proper ownership and logs the deployed address.
+ * @dev Deployment script for the AttestationTracker contract.
+ * This script deploys the minimal attestation tracking contract with proper ownership
+ * and EAS integration, following the DualStakingToken pattern.
  */
 contract DeployScript is Script {
     /**
      * @notice Main deployment function.
-     * @dev Deploys QuorumTracker contract with owner from environment variable.
-     * @return quorumTracker The deployed QuorumTracker contract instance.
+     * @dev Deploys AttestationTracker contract with owner and EAS address from environment variables.
+     * @return attestationTracker The deployed AttestationTracker contract instance.
      */
-    function run() public returns (QuorumTracker quorumTracker) {
+    function run() public returns (AttestationTracker attestationTracker) {
         // Get the deployer's private key from environment
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         
         // Get the owner address from environment
-        address owner = vm.envAddress("QUORUM_TRACKER_OWNER");
+        address owner = vm.envAddress("ATTESTATION_TRACKER_OWNER");
         
-        // Validate owner address
+        // Get the EAS contract address from environment
+        address easAddress = vm.envAddress("EAS_CONTRACT_ADDRESS");
+        
+        // Validate addresses
         require(owner != address(0), "Owner address cannot be zero");
+        require(easAddress != address(0), "EAS address cannot be zero");
         
         // Get deployer address for logging
         address deployer = vm.addr(deployerPrivateKey);
         
-        console.log("=== QuorumTracker Deployment ===");
+        console.log("=== AttestationTracker Deployment ===");
         console.log("Deployer:", deployer);
         console.log("Contract Owner:", owner);
+        console.log("EAS Address:", easAddress);
         
         vm.startBroadcast(deployerPrivateKey);
         
-        // Deploy the QuorumTracker contract
-        quorumTracker = new QuorumTracker(owner);
+        // Deploy the AttestationTracker contract
+        attestationTracker = new AttestationTracker(owner, easAddress);
         
         vm.stopBroadcast();
         
         // Log deployment information
-        console.log("QuorumTracker deployed to:", address(quorumTracker));
+        console.log("AttestationTracker deployed to:", address(attestationTracker));
         console.log("Deployment successful!");
         
         // Verify deployment
-        require(address(quorumTracker) != address(0), "Deployment failed");
-        require(quorumTracker.owner() == owner, "Owner not set correctly");
+        require(address(attestationTracker) != address(0), "Deployment failed");
+        require(attestationTracker.owner() == owner, "Owner not set correctly");
+        require(attestationTracker.EAS() == easAddress, "EAS address not set correctly");
         
         console.log("=== Deployment Verification ===");
-        console.log("Contract owner verified:", quorumTracker.owner());
-        console.log("VOTES_CAST constant:", quorumTracker.VOTES_CAST());
-        console.log("OPPORTUNITIES_CONSIDERED constant:", quorumTracker.OPPORTUNITIES_CONSIDERED());
-        console.log("NO_OPPORTUNITIES constant:", quorumTracker.NO_OPPORTUNITIES());
+        console.log("Contract owner verified:", attestationTracker.owner());
+        console.log("EAS address verified:", attestationTracker.EAS());
         
-        return quorumTracker;
+        // Test initial state
+        address testMultisig = makeAddr("test");
+        console.log("Initial attestation count for test address:", attestationTracker.getNumAttestations(testMultisig));
+        console.log("Initial active status for test address:", attestationTracker.isMultisigActive(testMultisig));
+        
+        return attestationTracker;
     }
 }
