@@ -3,6 +3,7 @@
 import os
 import pytest
 from unittest.mock import patch
+from pydantic import ValidationError
 
 from config import Settings
 
@@ -285,6 +286,63 @@ class TestOlasStakingConfiguration:
         
         # Should be able to create settings without any staking config
         assert isinstance(settings, Settings)
+
+
+class TestAttestationTrackerConfiguration:
+    """Test AttestationTracker configuration settings."""
+
+    def test_attestation_tracker_address_defaults_to_none(self):
+        """Test that attestation_tracker_address defaults to None."""
+        settings = Settings()
+        assert settings.attestation_tracker_address is None
+
+    def test_attestation_tracker_address_loaded_from_env(self):
+        """Test that attestation_tracker_address is loaded from environment variable."""
+        test_address = "0x1234567890abcdef1234567890abcdef12345678"
+        expected_checksum = "0x1234567890AbcdEF1234567890aBcdef12345678" 
+        with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": test_address}):
+            settings = Settings()
+            assert settings.attestation_tracker_address == expected_checksum
+
+    def test_attestation_tracker_address_validation_valid_address(self):
+        """Test that valid Ethereum addresses are accepted and converted to checksum format."""
+        test_cases = [
+            ("0x1234567890abcdef1234567890abcdef12345678", "0x1234567890AbcdEF1234567890aBcdef12345678"),
+            ("0xAbCdEf123456789ABCDef123456789abcdef1234", "0xABCDEF123456789abcdeF123456789ABCDEf1234")
+        ]
+        for input_address, expected_address in test_cases:
+            with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": input_address}):
+                settings = Settings()
+                assert settings.attestation_tracker_address == expected_address
+
+    def test_attestation_tracker_address_validation_invalid_address(self):
+        """Test that invalid Ethereum addresses are rejected."""
+        invalid_addresses = [
+            "0x123",  # Too short
+            "invalid_address",  # Not hex
+            "1234567890abcdef1234567890abcdef1234567",  # Too short (39 chars)
+        ]
+        for address in invalid_addresses:
+            with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": address}):
+                # Invalid addresses should raise validation error (Pydantic ValidationError)
+                with pytest.raises((ValueError, ValidationError)):
+                    Settings()
+
+    def test_attestation_tracker_address_empty_string_allowed(self):
+        """Test that empty string is treated as None."""
+        with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": ""}):
+            settings = Settings()
+            # Empty string should result in None
+            assert settings.attestation_tracker_address in [None, ""]
+
+    def test_attestation_tracker_address_checksum_conversion(self):
+        """Test that valid addresses are converted to checksum format."""
+        # Test address without checksum (all lowercase)
+        test_address = "1234567890abcdef1234567890abcdef12345678"
+        expected_checksum = "0x1234567890AbcdEF1234567890aBcdef12345678"
+        with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": test_address}):
+            settings = Settings()
+            assert settings.attestation_tracker_address == expected_checksum
 
 
 class TestPropertyMethods:

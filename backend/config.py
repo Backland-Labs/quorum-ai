@@ -89,32 +89,32 @@ class Settings(BaseSettings):
     dao_addresses: List[str] = Field(
         default_factory=list, description="List of DAO addresses to monitor"
     )
-    
+
     # QuorumTracker contract configuration
     quorum_tracker_address: Optional[str] = Field(
         default=None,
         alias="QUORUM_TRACKER_ADDRESS",
-        description="Address of the deployed QuorumTracker contract"
+        description="Address of the deployed QuorumTracker contract",
     )
     quorum_tracker_owner: Optional[str] = Field(
         default=None,
         alias="QUORUM_TRACKER_OWNER",
-        description="Owner address of the QuorumTracker contract"
+        description="Owner address of the QuorumTracker contract",
     )
     quorum_tracker_private_key: Optional[str] = Field(
         default=None,
         alias="QUORUM_TRACKER_PRIVATE_KEY",
-        description="Private key for the QuorumTracker owner account"
+        description="Private key for the QuorumTracker owner account",
     )
     rpc_url: str = Field(
         default="http://localhost:8545",
         alias="RPC_URL",
-        description="RPC URL for blockchain connection"
+        description="RPC URL for blockchain connection",
     )
     chain_id: int = Field(
         default=8453,
         alias="CHAIN_ID",
-        description="Chain ID for the network (8453 for Base)"
+        description="Chain ID for the network (8453 for Base)",
     )
 
     # Top voters endpoint settings
@@ -328,6 +328,13 @@ class Settings(BaseSettings):
         description="Base network RPC endpoint (alternative to BASE_LEDGER_RPC)",
     )
 
+    # AttestationTracker Configuration
+    attestation_tracker_address: Optional[str] = Field(
+        default=None,
+        alias="ATTESTATION_TRACKER_ADDRESS",
+        description="AttestationTracker wrapper contract address on Base network. If set, attestations will be routed through this contract.",
+    )
+
     # QuorumTracker configuration
     quorum_tracker_address: Optional[str] = Field(
         default=None,
@@ -336,7 +343,7 @@ class Settings(BaseSettings):
     )
     quorum_tracker_owner: Optional[str] = Field(
         default=None,
-        alias="QUORUM_TRACKER_OWNER", 
+        alias="QUORUM_TRACKER_OWNER",
         description="Owner address for QuorumTracker contract (backend service wallet)",
     )
 
@@ -780,6 +787,21 @@ class Settings(BaseSettings):
         if v and not Web3.is_address(v):
             raise ValueError(f"Invalid contract address: {v}")
         return Web3.to_checksum_address(v) if v else None
+
+    @model_validator(mode="after")
+    def validate_attestation_tracker_config(self):
+        """Validate AttestationTracker configuration."""
+        if self.attestation_tracker_address:
+            # Validate address format - must be a valid Web3 address
+            if not Web3.is_address(self.attestation_tracker_address):
+                raise ValueError(
+                    f"Invalid ATTESTATION_TRACKER_ADDRESS: {self.attestation_tracker_address}"
+                )
+            # Convert to checksum address for consistency
+            self.attestation_tracker_address = Web3.to_checksum_address(
+                self.attestation_tracker_address
+            )
+        return self
 
     def _parse_olas_config(self):
         """Parse Olas-specific configuration from environment variables with prefix support."""
