@@ -26,11 +26,11 @@ interface IEAS {
 /**
  * @title AttestationTracker
  * @dev Minimal implementation of the DualStakingToken attestation pattern.
- * 
- * This contract serves as a wrapper around EAS (Ethereum Attestation Service) 
- * that tracks which multisigs make attestations and maintains an active/inactive 
+ *
+ * This contract serves as a wrapper around EAS (Ethereum Attestation Service)
+ * that tracks which multisigs make attestations and maintains an active/inactive
  * status for each multisig using efficient bit manipulation.
- * 
+ *
  * Key features:
  * - Tracks attestation count per multisig address
  * - Maintains active/inactive status per multisig
@@ -62,7 +62,7 @@ contract AttestationTracker is Ownable {
     }
 
     // --- External Functions ---
-    
+
     /**
      * @notice Sets the active status for a multisig address.
      * @dev Can be used to mark multisigs as active/inactive for staking-related functionality.
@@ -87,24 +87,24 @@ contract AttestationTracker is Ownable {
      * @param delegatedRequest The EAS delegated attestation request.
      * @return attestationUID The UID of the created attestation.
      */
-    function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest) 
-        external 
-        payable 
-        returns (bytes32 attestationUID) 
+    function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest)
+        external
+        payable
+        returns (bytes32 attestationUID)
     {
         // Increment attestation counter for the caller (preserving upper bits)
         mapMultisigAttestations[msg.sender]++;
-        
+
         // Forward the attestation request to EAS
         attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(delegatedRequest);
-        
+
         emit AttestationMade(msg.sender, attestationUID);
-        
+
         return attestationUID;
     }
 
     // --- View Functions ---
-    
+
     /**
      * @notice Gets the number of attestations made by a multisig address.
      * @param multisig The address of the multisig.
@@ -132,10 +132,10 @@ contract AttestationTracker is Ownable {
      * @return numAttestations Number of attestations made.
      * @return isActive Whether the multisig is marked as active.
      */
-    function getMultisigInfo(address multisig) 
-        external 
-        view 
-        returns (uint256 numAttestations, bool isActive) 
+    function getMultisigInfo(address multisig)
+        external
+        view
+        returns (uint256 numAttestations, bool isActive)
     {
         uint256 attestationData = mapMultisigAttestations[multisig];
         numAttestations = attestationData & ((1 << 255) - 1);

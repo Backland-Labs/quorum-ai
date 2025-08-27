@@ -148,7 +148,7 @@ cast call 0x0451830c7F76ca89b52a4dbecF22f58a507282b9 \
   0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
   --rpc-url http://localhost:8545
 
-# Result: [2, 5, 1] 
+# Result: [2, 5, 1]
 # Interpretation: 2 votes cast, 5 opportunities considered, 1 no opportunity
 ```
 
@@ -204,7 +204,7 @@ cast call 0x0451830c7F76ca89b52a4dbecF22f58a507282b9 \
 // Final state verification via direct storage queries
 Multisig: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 - Votes Cast: 2
-- Opportunities Considered: 5  
+- Opportunities Considered: 5
 - No Opportunities: 1
 
 Multisig: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
@@ -250,7 +250,7 @@ Multisig: 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
 ### IQuorumTracker Interface Compliance
 ```solidity
 interface IQuorumTracker {
-    function getVotingStats(address multisig) 
+    function getVotingStats(address multisig)
         external view returns (uint256[] memory);
 }
 ```

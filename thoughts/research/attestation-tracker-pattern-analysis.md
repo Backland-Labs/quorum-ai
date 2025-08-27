@@ -38,25 +38,25 @@ mapping(address => uint256) public mapMultisigAttestations;
 
 **Key Features:**
 - **Single storage slot efficiency**: Uses bit manipulation to store both active status and attestation count
-- **MSB (bit 255)**: Active/inactive status flag  
+- **MSB (bit 255)**: Active/inactive status flag
 - **Lower 255 bits**: Attestation counter (max: 2^255 - 1 attestations)
 - **Public visibility**: Allows external contract queries, following autonolas pattern
 
-#### Wrapper Function Implementation  
+#### Wrapper Function Implementation
 ```solidity
-function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest) 
-    external 
-    payable 
-    returns (bytes32 attestationUID) 
+function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest)
+    external
+    payable
+    returns (bytes32 attestationUID)
 {
     // Increment attestation counter for the caller (preserving upper bits)
     mapMultisigAttestations[msg.sender]++;
-    
+
     // Forward the attestation request to EAS
     attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(delegatedRequest);
-    
+
     emit AttestationMade(msg.sender, attestationUID);
-    
+
     return attestationUID;
 }
 ```
@@ -76,7 +76,7 @@ mapping(uint256 => address) public mapServiceIdStakers;
 ```
 
 **AttestationTracker Equivalent:**
-```solidity  
+```solidity
 mapping(address => uint256) public mapMultisigAttestations;
 ```
 
@@ -105,7 +105,7 @@ The AttestationTracker implements sophisticated bit manipulation that exceeds th
 // Set active (preserve count) - contracts/src/AttestationTracker.sol:76
 mapMultisigAttestations[multisig] |= 1 << 255;
 
-// Set inactive (preserve count) - contracts/src/AttestationTracker.sol:79  
+// Set inactive (preserve count) - contracts/src/AttestationTracker.sol:79
 mapMultisigAttestations[multisig] &= ((1 << 255) - 1);
 
 // Extract attestation count - contracts/src/AttestationTracker.sol:115
@@ -127,7 +127,7 @@ The test suite at `contracts/test/AttestationTracker.t.sol` demonstrates robust 
 
 #### Test Categories Covered:
 - ✅ **Constructor validation** (lines 74-90)
-- ✅ **Access control** (owner-only functions, lines 117-121) 
+- ✅ **Access control** (owner-only functions, lines 117-121)
 - ✅ **Wrapper functionality** (forwarding to EAS, lines 130-235)
 - ✅ **Bit manipulation correctness** (independent status/count, lines 243-283)
 - ✅ **Multi-address independence** (separate tracking, lines 324-356)
@@ -137,7 +137,7 @@ The test suite at `contracts/test/AttestationTracker.t.sol` demonstrates robust 
 
 #### Notable Test Insights:
 - **Gas usage**: ~150k gas limit for attestation operations (`test_Gas_AttestByDelegation`)
-- **Independence verified**: Multiple addresses tracked separately 
+- **Independence verified**: Multiple addresses tracked separately
 - **Overflow behavior**: Handles edge cases gracefully with 2^255-1 limit
 - **Value forwarding**: ETH properly passed to underlying EAS contract
 
@@ -159,7 +159,7 @@ interface IEAS {
         uint64 deadline;
         bytes signature;
     }
-    
+
     function attestByDelegation(DelegatedAttestationRequest calldata request) external payable returns (bytes32);
 }
 ```
@@ -226,7 +226,7 @@ If you wanted to adopt more autonolas patterns, consider:
    ```
 
 2. **Additional Access Control Patterns**:
-   ```solidity  
+   ```solidity
    // Could add role-based access if needed, but current owner model works well
    ```
 
@@ -246,7 +246,7 @@ The current implementation already matches and exceeds the autonolas patterns. N
 The AttestationTracker represents an evolution from a previous `QuorumTrackerWithAttestations` implementation, with these improvements:
 
 - **Simplified Interface**: Removed voting statistics tracking for focused attestation functionality
-- **Better Documentation**: Comprehensive README and inline documentation  
+- **Better Documentation**: Comprehensive README and inline documentation
 - **Enhanced Testing**: More thorough test suite with fuzz testing and edge cases
 - **Gas Optimizations**: Combined getter functions and efficient storage patterns
 - **Cleaner Architecture**: Separation of concerns with focused responsibility
@@ -264,7 +264,7 @@ None - the current implementation successfully addresses the research question a
 The AttestationTracker contract already implements the requested functionality as a simple wrapper function with efficient address mapping. It follows and improves upon the autonolas DualStakingToken patterns while being specifically optimized for EAS attestation tracking. The implementation demonstrates:
 
 - **Pattern Compliance**: Matches autonolas mapping and wrapper patterns
-- **Superior Optimization**: Bit manipulation for dual data storage  
+- **Superior Optimization**: Bit manipulation for dual data storage
 - **Comprehensive Testing**: Robust test coverage including edge cases
 - **Clear Documentation**: Well-documented implementation and usage patterns
 - **Production Ready**: Proper access control, error handling, and gas optimization

@@ -1288,3 +1288,568 @@
 [2025-08-26 21:08:12,593] [INFO] [agent] Pearl logger initialized successfully
 [2025-08-26 21:08:12,593] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
 [2025-08-26 21:08:12,594] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-27 16:13:34,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:13:35,188] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:13:35,699] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:13:35,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:13:35,707] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:20:22,945] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:20:23,202] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:20:23,525] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:20:45,277] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:20:45,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:20:45,691] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:21:38,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:21:39,205] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:21:39,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:17,462] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:17,674] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:17,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:32,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:32,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:33,940] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:39,661] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:39,939] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:40,661] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:57,114] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:57,341] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:22:57,662] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:03,276] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:03,527] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:04,154] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:04,170] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:04,172] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:23:25,588] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:25,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:26,580] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:26,611] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:26,615] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:23:43,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:43,199] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:43,448] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:43,459] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:43,461] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:23:48,459] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,638] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,898] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:23:48,899] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:23:48,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,905] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,905] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:23:48,906] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:23:48,908] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,908] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,908] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,908] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,908] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:23:48,909] [INFO] [agent] Agent run started (run_id=test.eth_1756337028, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:23:48,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,911] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:23:48,912] [INFO] [agent] Agent run started (run_id=test.eth_1756337028, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:23:48,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,915] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,915] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:23:48,915] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:23:48,916] [INFO] [agent] Agent run started (run_id=test.eth_1756337028, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:24:27,943] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:28,194] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:28,540] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:33,193] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:33,367] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:33,623] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:33,637] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:24:33,643] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:25:28,667] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:28,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:29,158] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,319] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,532] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,841] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:25:54,869] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,869] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,869] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,869] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,869] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:25:54,869] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:25:54,873] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,873] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,874] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,874] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,874] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:25:54,874] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:25:54,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,878] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,878] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:25:54,879] [INFO] [agent] Agent run started (run_id=test.eth_1756337154, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:25:54,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,882] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,882] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:25:54,883] [INFO] [agent] Agent run started (run_id=test.eth_1756337154, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:25:54,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:25:54,885] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:25:54,886] [INFO] [agent] Agent run started (run_id=test.eth_1756337154, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:28:56,534] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:28:56,758] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:28:57,057] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:28:57,059] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:28:57,060] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:28:57,155] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:28,493] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:28,694] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:28,993] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:28,995] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:28,996] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:29,007] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:29:29,008] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:29:29,008] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:29:29,012] [ERROR] [agent] Unhandled exception error=cannot access local variable 'settings' where it is not associated with a value path=http://testserver/healthcheck method=GET exception_type=UnboundLocalError
+Traceback:
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/main.py", line 368, in healthcheck
+    "configured": bool(settings.attestation_tracker_address),
+                       ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/main.py", line 384, in healthcheck
+    "configured": bool(settings.attestation_tracker_address),
+                       ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/main.py", line 411, in healthcheck
+    "configured": bool(settings.attestation_tracker_address) if hasattr(settings, 'attestation_tracker_address') else False,
+                                                                        ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+[2025-08-27 16:29:29,174] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:29:29,174] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:29:29,175] [ERROR] [agent] Unhandled exception error=cannot access local variable 'settings' where it is not associated with a value path=http://testserver/healthcheck method=GET exception_type=UnboundLocalError
+Traceback:
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/main.py", line 368, in healthcheck
+    "configured": bool(settings.attestation_tracker_address),
+                       ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/main.py", line 384, in healthcheck
+    "configured": bool(settings.attestation_tracker_address),
+                       ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/main.py", line 411, in healthcheck
+    "configured": bool(settings.attestation_tracker_address) if hasattr(settings, 'attestation_tracker_address') else False,
+                                                                        ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+[2025-08-27 16:29:29,280] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:29:29,280] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:29:29,280] [ERROR] [agent] Unhandled exception error=cannot access local variable 'settings' where it is not associated with a value path=http://testserver/healthcheck method=GET exception_type=UnboundLocalError
+Traceback:
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/main.py", line 368, in healthcheck
+    "configured": bool(settings.attestation_tracker_address),
+                       ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/main.py", line 384, in healthcheck
+    "configured": bool(settings.attestation_tracker_address),
+                       ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/main.py", line 411, in healthcheck
+    "configured": bool(settings.attestation_tracker_address) if hasattr(settings, 'attestation_tracker_address') else False,
+                                                                        ^^^^^^^^
+UnboundLocalError: cannot access local variable 'settings' where it is not associated with a value
+
+[2025-08-27 16:30:23,274] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:23,480] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:23,743] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:23,745] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:23,746] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:39,821] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:40,034] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:40,307] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:40,309] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:40,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:54,932] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:55,145] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:55,415] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:55,417] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:55,418] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:55,421] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:30:55,422] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:30:55,422] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:31:17,200] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:31:17,421] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:31:17,688] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:31:17,690] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:31:17,691] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:31:17,694] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:31:17,694] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:31:17,694] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:32:01,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:01,819] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:02,081] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:02,084] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:02,084] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,046] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,252] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,525] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,526] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,530] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:32:52,530] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:32:52,530] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 16:35:20,033] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:20,273] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:20,582] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,479] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,674] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,977] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:24,983] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:24,984] [INFO] [agent] Agent run started (run_id=test.eth_1756337724, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:34,291] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,458] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,706] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,711] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:34,711] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:34,712] [INFO] [agent] Agent run started (run_id=test.eth_1756337734, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:39,493] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,665] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,920] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,934] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,936] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:35:39,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,971] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,971] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:39,972] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:35:39,976] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,976] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,976] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,977] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,977] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:39,977] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:35:39,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,980] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:39,981] [INFO] [agent] Agent run started (run_id=test.eth_1756337739, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:39,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,983] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,984] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,984] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:39,985] [INFO] [agent] Agent run started (run_id=test.eth_1756337739, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:39,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,988] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,988] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:39,990] [INFO] [agent] Agent run started (run_id=test.eth_1756337739, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:39,993] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,993] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,993] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,994] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:39,994] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:39,994] [INFO] [agent] Agent run started (run_id=test.eth_1756337739, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:44,117] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:44,293] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:44,514] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:49,630] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:49,800] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,063] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,155] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,156] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,173] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,173] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,184] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,282] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,491] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,491] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,495] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,495] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,500] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,500] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,501] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,501] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,502] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,502] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,504] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,504] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,505] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,505] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,506] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,506] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,506] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,506] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,507] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,507] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,586] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,586] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-08-27 16:35:50,586] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,591] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,591] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,591] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-08-27 16:35:50,592] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:50,592] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 16:35:50,599] [INFO] [agent] Starting get_agent_run_status
+[2025-08-27 16:35:50,599] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-08-27 16:35:50,599] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-08-27 16:35:50,633] [INFO] [agent] Starting get_agent_run_status
+[2025-08-27 16:35:50,633] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-08-27 16:35:50,633] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-08-27 16:35:55,934] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,115] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,371] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,392] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,394] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 16:35:56,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,427] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:56,428] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:35:56,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,432] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,432] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:56,433] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-08-27 16:35:56,434] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,435] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,435] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,435] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,435] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:56,435] [INFO] [agent] Agent run started (run_id=test.eth_1756337756, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:56,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,438] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,438] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:56,439] [INFO] [agent] Agent run started (run_id=test.eth_1756337756, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:56,441] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,441] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,441] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,441] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,441] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:56,442] [INFO] [agent] Agent run started (run_id=test.eth_1756337756, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:35:56,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:35:56,444] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:35:56,445] [INFO] [agent] Agent run started (run_id=test.eth_1756337756, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:36:02,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,291] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,543] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:02,590] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:36:02,591] [INFO] [agent] Agent run started (run_id=test.eth_1756337762, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:36:53,032] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,284] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,598] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,646] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:36:53,646] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:36:53,647] [INFO] [agent] Agent run started (run_id=test.eth_1756337813, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:37:08,439] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:08,650] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:08,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:09,682] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:09,851] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:10,101] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:10,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:10,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:10,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:10,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:10,106] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:37:10,107] [INFO] [agent] Agent run started (run_id=test.eth_1756337830, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:37:10,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,300] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,353] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,354] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:11,354] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:37:11,356] [INFO] [agent] Agent run started (run_id=test.eth_1756337831, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:37:41,828] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:41,998] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:42,284] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:42,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:42,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:42,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:42,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:37:42,333] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:37:42,334] [INFO] [agent] Agent run started (run_id=test.eth_1756337862, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:38:52,038] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:38:52,280] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:38:52,590] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:03,099] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:03,318] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:03,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,481] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,651] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,912] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,916] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,916] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,916] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,916] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:39:09,916] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 16:39:09,917] [INFO] [agent] Agent run started (run_id=test.eth_1756337949, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-27 16:40:08,252] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,419] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,671] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,761] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,762] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,778] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,789] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 16:40:08,883] [INFO] [agent] Pearl logger initialized successfully

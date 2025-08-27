@@ -52,7 +52,7 @@ The comprehensive test suite should pass all tests including:
    - ✅ Sets owner correctly
    - ✅ Rejects zero address as owner
 
-2. **Activity Registration Tests**  
+2. **Activity Registration Tests**
    - ✅ Owner can register all three activity types
    - ✅ Non-owner registration is rejected
    - ✅ Invalid activity types (>2) are rejected
@@ -87,7 +87,7 @@ The comprehensive test suite should pass all tests including:
 The generated contract ABI should match the existing `backend/abi/quorum_tracker.json`:
 
 - ✅ `constructor(address initialOwner)`
-- ✅ `register(address multisig, uint8 activityType)` 
+- ✅ `register(address multisig, uint8 activityType)`
 - ✅ `getVotingStats(address multisig) returns (uint256[] result)`
 - ✅ Constants: `VOTES_CAST`, `OPPORTUNITIES_CONSIDERED`, `NO_OPPORTUNITIES`
 - ✅ Public `stats` mapping access

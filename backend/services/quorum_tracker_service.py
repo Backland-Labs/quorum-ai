@@ -6,7 +6,6 @@ from web3 import Web3
 
 from config import settings
 from services.safe_service import SafeService
-from models import ActivityType
 from logging_config import setup_pearl_logger, log_span
 
 
@@ -155,14 +154,14 @@ class QuorumTrackerService:
 
     def _load_quorum_tracker_abi(self) -> list:
         """Load QuorumTracker contract ABI from file.
-        
+
         Returns:
             List containing the QuorumTracker ABI
         """
         import os
-        
+
         abi_path = os.path.join(os.path.dirname(__file__), "../abi/quorum_tracker.json")
-        
+
         with open(abi_path, "r") as f:
             return json.load(f)
 

@@ -34,7 +34,7 @@ All three activity types are properly implemented:
 
 - ✅ **Integration Tests** (3/3 passed):
   - NO_OPPORTUNITY tracking test
-  - OPPORTUNITY_CONSIDERED tracking test  
+  - OPPORTUNITY_CONSIDERED tracking test
   - VOTE_CAST tracking test
 
 - ✅ **End-to-End Workflow**:
@@ -79,7 +79,7 @@ The QuorumTracker feature is **fully implemented and operational**:
 When the agent runs:
 1. Fetches proposals from Snapshot spaces
 2. If no proposals found → registers `NO_OPPORTUNITY`
-3. If proposals found → registers `OPPORTUNITY_CONSIDERED` 
+3. If proposals found → registers `OPPORTUNITY_CONSIDERED`
 4. If votes executed → registers `VOTE_CAST`
 5. All activities are sent to the QuorumTracker contract via Safe transactions
 

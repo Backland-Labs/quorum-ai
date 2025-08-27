@@ -71,7 +71,7 @@ forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
 #### `register(address multisig, uint8 activityType)`
 - **Access**: Owner only
 - **Purpose**: Increments the activity counter for a multisig address
-- **Parameters**: 
+- **Parameters**:
   - `multisig`: The multisig address to track
   - `activityType`: 0, 1, or 2 (see constants above)
 
@@ -83,7 +83,7 @@ forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
 ### Constants
 
 - `VOTES_CAST = 0`
-- `OPPORTUNITIES_CONSIDERED = 1` 
+- `OPPORTUNITIES_CONSIDERED = 1`
 - `NO_OPPORTUNITIES = 2`
 
 ## Testing
