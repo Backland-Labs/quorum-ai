@@ -89,6 +89,33 @@ class Settings(BaseSettings):
     dao_addresses: List[str] = Field(
         default_factory=list, description="List of DAO addresses to monitor"
     )
+    
+    # QuorumTracker contract configuration
+    quorum_tracker_address: Optional[str] = Field(
+        default=None,
+        alias="QUORUM_TRACKER_ADDRESS",
+        description="Address of the deployed QuorumTracker contract"
+    )
+    quorum_tracker_owner: Optional[str] = Field(
+        default=None,
+        alias="QUORUM_TRACKER_OWNER",
+        description="Owner address of the QuorumTracker contract"
+    )
+    quorum_tracker_private_key: Optional[str] = Field(
+        default=None,
+        alias="QUORUM_TRACKER_PRIVATE_KEY",
+        description="Private key for the QuorumTracker owner account"
+    )
+    rpc_url: str = Field(
+        default="http://localhost:8545",
+        alias="RPC_URL",
+        description="RPC URL for blockchain connection"
+    )
+    chain_id: int = Field(
+        default=8453,
+        alias="CHAIN_ID",
+        description="Chain ID for the network (8453 for Base)"
+    )
 
     # Top voters endpoint settings
     DEFAULT_TOP_VOTERS_LIMIT: ClassVar[int] = 10
