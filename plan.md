@@ -354,7 +354,98 @@ class TestAttestationTrackerIntegration:
 
 ---
 
-## Phase 4: Testing Integration
+## Phase 4: Monitoring Helper Functions ✅ COMPLETED
+
+### Overview
+Add simple helper functions to query AttestationTracker statistics and integrate them into the health endpoint.
+
+### Implementation Summary:
+- **Created AttestationTracker monitoring helpers** at `backend/utils/attestation_tracker_helpers.py`
+- **Implemented three helper functions** as specified in the plan:
+  - `get_multisig_info(multisig_address: str) -> Tuple[int, bool]` - Get attestation count and active status
+  - `get_attestation_count(multisig_address: str) -> int` - Get number of attestations
+  - `is_multisig_active(multisig_address: str) -> bool` - Check if multisig is active
+- **Updated health endpoint** in `backend/main.py` to include AttestationTracker statistics
+- **Added comprehensive test suite** with 3 test cases covering all scenarios
+- **Applied linting and code formatting** for consistency
+
+### Changes Made:
+
+#### 1. AttestationTracker Helper Functions Created
+**File**: `backend/utils/attestation_tracker_helpers.py`
+```python
+def get_multisig_info(multisig_address: str) -> Tuple[int, bool]:
+    """Get attestation count and active status for a multisig.
+    
+    Returns:
+        Tuple of (attestation_count, is_active)
+        Returns (0, False) if tracker not configured or on error
+    """
+    # Implementation with graceful error handling and Web3 contract queries
+    
+def get_attestation_count(multisig_address: str) -> int:
+    """Get number of attestations for a multisig."""
+    count, _ = get_multisig_info(multisig_address)
+    return count
+
+def is_multisig_active(multisig_address: str) -> bool:
+    """Check if multisig is active."""
+    _, is_active = get_multisig_info(multisig_address)
+    return is_active
+```
+
+#### 2. Health Endpoint Enhanced  
+**File**: `backend/main.py`
+**Changes**: Added AttestationTracker statistics after pearl_fields update (line 361+)
+```python
+# Add AttestationTracker statistics
+try:
+    attestation_tracker_data = {
+        "configured": bool(settings.attestation_tracker_address),
+        "contract_address": settings.attestation_tracker_address,
+        "attestation_count": 0,
+        "multisig_active": False,
+    }
+    
+    if settings.attestation_tracker_address and settings.base_safe_address:
+        count, is_active = get_multisig_info(settings.base_safe_address)
+        attestation_tracker_data["attestation_count"] = count
+        attestation_tracker_data["multisig_active"] = is_active
+    
+    response["attestation_tracker"] = attestation_tracker_data
+    
+except Exception as tracker_error:
+    # Graceful error handling with error field
+```
+
+#### 3. Test Suite Added
+**File**: `backend/tests/test_attestation_tracker_helpers.py`
+- 3 comprehensive tests covering all scenarios
+- Tests for successful queries, no tracker configured, and error handling
+- All tests passing successfully
+
+### Success Criteria: ✅ VERIFIED
+
+#### Automated Verification: ✅
+- ✅ Helper functions import correctly: `from utils.attestation_tracker_helpers import get_multisig_info`
+- ✅ Helper function tests pass: `uv run pytest tests/test_attestation_tracker_helpers.py -v` (3/3 passed)
+- ✅ Health endpoint includes tracker info: `{'configured': False, 'contract_address': None, 'attestation_count': 0, 'multisig_active': False}`
+- ✅ Statistics query works when tracker not configured: Returns (0, False) gracefully
+- ✅ Application starts successfully with new code
+- ✅ Code formatting and linting pass
+
+#### Manual Verification: ✅
+- ✅ Helper functions work correctly: `get_attestation_count()` and `is_multisig_active()` return expected defaults
+- ✅ Health endpoint returns AttestationTracker statistics in response
+- ✅ Graceful fallback when tracker not configured (returns safe defaults)
+- ✅ Error handling works correctly (tested with invalid addresses)
+
+**Implementation Date**: 2025-01-27
+**Status**: COMPLETED
+
+---
+
+## Phase 5: Testing Integration
 
 ### Overview
 Extend existing tests to cover AttestationTracker integration.
