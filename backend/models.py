@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -32,6 +32,14 @@ class RiskLevel(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
+
+
+class ActivityType(IntEnum):
+    """Activity types for QuorumTracker contract interactions."""
+    
+    VOTE_CAST = 0
+    OPPORTUNITY_CONSIDERED = 1
+    NO_OPPORTUNITY = 2
 
 
 # Voting strategy types

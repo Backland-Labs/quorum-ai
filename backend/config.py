@@ -5,6 +5,7 @@ from typing import ClassVar, Dict, List, Optional
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings
+from web3 import Web3
 
 from utils.env_helper import get_env_with_prefix
 
@@ -298,6 +299,18 @@ class Settings(BaseSettings):
         default=None,
         alias="BASE_RPC_URL",
         description="Base network RPC endpoint (alternative to BASE_LEDGER_RPC)",
+    )
+
+    # QuorumTracker configuration
+    quorum_tracker_address: Optional[str] = Field(
+        default=None,
+        alias="QUORUM_TRACKER_ADDRESS",
+        description="QuorumTracker contract address on local testnet",
+    )
+    quorum_tracker_owner: Optional[str] = Field(
+        default=None,
+        alias="QUORUM_TRACKER_OWNER", 
+        description="Owner address for QuorumTracker contract (backend service wallet)",
     )
 
     @field_validator("log_level", mode="before")
@@ -732,6 +745,14 @@ class Settings(BaseSettings):
             )
 
         return True
+
+    @field_validator("quorum_tracker_address", "quorum_tracker_owner", mode="before")
+    @classmethod
+    def validate_tracker_addresses(cls, v):
+        """Validate QuorumTracker addresses are valid Web3 addresses."""
+        if v and not Web3.is_address(v):
+            raise ValueError(f"Invalid contract address: {v}")
+        return Web3.to_checksum_address(v) if v else None
 
     def _parse_olas_config(self):
         """Parse Olas-specific configuration from environment variables with prefix support."""
