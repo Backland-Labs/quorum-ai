@@ -480,7 +480,10 @@ class SafeService:
     def _build_eas_attestation_tx(
         self, attestation_data: EASAttestationData
     ) -> Dict[str, Any]:
-        """Build EAS attestation transaction data.
+        """Build attestation transaction data.
+
+        Routes to AttestationTracker when configured, otherwise uses direct EAS.
+        Both use the delegated attestation pattern for Safe multisig compatibility.
 
         Args:
             attestation_data: The attestation data to encode
@@ -488,39 +491,72 @@ class SafeService:
         Returns:
             Transaction data dict with 'to', 'data', and 'value' fields
         """
-        # Get Web3 instance for Base network
-        w3 = self._get_web3_instance("base")
+        # Use AttestationTracker if configured, otherwise direct EAS
+        if settings.attestation_tracker_address:
+            # Assertion for type checking
+            assert settings.attestation_tracker_address is not None
+            return self._build_delegated_attestation_tx(
+                attestation_data,
+                target_address=settings.attestation_tracker_address,
+                abi_name="attestation_tracker",
+            )
+        else:
+            # Build delegated request for direct EAS (updating from current attest() pattern)
+            if not settings.eas_contract_address:
+                raise ValueError("EAS contract address not configured")
+            return self._build_delegated_attestation_tx(
+                attestation_data,
+                target_address=settings.eas_contract_address,
+                abi_name="eas",
+            )
 
-        # Load EAS ABI
-        eas_abi = self._load_eas_abi()
+    def _build_delegated_attestation_tx(
+        self, attestation_data: EASAttestationData, target_address: str, abi_name: str
+    ) -> Dict[str, Any]:
+        """Build delegated attestation transaction.
 
-        # Create contract instance
-        eas_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(settings.eas_contract_address), abi=eas_abi
+        Args:
+            attestation_data: The attestation data
+            target_address: Contract address to call
+            abi_name: Name of ABI file to load
+
+        Returns:
+            Transaction data dict
+        """
+        from utils.web3_provider import get_w3
+        from utils.abi_loader import load_abi
+
+        w3 = get_w3("base")
+
+        # Load ABI using existing utility
+        contract_abi = load_abi(abi_name)
+
+        contract = w3.eth.contract(
+            address=Web3.to_checksum_address(target_address), abi=contract_abi
         )
 
-        # Encode attestation data
-        encoded_data = self._encode_attestation_data(attestation_data)
-
-        # Build attestation request structure
-        attestation_request = {
-            "uid": b"\x00" * 32,  # Empty for new attestation
+        # Build delegated attestation request
+        delegated_request = {
             "schema": Web3.to_bytes(hexstr=settings.eas_schema_uid),
-            "time": 0,  # Will be set by contract
-            "expirationTime": 0,  # No expiration
-            "revocationTime": 0,  # Not revoked
-            "refUID": b"\x00" * 32,  # No reference
-            "recipient": Web3.to_checksum_address(attestation_data.voter_address),
-            "attester": Web3.to_checksum_address(settings.agent_address),
+            "data": self._encode_attestation_data(attestation_data),
+            "expirationTime": 0,
             "revocable": True,
-            "data": encoded_data,
+            "refUID": b"\x00" * 32,
+            "recipient": Web3.to_checksum_address(attestation_data.voter_address),
+            "value": 0,
+            "deadline": 0,
+            "signature": b"",  # Empty for Safe multisig pattern
         }
 
-        # Build the transaction
-        tx = eas_contract.functions.attest(attestation_request).build_transaction(
+        self.logger.info(
+            f"Building delegated attestation for {abi_name} at {target_address[:10]}..."
+        )
+
+        # Build transaction
+        tx = contract.functions.attestByDelegation(delegated_request).build_transaction(
             {
                 "from": settings.base_safe_address,
-                "gas": 300000,  # Reasonable gas limit for attestation
+                "gas": 300000,  # Standard gas limit
             }
         )
 
@@ -555,19 +591,6 @@ class SafeService:
         )
 
         return encoded
-
-    def _load_eas_abi(self) -> list:
-        """Load EAS contract ABI from file.
-
-        Returns:
-            List containing the EAS ABI
-        """
-        import os
-
-        abi_path = os.path.join(os.path.dirname(__file__), "../abi/eas.json")
-
-        with open(abi_path, "r") as f:
-            return json.load(f)
 
     def _get_web3_instance(self, chain: str) -> Web3:
         """Get Web3 instance for a specific chain.
