@@ -1853,3 +1853,80 @@ UnboundLocalError: cannot access local variable 'settings' where it is not assoc
 [2025-08-27 16:40:08,779] [INFO] [agent] Pearl logger initialized successfully
 [2025-08-27 16:40:08,789] [INFO] [agent] Pearl logger initialized successfully
 [2025-08-27 16:40:08,883] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:36,250] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:36,566] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:36,999] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,003] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,003] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,224] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,273] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,274] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,314] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,314] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-27 20:08:37,334] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-27 20:08:37,335] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-27 20:08:37,336] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-27 20:08:37,338] [INFO] [agent] Creating AI model
+[2025-08-27 20:08:37,373] [INFO] [agent] Using OpenRouter
+[2025-08-27 20:08:37,373] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-27 20:08:37,373] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-27 20:08:37,374] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-27 20:08:37,415] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,415] [INFO] [agent] Creating AI model for VotingAgent
+[2025-08-27 20:08:37,416] [INFO] [agent] Successfully created OpenRouter model for VotingAgent, model_type=OpenAIModel
+[2025-08-27 20:08:37,416] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-27 20:08:37,416] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-08-27 20:08:37,417] [INFO] [agent] Creating AI model
+[2025-08-27 20:08:37,417] [INFO] [agent] Using OpenRouter
+[2025-08-27 20:08:37,417] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-08-27 20:08:37,417] [INFO] [agent] Creating Pydantic AI agent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-08-27 20:08:37,418] [INFO] [agent] Successfully created Pydantic AI agent, agent_type=Agent
+[2025-08-27 20:08:37,418] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,418] [INFO] [agent] KeyManager initialized
+[2025-08-27 20:08:37,419] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,419] [INFO] [agent] VotingService initialized
+[2025-08-27 20:08:37,419] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,422] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 20:08:37,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,422] [INFO] [agent] AgentRunService initialized with all dependencies including QuorumTracker
+[2025-08-27 20:08:37,423] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,426] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-27 20:08:37,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,426] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-08-27 20:08:37,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,426] [INFO] [agent] KeyManager initialized
+[2025-08-27 20:08:37,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,426] [INFO] [agent] VotingService initialized
+[2025-08-27 20:08:37,447] [INFO] [agent] WithdrawalService initialized
+[2025-08-27 20:08:37,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,447] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-08-27 20:08:37,447] [INFO] [agent] HealthStatusService initialized successfully
+[2025-08-27 20:08:37,448] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,448] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:08:37,448] [INFO] [agent] State tracker initialized with StateManager persistence
+[2025-08-27 20:08:37,448] [INFO] [agent] Registered service 'agent' for shutdown coordination
+[2025-08-27 20:08:37,448] [INFO] [agent] Registered service 'voting' for shutdown coordination
+[2025-08-27 20:08:37,448] [INFO] [agent] Registered service 'user_preferences' for shutdown coordination
+[2025-08-27 20:08:37,448] [INFO] [agent] Registered service 'state_manager' for shutdown coordination
+[2025-08-27 20:08:37,448] [INFO] [agent] Signal handlers registered for SIGTERM and SIGINT
+[2025-08-27 20:08:37,449] [INFO] [agent] Application started version=0.1.0
+[2025-08-27 20:08:37,449] [INFO] [agent] Normal operation mode - agent runs will proceed as configured
+[2025-08-27 20:08:37,559] [INFO] [agent] Starting health_status_gathering
+[2025-08-27 20:08:37,559] [INFO] [agent] Starting parallel health status gathering
+[2025-08-27 20:08:37,559] [WARN] [agent] Transaction manager health check failed: No valid chain configuration found
+[2025-08-27 20:08:37,559] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-08-27 20:08:37,559] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-08-27 20:08:37,560] [ERROR] [agent] Error querying AttestationTracker: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 20:08:37,560] [ERROR] [agent] Error in healthcheck endpoint: cannot access local variable 'settings' where it is not associated with a value
+[2025-08-27 20:08:37,560] [INFO] [agent] Starting health_status_gathering
+[2025-08-27 20:08:37,560] [INFO] [agent] Starting parallel health status gathering
+[2025-08-27 20:08:37,560] [WARN] [agent] Transaction manager health check failed: No valid chain configuration found
+[2025-08-27 20:08:37,560] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-08-27 20:08:37,560] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-08-27 20:11:56,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:11:56,689] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-27 20:11:57,166] [INFO] [agent] Pearl logger initialized successfully
