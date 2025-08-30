@@ -6,7 +6,7 @@ from web3 import Web3
 import json
 
 from services.safe_service import SafeService
-from utils.vote_encoder import Support
+
 
 
 class TestSafeServiceInitialization:
@@ -334,106 +334,4 @@ class TestSafeServiceHelperMethods:
         )
 
 
-class TestSafeServiceGovernorVoting:
-    """Test SafeService governor voting functionality."""
-    
-    @pytest.mark.asyncio
-    async def test_perform_governor_vote_basic_functionality(self):
-        """Test basic governor vote functionality without complex mocking."""
-        # Create a mock SafeService instance
-        service = MagicMock()
-        service.perform_governor_vote = SafeService.perform_governor_vote.__get__(service, SafeService)
-        service.safe_addresses = {}
-        
-        # Mock the _submit_safe_transaction method
-        async def mock_submit_safe_transaction(**kwargs):
-            return {"success": False, "error": f"No Safe address configured for chain: {kwargs['chain']}"}
-        
-        service._submit_safe_transaction = mock_submit_safe_transaction
-        
-        # Test with valid governor ID
-        result = await service.perform_governor_vote(
-            governor_id="compound-mainnet",
-            proposal_id=123,
-            support=Support.FOR,
-            reason="I support this proposal"
-        )
-        
-        # Should fail due to no Safe address configured
-        assert result["success"] is False
-        assert "No Safe address configured for chain: ethereum" in result["error"]
-    
-    @pytest.mark.asyncio
-    async def test_perform_governor_vote_invalid_governor(self):
-        """Test governor vote with invalid governor ID."""
-        # Create a mock SafeService instance
-        service = MagicMock()
-        service.perform_governor_vote = SafeService.perform_governor_vote.__get__(service, SafeService)
-        
-        result = await service.perform_governor_vote(
-            governor_id="invalid-dao",
-            proposal_id=123,
-            support=Support.FOR
-        )
-        
-        assert result["success"] is False
-        assert "Governor 'invalid-dao' not found" in result["error"]
-    
-    @pytest.mark.asyncio
-    async def test_perform_governor_vote_chain_selection(self):
-        """Test governor vote uses correct chain."""
-        # Create a mock SafeService instance
-        service = MagicMock()
-        service.perform_governor_vote = SafeService.perform_governor_vote.__get__(service, SafeService)
-        service.safe_addresses = {}
-        
-        # Mock the _submit_safe_transaction method
-        async def mock_submit_safe_transaction(**kwargs):
-            return {"success": False, "error": f"No Safe address configured for chain: {kwargs['chain']}"}
-        
-        service._submit_safe_transaction = mock_submit_safe_transaction
-        
-        # Test that it uses ethereum chain for compound-mainnet (chain_id=1)
-        result = await service.perform_governor_vote(
-            governor_id="compound-mainnet",
-            proposal_id=123,
-            support=Support.FOR
-        )
-        
-        # Should fail due to no Safe address, but should have selected ethereum chain
-        assert result["success"] is False
-        assert "No Safe address configured for chain: ethereum" in result["error"]
-    
-    @pytest.mark.asyncio
-    async def test_perform_governor_vote_different_support_values(self):
-        """Test governor vote with different support values."""
-        # Create a mock SafeService instance
-        service = MagicMock()
-        service.perform_governor_vote = SafeService.perform_governor_vote.__get__(service, SafeService)
-        service.safe_addresses = {}
-        
-        # Mock the _submit_safe_transaction method
-        async def mock_submit_safe_transaction(**kwargs):
-            return {"success": False, "error": f"No Safe address configured for chain: {kwargs['chain']}"}
-        
-        service._submit_safe_transaction = mock_submit_safe_transaction
-        
-        # Test AGAINST vote
-        result = await service.perform_governor_vote(
-            governor_id="compound-mainnet",
-            proposal_id=123,
-            support=Support.AGAINST
-        )
-        
-        assert result["success"] is False
-        assert "No Safe address configured for chain: ethereum" in result["error"]
-        
-        # Test ABSTAIN vote
-        result = await service.perform_governor_vote(
-            governor_id="compound-mainnet",
-            proposal_id=456,
-            support=Support.ABSTAIN
-        )
-        
-        assert result["success"] is False
-        assert "No Safe address configured for chain: ethereum" in result["error"]
+

@@ -9,8 +9,7 @@ from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
 
 from config import settings
-from utils.vote_encoder import encode_cast_vote, Support
-from services.governor_registry import get_governor, GovernorRegistryError
+
 from models import EASAttestationData
 
 from logging_config import setup_pearl_logger, log_span
@@ -24,15 +23,7 @@ SAFE_SERVICE_URLS = {
     "mode": "https://safe-transaction-mode.safe.global/",
 }
 
-# Chain ID mapping for governor vote support
 
-CHAIN_ID_TO_NAME = {
-    1: "ethereum",
-    11155111: "ethereum",  # Sepolia testnet maps to ethereum
-    100: "gnosis",
-    8453: "base",
-    34443: "mode",
-}
 
 
 # Safe operation types
@@ -308,71 +299,7 @@ class SafeService:
             operation=SAFE_OPERATION_CALL,  # CALL operation
         )
 
-    async def perform_governor_vote(
-        self,
-        governor_id: str,
-        proposal_id: int,
-        support: Support,
-        reason: str = "",
-        chain: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Cast a vote on a governor proposal via Safe multisig.
 
-        Args:
-            governor_id: Governor identifier (e.g., "compound-mainnet")
-            proposal_id: Proposal ID to vote on
-            support: Vote choice (FOR, AGAINST, ABSTAIN)
-            reason: Optional reason for the vote
-            chain: Specific chain to use, or None to use governor's chain
-
-        Returns:
-            Dict with transaction details and success status
-        """
-        # Runtime assertions for critical inputs
-        assert (
-            isinstance(governor_id, str) and governor_id
-        ), "Governor ID must be a non-empty string"
-        assert (
-            isinstance(proposal_id, int) and proposal_id >= 0
-        ), "Proposal ID must be a non-negative integer"
-
-        try:
-            # Get governor metadata
-            governor_meta, _ = get_governor(governor_id)
-
-            # Use governor's chain if not specified
-            if not chain:
-                chain = CHAIN_ID_TO_NAME.get(governor_meta.chain_id)
-                if not chain:
-                    error_msg = f"Unsupported chain ID: {governor_meta.chain_id}"
-                    return {"success": False, "error": error_msg}
-
-            # Encode the vote transaction
-            encoded_data = encode_cast_vote(
-                governor_id=governor_id,
-                proposal_id=proposal_id,
-                support=support,
-                reason=reason,
-            )
-
-            # Convert hex string to bytes
-            data_bytes = bytes.fromhex(encoded_data[2:])  # Remove '0x' prefix
-
-            # Submit the transaction
-            return await self._submit_safe_transaction(
-                chain=chain,
-                to=governor_meta.address,
-                value=0,  # No ETH sent
-                data=data_bytes,
-                operation=SAFE_OPERATION_CALL,  # CALL operation
-            )
-
-        except GovernorRegistryError as e:
-            return {"success": False, "error": str(e)}
-        except Exception as e:
-            self.logger.error(f"Error creating governor vote transaction: {e}")
-
-            return {"success": False, "error": str(e)}
 
     async def get_safe_nonce(self, chain: str, safe_address: str) -> int:
         """Get current nonce for a Safe on specified chain.
