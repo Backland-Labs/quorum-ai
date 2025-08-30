@@ -1,4 +1,5 @@
-# CLAUDE.md
+# AGENTS.md
+
 **IMPORTANT**: NEVER delete the `specs/` directory or its contents. These specifications are essential project documentation that guide implementation decisions.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -84,8 +85,12 @@ This is a full-stack DAO proposal summarization and autonomous voting applicatio
   - `snapshot_service.py`: Handles Snapshot space and proposal data fetching
   - `ai_service.py`: Manages AI summarization, risk assessment, and autonomous voting decisions
   - `voting_service.py`: Handles vote submission to Snapshot
-  - `agent_run_service.py`: Orchestrates autonomous voting workflow
+  - `agent_run_service.py`: Orchestrates autonomous voting workflow (streamlined, no activity tracking)
   - `user_preferences_service.py`: Manages user voting preferences
+  - `safe_service.py`: Multi-signature wallet operations with optional AttestationTracker integration
+  - `state_manager.py`: Atomic state persistence with checkpoint/rollback support
+  - `activity_service.py`: System activity monitoring and health checks
+  - `health_status_service.py`: Comprehensive health monitoring with Pearl-compliant logging
 - **Pydantic models** for type-safe data validation (`models.py`)
 - **Configuration management** via environment variables (`config.py`)
 - **Pearl-compliant logging** to local files for observability and tracing
@@ -122,6 +127,11 @@ OPENROUTER_API_KEY=your_openrouter_api_key  # For Claude 3.5 Sonnet via OpenRout
 DEBUG=false  # Enable debug mode
 HOST=0.0.0.0  # Server host
 HEALTH_CHECK_PORT=8716  # Server port (defaults to 8716)
+
+# AttestationTracker Integration (Optional)
+ATTESTATION_TRACKER_ADDRESS=0x...  # AttestationTracker contract address on Base network
+                                   # When set, uses AttestationTracker as EAS wrapper
+                                   # Falls back to direct EAS when not configured
 
 # Note: Observability is handled by Pearl-compliant logging to local files
 # Log files are written to ./logs/ directory following Pearl standards
@@ -244,12 +254,35 @@ The AI service has been updated to work with Snapshot's data structure:
 
 ### Autonomous Voting Agent
 The application now includes a comprehensive autonomous voting system:
-- **Agent Run Service**: Orchestrates the complete voting workflow
+- **Agent Run Service**: Orchestrates the complete voting workflow (streamlined architecture)
 - **User Preferences**: Persistent configuration for voting strategies
 - **Proposal Filtering**: Intelligent filtering based on urgency and user preferences
 - **Voting Strategies**: Balanced, conservative, and aggressive approaches
 - **Dry Run Mode**: Test decisions without executing actual votes
 - **Comprehensive Logging**: Full audit trail with Pearl-compliant local file logging
+
+### Smart Contract Integration
+The application supports optional AttestationTracker integration for on-chain attestation tracking:
+
+#### AttestationTracker Contract (`contracts/src/AttestationTracker.sol`)
+- **EAS Wrapper**: Simplified wrapper around Ethereum Attestation Service (EAS)
+- **Attestation Counting**: Tracks total attestations made by each multisig wallet
+- **Owner Control**: Owner-only access for managing the contract
+- **Event Emission**: `AttestationMade(address indexed multisig, bytes32 indexed attestationUID)`
+- **Gas Efficient**: Optimized for minimal gas consumption
+
+#### Backend Integration
+- **SafeService Integration**: Routes attestations through AttestationTracker when configured
+- **Configuration-Based**: Uses `ATTESTATION_TRACKER_ADDRESS` environment variable
+- **Fallback Behavior**: Falls back to direct EAS when AttestationTracker not configured
+- **Monitoring**: Health endpoint includes attestation statistics via `get_multisig_info()`
+- **Helper Functions**: `attestation_tracker_helpers.py` provides utility functions
+
+#### Key Features Removed
+- **QuorumTracker System**: Complete removal of on-chain activity classification system
+- **ActivityType Enum**: Eliminated VOTE_CAST, OPPORTUNITY_CONSIDERED, NO_OPPORTUNITY tracking
+- **Activity Registration**: No automatic activity tracking calls in agent runs
+- **Complex State Management**: Simplified to pure attestation counting (removed bit manipulation)
 
 ## Project Specifications
 
