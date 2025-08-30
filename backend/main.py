@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from logging_config import setup_pearl_logger, log_span
 
 from config import settings
+from utils.attestation_tracker_helpers import get_multisig_info
 from models import (
     AgentRunRequest,
     AgentRunResponse,
@@ -361,6 +362,32 @@ async def healthcheck():
         pearl_fields = await _get_pearl_compliance_fields()
         response.update(pearl_fields)
 
+        # Add AttestationTracker statistics
+        try:
+            attestation_tracker_data = {
+                "configured": bool(settings.attestation_tracker_address),
+                "contract_address": settings.attestation_tracker_address,
+                "attestation_count": 0,
+                "multisig_active": False,
+            }
+
+            if settings.attestation_tracker_address and settings.base_safe_address:
+                count, is_active = get_multisig_info(settings.base_safe_address)
+                attestation_tracker_data["attestation_count"] = count
+                attestation_tracker_data["multisig_active"] = is_active
+
+            response["attestation_tracker"] = attestation_tracker_data
+
+        except Exception as tracker_error:
+            logger.error(f"Error querying AttestationTracker: {tracker_error}")
+            response["attestation_tracker"] = {
+                "configured": bool(settings.attestation_tracker_address),
+                "contract_address": settings.attestation_tracker_address,
+                "attestation_count": 0,
+                "multisig_active": False,
+                "error": str(tracker_error),
+            }
+
         return response
 
     except Exception as e:
@@ -378,6 +405,21 @@ async def healthcheck():
             "reset_pause_duration": 0.5,
         }
         error_response.update(pearl_defaults)
+
+        # Add AttestationTracker defaults on error
+        try:
+            tracker_configured = bool(settings.attestation_tracker_address)
+            tracker_address = settings.attestation_tracker_address
+        except:
+            tracker_configured = False
+            tracker_address = None
+            
+        error_response["attestation_tracker"] = {
+            "configured": tracker_configured,
+            "contract_address": tracker_address,
+            "attestation_count": 0,
+            "multisig_active": False,
+        }
 
         return error_response
 

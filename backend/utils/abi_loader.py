@@ -1,15 +1,14 @@
-"""ABI Loader for On-Chain Governor Contract Interfaces.
-
-NOTE: This module is currently not in active use as the system has migrated to
-Snapshot (off-chain) voting. However, this code is being retained for future
-implementation of on-chain governance support.
+"""ABI Loader for On-Chain Contract Interfaces.
 
 This utility loads Application Binary Interface (ABI) definitions for various
-on-chain governor contracts. These ABIs are essential for encoding and decoding
-transaction data when interacting with governor smart contracts.
+smart contracts including governor contracts, EAS, and AttestationTracker.
+These ABIs are essential for encoding and decoding transaction data when
+interacting with smart contracts.
 
-Future work will use this loader when constructing on-chain vote transactions
-for governor contracts like Compound Bravo, OpenZeppelin Governor, etc.
+Used for:
+- Governor contracts (Compound Bravo, OpenZeppelin Governor, etc.)
+- Ethereum Attestation Service (EAS) integration
+- AttestationTracker wrapper contract
 """
 
 from functools import lru_cache
@@ -45,3 +44,22 @@ class ABILoader:
             raise ABILoaderError(f"Invalid JSON in ABI '{name}': {e}")
         except Exception as e:
             raise ABILoaderError(f"Error loading ABI '{name}': {e}")
+
+
+# Global instance for standalone function
+_loader = ABILoader()
+
+
+def load_abi(name: str) -> List[Dict[str, Any]]:
+    """Load ABI by name using global loader instance.
+
+    Args:
+        name: The ABI name (e.g., 'eas', 'attestation_tracker')
+
+    Returns:
+        ABI as list of dictionaries
+
+    Raises:
+        ABILoaderError: If ABI not found or invalid
+    """
+    return _loader.load(name)

@@ -68,7 +68,7 @@
   function formatDate(dateInput: string | number): string {
     // Runtime assertions for formatDate
     console.assert(typeof dateInput === 'string' || typeof dateInput === 'number', 'dateInput must be a string or number');
-    
+
     let date: Date;
     if (typeof dateInput === 'number') {
       // Assume timestamp is in seconds, convert to milliseconds if needed
@@ -77,7 +77,7 @@
       console.assert(dateInput.length > 0, 'dateString cannot be empty');
       date = new Date(dateInput);
     }
-    
+
     return date.toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
   }
 

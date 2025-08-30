@@ -25,16 +25,14 @@ interface IEAS {
 
 /**
  * @title AttestationTracker
- * @dev Minimal implementation of the DualStakingToken attestation pattern.
- * 
- * This contract serves as a wrapper around EAS (Ethereum Attestation Service) 
- * that tracks which multisigs make attestations and maintains an active/inactive 
- * status for each multisig using efficient bit manipulation.
- * 
+ * @dev Simple attestation counter wrapper around EAS (Ethereum Attestation Service).
+ *
+ * This contract serves as a wrapper around EAS that tracks the number of 
+ * attestations made by each multisig address.
+ *
  * Key features:
  * - Tracks attestation count per multisig address
- * - Maintains active/inactive status per multisig
- * - Uses single storage slot per multisig (MSB = active status, lower 255 bits = count)
+ * - Simple uint256 counter for each multisig
  * - Forwards all attestations to EAS while maintaining local tracking
  */
 contract AttestationTracker is Ownable {
@@ -46,8 +44,7 @@ contract AttestationTracker is Ownable {
     address public immutable EAS;
 
     // --- State ---
-    /// @dev Mapping of multisig addresses => (active status bit + attestation counter)
-    /// Following DualStakingToken pattern: MSB = active status, lower 255 bits = attestation count
+    /// @dev Mapping of multisig addresses => attestation counter
     mapping(address => uint256) public mapMultisigAttestations;
 
     // --- Constructor ---
@@ -62,83 +59,37 @@ contract AttestationTracker is Ownable {
     }
 
     // --- External Functions ---
-    
-    /**
-     * @notice Sets the active status for a multisig address.
-     * @dev Can be used to mark multisigs as active/inactive for staking-related functionality.
-     * Only the contract owner can call this function.
-     * @param multisig The address of the multisig.
-     * @param active True to mark as active, false to mark as inactive.
-     */
-    function setMultisigActiveStatus(address multisig, bool active) external onlyOwner {
-        if (active) {
-            // Set MSB to indicate active status, preserving attestation count
-            mapMultisigAttestations[multisig] |= 1 << 255;
-        } else {
-            // Clear MSB while preserving attestation count
-            mapMultisigAttestations[multisig] &= ((1 << 255) - 1);
-        }
-    }
 
     /**
      * @notice Wrapper function for EAS attestations that tracks which multisigs make attestations.
-     * @dev This is the core wrapper functionality following the DualStakingToken pattern.
-     * Increments the attestation counter for msg.sender and forwards the request to EAS.
+     * @dev Increments the attestation counter for msg.sender and forwards the request to EAS.
      * @param delegatedRequest The EAS delegated attestation request.
      * @return attestationUID The UID of the created attestation.
      */
-    function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest) 
-        external 
-        payable 
-        returns (bytes32 attestationUID) 
+    function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest)
+        external
+        payable
+        returns (bytes32 attestationUID)
     {
-        // Increment attestation counter for the caller (preserving upper bits)
+        // Increment attestation counter for the caller
         mapMultisigAttestations[msg.sender]++;
-        
+
         // Forward the attestation request to EAS
         attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(delegatedRequest);
-        
+
         emit AttestationMade(msg.sender, attestationUID);
-        
+
         return attestationUID;
     }
 
     // --- View Functions ---
-    
+
     /**
      * @notice Gets the number of attestations made by a multisig address.
      * @param multisig The address of the multisig.
-     * @return The number of attestations made (excluding MSB active status).
+     * @return The number of attestations made.
      */
     function getNumAttestations(address multisig) external view returns (uint256) {
-        // Remove MSB to get just the attestation count
-        return mapMultisigAttestations[multisig] & ((1 << 255) - 1);
-    }
-
-    /**
-     * @notice Checks if a multisig is marked as active.
-     * @param multisig The address of the multisig.
-     * @return True if the multisig is active, false otherwise.
-     */
-    function isMultisigActive(address multisig) external view returns (bool) {
-        // Check MSB for active status
-        return (mapMultisigAttestations[multisig] >> 255) == 1;
-    }
-
-    /**
-     * @notice Gets both attestation count and active status for a multisig.
-     * @dev More gas efficient than calling getNumAttestations and isMultisigActive separately.
-     * @param multisig The address of the multisig.
-     * @return numAttestations Number of attestations made.
-     * @return isActive Whether the multisig is marked as active.
-     */
-    function getMultisigInfo(address multisig) 
-        external 
-        view 
-        returns (uint256 numAttestations, bool isActive) 
-    {
-        uint256 attestationData = mapMultisigAttestations[multisig];
-        numAttestations = attestationData & ((1 << 255) - 1);
-        isActive = (attestationData >> 255) == 1;
+        return mapMultisigAttestations[multisig];
     }
 }

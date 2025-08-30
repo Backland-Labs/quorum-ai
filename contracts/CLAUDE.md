@@ -38,9 +38,9 @@ Following the DualStakingToken pattern:
 ### Core Functions
 
 ```solidity
-function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest) 
-    external 
-    payable 
+function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest)
+    external
+    payable
     returns (bytes32 attestationUID);
 ```
 - **Purpose**: Main wrapper function for EAS attestations
@@ -67,9 +67,9 @@ function isMultisigActive(address multisig) external view returns (bool);
 - Returns whether a multisig is marked as active
 
 ```solidity
-function getMultisigInfo(address multisig) 
-    external 
-    view 
+function getMultisigInfo(address multisig)
+    external
+    view
     returns (uint256 numAttestations, bool isActive);
 ```
 - Gas-efficient function returning both values in one call
@@ -232,7 +232,7 @@ bool isActive = tracker.isMultisigActive(multisigAddr);
 This contract is designed to work on any network where EAS is deployed:
 - Ethereum Mainnet
 - Arbitrum
-- Optimism  
+- Optimism
 - Polygon
 - Base
 - Other EVM networks with EAS deployment
