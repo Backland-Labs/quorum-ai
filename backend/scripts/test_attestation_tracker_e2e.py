@@ -21,7 +21,6 @@ from models import EASAttestationData
 from utils.attestation_tracker_helpers import (
     get_multisig_info,
     get_attestation_count,
-    is_multisig_active,
 )
 from config import settings
 
@@ -223,8 +222,7 @@ async def verify_integration_readiness():
         test_address = (
             settings.base_safe_address or "0x742d35Cc6634C0532925a3b844Bc9e7595f89590"
         )
-        count = get_attestation_count(test_address)
-        active = is_multisig_active(test_address)
+        count, active = get_multisig_info(test_address)
         print("✓ AttestationTracker helper functions working")
         checks_passed += 1
     except Exception as e:

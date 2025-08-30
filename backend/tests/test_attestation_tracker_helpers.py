@@ -10,7 +10,6 @@ from web3 import Web3
 from utils.attestation_tracker_helpers import (
     get_multisig_info,
     get_attestation_count,
-    is_multisig_active,
 )
 
 

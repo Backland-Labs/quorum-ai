@@ -68,14 +68,3 @@ def get_attestation_count(multisig_address: str) -> int:
     return count
 
 
-def is_multisig_active(multisig_address: str) -> bool:
-    """Check if multisig is active.
-
-    Args:
-        multisig_address: The multisig address to query
-
-    Returns:
-        True if multisig is active, False if tracker not configured or on error
-    """
-    _, is_active = get_multisig_info(multisig_address)
-    return is_active
