@@ -168,8 +168,8 @@ contract AttestationTrackerTest is Test {
             signature: hex"0123456789abcdef"
         });
 
-        vm.expectEmit(true, true, false, false);
-        emit AttestationMade(multisig1, bytes32(0)); // UID will be different, so we ignore data
+        vm.expectEmit(true, false, false, false);
+        emit AttestationMade(multisig1, bytes32(0)); // Only check multisig address, ignore UID
 
         vm.prank(multisig1);
         tracker.attestByDelegation(request);
@@ -469,7 +469,7 @@ contract AttestationTrackerTest is Test {
         // Directly set a high attestation count via storage manipulation for testing
         // This simulates having a very high attestation count
         vm.store(address(tracker),
-                keccak256(abi.encode(multisig1, 2)), // slot for mapMultisigAttestations[multisig1]
+                keccak256(abi.encode(multisig1, 1)), // slot for mapMultisigAttestations[multisig1] (mapping is at slot 1)
                 bytes32(maxCount));
 
         assertEq(tracker.getNumAttestations(multisig1), maxCount, "Should handle max attestation count");
@@ -491,7 +491,7 @@ contract AttestationTrackerTest is Test {
         // Set attestation count to maximum (2^255 - 1)
         uint256 maxCount = (1 << 255) - 1;
         vm.store(address(tracker),
-                keccak256(abi.encode(multisig1, 2)), // slot for mapMultisigAttestations[multisig1]
+                keccak256(abi.encode(multisig1, 1)), // slot for mapMultisigAttestations[multisig1] (mapping is at slot 1)
                 bytes32(maxCount));
 
         IEAS.DelegatedAttestationRequest memory request = IEAS.DelegatedAttestationRequest({
