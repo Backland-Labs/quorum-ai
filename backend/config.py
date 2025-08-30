@@ -319,6 +319,11 @@ class Settings(BaseSettings):
         alias="ATTESTATION_TRACKER_ADDRESS",
         description="AttestationTracker wrapper contract address on Base network. If set, attestations will be routed through this contract.",
     )
+    attestation_chain: str = Field(
+        default="base",
+        alias="ATTESTATION_CHAIN",
+        description="Chain to use for attestation transactions (e.g., 'base', 'ethereum')",
+    )
 
 
 

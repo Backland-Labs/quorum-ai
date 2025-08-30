@@ -526,7 +526,7 @@ class SafeService:
         from utils.web3_provider import get_w3
         from utils.abi_loader import load_abi
 
-        w3 = get_w3("base")
+        w3 = get_w3(settings.attestation_chain)
 
         # Load ABI using existing utility
         contract_abi = load_abi(abi_name)

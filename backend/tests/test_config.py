@@ -344,6 +344,18 @@ class TestAttestationTrackerConfiguration:
             settings = Settings()
             assert settings.attestation_tracker_address == expected_checksum
 
+    def test_attestation_chain_defaults_to_base(self):
+        """Test that attestation_chain defaults to 'base'."""
+        settings = Settings()
+        assert settings.attestation_chain == "base"
+
+    def test_attestation_chain_loaded_from_env(self):
+        """Test that attestation_chain is loaded from environment variable."""
+        test_chain = "ethereum"
+        with patch.dict(os.environ, {"ATTESTATION_CHAIN": test_chain}):
+            settings = Settings()
+            assert settings.attestation_chain == test_chain
+
 
 class TestPropertyMethods:
     """Test new property methods for agent configuration."""
