@@ -61,7 +61,6 @@ contract DeployScript is Script {
         // Test initial state
         address testMultisig = makeAddr("test");
         console.log("Initial attestation count for test address:", attestationTracker.getNumAttestations(testMultisig));
-        console.log("Initial active status for test address:", attestationTracker.isMultisigActive(testMultisig));
 
         return attestationTracker;
     }
