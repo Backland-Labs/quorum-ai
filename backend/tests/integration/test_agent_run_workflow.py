@@ -27,7 +27,6 @@ from models import (
     VoteType,
     VotingStrategy,
     UserPreferences,
-    ActivityType,
     RiskLevel,
     EASAttestationData,
 )

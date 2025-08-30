@@ -20,7 +20,6 @@ from models import (
     VoteType,
     UserPreferences,
     EASAttestationData,
-    ActivityType,
 )
 from services.snapshot_service import SnapshotService
 from services.ai_service import AIService
@@ -30,7 +29,7 @@ from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
 from services.state_transition_tracker import StateTransitionTracker, AgentState
-from services.quorum_tracker_service import QuorumTrackerService
+
 
 
 # Constants
@@ -91,11 +90,7 @@ class AgentRunService:
         self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
 
-        # Initialize QuorumTracker service conditionally based on configuration
-        if settings.quorum_tracker_address:
-            self.quorum_tracker_service = QuorumTrackerService(self.safe_service)
-        else:
-            self.quorum_tracker_service = None
+
 
         # Initialize state transition tracker with StateManager for persistence
         self.state_tracker = StateTransitionTracker(
@@ -110,14 +105,9 @@ class AgentRunService:
 
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name="agent_run_service")
-        if self.quorum_tracker_service:
-            self.pearl_logger.info(
-                "AgentRunService initialized with all dependencies including QuorumTracker"
-            )
-        else:
-            self.pearl_logger.info(
-                "AgentRunService initialized with all dependencies (QuorumTracker disabled)"
-            )
+        self.pearl_logger.info(
+            "AgentRunService initialized with all dependencies"
+        )
 
     async def initialize(self):
         """Initialize async components including state tracker."""
@@ -127,43 +117,7 @@ class AgentRunService:
                 "State tracker initialized with StateManager persistence"
             )
 
-    async def _track_activity(self, activity_type: ActivityType) -> None:
-        """Track activity with QuorumTracker contract if configured.
 
-        Args:
-            activity_type: The type of activity to track (VOTE_CAST, OPPORTUNITY_CONSIDERED, NO_OPPORTUNITY)
-        """
-        if not self.quorum_tracker_service:
-            return
-
-        try:
-            # Get multisig address from SafeService (using Base chain by default for QuorumTracker)
-            multisig_address = self.safe_service.safe_addresses.get("base")
-            if not multisig_address:
-                self.pearl_logger.warning(
-                    "No Base multisig address available for activity tracking"
-                )
-                return
-
-            # Register activity with QuorumTracker
-            result = await self.quorum_tracker_service.register_activity(
-                multisig_address=multisig_address, activity_type=activity_type.value
-            )
-
-            if result.get("success"):
-                self.pearl_logger.info(
-                    f"Successfully tracked activity {activity_type.name} for multisig {multisig_address}"
-                )
-            else:
-                self.pearl_logger.error(
-                    f"Failed to track activity {activity_type.name}: {result.get('error', 'Unknown error')}"
-                )
-
-        except Exception as e:
-            self.pearl_logger.error(
-                f"Error tracking activity {activity_type.name}: {str(e)}"
-            )
-            # Don't raise - activity tracking failures should not disrupt normal operation
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.
@@ -248,7 +202,7 @@ class AgentRunService:
                 # Track activity based on proposals available
                 if not filtered_proposals:
                     # No proposals available to vote on
-                    await self._track_activity(ActivityType.NO_OPPORTUNITY)
+                    pass
 
                 # Step 3: Make and execute voting decisions
                 (
@@ -751,7 +705,7 @@ class AgentRunService:
                         )
                     else:
                         # Proposal was evaluated but not voted on due to low confidence
-                        await self._track_activity(ActivityType.OPPORTUNITY_CONSIDERED)
+                        pass
                         self.pearl_logger.info(
                             f"Vote decision rejected due to low confidence "
                             f"(proposal_id={proposal.id}, confidence={decision.confidence}, "
@@ -862,7 +816,7 @@ class AgentRunService:
                             self.logger.log_vote_execution(decision, True)
 
                             # Track successful vote cast activity
-                            await self._track_activity(ActivityType.VOTE_CAST)
+                            pass
 
                             # Queue attestation for successful vote
                             await self._queue_attestation(decision, space_id, run_id)

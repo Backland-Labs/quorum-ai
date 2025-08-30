@@ -90,22 +90,7 @@ class Settings(BaseSettings):
         default_factory=list, description="List of DAO addresses to monitor"
     )
 
-    # QuorumTracker contract configuration
-    quorum_tracker_address: Optional[str] = Field(
-        default=None,
-        alias="QUORUM_TRACKER_ADDRESS",
-        description="Address of the deployed QuorumTracker contract",
-    )
-    quorum_tracker_owner: Optional[str] = Field(
-        default=None,
-        alias="QUORUM_TRACKER_OWNER",
-        description="Owner address of the QuorumTracker contract",
-    )
-    quorum_tracker_private_key: Optional[str] = Field(
-        default=None,
-        alias="QUORUM_TRACKER_PRIVATE_KEY",
-        description="Private key for the QuorumTracker owner account",
-    )
+
     rpc_url: str = Field(
         default="http://localhost:8545",
         alias="RPC_URL",
@@ -335,17 +320,7 @@ class Settings(BaseSettings):
         description="AttestationTracker wrapper contract address on Base network. If set, attestations will be routed through this contract.",
     )
 
-    # QuorumTracker configuration
-    quorum_tracker_address: Optional[str] = Field(
-        default=None,
-        alias="QUORUM_TRACKER_ADDRESS",
-        description="QuorumTracker contract address on local testnet",
-    )
-    quorum_tracker_owner: Optional[str] = Field(
-        default=None,
-        alias="QUORUM_TRACKER_OWNER",
-        description="Owner address for QuorumTracker contract (backend service wallet)",
-    )
+
 
     @field_validator("log_level", mode="before")
     @classmethod
@@ -780,13 +755,7 @@ class Settings(BaseSettings):
 
         return True
 
-    @field_validator("quorum_tracker_address", "quorum_tracker_owner", mode="before")
-    @classmethod
-    def validate_tracker_addresses(cls, v):
-        """Validate QuorumTracker addresses are valid Web3 addresses."""
-        if v and not Web3.is_address(v):
-            raise ValueError(f"Invalid contract address: {v}")
-        return Web3.to_checksum_address(v) if v else None
+
 
     @model_validator(mode="after")
     def validate_attestation_tracker_config(self):

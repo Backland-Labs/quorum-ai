@@ -1,0 +1,110 @@
+[2025-08-30 09:58:28,241] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 09:58:28,511] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 09:58:28,811] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,101] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,339] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,653] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,654] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,657] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,657] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,657] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,658] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,658] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,659] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,661] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,661] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,661] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,662] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,662] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,724] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,726] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,726] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,727] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,727] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,727] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-08-30 10:00:46,727] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-08-30 10:00:46,727] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-08-30 10:00:46,727] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s
+[2025-08-30 10:00:46,728] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,730] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,730] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,731] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,732] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,732] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,732] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=5)
+[2025-08-30 10:00:46,732] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=5)
+[2025-08-30 10:00:46,732] [ERROR] [agent] Failed to fetch active proposals (space_id=test-space, limit=5, error=Service error)
+[2025-08-30 10:00:46,732] [ERROR] [agent] Failed fetch_active_proposals after 0.000s: Failed to fetch active proposals from test-space: Service error
+[2025-08-30 10:00:46,733] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,735] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,735] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,735] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,735] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-08-30 10:00:46,735] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-08-30 10:00:46,735] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-08-30 10:00:46,735] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s
+[2025-08-30 10:00:46,755] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,757] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,757] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,757] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,758] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,758] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,762] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,764] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,765] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,765] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,770] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,772] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,772] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,772] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,772] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,773] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,777] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,779] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,780] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,780] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,794] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,796] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,796] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,796] [INFO] [agent] State transition: idle -> starting
+[2025-08-30 10:00:46,797] [INFO] [agent] Starting agent_run_execution (space_id=test-space, dry_run=False)
+[2025-08-30 10:00:46,797] [INFO] [agent] State transition: starting -> loading_preferences
+[2025-08-30 10:00:46,798] [INFO] [agent] Agent run started (run_id=test-space_1756573246, space_id=test-space, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-08-30 10:00:46,798] [INFO] [agent] State transition: loading_preferences -> fetching_proposals
+[2025-08-30 10:00:46,799] [INFO] [agent] Starting fetch_active_proposals (space_id=test-space, limit=3)
+[2025-08-30 10:00:46,799] [INFO] [agent] Fetching active proposals (space_id=test-space, limit=3)
+[2025-08-30 10:00:46,799] [INFO] [agent] Successfully fetched active proposals (space_id=test-space, proposal_count=0)
+[2025-08-30 10:00:46,799] [INFO] [agent] Completed fetch_active_proposals successfully in 0.000s
+[2025-08-30 10:00:46,799] [INFO] [agent] State transition: fetching_proposals -> filtering_proposals
+[2025-08-30 10:00:46,799] [INFO] [agent] Agent run completed (run_id=test-space_1756573246, space_id=test-space, proposals_analyzed=0, votes_cast=0, successful_votes=0, failed_votes=0, execution_time=0.001, errors=[])
+[2025-08-30 10:00:46,799] [INFO] [agent] State transition: filtering_proposals -> completed
+[2025-08-30 10:00:46,800] [INFO] [agent] State transition: completed -> idle
+[2025-08-30 10:00:46,801] [INFO] [agent] Completed agent_run_execution successfully in 0.004s
+[2025-08-30 10:00:46,802] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,804] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,804] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,804] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,805] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,807] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,808] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,808] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,808] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,808] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-08-30 10:00:46,809] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,812] [INFO] [agent] SafeService initialized (eoa_address=0x8fd379246834eac74B8419FfdA202CF8051F7A03, safe_addresses=[], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-08-30 10:00:46,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-08-30 10:00:46,812] [INFO] [agent] AgentRunService initialized with all dependencies

@@ -34,13 +34,6 @@ class RiskLevel(str, Enum):
     HIGH = "HIGH"
 
 
-class ActivityType(IntEnum):
-    """Activity types for QuorumTracker contract interactions."""
-
-    VOTE_CAST = 0
-    OPPORTUNITY_CONSIDERED = 1
-    NO_OPPORTUNITY = 2
-
 
 # Voting strategy types
 class VotingStrategy(str, Enum):

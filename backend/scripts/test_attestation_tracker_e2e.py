@@ -4,7 +4,7 @@ End-to-end test for AttestationTracker integration.
 
 Tests the complete attestation flow through AttestationTracker wrapper,
 including initial statistics, attestation submission, and updated statistics.
-This script follows the same pattern as the QuorumTracker E2E test.
+This script provides end-to-end testing for the AttestationTracker functionality.
 """
 
 import asyncio
