@@ -1,66 +1,7 @@
 {
   "current_state": "idle",
-  "last_transition_time": "2025-08-30T10:00:46.800509",
+  "last_transition_time": "2025-08-30T11:04:15.109968",
   "transition_history": [
-    {
-      "from_state": "loading_preferences",
-      "to_state": "fetching_proposals",
-      "timestamp": "2025-08-03T15:54:58.347027",
-      "metadata": {
-        "run_id": "run_test-space_1754258098",
-        "spaces": [
-          "test-space"
-        ]
-      }
-    },
-    {
-      "from_state": "fetching_proposals",
-      "to_state": "filtering_proposals",
-      "timestamp": "2025-08-03T15:54:58.347372",
-      "metadata": {
-        "run_id": "run_test-space_1754258098",
-        "total_proposals": 0,
-        "filtered_proposals": 0
-      }
-    },
-    {
-      "from_state": "filtering_proposals",
-      "to_state": "completed",
-      "timestamp": "2025-08-03T15:54:58.347648",
-      "metadata": {
-        "run_id": "run_test-space_1754258098",
-        "total_duration": 0.0015299320220947266,
-        "proposals_analyzed": 0,
-        "votes_cast": 0
-      }
-    },
-    {
-      "from_state": "completed",
-      "to_state": "idle",
-      "timestamp": "2025-08-03T15:54:58.347880",
-      "metadata": {
-        "run_id": "run_test-space_1754258098"
-      }
-    },
-    {
-      "from_state": "idle",
-      "to_state": "starting",
-      "timestamp": "2025-08-26T20:22:28.101483",
-      "metadata": {
-        "run_id": "run_test-space_1756264948",
-        "spaces": [
-          "test-space"
-        ]
-      }
-    },
-    {
-      "from_state": "starting",
-      "to_state": "loading_preferences",
-      "timestamp": "2025-08-26T20:22:28.102736",
-      "metadata": {
-        "run_id": "run_test-space_1756264948"
-      }
-    },
     {
       "from_state": "loading_preferences",
       "to_state": "fetching_proposals",
@@ -990,6 +931,65 @@
       "timestamp": "2025-08-30T10:00:46.800509",
       "metadata": {
         "run_id": "run_test-space_1756573246"
+      }
+    },
+    {
+      "from_state": "idle",
+      "to_state": "starting",
+      "timestamp": "2025-08-30T11:04:15.105961",
+      "metadata": {
+        "run_id": "run_test-space_1756577055",
+        "spaces": [
+          "test-space"
+        ]
+      }
+    },
+    {
+      "from_state": "starting",
+      "to_state": "loading_preferences",
+      "timestamp": "2025-08-30T11:04:15.107189",
+      "metadata": {
+        "run_id": "run_test-space_1756577055"
+      }
+    },
+    {
+      "from_state": "loading_preferences",
+      "to_state": "fetching_proposals",
+      "timestamp": "2025-08-30T11:04:15.107905",
+      "metadata": {
+        "run_id": "run_test-space_1756577055",
+        "spaces": [
+          "test-space"
+        ]
+      }
+    },
+    {
+      "from_state": "fetching_proposals",
+      "to_state": "filtering_proposals",
+      "timestamp": "2025-08-30T11:04:15.108662",
+      "metadata": {
+        "run_id": "run_test-space_1756577055",
+        "total_proposals": 0,
+        "filtered_proposals": 0
+      }
+    },
+    {
+      "from_state": "filtering_proposals",
+      "to_state": "completed",
+      "timestamp": "2025-08-30T11:04:15.109339",
+      "metadata": {
+        "run_id": "run_test-space_1756577055",
+        "total_duration": 0.0033409595489501953,
+        "proposals_analyzed": 0,
+        "votes_cast": 0
+      }
+    },
+    {
+      "from_state": "completed",
+      "to_state": "idle",
+      "timestamp": "2025-08-30T11:04:15.109968",
+      "metadata": {
+        "run_id": "run_test-space_1756577055"
       }
     }
   ]

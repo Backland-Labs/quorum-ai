@@ -50,7 +50,6 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    anthropic_api_key: Optional[str] = None
     ai_model: str = "openai:gpt-4o-mini"
 
     # Pearl logging settings
