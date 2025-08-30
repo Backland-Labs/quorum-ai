@@ -31,8 +31,7 @@ contract MockEAS {
  *
  * Tests focus on:
  * - Core attestation wrapper functionality
- * - Bit manipulation for efficient storage (active status + attestation count)
- * - Access control for owner-only functions
+ * - Simple attestation counting
  * - Gas efficiency and edge cases
  * - Multi-multisig independent tracking
  */
@@ -84,41 +83,13 @@ contract AttestationTrackerTest is Test {
         assertEq(tracker.owner(), owner, "Owner should be set correctly");
         assertEq(tracker.EAS(), address(mockEAS), "EAS address should be set correctly");
 
-        // Initial states should be zero
+        // Initial attestation count should be zero
         assertEq(tracker.getNumAttestations(multisig1), 0, "Initial attestation count should be 0");
-        assertFalse(tracker.isMultisigActive(multisig1), "Initial active status should be false");
     }
 
-    // --- Active Status Management Tests ---
 
-    /**
-     * @dev Test setting multisig active status as owner.
-     * This tests the core active status toggle functionality.
-     */
-    function test_SetMultisigActiveStatus_AsOwner() public {
-        // Initially inactive
-        assertFalse(tracker.isMultisigActive(multisig1), "Should be initially inactive");
 
-        // Set active
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, true);
-        assertTrue(tracker.isMultisigActive(multisig1), "Should be active after setting");
-
-        // Set inactive
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, false);
-        assertFalse(tracker.isMultisigActive(multisig1), "Should be inactive after clearing");
-    }
-
-    /**
-     * @dev Test that only owner can set active status.
-     * This ensures proper access control for administrative functions.
-     */
-    function test_RevertWhen_SetMultisigActiveStatus_NotOwner() public {
-        vm.prank(unauthorized);
-        vm.expectRevert("Ownable: caller is not the owner");
-        tracker.setMultisigActiveStatus(multisig1, true);
-    }
+    // --- Attestation Wrapper Tests ---
 
     // --- Attestation Wrapper Tests ---
 
@@ -234,86 +205,7 @@ contract AttestationTrackerTest is Test {
         assertEq(tracker.getNumAttestations(multisig1), 1, "Attestation count should still increment");
     }
 
-    // --- Bit Manipulation Tests ---
 
-    /**
-     * @dev Test that active status and attestation count work independently.
-     * This is crucial for testing the DualStakingToken pattern's bit manipulation.
-     */
-    function test_BitManipulation_ActiveStatusAndAttestations() public {
-        IEAS.DelegatedAttestationRequest memory request = IEAS.DelegatedAttestationRequest({
-            schema: bytes32(uint256(1)),
-            data: abi.encode("test data"),
-            expirationTime: uint64(block.timestamp + 3600),
-            revocable: false,
-            refUID: bytes32(0),
-            recipient: multisig1,
-            value: 0,
-            deadline: uint64(block.timestamp + 1800),
-            signature: hex"0123456789abcdef"
-        });
-
-        // Make attestation first
-        vm.prank(multisig1);
-        tracker.attestByDelegation(request);
-
-        assertEq(tracker.getNumAttestations(multisig1), 1, "Should have 1 attestation");
-        assertFalse(tracker.isMultisigActive(multisig1), "Should not be active yet");
-
-        // Set active status
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, true);
-
-        assertEq(tracker.getNumAttestations(multisig1), 1, "Attestation count should be preserved");
-        assertTrue(tracker.isMultisigActive(multisig1), "Should be active now");
-
-        // Make another attestation
-        vm.prank(multisig1);
-        tracker.attestByDelegation(request);
-
-        assertEq(tracker.getNumAttestations(multisig1), 2, "Should have 2 attestations now");
-        assertTrue(tracker.isMultisigActive(multisig1), "Should still be active");
-
-        // Set inactive
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, false);
-
-        assertEq(tracker.getNumAttestations(multisig1), 2, "Attestation count should be preserved");
-        assertFalse(tracker.isMultisigActive(multisig1), "Should be inactive now");
-    }
-
-    /**
-     * @dev Test the combined getter function for gas efficiency.
-     * This tests getMultisigInfo which returns both values in a single call.
-     */
-    function test_GetMultisigInfo_Efficiency() public {
-        // Set up some state
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, true);
-
-        IEAS.DelegatedAttestationRequest memory request = IEAS.DelegatedAttestationRequest({
-            schema: bytes32(uint256(1)),
-            data: abi.encode("test data"),
-            expirationTime: uint64(block.timestamp + 3600),
-            revocable: false,
-            refUID: bytes32(0),
-            recipient: multisig1,
-            value: 0,
-            deadline: uint64(block.timestamp + 1800),
-            signature: hex"0123456789abcdef"
-        });
-
-        vm.startPrank(multisig1);
-        tracker.attestByDelegation(request);
-        tracker.attestByDelegation(request);
-        vm.stopPrank();
-
-        // Get info with single call
-        (uint256 numAttestations, bool isActive) = tracker.getMultisigInfo(multisig1);
-
-        assertEq(numAttestations, 2, "Should have 2 attestations");
-        assertTrue(isActive, "Should be active");
-    }
 
     // --- Multi-Multisig Independent Tracking Tests ---
 
@@ -344,15 +236,9 @@ contract AttestationTrackerTest is Test {
         vm.prank(multisig2);
         tracker.attestByDelegation(request);
 
-        // Set multisig1 as active
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, true);
-
         // Verify independent tracking
         assertEq(tracker.getNumAttestations(multisig1), 2, "Multisig1 should have 2 attestations");
         assertEq(tracker.getNumAttestations(multisig2), 1, "Multisig2 should have 1 attestation");
-        assertTrue(tracker.isMultisigActive(multisig1), "Multisig1 should be active");
-        assertFalse(tracker.isMultisigActive(multisig2), "Multisig2 should not be active");
     }
 
     // --- Fuzz Tests ---
@@ -387,44 +273,7 @@ contract AttestationTrackerTest is Test {
         assertEq(tracker.getNumAttestations(multisig1), numAttestations, "Attestation count should match");
     }
 
-    /**
-     * @dev Fuzz test for active status toggling with attestations.
-     * This ensures that active status changes don't affect attestation counts.
-     */
-    function testFuzz_ActiveStatusToggling(uint8 numAttestations, bool finalActiveState) public {
-        vm.assume(numAttestations > 0 && numAttestations <= 50);
 
-        IEAS.DelegatedAttestationRequest memory request = IEAS.DelegatedAttestationRequest({
-            schema: bytes32(uint256(1)),
-            data: abi.encode("test data"),
-            expirationTime: uint64(block.timestamp + 3600),
-            revocable: false,
-            refUID: bytes32(0),
-            recipient: multisig1,
-            value: 0,
-            deadline: uint64(block.timestamp + 1800),
-            signature: hex"0123456789abcdef"
-        });
-
-        // Make attestations
-        vm.startPrank(multisig1);
-        for (uint8 i = 0; i < numAttestations; i++) {
-            tracker.attestByDelegation(request);
-        }
-        vm.stopPrank();
-
-        // Toggle active status multiple times
-        vm.startPrank(owner);
-        tracker.setMultisigActiveStatus(multisig1, true);
-        tracker.setMultisigActiveStatus(multisig1, false);
-        tracker.setMultisigActiveStatus(multisig1, true);
-        tracker.setMultisigActiveStatus(multisig1, finalActiveState);
-        vm.stopPrank();
-
-        // Verify attestation count is preserved through all toggles
-        assertEq(tracker.getNumAttestations(multisig1), numAttestations, "Attestation count should be preserved");
-        assertEq(tracker.isMultisigActive(multisig1), finalActiveState, "Final active state should match");
-    }
 
     // --- Gas Optimization Tests ---
 
@@ -459,37 +308,12 @@ contract AttestationTrackerTest is Test {
     // --- Edge Case Tests ---
 
     /**
-     * @dev Test maximum attestation counter (near 2^255-1).
-     * This tests the edge case of the bit manipulation pattern.
-     */
-    function test_EdgeCase_MaxAttestationCount() public {
-        // We can't test the actual maximum due to gas limits, but we can test the bit manipulation
-        uint256 maxCount = (1 << 255) - 1;
-
-        // Directly set a high attestation count via storage manipulation for testing
-        // This simulates having a very high attestation count
-        vm.store(address(tracker),
-                keccak256(abi.encode(multisig1, 1)), // slot for mapMultisigAttestations[multisig1] (mapping is at slot 1)
-                bytes32(maxCount));
-
-        assertEq(tracker.getNumAttestations(multisig1), maxCount, "Should handle max attestation count");
-        assertFalse(tracker.isMultisigActive(multisig1), "Should not be active with max count");
-
-        // Set active status
-        vm.prank(owner);
-        tracker.setMultisigActiveStatus(multisig1, true);
-
-        assertEq(tracker.getNumAttestations(multisig1), maxCount, "Count should be preserved");
-        assertTrue(tracker.isMultisigActive(multisig1), "Should be active");
-    }
-
-    /**
      * @dev Test attestation counter overflow protection.
-     * This tests what happens when we try to increment past the maximum.
+     * This tests what happens when we try to increment past the maximum uint256.
      */
     function test_EdgeCase_AttestationCounterOverflow() public {
-        // Set attestation count to maximum (2^255 - 1)
-        uint256 maxCount = (1 << 255) - 1;
+        // Set attestation count to maximum uint256
+        uint256 maxCount = type(uint256).max;
         vm.store(address(tracker),
                 keccak256(abi.encode(multisig1, 1)), // slot for mapMultisigAttestations[multisig1] (mapping is at slot 1)
                 bytes32(maxCount));
@@ -506,16 +330,9 @@ contract AttestationTrackerTest is Test {
             signature: hex"0123456789abcdef"
         });
 
-        // This should overflow and wrap to 0 (with MSB potentially set)
+        // This should overflow and wrap to 0 in Solidity < 0.8.0 but revert in 0.8.0+
         vm.prank(multisig1);
+        vm.expectRevert(); // Expect arithmetic overflow revert
         tracker.attestByDelegation(request);
-
-        // The attestation count should have wrapped around
-        // Due to the bit manipulation, this will interfere with the active status bit
-        uint256 finalCount = tracker.getNumAttestations(multisig1);
-
-        // This is an edge case - in practice, reaching 2^255 attestations is impossible
-        // but we test to understand the behavior
-        console.log("Attestation count after overflow:", finalCount);
     }
 }
