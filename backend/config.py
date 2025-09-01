@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = {
-        "env_file": ".env",
+        "env_file": [".env", "../.env"],  # Check both backend/.env and parent .env
         "extra": "ignore",
         "env_parse_none_str": "None",
         "env_nested_delimiter": "__",
