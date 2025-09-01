@@ -349,8 +349,6 @@ async def healthcheck():
         if hasattr(tracker, "fast_transition_window"):
             response["period"] = tracker.fast_transition_window
         else:
-            from config import settings
-
             response["period"] = settings.FAST_TRANSITION_THRESHOLD
 
         if hasattr(tracker, "fast_transition_threshold"):
