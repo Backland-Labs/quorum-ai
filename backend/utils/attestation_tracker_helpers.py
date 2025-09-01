@@ -22,6 +22,7 @@ def get_multisig_info(multisig_address: str) -> Tuple[int, bool]:
 
     Returns:
         Tuple of (attestation_count, is_active)
+        Active status defaults to True since deployed contract doesn't track active status
         Returns (0, False) if tracker not configured or on error
     """
     try:
@@ -41,12 +42,11 @@ def get_multisig_info(multisig_address: str) -> Tuple[int, bool]:
             abi=contract_abi,
         )
 
-        # Query multisig stats (packed uint256 with MSB for active status)
-        stats = contract.functions.multisigStats(multisig_address).call()
-
-        # Extract count (lower 255 bits) and active status (MSB)
-        count = stats & ((1 << 255) - 1)
-        is_active = (stats >> 255) == 1
+        # Query multisig attestation count using available function
+        count = contract.functions.getNumAttestations(multisig_address).call()
+        
+        # Default active status to True since separate active status tracking is not available
+        is_active = True
 
         return (count, is_active)
 
