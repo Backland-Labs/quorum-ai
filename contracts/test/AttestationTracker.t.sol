@@ -241,6 +241,53 @@ contract AttestationTrackerTest is Test {
         assertEq(tracker.getNumAttestations(multisig2), 1, "Multisig2 should have 1 attestation");
     }
 
+    // --- IQuorumTracker Interface Tests ---
+
+    /**
+     * @dev Test IQuorumTracker getVotingStats implementation.
+     * This tests the new IQuorumTracker interface functionality.
+     */
+    function test_IQuorumTracker_GetVotingStats() public {
+        // Initially, voting stats should be [0, 0, 0]
+        uint256[] memory stats = tracker.getVotingStats(multisig1);
+        assertEq(stats.length, 3, "Should return array of length 3");
+        assertEq(stats[0], 0, "Initial casted votes should be 0");
+        assertEq(stats[1], 0, "Initial voting opportunities should be 0");
+        assertEq(stats[2], 0, "Initial no voting opportunities should be 0");
+
+        // Create an attestation to increase the count
+        IEAS.DelegatedAttestationRequest memory request = IEAS.DelegatedAttestationRequest({
+            schema: bytes32(uint256(1)),
+            data: abi.encode("test data"),
+            expirationTime: uint64(block.timestamp + 3600),
+            revocable: false,
+            refUID: bytes32(0),
+            recipient: multisig1,
+            value: 0,
+            deadline: uint64(block.timestamp + 1800),
+            signature: hex"0123456789abcdef"
+        });
+
+        vm.prank(multisig1);
+        tracker.attestByDelegation(request);
+
+        // After one attestation, stats should be [1, 1, 0]
+        stats = tracker.getVotingStats(multisig1);
+        assertEq(stats[0], 1, "Casted votes should equal attestation count");
+        assertEq(stats[1], 1, "Voting opportunities should equal attestation count");
+        assertEq(stats[2], 0, "No voting opportunities should remain 0");
+
+        // Make another attestation
+        vm.prank(multisig1);
+        tracker.attestByDelegation(request);
+
+        // After two attestations, stats should be [2, 2, 0]
+        stats = tracker.getVotingStats(multisig1);
+        assertEq(stats[0], 2, "Casted votes should equal attestation count");
+        assertEq(stats[1], 2, "Voting opportunities should equal attestation count");
+        assertEq(stats[2], 0, "No voting opportunities should remain 0");
+    }
+
     // --- Fuzz Tests ---
 
     /**
