@@ -1,103 +1,171 @@
 # Implementation Plan
 
 ## Overview
-Validate and set up the test environment for Quorum AI's autonomous voting agent according to the test plan requirements. The environment includes local Anvil blockchain, Docker services, external API integrations, and contract deployments.
+Comprehensive verification and setup of the test environment prerequisites for Quorum AI testing as outlined in test-plan.md. This plan addresses identified configuration issues, missing components, and provides actionable tasks to ensure the environment is fully prepared for testing the autonomous voting agent functionality.
 
-## Environment Setup Validation
+## Feature 1: Environment Configuration Alignment
 
-### Task 1.1: Verify Anvil Blockchain Service
+#### Task 1.1: Synchronize Environment Variables Between Files
 - Acceptance Criteria:
-  * Anvil is running on port 8545 with Base chain ID 8453
-  * RPC endpoint responds to basic queries
-  * Forked from Base mainnet successfully
+  * Backend .env file uses real OpenRouter API key from main .env
+  * SNAPSHOT_GRAPHQL naming is consistent across files
+  * Docker networking addresses use host.docker.internal where appropriate
 - Test Cases:
-  * Test that `cast chain-id --rpc-url http://localhost:8545` returns 8453
+  * Verify backend container can access OpenRouter API with configured key
 - Integration Points:
-  * Local blockchain service for contract deployment and testing
+  * Main .env and backend/.env synchronization
+  * Docker container environment variable injection
 - Files to Modify/Create:
-  * No files need modification (service already running)
+  * /Users/max/code/quorum-ai/backend/.env
 
-### Task 1.2: Validate Environment Variables
+#### Task 1.2: Update Attestation Tracker Address
 - Acceptance Criteria:
-  * All required environment variables are present in .env file
-  * OpenRouter API key is configured
-  * Snapshot GraphQL endpoint is set to testnet
-  * Local RPC and chain configuration matches Anvil setup
+  * ATTESTATION_TRACKER_ADDRESS matches latest local deployment
+  * Address corresponds to chain ID 31337 for local Anvil
+  * Configuration is consistent across all environment files
 - Test Cases:
-  * Test that .env file contains all required variables from test plan
+  * Verify contract exists at configured address on local testnet
 - Integration Points:
-  * Environment configuration for Docker services
+  * Contract deployment output
+  * Environment variable configuration
 - Files to Modify/Create:
-  * /Users/max/code/quorum-ai/.env (already validated and updated)
+  * /Users/max/code/quorum-ai/.env
 
-### Task 1.3: Deploy EAS Contracts
-- Acceptance Criteria:
-  * AttestationTracker contract deployed to local Anvil
-  * Contract address updated in .env file
-  * Contract ownership properly configured
-  * EAS integration address set correctly
-- Test Cases:
-  * Test that deployed contract code exists at the specified address
-- Integration Points:
-  * Smart contract deployment on local blockchain
-- Files to Modify/Create:
-  * /Users/max/code/quorum-ai/contracts/deploy_local.sh (updated)
-  * /Users/max/code/quorum-ai/.env (updated with contract address)
+## Feature 2: Test Data Structure Initialization
 
-### Task 1.4: Initialize Test Data Structure
+#### Task 2.1: Create Agent State File
 - Acceptance Criteria:
-  * Test-data directory structure created as specified
-  * Initial state files created with default values
-  * Deployment information documented
-  * Log directories prepared for Pearl compliance
+  * agent_state.json exists with valid initial structure
+  * File contains required fields for agent operation
+  * Permissions allow read/write from Docker container
 - Test Cases:
-  * Test that all required directories and files exist
+  * Verify file can be read and written by backend service
 - Integration Points:
-  * File system structure for state persistence
+  * State management service
+  * Agent run service
 - Files to Modify/Create:
-  * /Users/max/code/quorum-ai/test-data/state/agent_state.json (created)
-  * /Users/max/code/quorum-ai/test-data/state/user_preferences.json (created)
-  * /Users/max/code/quorum-ai/test-data/deployment.json (created)
+  * /Users/max/code/quorum-ai/test-data/state/agent_state.json
 
-### Task 1.5: Verify Docker Compose Configuration
+#### Task 2.2: Create User Preferences File
 - Acceptance Criteria:
-  * Docker Compose file exists with backend and frontend services
-  * Health check endpoints configured
-  * Environment file properly referenced
-  * Port mappings match test plan requirements
+  * user_preferences.json exists with default preferences
+  * File structure matches backend expectations
+  * Contains test DAO monitoring configuration
 - Test Cases:
-  * Test that docker-compose.yml contains required service definitions
+  * Verify preferences can be loaded by backend service
 - Integration Points:
-  * Container orchestration configuration
+  * User preferences service
+  * DAO monitoring configuration
 - Files to Modify/Create:
-  * /Users/max/code/quorum-ai/docker-compose.yml (exists, no modification needed)
+  * /Users/max/code/quorum-ai/test-data/state/user_preferences.json
+
+#### Task 2.3: Create Deployment Configuration File
+- Acceptance Criteria:
+  * deployment.json contains contract deployment information
+  * Includes attestation tracker address and deployment block
+  * Documents network configuration used
+- Test Cases:
+  * Verify deployment information is accurate and readable
+- Integration Points:
+  * Contract deployment tracking
+  * Test execution evidence
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/test-data/deployment.json
+
+## Feature 3: Docker Environment Enhancement
+
+#### Task 3.1: Add Anvil Service to Docker Compose
+- Acceptance Criteria:
+  * Anvil service defined in docker-compose.yml
+  * Service configured with Base mainnet fork
+  * Port 8545 exposed for RPC access
+  * Proper network configuration for container communication
+- Test Cases:
+  * Verify Anvil container starts and is accessible from backend
+- Integration Points:
+  * Docker network bridge
+  * Backend RPC configuration
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/docker-compose.yml
+
+#### Task 3.2: Configure Container Network Access
+- Acceptance Criteria:
+  * Backend can access Anvil via Docker network
+  * Backend can reach external APIs (Snapshot, OpenRouter)
+  * Frontend can communicate with backend API
+- Test Cases:
+  * Test connectivity from backend container to all required endpoints
+- Integration Points:
+  * Docker network configuration
+  * Service discovery
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/docker-compose.yml
+
+## Feature 4: Contract Deployment Automation
+
+#### Task 4.1: Enhance Deployment Script
+- Acceptance Criteria:
+  * Script correctly identifies chain ID (31337 vs 8453)
+  * Automatically updates environment with deployed address
+  * Provides clear deployment status output
+- Test Cases:
+  * Test script successfully deploys and updates configuration
+- Integration Points:
+  * Foundry forge deployment
+  * Environment variable management
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/contracts/deploy_local.sh
+
+#### Task 4.2: Create Anvil Startup Script
+- Acceptance Criteria:
+  * Script starts Anvil with Base mainnet fork
+  * Configures correct chain ID and test accounts
+  * Provides persistent state option for testing
+- Test Cases:
+  * Verify Anvil starts with expected configuration
+- Integration Points:
+  * Local blockchain service
+  * Test account management
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/scripts/start-anvil.sh
+
+## Feature 5: Testing Infrastructure Validation
+
+#### Task 5.1: Create Environment Validation Script
+- Acceptance Criteria:
+  * Checks all required environment variables
+  * Validates API key formats and connectivity
+  * Tests RPC endpoint accessibility
+  * Verifies contract deployment status
+- Test Cases:
+  * Script correctly identifies configuration issues
+- Integration Points:
+  * All environment dependencies
+  * External service endpoints
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/scripts/validate-test-env.sh
+
+#### Task 5.2: Create Test Execution Helper
+- Acceptance Criteria:
+  * Script executes test steps from test-plan.md
+  * Captures evidence for each test step
+  * Generates test execution report
+- Test Cases:
+  * Script successfully runs through all test scenarios
+- Integration Points:
+  * Backend API endpoints
+  * Log file monitoring
+  * Contract interaction
+- Files to Modify/Create:
+  * /Users/max/code/quorum-ai/scripts/run-test-suite.sh
 
 ## Success Criteria
-- [x] Anvil blockchain running on port 8545 with chain ID 8453
-- [x] OpenRouter API key configured in .env file
-- [x] AttestationTracker contract deployed at 0x7e2ca159fb4ebb716ec14246d29ca1078ede9bfa
-- [x] Test data directory structure created
-- [x] All required environment variables set
-- [x] Docker Compose configuration validated
-- [ ] Docker services can be started (ready but not running)
-
-## Current Status Summary
-
-### Completed Setup Steps:
-1. **Anvil Blockchain**: Running on port 8545 with correct Base chain ID (8453)
-2. **Environment Variables**: All required variables configured in .env file
-3. **Smart Contracts**: AttestationTracker deployed at 0x7e2ca159fb4ebb716ec14246d29ca1078ede9bfa
-4. **Test Data Structure**: All directories and initial state files created
-5. **API Keys**: OpenRouter API key configured
-
-### Ready for Testing:
-- Docker services can be started with `docker-compose up -d`
-- Environment is fully configured for test execution
-- All external service endpoints are configured (Snapshot testnet, OpenRouter)
-- Local blockchain is ready for attestation testing
-
-### Next Steps:
-1. Start Docker services: `docker-compose up -d`
-2. Verify health check endpoints respond correctly
-3. Begin executing test scenarios from the test plan
-4. Monitor agent runs and collect metrics
+- [ ] Environment variables synchronized and consistent across all configuration files
+- [ ] OpenRouter API key properly configured and accessible from backend container
+- [ ] Test data directory structure complete with all required JSON files
+- [ ] Attestation Tracker contract deployed to local testnet with correct address configuration
+- [ ] Docker Compose includes Anvil service with proper networking
+- [ ] Backend container can access local Anvil, Snapshot API, and OpenRouter API
+- [ ] Deployment and validation scripts created and functional
+- [ ] All prerequisites from test-plan.md satisfied and verified
+- [ ] Test execution can proceed without configuration issues
