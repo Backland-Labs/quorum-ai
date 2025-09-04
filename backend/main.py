@@ -8,7 +8,8 @@ from typing import List, Optional, Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from logging_config import setup_pearl_logger, log_span
 
@@ -189,6 +190,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files for frontend
+static_path = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_path):
+    app.mount("/static", StaticFiles(directory=static_path), name="static")
+    
+    # Serve frontend index.html at root for SPA routing
+    @app.get("/")
+    async def serve_frontend():
+        """Serve the frontend application at root path."""
+        index_file = os.path.join(static_path, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        else:
+            return {"message": "Frontend not available - build frontend first"}
+    
+    # Catch-all route for SPA routing (frontend routes)
+    @app.get("/{full_path:path}")
+    async def serve_frontend_routes(full_path: str):
+        """Serve frontend for client-side routing, excluding API routes."""
+        # Don't intercept API routes
+        if full_path.startswith(("api/", "docs", "openapi.json", "healthcheck", "proposals", "agent-run", "user-preferences", "config")):
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+            
+        # Serve index.html for frontend routes
+        index_file = os.path.join(static_path, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        else:
+            return {"message": "Frontend not available - build frontend first"}
 
 
 # Exception handlers
