@@ -987,7 +987,23 @@ async def set_openrouter_key(request: dict):
     """
     try:
         key = request.get("api_key")
-        if not key or not isinstance(key, str) or len(key.strip()) < 20:
+        if key is None or not isinstance(key, str):
+            return {
+                "status": "error",
+                "data": None,
+                "error": "VALIDATION_ERROR",
+                "message": "API key is required",
+            }
+
+        # Handle empty key as removal
+        if len(key.strip()) == 0:
+            await user_preferences_service.remove_api_key()
+            ai_service.swap_api_key(None)
+            logger.info("API key removed successfully")
+            return {"status": "success", "data": {"configured": False}}
+
+        # Validate non-empty key
+        if len(key.strip()) < 20:
             return {
                 "status": "error",
                 "data": None,

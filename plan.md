@@ -34,10 +34,10 @@ Users can:
 - [x] AI Service works with lazy initialization ✅ COMPLETED
 
 #### Manual Verification:
-- [ ] User can enter API key in settings page (simple masked input)
-- [ ] AI features work with user-provided key
-- [ ] System runs without API key configured
-- [ ] API key is not exposed in logs or responses
+- [x] User can enter API key in settings page (simple masked input) ✅
+- [x] AI features work with user-provided key ✅
+- [x] System runs without API key configured ✅
+- [x] API key is not exposed in logs or responses ✅
 
 ## What We're NOT Doing (Simplification Focus)
 
@@ -331,10 +331,21 @@ export const configApi = {
 ### Success Criteria:
 
 #### Essential Tests:
-- [ ] Masked input field works
-- [ ] Key saves successfully
-- [ ] Status displays correctly
-- [ ] No key leakage in DOM/network
+- [x] Masked input field works ✅
+- [x] Key saves successfully ✅  
+- [x] Status displays correctly ✅
+- [x] No key leakage in DOM/network ✅
+
+**Implementation Status**: ✅ COMPLETED
+**Implementation Date**: 2025-01-08
+**Notes**:
+- Extended PreferenceForm component with masked API key input field
+- Added show/hide toggle, save/remove buttons with proper state management
+- Integrated with existing API endpoints using openapi-fetch patterns
+- Proper validation (minimum 20 characters) with user-friendly error messages
+- Status display shows source (user vs environment) with appropriate actions
+- Field clears after successful save for security
+- All manual verification criteria met through browser testing
 
 ---
 
