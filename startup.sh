@@ -45,7 +45,11 @@ load_env() {
     if [ -f ".env" ]; then
         print_status "Loading environment variables from .env file..."
         # Export variables from .env file, ignoring comments and empty lines
-        export $(grep -v '^#' .env | grep -v '^$' | xargs)
+        while IFS='=' read -r key value; do
+            if [[ -n "$key" && ! "$key" =~ ^[[:space:]]*# ]]; then
+                export "$key=$value"
+            fi
+        done < <(grep -v '^[[:space:]]*#' .env | grep -v '^[[:space:]]*$')
         print_success "Environment variables loaded"
     else
         print_warning ".env file not found. Using system environment variables only."

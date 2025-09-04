@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: quorum_backend
     env_file:
-      - .env
+      - .env.test
     ports:
       - "8716:8716"
     healthcheck:
