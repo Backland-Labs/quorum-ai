@@ -50,14 +50,10 @@ clean-logs:
 clean-state:
 	@echo "🧹 Cleaning state and runtime files..."
 	rm -f backend/agent_state.json
-	rm -f backend/shutdown_state.json
-	rm -f backend/user_preferences.txt
-	rm -f backend/ethereum_private_key.txt
 	rm -rf backend/agent_state/
 	rm -rf test-data/state/
 	@echo "✅ State and runtime files cleaned"
 
 clean-artifacts:
 	@echo "🧹 Cleaning test artifacts..."
-	rm -rf test-artifacts/
-	@echo "✅ Test artifacts cleaned"
+	@echo "⚠️  Skipping test-artifacts/ directory (preserved)"
