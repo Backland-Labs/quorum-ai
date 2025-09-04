@@ -14,15 +14,13 @@
     proposals: components['schemas']['Proposal'][];
     proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
     onProposalClick: (proposalId: string) => void;
-    onViewAllProposals: () => void;
     currentSpaceId?: string | null;
   }
 
-  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals, currentSpaceId = null }: Props = $props();
+  let { proposals, proposalSummaries, onProposalClick, currentSpaceId = null }: Props = $props();
 
   function validateProps(): void {
     console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
-    console.assert(typeof onViewAllProposals === 'function', 'onViewAllProposals must be a function');
   }
 
   function hasProposals(): boolean {
@@ -81,14 +79,12 @@
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <ProposalStats
           {proposals}
-          onViewDetails={onViewAllProposals}
         />
 
         <RecentProposals
           {proposals}
           {proposalSummaries}
           {onProposalClick}
-          {onViewAllProposals}
         />
       </div>
     {:else}

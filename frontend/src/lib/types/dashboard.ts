@@ -1,4 +1,4 @@
-export type TabType = 'overview' | 'proposals' | 'activity';
+export type TabType = 'overview';
 
 export interface Tab {
   id: TabType;

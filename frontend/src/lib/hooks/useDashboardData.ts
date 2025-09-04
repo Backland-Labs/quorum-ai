@@ -113,7 +113,7 @@ export function createDashboardStore() {
    */
   function changeTab(tabId: TabType): void {
     console.assert(typeof tabId === 'string', 'Tab ID must be a string');
-    console.assert(['overview', 'proposals', 'activity'].includes(tabId), 'Tab ID must be valid');
+    console.assert(['overview'].includes(tabId), 'Tab ID must be valid');
 
     update(state => ({ ...state, activeTab: tabId }));
   }

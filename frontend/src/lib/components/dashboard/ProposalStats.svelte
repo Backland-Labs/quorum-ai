@@ -3,10 +3,9 @@
 
   interface Props {
     proposals: components['schemas']['Proposal'][];
-    onViewDetails: () => void;
   }
 
-  let { proposals, onViewDetails }: Props = $props();
+  let { proposals }: Props = $props();
 
   const stats = $derived({
     total: proposals.length,
@@ -19,12 +18,6 @@
 <div class="bg-white rounded-lg shadow p-6">
   <div class="flex items-center justify-between mb-4">
     <h3 class="text-lg font-semibold text-secondary-900">Proposal Statistics</h3>
-    <button
-      onclick={onViewDetails}
-      class="text-sm text-primary-600 hover:text-primary-700"
-    >
-      View all
-    </button>
   </div>
 
   <div class="grid grid-cols-2 gap-4">
