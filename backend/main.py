@@ -411,7 +411,7 @@ async def healthcheck():
         except:
             tracker_configured = False
             tracker_address = None
-            
+
         error_response["attestation_tracker"] = {
             "configured": tracker_configured,
             "contract_address": tracker_address,
@@ -977,6 +977,73 @@ async def get_monitored_daos():
         raise HTTPException(
             status_code=500, detail="Failed to fetch monitored DAO configuration"
         )
+
+
+@app.post("/config/openrouter-key")
+async def set_openrouter_key(request: dict):
+    """Set or update OpenRouter API key.
+
+    Body: {"api_key": "sk-or-..."}
+    """
+    try:
+        key = request.get("api_key")
+        if not key or not isinstance(key, str) or len(key.strip()) < 20:
+            return {
+                "status": "error",
+                "data": None,
+                "error": "VALIDATION_ERROR",
+                "message": "API key must be at least 20 characters",
+            }
+
+        # Store using UserPreferencesService
+        await user_preferences_service.set_api_key(key.strip())
+
+        # Swap in AI service
+        ai_service.swap_api_key(key.strip())
+
+        logger.info("API key configured successfully")
+        return {"status": "success", "data": {"configured": True}}
+
+    except Exception as e:
+        logger.error(f"Failed to set API key: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "error": "INTERNAL_ERROR",
+            "message": "Failed to store API key",
+        }
+
+
+@app.get("/config/openrouter-key")
+async def get_openrouter_key_status():
+    """Get API key configuration status (not the key itself).
+
+    Returns whether a key is configured and its source.
+    """
+    try:
+        has_user_key = await user_preferences_service.get_api_key() is not None
+        has_env_key = settings.openrouter_api_key is not None
+
+        return {
+            "status": "success",
+            "data": {
+                "configured": has_user_key or has_env_key,
+                "source": "user"
+                if has_user_key
+                else "environment"
+                if has_env_key
+                else None,
+            },
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to get API key status: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "error": "INTERNAL_ERROR",
+            "message": "Failed to check API key status",
+        }
 
 
 # Development server

@@ -89,7 +89,6 @@ class Settings(BaseSettings):
         default_factory=list, description="List of DAO addresses to monitor"
     )
 
-
     rpc_url: str = Field(
         default="http://localhost:8545",
         alias="RPC_URL",
@@ -323,8 +322,6 @@ class Settings(BaseSettings):
         alias="ATTESTATION_CHAIN",
         description="Chain to use for attestation transactions (e.g., 'base', 'ethereum')",
     )
-
-
 
     @field_validator("log_level", mode="before")
     @classmethod
@@ -759,8 +756,6 @@ class Settings(BaseSettings):
 
         return True
 
-
-
     @model_validator(mode="after")
     def validate_attestation_tracker_config(self):
         """Validate AttestationTracker configuration."""
@@ -796,6 +791,29 @@ class Settings(BaseSettings):
                 addr.strip() for addr in dao_addresses_env.split(",") if addr.strip()
             ]
             self.dao_addresses = addresses
+
+    @property
+    def effective_openrouter_api_key(self) -> Optional[str]:
+        """Get API key with user preference priority.
+
+        Returns:
+            User-provided API key if available, otherwise environment key
+        """
+        # Try user key first (would be loaded from StateManager)
+        if hasattr(self, "_user_api_key") and self._user_api_key:
+            return self._user_api_key
+        # Fall back to environment
+        return self.openrouter_api_key
+
+    def reload_with_user_key(self, user_key: Optional[str]) -> None:
+        """Update user API key and trigger reload.
+
+        Args:
+            user_key: User-provided API key or None to clear
+        """
+        self._user_api_key = user_key
+        # Use existing reload mechanism
+        self.reload_config()
 
 
 # Global settings instance

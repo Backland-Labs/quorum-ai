@@ -565,26 +565,63 @@ class AIService:
     """
 
     def __init__(self, snapshot_service: Optional[SnapshotService] = None) -> None:
-        """Initialize the AI service with configured model."""
-        # Runtime assertion: validate initialization state
-        assert (
-            settings.openrouter_api_key is not None
-        ), "OpenRouter API key must be configured for AI service"
-        assert (
-            len(settings.openrouter_api_key.strip()) > 0
-        ), "OpenRouter API key cannot be empty"
+        """Initialize the AI service with lazy model initialization."""
+        import threading
 
         # Initialize services
         self.snapshot_service = snapshot_service or SnapshotService()
-
-        # Initialize VotingAgent for refactored architecture
-        self.voting_agent = VotingAgent()
-
-        # Maintain backward compatibility with existing model/agent
-        self.model = self._create_model()
-        self.agent = self._create_agent()
-        # Cache service removed for autonomous voting focus
         self.response_processor = AIResponseProcessor()
+
+        # Lazy initialization attributes
+        self._lock = threading.Lock()
+        self._api_key: Optional[str] = None
+        self.model = None
+        self.agent = None
+        self.voting_agent = None
+
+        # Try to initialize if API key is available
+        self._initialize_if_key_available()
+
+    def _initialize_if_key_available(self) -> None:
+        """Try to initialize with available API key."""
+        key = self._get_effective_key()
+        if key:
+            with self._lock:
+                self._api_key = key
+                try:
+                    self.model = self._create_model()
+                    self.agent = self._create_agent()
+                    self.voting_agent = VotingAgent()
+                except Exception as e:
+                    logger.warning(f"Could not initialize AI components: {e}")
+                    # Leave as None for lazy initialization later
+
+    def _get_effective_key(self) -> Optional[str]:
+        """Get effective API key from settings or user preferences."""
+        # Use effective key property that prioritizes user key
+        return getattr(settings, "effective_openrouter_api_key", None) or getattr(
+            settings, "openrouter_api_key", None
+        )
+
+    def swap_api_key(self, new_key: Optional[str]) -> None:
+        """Swap API key and reinitialize services under lock."""
+        with self._lock:
+            self._api_key = new_key
+            if new_key:
+                # Temporarily set settings key for model creation
+                old_key = getattr(settings, "openrouter_api_key", None)
+                settings.openrouter_api_key = new_key
+                try:
+                    self.model = self._create_model()
+                    self.agent = self._create_agent()
+                    self.voting_agent = VotingAgent()
+                finally:
+                    # Restore original key
+                    settings.openrouter_api_key = old_key
+            else:
+                self.model = None
+                self.agent = None
+                self.voting_agent = None
 
     def _create_model(self) -> Union[OpenAIModel, str]:
         """Create the AI model with OpenRouter configuration."""
@@ -856,6 +893,10 @@ class AIService:
         # Build strategy-specific prompt with proposal details
         prompt = self._build_agent_prompt(proposal, strategy)
 
+        # Check if voting agent is initialized
+        if not self.voting_agent:
+            raise ValueError("AI service not initialized - API key required")
+
         # Execute agent with structured output
         result = await self.voting_agent.agent.run(prompt, deps=deps)
 
@@ -884,6 +925,9 @@ class AIService:
 
     def _build_agent_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
         """Build a comprehensive prompt for the voting agent."""
+        if not self.voting_agent:
+            raise ValueError("AI service not initialized - API key required")
+
         system_prompt = self.voting_agent._get_system_prompt_for_strategy(strategy)
 
         # Truncate body for token efficiency
@@ -981,6 +1025,10 @@ class AIService:
             logger.info(
                 "Calling AI model for vote decision, prompt_length=%s", prompt_length
             )
+
+            # Check if agent is initialized
+            if not self.agent:
+                raise ValueError("AI service not initialized - API key required")
 
             # Call AI model and process result
             result = await self.agent.run(prompt)
@@ -1195,6 +1243,10 @@ class AIService:
             logger.info(
                 "Calling AI model for summarization, prompt_length=%s", prompt_length
             )
+
+            # Check if agent is initialized
+            if not self.agent:
+                raise ValueError("AI service not initialized - API key required")
 
             # Call AI model and process result
             result = await self.agent.run(prompt)
