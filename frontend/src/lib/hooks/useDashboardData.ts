@@ -1,13 +1,11 @@
 import { writable } from 'svelte/store';
 import apiClient from '$lib/api';
-import type { TabType } from '$lib/types/dashboard.js';
 import { extractApiErrorMessage, selectDefaultOrganization } from '$lib/utils/api.js';
 import type { components } from '$lib/api/client';
 
 interface DashboardState {
   loading: boolean;
   error: string | null;
-  activeTab: TabType;
   currentSpaceId: string;
   allProposals: components['schemas']['Proposal'][];
   proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
@@ -26,7 +24,6 @@ export function createDashboardStore() {
   const initialState: DashboardState = {
     loading: true,
     error: null,
-    activeTab: 'overview',
     currentSpaceId: 'uniswapgovernance.eth', // Default Snapshot space - can be made configurable
     allProposals: [],
     proposalSummaries: new Map(),
@@ -107,16 +104,7 @@ export function createDashboardStore() {
     }
   }
 
-  /**
-   * Changes active tab
-   * @param tabId - New tab identifier
-   */
-  function changeTab(tabId: TabType): void {
-    console.assert(typeof tabId === 'string', 'Tab ID must be a string');
-    console.assert(['overview'].includes(tabId), 'Tab ID must be valid');
 
-    update(state => ({ ...state, activeTab: tabId }));
-  }
 
   /**
    * Changes Snapshot space
@@ -155,7 +143,6 @@ export function createDashboardStore() {
   return {
     subscribe,
     loadProposals,
-    changeTab,
     changeSpace,
     updateProposalFilters
   };

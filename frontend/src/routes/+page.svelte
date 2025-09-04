@@ -1,14 +1,10 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  // TabNavigation removed in Phase 1
   import DashboardHeader from "$lib/components/dashboard/DashboardHeader.svelte";
   import LoadingState from "$lib/components/dashboard/LoadingState.svelte";
   import ErrorState from "$lib/components/dashboard/ErrorState.svelte";
-  import OverviewTab from "$lib/components/dashboard/OverviewTab.svelte";
-  // ProposalsTab removed in Phase 1
-  // ActivityTab removed in Phase 1
+  import DashboardContent from "$lib/components/dashboard/DashboardContent.svelte";
   import { createDashboardStore } from "$lib/hooks/useDashboardData.js";
-  // Tab types no longer used in Phase 1
   import apiClient from "$lib/api";
 
   interface Space {
@@ -18,8 +14,6 @@
 
   const dashboardStore = createDashboardStore();
   const dashboardState = $state(dashboardStore);
-
-  // Tabs removed; Overview is the default and only view
 
   let mounted = $state(false);
   let spaces = $state<Space[]>([]);
@@ -75,8 +69,6 @@
     ]);
   }
 
-  // Tab change handler removed; single Overview view only
-
   function handleSpaceChange(spaceId: string): void {
     console.assert(spaceId !== null, 'Space ID should not be null');
     console.assert(typeof spaceId === 'string', 'Space ID should be a string');
@@ -90,8 +82,6 @@
 
     goto(`/proposals/${proposalId}`);
   }
-
-  // View all proposals handler removed; Proposals tab deprecated
 
   // Derived values from store
   const proposals = $derived($dashboardState.allProposals);
@@ -117,7 +107,7 @@
     <ErrorState error={$dashboardState.error} />
   {:else}
     <div class="mt-6">
-      <OverviewTab
+      <DashboardContent
         {proposals}
         proposalSummaries={$dashboardState.proposalSummaries}
         onProposalClick={handleProposalClick}

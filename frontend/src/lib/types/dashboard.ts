@@ -1,11 +1,3 @@
-export type TabType = 'overview';
-
-export interface Tab {
-  id: TabType;
-  label: string;
-  content?: string;
-}
-
 export interface Organization {
   id: string;
   name: string;
@@ -85,17 +77,10 @@ export interface ExtendedProposal {
 }
 
 export interface DashboardState {
-  activeTab: TabType;
   selectedOrganization: Organization | null;
   organizations: OrganizationWithProposals[];
   loading: boolean;
   error: string | null;
-}
-
-export interface TabNavigationProps {
-  tabs: Tab[];
-  activeTab: TabType;
-  onTabChange: (tabId: TabType) => void;
 }
 
 export interface OrganizationDropdownProps {

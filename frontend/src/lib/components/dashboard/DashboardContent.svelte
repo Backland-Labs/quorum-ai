@@ -49,7 +49,7 @@
   });
 </script>
 
-<div id="tab-panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+<div>
   <!-- Autonomous Voting Agent Section -->
   <div class="mb-8">
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Autonomous Voting Agent</h2>
