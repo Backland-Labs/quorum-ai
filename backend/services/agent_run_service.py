@@ -812,8 +812,15 @@ class AgentRunService:
                             # Track successful vote cast activity
                             pass
 
-                            # Queue attestation for successful vote
-                            await self._queue_attestation(decision, space_id, run_id)
+                            # Extract vote ID from the Snapshot response
+                            vote_id = None
+                            submission_result = vote_result.get("submission_result", {})
+                            if submission_result.get("success"):
+                                response = submission_result.get("response", {})
+                                vote_id = response.get("id")
+                            
+                            # Queue attestation for successful vote with vote ID
+                            await self._queue_attestation(decision, space_id, run_id, vote_id)
                         else:
                             self.logger.log_vote_execution(
                                 decision, False, vote_result.get("error")
@@ -945,7 +952,7 @@ class AgentRunService:
                         space_id=space_id,
                         voter_address=attestation["voter_address"],
                         choice=attestation["vote_choice"],
-                        vote_tx_hash=attestation.get("vote_tx_hash", "unknown"),
+                        vote_tx_hash=attestation.get("vote_tx_hash", "0x" + "0" * 64),
                         timestamp=datetime.fromisoformat(attestation["timestamp"])
                         if isinstance(attestation["timestamp"], str)
                         else attestation["timestamp"],
@@ -988,7 +995,7 @@ class AgentRunService:
             )
 
     async def _queue_attestation(
-        self, decision: VoteDecision, space_id: str, run_id: str
+        self, decision: VoteDecision, space_id: str, run_id: str, vote_tx_hash: Optional[str] = None
     ) -> None:
         """Queue an attestation for a successful vote.
 
@@ -996,6 +1003,7 @@ class AgentRunService:
             decision: The vote decision that was executed
             space_id: The space ID where the vote was cast
             run_id: The current agent run ID
+            vote_tx_hash: The vote transaction hash/ID from Snapshot (optional)
         """
         if not self.state_manager:
             self.pearl_logger.warning("No state manager, skipping attestation queue")
@@ -1003,7 +1011,7 @@ class AgentRunService:
 
         try:
             # Load current checkpoint
-            checkpoint = await self.state_manager.load_checkpoint(f"run_{run_id}")
+            checkpoint = await self.state_manager.load_checkpoint(f"agent_checkpoint_{space_id}")
             if checkpoint is None:
                 checkpoint = {}
 
@@ -1018,6 +1026,9 @@ class AgentRunService:
             delegate_address = voter_address
 
             # Create attestation data
+            # Use provided vote_tx_hash or create a valid placeholder
+            tx_hash = vote_tx_hash if vote_tx_hash else "0x" + "0" * 64
+            
             attestation_data = {
                 "proposal_id": decision.proposal_id,
                 "vote_choice": VOTE_CHOICE_MAPPING[
@@ -1025,6 +1036,7 @@ class AgentRunService:
                 ],  # Convert VoteType to choice number
                 "voter_address": voter_address,
                 "delegate_address": delegate_address,
+                "vote_tx_hash": tx_hash,
                 "reasoning": decision.reasoning,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "retry_count": 0,
@@ -1034,10 +1046,10 @@ class AgentRunService:
             checkpoint["pending_attestations"].append(attestation_data)
 
             # Save updated checkpoint
-            await self.state_manager.save_checkpoint(f"run_{run_id}", checkpoint)
+            await self.state_manager.save_checkpoint(f"agent_checkpoint_{space_id}", checkpoint)
 
             self.pearl_logger.info(
-                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: run_{run_id}"
+                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: agent_checkpoint_{space_id}"
             )
 
         except Exception as e:
