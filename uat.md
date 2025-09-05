@@ -86,7 +86,7 @@ cast call $ATTESTATION_TRACKER_ADDRESS "owner()" --rpc-url http://localhost:8545
 # Update .env with contract addresses
 echo "ATTESTATION_TRACKER_ADDRESS=$ATTESTATION_TRACKER_ADDRESS" >> .env
 
-# Build containers
+# Build container
 docker-compose build
 
 # Start containers with logging
@@ -133,10 +133,6 @@ curl -f http://localhost:8716/
 # Terminal 4: Tail application logs (combined)
 docker logs -f quorum_app
 
-# Or if using local deployment:
-tail -f backend.log
-tail -f frontend.log
-tail -f backend/log.txt  # Pearl agent logs
 ```
 
 ### Phase 4: UI Testing with Playwright MCP

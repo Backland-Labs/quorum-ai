@@ -24,7 +24,7 @@ export function createDashboardStore() {
   const initialState: DashboardState = {
     loading: true,
     error: null,
-    currentSpaceId: 'uniswapgovernance.eth', // Default Snapshot space - can be made configurable
+    currentSpaceId: 'quorum-ai.eth', // Default Snapshot space - can be made configurable
     allProposals: [],
     proposalSummaries: new Map(),
     proposalsLoading: false,

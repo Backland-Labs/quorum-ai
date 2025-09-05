@@ -1,14 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import apiClient from '$lib/api/index.js';
-  import TopVoters from '$lib/components/TopVoters.svelte';
   import VotingIndicator from '$lib/components/dashboard/VotingIndicator.svelte';
   import { parseProposalSummary, cleanProposalTitle } from '$lib/utils/proposals.js';
   import type { components } from '$lib/api/client.js';
   import type { ExtendedProposal } from '$lib/types/dashboard.js';
 
   // Constants
-  const TOP_VOTERS_LIMIT = 10;
   const DATE_FORMAT_OPTIONS = {
     weekday: 'long',
     year: 'numeric',
@@ -224,9 +222,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column - Proposal Details -->
-        <div class="lg:col-span-2 space-y-6">
+      <div class="space-y-6">
           <!-- AI Analysis Summary -->
           <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">AI Analysis</h2>
@@ -311,12 +307,6 @@
               </a>
             </div>
           {/if}
-        </div>
-
-        <!-- Right Column - Top Voters -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <TopVoters proposalId={proposalId!} limit={TOP_VOTERS_LIMIT} />
-        </div>
       </div>
     {/if}
   </div>

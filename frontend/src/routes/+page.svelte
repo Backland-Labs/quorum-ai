@@ -21,7 +21,7 @@
 
   // Fallback spaces for when API is unavailable
   const FALLBACK_SPACES: Space[] = [
-    { id: 'uniswapgovernance.eth', name: 'Uniswapgovernance' },
+    { id: 'quorum-ai.eth', name: 'Quorum AI' },
     { id: 'aave.eth', name: 'Aave' },
     { id: 'compound-governance.eth', name: 'Compound Governance' },
     { id: 'ens.eth', name: 'Ens' },
