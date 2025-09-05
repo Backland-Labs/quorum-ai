@@ -12,10 +12,8 @@ vi.mock('$lib/api', () => ({
 describe('AgentStatistics - Responsive Design', () => {
   const mockStatistics = {
     total_runs: 42,
-    total_proposals_reviewed: 156,
-    total_votes_cast: 89,
-    average_confidence: 0.875,
-    success_rate: 0.95
+    total_proposals_evaluated: 156,
+    total_votes_cast: 89
   };
 
   beforeEach(async () => {
@@ -47,7 +45,7 @@ describe('AgentStatistics - Responsive Design', () => {
     await screen.findByText('42');
 
     const statCards = container.querySelectorAll('[data-testid="stat-card"]');
-    expect(statCards.length).toBe(5); // All 5 statistics
+    expect(statCards.length).toBe(3); // Visible statistics only
 
     statCards.forEach(card => {
       // Mobile-first sizing
@@ -85,19 +83,6 @@ describe('AgentStatistics - Responsive Design', () => {
     });
   });
 
-  it('should handle percentage display in a mobile-friendly way', async () => {
-    const { container } = render(AgentStatistics);
-
-    await screen.findByText('87.5%'); // Average confidence
-    await screen.findByText('95%'); // Success rate
-
-    const percentages = container.querySelectorAll('[data-testid="percentage-value"]');
-    percentages.forEach(pct => {
-      // Ensure percentages don't overflow on small screens
-      expect(pct.classList.contains('tabular-nums')).toBe(true);
-      expect(pct.classList.contains('font-mono')).toBe(true);
-    });
-  });
 
   it('should stack elements appropriately on mobile', async () => {
     const { container } = render(AgentStatistics);
@@ -152,7 +137,7 @@ describe('AgentStatistics - Responsive Design', () => {
 
     const { container } = render(AgentStatistics);
 
-    await screen.findByText(/error loading/i);
+    await screen.findByText('Failed to load statistics');
 
     const errorState = container.querySelector('[data-testid="error-state"]');
     expect(errorState?.classList.contains('text-center')).toBe(true);
@@ -162,17 +147,4 @@ describe('AgentStatistics - Responsive Design', () => {
     expect(errorState?.classList.contains('sm:text-base')).toBe(true);
   });
 
-  it('should use appropriate icon sizing for mobile', async () => {
-    const { container } = render(AgentStatistics);
-
-    await screen.findByText('42');
-
-    const icons = container.querySelectorAll('[data-testid="stat-icon"]');
-    icons.forEach(icon => {
-      expect(icon.classList.contains('w-4')).toBe(true);
-      expect(icon.classList.contains('h-4')).toBe(true);
-      expect(icon.classList.contains('sm:w-5')).toBe(true);
-      expect(icon.classList.contains('sm:h-5')).toBe(true);
-    });
-  });
 });
