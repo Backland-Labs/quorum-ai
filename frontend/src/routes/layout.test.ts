@@ -11,4 +11,13 @@ describe('Top Navigation', () => {
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.queryByText('Organizations')).not.toBeInTheDocument();
   });
+
+  // Purpose: Verify an Instructions tab is visible and correctly linked
+  it('shows Instructions link in navigation with correct href', () => {
+    render(Layout);
+
+    const link = screen.getByRole('link', { name: 'Instructions' });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', '/instructions');
+  });
 });
