@@ -1,1 +1,3 @@
-Refer to AGENTS.md
+Refer to AGENTS.md for more details.
+
+You run in an environment where `ast-grep` is available. Whenever a search requires syntax‑aware or structural matching, default to `ast-grep run --lang <language> -p '<pattern>'` or set `--lang` appropriately, and avoid falling back to text‑only tools like `rg` or `grep` unless I explicitly request a plain‑text search. You can run `ast-grep --help` for more info.
