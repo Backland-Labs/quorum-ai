@@ -262,33 +262,48 @@ class TestAIServiceCallModelForSummary:
     async def test_call_ai_model_for_summary_success(
         self, ai_service: AIService
     ) -> None:
-        """Test _call_ai_model_for_summary successful call."""
-        with patch.object(ai_service.agent, "run") as mock_run:
-            # Mock result with dictionary output
-            mock_result = type("MockResult", (), {})()
-            mock_result.output = {
-                "summary": "Test summary",
-                "key_points": ["Point 1"],
-                "risk_level": "LOW",
-                "recommendation": "APPROVE",
-            }
-            mock_run.return_value = mock_result
+        """Test _call_ai_model_for_summary successful call using SummarizationAgent."""
+        # Mock the summarization agent
+        if ai_service.summarization_agent:
+            with patch.object(ai_service.summarization_agent.agent, "run") as mock_run:
+                # Mock result with ProposalSummary structure
+                mock_result = type("MockResult", (), {})()
+                mock_result.output = {
+                    "proposal_id": "test-id",
+                    "title": "Test Title",
+                    "summary": "Test summary",
+                    "key_points": ["Point 1"],
+                    "risk_assessment": "LOW",
+                    "recommendation": "APPROVE",
+                    "confidence": 0.8
+                }
+                mock_run.return_value = mock_result
 
-            result = await ai_service._call_ai_model_for_summary("test prompt")
+                result = await ai_service._call_ai_model_for_summary("test prompt")
 
-            assert isinstance(result, dict)
-            assert result["summary"] == "Test summary"
-            assert result["key_points"] == ["Point 1"]
+                assert isinstance(result, dict)
+                assert result["summary"] == "Test summary"
+                assert result["key_points"] == ["Point 1"]
+        else:
+            # If no summarization agent initialized, expect ValueError
+            with pytest.raises(ValueError, match="AI service not initialized"):
+                await ai_service._call_ai_model_for_summary("test prompt")
 
     @pytest.mark.asyncio
     async def test_call_ai_model_for_summary_handles_error(
         self, ai_service: AIService
     ) -> None:
-        """Test _call_ai_model_for_summary error handling."""
-        with patch.object(ai_service.agent, "run") as mock_run:
-            mock_run.side_effect = Exception("AI model error")
+        """Test _call_ai_model_for_summary error handling using SummarizationAgent."""
+        # Mock the summarization agent
+        if ai_service.summarization_agent:
+            with patch.object(ai_service.summarization_agent.agent, "run") as mock_run:
+                mock_run.side_effect = Exception("AI model error")
 
-            with pytest.raises(Exception, match="AI model error"):
+                with pytest.raises(Exception, match="AI model error"):
+                    await ai_service._call_ai_model_for_summary("test prompt")
+        else:
+            # If no summarization agent initialized, expect ValueError
+            with pytest.raises(ValueError, match="AI service not initialized"):
                 await ai_service._call_ai_model_for_summary("test prompt")
 
 
