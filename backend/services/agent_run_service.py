@@ -75,14 +75,15 @@ class AgentRunService:
     4. Execute votes (or simulate in dry run mode)
     """
 
-    def __init__(self, state_manager=None) -> None:
+    def __init__(self, state_manager=None, ai_service=None) -> None:
         """Initialize AgentRunService with required dependencies.
 
         Args:
             state_manager: Optional StateManager instance for state persistence
+            ai_service: Optional AIService instance for shared configuration
         """
         self.snapshot_service = SnapshotService()
-        self.ai_service = AIService()
+        self.ai_service = ai_service or AIService()
         self.voting_service = VotingService()
         self.safe_service = SafeService()
         self.user_preferences_service = UserPreferencesService()

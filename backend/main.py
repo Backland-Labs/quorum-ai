@@ -90,7 +90,7 @@ async def lifespan(_app: FastAPI):
 
     # Initialize services with state manager where needed
     ai_service = AIService()
-    agent_run_service = AgentRunService(state_manager=state_manager)
+    agent_run_service = AgentRunService(state_manager=state_manager, ai_service=ai_service)
     safe_service = SafeService()
     activity_service = ActivityService()
     user_preferences_service = UserPreferencesService(state_manager=state_manager)
