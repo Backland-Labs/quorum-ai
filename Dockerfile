@@ -1,6 +1,22 @@
-# Single stage Dockerfile for Quorum AI Application
-# Uses pre-built frontend files to avoid build issues
+# Multi-stage Dockerfile for Quorum AI Application
+# Stage 1: Build frontend
+FROM node:24-alpine as frontend-builder
 
+WORKDIR /app/frontend
+
+# Copy frontend dependency files
+COPY frontend/package*.json ./
+
+# Install frontend dependencies (including dev dependencies for build)
+RUN npm ci
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Build frontend for production
+RUN npm run build
+
+# Stage 2: Backend with built frontend
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 # Set working directory
@@ -34,8 +50,8 @@ COPY backend/ ./
 # Install the backend application
 RUN uv sync --frozen --no-dev
 
-# Copy pre-built frontend files
-COPY frontend/build/client ./static/
+# Copy built frontend files from stage 1
+COPY --from=frontend-builder /app/frontend/build ./static/
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m appuser

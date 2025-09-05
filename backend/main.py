@@ -194,7 +194,18 @@ app.add_middleware(
 # Mount static files for frontend
 static_path = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_path):
-    app.mount("/static", StaticFiles(directory=static_path), name="static")
+    # Mount frontend assets directory
+    app_assets_path = os.path.join(static_path, "_app")
+    if os.path.exists(app_assets_path):
+        app.mount("/_app", StaticFiles(directory=app_assets_path), name="frontend_assets")
+    
+    # Mount favicon
+    favicon_path = os.path.join(static_path, "favicon.png")
+    if os.path.exists(favicon_path):
+        from fastapi.responses import FileResponse
+        @app.get("/favicon.png")
+        async def serve_favicon():
+            return FileResponse(favicon_path)
 
     # Serve frontend index.html at root for SPA routing
     @app.get("/")
@@ -206,31 +217,6 @@ if os.path.exists(static_path):
         else:
             return {"message": "Frontend not available - build frontend first"}
 
-    # Catch-all route for SPA routing (frontend routes)
-    @app.get("/{full_path:path}")
-    async def serve_frontend_routes(full_path: str):
-        """Serve frontend for client-side routing, excluding API routes."""
-        # Don't intercept API routes
-        if full_path.startswith(
-            (
-                "api/",
-                "docs",
-                "openapi.json",
-                "healthcheck",
-                "proposals",
-                "agent-run",
-                "user-preferences",
-                "config",
-            )
-        ):
-            raise HTTPException(status_code=404, detail="API endpoint not found")
-
-        # Serve index.html for frontend routes
-        index_file = os.path.join(static_path, "index.html")
-        if os.path.exists(index_file):
-            return FileResponse(index_file)
-        else:
-            return {"message": "Frontend not available - build frontend first"}
 
 
 # Exception handlers
@@ -1102,6 +1088,35 @@ async def get_openrouter_key_status():
             "error": "INTERNAL_ERROR",
             "message": "Failed to check API key status",
         }
+
+
+# Catch-all route for SPA routing (frontend routes) - MUST be registered last
+@app.get("/{full_path:path}")
+async def serve_frontend_routes(full_path: str):
+    """Serve frontend for client-side routing, excluding API routes."""
+    # Don't intercept API routes or frontend assets
+    if full_path.startswith(
+        (
+            "api/",
+            "docs",
+            "openapi.json",
+            "healthcheck",
+            "proposals",
+            "agent-run",
+            "user-preferences",
+            "config",
+            "_app/",
+            "favicon.png",
+        )
+    ):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    # Serve index.html for frontend routes
+    index_file = os.path.join(static_path, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    else:
+        return {"message": "Frontend not available - build frontend first"}
 
 
 # Development server

@@ -1,35 +1,17 @@
 services:
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
-    container_name: quorum_backend
+    container_name: quorum_app
     env_file:
-      - .env.test
+      - .env
+    environment:
+      - PUBLIC_API_BASE_URL=http://localhost:8716
     ports:
       - "8716:8716"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8716/healthcheck || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    restart: unless-stopped
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: quorum_frontend
-    environment:
-      - PUBLIC_API_BASE_URL=http://localhost:8716
-      - TOP_ORGANIZATIONS=compound,nounsdao,arbitrum
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
