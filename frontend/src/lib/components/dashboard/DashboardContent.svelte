@@ -32,6 +32,7 @@
   validateProps();
 
   // Update store with current space ID when it changes
+  // Set it even if it's the default value to ensure the store is initialized
   $effect(() => {
     if (currentSpaceId) {
       agentStatusStore.setCurrentSpaceId(currentSpaceId);
@@ -40,6 +41,10 @@
 
   // Start polling when component mounts
   onMount(() => {
+    // Initialize the store with the current space ID immediately
+    if (currentSpaceId) {
+      agentStatusStore.setCurrentSpaceId(currentSpaceId);
+    }
     agentStatusStore.startPolling(30000); // 30 second interval
   });
 
@@ -62,7 +67,7 @@
 
     <!-- Agent Quick Actions -->
     <div class="mb-6">
-      <AgentQuickActions />
+      <AgentQuickActions spaceId={currentSpaceId} />
     </div>
 
     <!-- Agent Decisions Panel -->

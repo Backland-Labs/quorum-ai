@@ -76,6 +76,11 @@ class Settings(BaseSettings):
         alias="SNAPSHOT_GRAPHQL_ENDPOINT",
         description="Snapshot GraphQL API endpoint",
     )
+    snapshot_hub_url: str = Field(
+        default="https://seq.snapshot.org/",
+        alias="SNAPSHOT_HUB_URL",
+        description="Snapshot Hub API endpoint for vote submissions",
+    )
 
     # Olas-specific configuration fields
     snapshot_api_key: Optional[str] = Field(

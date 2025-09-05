@@ -8,6 +8,7 @@ from eth_account import Account
 from eth_account.messages import encode_typed_data
 import httpx
 from logging_config import setup_pearl_logger, log_span
+from config import settings
 
 
 # Constants for vote choices and API configuration
@@ -16,7 +17,6 @@ VOTE_CHOICE_AGAINST = 2
 VOTE_CHOICE_ABSTAIN = 3
 VALID_VOTE_CHOICES = [VOTE_CHOICE_FOR, VOTE_CHOICE_AGAINST, VOTE_CHOICE_ABSTAIN]
 
-SNAPSHOT_HUB_URL = "https://seq.snapshot.org/"
 VOTE_CHOICE_DESCRIPTIONS = {
     VOTE_CHOICE_FOR: "For",
     VOTE_CHOICE_AGAINST: "Against",
@@ -215,7 +215,7 @@ class VotingService:
             self.logger.info("Submitting Snapshot vote")
 
             # Snapshot Hub API endpoint
-            url = SNAPSHOT_HUB_URL
+            url = settings.snapshot_hub_url
 
             # Prepare Snapshot vote request
             from_address = Web3.to_checksum_address(self.account.address)
