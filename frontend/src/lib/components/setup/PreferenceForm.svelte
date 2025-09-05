@@ -330,41 +330,6 @@
 		</p>
 	</div>
 
-	<!-- Blacklisted Proposers -->
-	<div>
-		<label for="blacklisted-proposers" class="block text-sm font-medium text-gray-700 mb-2">
-			Blacklisted Proposers
-		</label>
-		<textarea
-			id="blacklisted-proposers"
-			bind:value={blacklistedProposers}
-			rows="3"
-			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
-			placeholder="Enter wallet addresses, one per line"
-			disabled={isSubmitting}
-		></textarea>
-		<p class="mt-1 text-sm text-gray-500">
-			Proposals from these addresses will be automatically rejected
-		</p>
-	</div>
-
-	<!-- Whitelisted Proposers -->
-	<div>
-		<label for="whitelisted-proposers" class="block text-sm font-medium text-gray-700 mb-2">
-			Whitelisted Proposers
-		</label>
-		<textarea
-			id="whitelisted-proposers"
-			bind:value={whitelistedProposers}
-			rows="3"
-			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
-			placeholder="Enter wallet addresses, one per line"
-			disabled={isSubmitting}
-		></textarea>
-		<p class="mt-1 text-sm text-gray-500">
-			Proposals from these addresses will receive priority consideration
-		</p>
-	</div>
 
 	<!-- Submit Button -->
 	<div class="pt-4">
