@@ -32,9 +32,16 @@
   type Proposal = components['schemas']['Proposal'];
 
   let proposalId = $page.params.id;
+  
+  // Ensure proposalId is available
+  if (!proposalId) {
+    throw new Error('Proposal ID is required');
+  }
   let proposal = $state<ExtendedProposal | null>(null);
   let loading = $state(true);
   let error = $state<string | null>(null);
+  let decision = $state<components['schemas']['AgentDecisionResponse'] | null>(null);
+  let decisionLoading = $state(false);
 
   async function fetchProposal() {
     // Runtime assertions for fetchProposal
@@ -47,7 +54,7 @@
     try {
       const { data, error: fetchError } = await apiClient.GET('/proposals/{proposal_id}', {
         params: {
-          path: { proposal_id: proposalId }
+          path: { proposal_id: proposalId! }
         }
       });
 
@@ -62,6 +69,41 @@
       error = err instanceof Error ? err.message : 'Failed to load proposal';
     } finally {
       loading = false;
+    }
+  }
+
+  async function fetchDecisionForProposal() {
+    // Runtime assertions for fetchDecisionForProposal
+    console.assert(typeof proposalId === 'string', 'proposalId must be a string');
+    console.assert(proposalId.length > 0, 'proposalId cannot be empty');
+
+    decisionLoading = true;
+
+    try {
+      // Fetch recent decisions with a reasonable limit to find our proposal
+      const { data, error: fetchError } = await apiClient.GET('/agent-run/decisions', {
+        params: {
+          query: { limit: 50 }  // Increase limit to improve chances of finding the decision
+        }
+      });
+
+      if (fetchError) {
+        console.warn('Failed to fetch decisions:', fetchError);
+        decision = null;
+        return;
+      }
+
+      // Find the decision for this specific proposal
+      const proposalDecision = data?.decisions?.find(
+        (d: components['schemas']['AgentDecisionResponse']) => d.proposal_id === proposalId!
+      );
+
+      decision = proposalDecision || null;
+    } catch (err) {
+      console.warn('Error fetching decision for proposal:', err);
+      decision = null;
+    } finally {
+      decisionLoading = false;
     }
   }
 
@@ -99,6 +141,7 @@
 
   $effect(() => {
     fetchProposal();
+    fetchDecisionForProposal();
   });
 </script>
 
@@ -184,10 +227,44 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Left Column - Proposal Details -->
         <div class="lg:col-span-2 space-y-6">
-          <!-- Summary -->
+          <!-- AI Analysis Summary -->
           <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Summary</h2>
-            <p class="text-gray-700 leading-relaxed">{parsedProposal.summary}</p>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">AI Analysis</h2>
+            {#if decisionLoading}
+              <div class="animate-pulse">
+                <div class="h-4 bg-gray-200 rounded mb-3"></div>
+                <div class="h-4 bg-gray-200 rounded mb-3"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            {:else if decision && decision.reasoning}
+              <div class="text-gray-700 leading-relaxed space-y-4">
+                {#if Array.isArray(decision.reasoning)}
+                  {#each decision.reasoning as reasoningItem}
+                    <p>{reasoningItem}</p>
+                  {/each}
+                {:else}
+                  <p>{decision.reasoning}</p>
+                {/if}
+                
+                <!-- Decision metadata -->
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                  <div class="flex flex-wrap items-center gap-4 text-sm">
+                    <span class="inline-flex items-center gap-2">
+                      <span class="font-medium text-gray-600">Vote:</span>
+                      <span class="px-2 py-1 rounded text-sm font-medium {decision.vote === 'FOR' ? 'bg-green-100 text-green-800' : decision.vote === 'AGAINST' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">
+                        {decision.vote}
+                      </span>
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                      <span class="font-medium text-gray-600">Confidence:</span>
+                      <span class="text-gray-900">{Math.round(decision.confidence * 100)}%</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {:else}
+              <p class="text-gray-500 italic">No AI analysis available for this proposal yet.</p>
+            {/if}
           </div>
 
           <!-- Key Points -->
@@ -238,7 +315,7 @@
 
         <!-- Right Column - Top Voters -->
         <div class="bg-white rounded-lg shadow p-6">
-          <TopVoters proposalId={proposalId} limit={TOP_VOTERS_LIMIT} />
+          <TopVoters proposalId={proposalId!} limit={TOP_VOTERS_LIMIT} />
         </div>
       </div>
     {/if}
