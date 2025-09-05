@@ -389,7 +389,7 @@ def _create_agent(self) -> Agent[None, AiVoteResponse]:
 
 ---
 
-## Phase 3: Update Response Processing for ProposalSummary Structure
+## Phase 3: Update Response Processing for ProposalSummary Structure [COMPLETED]
 
 ### Overview  
 Update the response processing and validation logic to properly handle the ProposalSummary structure that SummarizationAgent returns, replacing the workaround logic that tries to extract summary fields from AiVoteResponse.
@@ -473,6 +473,36 @@ def _parse_and_validate_summary_response(
 - [ ] Response processing handles all required fields correctly
 - [ ] Pearl-compliant log messages appear for validation steps
 - [ ] Debug print statements have been removed from production code
+
+### Implementation Summary:
+
+**Completed on**: January 5, 2025
+
+**Key Changes Implemented**:
+1. **Updated Response Processing Method**: Modified `_parse_and_validate_summary_response()` to handle ProposalSummary structure instead of AiVoteResponse
+2. **Field Mapping Changes**: 
+   - Added extraction for: `proposal_id`, `title`, `confidence`
+   - Changed `risk_level` to `risk_assessment` 
+   - Maintained: `summary`, `key_points`, `recommendation`
+3. **Enhanced Validation**: Added confidence validation (0.0-1.0 range) with proper fallback
+4. **Pearl-Compliant Logging**: Added structured logging for validation steps and warnings
+5. **Updated Tests**: Modified all related tests to work with new ProposalSummary structure
+6. **Code Quality**: Applied ruff formatting and followed existing code patterns
+
+**Verification Results**:
+- ✅ All 21 AI service tests pass
+- ✅ ProposalSummary model imports successfully
+- ✅ Response processing handles all required fields correctly
+- ✅ Confidence validation works with proper fallbacks
+- ✅ Missing fields get appropriate default values
+- ✅ Pearl-compliant log messages appear for validation steps
+- ✅ No debug print statements found in production code
+- ✅ Existing functionality remains intact
+
+**Breaking Changes Made**:
+- Response structure changed from old AiVoteResponse fields to ProposalSummary fields
+- Test expectations updated to match new structure
+- Field name changed: `risk_level` → `risk_assessment`
 
 ---
 

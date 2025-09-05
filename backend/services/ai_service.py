@@ -1413,43 +1413,48 @@ class AIService:
     def _parse_and_validate_summary_response(
         self, ai_response: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Parse and validate AI summary response."""
-        # Runtime assertion: validate input parameters
+        """Parse and validate AI summary response from SummarizationAgent."""
+        logger.info("Parsing and validating ProposalSummary response")
+
         assert ai_response is not None, "AI response cannot be None"
         assert isinstance(
             ai_response, dict
         ), f"Expected dict response, got {type(ai_response)}"
 
-        # Extract raw values with defaults
+        # Extract fields from ProposalSummary structure (not AiVoteResponse)
+        proposal_id = ai_response.get("proposal_id", "")
+        title = ai_response.get("title", "")
         summary = ai_response.get("summary", "No summary provided")
         key_points = ai_response.get("key_points", [])
-        risk_level = ai_response.get("risk_level", DEFAULT_RISK_LEVEL_FALLBACK)
-        recommendation = ai_response.get("recommendation", "")
+        risk_assessment = ai_response.get("risk_assessment", None)
+        recommendation = ai_response.get("recommendation", None)
+        confidence = ai_response.get("confidence", 0.5)
 
-        # Validate risk level
-        validated_risk_level = self.response_processor._validate_risk_level(risk_level)
+        # Validate required fields with Pearl logging
+        if not summary or summary == "No summary provided":
+            logger.warning("AI response missing summary field")
+        if not key_points:
+            logger.warning("AI response missing key_points field")
+        if not isinstance(confidence, (int, float)) or not (0.0 <= confidence <= 1.0):
+            logger.warning("Invalid confidence value %s, using default", confidence)
+            confidence = 0.5
 
         # Ensure key_points is a list
         if not isinstance(key_points, list):
             key_points = [str(key_points)] if key_points else []
 
-        validated_response = {
+        logger.info("Successfully validated ProposalSummary response structure")
+
+        # Return structure for downstream ProposalSummary creation
+        return {
+            "proposal_id": proposal_id,
+            "title": title,
             "summary": summary,
             "key_points": key_points,
-            "risk_level": validated_risk_level,
+            "risk_assessment": risk_assessment,
             "recommendation": recommendation,
+            "confidence": confidence,
         }
-
-        # Runtime assertion: validate output structure
-        assert isinstance(validated_response, dict), "Validated response must be dict"
-        assert (
-            "summary" in validated_response
-        ), "Validated response must contain 'summary' key"
-        assert (
-            "key_points" in validated_response
-        ), "Validated response must contain 'key_points' key"
-
-        return validated_response
 
     async def save_decision_file(
         self, decision: VotingDecisionFile, base_path: Optional[Path] = None
