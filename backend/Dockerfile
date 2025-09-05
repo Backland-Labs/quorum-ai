@@ -7,6 +7,7 @@ WORKDIR /app
 # Set environment variables
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
+ENV PYTHONOPTIMIZE=1
 
 # Install curl for healthcheck and build tools for compiling native dependencies
 RUN apt-get update && apt-get install -y \
