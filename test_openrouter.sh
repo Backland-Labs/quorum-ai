@@ -17,7 +17,7 @@ echo "TEST 1: OpenRouter Key Management Tests"
 echo "========================================="
 uv run pytest tests/test_openrouter_key_management.py -v --tb=short --no-header || echo "❌ OpenRouter key management tests failed"
 
-# Test 2: API Endpoints Tests  
+# Test 2: API Endpoints Tests
 echo ""
 echo "==============================="
 echo "TEST 2: API Endpoints Tests"

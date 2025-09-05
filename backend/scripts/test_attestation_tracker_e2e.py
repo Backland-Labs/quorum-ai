@@ -20,7 +20,6 @@ from services.safe_service import SafeService
 from models import EASAttestationData
 from utils.attestation_tracker_helpers import (
     get_multisig_info,
-    get_attestation_count,
 )
 from config import settings
 

@@ -45,26 +45,26 @@ This document outlines the comprehensive testing strategy for validating Quorum 
    ```bash
    # Required
    OPENROUTER_API_KEY= # Accessed in .env
-   
+
    # Snapshot Testnet Configuration
    SNAPSHOT_GRAPHQL_URL=https://testnet.hub.snapshot.org/graphql
-   
+
    # Local Testnet Configuration (Anvil)
    RPC_URL=http://localhost:8545
    CHAIN_ID=8453  # Base chain ID for EAS compatibility
-   
+
    # Agent's own Safe for attestations (on local testnet)
    BASE_SAFE_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
    BASE_RPC_URL=http://localhost:8545
-   
+
    # Test wallet (from Anvil mnemonic)
    PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-   
+
    # EAS Configuration (deployed on local Anvil)
    EAS_CONTRACT_ADDRESS=0x4200000000000000000000000000000000000021
    EAS_SCHEMA_UID=0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
    ATTESTATION_TRACKER_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3  # First contract deployed by Anvil
-   
+
    # Testing configuration (using real testnet space)
    MONITORED_DAOS=myshelldao.eth
    DRY_RUN_DEFAULT=false

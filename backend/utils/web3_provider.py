@@ -21,7 +21,8 @@ def get_w3(chain: str = "base") -> Web3:
     """
     # Map chain to RPC endpoint
     rpc_endpoints = {
-        "base": settings.get_base_rpc_endpoint() or "http://localhost:8545",  # Default to localhost for tests
+        "base": settings.get_base_rpc_endpoint()
+        or "http://localhost:8545",  # Default to localhost for tests
         "ethereum": settings.ethereum_ledger_rpc,
     }
 
