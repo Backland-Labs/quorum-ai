@@ -1331,7 +1331,7 @@ class AIService:
 
             # Process result - now returns ProposalSummary structure
             processed_result = (
-                result.output.model_dump()
+                result.output.model_dump(mode='json')
                 if hasattr(result.output, "model_dump")
                 else result.output
             )
