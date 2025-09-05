@@ -50,13 +50,13 @@ contract MockMultisig is IMultisig {
 /**
  * @title TestQuorumStakingIntegrationScript
  * @dev Script to test QuorumStaking integration on local testnet with deployed contracts.
- * 
+ *
  * This script demonstrates:
  * 1. Deploying all required contracts
  * 2. Making attestations through AttestationTracker
  * 3. Verifying QuorumStakingTokenActivityChecker sees the updates
  * 4. Testing liveness ratio calculations
- * 
+ *
  * Usage:
  *   # Run on local anvil testnet
  *   forge script script/TestQuorumStakingIntegration.s.sol --fork-url http://localhost:8545 --broadcast
@@ -64,7 +64,7 @@ contract MockMultisig is IMultisig {
 contract TestQuorumStakingIntegrationScript is Script {
     // Default configuration
     uint256 public constant DEFAULT_LIVENESS_RATIO = 1e15; // 1e15 per second
-    
+
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address deployer = vm.addr(deployerPrivateKey);
@@ -77,25 +77,25 @@ contract TestQuorumStakingIntegrationScript is Script {
 
         // Step 1: Deploy all contracts
         console.log("\n1. Deploying contracts...");
-        
+
         MockEAS mockEAS = new MockEAS();
         console.log("MockEAS deployed to:", address(mockEAS));
-        
+
         AttestationTracker attestationTracker = new AttestationTracker(deployer, address(mockEAS));
         console.log("AttestationTracker deployed to:", address(attestationTracker));
-        
+
         QuorumStakingTokenActivityChecker stakingChecker = new QuorumStakingTokenActivityChecker(
             address(attestationTracker),
             DEFAULT_LIVENESS_RATIO
         );
         console.log("QuorumStakingTokenActivityChecker deployed to:", address(stakingChecker));
-        
+
         MockMultisig mockMultisig = new MockMultisig();
         console.log("MockMultisig deployed to:", address(mockMultisig));
 
         // Step 2: Verify initial state
         console.log("\n2. Verifying initial state...");
-        
+
         uint256[] memory initialNonces = stakingChecker.getMultisigNonces(address(mockMultisig));
         console.log("Initial multisig nonce:", initialNonces[0]);
         console.log("Initial casted votes:", initialNonces[1]);
@@ -104,42 +104,42 @@ contract TestQuorumStakingIntegrationScript is Script {
 
         // Step 3: Make some attestations
         console.log("\n3. Making attestations...");
-        
+
         // Make first attestation
         _makeAttestation(attestationTracker, address(mockMultisig));
         console.log("Made first attestation");
-        
+
         uint256[] memory afterFirstNonces = stakingChecker.getMultisigNonces(address(mockMultisig));
         console.log("After first attestation - casted votes:", afterFirstNonces[1]);
-        
+
         // Make second attestation
         _makeAttestation(attestationTracker, address(mockMultisig));
         console.log("Made second attestation");
-        
+
         uint256[] memory afterSecondNonces = stakingChecker.getMultisigNonces(address(mockMultisig));
         console.log("After second attestation - casted votes:", afterSecondNonces[1]);
 
         // Step 4: Simulate multisig transactions
         console.log("\n4. Simulating multisig transactions...");
-        
+
         mockMultisig.executeTransaction();
         mockMultisig.executeTransaction();
-        
+
         uint256[] memory afterTransactionsNonces = stakingChecker.getMultisigNonces(address(mockMultisig));
         console.log("After transactions - multisig nonce:", afterTransactionsNonces[0]);
 
         // Step 5: Test ratio calculations
         console.log("\n5. Testing ratio calculations...");
-        
+
         // Simulate time-based scenario
         uint256[] memory oldNonces = _createNonces(0, 0, 0, 0);  // Starting state
         uint256[] memory newNonces = afterTransactionsNonces;    // Current state
         uint256 timespan = 3600; // 1 hour
-        
+
         bool ratioResult = stakingChecker.isRatioPass(newNonces, oldNonces, timespan);
         console.log("Ratio test result:", ratioResult);
         console.log("Time span used:", timespan, "seconds");
-        
+
         // Calculate and display the actual ratio
         if (newNonces[1] > oldNonces[1] && timespan > 0) {
             uint256 attestationDiff = newNonces[1] - oldNonces[1];
@@ -151,11 +151,11 @@ contract TestQuorumStakingIntegrationScript is Script {
 
         // Step 6: Test edge cases
         console.log("\n6. Testing edge cases...");
-        
+
         // Test with no nonce change
         bool noNonceChangeResult = stakingChecker.isRatioPass(newNonces, newNonces, timespan);
         console.log("No nonce change result:", noNonceChangeResult);
-        
+
         // Test with zero timespan
         bool zeroTimespanResult = stakingChecker.isRatioPass(newNonces, oldNonces, 0);
         console.log("Zero timespan result:", zeroTimespanResult);
@@ -203,10 +203,10 @@ contract TestQuorumStakingIntegrationScript is Script {
     /**
      * @dev Helper to create nonce arrays.
      */
-    function _createNonces(uint256 multisigNonce, uint256 casted, uint256 opportunities, uint256 noOpportunities) 
-        internal 
-        pure 
-        returns (uint256[] memory nonces) 
+    function _createNonces(uint256 multisigNonce, uint256 casted, uint256 opportunities, uint256 noOpportunities)
+        internal
+        pure
+        returns (uint256[] memory nonces)
     {
         nonces = new uint256[](4);
         nonces[0] = multisigNonce;

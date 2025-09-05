@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    ai_model: str = "openai:gpt-4o-mini"
+    ai_model: str = "google/gemini-2.0-flash-001"
 
     # Pearl logging settings
     log_level: str = Field(

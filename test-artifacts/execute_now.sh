@@ -23,31 +23,31 @@ if [ $HEALTH_STATUS -eq 0 ] && [ -n "$HEALTH_RESPONSE" ]; then
 else
     echo "❌ Service not running - starting it..."
     SERVICE_RUNNING=false
-    
+
     # Start the backend service
     echo -e "\n2. Starting Backend Service"
     cd backend
-    
+
     echo "Starting backend with: uv run main.py"
     uv run main.py &
     BACKEND_PID=$!
-    
+
     echo "Backend started with PID: $BACKEND_PID"
     echo $BACKEND_PID > ../backend_test.pid
-    
+
     echo "Waiting 20 seconds for service to initialize..."
     sleep 20
-    
+
     # Test health again
     cd /Users/max/code/quorum-ai
     echo "Re-testing health endpoint..."
-    
+
     HEALTH_RESPONSE=$(curl -s --connect-timeout 5 --max-time 10 http://localhost:8716/health 2>/dev/null)
     HEALTH_STATUS=$?
-    
+
     echo "Health recheck exit code: $HEALTH_STATUS"
     echo "Health recheck response: $HEALTH_RESPONSE"
-    
+
     if [ $HEALTH_STATUS -eq 0 ] && [ -n "$HEALTH_RESPONSE" ]; then
         echo "✅ Backend service started successfully"
         SERVICE_RUNNING=true
@@ -88,14 +88,14 @@ echo "Response length: ${#AGENT_RESPONSE}"
 if [ $AGENT_STATUS -eq 0 ]; then
     echo "✅ Agent run completed"
     echo "Response: $AGENT_RESPONSE"
-    
+
     # Try to extract key info from JSON
     PROPOSALS=$(echo "$AGENT_RESPONSE" | grep -o '"proposals_analyzed":[0-9]*' | cut -d':' -f2)
     VOTES=$(echo "$AGENT_RESPONSE" | grep -o '"votes_cast":\[[^]]*\]' | grep -o '\[.*\]' | tr ',' '\n' | wc -l)
-    
+
     echo "Proposals analyzed: $PROPOSALS"
     echo "Votes cast: $VOTES"
-    
+
 else
     echo "❌ Agent run failed"
     echo "Error output: $AGENT_RESPONSE"
@@ -109,7 +109,7 @@ LOG_FILES=("backend/log.txt" "backend.log" "service.log")
 for LOG_FILE in "${LOG_FILES[@]}"; do
     if [ -f "$LOG_FILE" ]; then
         echo "Checking $LOG_FILE..."
-        
+
         SNAPSHOT_LINES=$(grep -i "snapshot\|graphql\|proposals" "$LOG_FILE" 2>/dev/null)
         if [ -n "$SNAPSHOT_LINES" ]; then
             echo "✅ Found Snapshot evidence in $LOG_FILE"

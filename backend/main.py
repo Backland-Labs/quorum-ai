@@ -90,7 +90,7 @@ async def lifespan(_app: FastAPI):
 
     # Initialize services with state manager where needed
     ai_service = AIService()
-    agent_run_service = AgentRunService(state_manager=state_manager)
+    agent_run_service = AgentRunService(state_manager=state_manager, ai_service=ai_service)
     safe_service = SafeService()
     activity_service = ActivityService()
     user_preferences_service = UserPreferencesService(state_manager=state_manager)
@@ -195,7 +195,7 @@ app.add_middleware(
 static_path = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_path):
     app.mount("/static", StaticFiles(directory=static_path), name="static")
-    
+
     # Serve frontend index.html at root for SPA routing
     @app.get("/")
     async def serve_frontend():
@@ -205,15 +205,26 @@ if os.path.exists(static_path):
             return FileResponse(index_file)
         else:
             return {"message": "Frontend not available - build frontend first"}
-    
+
     # Catch-all route for SPA routing (frontend routes)
     @app.get("/{full_path:path}")
     async def serve_frontend_routes(full_path: str):
         """Serve frontend for client-side routing, excluding API routes."""
         # Don't intercept API routes
-        if full_path.startswith(("api/", "docs", "openapi.json", "healthcheck", "proposals", "agent-run", "user-preferences", "config")):
+        if full_path.startswith(
+            (
+                "api/",
+                "docs",
+                "openapi.json",
+                "healthcheck",
+                "proposals",
+                "agent-run",
+                "user-preferences",
+                "config",
+            )
+        ):
             raise HTTPException(status_code=404, detail="API endpoint not found")
-            
+
         # Serve index.html for frontend routes
         index_file = os.path.join(static_path, "index.html")
         if os.path.exists(index_file):

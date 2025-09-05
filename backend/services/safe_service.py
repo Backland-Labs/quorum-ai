@@ -24,8 +24,6 @@ SAFE_SERVICE_URLS = {
 }
 
 
-
-
 # Safe operation types
 SAFE_OPERATION_CALL = 0
 SAFE_OPERATION_DELEGATECALL = 1
@@ -298,8 +296,6 @@ class SafeService:
             data=b"",  # Empty data
             operation=SAFE_OPERATION_CALL,  # CALL operation
         )
-
-
 
     async def get_safe_nonce(self, chain: str, safe_address: str) -> int:
         """Get current nonce for a Safe on specified chain.

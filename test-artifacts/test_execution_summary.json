@@ -22,7 +22,7 @@
       },
       "step2": {
         "name": "OpenRouter API & Voting Decision Making",
-        "status": "PASSED", 
+        "status": "PASSED",
         "description": "Monitor logs for OpenRouter API queries and voting decisions",
         "evidence": [
           "AI service integration verification",
@@ -59,7 +59,7 @@
         "description": "Verify EAS contract accessibility for attestations",
         "evidence": [
           "EAS contract accessibility",
-          "Network configuration validation", 
+          "Network configuration validation",
           "Attestation infrastructure readiness",
           "Base network fork compatibility"
         ]
@@ -74,7 +74,7 @@
     "evidence_files": [
       "complete_test_suite.py",
       "step1_evidence.md",
-      "step2_evidence.md", 
+      "step2_evidence.md",
       "step3_evidence.md",
       "step4_evidence.md",
       "step5_evidence.md",

@@ -1,7 +1,7 @@
 # Quorum AI Application - Error Catalog
 
-**Analysis Date**: September 5, 2025  
-**Environment**: Docker containers (quorum_backend, quorum_frontend)  
+**Analysis Date**: September 5, 2025
+**Environment**: Docker containers (quorum_backend, quorum_frontend)
 **Analysis Method**: Container logs, application logs (/app/log.txt), and runtime inspection
 
 ## Critical Errors (Blocking Core Functionality)
@@ -10,15 +10,15 @@
 **Error Messages**:
 ```
 Web3 provider for base not connected, retrying...
-Error querying AttestationTracker for 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266: 
-HTTPConnectionPool(host='localhost', port=8545): Max retries exceeded with url: / 
-(Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xffffa0eda0c0>: 
+Error querying AttestationTracker for 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266:
+HTTPConnectionPool(host='localhost', port=8545): Max retries exceeded with url: /
+(Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xffffa0eda0c0>:
 Failed to establish a new connection: [Errno 111] Connection refused'))
 ```
 
-**Location**: Backend container, Web3 provider initialization and AttestationTracker queries  
-**Root Cause**: Local Ethereum node/Anvil instance not running on localhost:8545  
-**Impact**: 
+**Location**: Backend container, Web3 provider initialization and AttestationTracker queries
+**Root Cause**: Local Ethereum node/Anvil instance not running on localhost:8545
+**Impact**:
 - AttestationTracker contract queries fail
 - Blockchain-based voting and attestation functionality unavailable
 - Agent cannot interact with on-chain governance contracts
@@ -30,14 +30,14 @@ Failed to establish a new connection: [Errno 111] Connection refused'))
 ```
 [ERROR] [agent] AI model call failed for summarization, error=AI result must be a dictionary
 [ERROR] [agent] Failed ai_proposal_summary after 1.964s: AI result must be a dictionary
-[ERROR] [agent] Failed to summarize proposal, proposal_id=0xb6c85c946e947b..., proposal_title=test25090104, 
+[ERROR] [agent] Failed to summarize proposal, proposal_id=0xb6c85c946e947b..., proposal_title=test25090104,
 error=AI result must be a dictionary, error_type=AssertionError
 [ERROR] [agent] Failed ai_multiple_proposal_summaries after 1.964s: AI result must be a dictionary
 ```
 
 **Location**: Backend container, AI proposal processing functions:
 - `ai_proposal_summary`
-- `ai_multiple_proposal_summaries` 
+- `ai_multiple_proposal_summaries`
 - `generate_proposal_summaries`
 - `summarize_proposals`
 
@@ -49,14 +49,14 @@ error=AI result must be a dictionary, error_type=AssertionError
 - Response processing fails in `_process_summary_ai_result()` method
 - The method returns structured objects instead of dictionaries
 
-**Impact**: 
+**Impact**:
 - **Zero summaries are being generated** - complete failure before any summary creation
 - Agent cannot process or analyze governance proposals
 - Affects all proposals requiring AI summarization
 - System fails at response processing stage, not at API call stage
 
 **Frequency**: High - occurs for every proposal that needs summarization
-**Files Likely Affected**: 
+**Files Likely Affected**:
 - `/backend/services/ai_service.py` - `_process_summary_ai_result()` method
 - AI response processing pipeline
 - Response conversion logic
@@ -117,7 +117,7 @@ error=AI result must be a dictionary, error_type=AssertionError
 - `AgentRunService` class missing `save_state()` method
 - `VotingService` class missing `_active_votes` attribute
 
-**Impact**: 
+**Impact**:
 - Cannot perform graceful shutdown with state persistence
 - Active votes may be lost during shutdown
 - Service state cannot be properly restored after restart
@@ -127,13 +127,13 @@ error=AI result must be a dictionary, error_type=AssertionError
 ### 4. State Management Persistence Issues
 **Error Messages**:
 ```
-[ERROR] [agent] Error processing pending attestations for space uniswapgovernance.eth: 
+[ERROR] [agent] Error processing pending attestations for space uniswapgovernance.eth:
 'StateManager' object has no attribute 'load_checkpoint'
 ```
 
-**Location**: Backend container, attestation processing for governance spaces  
-**Root Cause**: `StateManager` class missing `load_checkpoint()` method implementation  
-**Impact**: 
+**Location**: Backend container, attestation processing for governance spaces
+**Root Cause**: `StateManager` class missing `load_checkpoint()` method implementation
+**Impact**:
 - Cannot process pending attestations for governance spaces
 - State restoration from checkpoints fails
 - Agent runs may lose previous execution context
@@ -148,9 +148,9 @@ error=AI result must be a dictionary, error_type=AssertionError
 [WARN] [agent] Transaction manager health check failed: No valid chain configuration found
 ```
 
-**Location**: Backend container, health status gathering process  
-**Root Cause**: Chain configuration not properly initialized or missing required blockchain network settings  
-**Impact**: 
+**Location**: Backend container, health status gathering process
+**Root Cause**: Chain configuration not properly initialized or missing required blockchain network settings
+**Impact**:
 - Health checks report transaction manager as unhealthy
 - May affect overall system health reporting
 - Could indicate underlying blockchain configuration issues
@@ -163,9 +163,9 @@ error=AI result must be a dictionary, error_type=AssertionError
 [WARN] [agent] Decisions directory does not exist: decisions
 ```
 
-**Location**: Backend container, agent run decision retrieval  
-**Root Cause**: `decisions` directory not created in the application filesystem  
-**Impact**: 
+**Location**: Backend container, agent run decision retrieval
+**Root Cause**: `decisions` directory not created in the application filesystem
+**Impact**:
 - Cannot store or retrieve agent decision records
 - Historical decision data unavailable
 - Affects agent decision tracking and audit trail
@@ -178,21 +178,21 @@ error=AI result must be a dictionary, error_type=AssertionError
 **Warning Messages**:
 ```
 [vite-plugin-svelte] src/lib/components/dashboard/AgentStatistics.svelte:16:2 Redundant role 'region'
-[vite-plugin-svelte] src/lib/components/dashboard/ProposalCard.svelte:71:0 
+[vite-plugin-svelte] src/lib/components/dashboard/ProposalCard.svelte:71:0
 noninteractive element cannot have nonnegative tabIndex value
 ```
 
-**Location**: Frontend build process, Svelte components  
-**Root Cause**: 
+**Location**: Frontend build process, Svelte components
+**Root Cause**:
 - AgentStatistics component has redundant ARIA role
 - ProposalCard component has improper tabindex on non-interactive elements
 
-**Impact**: 
+**Impact**:
 - Potential accessibility issues for screen readers
 - May affect keyboard navigation
 - Does not break functionality but reduces accessibility compliance
 **Frequency**: Every frontend build
-**Files Affected**: 
+**Files Affected**:
 - `/frontend/src/lib/components/dashboard/AgentStatistics.svelte:16`
 - `/frontend/src/lib/components/dashboard/ProposalCard.svelte:71`
 
@@ -208,7 +208,7 @@ noninteractive element cannot have nonnegative tabIndex value
 ### 9. Governance Spaces Affected
 Based on error logs, the following governance spaces are experiencing issues:
 - `uniswapgovernance.eth`
-- `myshelldao.eth` 
+- `myshelldao.eth`
 - Multiple test proposals with IDs like `0x9e67622c...`, `0xae10d159...`, etc.
 
 ## Recommendations for Resolution

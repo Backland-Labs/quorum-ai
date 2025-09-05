@@ -14,20 +14,20 @@ HEALTH_STATUS=$?
 
 if [ $HEALTH_STATUS -ne 0 ]; then
     echo -e "\n❌ Service not running. Starting services..."
-    
+
     # Start services using the startup script
     echo "Starting services with startup script..."
     chmod +x startup.sh
     ./startup.sh --claude-code
-    
+
     # Wait for services to be ready
     echo "Waiting 10 seconds for services to initialize..."
     sleep 10
-    
+
     # Test health again
     echo "Re-testing service health..."
     python3 test_health_check.py
-    
+
     if [ $? -ne 0 ]; then
         echo "❌ Failed to start services. Exiting."
         exit 1

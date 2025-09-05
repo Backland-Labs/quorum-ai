@@ -31,7 +31,6 @@ from services.agent_run_logger import AgentRunLogger
 from services.state_transition_tracker import StateTransitionTracker, AgentState
 
 
-
 # Constants
 MAX_ATTESTATION_RETRIES = 3
 
@@ -76,21 +75,20 @@ class AgentRunService:
     4. Execute votes (or simulate in dry run mode)
     """
 
-    def __init__(self, state_manager=None) -> None:
+    def __init__(self, state_manager=None, ai_service=None) -> None:
         """Initialize AgentRunService with required dependencies.
 
         Args:
             state_manager: Optional StateManager instance for state persistence
+            ai_service: Optional AIService instance for shared configuration
         """
         self.snapshot_service = SnapshotService()
-        self.ai_service = AIService()
+        self.ai_service = ai_service or AIService()
         self.voting_service = VotingService()
         self.safe_service = SafeService()
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
-
-
 
         # Initialize state transition tracker with StateManager for persistence
         self.state_tracker = StateTransitionTracker(
@@ -105,9 +103,7 @@ class AgentRunService:
 
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name="agent_run_service")
-        self.pearl_logger.info(
-            "AgentRunService initialized with all dependencies"
-        )
+        self.pearl_logger.info("AgentRunService initialized with all dependencies")
 
     async def initialize(self):
         """Initialize async components including state tracker."""
@@ -116,8 +112,6 @@ class AgentRunService:
             self.pearl_logger.info(
                 "State tracker initialized with StateManager persistence"
             )
-
-
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.

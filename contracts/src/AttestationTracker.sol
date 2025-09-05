@@ -35,7 +35,7 @@ interface IEAS {
  * @title AttestationTracker
  * @dev Simple attestation counter wrapper around EAS (Ethereum Attestation Service).
  *
- * This contract serves as a wrapper around EAS that tracks the number of 
+ * This contract serves as a wrapper around EAS that tracks the number of
  * attestations made by each multisig address.
  *
  * Key features:
@@ -110,14 +110,14 @@ contract AttestationTracker is Ownable, IQuorumTracker {
     function getVotingStats(address multisig) external view returns (uint256[] memory votingStats) {
         votingStats = new uint256[](3);
         uint256 attestationCount = mapMultisigAttestations[multisig];
-        
+
         // [0]: attestations for casted votes (use current attestation count)
         votingStats[0] = attestationCount;
         // [1]: attestations for voting opportunities (use current attestation count)
         votingStats[1] = attestationCount;
         // [2]: attestations for no voting opportunities (return 0 for now)
         votingStats[2] = 0;
-        
+
         return votingStats;
     }
 }

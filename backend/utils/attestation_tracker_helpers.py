@@ -44,7 +44,7 @@ def get_multisig_info(multisig_address: str) -> Tuple[int, bool]:
 
         # Query multisig attestation count using available function
         count = contract.functions.getNumAttestations(multisig_address).call()
-        
+
         # Default active status to True since separate active status tracking is not available
         is_active = True
 
@@ -66,5 +66,3 @@ def get_attestation_count(multisig_address: str) -> int:
     """
     count, _ = get_multisig_info(multisig_address)
     return count
-
-

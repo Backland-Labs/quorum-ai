@@ -195,4 +195,3 @@
 - [x] Healthcheck fully functional (all fields implemented)
 - [x] Logging compliant (Pearl format to log.txt)
 - [x] SIGKILL recovery tested (entrypoint.sh has signal handling)
-
