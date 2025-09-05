@@ -86,9 +86,9 @@ class VotingAgent:
         """Create and configure the Pydantic AI agent."""
         # Runtime assertion: validate preconditions
         assert self.model is not None, "Model must be initialized before creating agent"
-        assert hasattr(
-            self, "model"
-        ), "Model attribute must exist before agent creation"
+        assert hasattr(self, "model"), (
+            "Model attribute must exist before agent creation"
+        )
 
         try:
             # Extract model information for logging
@@ -249,9 +249,9 @@ class VotingAgent:
 
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
-            assert (
-                ctx.deps.snapshot_service is not None
-            ), "SnapshotService must be available"
+            assert ctx.deps.snapshot_service is not None, (
+                "SnapshotService must be available"
+            )
             assert space_id, "space_id must not be empty"
 
             try:
@@ -297,9 +297,9 @@ class VotingAgent:
 
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
-            assert (
-                ctx.deps.snapshot_service is not None
-            ), "SnapshotService must be available"
+            assert ctx.deps.snapshot_service is not None, (
+                "SnapshotService must be available"
+            )
             assert proposal_id, "proposal_id must not be empty"
 
             try:
@@ -488,9 +488,9 @@ class SummarizationAgent:
         **Current Status:** {proposal.state}
 
         **Voting Results:**
-        - Votes For: {vote_breakdown['for']:,.0f}
-        - Votes Against: {vote_breakdown['against']:,.0f}
-        - Abstain: {vote_breakdown['abstain']:,.0f}
+        - Votes For: {vote_breakdown["for"]:,.0f}
+        - Votes Against: {vote_breakdown["against"]:,.0f}
+        - Abstain: {vote_breakdown["abstain"]:,.0f}
         - Total Votes: {proposal.votes}
 
         **Proposal Description:**
@@ -548,9 +548,9 @@ class AIResponseProcessor:
         """Parse and validate AI vote response."""
         # Runtime assertion: validate input parameters
         assert ai_response is not None, "AI response cannot be None"
-        assert isinstance(
-            ai_response, dict
-        ), f"Expected dict response, got {type(ai_response)}"
+        assert isinstance(ai_response, dict), (
+            f"Expected dict response, got {type(ai_response)}"
+        )
 
         # Extract raw values with defaults
         raw_values = self._extract_raw_response_values(ai_response)
@@ -560,12 +560,12 @@ class AIResponseProcessor:
 
         # Runtime assertion: validate output structure
         assert isinstance(validated_response, dict), "Validated response must be dict"
-        assert (
-            "vote" in validated_response
-        ), "Validated response must contain 'vote' key"
-        assert (
-            "confidence" in validated_response
-        ), "Validated response must contain 'confidence' key"
+        assert "vote" in validated_response, (
+            "Validated response must contain 'vote' key"
+        )
+        assert "confidence" in validated_response, (
+            "Validated response must contain 'confidence' key"
+        )
 
         return validated_response
 
@@ -752,9 +752,9 @@ class AIService:
 
         # Runtime assertion: validate API key configuration
         assert settings.openrouter_api_key, "OpenRouter API key is not configured"
-        assert isinstance(
-            settings.openrouter_api_key, str
-        ), f"API key must be string, got {type(settings.openrouter_api_key)}"
+        assert isinstance(settings.openrouter_api_key, str), (
+            f"API key must be string, got {type(settings.openrouter_api_key)}"
+        )
 
         if settings.openrouter_api_key:
             logger.info("Using OpenRouter")
@@ -774,9 +774,9 @@ class AIService:
 
                 # Runtime assertion: validate model creation
                 assert model is not None, "OpenRouter model creation returned None"
-                assert hasattr(
-                    model, "__class__"
-                ), "Model must be a valid object instance"
+                assert hasattr(model, "__class__"), (
+                    "Model must be a valid object instance"
+                )
 
                 return model
             except Exception as e:
@@ -826,9 +826,9 @@ class AIService:
         """Make a voting decision for a proposal using the specified strategy."""
         # Runtime assertion: validate input parameters
         assert proposal is not None, "Proposal cannot be None"
-        assert isinstance(
-            proposal, Proposal
-        ), f"Expected Proposal object, got {type(proposal)}"
+        assert isinstance(proposal, Proposal), (
+            f"Expected Proposal object, got {type(proposal)}"
+        )
 
         # Determine strategy from user_preferences or parameter
         if user_preferences:
@@ -836,9 +836,9 @@ class AIService:
         elif strategy is None:
             strategy = VotingStrategy.BALANCED  # Default strategy
 
-        assert isinstance(
-            strategy, VotingStrategy
-        ), f"Expected VotingStrategy enum, got {type(strategy)}"
+        assert isinstance(strategy, VotingStrategy), (
+            f"Expected VotingStrategy enum, got {type(strategy)}"
+        )
 
         try:
             # Extract logging context
@@ -882,12 +882,12 @@ class AIService:
 
                 # Runtime assertion: validate output
                 assert vote_decision is not None, "VoteDecision creation returned None"
-                assert (
-                    vote_decision.proposal_id == proposal.id
-                ), "VoteDecision proposal_id mismatch"
-                assert hasattr(
-                    vote_decision, "vote"
-                ), "VoteDecision must have vote attribute"
+                assert vote_decision.proposal_id == proposal.id, (
+                    "VoteDecision proposal_id mismatch"
+                )
+                assert hasattr(vote_decision, "vote"), (
+                    "VoteDecision must have vote attribute"
+                )
 
                 # Save to file if requested
                 if save_to_file:
@@ -1060,9 +1060,9 @@ class AIService:
         **Current Status:** {proposal.state}
 
         **Voting Results:**
-        - Votes For: {vote_breakdown['for']:,.0f}
-        - Votes Against: {vote_breakdown['against']:,.0f}
-        - Abstain: {vote_breakdown['abstain']:,.0f}
+        - Votes For: {vote_breakdown["for"]:,.0f}
+        - Votes Against: {vote_breakdown["against"]:,.0f}
+        - Abstain: {vote_breakdown["abstain"]:,.0f}
         - Total Votes: {proposal.votes}
 
         **Proposal Description:**
@@ -1122,9 +1122,9 @@ class AIService:
         """Generate a summary for a single proposal."""
         # Runtime assertion: validate input parameters
         assert proposal is not None, "Proposal cannot be None"
-        assert isinstance(
-            proposal, Proposal
-        ), f"Expected Proposal object, got {type(proposal)}"
+        assert isinstance(proposal, Proposal), (
+            f"Expected Proposal object, got {type(proposal)}"
+        )
 
         # Constants for default values
         DEFAULT_CONFIDENCE_SCORE = 0.85
@@ -1167,15 +1167,15 @@ class AIService:
                 )
 
                 # Runtime assertion: validate output
-                assert (
-                    proposal_summary is not None
-                ), "ProposalSummary creation returned None"
-                assert (
-                    proposal_summary.proposal_id == proposal.id
-                ), "ProposalSummary proposal_id mismatch"
-                assert hasattr(
-                    proposal_summary, "summary"
-                ), "ProposalSummary must have summary attribute"
+                assert proposal_summary is not None, (
+                    "ProposalSummary creation returned None"
+                )
+                assert proposal_summary.proposal_id == proposal.id, (
+                    "ProposalSummary proposal_id mismatch"
+                )
+                assert hasattr(proposal_summary, "summary"), (
+                    "ProposalSummary must have summary attribute"
+                )
 
                 return proposal_summary
 
@@ -1205,7 +1205,7 @@ class AIService:
             title=proposal.title,
             summary=summary_data["summary"],
             key_points=summary_data["key_points"],
-            risk_assessment=summary_data["risk_level"],
+            risk_assessment=summary_data["risk_assessment"],
             recommendation=summary_data.get("recommendation", default_recommendation),
             confidence=default_confidence,
         )
@@ -1216,9 +1216,9 @@ class AIService:
         """Generate summaries for multiple proposals concurrently."""
         # Runtime assertion: validate input parameters
         assert proposals is not None, "Proposals list cannot be None"
-        assert isinstance(
-            proposals, list
-        ), f"Expected list of Proposals, got {type(proposals)}"
+        assert isinstance(proposals, list), (
+            f"Expected list of Proposals, got {type(proposals)}"
+        )
         assert len(proposals) > 0, "Proposals list cannot be empty"
 
         try:
@@ -1272,12 +1272,12 @@ class AIService:
                 )
 
                 # Runtime assertion: validate output
-                assert (
-                    summary_count == proposal_count
-                ), "Summary count must match proposal count"
-                assert all(
-                    isinstance(s, ProposalSummary) for s in summaries
-                ), "All items must be ProposalSummary objects"
+                assert summary_count == proposal_count, (
+                    "Summary count must match proposal count"
+                )
+                assert all(isinstance(s, ProposalSummary) for s in summaries), (
+                    "All items must be ProposalSummary objects"
+                )
 
                 return summaries
 
@@ -1417,9 +1417,9 @@ class AIService:
         logger.info("Parsing and validating ProposalSummary response")
 
         assert ai_response is not None, "AI response cannot be None"
-        assert isinstance(
-            ai_response, dict
-        ), f"Expected dict response, got {type(ai_response)}"
+        assert isinstance(ai_response, dict), (
+            f"Expected dict response, got {type(ai_response)}"
+        )
 
         # Extract fields from ProposalSummary structure (not AiVoteResponse)
         proposal_id = ai_response.get("proposal_id", "")

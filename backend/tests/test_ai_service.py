@@ -42,7 +42,7 @@ class TestAIServiceSummarizeProposal:
                     "Hire more developers", 
                     "Accelerate roadmap implementation",
                 ],
-                "risk_level": "MEDIUM",
+                "risk_assessment": "MEDIUM",
                 "recommendation": "APPROVE with careful monitoring",
             }
 
