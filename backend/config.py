@@ -315,7 +315,7 @@ class Settings(BaseSettings):
 
     # AttestationTracker Configuration
     attestation_tracker_address: Optional[str] = Field(
-        default=None,
+        default="0xc16647a4290E4C931aD586713c7d85E0eFbafba0",
         alias="ATTESTATION_TRACKER_ADDRESS",
         description="AttestationTracker wrapper contract address on Base network. If set, attestations will be routed through this contract.",
     )

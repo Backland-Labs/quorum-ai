@@ -14,20 +14,12 @@ Before running Quorum AI, you need access to the following smart contracts:
 
 ### 📋 Required Deployments
 
-1. **EAS Schema** - Register attestation schema on Base network
-   - Schema: `address agent, string spaceId, string proposalId, uint8 voteChoice, string snapshotSig, uint256 timestamp, string runId, uint8 confidence`
-   - Deploy via [EAS Schema Registry](https://base.easscan.org/schema/create)
-   - Save the Schema UID for environment configuration
 
 2. **AttestationTracker** - EAS wrapper contract for vote attestations
    - Location: `contracts/src/AttestationTracker.sol`
    - Deploy using: `forge script script/Deploy.s.sol`
    - Required for on-chain vote tracking
 
-3. **QuorumStaking** *(Optional)* - Token activity monitoring
-   - Location: `contracts/src/QuorumStaking.sol`
-   - Deploy using: `forge script script/DeployQuorumStaking.s.sol`
-   - Required only if using activity-based rewards
 
 ### 🔑 Key Considerations
 

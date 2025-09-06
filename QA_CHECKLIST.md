@@ -37,8 +37,8 @@ This checklist outlines the steps required to integrate your AI agent with the P
 
 - [ ] Staking contract and activity checker are deployed - Olas is writing/deploying staking contract
 
-- [ ] AttestationTrack contract is deployed on Base.
-    - **Address:** `address`
+- [x] AttestationTrack contract is deployed on Base.
+    - **Address:** `0xc16647a4290E4C931aD586713c7d85E0eFbafba0`
 
 ## 3. Agent Architecture Requirements
 
