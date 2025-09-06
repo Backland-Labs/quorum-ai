@@ -298,7 +298,7 @@ class Settings(BaseSettings):
         description="EAS contract address on Base network",
     )
     eas_schema_uid: Optional[str] = Field(
-        default=None,
+        default="7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c",
         alias="EAS_SCHEMA_UID",
         description="EAS schema UID for vote attestations",
     )
