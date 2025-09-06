@@ -1,6 +1,7 @@
 """Safe transaction service for handling multi-signature wallet operations."""
 
 import json
+import time
 from typing import Dict, Optional, Any
 from web3 import Web3
 from eth_account import Account
@@ -63,6 +64,16 @@ class SafeService:
             f"available_chains={available_chains})"
         )
 
+    def _rate_limit_base_rpc(self, rpc_url: str) -> None:
+        """Add rate limiting delay for Base mainnet RPC calls to prevent 429 errors.
+        
+        Args:
+            rpc_url: The RPC endpoint URL to check
+        """
+        if "mainnet.base.org" in rpc_url:
+            self.logger.debug(f"Adding 1-second delay for Base mainnet RPC call to {rpc_url}")
+            time.sleep(1.0)
+
     def get_web3_connection(self, chain: str) -> Web3:
         """Get Web3 connection for specified chain.
 
@@ -82,6 +93,9 @@ class SafeService:
         rpc_url = self.rpc_endpoints.get(chain)
         if not rpc_url:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
+
+        # Add rate limiting for Base mainnet RPC calls
+        self._rate_limit_base_rpc(rpc_url)
 
         w3 = Web3(Web3.HTTPProvider(rpc_url))
         if not w3.is_connected():
@@ -165,7 +179,11 @@ class SafeService:
 
                 # Get Web3 and Ethereum client
                 w3 = self.get_web3_connection(chain)
-                eth_client = EthereumClient(self.rpc_endpoints[chain])  # type: ignore
+                
+                # Add rate limiting before creating EthereumClient
+                rpc_url = self.rpc_endpoints[chain]
+                self._rate_limit_base_rpc(rpc_url)
+                eth_client = EthereumClient(rpc_url)  # type: ignore
 
                 # Initialize Safe instance
                 safe_instance = Safe(safe_address, eth_client)  # type: ignore
@@ -311,7 +329,11 @@ class SafeService:
         Returns:
             Current Safe nonce
         """
-        eth_client = EthereumClient(self.rpc_endpoints[chain])  # type: ignore
+        # Add rate limiting for Base mainnet RPC calls
+        rpc_url = self.rpc_endpoints[chain]
+        self._rate_limit_base_rpc(rpc_url)
+        
+        eth_client = EthereumClient(rpc_url)  # type: ignore
         safe_instance = Safe(Web3.to_checksum_address(safe_address), eth_client)  # type: ignore
         return safe_instance.retrieve_nonce()
 
@@ -335,7 +357,12 @@ class SafeService:
             raise ValueError(f"No Safe address configured for chain: {chain}")
 
         safe_address = Web3.to_checksum_address(safe_address)
-        eth_client = EthereumClient(self.rpc_endpoints[chain])  # type: ignore
+        
+        # Add rate limiting for Base mainnet RPC calls
+        rpc_url = self.rpc_endpoints[chain]
+        self._rate_limit_base_rpc(rpc_url)
+        
+        eth_client = EthereumClient(rpc_url)  # type: ignore
         safe_instance = Safe(safe_address, eth_client)  # type: ignore
 
         safe_tx = safe_instance.build_multisig_tx(
@@ -564,6 +591,9 @@ class SafeService:
         if not rpc_url:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
 
+        # Add rate limiting for Base mainnet RPC calls
+        self._rate_limit_base_rpc(rpc_url)
+        
         return Web3(Web3.HTTPProvider(rpc_url))
 
     def _generate_eas_delegated_signature(
