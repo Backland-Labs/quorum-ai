@@ -606,23 +606,84 @@ class SafeService:
             eas_address
         )
         
-        delegated_request = {
-            **attestation_request_data,
-            "signature": signature,
-        }
-
-        self.logger.info(
-            f"Built complete delegated request for {abi_name} contract at {target_address}"
-        )
-
-        # Build transaction
-        self.logger.debug("Building attestByDelegation transaction")
-        tx = contract.functions.attestByDelegation(delegated_request).build_transaction(
-            {
-                "from": settings.base_safe_address,
-                "gas": 300000,  # Standard gas limit
+        # For AttestationTracker, we need to use the new interface with 4 separate parameters
+        if abi_name == "attestation_tracker":
+            # Parse signature bytes into v, r, s components
+            v = signature[64]
+            r = signature[:32]
+            s = signature[32:64]
+            
+            # Build the delegated request struct (without signature/deadline)
+            delegated_request = {
+                "schema": eas_schema_uid,
+                "data": {
+                    "recipient": attestation_request_data["recipient"],
+                    "expirationTime": attestation_request_data["expirationTime"],
+                    "revocable": attestation_request_data["revocable"],
+                    "refUID": attestation_request_data["refUID"],
+                    "data": attestation_request_data["data"],
+                    "value": attestation_request_data["value"],
+                }
             }
-        )
+            
+            # Build the signature struct
+            signature_struct = {
+                "v": v,
+                "r": r,
+                "s": s,
+            }
+            
+            # Get attester address from private key
+            from eth_account import Account
+            import os
+            # Load private key from file or env
+            private_key = None
+            if os.path.exists("ethereum_private_key.txt"):
+                with open("ethereum_private_key.txt", "r") as f:
+                    private_key = f.read().strip()
+            elif os.getenv("ETHEREUM_PRIVATE_KEY"):
+                private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
+            else:
+                raise ValueError("Private key not found in file or environment")
+            
+            attester = Account.from_key(private_key).address
+            
+            self.logger.info(
+                f"Built delegated request for AttestationTracker with 4 params - attester={attester}, deadline={deadline}"
+            )
+            
+            # Build transaction with 4 separate parameters
+            self.logger.debug("Building attestByDelegation transaction with new interface")
+            tx = contract.functions.attestByDelegation(
+                delegated_request,
+                signature_struct,
+                attester,
+                deadline
+            ).build_transaction(
+                {
+                    "from": settings.base_safe_address,
+                    "gas": 300000,  # Standard gas limit
+                }
+            )
+        else:
+            # For EAS, use the old interface with single struct parameter
+            delegated_request = {
+                **attestation_request_data,
+                "signature": signature,
+            }
+
+            self.logger.info(
+                f"Built complete delegated request for {abi_name} contract at {target_address}"
+            )
+
+            # Build transaction
+            self.logger.debug("Building attestByDelegation transaction")
+            tx = contract.functions.attestByDelegation(delegated_request).build_transaction(
+                {
+                    "from": settings.base_safe_address,
+                    "gas": 300000,  # Standard gas limit
+                }
+            )
 
         self.logger.info(
             f"Built delegated attestation transaction - to={tx['to']}, "
