@@ -432,6 +432,33 @@ class StateManager:
             self.logger.error(f"Failed to list state files: {e}")
             return []
 
+    async def save_checkpoint(self, name: str, data: Dict[str, Any]) -> Path:
+        """Save checkpoint data for recovery purposes.
+        
+        Args:
+            name: The checkpoint name/identifier
+            data: The checkpoint data to save
+            
+        Returns:
+            Path to the saved checkpoint file
+        """
+        # Use the standard save_state method with checkpoint prefix
+        checkpoint_name = f"checkpoint_{name}"
+        return await self.save_state(checkpoint_name, data)
+    
+    async def load_checkpoint(self, name: str) -> Optional[Dict[str, Any]]:
+        """Load checkpoint data for recovery.
+        
+        Args:
+            name: The checkpoint name/identifier
+            
+        Returns:
+            The checkpoint data if it exists, None otherwise
+        """
+        # Use the standard load_state method with checkpoint prefix
+        checkpoint_name = f"checkpoint_{name}"
+        return await self.load_state(checkpoint_name, allow_recovery=True)
+
 
 # Example usage:
 """

@@ -7,7 +7,9 @@ You run in an environment where `ast-grep` is available. Whenever a search requi
 To run the backend development server:
 
 ```bash
-export $(cat .env.test | xargs) && cd backend && uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+export $(cat .env | xargs) && export SAFE_CONTRACT_ADDRESSES='{"base":                                            │
+│   "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"}' && cd backend && uv run uvicorn main:app --host 0.0.0.0 --port     │
+│   8000
 ```
 
 **Important**: The `--reload` flag in uvicorn may not work reliably for detecting file changes. If you make code changes and they don't take effect, manually restart the server by killing the process and running the command again.

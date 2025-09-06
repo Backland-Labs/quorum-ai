@@ -914,21 +914,36 @@ class AgentRunService:
         Args:
             space_id: The space ID to process attestations for
         """
+        print(f"DEBUG: _process_pending_attestations called for space_id={space_id}")
+        
         if not self.state_manager:
+            print("DEBUG: No state_manager, returning early")
             return
 
         try:
             # Load checkpoint with any pending attestations
-            checkpoint = await self.state_manager.load_checkpoint(
-                f"agent_checkpoint_{space_id}"
-            )
-            if not checkpoint or "pending_attestations" not in checkpoint:
+            checkpoint_name = f"agent_checkpoint_{space_id}"
+            print(f"DEBUG: Loading checkpoint '{checkpoint_name}'")
+            checkpoint = await self.state_manager.load_checkpoint(checkpoint_name)
+            
+            if not checkpoint:
+                print(f"DEBUG: No checkpoint found for '{checkpoint_name}'")
                 return
+                
+            if "pending_attestations" not in checkpoint:
+                print(f"DEBUG: No 'pending_attestations' key in checkpoint")
+                return
+                
+            print(f"DEBUG: Checkpoint loaded successfully with keys: {list(checkpoint.keys())}")
+            print(f"DEBUG: Found {len(checkpoint['pending_attestations'])} pending attestations")
 
             pending_attestations = checkpoint["pending_attestations"]
             if not pending_attestations:
+                print("DEBUG: No pending attestations to process")
                 return
 
+            print(f"DEBUG: Starting to process {len(pending_attestations)} pending attestations")
+            
             self.pearl_logger.info(
                 f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
             )
@@ -970,7 +985,7 @@ class AgentRunService:
                     processed_attestations.append(attestation["proposal_id"])
 
                 except Exception as e:
-                    self.pearl_logger.error(
+                    self.pearl_logger.exception(
                         f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
                     )
 

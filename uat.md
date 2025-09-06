@@ -86,6 +86,14 @@ cast call $ATTESTATION_TRACKER_ADDRESS "owner()" --rpc-url http://localhost:8545
 # Update .env with contract addresses
 echo "ATTESTATION_TRACKER_ADDRESS=$ATTESTATION_TRACKER_ADDRESS" >> .env
 
+# Update .env with Test Safe address for attestation testing
+sed -i '' "s/SAFE_CONTRACT_ADDRESSES=.*/SAFE_CONTRACT_ADDRESSES='{\"base\": \"$TEST_SAFE_ADDRESS\"}'/" .env
+
+# Verify configuration
+echo "Updated .env with:"
+echo "ATTESTATION_TRACKER_ADDRESS=$ATTESTATION_TRACKER_ADDRESS"
+echo "SAFE_CONTRACT_ADDRESSES={\"base\": \"$TEST_SAFE_ADDRESS\"}"
+
 # Build container
 docker-compose build
 
