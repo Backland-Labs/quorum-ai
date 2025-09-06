@@ -54,12 +54,14 @@ class TestSafeServiceEAS:
     def sample_attestation_data(self):
         """Create sample EAS attestation data."""
         return EASAttestationData(
+            agent="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
+            space_id="aave.eth", 
             proposal_id="0xproposal123",
-            space_id="aave.eth",
-            voter_address="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
-            choice=1,
-            vote_tx_hash="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-            timestamp=datetime.utcnow(),
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1703980800,  # Unix timestamp
+            run_id="run_12345",
+            confidence=85,
             retry_count=0
         )
     
@@ -225,12 +227,14 @@ class TestAttestationTrackerIntegration:
     def sample_attestation_data(self):
         """Create sample EAS attestation data."""
         return EASAttestationData(
+            agent="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
+            space_id="aave.eth", 
             proposal_id="0xproposal123",
-            space_id="aave.eth",
-            voter_address="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
-            choice=1,
-            vote_tx_hash="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-            timestamp=datetime.utcnow(),
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1703980800,  # Unix timestamp
+            run_id="run_12345",
+            confidence=85,
             retry_count=0
         )
 

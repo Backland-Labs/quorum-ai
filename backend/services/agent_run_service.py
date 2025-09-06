@@ -975,12 +975,23 @@ class AgentRunService:
                     )
 
                     # Submit attestation
+                    self.pearl_logger.info(
+                        f"Submitting EAS attestation for proposal {attestation['proposal_id']} "
+                        f"(attempt {retry_count + 1}/{MAX_ATTESTATION_RETRIES})"
+                    )
                     result = await self.safe_service.create_eas_attestation(eas_data)
 
-                    self.pearl_logger.info(
-                        f"Successfully created attestation for proposal {attestation['proposal_id']}: "
-                        f"tx_hash={result.get('tx_hash')}, uid={result.get('attestation_uid')}"
-                    )
+                    if result.get("success"):
+                        self.pearl_logger.info(
+                            f"Successfully created attestation for proposal {attestation['proposal_id']}: "
+                            f"tx_hash={result.get('safe_tx_hash')}, success={result.get('success')}"
+                        )
+                    else:
+                        self.pearl_logger.error(
+                            f"Failed to create attestation for proposal {attestation['proposal_id']}: "
+                            f"error={result.get('error')}"
+                        )
+                        raise Exception(f"Attestation failed: {result.get('error')}")
 
                     processed_attestations.append(attestation["proposal_id"])
 

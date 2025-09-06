@@ -980,17 +980,23 @@ class WithdrawalTransaction(BaseModel):
 
 
 class EASAttestationData(BaseModel):
-    """Data model for EAS (Ethereum Attestation Service) attestations."""
+    """Data model for EAS (Ethereum Attestation Service) attestations.
+    
+    Schema: address agent, string spaceId, string proposalId, uint8 voteChoice, 
+            string snapshotSig, uint256 timestamp, string runId, uint8 confidence
+    """
 
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
-    # Required fields for attestation
-    proposal_id: str = Field(..., description="Snapshot proposal ID being attested")
+    # Required fields for attestation (matching new schema)
+    agent: str = Field(..., description="Address of the agent/voter")
     space_id: str = Field(..., description="Snapshot space ID")
-    voter_address: str = Field(..., description="Address of the voter")
-    choice: int = Field(..., description="Vote choice value")
-    vote_tx_hash: str = Field(..., description="Transaction hash of the Snapshot vote")
-    timestamp: datetime = Field(..., description="Timestamp of the attestation")
+    proposal_id: str = Field(..., description="Snapshot proposal ID being attested")
+    vote_choice: int = Field(..., ge=0, le=255, description="Vote choice value (uint8)")
+    snapshot_sig: str = Field(..., description="Snapshot signature hash")
+    timestamp: int = Field(..., description="Unix timestamp of the attestation")
+    run_id: str = Field(..., description="Agent run identifier")
+    confidence: int = Field(..., ge=0, le=255, description="Confidence level (uint8)")
     retry_count: int = Field(
         default=0, ge=0, le=3, description="Number of retry attempts"
     )
@@ -1009,13 +1015,13 @@ class EASAttestationData(BaseModel):
         None, description="Error message if attestation failed"
     )
 
-    @field_validator("voter_address")
+    @field_validator("agent")
     @classmethod
-    def validate_voter_address(cls, v: str) -> str:
+    def validate_agent_address(cls, v: str) -> str:
         """Validate Ethereum address format."""
         return ModelValidationHelper.validate_blockchain_address(v)
 
-    @field_validator("vote_tx_hash", "attestation_tx_hash")
+    @field_validator("snapshot_sig", "attestation_tx_hash")
     @classmethod
     def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
         """Validate transaction hash format."""

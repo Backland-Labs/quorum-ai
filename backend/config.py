@@ -125,9 +125,6 @@ class Settings(BaseSettings):
 
     # DAO monitoring - removed from Pydantic fields to avoid JSON parsing issues
     # Use the monitored_daos_list property instead
-    vote_confidence_threshold: float = Field(
-        default=0.6, ge=0.0, le=1.0, description="Vote confidence threshold"
-    )
 
     # Activity tracking
     DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS: ClassVar[int] = 3600  # 1 hour
@@ -156,6 +153,7 @@ class Settings(BaseSettings):
         alias="STAKING_TOKEN_CONTRACT_ADDRESS",
         description="Olas staking token contract",
     )
+    # There is the attestation_tracker_address below where activity is checked. This address is currently unused.
     activity_checker_contract_address: Optional[str] = Field(
         default=None,
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
@@ -187,7 +185,7 @@ class Settings(BaseSettings):
         description="Maximum proposals to process per agent run",
     )
     agent_confidence_threshold: float = Field(
-        default=0.7,
+        default=0.2,
         ge=0.0,
         le=1.0,
         description="Default confidence threshold for agent voting decisions",
@@ -301,7 +299,7 @@ class Settings(BaseSettings):
         description="EAS contract address on Base network",
     )
     eas_schema_uid: Optional[str] = Field(
-        default=None,
+        default="7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c",
         alias="EAS_SCHEMA_UID",
         description="EAS schema UID for vote attestations",
     )
@@ -318,7 +316,7 @@ class Settings(BaseSettings):
 
     # AttestationTracker Configuration
     attestation_tracker_address: Optional[str] = Field(
-        default=None,
+        default="0x08E7C36CDC1649428c6a056B8465d478ADE0Fae8",
         alias="ATTESTATION_TRACKER_ADDRESS",
         description="AttestationTracker wrapper contract address on Base network. If set, attestations will be routed through this contract.",
     )
@@ -452,7 +450,6 @@ class Settings(BaseSettings):
         """Parse environment-specific settings after model initialization."""
         self._parse_safe_addresses()
         self._parse_agent_address()
-        self._parse_vote_threshold()
         self._parse_intervals()
         self._parse_agent_run_config()
         self._parse_pearl_logging_config()
@@ -478,17 +475,6 @@ class Settings(BaseSettings):
         agent_address_env = os.getenv("AGENT_ADDRESS")
         if agent_address_env:
             self.agent_address = agent_address_env
-
-    def _parse_vote_threshold(self):
-        """Parse vote confidence threshold from VOTE_CONFIDENCE_THRESHOLD environment variable."""
-        vote_threshold_env = os.getenv("VOTE_CONFIDENCE_THRESHOLD")
-        if vote_threshold_env:
-            threshold = float(vote_threshold_env)
-            if not (0.0 <= threshold <= 1.0):
-                raise ValueError(
-                    f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
-                )
-            self.vote_confidence_threshold = threshold
 
     def _parse_intervals(self):
         """Parse interval settings from environment variables."""

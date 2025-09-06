@@ -20,50 +20,45 @@
       Back to Dashboard
     </button>
 
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Instructions</h1>
-    <p class="text-gray-600 mb-8">Follow these steps to configure and use Quorum AI for autonomous Snapshot voting.</p>
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Getting Started</h1>
+    <p class="text-gray-600 mb-8">Follow these steps to set up and configure Quorum AI for autonomous Snapshot voting.</p>
 
     <div class="bg-white shadow rounded-lg p-6 space-y-6">
       <section>
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Getting Started</h2>
-        <ol class="list-decimal pl-5 space-y-2 text-gray-700">
-          <li>Start the backend (FastAPI) on port 8716 and the frontend. Quick start: <code class="text-gray-900">./startup.sh</code></li>
-          <li>Open the app and complete the setup wizard to save your voting preferences (<a href="/setup" class="text-indigo-600 hover:text-indigo-500 underline">/setup</a>).</li>
-          <li>From the Dashboard, select the Snapshot space you want to follow and run the agent.</li>
-          <li>Review recent decisions and status on the Dashboard. For detailed options, see <a href="/docs" class="text-indigo-600 hover:text-indigo-500 underline">Documentation</a>.</li>
-        </ol>
-      </section>
-
-      <section class="border-t pt-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Required Setup</h2>
-        <ul class="list-disc pl-5 space-y-2 text-gray-700">
-          <li><strong>OpenRouter API Key:</strong> Required for AI features. Set <code class="text-gray-900">OPENROUTER_API_KEY</code> in your environment/backend.</li>
-          <li><strong>Backend Port:</strong> Runs on <code class="text-gray-900">8716</code> by default; API docs available at <code class="text-gray-900">/docs</code> when running.</li>
-          <li><strong>Private Key for Voting:</strong> The agent uses <code class="text-gray-900">backend/ethereum_private_key.txt</code> (preferred) or <code class="text-gray-900">PRIVATE_KEY</code> in <code class="text-gray-900">.env</code>. Ensure the file exists, is valid, and has secure permissions (chmod 600).</li>
-          <li><strong>API Client (optional):</strong> Generate types by running <code class="text-gray-900">npm run generate-api</code> in <code class="text-gray-900">frontend/</code> when the backend is running.</li>
-        </ul>
-      </section>
-
-      <section class="border-t pt-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Voting Power Requirements</h2>
-        <div class="text-gray-700 space-y-2">
-          <p>Snapshot will only accept votes from addresses that have voting power in the selected space (according to that space's strategies/rules).</p>
-          <ul class="list-disc pl-5 space-y-2">
-            <li>If you see a 400 error "no voting power" in logs, your address doesn't meet the space requirements. This is not a technical error but an eligibility rule.</li>
-            <li>Verify the active address corresponds to your configured private key and holds the required tokens or delegations for that space.</li>
-            <li>For test environments, use a funded/authorized test account with voting power in the test space.</li>
-          </ul>
-          <p class="text-xs text-gray-500">Tip: Check <code>backend/log.txt</code> for detailed Pearl-compliant logs when troubleshooting.</p>
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Configure Your Agent</h2>
+        <div class="text-gray-700 space-y-3">
+          <p>First, you'll need to sign up for OpenRouter to get an API key for AI functionality:</p>
+          <ol class="list-decimal pl-5 space-y-2">
+            <li>Go to <a href="https://openrouter.ai/" target="_blank" class="text-indigo-600 hover:text-indigo-500 underline">OpenRouter.ai</a></li>
+            <li>Sign up for an account</li>
+            <li>Navigate to your API keys section</li>
+            <li>Generate a new API key</li>
+            <li>Copy and save this key</li>
+            <li>Go to the <a href="/settings" class="text-indigo-600 hover:text-indigo-500 underline">Settings</a> page in Quorum AI</li>
+            <li>Add your OpenRouter API key in the configuration section</li>
+            <li>Configure your agent's voting strategy based on your preferences</li>
+            <li>Configure the confidence threshold (recommend leaving the defaults)</li>
+          </ol>
         </div>
       </section>
 
       <section class="border-t pt-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-3">Troubleshooting</h2>
-        <ul class="list-disc pl-5 space-y-2 text-gray-700">
-          <li>Status not updating? Ensure the backend is running on port 8716 and check network errors.</li>
-          <li>Agent run failed? Confirm your OpenRouter API key is set and user preferences are saved.</li>
-          <li>No votes posted? Verify voting power and private key configuration as above.</li>
-        </ul>
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Important Note</h2>
+        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">Voting Power Required</h3>
+              <div class="mt-2 text-sm text-yellow-700">
+                <p>In order for the agent to vote on a given proposal, your wallet address must have voting power for that specific proposal. This is determined by the DAO's voting strategies and token holdings at the proposal's snapshot block.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   </div>
