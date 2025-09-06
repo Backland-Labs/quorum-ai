@@ -4,6 +4,7 @@ import json
 from typing import Dict, Optional, Any
 from web3 import Web3
 from eth_account import Account
+from eth_account.messages import encode_typed_data
 from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
@@ -22,8 +23,6 @@ SAFE_SERVICE_URLS = {
     "base": "https://safe-transaction-base.safe.global/",
     "mode": "https://safe-transaction-mode.safe.global/",
 }
-
-
 
 
 # Safe operation types
@@ -49,6 +48,7 @@ class SafeService:
         with open("ethereum_private_key.txt", "r") as f:
             private_key = f.read().strip()
 
+        self.private_key = private_key
         self.account = Account.from_key(private_key)
         self._web3_connections = {}
 
@@ -182,12 +182,13 @@ class SafeService:
                     base_url=safe_service_url,
                 )
 
-                # Build Safe transaction
+                # Build Safe transaction with proper gas estimation
                 safe_tx = safe_instance.build_multisig_tx(
                     to=to,
                     value=value,
                     data=data,
                     operation=operation,
+                    safe_tx_gas=100000,  # Set reasonable gas limit to avoid GS013
                 )
 
                 # Sign Safe transaction hash
@@ -223,7 +224,7 @@ class SafeService:
                     gas_token=safe_tx.gas_token,
                     refund_receiver=safe_tx.refund_receiver,
                     signatures=safe_tx.signatures,
-                    tx_sender_private_key=self.account.address,
+                    tx_sender_private_key=self.private_key,
                 )
 
                 tx_hash = ethereum_tx_sent.tx_hash
@@ -255,7 +256,7 @@ class SafeService:
                         "gas_used": gas_used,
                     }
                 else:
-                    self.logger.error(f"Transaction reverted (tx_hash={tx_hash_hex})")
+                    self.logger.exception(f"Transaction reverted (tx_hash={tx_hash_hex})")
                     return {
                         "success": False,
                         "error": "Transaction reverted",
@@ -263,7 +264,7 @@ class SafeService:
                     }
 
             except Exception as e:
-                self.logger.error(f"Error creating Safe transaction: {str(e)}")
+                self.logger.exception(f"Error creating Safe transaction: {str(e)}")
 
                 return {"success": False, "error": str(e)}
 
@@ -291,6 +292,7 @@ class SafeService:
             }
 
         # Use helper method to submit dummy transaction
+        self.logger.info("Performing activity transaction")
         return await self._submit_safe_transaction(
             chain=chain,
             to=safe_address,  # Send to itself
@@ -298,8 +300,6 @@ class SafeService:
             data=b"",  # Empty data
             operation=SAFE_OPERATION_CALL,  # CALL operation
         )
-
-
 
     async def get_safe_nonce(self, chain: str, safe_address: str) -> int:
         """Get current nonce for a Safe on specified chain.
@@ -372,6 +372,7 @@ class SafeService:
             Dict containing success status and transaction details or error
         """
         try:
+            self.logger.info("Creating EAS attestation")
             # Check if EAS configuration is available
             if not settings.eas_contract_address or not settings.eas_schema_uid:
                 return {
@@ -385,11 +386,16 @@ class SafeService:
             # Build the attestation transaction
             tx_data = self._build_eas_attestation_tx(attestation_data)
 
+            self.logger.debug(f"EAS tx data: {tx_data}, type: {type(tx_data)}")
+
+            # Convert hex string to bytes for Safe transaction
+            tx_data_bytes = bytes.fromhex(tx_data["data"][2:]) if tx_data["data"].startswith("0x") else bytes.fromhex(tx_data["data"])
+
             # Submit through Safe
             result = await self._submit_safe_transaction(
                 chain="base",
                 to=tx_data["to"],
-                data=tx_data["data"],
+                data=tx_data_bytes,
                 value=tx_data.get("value", 0),
             )
 
@@ -401,7 +407,7 @@ class SafeService:
             return {"success": True, "safe_tx_hash": result.get("hash")}
 
         except Exception as e:
-            self.logger.error(f"Failed to create EAS attestation: {str(e)}")
+            self.logger.exception(f"Failed to create EAS attestation: {str(e)}")
             return {"success": False, "error": str(e)}
 
     def _build_eas_attestation_tx(
@@ -419,9 +425,11 @@ class SafeService:
             Transaction data dict with 'to', 'data', and 'value' fields
         """
         # Use AttestationTracker if configured, otherwise direct EAS
+        self.logger.info("Building EAS attestation transaction")
         if settings.attestation_tracker_address:
             # Assertion for type checking
             assert settings.attestation_tracker_address is not None
+            self.logger.info("Using AttestationTracker for EAS attestation")
             return self._build_delegated_attestation_tx(
                 attestation_data,
                 target_address=settings.attestation_tracker_address,
@@ -462,17 +470,36 @@ class SafeService:
             address=Web3.to_checksum_address(target_address), abi=contract_abi
         )
 
-        # Build delegated attestation request
-        delegated_request = {
-            "schema": Web3.to_bytes(hexstr=settings.eas_schema_uid),
+        eas_schema_uid = Web3.to_bytes(hexstr=settings.eas_schema_uid)
+
+        assert isinstance(eas_schema_uid, bytes), f"eas_schema_uid must be bytes, got {type(eas_schema_uid)}"
+
+        # Build delegated attestation request with proper signature
+        attestation_request_data = {
+            "schema": eas_schema_uid,
             "data": self._encode_attestation_data(attestation_data),
             "expirationTime": 0,
             "revocable": True,
             "refUID": b"\x00" * 32,
             "recipient": Web3.to_checksum_address(attestation_data.voter_address),
             "value": 0,
-            "deadline": 0,
-            "signature": b"",  # Empty for Safe multisig pattern
+            "deadline": int(w3.eth.get_block('latest')['timestamp']) + 3600,  # 1 hour deadline
+        }
+        
+        # Generate EAS delegated signature (always sign for EAS contract, not wrapper)
+        eas_address = settings.eas_contract_address
+        if not eas_address:
+            raise ValueError("EAS contract address not configured")
+            
+        signature = self._generate_eas_delegated_signature(
+            attestation_request_data, 
+            w3, 
+            eas_address
+        )
+        
+        delegated_request = {
+            **attestation_request_data,
+            "signature": signature,
         }
 
         self.logger.info(
@@ -506,6 +533,11 @@ class SafeService:
         """
         w3 = Web3()
 
+        # Convert vote_tx_hash string to bytes32
+        vote_tx_hash_bytes = Web3.to_bytes(hexstr=attestation_data.vote_tx_hash)
+
+        assert isinstance(vote_tx_hash_bytes, bytes), f"vote_tx_hash must be bytes, got {type(vote_tx_hash_bytes)}"
+        
         # Encode the attestation data
         encoded = w3.codec.encode(
             ["string", "string", "uint256", "bytes32"],
@@ -513,7 +545,7 @@ class SafeService:
                 attestation_data.proposal_id,
                 attestation_data.space_id,
                 attestation_data.choice,
-                Web3.to_bytes(hexstr=attestation_data.vote_tx_hash),
+                vote_tx_hash_bytes,
             ],
         )
 
@@ -533,3 +565,73 @@ class SafeService:
             raise ValueError(f"No RPC endpoint configured for chain: {chain}")
 
         return Web3(Web3.HTTPProvider(rpc_url))
+
+    def _generate_eas_delegated_signature(
+        self, request_data: Dict[str, Any], w3: Web3, eas_contract_address: str
+    ) -> bytes:
+        """Generate EIP-712 signature for EAS delegated attestation.
+        
+        Args:
+            request_data: The attestation request data (without signature)
+            w3: Web3 instance
+            eas_contract_address: EAS contract address
+            
+        Returns:
+            EIP-712 signature bytes
+        """
+        # EAS EIP-712 domain and types structure
+        types = {
+            'EIP712Domain': [
+                {'name': 'name', 'type': 'string'},
+                {'name': 'version', 'type': 'string'},
+                {'name': 'chainId', 'type': 'uint256'},
+                {'name': 'verifyingContract', 'type': 'address'},
+            ],
+            'DelegatedAttestation': [
+                {'name': 'schema', 'type': 'bytes32'},
+                {'name': 'recipient', 'type': 'address'},
+                {'name': 'expirationTime', 'type': 'uint64'},
+                {'name': 'revocable', 'type': 'bool'},
+                {'name': 'refUID', 'type': 'bytes32'},
+                {'name': 'data', 'type': 'bytes'},
+                {'name': 'value', 'type': 'uint256'},
+                {'name': 'deadline', 'type': 'uint64'},
+            ]
+        }
+        
+        domain = {
+            'name': 'EAS Attestation',
+            'version': '0.26',
+            'chainId': w3.eth.chain_id,
+            'verifyingContract': Web3.to_checksum_address(eas_contract_address),
+        }
+        
+        # Message data
+        message = {
+            'schema': request_data['schema'],
+            'recipient': request_data['recipient'], 
+            'expirationTime': request_data['expirationTime'],
+            'revocable': request_data['revocable'],
+            'refUID': request_data['refUID'],
+            'data': request_data['data'],
+            'value': request_data['value'],
+            'deadline': request_data['deadline'],
+        }
+        
+        # Create EIP-712 encoded data
+        typed_data = {
+            'domain': domain,
+            'primaryType': 'DelegatedAttestation', 
+            'types': types,
+            'message': message,
+        }
+        encoded = encode_typed_data(full_message=typed_data)
+        
+        # Sign with the account's private key
+        signature = self.account.sign_message(encoded)
+        
+        self.logger.info(
+            f"Generated EAS delegated signature: {signature.signature.hex()}"
+        )
+        
+        return signature.signature

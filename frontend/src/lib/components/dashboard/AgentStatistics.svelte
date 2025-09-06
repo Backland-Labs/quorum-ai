@@ -4,21 +4,10 @@
   // Constants
   const ERROR_MESSAGE = 'Failed to load statistics';
   const RETRY_MESSAGE = 'Please try again later';
-  const NO_DATA_TEXT = 'No data';
 
   // Get data from the store
   const storeState = $state($agentStatusStore);
 
-  // Format percentage values for display
-  const formatPercentage = (value: number, hasData: boolean): string => {
-    if (!hasData) return NO_DATA_TEXT;
-    return `${Math.round(value * 100)}%`;
-  };
-
-  // Determine if we have meaningful data
-  const hasData = (stats: typeof storeState.statistics): boolean => {
-    return stats !== null && stats.total_runs > 0;
-  };
 </script>
 
 <section
@@ -72,25 +61,7 @@
         </div>
       </div>
 
-      <!-- Average Confidence -->
-      <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Average confidence">
-        <div data-testid="stat-content" class="flex flex-col space-y-1">
-          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Avg Confidence</dt>
-          <dd data-testid="stat-value percentage-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums font-mono" aria-label="Average confidence: {formatPercentage(storeState.statistics.average_confidence_score, hasData(storeState.statistics))}">
-            {formatPercentage(storeState.statistics.average_confidence_score, hasData(storeState.statistics))}
-          </dd>
-        </div>
-      </div>
 
-      <!-- Success Rate -->
-      <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Success rate">
-        <div data-testid="stat-content" class="flex flex-col space-y-1">
-          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Success Rate</dt>
-          <dd data-testid="stat-value percentage-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums font-mono" aria-label="Success rate: {formatPercentage(storeState.statistics.success_rate, hasData(storeState.statistics))}">
-            {formatPercentage(storeState.statistics.success_rate, hasData(storeState.statistics))}
-          </dd>
-        </div>
-      </div>
     </dl>
   {/if}
 </section>

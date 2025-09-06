@@ -17,10 +17,13 @@
         </div>
         <nav class="flex space-x-8">
           <a href="/" class="text-secondary-600 hover:text-primary-600 font-medium transition-colors duration-200">
-            Organizations
+            Dashboard
           </a>
           <a href="/settings" class="text-secondary-600 hover:text-primary-600 font-medium transition-colors duration-200">
             Settings
+          </a>
+          <a href="/instructions" class="text-secondary-600 hover:text-primary-600 font-medium transition-colors duration-200">
+            Instructions
           </a>
         </nav>
       </div>

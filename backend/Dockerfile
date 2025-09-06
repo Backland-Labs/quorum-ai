@@ -7,9 +7,16 @@ WORKDIR /app
 # Set environment variables
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
+ENV PYTHONOPTIMIZE=1
 
-# Install curl for healthcheck
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install curl for healthcheck and build tools for compiling native dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gcc \
+    g++ \
+    make \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency files first for better Docker layer caching
 COPY pyproject.toml uv.lock ./

@@ -5,34 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased] - 2025-09-06
 
 ### Added
-- Pydantic AI Agents integration with Google Gemini 2.0 Flash via OpenRouter (#146)
-- VotingAgent class with agent tools for Snapshot integration (query_active_proposals, get_proposal_details, get_voting_power)
-- File-based decision output system with atomic writes and automatic cleanup
-- Comprehensive agent testing suite with 30+ test cases and performance benchmarks
-- Autonomous voting dashboard with real-time status monitoring (#143)
-- Agent dashboard API endpoints: /agent-run/status, /agent-run/decisions, /agent-run/statistics
-- Frontend components: AgentStatusWidget, AgentDecisionsPanel, AgentStatistics, AgentQuickActions
-- Shared state management for agent dashboard with Svelte stores
-- Dynamic MONITORED_DAOS configuration from backend API
-- Pearl log streaming in startup.sh --logs mode
+- **Smart Contract Infrastructure**: Complete AttestationTracker and QuorumStaking contract system
+  - AttestationTracker.sol: EAS-based vote attestation tracking with IQuorumTracker interface
+  - QuorumStaking.sol: Token activity monitoring with configurable liveness ratios
+  - Foundry deployment scripts and comprehensive test suites
+  - Multi-chain deployment support (Base, Ethereum, Gnosis, Mode)
+- **Frontend UI Enhancements**:
+  - Instructions tab and dedicated page in navigation system
+  - Streamlined Dashboard navigation (replaced 'Organizations' label)
+  - Removed confidence/success rate cards for simplified metrics display
+  - Complete removal of unused Proposals/Activity tabs and tab infrastructure
+- **AI Agent Architecture Improvements**:
+  - Separated voting and summarization agents for better modularity (#180)
+  - Enhanced AI reasoning integration with decision data
+  - Improved agent orchestration and error handling
+- **Repository Organization**:
+  - Dedicated test-artifacts/ directory for organized development files
+  - Comprehensive CLAUDE.md documentation for AI assistant context
+  - Enhanced development tooling with ast-grep integration
+- **Docker & Deployment**:
+  - Combined Docker container implementation for frontend and backend
+  - Improved containerization with proper environment setup
+  - Enhanced Dockerfile with security improvements (removed API key logging)
 
 ### Changed
-- Refactored AI Service to use Pydantic AI Agents architecture
-- Migrated vote decision logic to use VotingAgent with structured outputs
-- Enhanced error handling and logging throughout AI service
-- Improved startup.sh with graceful shutdown and better error handling
-- Updated agent dashboard with responsive design and accessibility features
-- Standardized application to use port 8716 consistently across all services
+- **Blockchain Integration Fixes**: Resolved signature validation issues in EAS attestation
+- **Frontend Architecture**: Complete tab system removal and navigation simplification
+- **User Interface**: Removed blacklisted/whitelisted proposers UI from settings page
+- **AI Decision Making**: Enhanced summary section with AI reasoning from decision data
+- **Development Workflow**: Improved Docker entrypoint with graceful shutdown handling
 
 ### Fixed
-- AI service summarization errors with proper fallback responses
-- Proposal title display showing 'Unknown Proposal' in dashboard
-- Decision file reading in get_recent_decisions method
-- Type annotations and Pylance errors in ai_service.py
-- Snapshot API integration issues with space_id handling
+- **EAS Integration**: Fixed attestation validation by properly capturing Snapshot vote IDs
+- **Blockchain Signatures**: Resolved signature format issues in contract interactions
+- **Environment Handling**: Corrected empty string validation in env_helper.py
+- **Container Security**: Removed API key exposure in container logging
+- **Build Process**: Various Docker and container configuration improvements
+
+### Removed
+- **UI Complexity**: Eliminated unused tab components and navigation complexity
+- **Deprecated Metrics**: Removed confidence and success rate cards from dashboard
+- **Legacy Code**: Cleaned up remaining tab infrastructure and unused components
 
 ## [0.5.0] - 2025-07-23
 ### Added

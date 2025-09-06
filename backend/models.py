@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 from decimal import Decimal
-from enum import Enum, IntEnum
+from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -32,7 +32,6 @@ class RiskLevel(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
-
 
 
 # Voting strategy types
@@ -1239,3 +1238,16 @@ class HealthServiceTimeoutError(HealthCheckError):
         self.timeout_ms = timeout_ms
         self.operation = operation
         super().__init__(message, context)
+
+
+# API Key Management Exceptions
+class ApiKeyError(Exception):
+    """API key related errors."""
+
+    pass
+
+
+class ValidationError(Exception):
+    """Validation errors."""
+
+    pass

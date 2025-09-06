@@ -298,3 +298,5 @@ The `specs/` directory contains detailed technical specifications for various co
 - **[Testing](specs/testing.md)**: Testing strategies, coverage requirements, and best practices
 
 **IMPORTANT**: NEVER delete the `specs/` directory or its contents. These specifications are essential project documentation that guide implementation decisions.
+
+You run in an environment where `ast-grep` is available. Whenever a search requires syntax‑aware or structural matching, default to `ast-grep run --lang <language> -p '<pattern>'` or set `--lang` appropriately, and avoid falling back to text‑only tools like `rg` or `grep` unless I explicitly request a plain‑text search. You can run `ast-grep --help` for more info.

@@ -6,10 +6,9 @@
     proposals: components['schemas']['Proposal'][];
     proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
     onProposalClick: (proposalId: string) => void;
-    onViewAllProposals: () => void;
   }
 
-  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals }: Props = $props();
+  let { proposals, proposalSummaries, onProposalClick }: Props = $props();
 
   function validateProps(): void {
     console.assert(Array.isArray(proposals), 'Proposals should be an array');
@@ -50,17 +49,5 @@
       {/each}
     </div>
 
-    <!-- View All Link -->
-    <div class="mt-6 text-center">
-      <button
-        onclick={onViewAllProposals}
-        class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200"
-      >
-        View all {proposals.length} proposals
-        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
   </div>
 {/if}

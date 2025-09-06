@@ -31,7 +31,6 @@ from services.agent_run_logger import AgentRunLogger
 from services.state_transition_tracker import StateTransitionTracker, AgentState
 
 
-
 # Constants
 MAX_ATTESTATION_RETRIES = 3
 
@@ -76,21 +75,20 @@ class AgentRunService:
     4. Execute votes (or simulate in dry run mode)
     """
 
-    def __init__(self, state_manager=None) -> None:
+    def __init__(self, state_manager=None, ai_service=None) -> None:
         """Initialize AgentRunService with required dependencies.
 
         Args:
             state_manager: Optional StateManager instance for state persistence
+            ai_service: Optional AIService instance for shared configuration
         """
         self.snapshot_service = SnapshotService()
-        self.ai_service = AIService()
+        self.ai_service = ai_service or AIService()
         self.voting_service = VotingService()
         self.safe_service = SafeService()
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
-
-
 
         # Initialize state transition tracker with StateManager for persistence
         self.state_tracker = StateTransitionTracker(
@@ -105,9 +103,7 @@ class AgentRunService:
 
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name="agent_run_service")
-        self.pearl_logger.info(
-            "AgentRunService initialized with all dependencies"
-        )
+        self.pearl_logger.info("AgentRunService initialized with all dependencies")
 
     async def initialize(self):
         """Initialize async components including state tracker."""
@@ -116,8 +112,6 @@ class AgentRunService:
             self.pearl_logger.info(
                 "State tracker initialized with StateManager persistence"
             )
-
-
 
     async def execute_agent_run(self, request: AgentRunRequest) -> AgentRunResponse:
         """Execute a complete agent run for the given space.
@@ -818,8 +812,15 @@ class AgentRunService:
                             # Track successful vote cast activity
                             pass
 
-                            # Queue attestation for successful vote
-                            await self._queue_attestation(decision, space_id, run_id)
+                            # Extract vote ID from the Snapshot response
+                            vote_id = None
+                            submission_result = vote_result.get("submission_result", {})
+                            if submission_result.get("success"):
+                                response = submission_result.get("response", {})
+                                vote_id = response.get("id")
+                            
+                            # Queue attestation for successful vote with vote ID
+                            await self._queue_attestation(decision, space_id, run_id, vote_id)
                         else:
                             self.logger.log_vote_execution(
                                 decision, False, vote_result.get("error")
@@ -913,21 +914,36 @@ class AgentRunService:
         Args:
             space_id: The space ID to process attestations for
         """
+        print(f"DEBUG: _process_pending_attestations called for space_id={space_id}")
+        
         if not self.state_manager:
+            print("DEBUG: No state_manager, returning early")
             return
 
         try:
             # Load checkpoint with any pending attestations
-            checkpoint = await self.state_manager.load_checkpoint(
-                f"agent_checkpoint_{space_id}"
-            )
-            if not checkpoint or "pending_attestations" not in checkpoint:
+            checkpoint_name = f"agent_checkpoint_{space_id}"
+            print(f"DEBUG: Loading checkpoint '{checkpoint_name}'")
+            checkpoint = await self.state_manager.load_checkpoint(checkpoint_name)
+            
+            if not checkpoint:
+                print(f"DEBUG: No checkpoint found for '{checkpoint_name}'")
                 return
+                
+            if "pending_attestations" not in checkpoint:
+                print(f"DEBUG: No 'pending_attestations' key in checkpoint")
+                return
+                
+            print(f"DEBUG: Checkpoint loaded successfully with keys: {list(checkpoint.keys())}")
+            print(f"DEBUG: Found {len(checkpoint['pending_attestations'])} pending attestations")
 
             pending_attestations = checkpoint["pending_attestations"]
             if not pending_attestations:
+                print("DEBUG: No pending attestations to process")
                 return
 
+            print(f"DEBUG: Starting to process {len(pending_attestations)} pending attestations")
+            
             self.pearl_logger.info(
                 f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
             )
@@ -951,7 +967,7 @@ class AgentRunService:
                         space_id=space_id,
                         voter_address=attestation["voter_address"],
                         choice=attestation["vote_choice"],
-                        vote_tx_hash=attestation.get("vote_tx_hash", "unknown"),
+                        vote_tx_hash=attestation.get("vote_tx_hash", "0x" + "0" * 64),
                         timestamp=datetime.fromisoformat(attestation["timestamp"])
                         if isinstance(attestation["timestamp"], str)
                         else attestation["timestamp"],
@@ -969,7 +985,7 @@ class AgentRunService:
                     processed_attestations.append(attestation["proposal_id"])
 
                 except Exception as e:
-                    self.pearl_logger.error(
+                    self.pearl_logger.exception(
                         f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
                     )
 
@@ -994,7 +1010,7 @@ class AgentRunService:
             )
 
     async def _queue_attestation(
-        self, decision: VoteDecision, space_id: str, run_id: str
+        self, decision: VoteDecision, space_id: str, run_id: str, vote_tx_hash: Optional[str] = None
     ) -> None:
         """Queue an attestation for a successful vote.
 
@@ -1002,6 +1018,7 @@ class AgentRunService:
             decision: The vote decision that was executed
             space_id: The space ID where the vote was cast
             run_id: The current agent run ID
+            vote_tx_hash: The vote transaction hash/ID from Snapshot (optional)
         """
         if not self.state_manager:
             self.pearl_logger.warning("No state manager, skipping attestation queue")
@@ -1009,7 +1026,7 @@ class AgentRunService:
 
         try:
             # Load current checkpoint
-            checkpoint = await self.state_manager.load_checkpoint(f"run_{run_id}")
+            checkpoint = await self.state_manager.load_checkpoint(f"agent_checkpoint_{space_id}")
             if checkpoint is None:
                 checkpoint = {}
 
@@ -1024,6 +1041,9 @@ class AgentRunService:
             delegate_address = voter_address
 
             # Create attestation data
+            # Use provided vote_tx_hash or create a valid placeholder
+            tx_hash = vote_tx_hash if vote_tx_hash else "0x" + "0" * 64
+            
             attestation_data = {
                 "proposal_id": decision.proposal_id,
                 "vote_choice": VOTE_CHOICE_MAPPING[
@@ -1031,6 +1051,7 @@ class AgentRunService:
                 ],  # Convert VoteType to choice number
                 "voter_address": voter_address,
                 "delegate_address": delegate_address,
+                "vote_tx_hash": tx_hash,
                 "reasoning": decision.reasoning,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "retry_count": 0,
@@ -1040,10 +1061,10 @@ class AgentRunService:
             checkpoint["pending_attestations"].append(attestation_data)
 
             # Save updated checkpoint
-            await self.state_manager.save_checkpoint(f"run_{run_id}", checkpoint)
+            await self.state_manager.save_checkpoint(f"agent_checkpoint_{space_id}", checkpoint)
 
             self.pearl_logger.info(
-                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: run_{run_id}"
+                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: agent_checkpoint_{space_id}"
             )
 
         except Exception as e:

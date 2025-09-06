@@ -72,60 +72,23 @@ class VotingAgent:
     # Model configuration constants
     GEMINI_MODEL_NAME: str = "google/gemini-2.0-flash-001"
 
-    def __init__(self) -> None:
-        """Initialize the VotingAgent with model, agent, and tools."""
+    def __init__(self, model: OpenAIModel) -> None:
+        """Initialize VotingAgent with shared model instance."""
         self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
-        self.model: OpenAIModel = self._create_model()
+        self.model = model  # Use shared model instead of self._create_model()
         self.agent: Agent[VotingDependencies, AiVoteResponse] = self._create_agent()
         self.response_processor: AIResponseProcessor = AIResponseProcessor()
         self._register_tools()
 
-    def _create_model(self) -> OpenAIModel:
-        """Create the AI model with OpenRouter configuration."""
-        self.logger.info("Creating AI model for VotingAgent")
-
-        # Runtime assertion: validate API key configuration
-        assert settings.openrouter_api_key, "OpenRouter API key is not configured"
-        assert isinstance(
-            settings.openrouter_api_key, str
-        ), f"API key must be string, got {type(settings.openrouter_api_key)}"
-
-        try:
-            # Create OpenRouter provider
-            provider = OpenRouterProvider(api_key=settings.openrouter_api_key)
-
-            # Create model with provider
-            model = OpenAIModel(self.GEMINI_MODEL_NAME, provider=provider)
-
-            # Get model type name for logging
-            model_type_name = type(model).__name__
-            self.logger.info(
-                "Successfully created OpenRouter model for VotingAgent, model_type=%s",
-                model_type_name,
-            )
-
-            # Runtime assertion: validate model creation
-            assert model is not None, "OpenRouter model creation returned None"
-            assert hasattr(model, "__class__"), "Model must be a valid object instance"
-
-            return model
-        except Exception as e:
-            error_message = str(e)
-            error_type = type(e).__name__
-            self.logger.error(
-                "Failed to create OpenRouter model for VotingAgent, error=%s, error_type=%s",
-                error_message,
-                error_type,
-            )
-            raise e
+        self.logger.info("VotingAgent initialized with shared model")
 
     def _create_agent(self) -> Agent[VotingDependencies, AiVoteResponse]:
         """Create and configure the Pydantic AI agent."""
         # Runtime assertion: validate preconditions
         assert self.model is not None, "Model must be initialized before creating agent"
-        assert hasattr(
-            self, "model"
-        ), "Model attribute must exist before agent creation"
+        assert hasattr(self, "model"), (
+            "Model attribute must exist before agent creation"
+        )
 
         try:
             # Extract model information for logging
@@ -286,9 +249,9 @@ class VotingAgent:
 
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
-            assert (
-                ctx.deps.snapshot_service is not None
-            ), "SnapshotService must be available"
+            assert ctx.deps.snapshot_service is not None, (
+                "SnapshotService must be available"
+            )
             assert space_id, "space_id must not be empty"
 
             try:
@@ -334,9 +297,9 @@ class VotingAgent:
 
             # Runtime assertions
             assert ctx.deps is not None, "Dependencies must be available"
-            assert (
-                ctx.deps.snapshot_service is not None
-            ), "SnapshotService must be available"
+            assert ctx.deps.snapshot_service is not None, (
+                "SnapshotService must be available"
+            )
             assert proposal_id, "proposal_id must not be empty"
 
             try:
@@ -412,6 +375,140 @@ class VotingAgent:
                 raise e
 
 
+@dataclass
+class SummarizationDependencies:
+    """Dependencies for SummarizationAgent operations."""
+
+    snapshot_service: SnapshotService
+    # Note: Unlike VotingDependencies, summarization doesn't need user_preferences
+
+    def __post_init__(self):
+        """Runtime assertions for dependency validation."""
+        assert self.snapshot_service is not None, "SnapshotService required"
+
+
+class SummarizationAgent:
+    """Pydantic AI Agent for proposal summarization."""
+
+    # Shared model constant with VotingAgent
+    GEMINI_MODEL_NAME: str = "google/gemini-2.0-flash-001"
+
+    def __init__(self, model: OpenAIModel) -> None:
+        """Initialize SummarizationAgent with shared model instance."""
+        # Initialize Pearl-compliant logger (matches VotingAgent pattern)
+        self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
+        self.model = model  # Use shared model instance
+        self.agent: Agent[SummarizationDependencies, ProposalSummary] = (
+            self._create_agent()
+        )
+
+        # No tools registration needed (unlike VotingAgent)
+        self.logger.info("SummarizationAgent initialized with shared model")
+
+    def _create_agent(self) -> Agent[SummarizationDependencies, ProposalSummary]:
+        """Create and configure the summarization agent."""
+        assert self.model is not None, "Model must be initialized before creating agent"
+
+        self.logger.info("Creating SummarizationAgent with ProposalSummary output")
+
+        system_prompt = self._get_system_prompt()
+        output_config = NativeOutput(ProposalSummary, strict=False)
+
+        agent = Agent[SummarizationDependencies, ProposalSummary](
+            model=self.model,
+            system_prompt=system_prompt,
+            output_type=output_config,
+            deps_type=SummarizationDependencies,
+        )
+
+        assert agent is not None, "Agent creation returned None"
+        assert hasattr(agent, "run"), "Agent must have run method"
+
+        return agent
+
+    def _get_system_prompt(self) -> str:
+        """Get summarization-specific system prompt."""
+        return """You are an AI assistant specialized in analyzing DAO governance proposals for summarization.
+
+        Your role is to provide clear, comprehensive summaries that help users understand:
+        - The main purpose and goals of the proposal
+        - Key changes or actions being proposed
+        - Potential risks and benefits
+        - Voting recommendations based on the analysis
+
+        Always provide structured responses with all required fields populated."""
+
+    async def summarize_proposal(
+        self, proposal: Proposal, deps: SummarizationDependencies
+    ) -> ProposalSummary:
+        """Generate proposal summary using the summarization agent."""
+        self.logger.info(f"Processing proposal summary, proposal_id={proposal.id}")
+
+        try:
+            prompt = self._build_summary_prompt(proposal)
+            result = await self.agent.run(prompt, deps=deps)
+
+            self.logger.info(
+                f"Successfully generated summary for proposal {proposal.id}"
+            )
+            return result.output
+
+        except Exception as e:
+            self.logger.error(
+                f"Failed to generate summary for proposal {proposal.id}, error={str(e)}"
+            )
+            raise e
+
+    def _build_summary_prompt(self, proposal: Proposal) -> str:
+        """Build prompt for proposal summarization."""
+        proposal_info = self._format_proposal_info(proposal)
+
+        return f"""
+        Please analyze the following DAO proposal and provide a comprehensive summary:
+
+        {proposal_info}
+
+        Please provide your analysis in the required ProposalSummary format with:
+        - proposal_id: "{proposal.id}"
+        - title: "{proposal.title}"
+        - summary: A comprehensive summary of the proposal in 2-3 sentences
+        - key_points: List of the most important points from the proposal
+        - risk_assessment: Risk level (LOW, MEDIUM, or HIGH)
+        - recommendation: Optional voting recommendation for users
+        - confidence: Your confidence in the analysis (0.0-1.0)
+        """
+
+    def _format_proposal_info(self, proposal: Proposal) -> str:
+        """Format proposal information for the AI prompt."""
+        vote_breakdown = self._extract_vote_breakdown(proposal)
+        proposal_description = self._get_proposal_description(proposal)
+
+        return f"""**Proposal Title:** {proposal.title}
+        **Space:** {proposal.space_id}
+        **Current Status:** {proposal.state}
+
+        **Voting Results:**
+        - Votes For: {vote_breakdown["for"]:,.0f}
+        - Votes Against: {vote_breakdown["against"]:,.0f}
+        - Abstain: {vote_breakdown["abstain"]:,.0f}
+        - Total Votes: {proposal.votes}
+
+        **Proposal Description:**
+        {proposal_description}"""
+
+    def _extract_vote_breakdown(self, proposal: Proposal) -> Dict[str, float]:
+        """Extract individual vote counts from proposal scores array."""
+        votes_for = proposal.scores[0] if len(proposal.scores) > 0 else 0
+        votes_against = proposal.scores[1] if len(proposal.scores) > 1 else 0
+        votes_abstain = proposal.scores[2] if len(proposal.scores) > 2 else 0
+
+        return {"for": votes_for, "against": votes_against, "abstain": votes_abstain}
+
+    def _get_proposal_description(self, proposal: Proposal) -> str:
+        """Get proposal description with fallback."""
+        return proposal.body or "No description available"
+
+
 class AIResponseProcessor:
     """Cohesive class for handling AI response processing and validation."""
 
@@ -451,9 +548,9 @@ class AIResponseProcessor:
         """Parse and validate AI vote response."""
         # Runtime assertion: validate input parameters
         assert ai_response is not None, "AI response cannot be None"
-        assert isinstance(
-            ai_response, dict
-        ), f"Expected dict response, got {type(ai_response)}"
+        assert isinstance(ai_response, dict), (
+            f"Expected dict response, got {type(ai_response)}"
+        )
 
         # Extract raw values with defaults
         raw_values = self._extract_raw_response_values(ai_response)
@@ -463,12 +560,12 @@ class AIResponseProcessor:
 
         # Runtime assertion: validate output structure
         assert isinstance(validated_response, dict), "Validated response must be dict"
-        assert (
-            "vote" in validated_response
-        ), "Validated response must contain 'vote' key"
-        assert (
-            "confidence" in validated_response
-        ), "Validated response must contain 'confidence' key"
+        assert "vote" in validated_response, (
+            "Validated response must contain 'vote' key"
+        )
+        assert "confidence" in validated_response, (
+            "Validated response must contain 'confidence' key"
+        )
 
         return validated_response
 
@@ -565,40 +662,106 @@ class AIService:
     """
 
     def __init__(self, snapshot_service: Optional[SnapshotService] = None) -> None:
-        """Initialize the AI service with configured model."""
-        # Runtime assertion: validate initialization state
-        assert (
-            settings.openrouter_api_key is not None
-        ), "OpenRouter API key must be configured for AI service"
-        assert (
-            len(settings.openrouter_api_key.strip()) > 0
-        ), "OpenRouter API key cannot be empty"
+        """Initialize the AI service with lazy model initialization."""
+        import threading
 
         # Initialize services
         self.snapshot_service = snapshot_service or SnapshotService()
-
-        # Initialize VotingAgent for refactored architecture
-        self.voting_agent = VotingAgent()
-
-        # Maintain backward compatibility with existing model/agent
-        self.model = self._create_model()
-        self.agent = self._create_agent()
-        # Cache service removed for autonomous voting focus
         self.response_processor = AIResponseProcessor()
+
+        # Lazy initialization attributes
+        self._lock = threading.Lock()
+        self._api_key: Optional[str] = None
+        self.model = None
+
+        # Agent composition - replace single self.agent with separate agents
+        self.voting_agent: Optional[VotingAgent] = None
+        self.summarization_agent: Optional[SummarizationAgent] = None
+
+        # Try to initialize if API key is available
+        self._initialize_if_key_available()
+
+    def _initialize_if_key_available(self) -> None:
+        """Try to initialize with available API key."""
+        key = self._get_effective_key()
+        if key:
+            with self._lock:
+                self._api_key = key
+                try:
+                    model = self._create_model()
+                    if isinstance(model, OpenAIModel):
+                        self.model = model
+                        # Initialize both agents with shared model
+                        self.voting_agent = VotingAgent(self.model)
+                        self.summarization_agent = SummarizationAgent(self.model)
+                        logger.info(
+                            "Both voting and summarization agents initialized with shared model"
+                        )
+                    else:
+                        logger.warning(
+                            "Model creation returned fallback string, agents not initialized"
+                        )
+                except Exception as e:
+                    logger.warning(f"Could not initialize AI components: {e}")
+                    # Leave as None for lazy initialization later
+
+    def _get_effective_key(self) -> Optional[str]:
+        """Get effective API key from settings or user preferences."""
+        # Use effective key property that prioritizes user key
+        effective_key = getattr(settings, "effective_openrouter_api_key", None) or getattr(
+            settings, "openrouter_api_key", None
+        )
+        
+        
+        return effective_key
+
+    def swap_api_key(self, new_key: Optional[str]) -> None:
+        """Swap API key and reinitialize services under lock."""
+        
+        with self._lock:
+            self._api_key = new_key
+            if new_key:
+                # Temporarily set settings key for model creation
+                old_key = getattr(settings, "openrouter_api_key", None)
+                settings.openrouter_api_key = new_key
+                
+                
+                try:
+                    model = self._create_model()
+                    if isinstance(model, OpenAIModel):
+                        self.model = model
+                        # Initialize both agents with shared model
+                        self.voting_agent = VotingAgent(self.model)
+                        self.summarization_agent = SummarizationAgent(self.model)
+                        logger.info(
+                            "OpenRouter API key set successfully for both agents"
+                        )
+                    else:
+                        logger.warning(
+                            "Model creation returned fallback string, agents not initialized"
+                        )
+                finally:
+                    # Restore original key
+                    settings.openrouter_api_key = old_key
+            else:
+                self.model = None
+                self.voting_agent = None
+                self.summarization_agent = None
 
     def _create_model(self) -> Union[OpenAIModel, str]:
         """Create the AI model with OpenRouter configuration."""
         # Constants for model configuration
         GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
-        DEFAULT_MODEL_FALLBACK = "openai:gpt-4o-mini"
+        DEFAULT_MODEL_FALLBACK = "google/gemini-2.0-flash-001"
 
         logger.info("Creating AI model")
+        
 
         # Runtime assertion: validate API key configuration
         assert settings.openrouter_api_key, "OpenRouter API key is not configured"
-        assert isinstance(
-            settings.openrouter_api_key, str
-        ), f"API key must be string, got {type(settings.openrouter_api_key)}"
+        assert isinstance(settings.openrouter_api_key, str), (
+            f"API key must be string, got {type(settings.openrouter_api_key)}"
+        )
 
         if settings.openrouter_api_key:
             logger.info("Using OpenRouter")
@@ -618,9 +781,9 @@ class AIService:
 
                 # Runtime assertion: validate model creation
                 assert model is not None, "OpenRouter model creation returned None"
-                assert hasattr(
-                    model, "__class__"
-                ), "Model must be a valid object instance"
+                assert hasattr(model, "__class__"), (
+                    "Model must be a valid object instance"
+                )
 
                 return model
             except Exception as e:
@@ -635,59 +798,6 @@ class AIService:
         else:
             logger.warning("No AI API keys configured, using default model")
             return DEFAULT_MODEL_FALLBACK  # TODO: need to fix how this is handled
-
-    def _create_agent(self) -> Agent[None, AiVoteResponse]:
-        """Create and configure the Pydantic AI agent."""
-        # Runtime assertion: validate preconditions
-        assert self.model is not None, "Model must be initialized before creating agent"
-        assert hasattr(
-            self, "model"
-        ), "Model attribute must exist before agent creation"
-
-        try:
-            # Extract model information for logging
-            model_type_name = type(self.model).__name__
-            model_value = str(self.model)
-
-            logger.info(
-                "Creating Pydantic AI agent, model_type=%s, model_value=%s",
-                model_type_name,
-                model_value,
-            )
-
-            # Create agent with configuration
-            system_prompt = self._get_system_prompt()
-            output_config = NativeOutput(AiVoteResponse, strict=False)
-
-            agent = Agent(
-                model=self.model,
-                system_prompt=system_prompt,
-                output_type=output_config,
-            )
-
-            # Extract agent type for logging
-            agent_type_name = type(agent).__name__
-            logger.info(
-                "Successfully created Pydantic AI agent, agent_type=%s", agent_type_name
-            )
-
-            # Runtime assertion: validate agent creation
-            assert agent is not None, "Agent creation returned None"
-            assert hasattr(agent, "run"), "Agent must have run method"
-
-            return agent
-        except Exception as e:
-            error_message = str(e)
-            error_type = type(e).__name__
-            model_type_name = type(self.model).__name__
-
-            logger.error(
-                "Failed to create Pydantic AI agent, error=%s, error_type=%s, model_type=%s",
-                error_message,
-                error_type,
-                model_type_name,
-            )
-            raise e
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI agent."""
@@ -723,9 +833,9 @@ class AIService:
         """Make a voting decision for a proposal using the specified strategy."""
         # Runtime assertion: validate input parameters
         assert proposal is not None, "Proposal cannot be None"
-        assert isinstance(
-            proposal, Proposal
-        ), f"Expected Proposal object, got {type(proposal)}"
+        assert isinstance(proposal, Proposal), (
+            f"Expected Proposal object, got {type(proposal)}"
+        )
 
         # Determine strategy from user_preferences or parameter
         if user_preferences:
@@ -733,9 +843,9 @@ class AIService:
         elif strategy is None:
             strategy = VotingStrategy.BALANCED  # Default strategy
 
-        assert isinstance(
-            strategy, VotingStrategy
-        ), f"Expected VotingStrategy enum, got {type(strategy)}"
+        assert isinstance(strategy, VotingStrategy), (
+            f"Expected VotingStrategy enum, got {type(strategy)}"
+        )
 
         try:
             # Extract logging context
@@ -779,12 +889,12 @@ class AIService:
 
                 # Runtime assertion: validate output
                 assert vote_decision is not None, "VoteDecision creation returned None"
-                assert (
-                    vote_decision.proposal_id == proposal.id
-                ), "VoteDecision proposal_id mismatch"
-                assert hasattr(
-                    vote_decision, "vote"
-                ), "VoteDecision must have vote attribute"
+                assert vote_decision.proposal_id == proposal.id, (
+                    "VoteDecision proposal_id mismatch"
+                )
+                assert hasattr(vote_decision, "vote"), (
+                    "VoteDecision must have vote attribute"
+                )
 
                 # Save to file if requested
                 if save_to_file:
@@ -856,6 +966,10 @@ class AIService:
         # Build strategy-specific prompt with proposal details
         prompt = self._build_agent_prompt(proposal, strategy)
 
+        # Check if voting agent is initialized
+        if not self.voting_agent:
+            raise ValueError("AI service not initialized - API key required")
+
         # Execute agent with structured output
         result = await self.voting_agent.agent.run(prompt, deps=deps)
 
@@ -884,6 +998,9 @@ class AIService:
 
     def _build_agent_prompt(self, proposal: Proposal, strategy: VotingStrategy) -> str:
         """Build a comprehensive prompt for the voting agent."""
+        if not self.voting_agent:
+            raise ValueError("AI service not initialized - API key required")
+
         system_prompt = self.voting_agent._get_system_prompt_for_strategy(strategy)
 
         # Truncate body for token efficiency
@@ -950,9 +1067,9 @@ class AIService:
         **Current Status:** {proposal.state}
 
         **Voting Results:**
-        - Votes For: {vote_breakdown['for']:,.0f}
-        - Votes Against: {vote_breakdown['against']:,.0f}
-        - Abstain: {vote_breakdown['abstain']:,.0f}
+        - Votes For: {vote_breakdown["for"]:,.0f}
+        - Votes Against: {vote_breakdown["against"]:,.0f}
+        - Abstain: {vote_breakdown["abstain"]:,.0f}
         - Total Votes: {proposal.votes}
 
         **Proposal Description:**
@@ -971,37 +1088,50 @@ class AIService:
         return proposal.body or "No description available"
 
     async def _call_ai_model_for_vote_decision(self, prompt: str) -> Dict[str, Any]:
-        """Call the AI model with the given prompt."""
-        # Runtime assertion: validate input
+        """Call the AI model with the given prompt using VotingAgent."""
         assert prompt is not None, "Prompt cannot be None"
         assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
 
         try:
             prompt_length = len(prompt)
             logger.info(
-                "Calling AI model for vote decision, prompt_length=%s", prompt_length
+                "Calling VotingAgent for vote decision, prompt_length=%s", prompt_length
             )
 
-            # Call AI model and process result
-            result = await self.agent.run(prompt)
+            # Check if voting agent is initialized
+            if not self.voting_agent:
+                raise ValueError("AI service not initialized - API key required")
+
+            # Create default dependencies for legacy compatibility
+            deps = VotingDependencies(
+                snapshot_service=self.snapshot_service,
+                user_preferences=UserPreferences(
+                    voting_strategy=VotingStrategy.BALANCED,
+                    confidence_threshold=0.7,
+                    max_proposals_per_run=5,
+                    blacklisted_proposers=[],
+                    whitelisted_proposers=[],
+                ),
+            )
+
+            # Use dedicated voting agent
+            result = await self.voting_agent.agent.run(prompt, deps=deps)
             processed_result = self.response_processor.process_ai_result(result)
 
-            # Runtime assertion: validate output
             assert isinstance(processed_result, dict), "AI result must be a dictionary"
-
             return processed_result
+
         except Exception as e:
-            error_message = str(e)
-            logger.error("AI model call failed, error=%s", error_message)
+            logger.error("VotingAgent call failed, error=%s", str(e))
             raise e
 
     async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
         """Generate a summary for a single proposal."""
         # Runtime assertion: validate input parameters
         assert proposal is not None, "Proposal cannot be None"
-        assert isinstance(
-            proposal, Proposal
-        ), f"Expected Proposal object, got {type(proposal)}"
+        assert isinstance(proposal, Proposal), (
+            f"Expected Proposal object, got {type(proposal)}"
+        )
 
         # Constants for default values
         DEFAULT_CONFIDENCE_SCORE = 0.85
@@ -1044,15 +1174,15 @@ class AIService:
                 )
 
                 # Runtime assertion: validate output
-                assert (
-                    proposal_summary is not None
-                ), "ProposalSummary creation returned None"
-                assert (
-                    proposal_summary.proposal_id == proposal.id
-                ), "ProposalSummary proposal_id mismatch"
-                assert hasattr(
-                    proposal_summary, "summary"
-                ), "ProposalSummary must have summary attribute"
+                assert proposal_summary is not None, (
+                    "ProposalSummary creation returned None"
+                )
+                assert proposal_summary.proposal_id == proposal.id, (
+                    "ProposalSummary proposal_id mismatch"
+                )
+                assert hasattr(proposal_summary, "summary"), (
+                    "ProposalSummary must have summary attribute"
+                )
 
                 return proposal_summary
 
@@ -1082,7 +1212,7 @@ class AIService:
             title=proposal.title,
             summary=summary_data["summary"],
             key_points=summary_data["key_points"],
-            risk_assessment=summary_data["risk_level"],
+            risk_assessment=summary_data["risk_assessment"],
             recommendation=summary_data.get("recommendation", default_recommendation),
             confidence=default_confidence,
         )
@@ -1093,9 +1223,9 @@ class AIService:
         """Generate summaries for multiple proposals concurrently."""
         # Runtime assertion: validate input parameters
         assert proposals is not None, "Proposals list cannot be None"
-        assert isinstance(
-            proposals, list
-        ), f"Expected list of Proposals, got {type(proposals)}"
+        assert isinstance(proposals, list), (
+            f"Expected list of Proposals, got {type(proposals)}"
+        )
         assert len(proposals) > 0, "Proposals list cannot be empty"
 
         try:
@@ -1149,12 +1279,12 @@ class AIService:
                 )
 
                 # Runtime assertion: validate output
-                assert (
-                    summary_count == proposal_count
-                ), "Summary count must match proposal count"
-                assert all(
-                    isinstance(s, ProposalSummary) for s in summaries
-                ), "All items must be ProposalSummary objects"
+                assert summary_count == proposal_count, (
+                    "Summary count must match proposal count"
+                )
+                assert all(isinstance(s, ProposalSummary) for s in summaries), (
+                    "All items must be ProposalSummary objects"
+                )
 
                 return summaries
 
@@ -1186,29 +1316,40 @@ class AIService:
 
     async def _call_ai_model_for_summary(self, prompt: str) -> Dict[str, Any]:
         """Call the AI model with the given prompt for summarization."""
-        # Runtime assertion: validate input
         assert prompt is not None, "Prompt cannot be None"
         assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
 
         try:
             prompt_length = len(prompt)
             logger.info(
-                "Calling AI model for summarization, prompt_length=%s", prompt_length
+                "Calling SummarizationAgent for summary, prompt_length=%s",
+                prompt_length,
             )
 
-            # Call AI model and process result
-            result = await self.agent.run(prompt)
-            processed_result = self._process_summary_ai_result(result)
+            # Check if summarization agent is initialized
+            if not self.summarization_agent:
+                raise ValueError("AI service not initialized - API key required")
 
-            # Runtime assertion: validate output
+            # Create dependencies for summarization
+            deps = SummarizationDependencies(snapshot_service=self.snapshot_service)
+
+            # Use dedicated summarization agent instead of self.agent
+            result = await self.summarization_agent.agent.run(prompt, deps=deps)
+
+            # Process result - now returns ProposalSummary structure
+            processed_result = (
+                result.output.model_dump(mode='json')
+                if hasattr(result.output, "model_dump")
+                else result.output
+            )
+
             assert isinstance(processed_result, dict), "AI result must be a dictionary"
+            logger.info("Successfully processed summarization agent response")
 
             return processed_result
+
         except Exception as e:
-            error_message = str(e)
-            logger.error(
-                "AI model call failed for summarization, error=%s", error_message
-            )
+            logger.error("Summarization agent call failed, error=%s", str(e))
             raise e
 
     def _process_summary_ai_result(self, result: Any) -> Dict[str, Any]:
@@ -1279,43 +1420,48 @@ class AIService:
     def _parse_and_validate_summary_response(
         self, ai_response: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Parse and validate AI summary response."""
-        # Runtime assertion: validate input parameters
-        assert ai_response is not None, "AI response cannot be None"
-        assert isinstance(
-            ai_response, dict
-        ), f"Expected dict response, got {type(ai_response)}"
+        """Parse and validate AI summary response from SummarizationAgent."""
+        logger.info("Parsing and validating ProposalSummary response")
 
-        # Extract raw values with defaults
+        assert ai_response is not None, "AI response cannot be None"
+        assert isinstance(ai_response, dict), (
+            f"Expected dict response, got {type(ai_response)}"
+        )
+
+        # Extract fields from ProposalSummary structure (not AiVoteResponse)
+        proposal_id = ai_response.get("proposal_id", "")
+        title = ai_response.get("title", "")
         summary = ai_response.get("summary", "No summary provided")
         key_points = ai_response.get("key_points", [])
-        risk_level = ai_response.get("risk_level", DEFAULT_RISK_LEVEL_FALLBACK)
-        recommendation = ai_response.get("recommendation", "")
+        risk_assessment = ai_response.get("risk_assessment", None)
+        recommendation = ai_response.get("recommendation", None)
+        confidence = ai_response.get("confidence", 0.5)
 
-        # Validate risk level
-        validated_risk_level = self.response_processor._validate_risk_level(risk_level)
+        # Validate required fields with Pearl logging
+        if not summary or summary == "No summary provided":
+            logger.warning("AI response missing summary field")
+        if not key_points:
+            logger.warning("AI response missing key_points field")
+        if not isinstance(confidence, (int, float)) or not (0.0 <= confidence <= 1.0):
+            logger.warning("Invalid confidence value %s, using default", confidence)
+            confidence = 0.5
 
         # Ensure key_points is a list
         if not isinstance(key_points, list):
             key_points = [str(key_points)] if key_points else []
 
-        validated_response = {
+        logger.info("Successfully validated ProposalSummary response structure")
+
+        # Return structure for downstream ProposalSummary creation
+        return {
+            "proposal_id": proposal_id,
+            "title": title,
             "summary": summary,
             "key_points": key_points,
-            "risk_level": validated_risk_level,
+            "risk_assessment": risk_assessment,
             "recommendation": recommendation,
+            "confidence": confidence,
         }
-
-        # Runtime assertion: validate output structure
-        assert isinstance(validated_response, dict), "Validated response must be dict"
-        assert (
-            "summary" in validated_response
-        ), "Validated response must contain 'summary' key"
-        assert (
-            "key_points" in validated_response
-        ), "Validated response must contain 'key_points' key"
-
-        return validated_response
 
     async def save_decision_file(
         self, decision: VotingDecisionFile, base_path: Optional[Path] = None

@@ -8,7 +8,8 @@ from typing import List, Optional, Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from logging_config import setup_pearl_logger, log_span
 
@@ -89,7 +90,7 @@ async def lifespan(_app: FastAPI):
 
     # Initialize services with state manager where needed
     ai_service = AIService()
-    agent_run_service = AgentRunService(state_manager=state_manager)
+    agent_run_service = AgentRunService(state_manager=state_manager, ai_service=ai_service)
     safe_service = SafeService()
     activity_service = ActivityService()
     user_preferences_service = UserPreferencesService(state_manager=state_manager)
@@ -189,6 +190,33 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files for frontend
+static_path = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_path):
+    # Mount frontend assets directory
+    app_assets_path = os.path.join(static_path, "_app")
+    if os.path.exists(app_assets_path):
+        app.mount("/_app", StaticFiles(directory=app_assets_path), name="frontend_assets")
+    
+    # Mount favicon
+    favicon_path = os.path.join(static_path, "favicon.png")
+    if os.path.exists(favicon_path):
+        from fastapi.responses import FileResponse
+        @app.get("/favicon.png")
+        async def serve_favicon():
+            return FileResponse(favicon_path)
+
+    # Serve frontend index.html at root for SPA routing
+    @app.get("/")
+    async def serve_frontend():
+        """Serve the frontend application at root path."""
+        index_file = os.path.join(static_path, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        else:
+            return {"message": "Frontend not available - build frontend first"}
+
 
 
 # Exception handlers
@@ -349,8 +377,6 @@ async def healthcheck():
         if hasattr(tracker, "fast_transition_window"):
             response["period"] = tracker.fast_transition_window
         else:
-            from config import settings
-
             response["period"] = settings.FAST_TRANSITION_THRESHOLD
 
         if hasattr(tracker, "fast_transition_threshold"):
@@ -413,7 +439,7 @@ async def healthcheck():
         except:
             tracker_configured = False
             tracker_address = None
-            
+
         error_response["attestation_tracker"] = {
             "configured": tracker_configured,
             "contract_address": tracker_address,
@@ -979,6 +1005,118 @@ async def get_monitored_daos():
         raise HTTPException(
             status_code=500, detail="Failed to fetch monitored DAO configuration"
         )
+
+
+@app.post("/config/openrouter-key")
+async def set_openrouter_key(request: dict):
+    """Set or update OpenRouter API key.
+
+    Body: {"api_key": "sk-or-..."}
+    """
+    try:
+        key = request.get("api_key")
+        if key is None or not isinstance(key, str):
+            return {
+                "status": "error",
+                "data": None,
+                "error": "VALIDATION_ERROR",
+                "message": "API key is required",
+            }
+
+        # Handle empty key as removal
+        if len(key.strip()) == 0:
+            await user_preferences_service.remove_api_key()
+            ai_service.swap_api_key(None)
+            logger.info("API key removed successfully")
+            return {"status": "success", "data": {"configured": False}}
+
+        # Validate non-empty key
+        if len(key.strip()) < 20:
+            return {
+                "status": "error",
+                "data": None,
+                "error": "VALIDATION_ERROR",
+                "message": "API key must be at least 20 characters",
+            }
+
+        # Store using UserPreferencesService
+        await user_preferences_service.set_api_key(key.strip())
+
+        # Swap in AI service
+        ai_service.swap_api_key(key.strip())
+
+        logger.info("API key configured successfully")
+        return {"status": "success", "data": {"configured": True}}
+
+    except Exception as e:
+        logger.error(f"Failed to set API key: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "error": "INTERNAL_ERROR",
+            "message": "Failed to store API key",
+        }
+
+
+@app.get("/config/openrouter-key")
+async def get_openrouter_key_status():
+    """Get API key configuration status (not the key itself).
+
+    Returns whether a key is configured and its source.
+    """
+    try:
+        has_user_key = await user_preferences_service.get_api_key() is not None
+        has_env_key = settings.openrouter_api_key is not None
+
+        return {
+            "status": "success",
+            "data": {
+                "configured": has_user_key or has_env_key,
+                "source": "user"
+                if has_user_key
+                else "environment"
+                if has_env_key
+                else None,
+            },
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to get API key status: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "error": "INTERNAL_ERROR",
+            "message": "Failed to check API key status",
+        }
+
+
+# Catch-all route for SPA routing (frontend routes) - MUST be registered last
+@app.get("/{full_path:path}")
+async def serve_frontend_routes(full_path: str):
+    """Serve frontend for client-side routing, excluding API routes."""
+    # Don't intercept API routes or frontend assets
+    if full_path.startswith(
+        (
+            "api/",
+            "docs",
+            "openapi.json",
+            "healthcheck",
+            "proposals",
+            "agent-run",
+            "user-preferences",
+            "config",
+            "_app/",
+            "favicon.png",
+        )
+    ):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    # Serve index.html for frontend routes
+    index_file = os.path.join(static_path, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    else:
+        return {"message": "Frontend not available - build frontend first"}
 
 
 # Development server

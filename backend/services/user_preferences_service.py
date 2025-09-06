@@ -3,7 +3,7 @@
 import os
 import json
 import tempfile
-from typing import Any
+from typing import Any, Optional
 
 from logging_config import setup_pearl_logger
 from models import UserPreferences, VotingStrategy
@@ -130,6 +130,7 @@ class UserPreferencesService:
                 )
 
         # Save to file (for backward compatibility or as fallback)
+        temp_file_path = None
         try:
             # Ensure directory exists
             directory = os.path.dirname(self.preferences_file)
@@ -166,11 +167,11 @@ class UserPreferencesService:
                 str(e),
             )
             # Clean up temp file if it exists
-            try:
-                if "temp_file_path" in locals():
+            if temp_file_path:
+                try:
                     os.unlink(temp_file_path)
-            except:
-                pass
+                except OSError:
+                    pass
         except Exception as e:
             self.logger.error(
                 "Unexpected error saving user preferences, preferences_file=%s, error=%s",
@@ -272,7 +273,7 @@ class UserPreferencesService:
 
     async def stop(self) -> None:
         """Stop the service gracefully."""
-        await self.save_state()
+        await self.save_service_state()
 
     async def _migrate_to_state_manager(self, preferences: UserPreferences) -> None:
         """Migrate preferences from file to state manager.
@@ -290,3 +291,51 @@ class UserPreferencesService:
             self.logger.info("Successfully migrated preferences to state manager")
         except Exception as e:
             self.logger.warning(f"Failed to migrate preferences to state manager: {e}")
+
+    async def set_api_key(self, key: str) -> None:
+        """Store API key securely using StateManager.
+
+        Args:
+            key: OpenRouter API key to store
+        """
+        if not self.state_manager:
+            raise ValueError("StateManager required for API key storage")
+
+        api_key_data = {"openrouter_key": key}
+
+        await self.state_manager.save_state(
+            "api_keys",
+            api_key_data,
+            sensitive=True,  # Use StateManager's built-in encryption
+        )
+
+        self.logger.info("API key stored securely")
+
+    async def get_api_key(self) -> Optional[str]:
+        """Retrieve API key from StateManager.
+
+        Returns:
+            API key string or None if not found
+        """
+        if not self.state_manager:
+            return None
+
+        try:
+            state_data = await self.state_manager.load_state("api_keys", sensitive=True)
+            if state_data:
+                return state_data.get("openrouter_key")
+        except Exception as e:
+            self.logger.warning(f"Could not load API key: {e}")
+
+        return None
+
+    async def remove_api_key(self) -> None:
+        """Remove stored API key."""
+        if not self.state_manager:
+            return
+
+        try:
+            await self.state_manager.delete_state("api_keys")
+            self.logger.info("API key removed")
+        except Exception as e:
+            self.logger.warning(f"Could not remove API key: {e}")

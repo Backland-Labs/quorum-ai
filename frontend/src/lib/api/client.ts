@@ -24,6 +24,12 @@ export interface paths {
          *         - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
          *         - period: (optional) The time period used to determine if transitioning fast
          *         - reset_pause_duration: (optional) Time to wait before resetting transition tracking
+         *
+         *         Enhanced Pearl compliance fields (when HealthStatusService is available):
+         *         - is_tm_healthy: Boolean indicating transaction manager health
+         *         - agent_health: Object with agent health details
+         *         - rounds: List of round information
+         *         - rounds_info: Additional round metadata
          */
         get: operations["healthcheck_healthcheck_get"];
         put?: never;
@@ -274,6 +280,34 @@ export interface paths {
         get: operations["get_monitored_daos_config_monitored_daos_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/config/openrouter-key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Openrouter Key Status
+         * @description Get API key configuration status (not the key itself).
+         *
+         *     Returns whether a key is configured and its source.
+         */
+        get: operations["get_openrouter_key_status_config_openrouter_key_get"];
+        put?: never;
+        /**
+         * Set Openrouter Key
+         * @description Set or update OpenRouter API key.
+         *
+         *     Body: {"api_key": "sk-or-..."}
+         */
+        post: operations["set_openrouter_key_config_openrouter_key_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1158,6 +1192,61 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    get_openrouter_key_status_config_openrouter_key_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    set_openrouter_key_config_openrouter_key_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

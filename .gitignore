@@ -221,3 +221,6 @@ contracts/lib/
 contracts/cache/
 contracts/out/
 contracts/broadcast/
+
+.env.test
+.env.test

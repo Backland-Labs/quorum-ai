@@ -14,15 +14,13 @@
     proposals: components['schemas']['Proposal'][];
     proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
     onProposalClick: (proposalId: string) => void;
-    onViewAllProposals: () => void;
     currentSpaceId?: string | null;
   }
 
-  let { proposals, proposalSummaries, onProposalClick, onViewAllProposals, currentSpaceId = null }: Props = $props();
+  let { proposals, proposalSummaries, onProposalClick, currentSpaceId = null }: Props = $props();
 
   function validateProps(): void {
     console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
-    console.assert(typeof onViewAllProposals === 'function', 'onViewAllProposals must be a function');
   }
 
   function hasProposals(): boolean {
@@ -34,6 +32,7 @@
   validateProps();
 
   // Update store with current space ID when it changes
+  // Set it even if it's the default value to ensure the store is initialized
   $effect(() => {
     if (currentSpaceId) {
       agentStatusStore.setCurrentSpaceId(currentSpaceId);
@@ -42,6 +41,10 @@
 
   // Start polling when component mounts
   onMount(() => {
+    // Initialize the store with the current space ID immediately
+    if (currentSpaceId) {
+      agentStatusStore.setCurrentSpaceId(currentSpaceId);
+    }
     agentStatusStore.startPolling(30000); // 30 second interval
   });
 
@@ -51,7 +54,7 @@
   });
 </script>
 
-<div id="tab-panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+<div>
   <!-- Autonomous Voting Agent Section -->
   <div class="mb-8">
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Autonomous Voting Agent</h2>
@@ -64,7 +67,7 @@
 
     <!-- Agent Quick Actions -->
     <div class="mb-6">
-      <AgentQuickActions />
+      <AgentQuickActions spaceId={currentSpaceId} />
     </div>
 
     <!-- Agent Decisions Panel -->
@@ -81,14 +84,12 @@
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <ProposalStats
           {proposals}
-          onViewDetails={onViewAllProposals}
         />
 
         <RecentProposals
           {proposals}
           {proposalSummaries}
           {onProposalClick}
-          {onViewAllProposals}
         />
       </div>
     {:else}

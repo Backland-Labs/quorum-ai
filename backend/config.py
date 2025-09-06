@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = {
-        "env_file": ".env",
+        "env_file": [".env", "../.env"],  # Check both backend/.env and parent .env
         "extra": "ignore",
         "env_parse_none_str": "None",
         "env_nested_delimiter": "__",
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    ai_model: str = "openai:gpt-4o-mini"
+    ai_model: str = "google/gemini-2.0-flash-001"
 
     # Pearl logging settings
     log_level: str = Field(
@@ -76,6 +76,11 @@ class Settings(BaseSettings):
         alias="SNAPSHOT_GRAPHQL_ENDPOINT",
         description="Snapshot GraphQL API endpoint",
     )
+    snapshot_hub_url: str = Field(
+        default="https://seq.snapshot.org/",
+        alias="SNAPSHOT_HUB_URL",
+        description="Snapshot Hub API endpoint for vote submissions",
+    )
 
     # Olas-specific configuration fields
     snapshot_api_key: Optional[str] = Field(
@@ -88,7 +93,6 @@ class Settings(BaseSettings):
     dao_addresses: List[str] = Field(
         default_factory=list, description="List of DAO addresses to monitor"
     )
-
 
     rpc_url: str = Field(
         default="http://localhost:8545",
@@ -323,8 +327,6 @@ class Settings(BaseSettings):
         alias="ATTESTATION_CHAIN",
         description="Chain to use for attestation transactions (e.g., 'base', 'ethereum')",
     )
-
-
 
     @field_validator("log_level", mode="before")
     @classmethod
@@ -759,8 +761,6 @@ class Settings(BaseSettings):
 
         return True
 
-
-
     @model_validator(mode="after")
     def validate_attestation_tracker_config(self):
         """Validate AttestationTracker configuration."""
@@ -796,6 +796,29 @@ class Settings(BaseSettings):
                 addr.strip() for addr in dao_addresses_env.split(",") if addr.strip()
             ]
             self.dao_addresses = addresses
+
+    @property
+    def effective_openrouter_api_key(self) -> Optional[str]:
+        """Get API key with user preference priority.
+
+        Returns:
+            User-provided API key if available, otherwise environment key
+        """
+        # Try user key first (would be loaded from StateManager)
+        if hasattr(self, "_user_api_key") and self._user_api_key:
+            return self._user_api_key
+        # Fall back to environment
+        return self.openrouter_api_key
+
+    def reload_with_user_key(self, user_key: Optional[str]) -> None:
+        """Update user API key and trigger reload.
+
+        Args:
+            user_key: User-provided API key or None to clear
+        """
+        self._user_api_key = user_key
+        # Use existing reload mechanism
+        self.reload_config()
 
 
 # Global settings instance
