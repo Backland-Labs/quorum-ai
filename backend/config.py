@@ -153,6 +153,7 @@ class Settings(BaseSettings):
         alias="STAKING_TOKEN_CONTRACT_ADDRESS",
         description="Olas staking token contract",
     )
+    # There is the attestation_tracker_address below where activity is checked. This address is currently unused.
     activity_checker_contract_address: Optional[str] = Field(
         default=None,
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
@@ -184,7 +185,7 @@ class Settings(BaseSettings):
         description="Maximum proposals to process per agent run",
     )
     agent_confidence_threshold: float = Field(
-        default=0.7,
+        default=0.2,
         ge=0.0,
         le=1.0,
         description="Default confidence threshold for agent voting decisions",
