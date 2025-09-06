@@ -13,37 +13,50 @@ interface IQuorumTracker {
 
 /**
  * @title IEAS
- * @dev Interface for Ethereum Attestation Service interactions.
+ * @dev CORRECT Interface for Ethereum Attestation Service interactions.
  */
 interface IEAS {
-    struct DelegatedAttestationRequest {
-        bytes32 schema;
-        bytes data;
+    struct AttestationRequestData {
+        address recipient;
         uint64 expirationTime;
         bool revocable;
         bytes32 refUID;
-        address recipient;
+        bytes data;
         uint256 value;
-        uint64 deadline;
-        bytes signature;
     }
-
-    function attestByDelegation(DelegatedAttestationRequest calldata request) external payable returns (bytes32);
+    
+    struct DelegatedAttestationRequest {
+        bytes32 schema;
+        AttestationRequestData data;
+    }
+    
+    struct Signature {
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+    }
+    
+    function attestByDelegation(
+        DelegatedAttestationRequest calldata delegatedRequest,
+        Signature calldata signature,
+        address attester,
+        uint64 deadline
+    ) external payable returns (bytes32);
 }
 
 /**
- * @title AttestationTracker
- * @dev Simple attestation counter wrapper around EAS (Ethereum Attestation Service).
+ * @title AttestationTrackerFixed
+ * @dev CORRECTED attestation counter wrapper around EAS (Ethereum Attestation Service).
  *
  * This contract serves as a wrapper around EAS that tracks the number of
- * attestations made by each multisig address.
+ * attestations made by each multisig address, using the CORRECT EAS interface.
  *
  * Key features:
  * - Tracks attestation count per multisig address
  * - Simple uint256 counter for each multisig
- * - Forwards all attestations to EAS while maintaining local tracking
+ * - Forwards all attestations to EAS with correct parameters
  */
-contract AttestationTracker is Ownable, IQuorumTracker {
+contract AttestationTrackerFixed is Ownable, IQuorumTracker {
     // --- Events ---
     event AttestationMade(address indexed multisig, bytes32 indexed attestationUID);
 
@@ -62,7 +75,7 @@ contract AttestationTracker is Ownable, IQuorumTracker {
      * @param _EAS The EAS contract address for attestation functionality.
      */
     constructor(address initialOwner, address _EAS) Ownable(initialOwner) {
-        require(_EAS != address(0), "AttestationTracker: EAS address cannot be zero");
+        require(_EAS != address(0), "AttestationTrackerFixed: EAS address cannot be zero");
         EAS = _EAS;
     }
 
@@ -72,18 +85,27 @@ contract AttestationTracker is Ownable, IQuorumTracker {
      * @notice Wrapper function for EAS attestations that tracks which multisigs make attestations.
      * @dev Increments the attestation counter for msg.sender and forwards the request to EAS.
      * @param delegatedRequest The EAS delegated attestation request.
+     * @param signature The signature for the attestation.
+     * @param attester The address of the attester.
+     * @param deadline The deadline for the attestation.
      * @return attestationUID The UID of the created attestation.
      */
-    function attestByDelegation(IEAS.DelegatedAttestationRequest calldata delegatedRequest)
-        external
-        payable
-        returns (bytes32 attestationUID)
-    {
+    function attestByDelegation(
+        IEAS.DelegatedAttestationRequest calldata delegatedRequest,
+        IEAS.Signature calldata signature,
+        address attester,
+        uint64 deadline
+    ) external payable returns (bytes32 attestationUID) {
         // Increment attestation counter for the caller
         mapMultisigAttestations[msg.sender]++;
 
-        // Forward the attestation request to EAS
-        attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(delegatedRequest);
+        // Forward the attestation request to EAS with all required parameters
+        attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(
+            delegatedRequest,
+            signature,
+            attester,
+            deadline
+        );
 
         emit AttestationMade(msg.sender, attestationUID);
 
