@@ -257,3 +257,40 @@
 [2025-09-06 12:16:11,282] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=e7678d0f084725c21717...
 [2025-09-06 12:16:11,282] [INFO] [agent] Built complete delegated request for attestation_tracker contract at 0xc16647a4290E4C931aD586713c7d85E0eFbafba0
 [2025-09-06 12:16:11,501] [INFO] [agent] Built delegated attestation transaction - to=0xc16647a4290E4C931aD586713c7d85E0eFbafba0, data_length=1482, gas=300000
+[2025-09-06 14:23:54,835] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:23:55,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:23:56,083] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:23:56,085] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:23:56,087] [INFO] [agent] SafeService initialized (eoa_address=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-06 14:24:10,893] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:11,073] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:11,309] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:11,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:11,312] [INFO] [agent] SafeService initialized (eoa_address=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-06 14:24:11,312] [INFO] [agent] Building delegated attestation transaction - target_address=0xc16647a4290E4C931aD586713c7d85E0eFbafba0, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-06 14:24:11,618] [INFO] [agent] Created contract instance at address: 0xc16647a4290E4C931aD586713c7d85E0eFbafba0
+[2025-09-06 14:24:11,619] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757197451, data_length=576
+[2025-09-06 14:24:11,660] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0x4200000000000000000000000000000000000021, signer=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8
+[2025-09-06 14:24:11,709] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=1b411fd8b133a6114607...
+[2025-09-06 14:24:25,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:25,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:26,163] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:26,164] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:26,166] [INFO] [agent] SafeService initialized (eoa_address=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-06 14:24:26,166] [INFO] [agent] Building delegated attestation transaction - target_address=0xc16647a4290E4C931aD586713c7d85E0eFbafba0, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-06 14:24:26,396] [INFO] [agent] Created contract instance at address: 0xc16647a4290E4C931aD586713c7d85E0eFbafba0
+[2025-09-06 14:24:26,396] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757197465, data_length=576
+[2025-09-06 14:24:26,434] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0x4200000000000000000000000000000000000021, signer=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8
+[2025-09-06 14:24:26,486] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=62fbbc40a208456bba1d...
+[2025-09-06 14:24:38,994] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:39,171] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:39,401] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:39,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-06 14:24:39,404] [INFO] [agent] SafeService initialized (eoa_address=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-06 14:24:39,404] [INFO] [agent] Building delegated attestation transaction - target_address=0xc16647a4290E4C931aD586713c7d85E0eFbafba0, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-06 14:24:39,610] [INFO] [agent] Created contract instance at address: 0xc16647a4290E4C931aD586713c7d85E0eFbafba0
+[2025-09-06 14:24:39,611] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757197479, data_length=576
+[2025-09-06 14:24:39,644] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0x4200000000000000000000000000000000000021, signer=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8
+[2025-09-06 14:24:39,695] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=890f8a1ebab039d841f2...
+[2025-09-06 14:24:39,698] [INFO] [agent] Built delegated request for AttestationTracker with 4 params - attester=0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8, deadline=1757197479
+[2025-09-06 14:24:39,817] [INFO] [agent] Built delegated attestation transaction - to=0xc16647a4290E4C931aD586713c7d85E0eFbafba0, data_length=2122, gas=300000
