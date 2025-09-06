@@ -21,6 +21,12 @@ export PYTHONPATH=/app:$PYTHONPATH
 # Create logs directory if it doesn't exist
 mkdir -p /app/logs
 
+# Set secure permissions for ethereum private key file if it exists
+if [ -f "/app/ethereum_private_key.txt" ]; then
+    chmod 600 /app/ethereum_private_key.txt
+    echo "Set secure permissions (600) for ethereum_private_key.txt"
+fi
+
 echo "Starting Quorum AI application..."
 echo "Environment: $(printenv | grep -E '^(DEBUG|HOST|HEALTH_CHECK_PORT)=' || echo 'No relevant env vars set')"
 
