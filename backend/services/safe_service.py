@@ -414,8 +414,8 @@ class SafeService:
         try:
             self.logger.info(
                 f"Creating EAS attestation (proposal_id={attestation_data.proposal_id}, "
-                f"space_id={attestation_data.space_id}, choice={attestation_data.choice}, "
-                f"voter_address={attestation_data.voter_address})"
+                f"space_id={attestation_data.space_id}, vote_choice={attestation_data.vote_choice}, "
+                f"agent={attestation_data.agent})"
             )
             
             # Check if EAS configuration is available
@@ -582,14 +582,14 @@ class SafeService:
             "expirationTime": 0,
             "revocable": True,
             "refUID": b"\x00" * 32,
-            "recipient": Web3.to_checksum_address(attestation_data.voter_address),
+            "recipient": Web3.to_checksum_address(attestation_data.agent),
             "value": 0,
             "deadline": deadline,
         }
         
         self.logger.info(
             f"Built attestation request data - schema={settings.eas_schema_uid}, "
-            f"recipient={attestation_data.voter_address}, deadline={deadline}, "
+            f"recipient={attestation_data.agent}, deadline={deadline}, "
             f"data_length={len(encoded_data)}"
         )
         
@@ -635,10 +635,14 @@ class SafeService:
         """Encode attestation data according to EAS schema.
 
         The schema encodes:
+        - agent (address)
+        - space_id (string) 
         - proposal_id (string)
-        - space_id (string)
-        - choice (uint256)
-        - vote_tx_hash (bytes32)
+        - vote_choice (uint8)
+        - snapshot_sig (string)
+        - timestamp (uint256)
+        - run_id (string)
+        - confidence (uint8)
 
         Args:
             attestation_data: The attestation data to encode
@@ -648,19 +652,21 @@ class SafeService:
         """
         w3 = Web3()
 
-        # Convert vote_tx_hash string to bytes32
-        vote_tx_hash_bytes = Web3.to_bytes(hexstr=attestation_data.vote_tx_hash)
-
-        assert isinstance(vote_tx_hash_bytes, bytes), f"vote_tx_hash must be bytes, got {type(vote_tx_hash_bytes)}"
+        # Ensure agent address is checksummed
+        agent_address = Web3.to_checksum_address(attestation_data.agent)
         
-        # Encode the attestation data
+        # Encode the attestation data with new schema
         encoded = w3.codec.encode(
-            ["string", "string", "uint256", "bytes32"],
+            ["address", "string", "string", "uint8", "string", "uint256", "string", "uint8"],
             [
-                attestation_data.proposal_id,
+                agent_address,
                 attestation_data.space_id,
-                attestation_data.choice,
-                vote_tx_hash_bytes,
+                attestation_data.proposal_id,
+                attestation_data.vote_choice,
+                attestation_data.snapshot_sig,
+                attestation_data.timestamp,
+                attestation_data.run_id,
+                attestation_data.confidence,
             ],
         )
 
