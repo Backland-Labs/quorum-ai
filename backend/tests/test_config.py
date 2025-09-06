@@ -99,34 +99,6 @@ class TestAgentSpecificSettings:
         expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
         assert result == expected
 
-    def test_vote_confidence_threshold_defaults_to_0_6(self):
-        """Test that vote_confidence_threshold defaults to 0.6."""
-        settings = Settings()
-        assert settings.vote_confidence_threshold == 0.6
-
-    def test_vote_confidence_threshold_loaded_from_env(self):
-        """Test that vote_confidence_threshold is loaded from environment variable."""
-        test_threshold = 0.8
-        with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": str(test_threshold)}):
-            settings = Settings()
-            assert settings.vote_confidence_threshold == test_threshold
-
-    def test_vote_confidence_threshold_validation(self):
-        """Test that vote_confidence_threshold is validated between 0.0 and 1.0."""
-        # Test valid values
-        valid_values = [0.0, 0.1, 0.5, 0.9, 1.0]
-        for value in valid_values:
-            with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": str(value)}):
-                settings = Settings()
-                assert settings.vote_confidence_threshold == value
-
-        # Test invalid values should raise validation error
-        invalid_values = [-0.1, 1.1, 2.0]
-        for value in invalid_values:
-            with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": str(value)}):
-                with pytest.raises(ValueError):
-                    Settings()
-
     def test_activity_check_interval_defaults_to_3600(self):
         """Test that activity_check_interval defaults to 3600 seconds (1 hour)."""
         settings = Settings()

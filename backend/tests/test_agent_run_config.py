@@ -19,7 +19,6 @@ class TestAgentRunConfiguration:
     def test_agent_run_default_values(self):
         """Test that agent run configuration has proper default values."""
         # Test that the default values are set correctly
-        assert settings.vote_confidence_threshold == 0.6
         assert settings.activity_check_interval == 3600  # 1 hour
         assert settings.proposal_check_interval == 300  # 5 minutes
         assert settings.min_time_before_deadline == 1800  # 30 minutes
@@ -27,25 +26,23 @@ class TestAgentRunConfiguration:
     def test_agent_run_config_from_env(self):
         """Test agent run configuration loading from environment variables."""
         with patch.dict(os.environ, {
-            "VOTE_CONFIDENCE_THRESHOLD": "0.8",
             "ACTIVITY_CHECK_INTERVAL": "7200",
             "PROPOSAL_CHECK_INTERVAL": "600",
             "MIN_TIME_BEFORE_DEADLINE": "3600"
         }):
             test_settings = Settings()
-            assert test_settings.vote_confidence_threshold == 0.8
             assert test_settings.activity_check_interval == 7200
             assert test_settings.proposal_check_interval == 600
             assert test_settings.min_time_before_deadline == 3600
 
     def test_agent_run_config_validation(self):
         """Test validation of agent run configuration values."""
-        # Test vote confidence threshold validation - Pydantic will catch this
-        with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": "1.5"}):
+        # Test agent confidence threshold validation - Pydantic will catch this
+        with patch.dict(os.environ, {"AGENT_CONFIDENCE_THRESHOLD": "1.5"}):
             with pytest.raises(ValidationError):
                 Settings()
 
-        with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": "-0.1"}):
+        with patch.dict(os.environ, {"AGENT_CONFIDENCE_THRESHOLD": "-0.1"}):
             with pytest.raises(ValidationError):
                 Settings()
 
@@ -77,9 +74,6 @@ class TestAgentRunConfiguration:
         assert test_settings.activity_check_interval > 0
         assert test_settings.proposal_check_interval > 0
         assert test_settings.min_time_before_deadline > 0
-        
-        # Vote confidence threshold should be between 0 and 1
-        assert 0.0 <= test_settings.vote_confidence_threshold <= 1.0
 
 
 class TestAgentRunConfigurationExtensions:
@@ -98,7 +92,6 @@ class TestAgentRunConfigurationExtensions:
         assert test_settings.retry_delay_seconds == 5
         
         # Test that existing fields still work correctly
-        assert hasattr(test_settings, 'vote_confidence_threshold')
         assert hasattr(test_settings, 'activity_check_interval')
         assert hasattr(test_settings, 'proposal_check_interval')
         assert hasattr(test_settings, 'min_time_before_deadline')
@@ -136,7 +129,6 @@ class TestAgentRunConfigurationExtensions:
         """Test environment variable handling for agent run configuration."""
         # Test that environment variables are properly parsed and validated
         with patch.dict(os.environ, {
-            "VOTE_CONFIDENCE_THRESHOLD": "0.75",
             "ACTIVITY_CHECK_INTERVAL": "5400",  # 1.5 hours
             "PROPOSAL_CHECK_INTERVAL": "450",   # 7.5 minutes
             "MIN_TIME_BEFORE_DEADLINE": "2700",  # 45 minutes
@@ -148,7 +140,6 @@ class TestAgentRunConfigurationExtensions:
             "RETRY_DELAY_SECONDS": "10"
         }):
             test_settings = Settings()
-            assert test_settings.vote_confidence_threshold == 0.75
             assert test_settings.activity_check_interval == 5400
             assert test_settings.proposal_check_interval == 450
             assert test_settings.min_time_before_deadline == 2700
@@ -170,7 +161,6 @@ class TestAgentRunConfigurationExtensions:
         assert hasattr(test_settings, 'port')
         
         # Verify that agent run configuration is properly integrated
-        assert hasattr(test_settings, 'vote_confidence_threshold')
         assert hasattr(test_settings, 'activity_check_interval')
         assert hasattr(test_settings, 'proposal_check_interval')
         assert hasattr(test_settings, 'min_time_before_deadline')
@@ -178,10 +168,6 @@ class TestAgentRunConfigurationExtensions:
     def test_agent_run_config_error_handling(self):
         """Test error handling for invalid agent run configuration."""
         # Test invalid string values
-        with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": "invalid"}):
-            with pytest.raises(ValueError):
-                Settings()
-
         with patch.dict(os.environ, {"ACTIVITY_CHECK_INTERVAL": "not_a_number"}):
             with pytest.raises(ValueError):
                 Settings()
@@ -248,7 +234,6 @@ class TestAgentRunConfigurationExtensions:
         """Test boundary values for agent run configuration."""
         # Test minimum valid values
         with patch.dict(os.environ, {
-            "VOTE_CONFIDENCE_THRESHOLD": "0.0",
             "ACTIVITY_CHECK_INTERVAL": "1",
             "PROPOSAL_CHECK_INTERVAL": "1",
             "MIN_TIME_BEFORE_DEADLINE": "1",
@@ -260,7 +245,6 @@ class TestAgentRunConfigurationExtensions:
             "RETRY_DELAY_SECONDS": "1"
         }):
             test_settings = Settings()
-            assert test_settings.vote_confidence_threshold == 0.0
             assert test_settings.activity_check_interval == 1
             assert test_settings.proposal_check_interval == 1
             assert test_settings.min_time_before_deadline == 1
@@ -273,7 +257,6 @@ class TestAgentRunConfigurationExtensions:
 
         # Test maximum valid values
         with patch.dict(os.environ, {
-            "VOTE_CONFIDENCE_THRESHOLD": "1.0",
             "ACTIVITY_CHECK_INTERVAL": "86400",  # 24 hours
             "PROPOSAL_CHECK_INTERVAL": "3600",   # 1 hour
             "MIN_TIME_BEFORE_DEADLINE": "86400",  # 24 hours
@@ -285,7 +268,6 @@ class TestAgentRunConfigurationExtensions:
             "RETRY_DELAY_SECONDS": "60"  # 1 minute
         }):
             test_settings = Settings()
-            assert test_settings.vote_confidence_threshold == 1.0
             assert test_settings.activity_check_interval == 86400
             assert test_settings.proposal_check_interval == 3600
             assert test_settings.min_time_before_deadline == 86400

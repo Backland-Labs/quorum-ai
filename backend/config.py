@@ -125,9 +125,6 @@ class Settings(BaseSettings):
 
     # DAO monitoring - removed from Pydantic fields to avoid JSON parsing issues
     # Use the monitored_daos_list property instead
-    vote_confidence_threshold: float = Field(
-        default=0.6, ge=0.0, le=1.0, description="Vote confidence threshold"
-    )
 
     # Activity tracking
     DEFAULT_ACTIVITY_CHECK_INTERVAL_SECONDS: ClassVar[int] = 3600  # 1 hour
@@ -452,7 +449,6 @@ class Settings(BaseSettings):
         """Parse environment-specific settings after model initialization."""
         self._parse_safe_addresses()
         self._parse_agent_address()
-        self._parse_vote_threshold()
         self._parse_intervals()
         self._parse_agent_run_config()
         self._parse_pearl_logging_config()
@@ -478,17 +474,6 @@ class Settings(BaseSettings):
         agent_address_env = os.getenv("AGENT_ADDRESS")
         if agent_address_env:
             self.agent_address = agent_address_env
-
-    def _parse_vote_threshold(self):
-        """Parse vote confidence threshold from VOTE_CONFIDENCE_THRESHOLD environment variable."""
-        vote_threshold_env = os.getenv("VOTE_CONFIDENCE_THRESHOLD")
-        if vote_threshold_env:
-            threshold = float(vote_threshold_env)
-            if not (0.0 <= threshold <= 1.0):
-                raise ValueError(
-                    f"vote_confidence_threshold must be between 0.0 and 1.0, got {threshold}"
-                )
-            self.vote_confidence_threshold = threshold
 
     def _parse_intervals(self):
         """Parse interval settings from environment variables."""

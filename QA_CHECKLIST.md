@@ -1,7 +1,14 @@
-# Agent Integration Checklist
+# QA Review Document
+This document is to enable QA reviewers an easier time understanding the codebase and Pearl compliance.
 
-**Date:** Aug 29, 2025  
-**Approved for external use:** Yes
+[Video Walkthrough]()
+[Minimal Open Autonomy Agent Repo](https://github.com/Backland-Labs/quorum-olas-package)
+[Agent Source Code](https://github.com/Backland-Labs/quorum-ai/tree/main)
+[Agent Docker Image](https://hub.docker.com/repository/docker/backlandlabs/quorum/general)
+[README](README.md)
+
+
+## Agent Integration Checklist
 
 ## 1. Introduction
 
@@ -21,14 +28,17 @@ This checklist outlines the steps required to integrate your AI agent with the P
   - **Test Suite:** `backend/scripts/` - Contains test scripts including `test_agent_run.py`, `quick_test.sh`
   - **Coverage Target:** >90% expected (see `backend/pyproject.toml`)
 
-- [ ] The Agent satisfies the agent architecture requirements specified below (this implies the agent will be registered as an "autonomous service" in the Olas Registry and have an on-chain safe).
+- [x] The Agent satisfies the agent architecture requirements specified below (this implies the agent will be registered as an "autonomous service" in the Olas Registry and have an on-chain safe).
 
-- [ ] All dev packages have been pushed to via the `autonomy push-all` command.
-  - **IPFS Hash:** `[Fill-in the IPFS Hash]`
+- [x] All dev packages have been pushed to via the `autonomy push-all` command.
+  - **IPFS Hash:** `bafybeie65whvrfjdobhuqadutwpcwx22bnpty2yveu6j4x2dcithfhlnea`
 
 - [x] All agent components (excluding service components) have been minted on the Olas Registry.
 
-- [ ] Staking contract and activity checker are deployed
+- [ ] Staking contract and activity checker are deployed - Olas is writing/deploying staking contract
+
+- [ ] AttestationTrack contract is deployed on Base.
+    - **Address:** `address`
 
 ## 3. Agent Architecture Requirements
 
