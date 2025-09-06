@@ -42,7 +42,7 @@ class TestAIServiceSummarizeProposal:
                     "Hire more developers", 
                     "Accelerate roadmap implementation",
                 ],
-                "risk_level": "MEDIUM",
+                "risk_assessment": "MEDIUM",
                 "recommendation": "APPROVE with careful monitoring",
             }
 
@@ -195,26 +195,34 @@ class TestAIServiceSummaryResponseParsing:
     def test_parse_and_validate_summary_response_valid_response(
         self, ai_service: AIService
     ) -> None:
-        """Test parsing a valid AI summary response."""
+        """Test parsing a valid AI summary response with ProposalSummary structure."""
         ai_response = {
+            "proposal_id": "test-proposal-123",
+            "title": "Test Proposal Title",
             "summary": "This is a test summary",
             "key_points": ["Point 1", "Point 2", "Point 3"],
-            "risk_level": "MEDIUM",
+            "risk_assessment": "MEDIUM",
             "recommendation": "APPROVE with monitoring",
+            "confidence": 0.85,
         }
 
         parsed = ai_service._parse_and_validate_summary_response(ai_response)
 
+        assert parsed["proposal_id"] == "test-proposal-123"
+        assert parsed["title"] == "Test Proposal Title"
         assert parsed["summary"] == "This is a test summary"
         assert len(parsed["key_points"]) == 3
-        assert parsed["risk_level"] == "MEDIUM"
+        assert parsed["risk_assessment"] == "MEDIUM"
         assert parsed["recommendation"] == "APPROVE with monitoring"
+        assert parsed["confidence"] == 0.85
 
     def test_parse_and_validate_summary_response_missing_fields(
         self, ai_service: AIService
     ) -> None:
-        """Test parsing AI summary response with missing fields."""
+        """Test parsing AI summary response with missing fields using ProposalSummary structure."""
         ai_response = {
+            "proposal_id": "test-proposal-123",
+            "title": "Test Proposal",
             "summary": "Test summary",
             # Missing other fields
         }
@@ -222,20 +230,27 @@ class TestAIServiceSummaryResponseParsing:
         parsed = ai_service._parse_and_validate_summary_response(ai_response)
 
         # Should provide defaults for missing fields
+        assert parsed["proposal_id"] == "test-proposal-123"
+        assert parsed["title"] == "Test Proposal"
         assert parsed["summary"] == "Test summary"
         assert isinstance(parsed["key_points"], list)
-        assert parsed["risk_level"] in ["LOW", "MEDIUM", "HIGH"]
-        assert isinstance(parsed["recommendation"], str)
+        assert parsed["key_points"] == []  # Empty list default
+        assert parsed["risk_assessment"] is None  # None default for optional field
+        assert parsed["recommendation"] is None   # None default for optional field
+        assert parsed["confidence"] == 0.5       # Default confidence
 
     def test_parse_and_validate_summary_response_invalid_key_points(
         self, ai_service: AIService
     ) -> None:
-        """Test parsing summary response with invalid key_points."""
+        """Test parsing summary response with invalid key_points using ProposalSummary structure."""
         ai_response = {
+            "proposal_id": "test-proposal-123",
+            "title": "Test Proposal",
             "summary": "Test summary",
             "key_points": "not a list",  # Should be a list
-            "risk_level": "LOW",
+            "risk_assessment": "LOW",
             "recommendation": "APPROVE",
+            "confidence": 0.7,
         }
 
         parsed = ai_service._parse_and_validate_summary_response(ai_response)
@@ -243,6 +258,7 @@ class TestAIServiceSummaryResponseParsing:
         # Should convert to list
         assert isinstance(parsed["key_points"], list)
         assert parsed["key_points"] == ["not a list"]
+        assert parsed["confidence"] == 0.7
 
     def test_parse_and_validate_summary_response_validates_input(
         self, ai_service: AIService
@@ -262,33 +278,48 @@ class TestAIServiceCallModelForSummary:
     async def test_call_ai_model_for_summary_success(
         self, ai_service: AIService
     ) -> None:
-        """Test _call_ai_model_for_summary successful call."""
-        with patch.object(ai_service.agent, "run") as mock_run:
-            # Mock result with dictionary output
-            mock_result = type("MockResult", (), {})()
-            mock_result.output = {
-                "summary": "Test summary",
-                "key_points": ["Point 1"],
-                "risk_level": "LOW",
-                "recommendation": "APPROVE",
-            }
-            mock_run.return_value = mock_result
+        """Test _call_ai_model_for_summary successful call using SummarizationAgent."""
+        # Mock the summarization agent
+        if ai_service.summarization_agent:
+            with patch.object(ai_service.summarization_agent.agent, "run") as mock_run:
+                # Mock result with ProposalSummary structure
+                mock_result = type("MockResult", (), {})()
+                mock_result.output = {
+                    "proposal_id": "test-id",
+                    "title": "Test Title",
+                    "summary": "Test summary",
+                    "key_points": ["Point 1"],
+                    "risk_assessment": "LOW",
+                    "recommendation": "APPROVE",
+                    "confidence": 0.8
+                }
+                mock_run.return_value = mock_result
 
-            result = await ai_service._call_ai_model_for_summary("test prompt")
+                result = await ai_service._call_ai_model_for_summary("test prompt")
 
-            assert isinstance(result, dict)
-            assert result["summary"] == "Test summary"
-            assert result["key_points"] == ["Point 1"]
+                assert isinstance(result, dict)
+                assert result["summary"] == "Test summary"
+                assert result["key_points"] == ["Point 1"]
+        else:
+            # If no summarization agent initialized, expect ValueError
+            with pytest.raises(ValueError, match="AI service not initialized"):
+                await ai_service._call_ai_model_for_summary("test prompt")
 
     @pytest.mark.asyncio
     async def test_call_ai_model_for_summary_handles_error(
         self, ai_service: AIService
     ) -> None:
-        """Test _call_ai_model_for_summary error handling."""
-        with patch.object(ai_service.agent, "run") as mock_run:
-            mock_run.side_effect = Exception("AI model error")
+        """Test _call_ai_model_for_summary error handling using SummarizationAgent."""
+        # Mock the summarization agent
+        if ai_service.summarization_agent:
+            with patch.object(ai_service.summarization_agent.agent, "run") as mock_run:
+                mock_run.side_effect = Exception("AI model error")
 
-            with pytest.raises(Exception, match="AI model error"):
+                with pytest.raises(Exception, match="AI model error"):
+                    await ai_service._call_ai_model_for_summary("test prompt")
+        else:
+            # If no summarization agent initialized, expect ValueError
+            with pytest.raises(ValueError, match="AI service not initialized"):
                 await ai_service._call_ai_model_for_summary("test prompt")
 
 

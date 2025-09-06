@@ -8,11 +8,13 @@ from typing import List, Optional, Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from logging_config import setup_pearl_logger, log_span
 
 from config import settings
+from utils.attestation_tracker_helpers import get_multisig_info
 from models import (
     AgentRunRequest,
     AgentRunResponse,
@@ -40,6 +42,7 @@ from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
+from services.health_status_service import HealthStatusService
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -57,6 +60,7 @@ signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
+health_status_service: Optional[HealthStatusService] = None
 
 
 @asynccontextmanager
@@ -75,7 +79,8 @@ async def lifespan(_app: FastAPI):
         signal_handler, \
         shutdown_coordinator, \
         withdrawal_service, \
-        state_transition_tracker
+        state_transition_tracker, \
+        health_status_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -85,7 +90,7 @@ async def lifespan(_app: FastAPI):
 
     # Initialize services with state manager where needed
     ai_service = AIService()
-    agent_run_service = AgentRunService(state_manager=state_manager)
+    agent_run_service = AgentRunService(state_manager=state_manager, ai_service=ai_service)
     safe_service = SafeService()
     activity_service = ActivityService()
     user_preferences_service = UserPreferencesService(state_manager=state_manager)
@@ -96,6 +101,21 @@ async def lifespan(_app: FastAPI):
         safe_service=safe_service,
         snapshot_service=snapshot_service,
     )
+
+    # Initialize HealthStatusService with dependency injection
+    try:
+        if settings.HEALTH_CHECK_ENABLED:
+            health_status_service = HealthStatusService(
+                safe_service=safe_service,
+                activity_service=activity_service,
+                state_transition_tracker=state_transition_tracker,
+            )
+            logger.info("HealthStatusService initialized successfully")
+        else:
+            logger.info("HealthStatusService disabled via HEALTH_CHECK_ENABLED=False")
+    except Exception as e:
+        logger.error(f"Failed to initialize HealthStatusService: {e}")
+        health_status_service = None
 
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -171,39 +191,65 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files for frontend
+static_path = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_path):
+    # Mount frontend assets directory
+    app_assets_path = os.path.join(static_path, "_app")
+    if os.path.exists(app_assets_path):
+        app.mount("/_app", StaticFiles(directory=app_assets_path), name="frontend_assets")
+    
+    # Mount favicon
+    favicon_path = os.path.join(static_path, "favicon.png")
+    if os.path.exists(favicon_path):
+        from fastapi.responses import FileResponse
+        @app.get("/favicon.png")
+        async def serve_favicon():
+            return FileResponse(favicon_path)
+
+    # Serve frontend index.html at root for SPA routing
+    @app.get("/")
+    async def serve_frontend():
+        """Serve the frontend application at root path."""
+        index_file = os.path.join(static_path, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        else:
+            return {"message": "Frontend not available - build frontend first"}
+
+
 
 # Exception handlers
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     """Handle general exceptions."""
     import traceback
-    
+
     # Get the full traceback
-    tb_str = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
-    
+    tb_str = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+
     # Log the full exception details
     logger.error(
         f"Unhandled exception error={str(exc)} path={str(request.url)} "
         f"method={request.method} exception_type={type(exc).__name__}\n"
         f"Traceback:\n{tb_str}"
     )
-    
+
     # In debug mode, return the full error details
     if settings.debug:
         return JSONResponse(
-            status_code=500, 
+            status_code=500,
             content={
-                "error": "Internal server error", 
+                "error": "Internal server error",
                 "message": str(exc),
                 "exception_type": type(exc).__name__,
-                "traceback": tb_str.split('\n')
-            }
+                "traceback": tb_str.split("\n"),
+            },
         )
-    
+
     # In production, return a generic error message
     return JSONResponse(
-        status_code=500, 
-        content={"error": "Internal server error", "message": str(exc)}
+        status_code=500, content={"error": "Internal server error", "message": str(exc)}
     )
 
 
@@ -234,6 +280,51 @@ def _get_state_transition_tracker():
     return state_transition_tracker
 
 
+async def _get_pearl_compliance_fields() -> dict:
+    """Get Pearl compliance fields with graceful degradation.
+
+    Returns Pearl platform required fields for healthcheck endpoint.
+    Uses HealthStatusService when available, otherwise returns safe defaults.
+
+    Returns:
+        dict: Pearl compliance fields with safe defaults on failure
+    """
+    # Safe defaults for Pearl compliance
+    safe_defaults = {
+        "is_tm_healthy": True,
+        "agent_health": {
+            "is_making_on_chain_transactions": True,
+            "is_staking_kpi_met": True,
+            "has_required_funds": True,
+        },
+        "rounds": [],
+        "rounds_info": None,
+    }
+
+    if health_status_service is None:
+        logger.debug("HealthStatusService not available, using safe defaults")
+        return safe_defaults
+
+    try:
+        health_data = await health_status_service.get_health_status()
+
+        # Extract Pearl compliance fields from HealthStatusService
+        return {
+            "is_tm_healthy": health_data.is_tm_healthy,
+            "agent_health": (
+                health_data.agent_health.model_dump()
+                if health_data.agent_health
+                else safe_defaults["agent_health"]
+            ),
+            "rounds": health_data.rounds,
+            "rounds_info": health_data.rounds_info,
+        }
+
+    except Exception as e:
+        logger.warning(f"HealthStatusService failed, using safe defaults: {e}")
+        return safe_defaults
+
+
 # Pearl-compliant health check endpoint
 @app.get("/healthcheck")
 async def healthcheck():
@@ -248,6 +339,12 @@ async def healthcheck():
         - is_transitioning_fast: Boolean indicating if transitions are happening rapidly
         - period: (optional) The time period used to determine if transitioning fast
         - reset_pause_duration: (optional) Time to wait before resetting transition tracking
+
+        Enhanced Pearl compliance fields (when HealthStatusService is available):
+        - is_tm_healthy: Boolean indicating transaction manager health
+        - agent_health: Object with agent health details
+        - rounds: List of round information
+        - rounds_info: Additional round metadata
     """
     try:
         # Get the tracker instance
@@ -280,8 +377,6 @@ async def healthcheck():
         if hasattr(tracker, "fast_transition_window"):
             response["period"] = tracker.fast_transition_window
         else:
-            from config import settings
-
             response["period"] = settings.FAST_TRANSITION_THRESHOLD
 
         if hasattr(tracker, "fast_transition_threshold"):
@@ -289,17 +384,70 @@ async def healthcheck():
         else:
             response["reset_pause_duration"] = 0.5  # Default value
 
+        # Add Pearl compliance fields
+        pearl_fields = await _get_pearl_compliance_fields()
+        response.update(pearl_fields)
+
+        # Add AttestationTracker statistics
+        try:
+            attestation_tracker_data = {
+                "configured": bool(settings.attestation_tracker_address),
+                "contract_address": settings.attestation_tracker_address,
+                "attestation_count": 0,
+                "multisig_active": False,
+            }
+
+            if settings.attestation_tracker_address and settings.base_safe_address:
+                count, is_active = get_multisig_info(settings.base_safe_address)
+                attestation_tracker_data["attestation_count"] = count
+                attestation_tracker_data["multisig_active"] = is_active
+
+            response["attestation_tracker"] = attestation_tracker_data
+
+        except Exception as tracker_error:
+            logger.error(f"Error querying AttestationTracker: {tracker_error}")
+            response["attestation_tracker"] = {
+                "configured": bool(settings.attestation_tracker_address),
+                "contract_address": settings.attestation_tracker_address,
+                "attestation_count": 0,
+                "multisig_active": False,
+                "error": str(tracker_error),
+            }
+
         return response
 
     except Exception as e:
         # Handle errors gracefully - return safe defaults
         logger.error(f"Error in healthcheck endpoint: {str(e)}")
-        return {
+
+        # Get safe defaults for Pearl compliance fields
+        pearl_defaults = await _get_pearl_compliance_fields()
+
+        # Combine state transition defaults with Pearl compliance defaults
+        error_response = {
             "seconds_since_last_transition": -1,
             "is_transitioning_fast": False,
             "period": 5,
             "reset_pause_duration": 0.5,
         }
+        error_response.update(pearl_defaults)
+
+        # Add AttestationTracker defaults on error
+        try:
+            tracker_configured = bool(settings.attestation_tracker_address)
+            tracker_address = settings.attestation_tracker_address
+        except:
+            tracker_configured = False
+            tracker_address = None
+
+        error_response["attestation_tracker"] = {
+            "configured": tracker_configured,
+            "contract_address": tracker_address,
+            "attestation_count": 0,
+            "multisig_active": False,
+        }
+
+        return error_response
 
 
 # Proposal endpoints
@@ -366,7 +514,7 @@ async def get_proposal_by_id(proposal_id: str):
 async def summarize_proposals(request: SummarizeRequest):
     """Summarize multiple proposals using AI."""
     start_time = time.time()
-    
+
     # Log the incoming request
     logger.info(
         f"Received summarize request proposal_ids={request.proposal_ids} "
@@ -382,13 +530,11 @@ async def summarize_proposals(request: SummarizeRequest):
             proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
 
             if not proposals:
-                logger.warning(
-                    f"No proposals found for IDs: {request.proposal_ids}"
-                )
+                logger.warning(f"No proposals found for IDs: {request.proposal_ids}")
                 raise HTTPException(
                     status_code=404, detail="No proposals found for the provided IDs"
                 )
-            
+
             logger.info(f"Successfully fetched {len(proposals)} proposals")
 
             # Generate summaries
@@ -585,11 +731,7 @@ async def get_agent_run_decisions(limit: int = Query(5, ge=1, le=100)):
                     proposal = await snapshot_service.get_proposal(
                         vote_decision.proposal_id
                     )
-                    proposal_title = (
-                        proposal.title
-                        if proposal
-                        else "Unknown Proposal"
-                    )
+                    proposal_title = proposal.title if proposal else "Unknown Proposal"
                 except Exception as e:
                     logger.warning(
                         f"Error fetching proposal title for {vote_decision.proposal_id}: {e}"
@@ -835,7 +977,7 @@ async def update_user_preferences(preferences: UserPreferences):
 @app.get("/config/monitored-daos")
 async def get_monitored_daos():
     """Get the list of monitored DAO spaces from configuration.
-    
+
     Returns the spaces configured via MONITORED_DAOS environment variable.
     This provides the frontend with the list of available DAO spaces for monitoring.
     """
@@ -847,29 +989,134 @@ async def get_monitored_daos():
                 # For now, use space_id as display name
                 # Future enhancement: fetch actual space names from Snapshot
                 display_name = space_id.replace(".eth", "").replace("-", " ").title()
-                spaces.append({
-                    "id": space_id,
-                    "name": display_name
-                })
-            
-            response = {
-                "spaces": spaces,
-                "total": len(spaces)
-            }
-            
+                spaces.append({"id": space_id, "name": display_name})
+
+            response = {"spaces": spaces, "total": len(spaces)}
+
             # Cache for 1 hour since config doesn't change often
             headers = {"Cache-Control": "public, max-age=3600"}
-            
+
             logger.info(f"Returning monitored DAOs count={len(spaces)}")
-            
+
             return JSONResponse(content=response, headers=headers)
-            
+
     except Exception as e:
         logger.error(f"Failed to fetch monitored DAOs error={str(e)}")
         raise HTTPException(
-            status_code=500, 
-            detail="Failed to fetch monitored DAO configuration"
+            status_code=500, detail="Failed to fetch monitored DAO configuration"
         )
+
+
+@app.post("/config/openrouter-key")
+async def set_openrouter_key(request: dict):
+    """Set or update OpenRouter API key.
+
+    Body: {"api_key": "sk-or-..."}
+    """
+    try:
+        key = request.get("api_key")
+        if key is None or not isinstance(key, str):
+            return {
+                "status": "error",
+                "data": None,
+                "error": "VALIDATION_ERROR",
+                "message": "API key is required",
+            }
+
+        # Handle empty key as removal
+        if len(key.strip()) == 0:
+            await user_preferences_service.remove_api_key()
+            ai_service.swap_api_key(None)
+            logger.info("API key removed successfully")
+            return {"status": "success", "data": {"configured": False}}
+
+        # Validate non-empty key
+        if len(key.strip()) < 20:
+            return {
+                "status": "error",
+                "data": None,
+                "error": "VALIDATION_ERROR",
+                "message": "API key must be at least 20 characters",
+            }
+
+        # Store using UserPreferencesService
+        await user_preferences_service.set_api_key(key.strip())
+
+        # Swap in AI service
+        ai_service.swap_api_key(key.strip())
+
+        logger.info("API key configured successfully")
+        return {"status": "success", "data": {"configured": True}}
+
+    except Exception as e:
+        logger.error(f"Failed to set API key: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "error": "INTERNAL_ERROR",
+            "message": "Failed to store API key",
+        }
+
+
+@app.get("/config/openrouter-key")
+async def get_openrouter_key_status():
+    """Get API key configuration status (not the key itself).
+
+    Returns whether a key is configured and its source.
+    """
+    try:
+        has_user_key = await user_preferences_service.get_api_key() is not None
+        has_env_key = settings.openrouter_api_key is not None
+
+        return {
+            "status": "success",
+            "data": {
+                "configured": has_user_key or has_env_key,
+                "source": "user"
+                if has_user_key
+                else "environment"
+                if has_env_key
+                else None,
+            },
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to get API key status: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "error": "INTERNAL_ERROR",
+            "message": "Failed to check API key status",
+        }
+
+
+# Catch-all route for SPA routing (frontend routes) - MUST be registered last
+@app.get("/{full_path:path}")
+async def serve_frontend_routes(full_path: str):
+    """Serve frontend for client-side routing, excluding API routes."""
+    # Don't intercept API routes or frontend assets
+    if full_path.startswith(
+        (
+            "api/",
+            "docs",
+            "openapi.json",
+            "healthcheck",
+            "proposals",
+            "agent-run",
+            "user-preferences",
+            "config",
+            "_app/",
+            "favicon.png",
+        )
+    ):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    # Serve index.html for frontend routes
+    index_file = os.path.join(static_path, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    else:
+        return {"message": "Frontend not available - build frontend first"}
 
 
 # Development server

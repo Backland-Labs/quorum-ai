@@ -75,18 +75,19 @@ class AgentRunService:
     4. Execute votes (or simulate in dry run mode)
     """
 
-    def __init__(self, state_manager=None) -> None:
+    def __init__(self, state_manager=None, ai_service=None) -> None:
         """Initialize AgentRunService with required dependencies.
 
         Args:
             state_manager: Optional StateManager instance for state persistence
+            ai_service: Optional AIService instance for shared configuration
         """
         self.snapshot_service = SnapshotService()
-        self.ai_service = AIService()
+        self.ai_service = ai_service or AIService()
         self.voting_service = VotingService()
         self.safe_service = SafeService()
         self.user_preferences_service = UserPreferencesService()
-        self.logger = AgentRunLogger()
+        self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
 
         # Initialize state transition tracker with StateManager for persistence
@@ -151,7 +152,7 @@ class AgentRunService:
             "agent_run_execution",
             space_id=request.space_id,
             dry_run=request.dry_run,
-        ) as span_data:
+        ):
             try:
                 # Process any pending attestations from previous runs
                 await self._process_pending_attestations(request.space_id)
@@ -191,6 +192,11 @@ class AgentRunService:
                         "filtered_proposals": len(filtered_proposals),
                     },
                 )
+
+                # Track activity based on proposals available
+                if not filtered_proposals:
+                    # No proposals available to vote on
+                    pass
 
                 # Step 3: Make and execute voting decisions
                 (
@@ -492,7 +498,7 @@ class AgentRunService:
 
         with log_span(
             self.pearl_logger, "fetch_active_proposals", space_id=space_id, limit=limit
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Fetching active proposals (space_id={space_id}, limit={limit})"
@@ -503,7 +509,6 @@ class AgentRunService:
                     space_ids=[space_id], state="active", first=limit
                 )
 
-                span_data["proposal_count"] = len(proposals)
                 self.pearl_logger.info(
                     f"Successfully fetched active proposals (space_id={space_id}, proposal_count={len(proposals)})"
                 )
@@ -559,7 +564,7 @@ class AgentRunService:
             self.pearl_logger,
             "filter_and_rank_proposals",
             proposal_count=len(proposals),
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Starting proposal filtering and ranking (proposal_count={len(proposals)}, "
@@ -667,7 +672,7 @@ class AgentRunService:
 
         with log_span(
             self.pearl_logger, "make_voting_decisions", proposal_count=len(proposals)
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Making voting decisions (proposal_count={len(proposals)}, "
@@ -680,7 +685,9 @@ class AgentRunService:
                 for proposal in proposals:
                     # Make voting decision using AI
                     decision = await self.ai_service.decide_vote(
-                        proposal=proposal, strategy=preferences.voting_strategy, space_id=space_id
+                        proposal=proposal,
+                        strategy=preferences.voting_strategy,
+                        space_id=space_id,
                     )
 
                     # Filter by confidence threshold
@@ -691,6 +698,8 @@ class AgentRunService:
                             f"vote={decision.vote.value}, confidence={decision.confidence})"
                         )
                     else:
+                        # Proposal was evaluated but not voted on due to low confidence
+                        pass
                         self.pearl_logger.info(
                             f"Vote decision rejected due to low confidence "
                             f"(proposal_id={proposal.id}, confidence={decision.confidence}, "
@@ -760,7 +769,7 @@ class AgentRunService:
             space_id=space_id,
             decision_count=len(decisions),
             dry_run=dry_run,
-        ) as span_data:
+        ):
             try:
                 self.pearl_logger.info(
                     f"Executing votes (space_id={space_id}, decision_count={len(decisions)}, dry_run={dry_run})"
@@ -800,8 +809,18 @@ class AgentRunService:
                             executed_decisions.append(decision)
                             self.logger.log_vote_execution(decision, True)
 
-                            # Queue attestation for successful vote
-                            await self._queue_attestation(decision, space_id, run_id)
+                            # Track successful vote cast activity
+                            pass
+
+                            # Extract vote ID from the Snapshot response
+                            vote_id = None
+                            submission_result = vote_result.get("submission_result", {})
+                            if submission_result.get("success"):
+                                response = submission_result.get("response", {})
+                                vote_id = response.get("id")
+                            
+                            # Queue attestation for successful vote with vote ID
+                            await self._queue_attestation(decision, space_id, run_id, vote_id)
                         else:
                             self.logger.log_vote_execution(
                                 decision, False, vote_result.get("error")
@@ -895,21 +914,36 @@ class AgentRunService:
         Args:
             space_id: The space ID to process attestations for
         """
+        print(f"DEBUG: _process_pending_attestations called for space_id={space_id}")
+        
         if not self.state_manager:
+            print("DEBUG: No state_manager, returning early")
             return
 
         try:
             # Load checkpoint with any pending attestations
-            checkpoint = await self.state_manager.load_checkpoint(
-                f"agent_checkpoint_{space_id}"
-            )
-            if not checkpoint or "pending_attestations" not in checkpoint:
+            checkpoint_name = f"agent_checkpoint_{space_id}"
+            print(f"DEBUG: Loading checkpoint '{checkpoint_name}'")
+            checkpoint = await self.state_manager.load_checkpoint(checkpoint_name)
+            
+            if not checkpoint:
+                print(f"DEBUG: No checkpoint found for '{checkpoint_name}'")
                 return
+                
+            if "pending_attestations" not in checkpoint:
+                print(f"DEBUG: No 'pending_attestations' key in checkpoint")
+                return
+                
+            print(f"DEBUG: Checkpoint loaded successfully with keys: {list(checkpoint.keys())}")
+            print(f"DEBUG: Found {len(checkpoint['pending_attestations'])} pending attestations")
 
             pending_attestations = checkpoint["pending_attestations"]
             if not pending_attestations:
+                print("DEBUG: No pending attestations to process")
                 return
 
+            print(f"DEBUG: Starting to process {len(pending_attestations)} pending attestations")
+            
             self.pearl_logger.info(
                 f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
             )
@@ -933,7 +967,7 @@ class AgentRunService:
                         space_id=space_id,
                         voter_address=attestation["voter_address"],
                         choice=attestation["vote_choice"],
-                        vote_tx_hash=attestation.get("vote_tx_hash", "unknown"),
+                        vote_tx_hash=attestation.get("vote_tx_hash", "0x" + "0" * 64),
                         timestamp=datetime.fromisoformat(attestation["timestamp"])
                         if isinstance(attestation["timestamp"], str)
                         else attestation["timestamp"],
@@ -941,17 +975,28 @@ class AgentRunService:
                     )
 
                     # Submit attestation
+                    self.pearl_logger.info(
+                        f"Submitting EAS attestation for proposal {attestation['proposal_id']} "
+                        f"(attempt {retry_count + 1}/{MAX_ATTESTATION_RETRIES})"
+                    )
                     result = await self.safe_service.create_eas_attestation(eas_data)
 
-                    self.pearl_logger.info(
-                        f"Successfully created attestation for proposal {attestation['proposal_id']}: "
-                        f"tx_hash={result.get('tx_hash')}, uid={result.get('attestation_uid')}"
-                    )
+                    if result.get("success"):
+                        self.pearl_logger.info(
+                            f"Successfully created attestation for proposal {attestation['proposal_id']}: "
+                            f"tx_hash={result.get('safe_tx_hash')}, success={result.get('success')}"
+                        )
+                    else:
+                        self.pearl_logger.error(
+                            f"Failed to create attestation for proposal {attestation['proposal_id']}: "
+                            f"error={result.get('error')}"
+                        )
+                        raise Exception(f"Attestation failed: {result.get('error')}")
 
                     processed_attestations.append(attestation["proposal_id"])
 
                 except Exception as e:
-                    self.pearl_logger.error(
+                    self.pearl_logger.exception(
                         f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
                     )
 
@@ -976,7 +1021,7 @@ class AgentRunService:
             )
 
     async def _queue_attestation(
-        self, decision: VoteDecision, space_id: str, run_id: str
+        self, decision: VoteDecision, space_id: str, run_id: str, vote_tx_hash: Optional[str] = None
     ) -> None:
         """Queue an attestation for a successful vote.
 
@@ -984,6 +1029,7 @@ class AgentRunService:
             decision: The vote decision that was executed
             space_id: The space ID where the vote was cast
             run_id: The current agent run ID
+            vote_tx_hash: The vote transaction hash/ID from Snapshot (optional)
         """
         if not self.state_manager:
             self.pearl_logger.warning("No state manager, skipping attestation queue")
@@ -991,7 +1037,7 @@ class AgentRunService:
 
         try:
             # Load current checkpoint
-            checkpoint = await self.state_manager.load_checkpoint(f"run_{run_id}")
+            checkpoint = await self.state_manager.load_checkpoint(f"agent_checkpoint_{space_id}")
             if checkpoint is None:
                 checkpoint = {}
 
@@ -1006,6 +1052,9 @@ class AgentRunService:
             delegate_address = voter_address
 
             # Create attestation data
+            # Use provided vote_tx_hash or create a valid placeholder
+            tx_hash = vote_tx_hash if vote_tx_hash else "0x" + "0" * 64
+            
             attestation_data = {
                 "proposal_id": decision.proposal_id,
                 "vote_choice": VOTE_CHOICE_MAPPING[
@@ -1013,6 +1062,7 @@ class AgentRunService:
                 ],  # Convert VoteType to choice number
                 "voter_address": voter_address,
                 "delegate_address": delegate_address,
+                "vote_tx_hash": tx_hash,
                 "reasoning": decision.reasoning,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "retry_count": 0,
@@ -1022,10 +1072,10 @@ class AgentRunService:
             checkpoint["pending_attestations"].append(attestation_data)
 
             # Save updated checkpoint
-            await self.state_manager.save_checkpoint(f"run_{run_id}", checkpoint)
+            await self.state_manager.save_checkpoint(f"agent_checkpoint_{space_id}", checkpoint)
 
             self.pearl_logger.info(
-                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: run_{run_id}"
+                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: agent_checkpoint_{space_id}"
             )
 
         except Exception as e:
@@ -1183,7 +1233,9 @@ class AgentRunService:
             # Get the decisions directory path
             decisions_dir = Path(settings.decision_output_dir)
             if not decisions_dir.exists():
-                self.pearl_logger.warning(f"Decisions directory does not exist: {decisions_dir}")
+                self.pearl_logger.warning(
+                    f"Decisions directory does not exist: {decisions_dir}"
+                )
                 return []
 
             # Get all decision files and sort by modification time (most recent first)
@@ -1193,7 +1245,7 @@ class AgentRunService:
             # Load and parse decision files
             for decision_file in decision_files[:limit]:
                 try:
-                    with open(decision_file, 'r') as f:
+                    with open(decision_file, "r") as f:
                         decision_data = json.load(f)
 
                     # Extract the timestamp
@@ -1204,9 +1256,13 @@ class AgentRunService:
                         "proposal_id": decision_data.get("proposal_id"),
                         "vote": decision_data.get("vote"),
                         "confidence": decision_data.get("confidence"),
-                        "reasoning": " ".join(decision_data.get("reasoning", [])) if isinstance(decision_data.get("reasoning"), list) else decision_data.get("reasoning", ""),
+                        "reasoning": " ".join(decision_data.get("reasoning", []))
+                        if isinstance(decision_data.get("reasoning"), list)
+                        else decision_data.get("reasoning", ""),
                         "risk_assessment": decision_data.get("risk_level", "MEDIUM"),
-                        "strategy_used": decision_data.get("voting_strategy", "balanced"),
+                        "strategy_used": decision_data.get(
+                            "voting_strategy", "balanced"
+                        ),
                         "space_id": decision_data.get("space_id"),
                         "attestation_status": None,  # Not in decision files
                         "estimated_gas_cost": 0.002,  # Default value
@@ -1215,13 +1271,13 @@ class AgentRunService:
                         "dry_run": decision_data.get("dry_run", False),
                         "executed": decision_data.get("executed", False),
                         "transaction_hash": decision_data.get("transaction_hash"),
-                        "key_factors": decision_data.get("key_factors", [])
+                        "key_factors": decision_data.get("key_factors", []),
                     }
 
                     # Create VoteDecision from the mapped data
                     vote_decision = VoteDecision(**vote_data)
                     all_decisions.append((vote_decision, timestamp))
-                    
+
                 except Exception as e:
                     self.pearl_logger.warning(
                         f"Skipping invalid decision file {decision_file}: {e}"
@@ -1265,8 +1321,10 @@ class AgentRunService:
 
         try:
             # Check if list_files method exists
-            if not hasattr(self.state_manager, 'list_files'):
-                self.pearl_logger.warning("StateManager missing list_files method, returning empty statistics")
+            if not hasattr(self.state_manager, "list_files"):
+                self.pearl_logger.warning(
+                    "StateManager missing list_files method, returning empty statistics"
+                )
                 return {
                     "total_runs": 0,
                     "total_proposals_evaluated": 0,
@@ -1275,7 +1333,7 @@ class AgentRunService:
                     "success_rate": 0.0,
                     "average_runtime_seconds": 0.0,
                 }
-            
+
             # List all checkpoint files
             checkpoint_files = await self.state_manager.list_files()
             checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")

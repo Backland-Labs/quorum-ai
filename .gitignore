@@ -215,3 +215,12 @@ backend/decisions/
 backend/agent_state.json
 backend/shutdown_state.json
 agent_state/
+
+# Solidity/Foundry
+contracts/lib/
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+
+.env.test
+.env.test

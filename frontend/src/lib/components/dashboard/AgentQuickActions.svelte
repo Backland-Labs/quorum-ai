@@ -4,15 +4,17 @@
   import { agentStatusStore } from '$lib/stores/agentStatus';
 
   interface Props {
+    spaceId?: string | null;
     onRunComplete?: () => void;
   }
 
-  let { onRunComplete }: Props = $props();
+  let { spaceId, onRunComplete }: Props = $props();
 
   // Get data from the store
   const storeState = $state($agentStatusStore);
   const isAgentActive = $derived(storeState.status?.is_active || false);
-  const currentSpaceId = $derived(storeState.currentSpaceId);
+  // Use the prop if provided, otherwise fall back to store
+  const currentSpaceId = $derived(spaceId || storeState.currentSpaceId);
 
   // Constants
   const SUCCESS_MESSAGE_DURATION = 5000;
@@ -71,7 +73,9 @@
   }
 
   async function handleRunNow(): Promise<void> {
-    if (!currentSpaceId) {
+    // Only show error if no space is selected (empty string or null)
+    // The default space 'quorum-ai.eth' or any other valid space should be allowed
+    if (!currentSpaceId || currentSpaceId.trim() === '') {
       showMessage('error', 'No space selected. Please select a space first.');
       return;
     }

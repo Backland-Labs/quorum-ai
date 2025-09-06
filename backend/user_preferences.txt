@@ -1,6 +1,6 @@
 {
   "voting_strategy": "balanced",
-  "confidence_threshold": 0.7,
+  "confidence_threshold": 0.0,
   "max_proposals_per_run": 3,
   "blacklisted_proposers": [],
   "whitelisted_proposers": []

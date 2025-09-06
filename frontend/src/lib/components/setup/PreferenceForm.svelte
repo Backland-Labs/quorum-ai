@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { VotingStrategy } from '$lib/types/preferences';
+	import { apiClient } from '$lib/api';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		initialValues?: {
@@ -16,9 +18,10 @@
 			blacklisted_proposers: string[];
 			whitelisted_proposers: string[];
 		}) => void | Promise<void>;
+		showApiKeyField?: boolean;
 	}
 
-	let { initialValues, onSubmit }: Props = $props();
+	let { initialValues, onSubmit, showApiKeyField = true }: Props = $props();
 
 	// Default configuration values
 	const DEFAULT_VOTING_STRATEGY: VotingStrategy = 'balanced';
@@ -35,6 +38,15 @@
 	let maxProposalsPerRun = $state(initialValues?.max_proposals_per_run || DEFAULT_MAX_PROPOSALS_PER_RUN);
 	let blacklistedProposers = $state(initialValues?.blacklisted_proposers?.join('\n') || '');
 	let whitelistedProposers = $state(initialValues?.whitelisted_proposers?.join('\n') || '');
+
+	// API key state
+	let apiKey = $state('');
+	let showApiKey = $state(false);
+	let apiKeyConfigured = $state(false);
+	let apiKeySource = $state<string | null>(null);
+	let apiKeyError = $state('');
+	let apiKeySaving = $state(false);
+	let apiKeySuccess = $state(false);
 
 	// Form validation state
 	let confidenceError = $state('');
@@ -64,6 +76,89 @@
 			.split('\n')
 			.map(addr => addr.trim())
 			.filter(addr => addr.length > 0);
+	};
+
+	// Load API key status on mount
+	onMount(() => {
+		loadApiKeyStatus();
+	});
+
+	// API key functions
+	const loadApiKeyStatus = async () => {
+		try {
+			const response = await apiClient.GET('/config/openrouter-key');
+			if (response.data && typeof response.data === 'object') {
+				const data = response.data as any;
+				if (data.status === 'success' && data.data) {
+					apiKeyConfigured = data.data.configured || false;
+					apiKeySource = data.data.source || null;
+				}
+			}
+		} catch (error) {
+			console.error('Failed to load API key status:', error);
+		}
+	};
+
+	const handleSaveApiKey = async () => {
+		if (!apiKey.trim() || apiKey.trim().length < 20) {
+			apiKeyError = 'API key must be at least 20 characters';
+			return;
+		}
+
+		apiKeySaving = true;
+		apiKeyError = '';
+		apiKeySuccess = false;
+
+		try {
+			const response = await apiClient.POST('/config/openrouter-key', {
+				body: { api_key: apiKey.trim() }
+			});
+
+			if (response.data && typeof response.data === 'object') {
+				const data = response.data as any;
+				if (data.status === 'success') {
+					apiKeySuccess = true;
+					apiKey = ''; // Clear field after save
+					await loadApiKeyStatus(); // Refresh status
+					setTimeout(() => { apiKeySuccess = false; }, 3000);
+				} else {
+					apiKeyError = data.message || 'Failed to save API key';
+				}
+			} else {
+				apiKeyError = 'Failed to save API key';
+			}
+		} catch (error) {
+			apiKeyError = 'Failed to save API key';
+		} finally {
+			apiKeySaving = false;
+		}
+	};
+
+	const handleRemoveApiKey = async () => {
+		apiKeySaving = true;
+		apiKeyError = '';
+
+		try {
+			const response = await apiClient.POST('/config/openrouter-key', {
+				body: { api_key: '' }
+			});
+
+			if (response.data && typeof response.data === 'object') {
+				const data = response.data as any;
+				if (data.status === 'success') {
+					apiKey = '';
+					await loadApiKeyStatus();
+				} else {
+					apiKeyError = data.message || 'Failed to remove API key';
+				}
+			} else {
+				apiKeyError = 'Failed to remove API key';
+			}
+		} catch (error) {
+			apiKeyError = 'Failed to remove API key';
+		} finally {
+			apiKeySaving = false;
+		}
 	};
 
 	// Handle form submission
@@ -118,6 +213,74 @@
 		</p>
 	</div>
 
+	<!-- API Key Configuration -->
+	{#if showApiKeyField}
+		<div>
+			<label for="api-key" class="block text-sm font-medium text-gray-700 mb-2">
+				OpenRouter API Key
+			</label>
+			<div class="space-y-3">
+				<div class="relative">
+					<input
+						id="api-key"
+						type={showApiKey ? 'text' : 'password'}
+						bind:value={apiKey}
+						placeholder="sk-or-..."
+						class="block w-full pr-20 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+						class:border-red-500={apiKeyError}
+						disabled={apiKeySaving}
+					/>
+					<button
+						type="button"
+						onclick={() => showApiKey = !showApiKey}
+						class="absolute right-12 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
+						disabled={apiKeySaving}
+					>
+						{showApiKey ? 'Hide' : 'Show'}
+					</button>
+					<button
+						type="button"
+						onclick={handleSaveApiKey}
+						disabled={apiKeySaving || !apiKey.trim()}
+						class="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						{apiKeySaving ? '...' : 'Save'}
+					</button>
+				</div>
+
+				{#if apiKeySuccess}
+					<p class="text-sm text-green-600">✓ API key saved successfully</p>
+				{/if}
+
+				{#if apiKeyError}
+					<p class="text-sm text-red-600">{apiKeyError}</p>
+				{/if}
+
+				{#if apiKeyConfigured}
+					<div class="flex items-center justify-between bg-green-50 p-3 rounded-md">
+						<p class="text-sm text-green-800">
+							✓ API key configured from {apiKeySource === 'user' ? 'user input' : 'environment'}
+						</p>
+						{#if apiKeySource === 'user'}
+							<button
+								type="button"
+								onclick={handleRemoveApiKey}
+								disabled={apiKeySaving}
+								class="text-sm text-red-600 hover:text-red-800 disabled:opacity-50"
+							>
+								Remove
+							</button>
+						{/if}
+					</div>
+				{/if}
+
+				<p class="text-sm text-gray-500">
+					Enter your OpenRouter API key to enable AI-powered proposal analysis
+				</p>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Confidence Threshold -->
 	<div>
 		<label for="confidence-threshold" class="block text-sm font-medium text-gray-700 mb-2">
@@ -167,41 +330,6 @@
 		</p>
 	</div>
 
-	<!-- Blacklisted Proposers -->
-	<div>
-		<label for="blacklisted-proposers" class="block text-sm font-medium text-gray-700 mb-2">
-			Blacklisted Proposers
-		</label>
-		<textarea
-			id="blacklisted-proposers"
-			bind:value={blacklistedProposers}
-			rows="3"
-			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
-			placeholder="Enter wallet addresses, one per line"
-			disabled={isSubmitting}
-		></textarea>
-		<p class="mt-1 text-sm text-gray-500">
-			Proposals from these addresses will be automatically rejected
-		</p>
-	</div>
-
-	<!-- Whitelisted Proposers -->
-	<div>
-		<label for="whitelisted-proposers" class="block text-sm font-medium text-gray-700 mb-2">
-			Whitelisted Proposers
-		</label>
-		<textarea
-			id="whitelisted-proposers"
-			bind:value={whitelistedProposers}
-			rows="3"
-			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
-			placeholder="Enter wallet addresses, one per line"
-			disabled={isSubmitting}
-		></textarea>
-		<p class="mt-1 text-sm text-gray-500">
-			Proposals from these addresses will receive priority consideration
-		</p>
-	</div>
 
 	<!-- Submit Button -->
 	<div class="pt-4">

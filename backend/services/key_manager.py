@@ -13,8 +13,9 @@ from pathlib import Path
 from typing import Optional
 
 from logging_config import setup_pearl_logger
+from config import settings
 
-logger = setup_pearl_logger(__name__)
+logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
 # Constants
 KEY_FILE_NAME = "ethereum_private_key.txt"
@@ -45,11 +46,18 @@ class KeyManager:
 
         Args:
             working_directory: Directory containing the key file. Defaults to current directory.
+
+        Raises:
+            KeyManagerError: If key file doesn't exist or has insecure permissions.
         """
         self.working_directory = Path(working_directory or os.getcwd())
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
+        
+        # Validate key file setup during initialization
+        self._validate_key_file_setup()
+        
         logger.info(
             "KeyManager initialized",
             extra={"working_directory": str(self.working_directory)},
@@ -85,6 +93,19 @@ class KeyManager:
         self._cached_key = None
         self._cache_timestamp = None
         logger.info("Private key cache cleared")
+
+    def _validate_key_file_setup(self) -> None:
+        """Validate that the key file exists and has secure permissions.
+        
+        This method is called during initialization to provide early feedback
+        about key file configuration issues.
+        
+        Raises:
+            KeyManagerError: If file doesn't exist or has insecure permissions.
+        """
+        self._ensure_file_exists()
+        self._validate_file_permissions()
+        logger.info("Key file setup validated successfully")
 
     def _is_cache_valid(self) -> bool:
         """Check if the cached key is still valid.

@@ -48,7 +48,7 @@ describe('AgentStatistics', () => {
     // Mock successful API response
     const mockStats = {
       total_runs: 10,
-      total_proposals_reviewed: 150,
+      total_proposals_evaluated: 150,
       total_votes_cast: 45,
       average_confidence_score: 0.82,
       success_rate: 0.9
@@ -66,7 +66,7 @@ describe('AgentStatistics', () => {
       expect(screen.queryByText('Loading statistics...')).not.toBeInTheDocument();
     });
 
-    // Verify all metrics are displayed
+    // Verify visible metrics are displayed
     expect(screen.getByText('Total Runs')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
 
@@ -76,11 +76,9 @@ describe('AgentStatistics', () => {
     expect(screen.getByText('Votes Cast')).toBeInTheDocument();
     expect(screen.getByText('45')).toBeInTheDocument();
 
-    expect(screen.getByText('Avg Confidence')).toBeInTheDocument();
-    expect(screen.getByText('82%')).toBeInTheDocument();
-
-    expect(screen.getByText('Success Rate')).toBeInTheDocument();
-    expect(screen.getByText('90%')).toBeInTheDocument();
+    // Removed metrics should not be present
+    expect(screen.queryByText('Avg Confidence')).not.toBeInTheDocument();
+    expect(screen.queryByText('Success Rate')).not.toBeInTheDocument();
   });
 
   it('handles API error gracefully', async () => {
@@ -108,7 +106,7 @@ describe('AgentStatistics', () => {
     // Mock API response with zero values
     const mockStats = {
       total_runs: 0,
-      total_proposals_reviewed: 0,
+      total_proposals_evaluated: 0,
       total_votes_cast: 0,
       average_confidence_score: 0,
       success_rate: 0
@@ -130,11 +128,8 @@ describe('AgentStatistics', () => {
     expect(screen.getByText('Total Runs')).toBeInTheDocument();
     expect(screen.getByText('0')).toBeInTheDocument();
 
-    // Should show "No data" for percentages
-    expect(screen.getByText('Avg Confidence')).toBeInTheDocument();
-    expect(screen.getByText('No data')).toBeInTheDocument();
-
-    expect(screen.getByText('Success Rate')).toBeInTheDocument();
-    expect(screen.getByText('No data')).toBeInTheDocument();
+    // Removed metrics should not be present
+    expect(screen.queryByText('Avg Confidence')).not.toBeInTheDocument();
+    expect(screen.queryByText('Success Rate')).not.toBeInTheDocument();
   });
 });

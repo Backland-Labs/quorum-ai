@@ -498,7 +498,9 @@ class VoteDecision(BaseModel):
 class AiVoteResponse(BaseModel):
     vote: str = Field(description="Vote decision: FOR, AGAINST, or ABSTAIN")
     reasoning: str = Field(description="Reasoning for the vote decision")
-    confidence: float = Field(description="Confidence level in the decision (0.0 to 1.0)", ge=0.0, le=1.0)
+    confidence: float = Field(
+        description="Confidence level in the decision (0.0 to 1.0)", ge=0.0, le=1.0
+    )
     risk_level: str = Field(description="Risk assessment: LOW, MEDIUM, or HIGH")
 
 
@@ -978,17 +980,23 @@ class WithdrawalTransaction(BaseModel):
 
 
 class EASAttestationData(BaseModel):
-    """Data model for EAS (Ethereum Attestation Service) attestations."""
+    """Data model for EAS (Ethereum Attestation Service) attestations.
+    
+    Schema: address agent, string spaceId, string proposalId, uint8 voteChoice, 
+            string snapshotSig, uint256 timestamp, string runId, uint8 confidence
+    """
 
     model_config = {"str_strip_whitespace": True, "validate_assignment": True}
 
-    # Required fields for attestation
-    proposal_id: str = Field(..., description="Snapshot proposal ID being attested")
+    # Required fields for attestation (matching new schema)
+    agent: str = Field(..., description="Address of the agent/voter")
     space_id: str = Field(..., description="Snapshot space ID")
-    voter_address: str = Field(..., description="Address of the voter")
-    choice: int = Field(..., description="Vote choice value")
-    vote_tx_hash: str = Field(..., description="Transaction hash of the Snapshot vote")
-    timestamp: datetime = Field(..., description="Timestamp of the attestation")
+    proposal_id: str = Field(..., description="Snapshot proposal ID being attested")
+    vote_choice: int = Field(..., ge=0, le=255, description="Vote choice value (uint8)")
+    snapshot_sig: str = Field(..., description="Snapshot signature hash")
+    timestamp: int = Field(..., description="Unix timestamp of the attestation")
+    run_id: str = Field(..., description="Agent run identifier")
+    confidence: int = Field(..., ge=0, le=255, description="Confidence level (uint8)")
     retry_count: int = Field(
         default=0, ge=0, le=3, description="Number of retry attempts"
     )
@@ -1007,13 +1015,13 @@ class EASAttestationData(BaseModel):
         None, description="Error message if attestation failed"
     )
 
-    @field_validator("voter_address")
+    @field_validator("agent")
     @classmethod
-    def validate_voter_address(cls, v: str) -> str:
+    def validate_agent_address(cls, v: str) -> str:
         """Validate Ethereum address format."""
         return ModelValidationHelper.validate_blockchain_address(v)
 
-    @field_validator("vote_tx_hash", "attestation_tx_hash")
+    @field_validator("snapshot_sig", "attestation_tx_hash")
     @classmethod
     def validate_tx_hash(cls, v: Optional[str]) -> Optional[str]:
         """Validate transaction hash format."""
@@ -1067,32 +1075,32 @@ class AgentRunStatistics(BaseModel):
 
 class VotingDecisionFile(BaseModel):
     """Model for file-based voting decision output."""
-    
+
     # Metadata
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     version: str = Field(default="1.0.0")
     run_id: Optional[str] = None
-    
+
     # Proposal identification
     proposal_id: str = Field(min_length=MIN_PROPOSAL_ID_LENGTH)
     proposal_title: str
     space_id: str
-    
+
     # Decision data
     vote: str  # "FOR", "AGAINST", "ABSTAIN"
     confidence: float = Field(ge=0.0, le=1.0)
     risk_level: RiskLevel
-    
+
     # Reasoning and context
     reasoning: List[str] = Field(min_items=1)
     key_factors: List[str] = Field(default_factory=list)
     voting_strategy: VotingStrategy
-    
+
     # Execution metadata
     dry_run: bool = False
     executed: bool = False
     transaction_hash: Optional[str] = None
-    
+
     # File integrity
     checksum: Optional[str] = None
 
@@ -1104,3 +1112,148 @@ class VotingDecisionFile(BaseModel):
         if v not in valid_votes:
             raise ValueError(f"Vote must be one of {valid_votes}")
         return v
+
+
+class AgentHealth(BaseModel):
+    """Agent health status model for Olas Pearl compliance.
+
+    This model represents the health status of the autonomous agent,
+    providing key indicators required by the Pearl platform for monitoring
+    agent performance and compliance with staking requirements.
+    """
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    is_making_on_chain_transactions: bool = Field(
+        default=True,
+        description="Whether the agent is successfully making on-chain transactions",
+    )
+    is_staking_kpi_met: bool = Field(
+        default=True,
+        description="Whether the agent is meeting staking KPI requirements",
+    )
+    has_required_funds: bool = Field(
+        default=True,
+        description="Whether the agent has sufficient funds for operations",
+    )
+
+    @field_validator("is_making_on_chain_transactions", mode="before")
+    @classmethod
+    def validate_is_making_on_chain_transactions(cls, v) -> bool:
+        """Validate is_making_on_chain_transactions field is boolean type."""
+        return ModelValidationHelper.validate_boolean_field(
+            v, "is_making_on_chain_transactions"
+        )
+
+    @field_validator("is_staking_kpi_met", mode="before")
+    @classmethod
+    def validate_is_staking_kpi_met(cls, v) -> bool:
+        """Validate is_staking_kpi_met field is boolean type."""
+        return ModelValidationHelper.validate_boolean_field(v, "is_staking_kpi_met")
+
+    @field_validator("has_required_funds", mode="before")
+    @classmethod
+    def validate_has_required_funds(cls, v) -> bool:
+        """Validate has_required_funds field is boolean type."""
+        return ModelValidationHelper.validate_boolean_field(v, "has_required_funds")
+
+
+class HealthCheckResponse(BaseModel):
+    """Health check response model for Olas Pearl compliance.
+
+    This model extends the existing health check functionality with optional
+    Pearl platform compliance fields while maintaining backward compatibility.
+    All new fields have safe defaults to ensure existing API consumers continue
+    to work without modification.
+    """
+
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    # New Pearl compliance fields with safe defaults
+    is_tm_healthy: bool = Field(
+        default=True, description="Whether the transaction manager is healthy"
+    )
+    agent_health: Optional[AgentHealth] = Field(
+        default=None, description="Detailed agent health status information"
+    )
+    rounds: List[Dict[str, Any]] = Field(
+        default_factory=list, description="List of round information for Pearl platform"
+    )
+    rounds_info: Optional[Dict[str, Any]] = Field(
+        default=None, description="Additional round metadata for Pearl platform"
+    )
+
+    @field_validator("is_tm_healthy", mode="before")
+    @classmethod
+    def validate_is_tm_healthy(cls, v) -> bool:
+        """Validate is_tm_healthy field is boolean type."""
+        return ModelValidationHelper.validate_boolean_field(v, "is_tm_healthy")
+
+    @field_validator("rounds")
+    @classmethod
+    def validate_rounds(cls, v: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Validate rounds field is a list."""
+        if not isinstance(v, list):
+            raise ValueError("Rounds must be a list")
+        return v
+
+
+# Custom Health Exceptions for Pearl Compliance
+class HealthCheckError(Exception):
+    """Base exception for health check failures.
+
+    This exception follows the ExternalServiceError pattern mentioned in the
+    error handling specification, providing proper error messages and context
+    for debugging health check failures.
+    """
+
+    def __init__(self, message: str, context: Optional[Dict[str, Any]] = None):
+        """Initialize HealthCheckError with message and optional context.
+
+        Args:
+            message: Error message describing the health check failure
+            context: Optional dictionary containing additional error context
+        """
+        self.context = context
+        super().__init__(message)
+
+
+class HealthServiceTimeoutError(HealthCheckError):
+    """Exception for health service timeout scenarios.
+
+    This exception provides specific timeout-related context, helping with
+    debugging timeout issues in health check operations. It inherits from
+    HealthCheckError to maintain the exception hierarchy.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        timeout_ms: Optional[int] = None,
+        operation: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ):
+        """Initialize HealthServiceTimeoutError with timeout information.
+
+        Args:
+            message: Error message describing the timeout
+            timeout_ms: Timeout value in milliseconds that was exceeded
+            operation: Name of the operation that timed out
+            context: Optional dictionary containing additional error context
+        """
+        self.timeout_ms = timeout_ms
+        self.operation = operation
+        super().__init__(message, context)
+
+
+# API Key Management Exceptions
+class ApiKeyError(Exception):
+    """API key related errors."""
+
+    pass
+
+
+class ValidationError(Exception):
+    """Validation errors."""
+
+    pass

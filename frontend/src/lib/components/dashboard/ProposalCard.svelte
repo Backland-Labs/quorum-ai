@@ -50,7 +50,7 @@
     } else {
       date = new Date(dateInput);
     }
-    
+
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

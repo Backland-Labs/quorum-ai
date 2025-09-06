@@ -390,3 +390,72 @@ async def test_attestation_max_retries_honored(mock_services, sample_preferences
     # 3. Attestation removed from queue
     final_checkpoint = mock_state_manager.save_checkpoint.call_args_list[-1][0][1]
     assert len(final_checkpoint['pending_attestations']) == 0
+
+
+@pytest.mark.asyncio
+async def test_attestation_retry_with_tracker(mock_services, sample_preferences):
+    """
+    Test that attestation retry mechanism works correctly with AttestationTracker.
+    
+    This test validates that:
+    1. When AttestationTracker wrapper is configured, retries work through the wrapper
+    2. Failed attestations trigger the retry mechanism correctly
+    3. MAX_ATTESTATION_RETRIES is respected for wrapper failures
+    4. pending_attestations queue is updated correctly with retry counts
+    """
+    # Setup mock state manager with failing attestation
+    mock_state_manager = MagicMock()
+    
+    # Simulate an attestation that will fail multiple times
+    previous_checkpoint = {
+        'space_id': 'test.eth',
+        'pending_attestations': [
+            {
+                'proposal_id': '0x789',
+                'vote_choice': 1,
+                'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',
+                'delegate_address': '0xdelegate',
+                'reasoning': 'Test reasoning for retry',
+                'vote_tx_hash': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'retry_count': 1  # Already retried once
+            }
+        ]
+    }
+    
+    async def mock_load_checkpoint(key):
+        if key == 'agent_checkpoint_test.eth':
+            return previous_checkpoint
+        return None
+    
+    mock_state_manager.load_checkpoint = AsyncMock(side_effect=mock_load_checkpoint)
+    mock_state_manager.save_checkpoint = AsyncMock()
+    
+    service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
+    mock_services['prefs'].load_preferences.return_value = sample_preferences
+    mock_services['snapshot'].get_proposals.return_value = []
+    
+    # Mock AttestationTracker configuration
+    with patch('config.settings.attestation_tracker_address', '0x9876543210987654321098765432109876543210'):
+        # Mock safe service to fail on attestation creation
+        mock_services['safe'].create_eas_attestation.side_effect = Exception("AttestationTracker wrapper timeout")
+        
+        # Execute agent run
+        from models import AgentRunRequest
+        request = AgentRunRequest(space_id='test.eth', dry_run=False)
+        result = await service.execute_agent_run(request)
+    
+    # Assert
+    # 1. Attestation was attempted through safe service
+    mock_services['safe'].create_eas_attestation.assert_called_once()
+    
+    # 2. Failed attestation remains in queue with incremented retry count
+    final_checkpoint = mock_state_manager.save_checkpoint.call_args_list[-1][0][1]
+    assert len(final_checkpoint['pending_attestations']) == 1
+    attestation = final_checkpoint['pending_attestations'][0]
+    assert attestation['proposal_id'] == '0x789'
+    assert attestation['retry_count'] == 2  # Incremented from 1 to 2
+    
+    # 3. Agent run continues successfully despite attestation failure
+    assert result is not None
+    # The error should be logged but not crash the agent

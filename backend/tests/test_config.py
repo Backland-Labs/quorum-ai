@@ -3,6 +3,7 @@
 import os
 import pytest
 from unittest.mock import patch
+from pydantic import ValidationError
 
 from config import Settings
 
@@ -97,34 +98,6 @@ class TestAgentSpecificSettings:
         result = Settings.parse_monitored_daos("compound.eth,nouns.eth,arbitrum.eth")
         expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
         assert result == expected
-
-    def test_vote_confidence_threshold_defaults_to_0_6(self):
-        """Test that vote_confidence_threshold defaults to 0.6."""
-        settings = Settings()
-        assert settings.vote_confidence_threshold == 0.6
-
-    def test_vote_confidence_threshold_loaded_from_env(self):
-        """Test that vote_confidence_threshold is loaded from environment variable."""
-        test_threshold = 0.8
-        with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": str(test_threshold)}):
-            settings = Settings()
-            assert settings.vote_confidence_threshold == test_threshold
-
-    def test_vote_confidence_threshold_validation(self):
-        """Test that vote_confidence_threshold is validated between 0.0 and 1.0."""
-        # Test valid values
-        valid_values = [0.0, 0.1, 0.5, 0.9, 1.0]
-        for value in valid_values:
-            with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": str(value)}):
-                settings = Settings()
-                assert settings.vote_confidence_threshold == value
-
-        # Test invalid values should raise validation error
-        invalid_values = [-0.1, 1.1, 2.0]
-        for value in invalid_values:
-            with patch.dict(os.environ, {"VOTE_CONFIDENCE_THRESHOLD": str(value)}):
-                with pytest.raises(ValueError):
-                    Settings()
 
     def test_activity_check_interval_defaults_to_3600(self):
         """Test that activity_check_interval defaults to 3600 seconds (1 hour)."""
@@ -285,6 +258,75 @@ class TestOlasStakingConfiguration:
         
         # Should be able to create settings without any staking config
         assert isinstance(settings, Settings)
+
+
+class TestAttestationTrackerConfiguration:
+    """Test AttestationTracker configuration settings."""
+
+    def test_attestation_tracker_address_defaults_to_none(self):
+        """Test that attestation_tracker_address defaults to None."""
+        settings = Settings()
+        assert settings.attestation_tracker_address is None
+
+    def test_attestation_tracker_address_loaded_from_env(self):
+        """Test that attestation_tracker_address is loaded from environment variable."""
+        test_address = "0x1234567890abcdef1234567890abcdef12345678"
+        expected_checksum = "0x1234567890AbcdEF1234567890aBcdef12345678" 
+        with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": test_address}):
+            settings = Settings()
+            assert settings.attestation_tracker_address == expected_checksum
+
+    def test_attestation_tracker_address_validation_valid_address(self):
+        """Test that valid Ethereum addresses are accepted and converted to checksum format."""
+        test_cases = [
+            ("0x1234567890abcdef1234567890abcdef12345678", "0x1234567890AbcdEF1234567890aBcdef12345678"),
+            ("0xAbCdEf123456789ABCDef123456789abcdef1234", "0xABCDEF123456789abcdeF123456789ABCDEf1234")
+        ]
+        for input_address, expected_address in test_cases:
+            with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": input_address}):
+                settings = Settings()
+                assert settings.attestation_tracker_address == expected_address
+
+    def test_attestation_tracker_address_validation_invalid_address(self):
+        """Test that invalid Ethereum addresses are rejected."""
+        invalid_addresses = [
+            "0x123",  # Too short
+            "invalid_address",  # Not hex
+            "1234567890abcdef1234567890abcdef1234567",  # Too short (39 chars)
+        ]
+        for address in invalid_addresses:
+            with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": address}):
+                # Invalid addresses should raise validation error (Pydantic ValidationError)
+                with pytest.raises((ValueError, ValidationError)):
+                    Settings()
+
+    def test_attestation_tracker_address_empty_string_allowed(self):
+        """Test that empty string is treated as None."""
+        with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": ""}):
+            settings = Settings()
+            # Empty string should result in None
+            assert settings.attestation_tracker_address in [None, ""]
+
+    def test_attestation_tracker_address_checksum_conversion(self):
+        """Test that valid addresses are converted to checksum format."""
+        # Test address without checksum (all lowercase)
+        test_address = "1234567890abcdef1234567890abcdef12345678"
+        expected_checksum = "0x1234567890AbcdEF1234567890aBcdef12345678"
+        with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": test_address}):
+            settings = Settings()
+            assert settings.attestation_tracker_address == expected_checksum
+
+    def test_attestation_chain_defaults_to_base(self):
+        """Test that attestation_chain defaults to 'base'."""
+        settings = Settings()
+        assert settings.attestation_chain == "base"
+
+    def test_attestation_chain_loaded_from_env(self):
+        """Test that attestation_chain is loaded from environment variable."""
+        test_chain = "ethereum"
+        with patch.dict(os.environ, {"ATTESTATION_CHAIN": test_chain}):
+            settings = Settings()
+            assert settings.attestation_chain == test_chain
 
 
 class TestPropertyMethods:

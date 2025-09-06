@@ -120,7 +120,7 @@ The Agent Dashboard provides real-time visibility into the autonomous voting age
 **Location**: `src/lib/components/dashboard/AgentStatistics.svelte`
 **Features**:
 - Shows total runs, proposals reviewed, votes cast
-- Displays average confidence and success rate
+- Does not include average confidence or success rate (removed as of 2025-09-05)
 - Updates when dashboard refreshes
 - Responsive grid layout for metrics
 
