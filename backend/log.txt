@@ -264,3 +264,128 @@ safe_eth.safe.exceptions.InvalidInternalTx: Success bit is 0, should be equal to
 [2025-09-05 18:41:28,395] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
 [2025-09-05 18:41:28,395] [INFO] [agent] Building EAS attestation transaction
 [2025-09-05 18:41:28,395] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:46:50,783] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:46:51,243] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:46:51,683] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:46:51,692] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:46:51,696] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-05 18:47:15,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:47:15,922] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:47:16,330] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:47:16,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:47:16,347] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-05 18:47:16,347] [INFO] [agent] Creating EAS attestation
+[2025-09-05 18:47:16,347] [INFO] [agent] Building EAS attestation transaction
+[2025-09-05 18:47:16,347] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:47:16,354] [ERROR] [agent] Failed to create EAS attestation: Invalid domain key: `domain`
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 387, in create_eas_attestation
+    tx_data = self._build_eas_attestation_tx(attestation_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 433, in _build_eas_attestation_tx
+    return self._build_delegated_attestation_tx(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 494, in _build_delegated_attestation_tx
+    signature = self._generate_eas_delegated_signature(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 628, in _generate_eas_delegated_signature
+    encoded = encode_typed_data(typed_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/eth_account/messages.py", line 433, in encode_typed_data
+    hash_domain(parsed_domain_data),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/eth_account/_utils/encode_typed_data/encoding_and_hashing.py", line 237, in hash_domain
+    raise ValueError(f"Invalid domain key: `{k}`")
+ValueError: Invalid domain key: `domain`
+[2025-09-05 18:49:47,284] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:49:47,751] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:49:48,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:49:48,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:49:48,210] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-05 18:49:48,210] [INFO] [agent] Creating EAS attestation
+[2025-09-05 18:49:48,210] [INFO] [agent] Building EAS attestation transaction
+[2025-09-05 18:49:48,210] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:49:48,224] [INFO] [agent] Generated EAS delegated signature: 93d59eccaebef55295f22b0521ac48a19f0a2495e5c395a4e2c2ee8080c0b9015287e123c1f97e22923a66590989149af31bdfa12c6ddeb7dc1c0d121598dd901b
+[2025-09-05 18:49:48,224] [INFO] [agent] Building delegated attestation for attestation_tracker at 0x82372200...
+[2025-09-05 18:49:48,228] [INFO] [agent] Starting safe_service._submit_safe_transaction (chain=base, to=0x82372200341a23377129Ccc1aE2EFeB3048440eC)
+[2025-09-05 18:49:48,229] [INFO] [agent] Creating Safe transaction on base to 0x82372200341a23377129Ccc1aE2EFeB3048440eC
+[2025-09-05 18:49:48,251] [INFO] [agent] Built Safe transaction (chain=base, safe_address=0x07edA994E013AbC8619A5038455db3A6FBdd2Bca, to=0x82372200341a23377129Ccc1aE2EFeB3048440eC, value=0, data_length=740, nonce=3, safe_tx_hash=9581af867e0b2ce9df15fbb276b2c88dc1ffdd3c3b7854f8e3030e5eb7e610ef)
+[2025-09-05 18:49:48,999] [INFO] [agent] Proposed transaction to Safe service
+[2025-09-05 18:49:49,018] [ERROR] [agent] Error creating Safe transaction: Success bit is 0, should be equal to 1
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 216, in _submit_safe_transaction
+    ethereum_tx_sent = safe_instance.send_multisig_tx(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/safe_eth/safe/safe.py", line 915, in send_multisig_tx
+    safe_tx.call(
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/safe_eth/safe/safe_tx.py", line 320, in call
+    raise InvalidInternalTx(
+safe_eth.safe.exceptions.InvalidInternalTx: Success bit is 0, should be equal to 1
+[2025-09-05 18:49:49,020] [INFO] [agent] Completed safe_service._submit_safe_transaction successfully in 0.791s
+[2025-09-05 18:49:49,021] [INFO] [agent] Submitted Safe transaction for attestation. Safe tx hash: None.
+[2025-09-05 18:50:16,333] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:50:16,789] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:50:17,223] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:50:17,237] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:50:17,240] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-05 18:50:17,240] [INFO] [agent] Creating EAS attestation
+[2025-09-05 18:50:17,241] [INFO] [agent] Building EAS attestation transaction
+[2025-09-05 18:50:17,241] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:50:17,253] [INFO] [agent] Generated EAS delegated signature: 19dc8347f424938490282df657eec93a38b97dafb27e41b15ff697b25b53c0a6083de03d3f75064039d5ee421f666794f8a31acd7ec2e634f9a725afab4bf40b1c
+[2025-09-05 18:50:17,253] [INFO] [agent] Building delegated attestation for attestation_tracker at 0x82372200...
+[2025-09-05 18:50:17,257] [INFO] [agent] Starting safe_service._submit_safe_transaction (chain=base, to=0x82372200341a23377129Ccc1aE2EFeB3048440eC)
+[2025-09-05 18:50:17,257] [INFO] [agent] Creating Safe transaction on base to 0x82372200341a23377129Ccc1aE2EFeB3048440eC
+[2025-09-05 18:50:17,279] [INFO] [agent] Built Safe transaction (chain=base, safe_address=0x07edA994E013AbC8619A5038455db3A6FBdd2Bca, to=0x82372200341a23377129Ccc1aE2EFeB3048440eC, value=0, data_length=740, nonce=3, safe_tx_hash=5021ba13ea4c80de99bdd39cac25cb2dd60c2b39aaef03345e169d681b55bed9)
+[2025-09-05 18:50:17,946] [INFO] [agent] Proposed transaction to Safe service
+[2025-09-05 18:50:17,962] [ERROR] [agent] Error creating Safe transaction: Success bit is 0, should be equal to 1
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 216, in _submit_safe_transaction
+    ethereum_tx_sent = safe_instance.send_multisig_tx(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/safe_eth/safe/safe.py", line 915, in send_multisig_tx
+    safe_tx.call(
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/safe_eth/safe/safe_tx.py", line 320, in call
+    raise InvalidInternalTx(
+safe_eth.safe.exceptions.InvalidInternalTx: Success bit is 0, should be equal to 1
+[2025-09-05 18:50:17,964] [INFO] [agent] Completed safe_service._submit_safe_transaction successfully in 0.707s
+[2025-09-05 18:50:17,965] [INFO] [agent] Submitted Safe transaction for attestation. Safe tx hash: None.
+[2025-09-05 18:52:28,092] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:52:28,540] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:52:28,960] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:52:28,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:52:28,966] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-05 18:52:28,966] [INFO] [agent] Building EAS attestation transaction
+[2025-09-05 18:52:28,966] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:52:28,980] [INFO] [agent] Generated EAS delegated signature: fb2151c10230669a70f6c0642569fe8569b95b7a9f5f5eb4f6adb10c03f16b683c30394dd76e84bcfb2dadd87227d7d3944ce0fb2e986f4b81feb2adfb161e251b
+[2025-09-05 18:52:28,980] [INFO] [agent] Building delegated attestation for attestation_tracker at 0x82372200...
+[2025-09-05 18:56:34,469] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:56:34,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:56:35,453] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:56:35,455] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-05 18:56:35,459] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-05 18:56:35,473] [INFO] [agent] Generated EAS delegated signature: 829d6d8ad30e09bfb0f52f1ba1151d0aadfbfc636e5265815c16c42be9183c7036845663d3bb7eba48b6a9dd5b14e15a140fd6d0c322d7dd608e10a906711bc21c
+[2025-09-05 18:56:35,474] [INFO] [agent] Building EAS attestation transaction
+[2025-09-05 18:56:35,474] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:56:35,488] [INFO] [agent] Generated EAS delegated signature: 78c61780ddef5b2855d79ba8c490ad1da15f8dd63ae74d297d65194c81dfd05b389d2d8b30cfb8371f9dc9f25df61b01f220927b48a4650211398a1eafc1c1641c
+[2025-09-05 18:56:35,488] [INFO] [agent] Building delegated attestation for attestation_tracker at 0x82372200...
+[2025-09-05 18:56:35,492] [INFO] [agent] Creating EAS attestation
+[2025-09-05 18:56:35,492] [INFO] [agent] Building EAS attestation transaction
+[2025-09-05 18:56:35,492] [INFO] [agent] Using AttestationTracker for EAS attestation
+[2025-09-05 18:56:35,504] [INFO] [agent] Generated EAS delegated signature: 78c61780ddef5b2855d79ba8c490ad1da15f8dd63ae74d297d65194c81dfd05b389d2d8b30cfb8371f9dc9f25df61b01f220927b48a4650211398a1eafc1c1641c
+[2025-09-05 18:56:35,504] [INFO] [agent] Building delegated attestation for attestation_tracker at 0x82372200...
+[2025-09-05 18:56:35,507] [INFO] [agent] Starting safe_service._submit_safe_transaction (chain=base, to=0x82372200341a23377129Ccc1aE2EFeB3048440eC)
+[2025-09-05 18:56:35,507] [INFO] [agent] Creating Safe transaction on base to 0x82372200341a23377129Ccc1aE2EFeB3048440eC
+[2025-09-05 18:56:35,531] [INFO] [agent] Built Safe transaction (chain=base, safe_address=0x07edA994E013AbC8619A5038455db3A6FBdd2Bca, to=0x82372200341a23377129Ccc1aE2EFeB3048440eC, value=0, data_length=740, nonce=3, safe_tx_hash=abfc1ca5281875e1f1e39cb1896eebeeeaf4dfb26b7480591fe11102c8220096)
+[2025-09-05 18:56:36,218] [INFO] [agent] Proposed transaction to Safe service
+[2025-09-05 18:56:36,232] [ERROR] [agent] Error creating Safe transaction: Success bit is 0, should be equal to 1
+Traceback (most recent call last):
+  File "/Users/max/code/quorum-ai/backend/../backend/services/safe_service.py", line 216, in _submit_safe_transaction
+    ethereum_tx_sent = safe_instance.send_multisig_tx(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/safe_eth/safe/safe.py", line 915, in send_multisig_tx
+    safe_tx.call(
+  File "/Users/max/code/quorum-ai/backend/.venv/lib/python3.12/site-packages/safe_eth/safe/safe_tx.py", line 320, in call
+    raise InvalidInternalTx(
+safe_eth.safe.exceptions.InvalidInternalTx: Success bit is 0, should be equal to 1
+[2025-09-05 18:56:36,233] [INFO] [agent] Completed safe_service._submit_safe_transaction successfully in 0.726s
+[2025-09-05 18:56:36,234] [INFO] [agent] Submitted Safe transaction for attestation. Safe tx hash: None.

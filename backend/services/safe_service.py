@@ -625,7 +625,7 @@ class SafeService:
             'types': types,
             'message': message,
         }
-        encoded = encode_typed_data(typed_data)
+        encoded = encode_typed_data(full_message=typed_data)
         
         # Sign with the account's private key
         signature = self.account.sign_message(encoded)
