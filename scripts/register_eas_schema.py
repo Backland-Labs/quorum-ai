@@ -102,7 +102,7 @@ def register_schema():
         tx = schema_registry.functions.register(
             SCHEMA,
             "0x0000000000000000000000000000000000000000",  # No resolver
-            True  # Revocable
+            False  # Revocable
         ).build_transaction({
             'from': account.address,
             'gas': int(gas_estimate * 1.1),  # Add 10% buffer

@@ -230,6 +230,19 @@ class SafeService:
                 safe_service.post_transaction(safe_tx)
                 self.logger.info("Proposed transaction to Safe service")
 
+                # Simulate transaction before execution to catch revert reasons
+                try:
+                    self.logger.info("Simulating Safe transaction before execution")
+                    safe_tx.call()  # This will reveal the specific revert reason if transaction would fail
+                    self.logger.info("Transaction simulation successful")
+                except Exception as simulation_error:
+                    self.logger.error(f"Transaction simulation failed: {str(simulation_error)}")
+                    return {
+                        "success": False, 
+                        "error": f"Transaction would revert: {str(simulation_error)}",
+                        "simulation_failed": True
+                    }
+
                 # Execute Safe transaction on-chain
                 ethereum_tx_sent = safe_instance.send_multisig_tx(
                     to=safe_tx.to,
@@ -399,26 +412,48 @@ class SafeService:
             Dict containing success status and transaction details or error
         """
         try:
-            self.logger.info("Creating EAS attestation")
+            self.logger.info(
+                f"Creating EAS attestation (proposal_id={attestation_data.proposal_id}, "
+                f"space_id={attestation_data.space_id}, choice={attestation_data.choice}, "
+                f"voter_address={attestation_data.voter_address})"
+            )
+            
             # Check if EAS configuration is available
             if not settings.eas_contract_address or not settings.eas_schema_uid:
+                self.logger.error(
+                    f"EAS configuration missing - contract_address={settings.eas_contract_address}, "
+                    f"schema_uid={settings.eas_schema_uid}"
+                )
                 return {
                     "success": False,
                     "error": "EAS configuration missing: contract address or schema UID not set",
                 }
 
             if not settings.base_safe_address:
+                self.logger.error(f"Base Safe address not configured")
                 return {"success": False, "error": "Base Safe address not configured"}
 
+            self.logger.info(
+                f"EAS configuration validated - contract_address={settings.eas_contract_address}, "
+                f"schema_uid={settings.eas_schema_uid}, safe_address={settings.base_safe_address}"
+            )
+
             # Build the attestation transaction
+            self.logger.debug("Building EAS attestation transaction data")
             tx_data = self._build_eas_attestation_tx(attestation_data)
 
-            self.logger.debug(f"EAS tx data: {tx_data}, type: {type(tx_data)}")
+            self.logger.info(
+                f"Built EAS transaction data - to={tx_data['to']}, "
+                f"data_length={len(tx_data['data'])}, value={tx_data.get('value', 0)}"
+            )
 
             # Convert hex string to bytes for Safe transaction
             tx_data_bytes = bytes.fromhex(tx_data["data"][2:]) if tx_data["data"].startswith("0x") else bytes.fromhex(tx_data["data"])
 
+            self.logger.debug(f"Converted transaction data to bytes, length={len(tx_data_bytes)}")
+
             # Submit through Safe
+            self.logger.info("Submitting EAS attestation transaction through Safe")
             result = await self._submit_safe_transaction(
                 chain="base",
                 to=tx_data["to"],
@@ -426,15 +461,23 @@ class SafeService:
                 value=tx_data.get("value", 0),
             )
 
-            self.logger.info(
-                f"Submitted Safe transaction for attestation. "
-                f"Safe tx hash: {result.get('hash')}."
-            )
+            if result.get("success"):
+                self.logger.info(
+                    f"EAS attestation transaction submitted successfully - "
+                    f"tx_hash={result.get('tx_hash')}, safe_address={result.get('safe_address')}"
+                )
+            else:
+                self.logger.error(
+                    f"EAS attestation transaction failed - error={result.get('error')}"
+                )
 
-            return {"success": True, "safe_tx_hash": result.get("hash")}
+            return {"success": result.get("success", False), "safe_tx_hash": result.get("tx_hash")}
 
         except Exception as e:
-            self.logger.exception(f"Failed to create EAS attestation: {str(e)}")
+            self.logger.exception(
+                f"Failed to create EAS attestation - proposal_id={attestation_data.proposal_id}, "
+                f"error={str(e)}"
+            )
             return {"success": False, "error": str(e)}
 
     def _build_eas_attestation_tx(
@@ -451,21 +494,33 @@ class SafeService:
         Returns:
             Transaction data dict with 'to', 'data', and 'value' fields
         """
+        self.logger.info(
+            f"Building EAS attestation transaction - attestation_tracker_address={settings.attestation_tracker_address}, "
+            f"eas_contract_address={settings.eas_contract_address}"
+        )
+        
         # Use AttestationTracker if configured, otherwise direct EAS
-        self.logger.info("Building EAS attestation transaction")
         if settings.attestation_tracker_address:
             # Assertion for type checking
             assert settings.attestation_tracker_address is not None
-            self.logger.info("Using AttestationTracker for EAS attestation")
+            self.logger.info(
+                f"Using AttestationTracker contract for EAS attestation - "
+                f"tracker_address={settings.attestation_tracker_address}"
+            )
             return self._build_delegated_attestation_tx(
                 attestation_data,
                 target_address=settings.attestation_tracker_address,
                 abi_name="attestation_tracker",
             )
         else:
-            # Build delegated request for direct EAS (updating from current attest() pattern)
             if not settings.eas_contract_address:
+                self.logger.error("EAS contract address not configured for direct EAS call")
                 raise ValueError("EAS contract address not configured")
+            
+            self.logger.info(
+                f"Using direct EAS contract for attestation - "
+                f"eas_address={settings.eas_contract_address}"
+            )
             return self._build_delegated_attestation_tx(
                 attestation_data,
                 target_address=settings.eas_contract_address,
@@ -485,39 +540,66 @@ class SafeService:
         Returns:
             Transaction data dict
         """
+        self.logger.info(
+            f"Building delegated attestation transaction - target_address={target_address}, "
+            f"abi_name={abi_name}, attestation_chain={settings.attestation_chain}"
+        )
+        
         from utils.web3_provider import get_w3
         from utils.abi_loader import load_abi
 
+        # Get Web3 connection
+        self.logger.debug(f"Getting Web3 connection for chain: {settings.attestation_chain}")
         w3 = get_w3(settings.attestation_chain)
+        current_block = w3.eth.get_block('latest')
+        self.logger.debug(f"Current block number: {current_block['number']}, timestamp: {current_block['timestamp']}")
 
         # Load ABI using existing utility
+        self.logger.debug(f"Loading ABI for contract type: {abi_name}")
         contract_abi = load_abi(abi_name)
+        self.logger.debug(f"Loaded ABI with {len(contract_abi)} functions/events")
 
         contract = w3.eth.contract(
             address=Web3.to_checksum_address(target_address), abi=contract_abi
         )
+        self.logger.info(f"Created contract instance at address: {target_address}")
 
         eas_schema_uid = Web3.to_bytes(hexstr=settings.eas_schema_uid)
-
         assert isinstance(eas_schema_uid, bytes), f"eas_schema_uid must be bytes, got {type(eas_schema_uid)}"
+        
+        self.logger.debug(f"EAS schema UID: {settings.eas_schema_uid} (as bytes: {eas_schema_uid.hex()})")
+
+        # Encode attestation data
+        self.logger.debug("Encoding attestation data")
+        encoded_data = self._encode_attestation_data(attestation_data)
+        self.logger.debug(f"Encoded attestation data length: {len(encoded_data)} bytes")
 
         # Build delegated attestation request with proper signature
+        deadline = int(current_block['timestamp']) + 3600  # 1 hour deadline
         attestation_request_data = {
             "schema": eas_schema_uid,
-            "data": self._encode_attestation_data(attestation_data),
+            "data": encoded_data,
             "expirationTime": 0,
             "revocable": True,
             "refUID": b"\x00" * 32,
             "recipient": Web3.to_checksum_address(attestation_data.voter_address),
             "value": 0,
-            "deadline": int(w3.eth.get_block('latest')['timestamp']) + 3600,  # 1 hour deadline
+            "deadline": deadline,
         }
+        
+        self.logger.info(
+            f"Built attestation request data - schema={settings.eas_schema_uid}, "
+            f"recipient={attestation_data.voter_address}, deadline={deadline}, "
+            f"data_length={len(encoded_data)}"
+        )
         
         # Generate EAS delegated signature (always sign for EAS contract, not wrapper)
         eas_address = settings.eas_contract_address
         if not eas_address:
+            self.logger.error("EAS contract address not configured for signature generation")
             raise ValueError("EAS contract address not configured")
-            
+        
+        self.logger.debug(f"Generating EAS delegated signature for EAS contract: {eas_address}")
         signature = self._generate_eas_delegated_signature(
             attestation_request_data, 
             w3, 
@@ -530,15 +612,21 @@ class SafeService:
         }
 
         self.logger.info(
-            f"Building delegated attestation for {abi_name} at {target_address[:10]}..."
+            f"Built complete delegated request for {abi_name} contract at {target_address}"
         )
 
         # Build transaction
+        self.logger.debug("Building attestByDelegation transaction")
         tx = contract.functions.attestByDelegation(delegated_request).build_transaction(
             {
                 "from": settings.base_safe_address,
                 "gas": 300000,  # Standard gas limit
             }
+        )
+
+        self.logger.info(
+            f"Built delegated attestation transaction - to={tx['to']}, "
+            f"data_length={len(tx['data'])}, gas={tx.get('gas', 'N/A')}"
         )
 
         return {"to": tx["to"], "data": tx["data"], "value": tx.get("value", 0)}
@@ -609,6 +697,11 @@ class SafeService:
         Returns:
             EIP-712 signature bytes
         """
+        self.logger.info(
+            f"Generating EAS delegated signature - chain_id={w3.eth.chain_id}, "
+            f"eas_contract={eas_contract_address}, signer={self.account.address}"
+        )
+        
         # EAS EIP-712 domain and types structure
         types = {
             'EIP712Domain': [
@@ -636,6 +729,11 @@ class SafeService:
             'verifyingContract': Web3.to_checksum_address(eas_contract_address),
         }
         
+        self.logger.debug(
+            f"EIP-712 domain - name={domain['name']}, version={domain['version']}, "
+            f"chainId={domain['chainId']}, verifyingContract={domain['verifyingContract']}"
+        )
+        
         # Message data
         message = {
             'schema': request_data['schema'],
@@ -648,6 +746,12 @@ class SafeService:
             'deadline': request_data['deadline'],
         }
         
+        self.logger.debug(
+            f"EIP-712 message - schema={request_data['schema'].hex()}, "
+            f"recipient={request_data['recipient']}, deadline={request_data['deadline']}, "
+            f"data_length={len(request_data['data'])}"
+        )
+        
         # Create EIP-712 encoded data
         typed_data = {
             'domain': domain,
@@ -655,13 +759,17 @@ class SafeService:
             'types': types,
             'message': message,
         }
+        
+        self.logger.debug("Encoding EIP-712 typed data")
         encoded = encode_typed_data(full_message=typed_data)
         
         # Sign with the account's private key
+        self.logger.debug("Signing EIP-712 encoded message with private key")
         signature = self.account.sign_message(encoded)
         
         self.logger.info(
-            f"Generated EAS delegated signature: {signature.signature.hex()}"
+            f"Generated EAS delegated signature successfully - signature_length={len(signature.signature)}, "
+            f"signature_hex={signature.signature.hex()[:20]}..."
         )
         
         return signature.signature

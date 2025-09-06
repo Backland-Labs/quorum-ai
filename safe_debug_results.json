@@ -1,0 +1,76 @@
+{
+  "timestamp": 1757184511,
+  "block_number": 35197582,
+  "chain_id": 8453,
+  "configuration": {
+    "rpc_url": "https://methodical-aged-haze.base-mainnet.quiknode.pro/be2a6f7bf2b041c1bcc41cf4a2880b239afcdeb7/",
+    "eas_contract": "0x4200000000000000000000000000000000000021",
+    "attestation_tracker": "0xc16647a4290E4C931aD586713c7d85E0eFbafba0",
+    "eas_schema_uid": "0x7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c",
+    "safe_address": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+  },
+  "theories": [
+    {
+      "theory": "Contract State Issues",
+      "tests": [
+        {
+          "name": "Contract connectivity",
+          "status": "\u2705 PASS",
+          "data": {
+            "owner": "0x0A84c988405Fbc7db7e5adC886585d1DAA4283F8",
+            "eas_address": "0x4200000000000000000000000000000000000021",
+            "expected_eas": "0x4200000000000000000000000000000000000021"
+          }
+        },
+        {
+          "name": "Safe attestation data",
+          "status": "\u2705 PASS",
+          "data": {
+            "safe_address": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca",
+            "attestation_count": 0,
+            "raw_storage": "0x0",
+            "active_status": false,
+            "count_from_raw": 0
+          }
+        },
+        {
+          "name": "Safe address permissions",
+          "status": "\u274c FAIL",
+          "error": "'Contract' object has no attribute 'encodeABI'"
+        }
+      ]
+    },
+    {
+      "theory": "EAS Attestation Validation",
+      "tests": [
+        {
+          "name": "Schema validation",
+          "status": "\u274c FAIL",
+          "error": "('execution reverted', '0x')"
+        },
+        {
+          "name": "Transaction data decode",
+          "status": "\u274c FAIL",
+          "error": "'attestByDelegation((bytes32,bytes,uint64,bool,bytes32,address,uint256,uint64,bytes))' object has no attribute 'function_identifier'"
+        }
+      ]
+    },
+    {
+      "theory": "Gas and Simulation Issues",
+      "tests": [
+        {
+          "name": "Gas estimation",
+          "status": "\u274c FAIL",
+          "error": "('execution reverted', '0x')",
+          "analysis": "This might indicate the transaction would revert"
+        },
+        {
+          "name": "Static call simulation",
+          "status": "\u274c FAIL - REVERT DETECTED",
+          "error": "('execution reverted', '0x')",
+          "analysis": "This is likely the root cause of the Safe transaction failure"
+        }
+      ]
+    }
+  ]
+}
