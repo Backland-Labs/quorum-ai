@@ -1,7 +1,7 @@
 # QA Review Document
 This document is to enable QA reviewers an easier time understanding the codebase and Pearl compliance.
 
-[Video Walkthrough]()
+[Video Walkthrough](https://www.loom.com/share/2f9fcd8bc6a24f21acd03e51fcf30432?sid=32ed6ae5-2817-40ad-80f8-ac166a422804)
 [Minimal Open Autonomy Agent Repo](https://github.com/Backland-Labs/quorum-olas-package)
 [Agent Source Code](https://github.com/Backland-Labs/quorum-ai/tree/main)
 [Agent Docker Image](https://hub.docker.com/repository/docker/backlandlabs/quorum/general)
