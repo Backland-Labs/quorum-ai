@@ -4,6 +4,10 @@
 
 A sophisticated autonomous voting agent for DAO governance on the Olas Pearl platform. This full-stack application enables automated participation in decentralized governance through AI-powered proposal analysis and voting decisions, featuring integration with Snapshot and Google Gemini 2.0 Flash.
 
+## QA
+
+[QA Checklist](QA_CHECKLIST.md)
+
 ## Required Contracts
 
 Before running Quorum AI, you need access to the following smart contracts:

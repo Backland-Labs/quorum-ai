@@ -1,0 +1,97 @@
+name: Release Binaries
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}-${{ matrix.arch }} binary
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos
+            arch: x64
+            runner: macos-13
+            python-arch: x64
+          - os: macos
+            arch: arm64
+            runner: macos-14
+            python-arch: arm64
+          - os: windows
+            arch: x64
+            runner: windows-latest
+            python-arch: x64
+          - os: windows
+            arch: arm64
+            runner: windows-latest
+            python-arch: x64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-arch }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: ${{ matrix.python-arch }}
+
+      - name: Install UV
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+            echo "$env:USERPROFILE\\.cargo\\bin" >> $GITHUB_PATH
+          else
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          fi
+
+      - name: Install dependencies
+        shell: bash
+        working-directory: backend
+        run: |
+          uv sync --dev
+          uv add pyinstaller
+
+      - name: Build executable
+        shell: bash
+        working-directory: backend
+        run: |
+          # Set binary name based on OS
+          if [[ "${{ matrix.os }}" == "windows" ]]; then
+            BINARY_NAME="agent_runner_${{ matrix.os }}_${{ matrix.arch }}.exe"
+          else
+            BINARY_NAME="agent_runner_${{ matrix.os }}_${{ matrix.arch }}"
+          fi
+          
+          # Build with PyInstaller
+          uv run pyinstaller \
+            --onefile \
+            --name "$BINARY_NAME" \
+            --distpath ../dist \
+            --workpath ../build \
+            --specpath ../build \
+            --add-data "abi:abi" \
+            --hidden-import uvloop \
+            --hidden-import pydantic_ai \
+            --hidden-import web3 \
+            --hidden-import eth_account \
+            --hidden-import safe_eth_py \
+            main.py
+
+      - name: Upload binary to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/agent_runner_${{ matrix.os }}_${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent_runner_${{ matrix.os }}_${{ matrix.arch }}
+          path: dist/agent_runner_${{ matrix.os }}_${{ matrix.arch }}${{ matrix.os == 'windows' && '.exe' || '' }}
