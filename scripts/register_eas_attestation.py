@@ -4,6 +4,7 @@
 # dependencies = [
 #     "web3>=6.0.0",
 #     "eth-account>=0.10.0",
+#     "eth-abi>=5.0.0",
 # ]
 # ///
 """
