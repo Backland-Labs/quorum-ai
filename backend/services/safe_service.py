@@ -777,7 +777,7 @@ class SafeService:
                 {'name': 'chainId', 'type': 'uint256'},
                 {'name': 'verifyingContract', 'type': 'address'},
             ],
-            'DelegatedAttestation': [
+            'Attest': [
                 {'name': 'schema', 'type': 'bytes32'},
                 {'name': 'recipient', 'type': 'address'},
                 {'name': 'expirationTime', 'type': 'uint64'},
@@ -790,8 +790,8 @@ class SafeService:
         }
         
         domain = {
-            'name': 'EAS Attestation',
-            'version': '0.26',
+            'name': 'EIP712Proxy',
+            'version': '1.2.0',
             'chainId': w3.eth.chain_id,
             'verifyingContract': Web3.to_checksum_address(eas_contract_address),
         }
@@ -822,7 +822,7 @@ class SafeService:
         # Create EIP-712 encoded data
         typed_data = {
             'domain': domain,
-            'primaryType': 'DelegatedAttestation', 
+            'primaryType': 'Attest', 
             'types': types,
             'message': message,
         }
