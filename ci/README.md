@@ -1,8 +1,8 @@
-# AttestationTracker CI Test Documentation
+# CI Testing Suite
 
 ## Overview
 
-The `test_attestation_tracker_ci.py` script provides comprehensive end-to-end testing of the AttestationTracker contract, suitable for CI/CD pipelines.
+This directory contains continuous integration testing tools for the Quorum AI project. The main component is the `test_attestation_tracker_ci.py` script which provides comprehensive end-to-end testing of the AttestationTracker contract, suitable for CI/CD pipelines.
 
 ## What It Tests
 
@@ -26,9 +26,16 @@ forge build
 
 ## Running the Test
 
+### Quick Start
+```bash
+# Use the automated runner script
+./ci/run-attestation-ci.sh
+```
+
 ### Direct Execution
 ```bash
-./scripts/test_attestation_tracker_ci.py
+# From project root
+./ci/test_attestation_tracker_ci.py
 ```
 
 ### In CI Pipeline
@@ -41,7 +48,7 @@ ANVIL_PID=$!
 sleep 5
 
 # Run test
-./scripts/test_attestation_tracker_ci.py
+./ci/test_attestation_tracker_ci.py
 EXIT_CODE=$?
 
 # Cleanup

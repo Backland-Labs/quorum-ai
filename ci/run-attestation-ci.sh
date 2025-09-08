@@ -166,13 +166,13 @@ echo ""
 export PYTHONPATH="$PROJECT_ROOT/backend:$PYTHONPATH"
 
 # Make script executable
-chmod +x scripts/test_attestation_tracker_ci.py
+chmod +x ci/test_attestation_tracker_ci.py
 
 # Run the test
 if [ "$VERBOSE" = true ]; then
-    ./scripts/test_attestation_tracker_ci.py || TEST_RESULT=$?
+    ./ci/test_attestation_tracker_ci.py || TEST_RESULT=$?
 else
-    ./scripts/test_attestation_tracker_ci.py || TEST_RESULT=$?
+    ./ci/test_attestation_tracker_ci.py || TEST_RESULT=$?
 fi
 
 echo ""
