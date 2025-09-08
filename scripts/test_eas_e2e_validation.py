@@ -1,4 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "web3==7.6.0",
+#     "eth-account==0.13.4",
+#     "eth-utils==5.1.0",
+# ]
+# ///
 """
 End-to-End Test for EAS Delegated Attestation Fix
 This test validates the complete flow with NO MOCKS against real Base mainnet fork.
@@ -212,7 +220,9 @@ print("STEP 4: Submit Delegated Attestation to EIP712Proxy")
 print("=" * 80)
 
 # Load EIP712Proxy ABI (it has same interface as EAS)
-with open("../backend/abi/eas.json", "r") as f:
+from pathlib import Path
+abi_path = Path(__file__).parent.parent / "backend" / "abi" / "eas.json"
+with open(abi_path, "r") as f:
     eas_data = json.load(f)
     eas_abi = eas_data["abi"]
 
