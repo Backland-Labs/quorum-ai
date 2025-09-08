@@ -21,7 +21,6 @@ from eth_account import Account
 from eth_account.messages import encode_typed_data
 import json
 import time
-from eth_utils import keccak
 
 print("=" * 80)
 print("EAS DELEGATED ATTESTATION END-TO-END TEST")
@@ -46,7 +45,7 @@ EAS_MAIN = "0x4200000000000000000000000000000000000021"
 EIP712_PROXY = "0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6"
 
 # Real schema UID from Base mainnet
-SCHEMA_UID = "0x56e7ff73404d5c8102a063b9efeb4b992c90b01c9c958de4c2baae18340f242b"
+SCHEMA_UID = "0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4"
 
 print(f"\nContract Addresses:")
 print(f"  EAS Main: {EAS_MAIN}")
