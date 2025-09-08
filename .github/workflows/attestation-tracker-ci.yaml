@@ -7,8 +7,9 @@ on:
       - develop
     paths:
       - 'contracts/**'
-      - 'scripts/test_attestation_tracker_ci.py'
+      - 'ci/**'
       - 'backend/models.py'
+      - 'backend/utils/eas_signature.py'
       - '.github/workflows/attestation-tracker-ci.yaml'
   pull_request:
     branches:
@@ -16,8 +17,9 @@ on:
       - develop
     paths:
       - 'contracts/**'
-      - 'scripts/test_attestation_tracker_ci.py'
+      - 'ci/**'
       - 'backend/models.py'
+      - 'backend/utils/eas_signature.py'
       - '.github/workflows/attestation-tracker-ci.yaml'
   workflow_dispatch:
     inputs:
@@ -108,10 +110,10 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/backend
         run: |
           # Make script executable
-          chmod +x scripts/test_attestation_tracker_ci.py
+          chmod +x ci/test_attestation_tracker_ci.py
           
           # Run the test script
-          ./scripts/test_attestation_tracker_ci.py
+          ./ci/test_attestation_tracker_ci.py
         
       - name: Upload test results
         if: always()
@@ -210,13 +212,13 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/backend
           DEBUG: ${{ github.event.inputs.debug_enabled || 'false' }}
         run: |
-          chmod +x scripts/test_attestation_tracker_ci.py
+          chmod +x ci/test_attestation_tracker_ci.py
           
           if [ "$DEBUG" = "true" ]; then
             echo "Running with debug output..."
-            ./scripts/test_attestation_tracker_ci.py --verbose
+            ./ci/test_attestation_tracker_ci.py --verbose
           else
-            ./scripts/test_attestation_tracker_ci.py
+            ./ci/test_attestation_tracker_ci.py
           fi
 
       - name: Generate test report
