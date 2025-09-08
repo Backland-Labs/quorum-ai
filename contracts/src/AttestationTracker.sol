@@ -47,7 +47,7 @@ interface IEAS_Fixed {
 }
 
 /**
- * @title AttestationTrackerFixed
+ * @title AttestationTracker
  * @dev FIXED attestation counter wrapper around EAS (Ethereum Attestation Service).
  *
  * This contract serves as a wrapper around EAS that tracks the number of
@@ -60,7 +60,7 @@ interface IEAS_Fixed {
  * - Reconstructs the nested tuple structure before forwarding to EAS
  * - Uses the correct single-parameter EAS interface
  */
-contract AttestationTrackerFixed is Ownable, IQuorumTracker {
+contract AttestationTracker is Ownable, IQuorumTracker {
     // --- Events ---
     event AttestationMade(address indexed multisig, bytes32 indexed attestationUID);
 
@@ -79,7 +79,7 @@ contract AttestationTrackerFixed is Ownable, IQuorumTracker {
      * @param _EAS The EAS contract address for attestation functionality.
      */
     constructor(address initialOwner, address _EAS) Ownable(initialOwner) {
-        require(_EAS != address(0), "AttestationTrackerFixed: EAS address cannot be zero");
+        require(_EAS != address(0), "AttestationTracker: EAS address cannot be zero");
         EAS = _EAS;
     }
 
