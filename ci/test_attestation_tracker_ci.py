@@ -12,7 +12,7 @@
 Comprehensive CI Test for AttestationTracker Contract
 ======================================================
 This script performs end-to-end testing of the AttestationTracker contract:
-1. Deploys AttestationTrackerFixed onto Base mainnet fork
+1. Deploys AttestationTracker onto Base mainnet fork
 2. Simulates SafeService execution flow
 3. Verifies attestation counter increments
 4. Confirms successful EAS attestation creation
@@ -93,16 +93,11 @@ def print_detail(label: str, value: str):
 # =============================================================================
 
 def deploy_attestation_tracker(w3: Web3, account: Account) -> Tuple[str, Any]:
-    """Deploy the AttestationTrackerFixed contract."""
+    """Deploy the AttestationTracker contract."""
     print_header("STEP 1: Deploy AttestationTracker Contract")
     
     # Load contract artifacts
-    contract_path = Path(__file__).parent.parent / "contracts" / "out" / "AttestationTrackerFixed.sol" / "AttestationTrackerFixed.json"
-    
-    # Fallback: Try AttestationTracker.sol if Fixed doesn't exist
-    if not contract_path.exists():
-        print_info("AttestationTrackerFixed not found, using original AttestationTracker")
-        contract_path = Path(__file__).parent.parent / "contracts" / "out" / "AttestationTracker.sol" / "AttestationTracker.json"
+    contract_path = Path(__file__).parent.parent / "contracts" / "out" / "AttestationTracker.sol" / "AttestationTracker.json"
     
     if not contract_path.exists():
         print_error(f"Contract artifacts not found at {contract_path}")
@@ -238,8 +233,8 @@ def execute_attestation(
     
     try:
         if has_fixed_interface:
-            # Use 12-parameter interface (AttestationTrackerFixed)
-            print_info("Using 12-parameter interface (AttestationTrackerFixed)")
+            # Use 12-parameter interface (AttestationTracker with fixed interface)
+            print_info("Using 12-parameter interface (AttestationTracker)")
             
             # Fund and impersonate Safe
             w3.provider.make_request("anvil_impersonateAccount", [safe_address])
