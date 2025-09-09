@@ -57,7 +57,7 @@ EIP712_PROXY = "0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6"
 SAFE_ADDRESS = "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
 
 # Working schema UID (confirmed to exist on Base)
-SCHEMA_UID = "0x56e7ff73404d5c8102a063b9efeb4b992c90b01c9c958de4c2baae18340f242b"
+SCHEMA_UID = "0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4"
 
 # Test account (Anvil default)
 PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"

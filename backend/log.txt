@@ -25,3 +25,2001 @@
 [2025-09-09 06:34:47,230] [INFO] [agent] Pearl logger initialized successfully
 [2025-09-09 06:34:47,237] [INFO] [agent] Pearl logger initialized successfully
 [2025-09-09 06:34:47,304] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:11,387] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:11,651] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:11,941] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,027] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,027] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,044] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,051] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,112] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,282] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,282] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,286] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,286] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,289] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,289] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,290] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,290] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,291] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,291] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,293] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,293] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,293] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,293] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,294] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,294] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,294] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,294] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,295] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,295] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,295] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,295] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,308] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,308] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-09-09 06:36:12,308] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,313] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,313] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,314] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-09-09 06:36:12,315] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,315] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:36:12,319] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,319] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,319] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,352] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,353] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,353] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,362] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,362] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [ERROR] [agent] Error getting agent statistics: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,362] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,362] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,362] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,370] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,370] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,370] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,374] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,374] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,374] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,375] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,375] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,375] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,375] [ERROR] [agent] Error getting agent statistics: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,379] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,379] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,379] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,382] [ERROR] [agent] Error getting agent statistics: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,386] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:12,386] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,386] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,387] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,387] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,387] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,387] [ERROR] [agent] Error getting agent statistics: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,391] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,391] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,391] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:36:12,395] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,395] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,395] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,395] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-09 06:36:12,396] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-09 06:36:12,400] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,400] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,400] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,400] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-09 06:36:12,401] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-09 06:36:12,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,402] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-09 06:36:12,403] [INFO] [agent] Agent run started (run_id=test.eth_1757424972, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-09 06:36:12,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,422] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,422] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-09 06:36:12,423] [INFO] [agent] Agent run started (run_id=test.eth_1757424972, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-09 06:36:12,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,427] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-09 06:36:12,428] [INFO] [agent] Agent run started (run_id=test.eth_1757424972, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-09 06:36:12,429] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,430] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,430] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,430] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-09 06:36:12,430] [INFO] [agent] Agent run started (run_id=test.eth_1757424972, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-09 06:36:12,542] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,542] [WARN] [agent] Error fetching proposal title for 0x123: 'dict' object has no attribute 'title'
+[2025-09-09 06:36:12,542] [INFO] [agent] Completed get_agent_run_decisions successfully in 0.000s
+[2025-09-09 06:36:12,546] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,546] [WARN] [agent] Error fetching proposal title for 0x0: 'dict' object has no attribute 'title'
+[2025-09-09 06:36:12,546] [WARN] [agent] Error fetching proposal title for 0x1: 'dict' object has no attribute 'title'
+[2025-09-09 06:36:12,546] [WARN] [agent] Error fetching proposal title for 0x2: 'dict' object has no attribute 'title'
+[2025-09-09 06:36:12,546] [INFO] [agent] Completed get_agent_run_decisions successfully in 0.000s
+[2025-09-09 06:36:12,547] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,547] [WARN] [agent] Error fetching proposal title for 0x123: 'dict' object has no attribute 'title'
+[2025-09-09 06:36:12,547] [INFO] [agent] Completed get_agent_run_decisions successfully in 0.000s
+[2025-09-09 06:36:12,550] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,550] [INFO] [agent] Completed get_agent_run_decisions successfully in 0.000s
+[2025-09-09 06:36:12,551] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,551] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: Internal service error
+[2025-09-09 06:36:12,551] [ERROR] [agent] Error getting agent decisions: Internal service error
+[2025-09-09 06:36:12,552] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:36:12,553] [INFO] [agent] Completed get_agent_run_decisions successfully in 0.000s
+[2025-09-09 06:36:12,578] [INFO] [agent] Starting agent_run (space_id=arbitrumfoundation.eth, dry_run=False)
+[2025-09-09 06:36:12,578] [INFO] [agent] Agent run completed space_id=arbitrumfoundation.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,578] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,580] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=True)
+[2025-09-09 06:36:12,580] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-09-09 06:36:12,580] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,587] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-09-09 06:36:12,587] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,587] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,588] [INFO] [agent] Starting agent_run (space_id=arbitrumfoundation.eth, dry_run=False)
+[2025-09-09 06:36:12,588] [INFO] [agent] Agent run completed space_id=arbitrumfoundation.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,589] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,590] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-09-09 06:36:12,590] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=1 votes_cast=0 execution_time=5.0 errors=['Failed to connect to voting service', 'Proposal analysis timeout'] dry_run=False
+[2025-09-09 06:36:12,590] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,592] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-09-09 06:36:12,592] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=0 votes_cast=0 execution_time=1.2 errors=[] dry_run=False
+[2025-09-09 06:36:12,592] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,593] [INFO] [agent] Starting agent_run (space_id=arbitrumfoundation.eth, dry_run=False)
+[2025-09-09 06:36:12,593] [INFO] [agent] Agent run completed space_id=arbitrumfoundation.eth proposals_analyzed=3 votes_cast=1 execution_time=8.5 errors=[] dry_run=False
+[2025-09-09 06:36:12,593] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,595] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=True)
+[2025-09-09 06:36:12,595] [INFO] [agent] Agent run completed space_id=test-space.eth proposals_analyzed=2 votes_cast=1 execution_time=3.2 errors=[] dry_run=True
+[2025-09-09 06:36:12,595] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,596] [INFO] [agent] Starting agent_run (space_id=empty-space.eth, dry_run=False)
+[2025-09-09 06:36:12,596] [INFO] [agent] Agent run completed space_id=empty-space.eth proposals_analyzed=0 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,596] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,598] [INFO] [agent] Starting agent_run (space_id=mixed-results.eth, dry_run=False)
+[2025-09-09 06:36:12,598] [INFO] [agent] Agent run completed space_id=mixed-results.eth proposals_analyzed=3 votes_cast=1 execution_time=15.0 errors=['Failed to analyze proposal 2', 'Voting service timeout for proposal 3'] dry_run=False
+[2025-09-09 06:36:12,598] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,599] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-09-09 06:36:12,599] [ERROR] [agent] Failed agent_run after 0.000s: Service initialization failed
+[2025-09-09 06:36:12,599] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Service initialization failed
+[2025-09-09 06:36:12,601] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-09-09 06:36:12,601] [ERROR] [agent] Failed agent_run after 0.000s: Execution failed
+[2025-09-09 06:36:12,601] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Execution failed
+[2025-09-09 06:36:12,603] [INFO] [agent] Starting agent_run (space_id=slow-space.eth, dry_run=False)
+[2025-09-09 06:36:12,603] [ERROR] [agent] Failed agent_run after 0.000s: Operation timed out
+[2025-09-09 06:36:12,603] [ERROR] [agent] Failed to execute agent run space_id=slow-space.eth error=Operation timed out
+[2025-09-09 06:36:12,604] [INFO] [agent] Starting agent_run (space_id=invalid-space-id, dry_run=False)
+[2025-09-09 06:36:12,605] [ERROR] [agent] Failed agent_run after 0.000s: Invalid space ID
+[2025-09-09 06:36:12,605] [ERROR] [agent] Failed to execute agent run space_id=invalid-space-id error=Invalid space ID
+[2025-09-09 06:36:12,606] [INFO] [agent] Starting agent_run (space_id=test-space.eth, dry_run=False)
+[2025-09-09 06:36:12,606] [ERROR] [agent] Failed agent_run after 0.000s: Network unreachable
+[2025-09-09 06:36:12,606] [ERROR] [agent] Failed to execute agent run space_id=test-space.eth error=Network unreachable
+[2025-09-09 06:36:12,608] [INFO] [agent] Starting agent_run (space_id=integration-test.eth, dry_run=False)
+[2025-09-09 06:36:12,608] [INFO] [agent] Agent run completed space_id=integration-test.eth proposals_analyzed=2 votes_cast=0 execution_time=6.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,608] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,609] [INFO] [agent] Starting agent_run (space_id=dependency-test.eth, dry_run=False)
+[2025-09-09 06:36:12,609] [INFO] [agent] Agent run completed space_id=dependency-test.eth proposals_analyzed=0 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,609] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,682] [INFO] [agent] Starting agent_run (space_id=async-test.eth, dry_run=False)
+[2025-09-09 06:36:12,682] [INFO] [agent] Agent run completed space_id=async-test.eth proposals_analyzed=1 votes_cast=0 execution_time=2.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,682] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,684] [INFO] [agent] Starting agent_run (space_id=concurrent-test.eth, dry_run=True)
+[2025-09-09 06:36:12,684] [INFO] [agent] Agent run completed space_id=concurrent-test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-09-09 06:36:12,684] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,684] [INFO] [agent] Starting agent_run (space_id=concurrent-test.eth, dry_run=True)
+[2025-09-09 06:36:12,684] [INFO] [agent] Agent run completed space_id=concurrent-test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-09-09 06:36:12,684] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,684] [INFO] [agent] Starting agent_run (space_id=concurrent-test.eth, dry_run=True)
+[2025-09-09 06:36:12,684] [INFO] [agent] Agent run completed space_id=concurrent-test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=True
+[2025-09-09 06:36:12,684] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,691] [INFO] [agent] Starting agent_run (space_id=test.eth, dry_run=False)
+[2025-09-09 06:36:12,691] [INFO] [agent] Agent run completed space_id=test.eth proposals_analyzed=1 votes_cast=0 execution_time=1.0 errors=[] dry_run=False
+[2025-09-09 06:36:12,691] [INFO] [agent] Completed agent_run successfully in 0.000s
+[2025-09-09 06:36:12,725] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:12,725] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:12,736] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:12,737] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,737] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:12,737] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:12,739] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:12,739] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,739] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:12,739] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:12,739] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:12,739] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:12,776] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:12,776] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:12,776] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:12,776] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,776] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:12,776] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:12,777] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:12,777] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,777] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:12,777] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:12,777] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:12,777] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:12,813] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:12,813] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:12,813] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:12,813] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,813] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:12,813] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:12,814] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:12,814] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,814] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:12,814] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:12,814] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:12,815] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:12,887] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:12,887] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:12,887] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:12,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,888] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:12,888] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:12,889] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:12,889] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,889] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:12,889] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:12,889] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:12,889] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:12,925] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:12,925] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:12,925] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:12,925] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,925] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:12,925] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:12,926] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:12,926] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,926] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:12,926] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:12,926] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:12,926] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:12,961] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:12,961] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:12,961] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:12,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,962] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:12,962] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:12,962] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:12,962] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:12,962] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:12,963] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:12,963] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:12,963] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,019] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,068] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,090] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,111] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,148] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,169] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,192] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,212] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,241] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,263] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,285] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,305] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,392] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,392] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,392] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,392] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,392] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,393] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,393] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,394] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,394] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,394] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,394] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,394] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,429] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,429] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,429] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,429] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,429] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,429] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,430] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,430] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,430] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,431] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,431] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,431] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,466] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,466] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,466] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,467] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,467] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,467] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,467] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,468] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,468] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,468] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,468] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,468] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,503] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,503] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,503] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,503] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,503] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,503] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,504] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,504] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,504] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,504] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,504] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,504] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,538] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,538] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,538] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,539] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,539] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,539] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,541] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,541] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,541] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,541] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,541] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,541] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,577] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,577] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,577] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,577] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,577] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,577] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,578] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,578] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,578] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,579] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,579] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,579] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,641] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,641] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,641] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,641] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,641] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,641] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,642] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,642] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,642] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,642] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,642] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,643] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,677] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,677] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,677] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,677] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,677] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,677] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,678] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,678] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,678] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,678] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,678] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,678] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,714] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,714] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,714] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,714] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,714] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,714] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,715] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,715] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,715] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,716] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,716] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,716] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,750] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,750] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,750] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,750] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,750] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,750] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,751] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,751] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,751] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,751] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,751] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,752] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,786] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,786] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,786] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,786] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,786] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,786] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,788] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,788] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,788] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,788] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,789] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,789] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,822] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,822] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,822] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,822] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,822] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,823] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,823] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,823] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,823] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,824] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,824] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,824] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,858] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,858] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,858] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,858] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,858] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,859] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,860] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,860] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,860] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,860] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,860] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,860] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,898] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,898] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,899] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,899] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,899] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,899] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,900] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,900] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,900] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,900] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,900] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,900] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,936] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,936] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,936] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,936] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,936] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,936] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,937] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,937] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,937] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,937] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,937] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,937] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:13,974] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:13,974] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:13,974] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:13,974] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,974] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:13,974] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:13,975] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:13,975] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:13,975] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:13,975] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:13,975] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:13,976] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,011] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,011] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,011] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,011] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,011] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,011] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,012] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,012] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,012] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,013] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,013] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,013] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,048] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,048] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,048] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,048] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,048] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,048] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,049] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,049] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,049] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,049] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,049] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,049] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,086] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,086] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,086] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,086] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,086] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,086] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,087] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,087] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,087] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,087] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,087] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,087] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,102] [ERROR] [agent] Error getting agent statistics: Failed to read checkpoint files
+[2025-09-09 06:36:14,126] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,126] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,126] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,126] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,126] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,126] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,127] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,127] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,127] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,127] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,127] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,127] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,164] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,164] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,164] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,164] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,164] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,164] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,165] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,165] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,165] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,165] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,165] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,165] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,200] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,201] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,201] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,201] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,201] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,201] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,202] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,202] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,202] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,202] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,202] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,202] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,237] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,237] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,237] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,237] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,237] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,238] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,240] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,240] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,240] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,240] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,240] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,240] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,316] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,316] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,316] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,316] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,316] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,316] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,317] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,317] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,317] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,318] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,318] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,318] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,329] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:14,330] [INFO] [agent] Completed get_agent_run_status successfully in 0.000s
+[2025-09-09 06:36:14,331] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:14,331] [INFO] [agent] Completed get_agent_run_status successfully in 0.000s
+[2025-09-09 06:36:14,333] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:14,333] [INFO] [agent] Completed get_agent_run_status successfully in 0.000s
+[2025-09-09 06:36:14,334] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:14,334] [INFO] [agent] Completed get_agent_run_status successfully in 0.000s
+[2025-09-09 06:36:14,335] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:14,335] [ERROR] [agent] Failed get_agent_run_status after 0.000s: Internal error
+[2025-09-09 06:36:14,335] [ERROR] [agent] Error getting agent run status: Internal error
+[2025-09-09 06:36:14,359] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,359] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,359] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,359] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,359] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,359] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,360] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,360] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,360] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,360] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,360] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,360] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,373] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:36:14,373] [INFO] [agent] Completed get_agent_run_status successfully in 0.000s
+[2025-09-09 06:36:14,386] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,386] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,386] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,386] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,386] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,386] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,387] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,387] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,387] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,387] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,387] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,402] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,415] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,415] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,415] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,415] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,415] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,415] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,416] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,416] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,416] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,416] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,416] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,428] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,498] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,498] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,510] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,510] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,510] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,510] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,510] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,510] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,511] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,511] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,511] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,511] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,511] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,523] [ERROR] [agent] Key file has insecure permissions
+[2025-09-09 06:36:14,752] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,752] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,752] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,781] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,781] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,782] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,782] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,782] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,782] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,783] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,783] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,783] [INFO] [agent] Starting ai_proposal_summary (proposal_id=prop-123)
+[2025-09-09 06:36:14,783] [INFO] [agent] Starting proposal summarization, proposal_id=prop-123, proposal_title=Sample Proposal, model_type=OpenAIModel
+[2025-09-09 06:36:14,783] [INFO] [agent] Successfully generated proposal summary, proposal_id=prop-123, summary_length=60, key_points_count=3
+[2025-09-09 06:36:14,783] [INFO] [agent] Completed ai_proposal_summary successfully in 0.000s
+[2025-09-09 06:36:14,796] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,796] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,796] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,796] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,796] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,796] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,797] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,797] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,797] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,797] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,797] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,797] [INFO] [agent] Starting ai_proposal_summary (proposal_id=prop-123)
+[2025-09-09 06:36:14,797] [INFO] [agent] Starting proposal summarization, proposal_id=prop-123, proposal_title=Sample Proposal, model_type=OpenAIModel
+[2025-09-09 06:36:14,798] [ERROR] [agent] Failed ai_proposal_summary after 0.000s: AI service unavailable
+[2025-09-09 06:36:14,798] [ERROR] [agent] Failed to summarize proposal, proposal_id=prop-123, proposal_title=Sample Proposal, error=AI service unavailable, error_type=Exception
+[2025-09-09 06:36:14,810] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,810] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,810] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,810] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,810] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,810] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,811] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,811] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,811] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,811] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,811] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,823] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,823] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,823] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,824] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,824] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,824] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,824] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,824] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,824] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,825] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,825] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,825] [INFO] [agent] Starting ai_multiple_proposal_summaries (proposal_count=2)
+[2025-09-09 06:36:14,825] [INFO] [agent] Starting multiple proposal summarization, proposal_count=2, model_type=OpenAIModel
+[2025-09-09 06:36:14,825] [INFO] [agent] Successfully generated multiple proposal summaries, proposal_count=2, summary_count=2
+[2025-09-09 06:36:14,825] [INFO] [agent] Completed ai_multiple_proposal_summaries successfully in 0.000s
+[2025-09-09 06:36:14,838] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,838] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,838] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,838] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,838] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,839] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,839] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,839] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,839] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,851] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,851] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,851] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,852] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,852] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,852] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,853] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,853] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,853] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,853] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:14,853] [INFO] [agent] Successfully validated ProposalSummary response structure
+[2025-09-09 06:36:14,866] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,866] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,866] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,866] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,866] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,866] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,867] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,867] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,867] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,867] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,880] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,880] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,880] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,881] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,881] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,881] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,881] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,881] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,882] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,882] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,882] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,895] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,895] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,895] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,895] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,895] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,895] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,896] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,896] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,896] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,896] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,896] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,896] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:14,896] [INFO] [agent] Successfully validated ProposalSummary response structure
+[2025-09-09 06:36:14,909] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,909] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,909] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,910] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,910] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,910] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,911] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,911] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,911] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,911] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,911] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,911] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:14,911] [WARN] [agent] AI response missing key_points field
+[2025-09-09 06:36:14,911] [INFO] [agent] Successfully validated ProposalSummary response structure
+[2025-09-09 06:36:14,924] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,924] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,924] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,924] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,924] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,924] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,925] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,925] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,925] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,925] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,925] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,925] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:14,925] [INFO] [agent] Successfully validated ProposalSummary response structure
+[2025-09-09 06:36:14,937] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,937] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,937] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,938] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,938] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,938] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,938] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,938] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,939] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,939] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,939] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:14,939] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:14,951] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,951] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,951] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,951] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,951] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,952] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,952] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,952] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,952] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,953] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,953] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,953] [INFO] [agent] Calling SummarizationAgent for summary, prompt_length=11
+[2025-09-09 06:36:14,953] [INFO] [agent] Successfully processed summarization agent response
+[2025-09-09 06:36:14,965] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,965] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,965] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,965] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,965] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,965] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,966] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,966] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,966] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,967] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,967] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,967] [INFO] [agent] Calling SummarizationAgent for summary, prompt_length=11
+[2025-09-09 06:36:14,967] [ERROR] [agent] Summarization agent call failed, error=AI model error
+[2025-09-09 06:36:14,979] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,979] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,979] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,979] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,979] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,979] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,981] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,981] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,981] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,981] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,981] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:14,994] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:14,994] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:14,994] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:14,994] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,994] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:14,994] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:14,995] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:14,995] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:14,995] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:14,995] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:14,995] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,007] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,007] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,007] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:15,007] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,007] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:15,007] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,008] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,008] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,008] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,008] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,008] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,020] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,020] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,021] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:15,021] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,021] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:15,021] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,021] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,022] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,022] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,022] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,022] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,022] [WARN] [agent] Failed to parse AI result as JSON: Expecting value: line 1 column 1 (char 0)
+[2025-09-09 06:36:15,034] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,034] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,034] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:15,035] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,035] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:15,035] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,036] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,036] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,036] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,036] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,036] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,050] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,050] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,050] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:15,392] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,392] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:15,392] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,393] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,393] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,393] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,394] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,394] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,408] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,408] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,408] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:15,408] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,408] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:15,408] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,409] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,409] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,409] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,409] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,409] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,409] [INFO] [agent] Calling SummarizationAgent for summary, prompt_length=11
+[2025-09-09 06:36:15,409] [INFO] [agent] Successfully processed summarization agent response
+[2025-09-09 06:36:15,423] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,423] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,424] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:15,424] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,424] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:15,424] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,424] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,425] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,425] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,425] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,425] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,426] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,426] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock spec='OpenAIModel' id='4630290432'>
+[2025-09-09 06:36:15,426] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,427] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,427] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,427] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,428] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,428] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,428] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4623180688'>
+[2025-09-09 06:36:15,429] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,429] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,429] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,429] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,430] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,430] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,430] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,430] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4623180688'>
+[2025-09-09 06:36:15,430] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,431] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,431] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,431] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,431] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,431] [INFO] [agent] OpenRouter API key set successfully for both agents
+[2025-09-09 06:36:15,445] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,445] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4623646800'>
+[2025-09-09 06:36:15,445] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,446] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,446] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,446] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,446] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,446] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4623646800'>
+[2025-09-09 06:36:15,447] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,447] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,447] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,448] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,448] [INFO] [agent] OpenRouter API key set successfully for both agents
+[2025-09-09 06:36:15,448] [INFO] [agent] Starting ai_vote_decision (proposal_id=test-proposal-123, strategy=balanced)
+[2025-09-09 06:36:15,448] [INFO] [agent] Starting vote decision making, proposal_id=test-proposal-123, proposal_title=Test Proposal, strategy=balanced, model_type=MagicMock
+[2025-09-09 06:36:15,448] [INFO] [agent] Successfully generated vote decision, proposal_id=test-proposal-123, vote=FOR, confidence=0.85, risk_level=MEDIUM
+[2025-09-09 06:36:15,448] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-09-09 06:36:15,462] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,462] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4626057072'>
+[2025-09-09 06:36:15,463] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,508] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,508] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,508] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,508] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,508] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,508] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4626057072'>
+[2025-09-09 06:36:15,509] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,509] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,509] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,509] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,510] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,510] [INFO] [agent] OpenRouter API key set successfully for both agents
+[2025-09-09 06:36:15,510] [INFO] [agent] Starting ai_proposal_summary (proposal_id=test-proposal-123)
+[2025-09-09 06:36:15,510] [INFO] [agent] Starting proposal summarization, proposal_id=test-proposal-123, proposal_title=Test Proposal, model_type=MagicMock
+[2025-09-09 06:36:15,510] [INFO] [agent] Calling SummarizationAgent for summary, prompt_length=773
+[2025-09-09 06:36:15,510] [INFO] [agent] Successfully processed summarization agent response
+[2025-09-09 06:36:15,510] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:15,510] [INFO] [agent] Successfully validated ProposalSummary response structure
+[2025-09-09 06:36:15,510] [INFO] [agent] Successfully generated proposal summary, proposal_id=test-proposal-123, summary_length=37, key_points_count=2
+[2025-09-09 06:36:15,510] [INFO] [agent] Completed ai_proposal_summary successfully in 0.000s
+[2025-09-09 06:36:15,523] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,523] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4625370192'>
+[2025-09-09 06:36:15,523] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,524] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,524] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,525] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,525] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:15,525] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,525] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=MagicMock, model_value=<MagicMock name='_create_model()' spec='OpenAIModel' id='4625370192'>
+[2025-09-09 06:36:15,525] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:15,525] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:15,526] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:15,526] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:15,526] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:15,526] [INFO] [agent] OpenRouter API key set successfully for both agents
+[2025-09-09 06:36:15,526] [INFO] [agent] Starting ai_vote_decision (proposal_id=concurrent-test-123, strategy=conservative)
+[2025-09-09 06:36:15,526] [INFO] [agent] Starting vote decision making, proposal_id=concurrent-test-123, proposal_title=Concurrent Test Proposal, strategy=conservative, model_type=MagicMock
+[2025-09-09 06:36:15,526] [INFO] [agent] Successfully generated vote decision, proposal_id=concurrent-test-123, vote=AGAINST, confidence=0.75, risk_level=HIGH
+[2025-09-09 06:36:15,526] [INFO] [agent] Completed ai_vote_decision successfully in 0.000s
+[2025-09-09 06:36:15,526] [INFO] [agent] Starting ai_proposal_summary (proposal_id=concurrent-test-123)
+[2025-09-09 06:36:15,526] [INFO] [agent] Starting proposal summarization, proposal_id=concurrent-test-123, proposal_title=Concurrent Test Proposal, model_type=MagicMock
+[2025-09-09 06:36:15,526] [INFO] [agent] Calling SummarizationAgent for summary, prompt_length=780
+[2025-09-09 06:36:15,526] [INFO] [agent] Successfully processed summarization agent response
+[2025-09-09 06:36:15,526] [INFO] [agent] Parsing and validating ProposalSummary response
+[2025-09-09 06:36:15,526] [INFO] [agent] Successfully validated ProposalSummary response structure
+[2025-09-09 06:36:15,526] [INFO] [agent] Successfully generated proposal summary, proposal_id=concurrent-test-123, summary_length=34, key_points_count=1
+[2025-09-09 06:36:15,526] [INFO] [agent] Completed ai_proposal_summary successfully in 0.000s
+[2025-09-09 06:36:15,539] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:15,539] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:15,539] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:26,538] [INFO] [agent] API key configured successfully
+[2025-09-09 06:36:27,145] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,148] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,148] [INFO] [agent] Starting test_span
+[2025-09-09 06:36:27,148] [INFO] [agent] Completed test_span successfully in 0.000s
+[2025-09-09 06:36:27,279] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,279] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,280] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,280] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,281] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,281] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,281] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,281] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,282] [INFO] [agent] Decision file saved: /var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/tmp40m1bx2y/decision_20250909_133627_0x123456.json
+[2025-09-09 06:36:27,295] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,295] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,295] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,295] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,295] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,295] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,296] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,296] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,296] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,296] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,296] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,297] [INFO] [agent] Decision file saved: /var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/tmp99e4p11g/new_dir/decisions/decision_20250909_133627_0x123456.json
+[2025-09-09 06:36:27,310] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,310] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,310] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,310] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,310] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,311] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,311] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,311] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,312] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,312] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,324] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,324] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,324] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,325] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,325] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,325] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,325] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,325] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,326] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,326] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,326] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,339] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,339] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,339] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,339] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,339] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,340] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,340] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,340] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,340] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,341] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,341] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,342] [INFO] [agent] Decision file saved: /var/folders/g6/kxs1vngn63b9zfzdry51x09c0000gn/T/tmp7eyrs6z0/decision_20250909_133627_0x123456.json
+[2025-09-09 06:36:27,355] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,355] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,355] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,355] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,355] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,355] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,356] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,356] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,356] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,357] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,357] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,357] [INFO] [agent] Starting ai_vote_decision (proposal_id=0x123456789abcdef0123456789abcdef, strategy=balanced)
+[2025-09-09 06:36:27,357] [INFO] [agent] Starting vote decision making, proposal_id=0x123456789abcdef0123456789abcdef, proposal_title=Test Proposal, strategy=balanced, model_type=OpenAIModel
+[2025-09-09 06:36:27,358] [INFO] [agent] Successfully generated vote decision, proposal_id=0x123456789abcdef0123456789abcdef, vote=ABSTAIN, confidence=0.5, risk_level=MEDIUM
+[2025-09-09 06:36:27,358] [ERROR] [agent] Failed ai_vote_decision after 0.000s: 1 validation error for VoteDecision
+reasoning
+  Input should be a valid string [type=string_type, input_value=<Mock name='mock.agent.ru...soning' id='4630402672'>, input_type=Mock]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+[2025-09-09 06:36:27,358] [ERROR] [agent] Failed to make vote decision, proposal_id=0x123456789abcdef0123456789abcdef, proposal_title=Test Proposal, strategy=balanced, error=1 validation error for VoteDecision
+reasoning
+  Input should be a valid string [type=string_type, input_value=<Mock name='mock.agent.ru...soning' id='4630402672'>, input_type=Mock]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type, error_type=ValidationError
+[2025-09-09 06:36:27,387] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,387] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,387] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,387] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,387] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,387] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,388] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,388] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,388] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,388] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,388] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,389] [INFO] [agent] Starting ai_vote_decision (proposal_id=0x123456789abcdef0123456789abcdef, strategy=balanced)
+[2025-09-09 06:36:27,389] [INFO] [agent] Starting vote decision making, proposal_id=0x123456789abcdef0123456789abcdef, proposal_title=Test Proposal, strategy=balanced, model_type=OpenAIModel
+[2025-09-09 06:36:27,389] [INFO] [agent] Successfully generated vote decision, proposal_id=0x123456789abcdef0123456789abcdef, vote=ABSTAIN, confidence=0.5, risk_level=MEDIUM
+[2025-09-09 06:36:27,389] [ERROR] [agent] Failed ai_vote_decision after 0.000s: 1 validation error for VoteDecision
+reasoning
+  Input should be a valid string [type=string_type, input_value=<Mock name='mock.agent.ru...soning' id='4623651504'>, input_type=Mock]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+[2025-09-09 06:36:27,389] [ERROR] [agent] Failed to make vote decision, proposal_id=0x123456789abcdef0123456789abcdef, proposal_title=Test Proposal, strategy=balanced, error=1 validation error for VoteDecision
+reasoning
+  Input should be a valid string [type=string_type, input_value=<Mock name='mock.agent.ru...soning' id='4623651504'>, input_type=Mock]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type, error_type=ValidationError
+[2025-09-09 06:36:27,416] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,416] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,417] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,417] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,417] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,417] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,418] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,418] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,418] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,418] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,418] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,418] [INFO] [agent] Starting ai_vote_decision (proposal_id=0x123456789abcdef0123456789abcdef, strategy=balanced)
+[2025-09-09 06:36:27,418] [INFO] [agent] Starting vote decision making, proposal_id=0x123456789abcdef0123456789abcdef, proposal_title=Test Proposal, strategy=balanced, model_type=OpenAIModel
+[2025-09-09 06:36:27,419] [INFO] [agent] Successfully generated vote decision, proposal_id=0x123456789abcdef0123456789abcdef, vote=ABSTAIN, confidence=0.5, risk_level=MEDIUM
+[2025-09-09 06:36:27,419] [ERROR] [agent] Failed ai_vote_decision after 0.000s: 1 validation error for VoteDecision
+reasoning
+  Input should be a valid string [type=string_type, input_value=<Mock name='mock.agent.ru...soning' id='4630427792'>, input_type=Mock]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+[2025-09-09 06:36:27,419] [ERROR] [agent] Failed to make vote decision, proposal_id=0x123456789abcdef0123456789abcdef, proposal_title=Test Proposal, strategy=balanced, error=1 validation error for VoteDecision
+reasoning
+  Input should be a valid string [type=string_type, input_value=<Mock name='mock.agent.ru...soning' id='4630427792'>, input_type=Mock]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type, error_type=ValidationError
+[2025-09-09 06:36:27,446] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,446] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,446] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,446] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,446] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,446] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,447] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,447] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,447] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,447] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,447] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,449] [INFO] [agent] [agent] Decision file cleanup: removed 5 old files, retained 5 recent files
+[2025-09-09 06:36:27,462] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,462] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,462] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,462] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,462] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,462] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,463] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,463] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,463] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,463] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,463] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,465] [INFO] [agent] [agent] Decision file cleanup: removed 7 old files, retained 3 recent files
+[2025-09-09 06:36:27,477] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,477] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,478] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,478] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,478] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,478] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,478] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,479] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,479] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,479] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,479] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,492] [INFO] [agent] Creating AI model
+[2025-09-09 06:36:27,492] [INFO] [agent] Using OpenRouter
+[2025-09-09 06:36:27,492] [INFO] [agent] Successfully created OpenRouter model, model_type=OpenAIModel
+[2025-09-09 06:36:27,492] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,492] [INFO] [agent] Creating Pydantic AI VotingAgent, model_type=OpenAIModel, model_value=OpenAIModel()
+[2025-09-09 06:36:27,492] [INFO] [agent] Successfully created Pydantic AI VotingAgent, agent_type=Agent
+[2025-09-09 06:36:27,493] [INFO] [agent] VotingAgent initialized with shared model
+[2025-09-09 06:36:27,493] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:27,493] [INFO] [agent] Creating SummarizationAgent with ProposalSummary output
+[2025-09-09 06:36:27,493] [INFO] [agent] SummarizationAgent initialized with shared model
+[2025-09-09 06:36:27,493] [INFO] [agent] Both voting and summarization agents initialized with shared model
+[2025-09-09 06:36:27,495] [INFO] [agent] [agent] Decision file cleanup: removed 3 old files, retained 7 recent files
+[2025-09-09 06:36:28,205] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,205] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,205] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,205] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': False, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,206] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,206] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,206] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,206] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,206] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,206] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,207] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,207] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,207] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,207] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,208] [WARN] [agent] Transaction manager health check failed: 
+[2025-09-09 06:36:28,208] [WARN] [agent] Agent health check failed: Service unavailable
+[2025-09-09 06:36:28,208] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,208] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,208] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,208] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': False, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,208] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,208] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,209] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,209] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,210] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,210] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,210] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,210] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,210] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,210] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,211] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,211] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': True, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,211] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,211] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,211] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,211] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,212] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,212] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': False, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,212] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,212] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,212] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,212] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,212] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,212] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': False, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,212] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,212] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,212] [ERROR] [agent] Health status gathering failed: Gather failed
+[2025-09-09 06:36:28,213] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,213] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,213] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': False, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,213] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,213] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,213] [WARN] [agent] Transaction manager health check failed: Network unavailable
+[2025-09-09 06:36:28,214] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,214] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,216] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,216] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': True, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,216] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,216] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,216] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,216] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,217] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,217] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': False, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,217] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,217] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,217] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=2)
+[2025-09-09 06:36:28,217] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,219] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,219] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,219] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,220] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,220] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,221] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,221] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,221] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,221] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,222] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,222] [INFO] [agent] Completed health_status_gathering successfully in 0.001s
+[2025-09-09 06:36:28,223] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,223] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': False, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,283] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,283] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,283] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,283] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,283] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,283] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,284] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,284] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,284] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,284] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,284] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,284] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,284] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,285] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,285] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,286] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,286] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,286] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,286] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,286] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,286] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,286] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,287] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,287] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,288] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,288] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,288] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,288] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,288] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,288] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,288] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,289] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,289] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,290] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,290] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,291] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,291] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,292] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,292] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,292] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,293] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,293] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,294] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,294] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,295] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,295] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,295] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,295] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,295] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,295] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,295] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,296] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,296] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,297] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,297] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,298] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,298] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,298] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,298] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,298] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,298] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,357] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,357] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': True, 'state_transition_tracker': False})
+[2025-09-09 06:36:28,357] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,357] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,357] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,357] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,358] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': False, 'activity_service': False, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,358] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,358] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,358] [WARN] [agent] Rounds info gathering failed: Timeout occurred
+[2025-09-09 06:36:28,358] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,358] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,359] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,359] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,359] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,359] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,360] [WARN] [agent] Agent health check failed: Activity service error
+[2025-09-09 06:36:28,360] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,360] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,361] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:36:28,361] [INFO] [agent] HealthStatusService initialized (dependencies={'safe_service': True, 'activity_service': True, 'state_transition_tracker': True})
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,361] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,361] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,361] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,361] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,362] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,362] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,362] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,362] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,362] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,362] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,362] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,363] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,363] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,363] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,363] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,363] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,363] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,363] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,364] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,364] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,364] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,364] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,364] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,364] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,364] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,365] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,365] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,365] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,365] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,365] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,365] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,366] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,366] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,366] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,366] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,366] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,366] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,366] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,367] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,367] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,367] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,367] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,367] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,367] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,367] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,368] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,368] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,368] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,368] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,368] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,368] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,368] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting health_status_gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Starting parallel health status gathering
+[2025-09-09 06:36:28,369] [INFO] [agent] Health status gathering completed (tm_healthy=True, agent_healthy=True, rounds_count=0)
+[2025-09-09 06:36:28,369] [INFO] [agent] Completed health_status_gathering successfully in 0.000s
+[2025-09-09 06:36:34,454] [ERROR] [agent] Error in healthcheck endpoint: Tracker error
+[2025-09-09 06:38:16,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,312] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,580] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,662] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,662] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,678] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,679] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,686] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:16,748] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,250] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,468] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,731] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,829] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,829] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:27,896] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,065] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,065] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,069] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,069] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,073] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,073] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,073] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,073] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,074] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,074] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,076] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,076] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,076] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,076] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,077] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,077] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,077] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,077] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,078] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,078] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,078] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,078] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,089] [WARN] [agent] Could not load activity state: [Errno 2] No such file or directory: 'activity_tracker.json'
+[2025-09-09 06:38:28,089] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,093] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,093] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,093] [WARN] [agent] Could not save activity state: [Errno 2] No such file or directory: ''
+[2025-09-09 06:38:28,094] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 06:38:28,094] [INFO] [agent] ActivityService initialized (persistent_file=activity_tracker.json, last_activity_date=None, daily_activity_needed=True)
+[2025-09-09 06:38:28,097] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:38:28,097] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,097] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,126] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:38:28,126] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,126] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,134] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:38:28,134] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,134] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,134] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:38:28,135] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,135] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,135] [ERROR] [agent] Error getting agent statistics: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,135] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:38:28,135] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,135] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,135] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:38:28,135] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,135] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,143] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:38:28,143] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,143] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,147] [INFO] [agent] Starting get_agent_run_status
+[2025-09-09 06:38:28,147] [ERROR] [agent] Failed get_agent_run_status after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,147] [ERROR] [agent] Error getting agent run status: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,147] [INFO] [agent] Starting get_agent_run_decisions
+[2025-09-09 06:38:28,147] [ERROR] [agent] Failed get_agent_run_decisions after 0.000s: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,147] [ERROR] [agent] Error getting agent decisions: name 'agent_run_service' is not defined
+[2025-09-09 06:38:28,147] [ERROR] [agent] Error getting agent statistics: name 'agent_run_service' is not defined
