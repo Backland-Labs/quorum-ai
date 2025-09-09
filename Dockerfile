@@ -1,20 +1,20 @@
 # Multi-stage Dockerfile for Quorum AI Application
 # Stage 1: Build frontend
-FROM node:24-alpine as frontend-builder
+FROM oven/bun:1-alpine AS frontend-builder
 
 WORKDIR /app/frontend
 
 # Copy frontend dependency files
-COPY frontend/package*.json ./
+COPY frontend/package.json frontend/bun.lock ./
 
 # Install frontend dependencies (including dev dependencies for build)
-RUN npm ci
+RUN bun install
 
 # Copy frontend source code
 COPY frontend/ ./
 
 # Build frontend for production
-RUN npm run build
+RUN bun run build
 
 # Stage 2: Backend with built frontend
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
