@@ -1,0 +1,252 @@
+name: Attestation Tracker CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'contracts/**'
+      - 'ci/**'
+      - 'backend/models.py'
+      - 'backend/utils/eas_signature.py'
+      - '.github/workflows/attestation-tracker-ci.yaml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'contracts/**'
+      - 'ci/**'
+      - 'backend/models.py'
+      - 'backend/utils/eas_signature.py'
+      - '.github/workflows/attestation-tracker-ci.yaml'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Enable debug logging'
+        required: false
+        default: false
+
+jobs:
+  test-attestation-tracker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install UV
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install Anvil dependencies
+        run: |
+          # Verify Anvil is installed
+          anvil --version
+
+      - name: Install contract dependencies
+        working-directory: contracts
+        run: |
+          git init
+          git config user.name "CI"
+          git config user.email "ci@example.com"
+          forge install foundry-rs/forge-std
+          forge install OpenZeppelin/openzeppelin-contracts
+
+      - name: Build contracts
+        working-directory: contracts
+        run: |
+          forge --version
+          forge build
+
+      - name: Start Anvil fork
+        run: |
+          # Start Anvil with Base mainnet fork in background
+          anvil --fork-url https://mainnet.base.org --auto-impersonate --silent &
+          ANVIL_PID=$!
+          echo "ANVIL_PID=$ANVIL_PID" >> $GITHUB_ENV
+          
+          # Wait for Anvil to be ready
+          echo "Waiting for Anvil to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8545 > /dev/null; then
+              echo "Anvil is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Anvil failed to start"
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Verify Anvil connection
+        run: |
+          # Test RPC connection
+          curl -X POST http://localhost:8545 \
+            -H "Content-Type: application/json" \
+            -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' | jq .
+
+      - name: Run EAS Signature Unit Tests
+        working-directory: backend
+        run: |
+          # Run unit tests for the shared signature module
+          uv run pytest tests/test_eas_signature.py -v
+      
+      - name: Run Attestation Tracker CI Test
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          # Make script executable
+          chmod +x ci/test_attestation_tracker_ci.py
+          
+          # Run the test script
+          ./ci/test_attestation_tracker_ci.py
+        
+
+      - name: Stop Anvil
+        if: always()
+        run: |
+          if [ ! -z "$ANVIL_PID" ]; then
+            kill $ANVIL_PID || true
+          fi
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Foundry artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            contracts/out
+            contracts/cache
+          key: ${{ runner.os }}-foundry-${{ hashFiles('contracts/**/*.sol') }}
+          restore-keys: |
+            ${{ runner.os }}-foundry-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install UV
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install contract dependencies
+        working-directory: contracts
+        run: |
+          git init
+          git config user.name "CI"
+          git config user.email "ci@example.com"
+          forge install foundry-rs/forge-std
+          forge install OpenZeppelin/openzeppelin-contracts
+
+      - name: Build contracts (if needed)
+        working-directory: contracts
+        run: |
+          # Only build if cache miss or source changed
+          if [ ! -d "out" ]; then
+            echo "Building contracts (no cache)..."
+            forge build
+          else
+            echo "Using cached build artifacts"
+            # Verify cached artifacts are valid
+            forge build --skip
+          fi
+
+      - name: Start Anvil fork with specific block
+        run: |
+          # Use a specific block for reproducible tests
+          BLOCK_NUMBER=22000000
+          
+          anvil --fork-url https://mainnet.base.org \
+                --fork-block-number $BLOCK_NUMBER \
+                --auto-impersonate \
+                --silent &
+          ANVIL_PID=$!
+          echo "ANVIL_PID=$ANVIL_PID" >> $GITHUB_ENV
+          
+          # Wait for Anvil
+          for i in {1..30}; do
+            if curl -s http://localhost:8545 > /dev/null; then
+              echo "Anvil ready at block $BLOCK_NUMBER"
+              break
+            fi
+            sleep 1
+          done
+
+      - name: Run tests with detailed output
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+          DEBUG: ${{ github.event.inputs.debug_enabled || 'false' }}
+        run: |
+          chmod +x ci/test_attestation_tracker_ci.py
+          
+          if [ "$DEBUG" = "true" ]; then
+            echo "Running with debug output..."
+            ./ci/test_attestation_tracker_ci.py --verbose
+          else
+            ./ci/test_attestation_tracker_ci.py
+          fi
+
+      - name: Generate test report
+        if: always()
+        run: |
+          # Create a summary of test results
+          echo "## Attestation Tracker CI Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ **All tests passed**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Tests failed**" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Environment" >> $GITHUB_STEP_SUMMARY
+          echo "- Chain: Base (fork)" >> $GITHUB_STEP_SUMMARY
+          echo "- Python: 3.11" >> $GITHUB_STEP_SUMMARY
+          echo "- Foundry: nightly" >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup
+        if: always()
+        run: |
+          if [ ! -z "$ANVIL_PID" ]; then
+            kill $ANVIL_PID || true
+          fi
