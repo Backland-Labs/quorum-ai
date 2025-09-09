@@ -130,7 +130,6 @@ jobs:
             kill $ANVIL_PID || true
           fi
 
-  test-attestation-tracker-with-cache:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'pull_request'
