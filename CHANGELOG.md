@@ -5,15 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-09-08
+## [Unreleased] - 2025-09-06
 
 ### Added
-- **Continuous Integration**: GitHub Actions workflow for cross-platform binary builds
-  - Automated building of agent_runner binaries for macOS and Windows (x64/ARM64)
-  - PyInstaller integration for standalone executable creation
-  - Automatic upload to GitHub releases and artifacts
-- **EAS Schema Management**: Automated schema registration and validation scripts
-- **Contract Deployment**: Mainnet deployment scripts with environment configuration
 - **Smart Contract Infrastructure**: Complete AttestationTracker and QuorumStaking contract system
   - AttestationTracker.sol: EAS-based vote attestation tracking with IQuorumTracker interface
   - QuorumStaking.sol: Token activity monitoring with configurable liveness ratios
@@ -38,10 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced Dockerfile with security improvements (removed API key logging)
 
 ### Changed
-- **AttestationTracker Contract**: Refactored from AttestationTrackerFixed to standardized AttestationTracker
-- **EAS Interface Integration**: Updated contract interface to match deployed EAS attestation standards
-- **Base RPC Rate Limiting**: Added 1-second delays to prevent 429 Too Many Requests errors
-- **CI/CD Pipeline**: Enhanced testing and deployment automation with standardized contract usage
 - **Blockchain Integration Fixes**: Resolved signature validation issues in EAS attestation
 - **Frontend Architecture**: Complete tab system removal and navigation simplification
 - **User Interface**: Removed blacklisted/whitelisted proposers UI from settings page
@@ -49,10 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Development Workflow**: Improved Docker entrypoint with graceful shutdown handling
 
 ### Fixed
-- **EAS Delegated Attestation**: Resolved EIP-712 signature parameter validation issues
-- **AttestationTracker Interface**: Fixed contract method calls to match deployed interface
-- **CI Test Integration**: Updated tests to use standard AttestationTracker.sol contract
-- **Signature Generation**: Improved signature extraction and validation for blockchain transactions
 - **EAS Integration**: Fixed attestation validation by properly capturing Snapshot vote IDs
 - **Blockchain Signatures**: Resolved signature format issues in contract interactions
 - **Environment Handling**: Corrected empty string validation in env_helper.py

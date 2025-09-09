@@ -38,7 +38,7 @@ console = Console()
 
 # Base mainnet configuration
 BASE_RPC_URL = "https://mainnet.base.org"
-BASE_EAS_ADDRESS = "0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6" #EIP712Proxy address
+BASE_EAS_ADDRESS = "0x4200000000000000000000000000000000000021"
 
 app = typer.Typer(help="Deploy AttestationTracker contract")
 
