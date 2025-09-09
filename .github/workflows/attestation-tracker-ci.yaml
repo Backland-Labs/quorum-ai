@@ -42,13 +42,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: contracts/package-lock.json
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -64,6 +62,15 @@ jobs:
         run: |
           # Verify Anvil is installed
           anvil --version
+
+      - name: Install contract dependencies
+        working-directory: contracts
+        run: |
+          git init
+          git config user.name "CI"
+          git config user.email "ci@example.com"
+          forge install foundry-rs/forge-std
+          forge install OpenZeppelin/openzeppelin-contracts
 
       - name: Build contracts
         working-directory: contracts
@@ -115,15 +122,6 @@ jobs:
           # Run the test script
           ./ci/test_attestation_tracker_ci.py
         
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: attestation-tracker-test-results
-          path: |
-            contracts/out/
-            contracts/broadcast/
-          retention-days: 7
 
       - name: Stop Anvil
         if: always()
@@ -155,13 +153,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: contracts/package-lock.json
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -172,6 +168,15 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install contract dependencies
+        working-directory: contracts
+        run: |
+          git init
+          git config user.name "CI"
+          git config user.email "ci@example.com"
+          forge install foundry-rs/forge-std
+          forge install OpenZeppelin/openzeppelin-contracts
 
       - name: Build contracts (if needed)
         working-directory: contracts
