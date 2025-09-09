@@ -130,10 +130,6 @@ jobs:
             kill $ANVIL_PID || true
           fi
 
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event_name == 'pull_request'
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
