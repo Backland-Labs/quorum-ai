@@ -12,11 +12,11 @@ interface IQuorumTracker {
 }
 
 /**
- * @title IEAS_Fixed
- * @dev CORRECTED Interface for Ethereum Attestation Service interactions.
- * This is the actual EAS interface that expects a single nested tuple parameter.
+ * @title IEAS
+ * @dev Interface for Ethereum Attestation Service interactions.
+ * This interface expects a single nested tuple parameter.
  */
-interface IEAS_Fixed {
+interface IEAS {
     struct AttestationRequestData {
         address recipient;
         uint64 expirationTime;
@@ -48,17 +48,17 @@ interface IEAS_Fixed {
 
 /**
  * @title AttestationTracker
- * @dev FIXED attestation counter wrapper around EAS (Ethereum Attestation Service).
+ * @dev Attestation counter wrapper around EAS (Ethereum Attestation Service).
  *
  * This contract serves as a wrapper around EAS that tracks the number of
- * attestations made by each multisig address, using the CORRECT EAS interface.
+ * attestations made by each multisig address.
  *
  * Key features:
  * - Tracks attestation count per multisig address
  * - Simple uint256 counter for each multisig
- * - Accepts 4 separate parameters (for backward compatibility with SafeService)
+ * - Accepts separate parameters (for backward compatibility with SafeService)
  * - Reconstructs the nested tuple structure before forwarding to EAS
- * - Uses the correct single-parameter EAS interface
+ * - Uses the single-parameter EAS interface
  */
 contract AttestationTracker is Ownable, IQuorumTracker {
     // --- Events ---
@@ -122,10 +122,10 @@ contract AttestationTracker is Ownable, IQuorumTracker {
 
         // Forward the attestation request to EAS with the single nested tuple parameter
         // Construct inline to avoid "stack too deep" error
-        attestationUID = IEAS_Fixed(EAS).attestByDelegation{value: msg.value}(
-            IEAS_Fixed.DelegatedAttestationRequest({
+        attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(
+            IEAS.DelegatedAttestationRequest({
                 schema: schema,
-                data: IEAS_Fixed.AttestationRequestData({
+                data: IEAS.AttestationRequestData({
                     recipient: recipient,
                     expirationTime: expirationTime,
                     revocable: revocable,
@@ -133,7 +133,7 @@ contract AttestationTracker is Ownable, IQuorumTracker {
                     data: data,
                     value: value
                 }),
-                signature: IEAS_Fixed.Signature({
+                signature: IEAS.Signature({
                     v: v,
                     r: r,
                     s: s

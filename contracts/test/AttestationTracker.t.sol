@@ -2,11 +2,11 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {AttestationTracker, IEAS_Fixed} from "../src/AttestationTracker.sol";
+import {AttestationTracker, IEAS} from "../src/AttestationTracker.sol";
 
 /**
  * @title MockEAS
- * @dev Mock EAS contract for testing purposes with correct interface.
+ * @dev Mock EAS contract for testing purposes.
  */
 contract MockEAS {
     uint256 private _attestationCounter;
@@ -14,7 +14,7 @@ contract MockEAS {
     mapping(bytes32 => bool) public attestations;
 
     function attestByDelegation(
-        IEAS_Fixed.DelegatedAttestationRequest calldata
+        IEAS.DelegatedAttestationRequest calldata
     ) external payable returns (bytes32) {
         _attestationCounter++;
         bytes32 uid = keccak256(abi.encodePacked(_attestationCounter, block.timestamp));
