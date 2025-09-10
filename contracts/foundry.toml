@@ -5,6 +5,7 @@ libs = ["lib"]
 solc = "0.8.24"
 optimizer = true
 optimizer_runs = 200
+via_ir = true  # Enable IR-based compilation to avoid stack too deep errors
 dynamic_test_linking = true
 
 # Gas reporting

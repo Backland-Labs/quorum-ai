@@ -2,7 +2,7 @@
 
 ## Overview
 
-This specification documents the technical implementation patterns for interacting with on-chain contracts across multiple blockchain networks in the Quorum AI application. The application supports both externally owned account (EOA) operations and multi-signature Safe wallet interactions across Ethereum, Gnosis Chain, Base, and Mode networks.
+This specification documents the technical implementation patterns for interacting with on-chain contracts across multiple blockchain networks in the Quorum AI application. The application integrates with multiple smart contracts for attestation tracking, multi-signature wallet management, and staking compliance across Ethereum, Gnosis Chain, Base, Mode, and Celo networks.
 
 ## Core Libraries and Dependencies
 
@@ -16,6 +16,190 @@ This specification documents the technical implementation patterns for interacti
 - **eth-keys**: Ethereum key handling
 - **eth-typing**: Type definitions for Ethereum primitives
 - **hexbytes**: Hex string and bytes utilities
+
+## Smart Contract Integrations
+
+### 1. AttestationTracker Contract
+
+The application integrates with a custom `AttestationTracker` contract that wraps the Ethereum Attestation Service (EAS):
+
+**Purpose:**
+- Tracks attestations made by multisig addresses
+- Maintains active/inactive status for multisigs
+- Provides on-chain attestation counting for compliance
+
+**Contract Interface:**
+```solidity
+interface AttestationTracker {
+    function attestByDelegation(
+        bytes32 schema,
+        address recipient,
+        uint64 expirationTime,
+        bool revocable,
+        bytes32 refUID,
+        bytes data,
+        uint256 value,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        address attester,
+        uint64 deadline
+    ) external payable returns (bytes32);
+    
+    function getNumAttestations(address multisig) external view returns (uint256);
+    function isMultisigActive(address multisig) external view returns (bool);
+}
+```
+
+**Configuration:**
+- Contract address: `ATTESTATION_TRACKER_ADDRESS` environment variable
+- Deployed on Base network (chain ID: 8453)
+- Interacts with EAS for actual attestation storage
+
+### 2. EAS (Ethereum Attestation Service)
+
+The application uses EAS for creating on-chain attestations about agent actions:
+
+**Purpose:**
+- Permanent on-chain record of agent decisions
+- Verifiable attestations for voting actions
+- Compliance tracking for OLAS staking requirements
+
+**Integration Pattern:**
+```python
+from utils.eas_signature import EASSignature
+
+# Create attestation data
+attestation_data = {
+    "schema": EAS_SCHEMA_UID,
+    "recipient": safe_address,
+    "expirationTime": 0,  # No expiration
+    "revocable": True,
+    "refUID": bytes32(0),
+    "data": encoded_voting_data,
+    "value": 0
+}
+
+# Sign with delegated signature
+signature = EASSignature.sign_delegated_attestation(
+    schema=attestation_data["schema"],
+    recipient=attestation_data["recipient"],
+    expirationTime=attestation_data["expirationTime"],
+    revocable=attestation_data["revocable"],
+    refUID=attestation_data["refUID"],
+    data=attestation_data["data"],
+    value=attestation_data["value"],
+    nonce=nonce,
+    deadline=deadline,
+    attester_private_key=private_key
+)
+```
+
+**Configuration:**
+- EAS contract: `EAS_CONTRACT_ADDRESS` environment variable
+- Schema UID: `EAS_SCHEMA_UID` for voting attestations
+- Base network deployment: `0x4200000000000000000000000000000021`
+
+### 3. Safe (Gnosis Safe) Multi-Signature Wallet
+
+The application manages Safe wallets for secure multi-party operations:
+
+**Purpose:**
+- Multi-signature transaction execution
+- Secure fund management
+- Delegated voting through Safe
+
+**Safe Transaction Types:**
+1. **Governor Voting**: Cast votes on governance proposals
+2. **Activity Transactions**: Daily self-transfers for OLAS compliance
+3. **Withdrawal Operations**: Fund withdrawals from Safe
+4. **Attestation Creation**: On-chain attestations via AttestationTracker
+
+**Integration Pattern:**
+```python
+from gnosis.safe import Safe
+from gnosis.safe.safe_tx import SafeTx
+
+# Build Safe transaction
+safe_tx = SafeTx(
+    safe_address=safe_address,
+    to=target_contract,
+    value=eth_value,
+    data=encoded_data,
+    operation=SafeOperation.CALL,
+    safe_tx_gas=0,  # Gasless through relayer
+    base_gas=0,
+    gas_price=0,
+    gas_token=NULL_ADDRESS,
+    refund_receiver=NULL_ADDRESS,
+    signatures=b"",
+    safe_nonce=nonce
+)
+
+# Sign transaction
+safe_tx.sign(account.key)
+
+# Submit to Safe API
+safe_api.post_transaction(safe_tx)
+```
+
+**Configuration:**
+- Safe addresses: `SAFE_CONTRACT_ADDRESSES` JSON environment variable
+- Format: `{"chain_name": "0xSafeAddress"}`
+- Supported chains: ethereum, gnosis, base, mode, celo
+
+### 4. OLAS ServiceStaking Contract (Indirect)
+
+The application doesn't directly interact with OLAS staking contracts but maintains compliance:
+
+**Purpose:**
+- Agent staking for rewards
+- KPI compliance tracking
+- Liveness requirements
+
+**Compliance Requirements:**
+1. **Daily Activity**: At least one transaction per 24 hours
+2. **Attestation Tracking**: Regular attestations for voting actions
+3. **Liveness Ratio**: Maintained through activity transactions
+
+**Activity Service Integration:**
+```python
+class ActivityService:
+    async def ensure_daily_olas_compliance(self):
+        """Ensure daily OLAS compliance by triggering Safe transaction if needed."""
+        if await self.needs_daily_activity():
+            # Create 0 ETH self-transfer for activity
+            await self.safe_service.submit_activity_transaction()
+            await self.mark_daily_activity_completed()
+```
+
+**Note:** The OLAS staking contract monitors Safe activity externally. The application ensures compliance through regular transactions but doesn't directly call staking functions.
+
+### 5. Governor Contracts
+
+The application interacts with various DAO governor contracts for voting:
+
+**Supported Governor Types:**
+- Compound Bravo (Compound, Uniswap)
+- OpenZeppelin Governor (Arbitrum, Optimism)
+- Nouns DAO Fork
+
+**Voting Pattern:**
+```python
+# Encode vote transaction
+encoded_data = encode_cast_vote(
+    proposal_id=proposal_id,
+    support=Support.FOR,  # 0=Against, 1=For, 2=Abstain
+    reason=reasoning
+)
+
+# Submit through Safe
+safe_tx = build_safe_transaction(
+    to=governor_address,
+    data=encoded_data,
+    value=0
+)
+```
 
 ## Architecture Patterns
 
@@ -319,6 +503,29 @@ def test_key_validation():
         key_manager._validate_private_key("invalid")
 ```
 
+## Contract Interaction Flow
+
+### Voting with Attestation Flow
+
+1. **Proposal Detection**: Agent detects active proposals via Snapshot/Governor APIs
+2. **Decision Making**: AI service analyzes proposal and determines vote
+3. **Attestation Creation**: 
+   - Generate attestation data with vote details
+   - Sign using EAS delegated signature
+   - Submit to AttestationTracker contract
+4. **Vote Execution**:
+   - Encode vote transaction for governor
+   - Create Safe transaction
+   - Submit to Safe API for execution
+
+### Daily Activity Flow (OLAS Compliance)
+
+1. **Activity Check**: ActivityService checks last transaction timestamp
+2. **Compliance Trigger**: If >24 hours since last transaction
+3. **Transaction Creation**: Build 0 ETH self-transfer Safe transaction
+4. **Submission**: Post to Safe API for gasless execution
+5. **Tracking**: Update activity timestamp in state
+
 ## Implementation Checklist
 
 When implementing new blockchain features:
@@ -327,31 +534,51 @@ When implementing new blockchain features:
    - [ ] Add RPC endpoints to environment variables
    - [ ] Update chain mappings in relevant services
    - [ ] Configure Safe addresses if using multi-sig
+   - [ ] Set contract addresses (AttestationTracker, EAS)
+   - [ ] Configure schema UIDs for attestations
 
-2. **Key Management**
+2. **Contract Integration**
+   - [ ] Add contract ABIs to `backend/abis/` directory
+   - [ ] Update ABILoader with new contract types
+   - [ ] Implement contract-specific encoding functions
+   - [ ] Add contract interaction methods to SafeService
+
+3. **Key Management**
    - [ ] Use KeyManager for all private key operations
    - [ ] Never hardcode private keys
    - [ ] Implement proper error handling
+   - [ ] Validate key permissions (600)
 
-3. **Transaction Building**
+4. **Transaction Building**
    - [ ] Validate all addresses with checksum
-   - [ ] Use appropriate gas settings
+   - [ ] Use appropriate gas settings (0 for Safe)
    - [ ] Implement proper nonce management
+   - [ ] Handle EIP-712 signing for typed data
 
-4. **Error Handling**
+5. **Attestation Handling**
+   - [ ] Use EASSignature utility for delegated attestations
+   - [ ] Include proper schema and recipient
+   - [ ] Set appropriate expiration and revocability
+   - [ ] Track attestation UIDs for verification
+
+6. **Error Handling**
    - [ ] Add specific error types for failures
    - [ ] Implement retry logic for network issues
    - [ ] Log errors without exposing sensitive data
+   - [ ] Handle Safe API errors gracefully
 
-5. **Testing**
+7. **Testing**
    - [ ] Mock all external blockchain calls
    - [ ] Test error scenarios
    - [ ] Validate transaction encoding
+   - [ ] Test attestation signature generation
+   - [ ] Verify Safe transaction building
 
-6. **Logging**
+8. **Logging**
    - [ ] Use Pearl-compliant logging
    - [ ] Log transaction hashes and addresses
    - [ ] Never log private keys or signatures
+   - [ ] Track attestation UIDs
 
 ## Common Pitfalls to Avoid
 
@@ -363,6 +590,45 @@ When implementing new blockchain features:
 6. **Missing Retries**: Implement retry logic for transient failures
 7. **Unchecked Connections**: Always verify Web3 connection before use
 
+## Contract Deployment Summary
+
+### Production Deployments (Base Network - Chain ID: 8453)
+
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| AttestationTracker | Configured via `ATTESTATION_TRACKER_ADDRESS` | Tracks multisig attestations |
+| EAS | `0x4200000000000000000000000000000021` | Ethereum Attestation Service |
+| Safe Implementation | Chain-specific from `SAFE_CONTRACT_ADDRESSES` | Multi-signature wallet |
+
+### Environment Variables Required
+
+```bash
+# Contract Addresses
+ATTESTATION_TRACKER_ADDRESS=0x...     # AttestationTracker contract on Base
+EAS_CONTRACT_ADDRESS=0x42000...       # EAS contract (Base: 0x4200000000000000000000000000000021)
+EAS_SCHEMA_UID=0x...                  # Schema for voting attestations
+SAFE_CONTRACT_ADDRESSES='{"base":"0x...","gnosis":"0x..."}' # JSON of Safe addresses per chain
+
+# RPC Endpoints
+BASE_LEDGER_RPC=https://...           # Base network RPC
+GNOSIS_LEDGER_RPC=https://...         # Gnosis network RPC
+ETHEREUM_LEDGER_RPC=https://...       # Ethereum mainnet RPC
+MODE_LEDGER_RPC=https://...           # Mode network RPC
+CELO_LEDGER_RPC=https://...           # Celo network RPC
+
+# Private Key (600 permissions required)
+# Stored in ethereum_private_key.txt in working directory
+```
+
+### Network Priority
+
+For gas optimization, networks are prioritized in this order:
+1. Gnosis (lowest gas costs)
+2. Celo
+3. Mode
+4. Base
+5. Ethereum (highest gas costs)
+
 ## Future Considerations
 
 1. **Hardware Wallet Support**: Extend KeyManager for hardware wallet integration
@@ -371,3 +637,5 @@ When implementing new blockchain features:
 4. **Multi-Sig Coordination**: Enhanced Safe transaction queue management
 5. **Cross-Chain Messaging**: Support for cross-chain protocols
 6. **MEV Protection**: Implement flashbot integration for sensitive transactions
+7. **Direct OLAS Integration**: Direct staking contract interaction for rewards claiming
+8. **Multi-Attestation Schemas**: Support for different attestation types beyond voting

@@ -1,0 +1,189 @@
+name: Attestation Tracker CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'contracts/**'
+      - 'ci/**'
+      - 'backend/models.py'
+      - 'backend/utils/eas_signature.py'
+      - '.github/workflows/attestation-tracker-ci.yaml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'contracts/**'
+      - 'ci/**'
+      - 'backend/models.py'
+      - 'backend/utils/eas_signature.py'
+      - '.github/workflows/attestation-tracker-ci.yaml'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Enable debug logging'
+        required: false
+        default: false
+
+jobs:
+  test-attestation-tracker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl wget git jq
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install UV
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          # Verify UV installation
+          $HOME/.cargo/bin/uv --version || echo "UV not in cargo bin"
+          # Try direct installation path
+          which uv || echo "UV not found in PATH"
+
+      - name: Verify tool installations
+        run: |
+          # Verify all tools are installed
+          echo "Node version:"
+          node --version
+          echo "Python version:"
+          python --version
+          echo "Forge version:"
+          forge --version || echo "Forge not found"
+          echo "Anvil version:"
+          anvil --version || echo "Anvil not found"
+
+      - name: Install contract dependencies
+        working-directory: contracts
+        run: |
+          # Remove any existing lib directory to ensure clean install
+          rm -rf lib
+          
+          # Initialize git if needed for forge dependencies
+          if [ ! -d .git ]; then
+            git init
+            git config user.name "CI"
+            git config user.email "ci@example.com"
+          fi
+          
+          # Install forge dependencies with proper depth
+          forge install foundry-rs/forge-std --no-git
+          forge install OpenZeppelin/openzeppelin-contracts --no-git
+          
+          # Verify installations
+          echo "Checking forge-std installation:"
+          ls -la lib/forge-std/src/ | head -5
+          echo "Checking OpenZeppelin installation:"
+          ls -la lib/openzeppelin-contracts/contracts/ | head -5
+
+      - name: Build contracts
+        working-directory: contracts
+        env:
+          FOUNDRY_DISABLE_NIGHTLY_WARNING: true
+        run: |
+          forge --version
+          forge build
+
+      - name: Start Anvil fork
+        run: |
+          # Start Anvil with Base mainnet fork in background
+          anvil --fork-url https://mainnet.base.org --auto-impersonate --silent &
+          ANVIL_PID=$!
+          echo "ANVIL_PID=$ANVIL_PID" >> $GITHUB_ENV
+          
+          # Wait for Anvil to be ready
+          echo "Waiting for Anvil to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8545 > /dev/null; then
+              echo "Anvil is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Anvil failed to start"
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Verify Anvil connection
+        run: |
+          # Test RPC connection
+          curl -X POST http://localhost:8545 \
+            -H "Content-Type: application/json" \
+            -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' | jq .
+
+      - name: Run EAS Signature Unit Tests
+        working-directory: backend
+        run: |
+          # Run unit tests for the shared signature module
+          uv run pytest tests/test_eas_signature.py -v
+      
+      - name: Run Attestation Tracker CI Test
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          # Make script executable
+          chmod +x ci/test_attestation_tracker_ci.py
+          
+          # Run the test script
+          ./ci/test_attestation_tracker_ci.py
+        
+
+      - name: Stop Anvil
+        if: always()
+        run: |
+          if [ ! -z "$ANVIL_PID" ]; then
+            kill $ANVIL_PID || true
+          fi
+
+      - name: Generate test report
+        if: always()
+        run: |
+          # Create a summary of test results
+          echo "## Attestation Tracker CI Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ **All tests passed**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Tests failed**" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Environment" >> $GITHUB_STEP_SUMMARY
+          echo "- Chain: Base (fork)" >> $GITHUB_STEP_SUMMARY
+          echo "- Python: 3.11" >> $GITHUB_STEP_SUMMARY
+          echo "- Foundry: nightly" >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup
+        if: always()
+        run: |
+          if [ ! -z "$ANVIL_PID" ]; then
+            kill $ANVIL_PID || true
+          fi

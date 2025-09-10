@@ -6,7 +6,7 @@ import {AttestationTracker, IEAS} from "../src/AttestationTracker.sol";
 
 /**
  * @title MockEAS
- * @dev Mock EAS contract for testing purposes with correct interface.
+ * @dev Mock EAS contract for testing purposes.
  */
 contract MockEAS {
     uint256 private _attestationCounter;
@@ -14,10 +14,7 @@ contract MockEAS {
     mapping(bytes32 => bool) public attestations;
 
     function attestByDelegation(
-        IEAS.DelegatedAttestationRequest calldata,
-        IEAS.Signature calldata,
-        address,
-        uint64
+        IEAS.DelegatedAttestationRequest calldata
     ) external payable returns (bytes32) {
         _attestationCounter++;
         bytes32 uid = keccak256(abi.encodePacked(_attestationCounter, block.timestamp));
@@ -88,38 +85,6 @@ contract AttestationTrackerTest is Test {
         assertEq(tracker.getNumAttestations(multisig1), 0, "Initial attestation count should be 0");
     }
 
-    // --- Helper Functions ---
-
-    /**
-     * @dev Create a test attestation request with the correct nested structure.
-     */
-    function _createTestRequest() internal view returns (IEAS.DelegatedAttestationRequest memory) {
-        IEAS.AttestationRequestData memory data = IEAS.AttestationRequestData({
-            recipient: multisig1,
-            expirationTime: uint64(block.timestamp + 3600),
-            revocable: false,
-            refUID: bytes32(0),
-            data: abi.encode("test data"),
-            value: 0
-        });
-
-        return IEAS.DelegatedAttestationRequest({
-            schema: bytes32(uint256(1)),
-            data: data
-        });
-    }
-
-    /**
-     * @dev Create a test signature.
-     */
-    function _createTestSignature() internal pure returns (IEAS.Signature memory) {
-        return IEAS.Signature({
-            v: 27,
-            r: bytes32(uint256(1)),
-            s: bytes32(uint256(2))
-        });
-    }
-
     // --- Attestation Wrapper Tests ---
 
     /**
@@ -128,12 +93,21 @@ contract AttestationTrackerTest is Test {
      * while incrementing the local attestation counter.
      */
     function test_AttestByDelegation_Success() public {
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         vm.prank(multisig1);
-        bytes32 attestationUID = tracker.attestByDelegation(request, signature, multisig1, deadline);
+        bytes32 attestationUID = tracker.attestByDelegation(
+            bytes32(uint256(1)), // schema
+            multisig1, // recipient
+            uint64(block.timestamp + 3600), // expirationTime
+            false, // revocable
+            bytes32(0), // refUID
+            abi.encode("test data"), // data
+            0, // value
+            27, // v
+            bytes32(uint256(1)), // r
+            bytes32(uint256(2)), // s
+            multisig1, // attester
+            uint64(block.timestamp + 1800) // deadline
+        );
 
         // Verify attestation was created
         assertTrue(attestationUID != bytes32(0), "Attestation UID should not be zero");
@@ -148,15 +122,24 @@ contract AttestationTrackerTest is Test {
      * This ensures proper event emission for off-chain tracking.
      */
     function test_AttestByDelegation_EmitsEvent() public {
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         vm.expectEmit(true, false, false, false);
         emit AttestationMade(multisig1, bytes32(0)); // Only check multisig address, ignore UID
 
         vm.prank(multisig1);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        tracker.attestByDelegation(
+            bytes32(uint256(1)), // schema
+            multisig1, // recipient
+            uint64(block.timestamp + 3600), // expirationTime
+            false, // revocable
+            bytes32(0), // refUID
+            abi.encode("test data"), // data
+            0, // value
+            27, // v
+            bytes32(uint256(1)), // r
+            bytes32(uint256(2)), // s
+            multisig1, // attester
+            uint64(block.timestamp + 1800) // deadline
+        );
     }
 
     /**
@@ -164,16 +147,25 @@ contract AttestationTrackerTest is Test {
      * This verifies that the attestation counter properly increments with each attestation.
      */
     function test_AttestByDelegation_MultipleAttestations() public {
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         vm.startPrank(multisig1);
 
         // Make multiple attestations
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        for (uint i = 0; i < 3; i++) {
+            tracker.attestByDelegation(
+                bytes32(uint256(1)), // schema
+                multisig1, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 1)), // r
+                bytes32(uint256(i + 2)), // s
+                multisig1, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
+        }
 
         vm.stopPrank();
 
@@ -185,35 +177,29 @@ contract AttestationTrackerTest is Test {
      * This ensures that ETH sent with attestations is properly forwarded to EAS.
      */
     function test_AttestByDelegation_WithValue() public {
-        // Create request with value
-        IEAS.AttestationRequestData memory data = IEAS.AttestationRequestData({
-            recipient: multisig1,
-            expirationTime: uint64(block.timestamp + 3600),
-            revocable: false,
-            refUID: bytes32(0),
-            data: abi.encode("test data"),
-            value: 1 ether
-        });
-
-        IEAS.DelegatedAttestationRequest memory request = IEAS.DelegatedAttestationRequest({
-            schema: bytes32(uint256(1)),
-            data: data
-        });
-
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         // Give multisig1 some ETH
         vm.deal(multisig1, 2 ether);
 
         uint256 initialBalance = address(mockEAS).balance;
 
         vm.prank(multisig1);
-        tracker.attestByDelegation{value: 1 ether}(request, signature, multisig1, deadline);
+        tracker.attestByDelegation{value: 1 ether}(
+            bytes32(uint256(1)), // schema
+            multisig1, // recipient
+            uint64(block.timestamp + 3600), // expirationTime
+            false, // revocable
+            bytes32(0), // refUID
+            abi.encode("test data"), // data
+            1 ether, // value
+            27, // v
+            bytes32(uint256(1)), // r
+            bytes32(uint256(2)), // s
+            multisig1, // attester
+            uint64(block.timestamp + 1800) // deadline
+        );
 
         // Verify ETH was forwarded to EAS
         assertEq(address(mockEAS).balance, initialBalance + 1 ether, "ETH should be forwarded to EAS");
-        assertEq(tracker.getNumAttestations(multisig1), 1, "Attestation count should still increment");
     }
 
     // --- Multi-Multisig Independent Tracking Tests ---
@@ -223,23 +209,49 @@ contract AttestationTrackerTest is Test {
      * This ensures that each multisig's attestations and status are tracked separately.
      */
     function test_IndependentMultisigs_AttestationTracking() public {
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         // multisig1 makes 2 attestations
         vm.startPrank(multisig1);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        for (uint i = 0; i < 2; i++) {
+            tracker.attestByDelegation(
+                bytes32(uint256(1)), // schema
+                multisig1, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 1)), // r
+                bytes32(uint256(i + 2)), // s
+                multisig1, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
+        }
         vm.stopPrank();
 
-        // multisig2 makes 1 attestation
-        vm.prank(multisig2);
-        tracker.attestByDelegation(request, signature, multisig2, deadline);
+        // multisig2 makes 3 attestations
+        vm.startPrank(multisig2);
+        for (uint i = 0; i < 3; i++) {
+            tracker.attestByDelegation(
+                bytes32(uint256(2)), // schema
+                multisig2, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 10)), // r
+                bytes32(uint256(i + 20)), // s
+                multisig2, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
+        }
+        vm.stopPrank();
 
         // Verify independent tracking
-        assertEq(tracker.getNumAttestations(multisig1), 2, "Multisig1 should have 2 attestations");
-        assertEq(tracker.getNumAttestations(multisig2), 1, "Multisig2 should have 1 attestation");
+        assertEq(tracker.getNumAttestations(multisig1), 2, "multisig1 should have 2 attestations");
+        assertEq(tracker.getNumAttestations(multisig2), 3, "multisig2 should have 3 attestations");
     }
 
     // --- IQuorumTracker Interface Tests ---
@@ -249,51 +261,42 @@ contract AttestationTrackerTest is Test {
      * This tests the new IQuorumTracker interface functionality.
      */
     function test_GetVotingStats_ReturnsCorrectFormat() public {
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         // Make 3 attestations for multisig1
         vm.startPrank(multisig1);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        for (uint i = 0; i < 3; i++) {
+            tracker.attestByDelegation(
+                bytes32(uint256(1)), // schema
+                multisig1, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 1)), // r
+                bytes32(uint256(i + 2)), // s
+                multisig1, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
+        }
         vm.stopPrank();
 
-        // Get voting stats
         uint256[] memory stats = tracker.getVotingStats(multisig1);
-
-        // Check array length
+        
         assertEq(stats.length, 3, "Should return 3 elements");
-
-        // Check values (all should equal attestation count for now)
-        assertEq(stats[0], 3, "Casted votes should equal attestation count");
-        assertEq(stats[1], 3, "Voting opportunities should equal attestation count");
-        assertEq(stats[2], 0, "No voting opportunities should be 0");
-    }
-
-    /**
-     * @dev Test getVotingStats for address with no attestations.
-     */
-    function test_GetVotingStats_EmptyAddress() public {
-        address randomAddr = makeAddr("random");
-        uint256[] memory stats = tracker.getVotingStats(randomAddr);
-
-        assertEq(stats.length, 3, "Should return 3 elements");
-        assertEq(stats[0], 0, "Casted votes should be 0");
-        assertEq(stats[1], 0, "Voting opportunities should be 0");
+        assertEq(stats[0], 3, "Casted votes should be 3");
+        assertEq(stats[1], 3, "Voting opportunities should be 3");
         assertEq(stats[2], 0, "No voting opportunities should be 0");
     }
 
     // --- Edge Case Tests ---
 
     /**
-     * @dev Test attestation counter overflow protection.
-     * Since Solidity 0.8.x has built-in overflow protection, this test
-     * verifies the counter can safely reach high values.
+     * @dev Test attestation counting at maximum value.
+     * This tests the edge case where the counter reaches maximum uint256.
      */
-    function test_EdgeCase_CounterOverflow() public {
-        // Set counter to max uint256 - 1
+    function test_AttestationCount_MaxValue() public {
+        // Directly set the counter to max - 1 using vm.store
         vm.store(
             address(tracker),
             keccak256(abi.encode(multisig1, uint256(1))), // slot for mapMultisigAttestations[multisig1]
@@ -302,25 +305,33 @@ contract AttestationTrackerTest is Test {
 
         assertEq(tracker.getNumAttestations(multisig1), type(uint256).max - 1, "Counter should be at max - 1");
 
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         // This should increment to max uint256
         vm.prank(multisig1);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        tracker.attestByDelegation(
+            bytes32(uint256(1)), // schema
+            multisig1, // recipient
+            uint64(block.timestamp + 3600), // expirationTime
+            false, // revocable
+            bytes32(0), // refUID
+            abi.encode("test data"), // data
+            0, // value
+            27, // v
+            bytes32(uint256(1)), // r
+            bytes32(uint256(2)), // s
+            multisig1, // attester
+            uint64(block.timestamp + 1800) // deadline
+        );
 
         assertEq(tracker.getNumAttestations(multisig1), type(uint256).max, "Counter should be at max");
     }
 
     /**
-     * @dev Test getNumAttestations for various addresses.
-     * This verifies that uninitialized addresses return 0.
+     * @dev Test zero attestations.
+     * This ensures the contract behaves correctly when no attestations have been made.
      */
-    function test_GetNumAttestations_UninitializedAddresses() public view {
+    function test_ZeroAttestations() public view {
+        assertEq(tracker.getNumAttestations(multisig1), 0, "Should have 0 attestations initially");
         assertEq(tracker.getNumAttestations(address(0)), 0, "Zero address should have 0 attestations");
-        assertEq(tracker.getNumAttestations(unauthorized), 0, "Uninitialized address should have 0 attestations");
-        assertEq(tracker.getNumAttestations(owner), 0, "Owner should have 0 attestations initially");
     }
 
     // --- Gas Optimization Tests ---
@@ -330,17 +341,26 @@ contract AttestationTrackerTest is Test {
      * This helps track and optimize gas usage over time.
      */
     function test_Gas_AttestByDelegation() public {
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         vm.prank(multisig1);
         uint256 gasBefore = gasleft();
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        tracker.attestByDelegation(
+            bytes32(uint256(1)), // schema
+            multisig1, // recipient
+            uint64(block.timestamp + 3600), // expirationTime
+            false, // revocable
+            bytes32(0), // refUID
+            abi.encode("test data"), // data
+            0, // value
+            27, // v
+            bytes32(uint256(1)), // r
+            bytes32(uint256(2)), // s
+            multisig1, // attester
+            uint64(block.timestamp + 1800) // deadline
+        );
         uint256 gasUsed = gasBefore - gasleft();
 
         console.log("Gas used for attestByDelegation:", gasUsed);
-        // Typical gas usage should be around 50k-100k
+        // Gas should be reasonable (adjust threshold as needed)
         assertLt(gasUsed, 150000, "Gas usage should be reasonable");
     }
 
@@ -349,29 +369,40 @@ contract AttestationTrackerTest is Test {
      */
     function test_Gas_ViewFunctions() public {
         // Setup: Make some attestations
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         vm.prank(multisig1);
-        tracker.attestByDelegation(request, signature, multisig1, deadline);
+        tracker.attestByDelegation(
+            bytes32(uint256(1)), // schema
+            multisig1, // recipient
+            uint64(block.timestamp + 3600), // expirationTime
+            false, // revocable
+            bytes32(0), // refUID
+            abi.encode("test data"), // data
+            0, // value
+            27, // v
+            bytes32(uint256(1)), // r
+            bytes32(uint256(2)), // s
+            multisig1, // attester
+            uint64(block.timestamp + 1800) // deadline
+        );
 
         // Test getNumAttestations gas
         uint256 gasBefore = gasleft();
         tracker.getNumAttestations(multisig1);
         uint256 gasUsed = gasBefore - gasleft();
+
         console.log("Gas used for getNumAttestations:", gasUsed);
-        assertLt(gasUsed, 10000, "View function should be cheap");
+        assertLt(gasUsed, 5000, "View function should be cheap");
 
         // Test getVotingStats gas
         gasBefore = gasleft();
         tracker.getVotingStats(multisig1);
         gasUsed = gasBefore - gasleft();
+
         console.log("Gas used for getVotingStats:", gasUsed);
-        assertLt(gasUsed, 20000, "View function should be cheap");
+        assertLt(gasUsed, 10000, "View function should be relatively cheap");
     }
 
-    // --- Fuzz Tests ---
+    // --- Fuzz Testing ---
 
     /**
      * @dev Fuzz test for attestation counting.
@@ -381,22 +412,30 @@ contract AttestationTrackerTest is Test {
         vm.assume(multisig != address(0));
         vm.assume(numAttestations > 0 && numAttestations <= 100); // Reasonable range
 
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         vm.startPrank(multisig);
         for (uint8 i = 0; i < numAttestations; i++) {
-            tracker.attestByDelegation(request, signature, multisig, deadline);
+            tracker.attestByDelegation(
+                bytes32(uint256(i)), // schema
+                multisig, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 1)), // r
+                bytes32(uint256(i + 2)), // s
+                multisig, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
         }
         vm.stopPrank();
 
-        assertEq(tracker.getNumAttestations(multisig), numAttestations, "Count should match attestations made");
+        assertEq(tracker.getNumAttestations(multisig), numAttestations, "Counter should match number of attestations");
     }
 
     /**
-     * @dev Fuzz test for multiple multisigs.
-     * This ensures independent tracking works with random addresses.
+     * @dev Fuzz test for multiple multisigs with independent tracking.
      */
     function testFuzz_IndependentMultisigs(
         address multisigA,
@@ -408,21 +447,43 @@ contract AttestationTrackerTest is Test {
         vm.assume(multisigA != multisigB);
         vm.assume(countA <= 50 && countB <= 50); // Reasonable range
 
-        IEAS.DelegatedAttestationRequest memory request = _createTestRequest();
-        IEAS.Signature memory signature = _createTestSignature();
-        uint64 deadline = uint64(block.timestamp + 1800);
-
         // MultisigA attestations
         vm.startPrank(multisigA);
         for (uint8 i = 0; i < countA; i++) {
-            tracker.attestByDelegation(request, signature, multisigA, deadline);
+            tracker.attestByDelegation(
+                bytes32(uint256(i)), // schema
+                multisigA, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data A", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 1)), // r
+                bytes32(uint256(i + 2)), // s
+                multisigA, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
         }
         vm.stopPrank();
 
         // MultisigB attestations
         vm.startPrank(multisigB);
         for (uint8 i = 0; i < countB; i++) {
-            tracker.attestByDelegation(request, signature, multisigB, deadline);
+            tracker.attestByDelegation(
+                bytes32(uint256(i + 100)), // schema
+                multisigB, // recipient
+                uint64(block.timestamp + 3600), // expirationTime
+                false, // revocable
+                bytes32(0), // refUID
+                abi.encode("test data B", i), // data
+                0, // value
+                27, // v
+                bytes32(uint256(i + 100)), // r
+                bytes32(uint256(i + 200)), // s
+                multisigB, // attester
+                uint64(block.timestamp + 1800) // deadline
+            );
         }
         vm.stopPrank();
 

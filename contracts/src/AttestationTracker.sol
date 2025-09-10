@@ -13,7 +13,8 @@ interface IQuorumTracker {
 
 /**
  * @title IEAS
- * @dev CORRECT Interface for Ethereum Attestation Service interactions.
+ * @dev Interface for Ethereum Attestation Service interactions.
+ * This interface expects a single nested tuple parameter.
  */
 interface IEAS {
     struct AttestationRequestData {
@@ -25,36 +26,39 @@ interface IEAS {
         uint256 value;
     }
     
-    struct DelegatedAttestationRequest {
-        bytes32 schema;
-        AttestationRequestData data;
-    }
-    
     struct Signature {
         uint8 v;
         bytes32 r;
         bytes32 s;
     }
     
+    struct DelegatedAttestationRequest {
+        bytes32 schema;
+        AttestationRequestData data;
+        Signature signature;
+        address attester;
+        uint64 deadline;
+    }
+    
+    // The actual EAS interface expects a single nested tuple parameter
     function attestByDelegation(
-        DelegatedAttestationRequest calldata delegatedRequest,
-        Signature calldata signature,
-        address attester,
-        uint64 deadline
+        DelegatedAttestationRequest calldata delegatedRequest
     ) external payable returns (bytes32);
 }
 
 /**
  * @title AttestationTracker
- * @dev CORRECTED attestation counter wrapper around EAS (Ethereum Attestation Service).
+ * @dev Attestation counter wrapper around EAS (Ethereum Attestation Service).
  *
  * This contract serves as a wrapper around EAS that tracks the number of
- * attestations made by each multisig address, using the CORRECT EAS interface.
+ * attestations made by each multisig address.
  *
  * Key features:
  * - Tracks attestation count per multisig address
  * - Simple uint256 counter for each multisig
- * - Forwards all attestations to EAS with correct parameters
+ * - Accepts separate parameters (for backward compatibility with SafeService)
+ * - Reconstructs the nested tuple structure before forwarding to EAS
+ * - Uses the single-parameter EAS interface
  */
 contract AttestationTracker is Ownable, IQuorumTracker {
     // --- Events ---
@@ -83,28 +87,60 @@ contract AttestationTracker is Ownable, IQuorumTracker {
 
     /**
      * @notice Wrapper function for EAS attestations that tracks which multisigs make attestations.
-     * @dev Increments the attestation counter for msg.sender and forwards the request to EAS.
-     * @param delegatedRequest The EAS delegated attestation request.
-     * @param signature The signature for the attestation.
+     * @dev Accepts 4 separate parameters for backward compatibility with SafeService,
+     * then reconstructs the nested tuple structure before forwarding to EAS.
+     * @param schema The schema UID for the attestation.
+     * @param recipient The recipient of the attestation.
+     * @param expirationTime The expiration time for the attestation.
+     * @param revocable Whether the attestation is revocable.
+     * @param refUID The reference UID for the attestation.
+     * @param data The attestation data.
+     * @param value The value sent with the attestation.
+     * @param v The v component of the signature.
+     * @param r The r component of the signature.
+     * @param s The s component of the signature.
      * @param attester The address of the attester.
      * @param deadline The deadline for the attestation.
      * @return attestationUID The UID of the created attestation.
      */
     function attestByDelegation(
-        IEAS.DelegatedAttestationRequest calldata delegatedRequest,
-        IEAS.Signature calldata signature,
+        bytes32 schema,
+        address recipient,
+        uint64 expirationTime,
+        bool revocable,
+        bytes32 refUID,
+        bytes calldata data,
+        uint256 value,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
         address attester,
         uint64 deadline
     ) external payable returns (bytes32 attestationUID) {
         // Increment attestation counter for the caller
         mapMultisigAttestations[msg.sender]++;
 
-        // Forward the attestation request to EAS with all required parameters
+        // Forward the attestation request to EAS with the single nested tuple parameter
+        // Construct inline to avoid "stack too deep" error
         attestationUID = IEAS(EAS).attestByDelegation{value: msg.value}(
-            delegatedRequest,
-            signature,
-            attester,
-            deadline
+            IEAS.DelegatedAttestationRequest({
+                schema: schema,
+                data: IEAS.AttestationRequestData({
+                    recipient: recipient,
+                    expirationTime: expirationTime,
+                    revocable: revocable,
+                    refUID: refUID,
+                    data: data,
+                    value: value
+                }),
+                signature: IEAS.Signature({
+                    v: v,
+                    r: r,
+                    s: s
+                }),
+                attester: attester,
+                deadline: deadline
+            })
         );
 
         emit AttestationMade(msg.sender, attestationUID);

@@ -34,10 +34,19 @@ class ABILoader:
 
         try:
             with open(abi_path, "r") as f:
-                abi = json.load(f)
+                data = json.load(f)
 
-            if not isinstance(abi, list):
-                raise ABILoaderError(f"Invalid ABI format for '{name}': expected list")
+            # Handle both formats:
+            # 1. Direct ABI array (e.g., attestation_tracker.json)
+            # 2. Object with "abi" field (e.g., eas.json, eip712proxy.json)
+            if isinstance(data, list):
+                abi = data
+            elif isinstance(data, dict) and "abi" in data:
+                abi = data["abi"]
+                if not isinstance(abi, list):
+                    raise ABILoaderError(f"Invalid ABI format for '{name}': 'abi' field is not a list")
+            else:
+                raise ABILoaderError(f"Invalid ABI format for '{name}': expected list or object with 'abi' field")
 
             return abi
         except json.JSONDecodeError as e:

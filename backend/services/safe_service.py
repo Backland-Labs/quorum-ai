@@ -5,7 +5,6 @@ import time
 from typing import Dict, Optional, Any
 from web3 import Web3
 from eth_account import Account
-from eth_account.messages import encode_typed_data
 from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
 from safe_eth.safe.api import TransactionServiceApi
@@ -13,6 +12,7 @@ from safe_eth.safe.api import TransactionServiceApi
 from config import settings
 
 from models import EASAttestationData
+from utils.eas_signature import generate_eas_delegated_signature
 
 from logging_config import setup_pearl_logger, log_span
 
@@ -518,13 +518,13 @@ class SafeService:
                 raise ValueError("EAS contract address not configured")
             
             self.logger.info(
-                f"Using direct EAS contract for attestation - "
-                f"eas_address={settings.eas_contract_address}"
+                f"Using EIP712Proxy contract for attestation - "
+                f"proxy_address={settings.eas_contract_address}"
             )
             return self._build_delegated_attestation_tx(
                 attestation_data,
                 target_address=settings.eas_contract_address,
-                abi_name="eas",
+                abi_name="eip712proxy",
             )
 
     def _build_delegated_attestation_tx(
@@ -606,32 +606,12 @@ class SafeService:
             eas_address
         )
         
-        # For AttestationTracker, we need to use the new interface with 4 separate parameters
+        # For AttestationTracker, we need to use the new interface with 12 separate parameters
         if abi_name == "attestation_tracker":
             # Parse signature bytes into v, r, s components
             v = signature[64]
             r = signature[:32]
             s = signature[32:64]
-            
-            # Build the delegated request struct (without signature/deadline)
-            delegated_request = {
-                "schema": eas_schema_uid,
-                "data": {
-                    "recipient": attestation_request_data["recipient"],
-                    "expirationTime": attestation_request_data["expirationTime"],
-                    "revocable": attestation_request_data["revocable"],
-                    "refUID": attestation_request_data["refUID"],
-                    "data": attestation_request_data["data"],
-                    "value": attestation_request_data["value"],
-                }
-            }
-            
-            # Build the signature struct
-            signature_struct = {
-                "v": v,
-                "r": r,
-                "s": s,
-            }
             
             # Get attester address from private key
             from eth_account import Account
@@ -649,16 +629,24 @@ class SafeService:
             attester = Account.from_key(private_key).address
             
             self.logger.info(
-                f"Built delegated request for AttestationTracker with 4 params - attester={attester}, deadline={deadline}"
+                f"Built delegated request for AttestationTracker with 12 params - attester={attester}, deadline={deadline}"
             )
             
-            # Build transaction with 4 separate parameters
-            self.logger.debug("Building attestByDelegation transaction with new interface")
+            # Build transaction with 12 separate parameters
+            self.logger.debug("Building attestByDelegation transaction with 12-parameter interface")
             tx = contract.functions.attestByDelegation(
-                delegated_request,
-                signature_struct,
-                attester,
-                deadline
+                eas_schema_uid,  # schema
+                attestation_request_data["recipient"],  # recipient
+                attestation_request_data["expirationTime"],  # expirationTime
+                attestation_request_data["revocable"],  # revocable
+                attestation_request_data["refUID"],  # refUID
+                attestation_request_data["data"],  # data
+                attestation_request_data["value"],  # value
+                v,  # v
+                r,  # r
+                s,  # s
+                attester,  # attester
+                deadline  # deadline
             ).build_transaction(
                 {
                     "from": settings.base_safe_address,
@@ -666,14 +654,47 @@ class SafeService:
                 }
             )
         else:
-            # For EAS, use the old interface with single struct parameter
+            # For EIP712Proxy, parse signature and include attester
+            v = signature[64]
+            r = signature[:32]
+            s = signature[32:64]
+            
+            # Get attester address from private key
+            from eth_account import Account
+            import os
+            private_key = None
+            if os.path.exists("ethereum_private_key.txt"):
+                with open("ethereum_private_key.txt", "r") as f:
+                    private_key = f.read().strip()
+            elif os.getenv("ETHEREUM_PRIVATE_KEY"):
+                private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
+            else:
+                raise ValueError("Private key not found in file or environment")
+            
+            attester = Account.from_key(private_key).address
+            
+            # Build delegated request for EIP712Proxy with nested structure
             delegated_request = {
-                **attestation_request_data,
-                "signature": signature,
+                "schema": attestation_request_data["schema"],
+                "data": {
+                    "recipient": attestation_request_data["recipient"],
+                    "expirationTime": attestation_request_data["expirationTime"],
+                    "revocable": attestation_request_data["revocable"],
+                    "refUID": attestation_request_data["refUID"],
+                    "data": attestation_request_data["data"],
+                    "value": attestation_request_data["value"],
+                },
+                "signature": {
+                    "v": v,
+                    "r": r,
+                    "s": s,
+                },
+                "attester": attester,
+                "deadline": attestation_request_data["deadline"],
             }
 
             self.logger.info(
-                f"Built complete delegated request for {abi_name} contract at {target_address}"
+                f"Built complete delegated request for {abi_name} contract at {target_address} with attester={attester}"
             )
 
             # Build transaction
@@ -756,6 +777,9 @@ class SafeService:
     ) -> bytes:
         """Generate EIP-712 signature for EAS delegated attestation.
         
+        This method now delegates to the shared utility function to ensure
+        consistency between SafeService and test scripts.
+        
         Args:
             request_data: The attestation request data (without signature)
             w3: Web3 instance
@@ -769,74 +793,27 @@ class SafeService:
             f"eas_contract={eas_contract_address}, signer={self.account.address}"
         )
         
-        # EAS EIP-712 domain and types structure
-        types = {
-            'EIP712Domain': [
-                {'name': 'name', 'type': 'string'},
-                {'name': 'version', 'type': 'string'},
-                {'name': 'chainId', 'type': 'uint256'},
-                {'name': 'verifyingContract', 'type': 'address'},
-            ],
-            'DelegatedAttestation': [
-                {'name': 'schema', 'type': 'bytes32'},
-                {'name': 'recipient', 'type': 'address'},
-                {'name': 'expirationTime', 'type': 'uint64'},
-                {'name': 'revocable', 'type': 'bool'},
-                {'name': 'refUID', 'type': 'bytes32'},
-                {'name': 'data', 'type': 'bytes'},
-                {'name': 'value', 'type': 'uint256'},
-                {'name': 'deadline', 'type': 'uint64'},
-            ]
-        }
-        
-        domain = {
-            'name': 'EAS Attestation',
-            'version': '0.26',
-            'chainId': w3.eth.chain_id,
-            'verifyingContract': Web3.to_checksum_address(eas_contract_address),
-        }
-        
-        self.logger.debug(
-            f"EIP-712 domain - name={domain['name']}, version={domain['version']}, "
-            f"chainId={domain['chainId']}, verifyingContract={domain['verifyingContract']}"
-        )
-        
-        # Message data
-        message = {
-            'schema': request_data['schema'],
-            'recipient': request_data['recipient'], 
-            'expirationTime': request_data['expirationTime'],
-            'revocable': request_data['revocable'],
-            'refUID': request_data['refUID'],
-            'data': request_data['data'],
-            'value': request_data['value'],
-            'deadline': request_data['deadline'],
-        }
-        
         self.logger.debug(
             f"EIP-712 message - schema={request_data['schema'].hex()}, "
             f"recipient={request_data['recipient']}, deadline={request_data['deadline']}, "
             f"data_length={len(request_data['data'])}"
         )
         
-        # Create EIP-712 encoded data
-        typed_data = {
-            'domain': domain,
-            'primaryType': 'DelegatedAttestation', 
-            'types': types,
-            'message': message,
-        }
+        # Use the shared signature generation function
+        # Pass the private key from the loaded file
+        with open("ethereum_private_key.txt", "r") as f:
+            private_key = f.read().strip()
         
-        self.logger.debug("Encoding EIP-712 typed data")
-        encoded = encode_typed_data(full_message=typed_data)
-        
-        # Sign with the account's private key
-        self.logger.debug("Signing EIP-712 encoded message with private key")
-        signature = self.account.sign_message(encoded)
-        
-        self.logger.info(
-            f"Generated EAS delegated signature successfully - signature_length={len(signature.signature)}, "
-            f"signature_hex={signature.signature.hex()[:20]}..."
+        signature = generate_eas_delegated_signature(
+            request_data=request_data,
+            w3=w3,
+            eas_contract_address=eas_contract_address,
+            private_key=private_key
         )
         
-        return signature.signature
+        self.logger.info(
+            f"Generated EAS delegated signature successfully - signature_length={len(signature)}, "
+            f"signature_hex={signature.hex()[:20]}..."
+        )
+        
+        return signature
