@@ -963,14 +963,16 @@ class AgentRunService:
                 try:
                     # Create EAS attestation data
                     eas_data = EASAttestationData(
-                        proposal_id=attestation["proposal_id"],
+                        agent=attestation["voter_address"],
                         space_id=space_id,
-                        voter_address=attestation["voter_address"],
-                        choice=attestation["vote_choice"],
-                        vote_tx_hash=attestation.get("vote_tx_hash", "0x" + "0" * 64),
-                        timestamp=datetime.fromisoformat(attestation["timestamp"])
+                        proposal_id=attestation["proposal_id"],
+                        vote_choice=attestation["vote_choice"],
+                        snapshot_sig=attestation.get("snapshot_sig", "0x"),
+                        timestamp=int(datetime.fromisoformat(attestation["timestamp"]).timestamp())
                         if isinstance(attestation["timestamp"], str)
-                        else attestation["timestamp"],
+                        else int(attestation["timestamp"]),
+                        run_id=attestation.get("run_id", f"{space_id}_{int(time.time())}"),
+                        confidence=int(attestation.get("confidence", 80)),
                         retry_count=attestation.get("retry_count", 0),
                     )
 

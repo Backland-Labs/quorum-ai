@@ -130,7 +130,7 @@ async def test_attestation_queued_after_successful_vote(mock_services, sample_vo
     
     # Create service with mocks
     service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
-    mock_services['prefs'].load_preferences.return_value = sample_preferences
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
     mock_services['voting'].vote_on_proposal.return_value = {"success": True, "tx_hash": "0xabc123"}
     
     # Execute
@@ -143,7 +143,7 @@ async def test_attestation_queued_after_successful_vote(mock_services, sample_vo
     mock_services['voting'].vote_on_proposal.assert_called_once()
     
     # 2. Checkpoint was saved with pending attestations
-    saved_checkpoint = await mock_state_manager.load_checkpoint(f"run_test_run_123")
+    saved_checkpoint = await mock_state_manager.load_checkpoint("agent_checkpoint_test.eth")
     assert saved_checkpoint is not None, f"No checkpoint found. Available keys: {list(checkpoint_data.keys())}"
     assert 'pending_attestations' in saved_checkpoint
     assert len(saved_checkpoint['pending_attestations']) == 1
@@ -173,7 +173,7 @@ async def test_attestation_failure_does_not_block_voting(mock_services, sample_v
     mock_state_manager.load_checkpoint = AsyncMock(return_value=None)
     
     service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
-    mock_services['prefs'].load_preferences.return_value = sample_preferences
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
     mock_services['voting'].vote_on_proposal.return_value = {"success": True, "tx_hash": "0xabc123"}
     
     # Execute
@@ -210,8 +210,10 @@ async def test_pending_attestations_processed_on_startup(mock_services, sample_p
                 'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',
                 'delegate_address': '0xdelegate',
                 'reasoning': 'Test reasoning',
-                'vote_tx_hash': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'snapshot_sig': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
+                'run_id': 'test_run_123',
+                'confidence': 80,
                 'retry_count': 0
             }
         ]
@@ -226,14 +228,15 @@ async def test_pending_attestations_processed_on_startup(mock_services, sample_p
     mock_state_manager.save_checkpoint = AsyncMock()
     
     service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
-    mock_services['prefs'].load_preferences.return_value = sample_preferences
-    mock_services['safe'].create_eas_attestation.return_value = {
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
+    mock_services['safe'].create_eas_attestation = AsyncMock(return_value={
+        'success': True,
         'tx_hash': '0xattestation123',
         'attestation_uid': 'uid123'
-    }
+    })
     
     # Mock snapshot service to return empty proposals (no new work)
-    mock_services['snapshot'].get_proposals.return_value = []
+    mock_services['snapshot'].get_proposals = AsyncMock(return_value=[])
     
     # Execute
     from models import AgentRunRequest
@@ -246,6 +249,11 @@ async def test_pending_attestations_processed_on_startup(mock_services, sample_p
     call_args = mock_services['safe'].create_eas_attestation.call_args[0][0]
     assert isinstance(call_args, EASAttestationData)
     assert call_args.proposal_id == '0x123'
+    assert call_args.agent == '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e'
+    assert call_args.vote_choice == 1
+    assert call_args.snapshot_sig == '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+    assert call_args.run_id == 'test_run_123'
+    assert call_args.confidence == 80
     
     # 2. Checkpoint was updated to remove processed attestation
     final_checkpoint = mock_state_manager.save_checkpoint.call_args_list[-1][0][1]
@@ -277,8 +285,10 @@ async def test_failed_attestations_remain_in_queue(mock_services, sample_prefere
                 'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',
                 'delegate_address': '0xdelegate',
                 'reasoning': 'Test reasoning 1',
-                'vote_tx_hash': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'snapshot_sig': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
+                'run_id': 'test_run_123',
+                'confidence': 80,
                 'retry_count': 0
             },
             {
@@ -287,8 +297,10 @@ async def test_failed_attestations_remain_in_queue(mock_services, sample_prefere
                 'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',
                 'delegate_address': '0xdelegate',
                 'reasoning': 'Test reasoning 2',
-                'vote_tx_hash': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'snapshot_sig': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
+                'run_id': 'test_run_123',
+                'confidence': 80,
                 'retry_count': 0
             }
         ]
@@ -303,15 +315,15 @@ async def test_failed_attestations_remain_in_queue(mock_services, sample_prefere
     mock_state_manager.save_checkpoint = AsyncMock()
     
     service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
-    mock_services['prefs'].load_preferences.return_value = sample_preferences
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
     
     # First attestation fails, second succeeds
-    mock_services['safe'].create_eas_attestation.side_effect = [
+    mock_services['safe'].create_eas_attestation = AsyncMock(side_effect=[
         Exception("Network error"),
-        {'tx_hash': '0xattestation456', 'attestation_uid': 'uid456'}
-    ]
+        {'success': True, 'tx_hash': '0xattestation456', 'attestation_uid': 'uid456'}
+    ])
     
-    mock_services['snapshot'].get_proposals.return_value = []
+    mock_services['snapshot'].get_proposals = AsyncMock(return_value=[])
     
     # Execute
     from models import AgentRunRequest
@@ -353,8 +365,10 @@ async def test_attestation_max_retries_honored(mock_services, sample_preferences
                 'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',
                 'delegate_address': '0xdelegate',
                 'reasoning': 'Test reasoning',
-                'vote_tx_hash': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'snapshot_sig': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
+                'run_id': 'test_run_123',
+                'confidence': 80,
                 'retry_count': 3  # Assuming MAX_ATTESTATION_RETRIES = 3
             }
         ]
@@ -369,8 +383,8 @@ async def test_attestation_max_retries_honored(mock_services, sample_preferences
     mock_state_manager.save_checkpoint = AsyncMock()
     
     service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
-    mock_services['prefs'].load_preferences.return_value = sample_preferences
-    mock_services['snapshot'].get_proposals.return_value = []
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
+    mock_services['snapshot'].get_proposals = AsyncMock(return_value=[])
     
     # Execute
     with patch.object(service.pearl_logger, 'warning') as mock_log_warning:
@@ -416,8 +430,10 @@ async def test_attestation_retry_with_tracker(mock_services, sample_preferences)
                 'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',
                 'delegate_address': '0xdelegate',
                 'reasoning': 'Test reasoning for retry',
-                'vote_tx_hash': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'snapshot_sig': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
+                'run_id': 'test_run_123',
+                'confidence': 80,
                 'retry_count': 1  # Already retried once
             }
         ]
@@ -432,13 +448,13 @@ async def test_attestation_retry_with_tracker(mock_services, sample_preferences)
     mock_state_manager.save_checkpoint = AsyncMock()
     
     service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
-    mock_services['prefs'].load_preferences.return_value = sample_preferences
-    mock_services['snapshot'].get_proposals.return_value = []
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
+    mock_services['snapshot'].get_proposals = AsyncMock(return_value=[])
     
     # Mock AttestationTracker configuration
     with patch('config.settings.attestation_tracker_address', '0x9876543210987654321098765432109876543210'):
         # Mock safe service to fail on attestation creation
-        mock_services['safe'].create_eas_attestation.side_effect = Exception("AttestationTracker wrapper timeout")
+        mock_services['safe'].create_eas_attestation = AsyncMock(side_effect=Exception("AttestationTracker wrapper timeout"))
         
         # Execute agent run
         from models import AgentRunRequest
@@ -459,3 +475,94 @@ async def test_attestation_retry_with_tracker(mock_services, sample_preferences)
     # 3. Agent run continues successfully despite attestation failure
     assert result is not None
     # The error should be logged but not crash the agent
+
+
+@pytest.mark.asyncio
+async def test_eas_attestation_data_field_mapping(mock_services, sample_preferences):
+    """
+    Test that EAS attestation data is correctly mapped from stored attestation data.
+    
+    This test specifically validates the fix for the field mapping issue where
+    the stored attestation format needs to be converted to EASAttestationData format.
+    """
+    # Setup
+    mock_state_manager = MagicMock()
+    
+    # Simulate stored attestation data with old/mixed field names
+    previous_checkpoint = {
+        'space_id': 'test.eth',
+        'pending_attestations': [
+            {
+                'proposal_id': '0x123',
+                'vote_choice': 1,
+                'voter_address': '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e',  # Maps to 'agent'
+                'delegate_address': '0xdelegate',
+                'reasoning': 'Test reasoning',
+                'snapshot_sig': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+                'timestamp': datetime.now(timezone.utc).isoformat(),  # Will be converted to int
+                'run_id': 'test_run_123',
+                'confidence': 80,
+                'retry_count': 0
+            }
+        ]
+    }
+    
+    async def mock_load_checkpoint(key):
+        if key == 'agent_checkpoint_test.eth':
+            return previous_checkpoint
+        return None
+    
+    mock_state_manager.load_checkpoint = AsyncMock(side_effect=mock_load_checkpoint)
+    mock_state_manager.save_checkpoint = AsyncMock()
+    
+    service = create_service_with_mocks(mock_services, state_manager=mock_state_manager)
+    mock_services['prefs'].load_preferences = AsyncMock(return_value=sample_preferences)
+    mock_services['safe'].create_eas_attestation = AsyncMock(return_value={
+        'success': True,
+        'tx_hash': '0xattestation123',
+        'attestation_uid': 'uid123'
+    })
+    mock_services['snapshot'].get_proposals = AsyncMock(return_value=[])
+    
+    # Execute
+    from models import AgentRunRequest
+    request = AgentRunRequest(space_id='test.eth', dry_run=False)
+    result = await service.execute_agent_run(request)
+    
+    # Assert
+    # 1. Safe service was called with correctly mapped EASAttestationData
+    mock_services['safe'].create_eas_attestation.assert_called_once()
+    call_args = mock_services['safe'].create_eas_attestation.call_args[0][0]
+    assert isinstance(call_args, EASAttestationData)
+    
+    # Verify field mapping is correct
+    assert call_args.agent == '0x742d35Cc6634C0532925a3b844Bc9e7595f8eA9e'  # voter_address -> agent
+    assert call_args.vote_choice == 1  # vote_choice preserved
+    assert call_args.proposal_id == '0x123'  # proposal_id preserved
+    assert call_args.space_id == 'test.eth'  # space_id preserved
+    assert call_args.snapshot_sig == '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+    assert isinstance(call_args.timestamp, int)  # datetime string converted to int timestamp
+    assert call_args.run_id == 'test_run_123'
+    assert call_args.confidence == 80
+    assert call_args.retry_count == 0
+    
+    # 2. All required EAS fields are present (no validation errors)
+    # This ensures the fix prevents the "6 validation errors" issue
+    try:
+        # This should not raise validation errors
+        test_eas_data = EASAttestationData(
+            agent=call_args.agent,
+            space_id=call_args.space_id,
+            proposal_id=call_args.proposal_id,
+            vote_choice=call_args.vote_choice,
+            snapshot_sig=call_args.snapshot_sig,
+            timestamp=call_args.timestamp,
+            run_id=call_args.run_id,
+            confidence=call_args.confidence,
+            retry_count=call_args.retry_count
+        )
+        assert test_eas_data is not None
+    except Exception as e:
+        pytest.fail(f"EASAttestationData validation failed: {e}")
+
+
