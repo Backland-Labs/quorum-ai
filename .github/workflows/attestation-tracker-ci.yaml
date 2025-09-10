@@ -82,14 +82,30 @@ jobs:
       - name: Install contract dependencies
         working-directory: contracts
         run: |
-          git init
-          git config user.name "CI"
-          git config user.email "ci@example.com"
-          forge install foundry-rs/forge-std
-          forge install OpenZeppelin/openzeppelin-contracts
+          # Remove any existing lib directory to ensure clean install
+          rm -rf lib
+          
+          # Initialize git if needed for forge dependencies
+          if [ ! -d .git ]; then
+            git init
+            git config user.name "CI"
+            git config user.email "ci@example.com"
+          fi
+          
+          # Install forge dependencies with proper depth
+          forge install foundry-rs/forge-std --no-commit
+          forge install OpenZeppelin/openzeppelin-contracts --no-commit
+          
+          # Verify installations
+          echo "Checking forge-std installation:"
+          ls -la lib/forge-std/src/ | head -5
+          echo "Checking OpenZeppelin installation:"
+          ls -la lib/openzeppelin-contracts/contracts/ | head -5
 
       - name: Build contracts
         working-directory: contracts
+        env:
+          FOUNDRY_DISABLE_NIGHTLY_WARNING: true
         run: |
           forge --version
           forge build

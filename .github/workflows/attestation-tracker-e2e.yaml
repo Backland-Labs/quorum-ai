@@ -71,17 +71,30 @@ jobs:
       - name: Install contract dependencies
         working-directory: contracts
         run: |
-          # Initialize git if needed for forge dependencies
-          git init || true
-          git config user.name "CI"
-          git config user.email "ci@example.com"
+          # Remove any existing lib directory to ensure clean install
+          rm -rf lib
           
-          # Install forge dependencies
-          forge install foundry-rs/forge-std --no-commit || true
-          forge install OpenZeppelin/openzeppelin-contracts --no-commit || true
+          # Initialize git if needed for forge dependencies
+          if [ ! -d .git ]; then
+            git init
+            git config user.name "CI"
+            git config user.email "ci@example.com"
+          fi
+          
+          # Install forge dependencies with proper depth
+          forge install foundry-rs/forge-std --no-commit
+          forge install OpenZeppelin/openzeppelin-contracts --no-commit
+          
+          # Verify installations
+          echo "Checking forge-std installation:"
+          ls -la lib/forge-std/src/ | head -5
+          echo "Checking OpenZeppelin installation:"
+          ls -la lib/openzeppelin-contracts/contracts/ | head -5
 
       - name: Build contracts
         working-directory: contracts
+        env:
+          FOUNDRY_DISABLE_NIGHTLY_WARNING: true
         run: |
           echo "Building contracts..."
           forge build
@@ -139,6 +152,7 @@ jobs:
           ATTESTATION_TRACKER_OWNER: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
           EAS_CONTRACT_ADDRESS: "0x4200000000000000000000000000000000000021"
           LIVENESS_RATIO: "1000000000000000"
+          FOUNDRY_DISABLE_NIGHTLY_WARNING: true
         run: |
           echo "Deploying AttestationTracker contract..."
           
