@@ -38,6 +38,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl wget git jq
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -57,11 +62,22 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          # Verify UV installation
+          $HOME/.cargo/bin/uv --version || echo "UV not in cargo bin"
+          # Try direct installation path
+          which uv || echo "UV not found in PATH"
 
-      - name: Install Anvil dependencies
+      - name: Verify tool installations
         run: |
-          # Verify Anvil is installed
-          anvil --version
+          # Verify all tools are installed
+          echo "Node version:"
+          node --version
+          echo "Python version:"
+          python --version
+          echo "Forge version:"
+          forge --version || echo "Forge not found"
+          echo "Anvil version:"
+          anvil --version || echo "Anvil not found"
 
       - name: Install contract dependencies
         working-directory: contracts
@@ -128,97 +144,6 @@ jobs:
         run: |
           if [ ! -z "$ANVIL_PID" ]; then
             kill $ANVIL_PID || true
-          fi
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Cache Foundry artifacts
-        uses: actions/cache@v4
-        with:
-          path: |
-            contracts/out
-            contracts/cache
-          key: ${{ runner.os }}-foundry-${{ hashFiles('contracts/**/*.sol') }}
-          restore-keys: |
-            ${{ runner.os }}-foundry-
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - name: Install UV
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Install contract dependencies
-        working-directory: contracts
-        run: |
-          git init
-          git config user.name "CI"
-          git config user.email "ci@example.com"
-          forge install foundry-rs/forge-std
-          forge install OpenZeppelin/openzeppelin-contracts
-
-      - name: Build contracts (if needed)
-        working-directory: contracts
-        run: |
-          # Only build if cache miss or source changed
-          if [ ! -d "out" ]; then
-            echo "Building contracts (no cache)..."
-            forge build
-          else
-            echo "Using cached build artifacts"
-            # Verify cached artifacts are valid
-            forge build --skip
-          fi
-
-      - name: Start Anvil fork with specific block
-        run: |
-          # Use a specific block for reproducible tests
-          BLOCK_NUMBER=22000000
-          
-          anvil --fork-url https://mainnet.base.org \
-                --fork-block-number $BLOCK_NUMBER \
-                --auto-impersonate \
-                --silent &
-          ANVIL_PID=$!
-          echo "ANVIL_PID=$ANVIL_PID" >> $GITHUB_ENV
-          
-          # Wait for Anvil
-          for i in {1..30}; do
-            if curl -s http://localhost:8545 > /dev/null; then
-              echo "Anvil ready at block $BLOCK_NUMBER"
-              break
-            fi
-            sleep 1
-          done
-
-      - name: Run tests with detailed output
-        env:
-          PYTHONPATH: ${{ github.workspace }}/backend
-          DEBUG: ${{ github.event.inputs.debug_enabled || 'false' }}
-        run: |
-          chmod +x ci/test_attestation_tracker_ci.py
-          
-          if [ "$DEBUG" = "true" ]; then
-            echo "Running with debug output..."
-            ./ci/test_attestation_tracker_ci.py --verbose
-          else
-            ./ci/test_attestation_tracker_ci.py
           fi
 
       - name: Generate test report

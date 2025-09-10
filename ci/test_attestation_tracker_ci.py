@@ -2,11 +2,19 @@
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
-#     "web3==7.6.0",
-#     "eth-account==0.13.4",
-#     "pydantic==2.10.3",
-#     "pydantic-settings==2.6.1",
+#     "web3>=7.12.0",
+#     "eth-account>=0.13.7",
+#     "pydantic>=2.10.0",
+#     "pydantic-settings>=2.6.0",
+#     "pydantic-ai",
 #     "colorama==0.4.6",
+#     "httpx>=0.28.0",
+#     "safe-eth-py>=7.7.0",
+#     "requests>=2.32.4",
+#     "python-dotenv>=1.0.0",
+#     "fastapi>=0.115.0",
+#     "python-multipart>=0.0.12",
+#     "uvicorn[standard]>=0.32.0",
 # ]
 # ///
 """
@@ -406,7 +414,30 @@ def main():
     # Setup account
     account = Account.from_key(PRIVATE_KEY)
     print_detail("Test account", account.address)
+    
+    # Fund the test account using Anvil's setBalance RPC method
+    initial_balance = w3.eth.get_balance(account.address)
+    if initial_balance < Web3.to_wei(1, 'ether'):
+        print_info("Funding test account...")
+        # Use Anvil's hardhat_setBalance to fund the account
+        w3.provider.make_request(
+            "hardhat_setBalance",
+            [account.address, hex(Web3.to_wei(10, 'ether'))]
+        )
+        new_balance = w3.eth.get_balance(account.address)
+        print_success(f"Funded account with {new_balance / 10**18:.4f} ETH")
+    
     print_detail("Balance", f"{w3.eth.get_balance(account.address) / 10**18:.4f} ETH")
+    
+    # Also fund the Safe address that will be used for transactions
+    safe_balance = w3.eth.get_balance(SAFE_ADDRESS)
+    if safe_balance < Web3.to_wei(1, 'ether'):
+        print_info(f"Funding Safe address {SAFE_ADDRESS}...")
+        w3.provider.make_request(
+            "hardhat_setBalance",
+            [SAFE_ADDRESS, hex(Web3.to_wei(10, 'ether'))]
+        )
+        print_success(f"Funded Safe with {w3.eth.get_balance(SAFE_ADDRESS) / 10**18:.4f} ETH")
     
     # Check if EAS contract exists (it should on a forked mainnet)
     eas_code = w3.eth.get_code(Web3.to_checksum_address(EIP712_PROXY))
