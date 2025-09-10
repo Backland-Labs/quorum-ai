@@ -606,32 +606,12 @@ class SafeService:
             eas_address
         )
         
-        # For AttestationTracker, we need to use the new interface with 4 separate parameters
+        # For AttestationTracker, we need to use the new interface with 12 separate parameters
         if abi_name == "attestation_tracker":
             # Parse signature bytes into v, r, s components
             v = signature[64]
             r = signature[:32]
             s = signature[32:64]
-            
-            # Build the delegated request struct (without signature/deadline)
-            delegated_request = {
-                "schema": eas_schema_uid,
-                "data": {
-                    "recipient": attestation_request_data["recipient"],
-                    "expirationTime": attestation_request_data["expirationTime"],
-                    "revocable": attestation_request_data["revocable"],
-                    "refUID": attestation_request_data["refUID"],
-                    "data": attestation_request_data["data"],
-                    "value": attestation_request_data["value"],
-                }
-            }
-            
-            # Build the signature struct
-            signature_struct = {
-                "v": v,
-                "r": r,
-                "s": s,
-            }
             
             # Get attester address from private key
             from eth_account import Account
@@ -649,16 +629,24 @@ class SafeService:
             attester = Account.from_key(private_key).address
             
             self.logger.info(
-                f"Built delegated request for AttestationTracker with 4 params - attester={attester}, deadline={deadline}"
+                f"Built delegated request for AttestationTracker with 12 params - attester={attester}, deadline={deadline}"
             )
             
-            # Build transaction with 4 separate parameters
-            self.logger.debug("Building attestByDelegation transaction with new interface")
+            # Build transaction with 12 separate parameters
+            self.logger.debug("Building attestByDelegation transaction with 12-parameter interface")
             tx = contract.functions.attestByDelegation(
-                delegated_request,
-                signature_struct,
-                attester,
-                deadline
+                eas_schema_uid,  # schema
+                attestation_request_data["recipient"],  # recipient
+                attestation_request_data["expirationTime"],  # expirationTime
+                attestation_request_data["revocable"],  # revocable
+                attestation_request_data["refUID"],  # refUID
+                attestation_request_data["data"],  # data
+                attestation_request_data["value"],  # value
+                v,  # v
+                r,  # r
+                s,  # s
+                attester,  # attester
+                deadline  # deadline
             ).build_transaction(
                 {
                     "from": settings.base_safe_address,
