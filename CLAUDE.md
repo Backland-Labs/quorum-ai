@@ -13,3 +13,6 @@ export $(cat .env | xargs) && export SAFE_CONTRACT_ADDRESSES='{"base":          
 ```
 
 **Important**: The `--reload` flag in uvicorn may not work reliably for detecting file changes. If you make code changes and they don't take effect, manually restart the server by killing the process and running the command again.
+
+- Use `uv` to run python files
+- For one off scripts, use a uv single file excutable.

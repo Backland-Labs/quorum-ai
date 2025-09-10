@@ -5,6 +5,7 @@
 #     "web3==7.6.0",
 #     "eth-account==0.13.4",
 #     "pydantic==2.10.3",
+#     "pydantic-settings==2.6.1",
 #     "colorama==0.4.6",
 # ]
 # ///
@@ -40,7 +41,6 @@ from colorama import init, Fore, Style
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 from models import EASAttestationData
 from utils.eas_signature import generate_eas_delegated_signature, parse_signature_bytes
-from services.safe_service import SafeService
 
 # Initialize colorama for colored output
 init(autoreset=True)
