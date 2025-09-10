@@ -461,13 +461,31 @@ class Settings(BaseSettings):
         safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
         if safe_addresses_env:
             addresses = {}
-            for pair in safe_addresses_env.split(","):
-                if ":" in pair:
-                    dao, address = pair.split(":", 1)
-                    dao = dao.strip()
-                    address = address.strip()
-                    if dao and address:
-                        addresses[dao] = address
+            
+            # Try parsing as JSON first
+            try:
+                import json
+                parsed_json = json.loads(safe_addresses_env)
+                if isinstance(parsed_json, dict):
+                    addresses = parsed_json
+                    # Auto-assign BASE_SAFE_ADDRESS if "base" key exists and not already set
+                    if "base" in addresses and not self.base_safe_address:
+                        self.base_safe_address = addresses["base"]
+                else:
+                    raise ValueError("JSON must be a dictionary")
+            except (json.JSONDecodeError, ValueError):
+                # Fallback to comma-separated format
+                for pair in safe_addresses_env.split(","):
+                    if ":" in pair:
+                        dao, address = pair.split(":", 1)
+                        dao = dao.strip()
+                        address = address.strip()
+                        if dao and address:
+                            addresses[dao] = address
+                            # Auto-assign BASE_SAFE_ADDRESS if "base" key exists and not already set
+                            if dao == "base" and not self.base_safe_address:
+                                self.base_safe_address = address
+            
             self.safe_addresses = addresses
 
     def _parse_agent_address(self):
@@ -709,7 +727,12 @@ class Settings(BaseSettings):
 
         # Check required Base network configuration for attestation transactions
         if not self.base_safe_address:
-            missing_vars.append("BASE_SAFE_ADDRESS")
+            # Check if SAFE_CONTRACT_ADDRESSES is configured but missing 'base' key
+            safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
+            if safe_addresses_env:
+                missing_vars.append("SAFE_CONTRACT_ADDRESSES must contain 'base' key")
+            else:
+                missing_vars.append("BASE_SAFE_ADDRESS or SAFE_CONTRACT_ADDRESSES with 'base' key")
 
         # Check that at least one Base RPC endpoint is configured
         if not self.get_base_rpc_endpoint():
