@@ -553,8 +553,108 @@ fi
 echo -e "${GREEN}[OK] Docker image ready${NC}"
 echo ""
 
-# Step 6: Start Docker container directly
-echo -e "${BOLD}Step 6: Starting Quorum AI service...${NC}"
+# Step 6: Fund the Safe multisig for attestation transactions
+echo -e "${BOLD}Step 6: Funding Safe multisig for attestation transactions...${NC}"
+
+# Extract Safe address from configuration
+SAFE_ADDRESS=$(echo "$SAFE_CONTRACT_ADDRESSES" | grep -o '"base":"[^"]*"' | cut -d'"' -f4 2>/dev/null)
+if [ -z "$SAFE_ADDRESS" ]; then
+    # Fallback to BASE_SAFE_ADDRESS if parsing fails
+    SAFE_ADDRESS="$BASE_SAFE_ADDRESS"
+fi
+
+if [ -z "$SAFE_ADDRESS" ] || [ "$SAFE_ADDRESS" = "null" ]; then
+    echo -e "${YELLOW}WARNING: No Safe address configured, using default Anvil account${NC}"
+    SAFE_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+fi
+
+echo "Using Safe address: $SAFE_ADDRESS"
+
+# Check current balance of the Safe
+SAFE_BALANCE=$(curl -s -X POST http://localhost:8545 \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"jsonrpc\":\"2.0\",
+        \"method\":\"eth_getBalance\",
+        \"params\":[\"$SAFE_ADDRESS\", \"latest\"],
+        \"id\":1
+    }" 2>/dev/null | grep -o '"result":"[^"]*' | cut -d'"' -f4)
+
+if [ ! -z "$SAFE_BALANCE" ] && [ "$SAFE_BALANCE" != "0x" ]; then
+    # Convert hex to decimal and check if balance is sufficient (< 0.1 ETH)
+    BALANCE_WEI=$((16#${SAFE_BALANCE:2}))
+    BALANCE_ETH=$(echo "scale=6; $BALANCE_WEI / 1000000000000000000" | bc -l 2>/dev/null || echo "0")
+    
+    echo "Current Safe balance: ${BALANCE_ETH} ETH"
+    
+    # Check if balance is less than 0.1 ETH (threshold for funding)
+    NEEDS_FUNDING=0
+    if command -v bc >/dev/null 2>&1; then
+        NEEDS_FUNDING=$(echo "$BALANCE_ETH < 0.1" | bc -l)
+    else
+        # Fallback: check if balance is very small (less than 10^17 wei = 0.1 ETH)
+        if [ "$BALANCE_WEI" -lt "100000000000000000" ]; then
+            NEEDS_FUNDING=1
+        fi
+    fi
+    
+    if [ "$NEEDS_FUNDING" = "1" ]; then
+        echo "Safe balance is insufficient for attestation transactions, funding with 1 ETH..."
+        
+        # Check if cast is available
+        if command -v cast >/dev/null 2>&1; then
+            # Fund the Safe with 1 ETH using the default Anvil account
+            FUNDING_RESULT=$(cast send --private-key "$PRIVATE_KEY" \
+                --rpc-url http://localhost:8545 \
+                "$SAFE_ADDRESS" \
+                --value 1ether 2>&1)
+            
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}[OK] Safe successfully funded with 1 ETH${NC}"
+            else
+                echo -e "${YELLOW}WARNING: Failed to fund Safe with cast, trying curl method...${NC}"
+                
+                # Fallback to raw transaction via curl
+                FUND_TX=$(curl -s -X POST http://localhost:8545 \
+                    -H "Content-Type: application/json" \
+                    -d "{
+                        \"jsonrpc\":\"2.0\",
+                        \"method\":\"eth_sendTransaction\",
+                        \"params\":[{
+                            \"from\":\"$AGENT_ADDRESS\",
+                            \"to\":\"$SAFE_ADDRESS\",
+                            \"value\":\"0xde0b6b3a7640000\"
+                        }],
+                        \"id\":1
+                    }" 2>/dev/null)
+                
+                if [[ "$FUND_TX" == *"error"* ]]; then
+                    echo -e "${YELLOW}WARNING: Could not fund Safe automatically${NC}"
+                    echo -e "${YELLOW}Attestation transactions may fail due to insufficient funds${NC}"
+                    echo -e "${YELLOW}You may need to fund the Safe manually:${NC}"
+                    echo -e "${YELLOW}  cast send --private-key $PRIVATE_KEY --rpc-url http://localhost:8545 $SAFE_ADDRESS --value 1ether${NC}"
+                else
+                    echo -e "${GREEN}[OK] Safe successfully funded with 1 ETH${NC}"
+                fi
+            fi
+        else
+            echo -e "${YELLOW}WARNING: 'cast' command not found${NC}"
+            echo -e "${YELLOW}Cannot automatically fund Safe for attestation transactions${NC}"
+            echo -e "${YELLOW}Install Foundry or fund Safe manually:${NC}"
+            echo -e "${YELLOW}  curl -X POST http://localhost:8545 -H \"Content-Type: application/json\" -d '{\"jsonrpc\":\"2.0\",\"method\":\"eth_sendTransaction\",\"params\":[{\"from\":\"$AGENT_ADDRESS\",\"to\":\"$SAFE_ADDRESS\",\"value\":\"0xde0b6b3a7640000\"}],\"id\":1}'${NC}"
+        fi
+    else
+        echo -e "${GREEN}[OK] Safe has sufficient balance for attestation transactions${NC}"
+    fi
+else
+    echo -e "${YELLOW}WARNING: Could not check Safe balance${NC}"
+    echo -e "${YELLOW}Proceeding with setup, but attestation transactions may fail${NC}"
+fi
+
+echo ""
+
+# Step 7: Start Docker container directly
+echo -e "${BOLD}Step 7: Starting Quorum AI service...${NC}"
 
 # Stop any existing container
 docker stop quorum_app 2>/dev/null || true
@@ -627,7 +727,7 @@ echo ""
 # Save Anvil PID for stop command
 echo $ANVIL_PID > .anvil.pid
 
-# Step 7: Display success information
+# Step 8: Display success information
 print_header "QUORUM AI IS RUNNING SUCCESSFULLY!"
 
 echo -e "${BOLD}${GREEN}For Auditors - Verification Steps:${NC}"

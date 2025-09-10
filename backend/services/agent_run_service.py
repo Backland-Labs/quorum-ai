@@ -967,7 +967,7 @@ class AgentRunService:
                         space_id=space_id,
                         proposal_id=attestation["proposal_id"],
                         vote_choice=attestation["vote_choice"],
-                        snapshot_sig=attestation.get("snapshot_sig", "0x"),
+                        snapshot_sig=attestation["vote_tx_hash"],
                         timestamp=int(datetime.fromisoformat(attestation["timestamp"]).timestamp())
                         if isinstance(attestation["timestamp"], str)
                         else int(attestation["timestamp"]),

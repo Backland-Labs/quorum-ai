@@ -7511,3 +7511,148 @@ web3.exceptions.ContractLogicError: ('execution reverted', '0x')
 [2025-09-09 18:47:20,338] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=9bbb6495dde3fa7cd76d...
 [2025-09-09 18:47:20,342] [INFO] [agent] Built complete delegated request for eip712proxy contract at 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6 with attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 [2025-09-09 18:47:20,425] [INFO] [agent] Built delegated attestation transaction - to=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, data_length=2122, gas=300000
+[2025-09-10 14:11:44,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:44,718] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:45,196] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:45,204] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:45,204] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:45,204] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:45,204] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:11:45,206] [INFO] [agent] Agent run started (run_id=test.eth_1757538705, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:11:50,561] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:50,914] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:51,367] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:51,375] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:51,376] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:51,376] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:11:51,376] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:11:51,378] [INFO] [agent] Agent run started (run_id=test.eth_1757538711, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:12:36,888] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:12:37,243] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:12:37,684] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:12:37,692] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:12:37,692] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:12:37,692] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:12:37,692] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:12:37,694] [INFO] [agent] Agent run started (run_id=test.eth_1757538757, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:13:56,739] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:13:57,202] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:13:57,668] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:13:57,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:13:57,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:13:57,676] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:13:57,676] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:13:57,678] [INFO] [agent] Agent run started (run_id=test.eth_1757538837, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:14:40,524] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:40,856] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:41,301] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:41,309] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:41,309] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:41,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:41,310] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:14:41,311] [INFO] [agent] Agent run started (run_id=test.eth_1757538881, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:14:52,769] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:53,106] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:53,555] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:53,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:53,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:53,564] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:53,564] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:14:53,566] [INFO] [agent] Agent run started (run_id=test.eth_1757538893, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:14:59,602] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:14:59,949] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:00,386] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:00,394] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:00,394] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:00,394] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:00,394] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:00,396] [INFO] [agent] Agent run started (run_id=test.eth_1757538900, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:06,658] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,035] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,489] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,497] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,497] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,497] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,497] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,498] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-10 14:15:07,599] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,600] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,600] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,600] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,601] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-10 14:15:07,604] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,604] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,604] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,604] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,605] [INFO] [agent] Agent run started (run_id=test.eth_1757538907, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:07,608] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,609] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,609] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,609] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,610] [INFO] [agent] Agent run started (run_id=test.eth_1757538907, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:07,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,613] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,613] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,613] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,614] [INFO] [agent] Agent run started (run_id=test.eth_1757538907, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:07,618] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,619] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,619] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,619] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,620] [INFO] [agent] Agent run started (run_id=test.eth_1757538907, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:07,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,625] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,625] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,627] [INFO] [agent] Agent run started (run_id=test.eth_1757538907, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:07,631] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,631] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,631] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:07,631] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:07,633] [INFO] [agent] Agent run started (run_id=test.eth_1757538907, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:43,854] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:44,185] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:44,636] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:44,648] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:44,648] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:44,648] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:44,648] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:44,649] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-10 14:15:50,478] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:50,780] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,184] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,194] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,194] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,194] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,194] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,195] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-10 14:15:51,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,198] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,198] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,200] [INFO] [agent] Vote executed successfully (proposal_id=0x123, vote_choice=VoteType.FOR, confidence=0.9)
+[2025-09-10 14:15:51,202] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,202] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,202] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,202] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,204] [INFO] [agent] Agent run started (run_id=test.eth_1757538951, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:51,207] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,208] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,208] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,208] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,209] [INFO] [agent] Agent run started (run_id=test.eth_1757538951, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:51,212] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,212] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,212] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,212] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,214] [INFO] [agent] Agent run started (run_id=test.eth_1757538951, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:51,217] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,217] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,217] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,217] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,218] [INFO] [agent] Agent run started (run_id=test.eth_1757538951, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)
+[2025-09-10 14:15:51,221] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,221] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,221] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-10 14:15:51,221] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-09-10 14:15:51,222] [INFO] [agent] Agent run started (run_id=test.eth_1757538951, space_id=test.eth, dry_run=False, strategy=balanced, confidence_threshold=0.7, max_proposals=3)

@@ -216,6 +216,8 @@ curl -s -X POST http://localhost:8545 \
 - Status command shows attestation activity
 - Blockchain state reflects successful transactions
 
+IF THERE ARE PENDING ATTESTATION REVIEW log.txt FOR ERRORS. THIS IS A SIGN SOMETHING WENT WRONG.
+
 #### Step 4.2: Verify Attestation Content
 **Agent:** `attestation-verification-agent`
 **Action:** Validate attestation data quality
