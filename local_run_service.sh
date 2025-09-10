@@ -306,8 +306,7 @@ DEFAULT_PRIVATE_KEY="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f
 DEFAULT_AGENT_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 
 # Safe Configuration defaults
-DEFAULT_BASE_SAFE_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-DEFAULT_SAFE_CONTRACT_ADDRESSES='{"base":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"}'
+DEFAULT_SAFE_CONTRACT_ADDRESSES='{"base":"0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"}'
 
 # Server Configuration defaults
 DEFAULT_HOST="0.0.0.0"
@@ -331,7 +330,6 @@ BASE_RPC_URL="${BASE_RPC_URL:-$DEFAULT_BASE_RPC_URL}"
 CHAIN_ID="${CHAIN_ID:-$DEFAULT_CHAIN_ID}"
 PRIVATE_KEY="${PRIVATE_KEY:-$DEFAULT_PRIVATE_KEY}"
 AGENT_ADDRESS="${AGENT_ADDRESS:-$DEFAULT_AGENT_ADDRESS}"
-BASE_SAFE_ADDRESS="${BASE_SAFE_ADDRESS:-$DEFAULT_BASE_SAFE_ADDRESS}"
 SAFE_CONTRACT_ADDRESSES="${SAFE_CONTRACT_ADDRESSES:-$DEFAULT_SAFE_CONTRACT_ADDRESSES}"
 HOST="${HOST:-$DEFAULT_HOST}"
 PORT="${PORT:-$DEFAULT_PORT}"
@@ -558,10 +556,6 @@ echo -e "${BOLD}Step 6: Funding Safe multisig for attestation transactions...${N
 
 # Extract Safe address from configuration
 SAFE_ADDRESS=$(echo "$SAFE_CONTRACT_ADDRESSES" | grep -o '"base":"[^"]*"' | cut -d'"' -f4 2>/dev/null)
-if [ -z "$SAFE_ADDRESS" ]; then
-    # Fallback to BASE_SAFE_ADDRESS if parsing fails
-    SAFE_ADDRESS="$BASE_SAFE_ADDRESS"
-fi
 
 if [ -z "$SAFE_ADDRESS" ] || [ "$SAFE_ADDRESS" = "null" ]; then
     echo -e "${YELLOW}WARNING: No Safe address configured, using default Anvil account${NC}"
@@ -693,7 +687,6 @@ docker run -d \
     -e CHAIN_ID="$CHAIN_ID" \
     -e PRIVATE_KEY="$PRIVATE_KEY" \
     -e AGENT_ADDRESS="$AGENT_ADDRESS" \
-    -e BASE_SAFE_ADDRESS="$BASE_SAFE_ADDRESS" \
     -e SAFE_CONTRACT_ADDRESSES="$SAFE_CONTRACT_ADDRESSES" \
     -e HOST="$HOST" \
     -e PORT="$PORT" \

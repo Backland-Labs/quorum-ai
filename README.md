@@ -63,9 +63,8 @@ CHAIN_ID="8453"  # Base mainnet chain ID (preserved in fork)
 PRIVATE_KEY="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 AGENT_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 
-# Safe Configuration (optional for local testing)
-BASE_SAFE_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-SAFE_CONTRACT_ADDRESSES='{"base":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"}'
+# Safe Configuration
+SAFE_CONTRACT_ADDRESSES='{"base":"0x"}'
 
 # Server Configuration
 HOST="0.0.0.0"
@@ -189,7 +188,6 @@ Quorum AI requires several environment variables for proper operation. Create a 
 | `RPC_URL` | `https://mainnet.base.org` | Primary RPC endpoint |
 | `CHAIN_ID` | `8453` | Base mainnet chain ID |
 | `PRIVATE_KEY` or `EOA_PRIVATE_KEY` | - | Agent private key (without 0x prefix) - for testing only |
-| `BASE_SAFE_ADDRESS` | - | Gnosis Safe address on Base network |
 | `SAFE_CONTRACT_ADDRESSES` | - | JSON string of Safe addresses per chain |
 
 **Note**: For production, use `ethereum_private_key.txt` file (permissions 600) instead of `PRIVATE_KEY` or `EOA_PRIVATE_KEY` environment variables.
