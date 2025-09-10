@@ -7181,3 +7181,333 @@ web3.exceptions.ContractLogicError: ('execution reverted', '0x')
 [2025-09-09 17:53:04,726] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=401ab4980cf93138422a...
 [2025-09-09 17:53:04,730] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757469183
 [2025-09-09 17:53:04,921] [INFO] [agent] Built delegated attestation transaction - to=0xCdb91Eb0dB8d399CfC280a09Eb05aac66F29365C, data_length=1994, gas=300000
+[2025-09-09 18:12:15,358] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:12:15,753] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:12:16,172] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:12:16,175] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:12:16,178] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:12:16,179] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:12:16,179] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:16,179] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:12:16,328] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:16,328] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470335, data_length=576
+[2025-09-09 18:12:16,348] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:16,380] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=e47351c4956a9f285400...
+[2025-09-09 18:12:16,383] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470335
+[2025-09-09 18:12:16,453] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:12:16,612] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:16,664] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=e47351c4956a9f285400...
+[2025-09-09 18:12:23,348] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:12:23,349] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:23,349] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:12:23,473] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:23,474] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470343, data_length=576
+[2025-09-09 18:12:23,495] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:23,531] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=73307007a3f9757b5d5a...
+[2025-09-09 18:12:23,534] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470343
+[2025-09-09 18:12:23,604] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:12:23,766] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:23,818] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=73307007a3f9757b5d5a...
+[2025-09-09 18:12:30,440] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:12:30,440] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:30,440] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:12:30,585] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:30,586] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470349, data_length=576
+[2025-09-09 18:12:30,606] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:30,639] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=208b18566477272eefdb...
+[2025-09-09 18:12:30,643] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470349
+[2025-09-09 18:12:30,726] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:12:30,894] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:30,936] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=208b18566477272eefdb...
+[2025-09-09 18:12:37,498] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:12:37,498] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:37,498] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:12:37,625] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:12:37,625] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470357, data_length=576
+[2025-09-09 18:12:37,654] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:12:37,687] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=2b0d1363fc2d7f82b498...
+[2025-09-09 18:12:37,690] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470357
+[2025-09-09 18:12:37,772] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:13:34,423] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:13:34,880] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:13:35,344] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:13:35,347] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:13:35,350] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:13:35,351] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:13:35,351] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:13:35,351] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:13:35,502] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:13:35,502] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470415, data_length=576
+[2025-09-09 18:13:35,529] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:13:35,563] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=73127d99cef032a65b24...
+[2025-09-09 18:13:35,566] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470415
+[2025-09-09 18:13:35,638] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:13:35,812] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:13:35,854] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=73127d99cef032a65b24...
+[2025-09-09 18:13:42,644] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:13:42,644] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:13:42,644] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:13:42,779] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:13:42,780] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470421, data_length=576
+[2025-09-09 18:13:42,802] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:13:42,843] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=f46b0b1fbd0055facbe1...
+[2025-09-09 18:13:42,847] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470421
+[2025-09-09 18:13:42,929] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:13:43,070] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:13:43,100] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=f46b0b1fbd0055facbe1...
+[2025-09-09 18:13:49,168] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:13:49,168] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:13:49,168] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:13:49,297] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:13:49,298] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470429, data_length=576
+[2025-09-09 18:13:49,320] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:13:49,354] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=25e86b7bd447e6f5eaa2...
+[2025-09-09 18:13:49,358] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757470429
+[2025-09-09 18:13:49,437] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:13:49,590] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:13:49,627] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=25e86b7bd447e6f5eaa2...
+[2025-09-09 18:13:56,003] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=None, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:13:56,003] [INFO] [agent] Using direct EAS contract for attestation - eas_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:13:56,003] [INFO] [agent] Building delegated attestation transaction - target_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, abi_name=eas, attestation_chain=base
+[2025-09-09 18:32:49,203] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:32:49,603] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:32:50,029] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:32:50,035] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:32:50,038] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:32:50,039] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:32:50,039] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:32:50,039] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:32:50,191] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:32:50,192] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471569, data_length=576
+[2025-09-09 18:32:50,219] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:32:50,254] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=0a2458d42016c940ce2c...
+[2025-09-09 18:32:50,257] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471569
+[2025-09-09 18:32:50,360] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:32:50,515] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:32:50,548] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=0a2458d42016c940ce2c...
+[2025-09-09 18:32:57,521] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:32:57,521] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:32:57,521] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:32:57,646] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:32:57,647] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471577, data_length=576
+[2025-09-09 18:32:57,668] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:32:57,702] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=948ba1db74e9293b3dd4...
+[2025-09-09 18:32:57,705] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471577
+[2025-09-09 18:32:57,778] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:32:57,921] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:32:57,954] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=948ba1db74e9293b3dd4...
+[2025-09-09 18:33:04,260] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:04,261] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:33:04,261] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:33:04,399] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:33:04,400] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471583, data_length=576
+[2025-09-09 18:33:04,423] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:33:04,456] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=6eae993e5d94faa01b6e...
+[2025-09-09 18:33:04,459] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471583
+[2025-09-09 18:33:04,571] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:33:04,724] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:33:04,758] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=6eae993e5d94faa01b6e...
+[2025-09-09 18:33:11,044] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=None, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:11,044] [INFO] [agent] Using EIP712Proxy contract for attestation - proxy_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:11,044] [INFO] [agent] Building delegated attestation transaction - target_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, abi_name=eip712proxy, attestation_chain=base
+[2025-09-09 18:33:11,178] [INFO] [agent] Created contract instance at address: 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:11,178] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471589, data_length=576
+[2025-09-09 18:33:11,202] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:33:11,235] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=4925f5e4cf95da1fa86c...
+[2025-09-09 18:33:11,235] [INFO] [agent] Built complete delegated request for eip712proxy contract at 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:48,879] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:33:49,281] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:33:49,722] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:33:49,724] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:33:49,728] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:33:49,728] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:49,729] [INFO] [agent] Using EIP712Proxy contract for attestation - proxy_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:49,729] [INFO] [agent] Building delegated attestation transaction - target_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, abi_name=eip712proxy, attestation_chain=base
+[2025-09-09 18:33:49,866] [INFO] [agent] Created contract instance at address: 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:33:49,867] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471629, data_length=576
+[2025-09-09 18:33:49,893] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:33:49,924] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=fe1d17dcc5dff58a67ab...
+[2025-09-09 18:33:49,924] [INFO] [agent] Built complete delegated request for eip712proxy contract at 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:33,815] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:36:34,223] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:36:34,650] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:36:34,652] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:36:34,656] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:36:34,657] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:34,657] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:36:34,657] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:36:34,862] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:36:34,863] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471793, data_length=576
+[2025-09-09 18:36:34,891] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:34,926] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=40a1e74ad6b26f803e86...
+[2025-09-09 18:36:34,930] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471793
+[2025-09-09 18:36:35,014] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:36:35,191] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:35,226] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=40a1e74ad6b26f803e86...
+[2025-09-09 18:36:42,011] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:42,011] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:36:42,011] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:36:42,179] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:36:42,182] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471801, data_length=576
+[2025-09-09 18:36:42,203] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:42,243] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=87bfa5b566ff626164a0...
+[2025-09-09 18:36:42,247] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471801
+[2025-09-09 18:36:42,353] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:36:42,571] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:42,605] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=87bfa5b566ff626164a0...
+[2025-09-09 18:36:48,817] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:48,818] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:36:48,818] [INFO] [agent] Building delegated attestation transaction - target_address=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:36:48,963] [INFO] [agent] Created contract instance at address: 0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D
+[2025-09-09 18:36:48,964] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471807, data_length=576
+[2025-09-09 18:36:48,987] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:49,036] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=43f9ae7b87226bd476b8...
+[2025-09-09 18:36:49,042] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471807
+[2025-09-09 18:36:49,126] [INFO] [agent] Built delegated attestation transaction - to=0x5e3dc584C8EC649b078Aee9D3Fd74bB6268b713D, data_length=1994, gas=300000
+[2025-09-09 18:36:49,311] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:49,346] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=43f9ae7b87226bd476b8...
+[2025-09-09 18:36:55,524] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=None, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:55,524] [INFO] [agent] Using EIP712Proxy contract for attestation - proxy_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:55,524] [INFO] [agent] Building delegated attestation transaction - target_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, abi_name=eip712proxy, attestation_chain=base
+[2025-09-09 18:36:55,669] [INFO] [agent] Created contract instance at address: 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:36:55,670] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471815, data_length=576
+[2025-09-09 18:36:55,693] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:55,726] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=a73f50523cca64835026...
+[2025-09-09 18:36:55,732] [INFO] [agent] Built complete delegated request for eip712proxy contract at 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6 with attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:36:55,821] [INFO] [agent] Built delegated attestation transaction - to=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, data_length=2122, gas=300000
+[2025-09-09 18:37:41,622] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:37:42,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:37:42,502] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:37:42,505] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:37:42,508] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:37:42,509] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:37:42,509] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0
+[2025-09-09 18:37:42,509] [INFO] [agent] Building delegated attestation transaction - target_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:37:42,643] [INFO] [agent] Created contract instance at address: 0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0
+[2025-09-09 18:37:42,644] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471861, data_length=576
+[2025-09-09 18:37:42,666] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:37:42,699] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=121f7d3680ea1495e31b...
+[2025-09-09 18:37:42,702] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471861
+[2025-09-09 18:37:42,773] [INFO] [agent] Built delegated attestation transaction - to=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, data_length=1994, gas=300000
+[2025-09-09 18:37:42,932] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:37:42,970] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=121f7d3680ea1495e31b...
+[2025-09-09 18:37:49,267] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:37:49,268] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0
+[2025-09-09 18:37:49,268] [INFO] [agent] Building delegated attestation transaction - target_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:37:49,402] [INFO] [agent] Created contract instance at address: 0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0
+[2025-09-09 18:37:49,403] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471867, data_length=576
+[2025-09-09 18:37:49,431] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:37:49,463] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=6e7c6a8d76d10d06f977...
+[2025-09-09 18:37:49,468] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471867
+[2025-09-09 18:37:49,545] [INFO] [agent] Built delegated attestation transaction - to=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, data_length=1994, gas=300000
+[2025-09-09 18:37:49,710] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:37:49,748] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=cd3c95bcbf2b01a31d6a...
+[2025-09-09 18:37:55,867] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:37:55,867] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0
+[2025-09-09 18:37:55,867] [INFO] [agent] Building delegated attestation transaction - target_address=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:37:56,018] [INFO] [agent] Created contract instance at address: 0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0
+[2025-09-09 18:37:56,020] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471875, data_length=576
+[2025-09-09 18:37:56,044] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:37:56,079] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=a4ee15847568db17e0fd...
+[2025-09-09 18:37:56,084] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471875
+[2025-09-09 18:37:56,176] [INFO] [agent] Built delegated attestation transaction - to=0x84C2120aF3B34f8Fc95b9287188D1aa699b1EBE0, data_length=1994, gas=300000
+[2025-09-09 18:37:56,341] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:37:56,377] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=a4ee15847568db17e0fd...
+[2025-09-09 18:38:02,790] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=None, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:38:02,790] [INFO] [agent] Using EIP712Proxy contract for attestation - proxy_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:38:02,790] [INFO] [agent] Building delegated attestation transaction - target_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, abi_name=eip712proxy, attestation_chain=base
+[2025-09-09 18:38:02,937] [INFO] [agent] Created contract instance at address: 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:38:02,938] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757471881, data_length=576
+[2025-09-09 18:38:02,958] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:38:02,989] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=d644540ddcb7e9e6e028...
+[2025-09-09 18:38:02,993] [INFO] [agent] Built complete delegated request for eip712proxy contract at 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6 with attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:38:03,069] [INFO] [agent] Built delegated attestation transaction - to=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, data_length=2122, gas=300000
+[2025-09-09 18:42:30,566] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:42:30,950] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:42:31,369] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:42:32,052] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:42:32,057] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:42:32,059] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:42:32,059] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC
+[2025-09-09 18:42:32,059] [INFO] [agent] Building delegated attestation transaction - target_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:42:32,264] [INFO] [agent] Created contract instance at address: 0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC
+[2025-09-09 18:42:32,265] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472151, data_length=576
+[2025-09-09 18:42:32,294] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:42:32,335] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=590307f29d8b6712e28b...
+[2025-09-09 18:42:32,340] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472151
+[2025-09-09 18:42:32,446] [INFO] [agent] Built delegated attestation transaction - to=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, data_length=1994, gas=300000
+[2025-09-09 18:45:24,453] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:45:24,803] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:45:25,204] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:45:25,828] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:45:25,832] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:45:25,833] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:45:25,833] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC
+[2025-09-09 18:45:25,833] [INFO] [agent] Building delegated attestation transaction - target_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:45:26,010] [INFO] [agent] Created contract instance at address: 0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC
+[2025-09-09 18:45:26,011] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472325, data_length=576
+[2025-09-09 18:45:26,031] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:45:26,067] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=1b1b78d184162823a151...
+[2025-09-09 18:45:26,071] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472325
+[2025-09-09 18:45:26,145] [INFO] [agent] Built delegated attestation transaction - to=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, data_length=1994, gas=300000
+[2025-09-09 18:46:18,598] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:18,960] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:19,363] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:19,365] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:19,368] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:46:19,369] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:46:19,369] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC
+[2025-09-09 18:46:19,369] [INFO] [agent] Building delegated attestation transaction - target_address=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:46:19,509] [INFO] [agent] Created contract instance at address: 0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC
+[2025-09-09 18:46:19,509] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472377, data_length=576
+[2025-09-09 18:46:19,530] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:46:19,560] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=b4056d4649b076711471...
+[2025-09-09 18:46:19,563] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472377
+[2025-09-09 18:46:19,642] [INFO] [agent] Built delegated attestation transaction - to=0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC, data_length=1994, gas=300000
+[2025-09-09 18:46:58,657] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:59,071] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:59,488] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:59,490] [INFO] [agent] Pearl logger initialized successfully
+[2025-09-09 18:46:59,494] [INFO] [agent] SafeService initialized (eoa_address=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, safe_addresses=['base'], available_chains=['ethereum', 'gnosis', 'base', 'mode'])
+[2025-09-09 18:46:59,495] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:46:59,495] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E
+[2025-09-09 18:46:59,495] [INFO] [agent] Building delegated attestation transaction - target_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:46:59,650] [INFO] [agent] Created contract instance at address: 0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E
+[2025-09-09 18:46:59,650] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472419, data_length=576
+[2025-09-09 18:46:59,675] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:46:59,713] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=2e6b9c62165b8672f050...
+[2025-09-09 18:46:59,716] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472419
+[2025-09-09 18:46:59,807] [INFO] [agent] Built delegated attestation transaction - to=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, data_length=1994, gas=300000
+[2025-09-09 18:46:59,967] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:00,003] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=2e6b9c62165b8672f050...
+[2025-09-09 18:47:06,355] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:47:06,356] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E
+[2025-09-09 18:47:06,356] [INFO] [agent] Building delegated attestation transaction - target_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:47:06,493] [INFO] [agent] Created contract instance at address: 0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E
+[2025-09-09 18:47:06,493] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472425, data_length=576
+[2025-09-09 18:47:06,515] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:06,549] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=7f52ee4114098c7614b4...
+[2025-09-09 18:47:06,553] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472425
+[2025-09-09 18:47:06,635] [INFO] [agent] Built delegated attestation transaction - to=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, data_length=1994, gas=300000
+[2025-09-09 18:47:06,788] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:06,823] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=7f52ee4114098c7614b4...
+[2025-09-09 18:47:13,264] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:47:13,265] [INFO] [agent] Using AttestationTracker contract for EAS attestation - tracker_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E
+[2025-09-09 18:47:13,265] [INFO] [agent] Building delegated attestation transaction - target_address=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, abi_name=attestation_tracker, attestation_chain=base
+[2025-09-09 18:47:13,411] [INFO] [agent] Created contract instance at address: 0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E
+[2025-09-09 18:47:13,412] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472433, data_length=576
+[2025-09-09 18:47:13,439] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:13,475] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=a7fa066eed5efccba734...
+[2025-09-09 18:47:13,479] [INFO] [agent] Built delegated request for AttestationTracker with 12 params - attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472433
+[2025-09-09 18:47:13,559] [INFO] [agent] Built delegated attestation transaction - to=0x8FCb10ff1fC6A47F1eC0c754a22569f8FDceC31E, data_length=1994, gas=300000
+[2025-09-09 18:47:13,711] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:13,748] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=a7fa066eed5efccba734...
+[2025-09-09 18:47:20,131] [INFO] [agent] Building EAS attestation transaction - attestation_tracker_address=None, eas_contract_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:47:20,132] [INFO] [agent] Using EIP712Proxy contract for attestation - proxy_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:47:20,132] [INFO] [agent] Building delegated attestation transaction - target_address=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, abi_name=eip712proxy, attestation_chain=base
+[2025-09-09 18:47:20,277] [INFO] [agent] Created contract instance at address: 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6
+[2025-09-09 18:47:20,278] [INFO] [agent] Built attestation request data - schema=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, recipient=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, deadline=1757472439, data_length=576
+[2025-09-09 18:47:20,301] [INFO] [agent] Generating EAS delegated signature - chain_id=8453, eas_contract=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, signer=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:20,338] [INFO] [agent] Generated EAS delegated signature successfully - signature_length=65, signature_hex=9bbb6495dde3fa7cd76d...
+[2025-09-09 18:47:20,342] [INFO] [agent] Built complete delegated request for eip712proxy contract at 0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6 with attester=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+[2025-09-09 18:47:20,425] [INFO] [agent] Built delegated attestation transaction - to=0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6, data_length=2122, gas=300000
