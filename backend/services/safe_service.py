@@ -518,13 +518,13 @@ class SafeService:
                 raise ValueError("EAS contract address not configured")
             
             self.logger.info(
-                f"Using direct EAS contract for attestation - "
-                f"eas_address={settings.eas_contract_address}"
+                f"Using EIP712Proxy contract for attestation - "
+                f"proxy_address={settings.eas_contract_address}"
             )
             return self._build_delegated_attestation_tx(
                 attestation_data,
                 target_address=settings.eas_contract_address,
-                abi_name="eas",
+                abi_name="eip712proxy",
             )
 
     def _build_delegated_attestation_tx(
@@ -654,14 +654,47 @@ class SafeService:
                 }
             )
         else:
-            # For EAS, use the old interface with single struct parameter
+            # For EIP712Proxy, parse signature and include attester
+            v = signature[64]
+            r = signature[:32]
+            s = signature[32:64]
+            
+            # Get attester address from private key
+            from eth_account import Account
+            import os
+            private_key = None
+            if os.path.exists("ethereum_private_key.txt"):
+                with open("ethereum_private_key.txt", "r") as f:
+                    private_key = f.read().strip()
+            elif os.getenv("ETHEREUM_PRIVATE_KEY"):
+                private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
+            else:
+                raise ValueError("Private key not found in file or environment")
+            
+            attester = Account.from_key(private_key).address
+            
+            # Build delegated request for EIP712Proxy with nested structure
             delegated_request = {
-                **attestation_request_data,
-                "signature": signature,
+                "schema": attestation_request_data["schema"],
+                "data": {
+                    "recipient": attestation_request_data["recipient"],
+                    "expirationTime": attestation_request_data["expirationTime"],
+                    "revocable": attestation_request_data["revocable"],
+                    "refUID": attestation_request_data["refUID"],
+                    "data": attestation_request_data["data"],
+                    "value": attestation_request_data["value"],
+                },
+                "signature": {
+                    "v": v,
+                    "r": r,
+                    "s": s,
+                },
+                "attester": attester,
+                "deadline": attestation_request_data["deadline"],
             }
 
             self.logger.info(
-                f"Built complete delegated request for {abi_name} contract at {target_address}"
+                f"Built complete delegated request for {abi_name} contract at {target_address} with attester={attester}"
             )
 
             # Build transaction
