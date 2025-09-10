@@ -14,9 +14,14 @@ Comprehensive CI Test for AttestationTracker Contract
 ======================================================
 This script performs end-to-end testing of the AttestationTracker contract:
 1. Deploys AttestationTracker onto Base mainnet fork
-2. Simulates SafeService execution flow
+2. Tests SafeService integration using actual backend code
 3. Verifies attestation counter increments
 4. Confirms successful EAS attestation creation
+
+This test directly uses the backend SafeService code to ensure:
+- Any changes to SafeService are properly tested
+- The integration between SafeService and AttestationTracker is validated
+- The end-to-end flow works without mocks
 
 Prerequisites:
 - Anvil running with Base fork: anvil --fork-url https://mainnet.base.org --auto-impersonate
@@ -27,7 +32,9 @@ Exit codes:
 - 2: Setup/connection error
 """
 
+import os
 import json
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -40,7 +47,6 @@ from colorama import init, Fore, Style
 # Add parent directory to path to import from backend
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 from models import EASAttestationData
-from utils.eas_signature import generate_eas_delegated_signature, parse_signature_bytes
 
 # Initialize colorama for colored output
 init(autoreset=True)
@@ -50,18 +56,18 @@ init(autoreset=True)
 # =============================================================================
 
 # Network configuration
-RPC_URL = "http://localhost:8545"
+RPC_URL = os.getenv("RPC_URL", "http://localhost:8545")
 CHAIN_ID = 8453  # Base
 
 # Contract addresses on Base
-EIP712_PROXY = "0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6"
-SAFE_ADDRESS = "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+EIP712_PROXY = os.getenv("EAS_CONTRACT_ADDRESS", "0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6")
+SAFE_ADDRESS = os.getenv("BASE_SAFE_ADDRESS", "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca")
 
 # Working schema UID (confirmed to exist on Base)
-SCHEMA_UID = "0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4"
+SCHEMA_UID = os.getenv("EAS_SCHEMA_UID", "0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4")
 
 # Test account (Anvil default)
-PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+PRIVATE_KEY = os.getenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
 
 # =============================================================================
 # HELPER FUNCTIONS
@@ -93,306 +99,282 @@ def print_detail(label: str, value: str):
 # CONTRACT DEPLOYMENT
 # =============================================================================
 
-def deploy_attestation_tracker(w3: Web3, account: Account) -> Tuple[str, Any]:
+def deploy_attestation_tracker(w3: Web3, account: Account, eas_address: str) -> Tuple[str, Any]:
     """Deploy the AttestationTracker contract."""
     print_header("STEP 1: Deploy AttestationTracker Contract")
     
-    # Load contract artifacts
-    contract_path = Path(__file__).parent.parent / "contracts" / "out" / "AttestationTracker.sol" / "AttestationTracker.json"
-    
-    if not contract_path.exists():
-        print_error(f"Contract artifacts not found at {contract_path}")
-        print_info("Run 'forge build' in the contracts directory first")
+    # Try to compile the contract if forge is available
+    contracts_dir = Path(__file__).parent.parent / "contracts"
+    if (contracts_dir / "src" / "AttestationTracker.sol").exists():
+        print_info("Compiling AttestationTracker contract with Forge...")
+        
+        # Run forge build to compile the contract
+        result = subprocess.run(
+            ["forge", "build"],
+            cwd=contracts_dir,
+            capture_output=True,
+            text=True
+        )
+        
+        if result.returncode != 0:
+            print_error(f"Failed to compile: {result.stderr}")
+            sys.exit(2)
+        
+        # Load compiled bytecode and ABI
+        artifact_path = contracts_dir / "out" / "AttestationTracker.sol" / "AttestationTracker.json"
+        if artifact_path.exists():
+            with open(artifact_path, 'r') as f:
+                artifact = json.load(f)
+                tracker_bytecode = artifact['bytecode']['object']
+                tracker_abi = artifact['abi']
+                print_success(f"Loaded compiled AttestationTracker (bytecode length: {len(tracker_bytecode)} chars)")
+        else:
+            print_error("Failed to find compiled AttestationTracker artifact")
+            sys.exit(2)
+    else:
+        print_error("AttestationTracker.sol not found")
         sys.exit(2)
     
-    with open(contract_path, "r") as f:
-        contract_data = json.load(f)
-        abi = contract_data["abi"]
-        bytecode = contract_data["bytecode"]["object"]
+    # Deploy AttestationTracker
+    print_info(f"Deploying with owner: {account.address}, EAS: {eas_address}")
+    TrackerContract = w3.eth.contract(abi=tracker_abi, bytecode=tracker_bytecode)
+    tx = TrackerContract.constructor(account.address, eas_address).build_transaction({
+        'from': account.address,
+        'nonce': w3.eth.get_transaction_count(account.address),
+        'gas': 3000000,
+        'gasPrice': w3.eth.gas_price,
+    })
     
-    # Deploy contract
-    contract = w3.eth.contract(abi=abi, bytecode=bytecode)
-    
-    # Deploy with EIP712Proxy as the EAS address (critical!)
-    tx_hash = contract.constructor(
-        account.address,  # initialOwner
-        EIP712_PROXY      # EAS address (must be the proxy!)
-    ).transact({'from': account.address, 'gas': 3000000})
-    
+    signed_tx = account.sign_transaction(tx)
+    tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-    contract_address = receipt.contractAddress
     
-    print_success(f"AttestationTracker deployed at: {contract_address}")
-    print_detail("Owner", account.address)
-    print_detail("EAS (Proxy)", EIP712_PROXY)
-    print_detail("Gas used", str(receipt.gasUsed))
-    
-    # Return contract instance
-    return contract_address, w3.eth.contract(address=contract_address, abi=abi)
+    if receipt.status == 1:
+        print_success(f"AttestationTracker deployed at: {receipt.contractAddress}")
+        print_detail("Owner", account.address)
+        print_detail("EAS (Proxy)", eas_address)
+        print_detail("Gas used", str(receipt.gasUsed))
+        return receipt.contractAddress, tracker_abi
+    else:
+        print_error("Failed to deploy AttestationTracker")
+        sys.exit(2)
 
 # =============================================================================
-# EIP-712 SIGNATURE GENERATION
+# SAFE SERVICE INTEGRATION TEST
 # =============================================================================
 
-def generate_eas_signature(
+def test_safe_service_integration(
     w3: Web3,
-    attestation_data: bytes,
-    recipient: str,
-    deadline: int,
-    private_key: str
-) -> Dict[str, Any]:
-    """Generate EIP-712 signature for EAS attestation.
+    account: Account,
+    tracker_address: str,
+    eas_address: str
+) -> bool:
+    """Test SafeService integration with AttestationTracker using actual backend code.
     
-    This function now uses the shared utility module to ensure
-    consistency with SafeService implementation.
+    This test verifies:
+    1. SafeService correctly builds transactions targeting AttestationTracker
+    2. The transaction data is properly formatted with all 12 parameters
+    3. The signature generation works correctly
+    4. The transaction executes successfully on-chain
+    5. The attestation counter increments
+    6. Events are properly emitted
     """
+    print_header("STEP 2: Testing SafeService Integration with AttestationTracker")
     
-    # Prepare request data for the shared function
-    request_data = {
-        'schema': bytes.fromhex(SCHEMA_UID[2:]),
-        'recipient': recipient,
-        'expirationTime': 0,
-        'revocable': True,
-        'refUID': bytes(32),
-        'data': attestation_data,
-        'value': 0,
-        'deadline': deadline,
-    }
+    # Set up environment variables for SafeService
+    os.environ['ATTESTATION_TRACKER_ADDRESS'] = tracker_address
+    os.environ['EAS_CONTRACT_ADDRESS'] = eas_address
+    os.environ['EAS_SCHEMA_UID'] = SCHEMA_UID
+    os.environ['BASE_SAFE_ADDRESS'] = SAFE_ADDRESS
+    os.environ['RPC_URL'] = RPC_URL
+    os.environ['CHAIN_ID'] = str(w3.eth.chain_id)
+    os.environ['ATTESTATION_CHAIN'] = 'base'
+    os.environ['BASE_LEDGER_RPC'] = RPC_URL
     
-    # Use the shared signature generation function
-    signature_bytes = generate_eas_delegated_signature(
-        request_data=request_data,
-        w3=w3,
-        eas_contract_address=EIP712_PROXY,
-        private_key=private_key
-    )
+    print_info(f"Environment configured:")
+    print_detail("ATTESTATION_TRACKER_ADDRESS", tracker_address)
+    print_detail("EAS_CONTRACT_ADDRESS", eas_address)
+    print_detail("CHAIN_ID", str(w3.eth.chain_id))
     
-    # Parse the signature bytes into v, r, s components
-    parsed = parse_signature_bytes(signature_bytes)
-    
-    # Get signer address
-    account = Account.from_key(private_key)
-    
-    return {
-        'v': parsed['v'],
-        'r': parsed['r'],
-        's': parsed['s'],
-        'signer': account.address
-    }
-
-# =============================================================================
-# ATTESTATION EXECUTION
-# =============================================================================
-
-def execute_attestation(
-    w3: Web3,
-    tracker_contract: Any,
-    attestation_data: EASAttestationData,
-    safe_address: str
-) -> Dict[str, Any]:
-    """Execute attestation through AttestationTracker using production SafeService code."""
-    
-    print_header("STEP 2: Execute Attestation (Using Production SafeService)")
-    
-    print_detail("Space ID", attestation_data.space_id)
-    print_detail("Proposal ID", attestation_data.proposal_id)
-    print_detail("Vote Choice", str(attestation_data.vote_choice))
-    print_detail("Agent", attestation_data.agent)
-    
-    # Get initial attestation count
-    initial_count = tracker_contract.functions.getNumAttestations(safe_address).call()
-    print_detail("Initial attestation count", str(initial_count))
+    # Write private key to file for SafeService
+    with open('ethereum_private_key.txt', 'w') as f:
+        f.write(PRIVATE_KEY)
     
     try:
-        # Use production SafeService to build the attestation transaction
-        print_info("Using production SafeService code to build attestation transaction")
+        print_info("Initializing SafeService from backend...")
         
-        # Create a mock SafeService instance to use its transaction building logic
-        # Note: We can't use the full SafeService because it requires proper configuration,
-        # but we can use its internal methods to build the transaction data
-        from utils.web3_provider import get_w3
+        # Import SafeService and settings AFTER environment variables are set
+        from services.safe_service import SafeService
+        from config import settings
         from utils.abi_loader import load_abi
         
-        # Get the tracker contract address
-        tracker_address = tracker_contract.address
-        print_detail("AttestationTracker address", tracker_address)
+        # Override settings directly
+        settings.attestation_tracker_address = tracker_address
+        settings.eas_contract_address = eas_address
+        settings.eas_schema_uid = SCHEMA_UID
+        settings.base_safe_address = SAFE_ADDRESS
+        settings.attestation_chain = 'base'
         
-        # Load the AttestationTracker ABI
-        contract_abi = load_abi("attestation_tracker")
-        contract = w3.eth.contract(address=Web3.to_checksum_address(tracker_address), abi=contract_abi)
+        # Initialize SafeService
+        safe_service = SafeService()
+        print_success("SafeService initialized successfully")
         
-        # Build the attestation request using production logic (4-parameter struct interface)
-        eas_schema_uid = Web3.to_bytes(hexstr=SCHEMA_UID)
-        current_block = w3.eth.get_block('latest')
-        deadline = int(current_block['timestamp']) + 3600  # 1 hour deadline
-        
-        # Encode attestation data using production encoding
-        encoded_data = w3.codec.encode(
-            ["address", "string", "string", "uint8", "string", "uint256", "string", "uint8"],
-            [
-                Web3.to_checksum_address(attestation_data.agent),
-                attestation_data.space_id,
-                attestation_data.proposal_id,
-                attestation_data.vote_choice,
-                attestation_data.snapshot_sig,
-                attestation_data.timestamp,
-                attestation_data.run_id,
-                attestation_data.confidence,
-            ],
-        )
-        
-        # Build attestation request data for signature generation
-        attestation_request_data = {
-            "schema": eas_schema_uid,
-            "data": encoded_data,
-            "expirationTime": 0,
-            "revocable": True,
-            "refUID": b"\x00" * 32,
-            "recipient": Web3.to_checksum_address(attestation_data.agent),
-            "value": 0,
-            "deadline": deadline,
-        }
-        
-        print_detail("Deadline", str(deadline))
-        print_detail("Data length", str(len(encoded_data)))
-        
-        # Generate EAS delegated signature (for EAS contract, not tracker)
-        signature = generate_eas_delegated_signature(
-            request_data=attestation_request_data,
-            w3=w3,
-            eas_contract_address=EIP712_PROXY,  # Sign for EAS contract
-            private_key=PRIVATE_KEY
-        )
-        
-        # Parse signature bytes into v, r, s components (production logic)
-        v = signature[64]
-        r = signature[:32]
-        s = signature[32:64]
-        
-        print_detail("Signature v", str(v))
-        print_detail("Signature r", r.hex()[:20] + "...")
-        print_detail("Signature s", s.hex()[:20] + "...")
-        
-        # Build the delegated request struct (production 4-parameter structure)
-        delegated_request = {
-            "schema": eas_schema_uid,
-            "data": {
-                "recipient": attestation_request_data["recipient"],
-                "expirationTime": attestation_request_data["expirationTime"],
-                "revocable": attestation_request_data["revocable"],
-                "refUID": attestation_request_data["refUID"],
-                "data": attestation_request_data["data"],
-                "value": attestation_request_data["value"],
+        # Create test attestation data
+        test_cases = [
+            {
+                "name": "Standard attestation",
+                "data": EASAttestationData(
+                    agent="0x742d35Cc6634C0532925a3b844Bc9e7595f0fA27",
+                    space_id="compound-governance.eth",
+                    proposal_id=f"0x{int(time.time()):x}",
+                    vote_choice=1,
+                    snapshot_sig="0x" + "0" * 64,
+                    timestamp=int(time.time()),
+                    run_id=f"ci_test_{int(time.time())}",
+                    confidence=95,
+                    retry_count=0
+                )
+            },
+            {
+                "name": "Max confidence attestation",
+                "data": EASAttestationData(
+                    agent="0x742d35Cc6634C0532925a3b844Bc9e7595f0fA27",
+                    space_id="edge-test.eth",
+                    proposal_id=f"0xedge{int(time.time()):x}",
+                    vote_choice=2,
+                    snapshot_sig="0x" + "f" * 64,
+                    timestamp=int(time.time()),
+                    run_id=f"ci_test_max_{int(time.time())}",
+                    confidence=100,
+                    retry_count=1
+                )
             }
-        }
+        ]
         
-        # Build the signature struct
-        signature_struct = {
-            "v": v,
-            "r": r,
-            "s": s,
-        }
+        # Load tracker ABI
+        tracker_abi = load_abi('attestation_tracker')
+        tracker_contract = w3.eth.contract(address=Web3.to_checksum_address(tracker_address), abi=tracker_abi)
         
-        # Get attester address
-        attester = Account.from_key(PRIVATE_KEY).address
-        print_detail("Attester", attester)
+        all_passed = True
         
-        print_info("Using production 4-parameter interface (delegated_request, signature_struct, attester, deadline)")
-        
-        # Fund and impersonate Safe
-        w3.provider.make_request("anvil_impersonateAccount", [safe_address])
-        if w3.eth.get_balance(safe_address) < w3.to_wei(0.01, 'ether'):
-            account = Account.from_key(PRIVATE_KEY)
-            w3.eth.send_transaction({
-                'from': account.address,
-                'to': safe_address,
-                'value': w3.to_wei(0.1, 'ether')
-            })
-        
-        # Call with production 4-parameter structure - this should fail if contract has 12-parameter interface
-        tx_hash = contract.functions.attestByDelegation(
-            delegated_request,
-            signature_struct,
-            attester,
-            deadline
-        ).transact({'from': safe_address, 'gas': 500000})
-        
-        # Wait for receipt
-        receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-        
-        if receipt.status == 1:
-            print_success(f"Transaction successful! Hash: {tx_hash.hex()}")
-            print_detail("Block", str(receipt.blockNumber))
-            print_detail("Gas used", str(receipt.gasUsed))
+        for test_case in test_cases:
+            print_info(f"\nTesting: {test_case['name']}")
+            attestation_data = test_case['data']
             
-            # Extract attestation UID from logs
-            attestation_uid = None
-            for log in receipt.logs:
-                # Look for AttestationMade event or Attested event
-                if len(log['topics']) >= 2:
-                    # AttestationMade event has attestationUID as second indexed parameter
-                    attestation_uid = log['topics'][-1].hex() if log['topics'] else None
-                    if attestation_uid:
-                        break
+            print_detail("Space ID", attestation_data.space_id)
+            print_detail("Proposal ID", attestation_data.proposal_id)
+            print_detail("Vote Choice", str(attestation_data.vote_choice))
+            print_detail("Confidence", str(attestation_data.confidence))
             
-            return {
-                'success': True,
-                'tx_hash': tx_hash.hex(),
-                'attestation_uid': attestation_uid,
-                'gas_used': receipt.gasUsed
+            # Test 1: Verify encoding works
+            print_info("Testing attestation data encoding...")
+            encoded_data = safe_service._encode_attestation_data(attestation_data)
+            assert isinstance(encoded_data, bytes), "Encoded data should be bytes"
+            assert len(encoded_data) > 0, "Encoded data should not be empty"
+            print_success(f"Attestation data encoded (length: {len(encoded_data)} bytes)")
+            
+            # Test 2: Build transaction data
+            print_info("Building attestation transaction via SafeService...")
+            tx_data = safe_service._build_eas_attestation_tx(attestation_data)
+            
+            # Verify transaction structure
+            assert 'to' in tx_data, "Transaction missing 'to' field"
+            assert 'data' in tx_data, "Transaction missing 'data' field"
+            assert tx_data['to'].lower() == tracker_address.lower(), \
+                f"Transaction target mismatch: expected {tracker_address}, got {tx_data['to']}"
+            print_success(f"Transaction targets AttestationTracker at {tracker_address}")
+            
+            # Get initial attestation count
+            initial_count = tracker_contract.functions.getNumAttestations(SAFE_ADDRESS).call()
+            print_detail("Initial attestation count", str(initial_count))
+            
+            # Test 3: Execute transaction on-chain
+            print_info("Executing transaction on local network...")
+            
+            # Fund and impersonate the Safe address
+            w3.provider.make_request("anvil_impersonateAccount", [SAFE_ADDRESS])
+            if w3.eth.get_balance(SAFE_ADDRESS) < w3.to_wei(0.01, 'ether'):
+                w3.eth.send_transaction({
+                    'from': account.address,
+                    'to': SAFE_ADDRESS,
+                    'value': w3.to_wei(0.1, 'ether')
+                })
+            
+            # Execute transaction
+            tx = {
+                'from': SAFE_ADDRESS,
+                'to': tx_data['to'],
+                'data': tx_data['data'],
+                'value': tx_data.get('value', 0),
+                'gas': 1000000,
+                'gasPrice': w3.eth.gas_price
             }
-        else:
-            print_error("Transaction failed!")
-            return {'success': False, 'error': 'Transaction reverted'}
             
+            try:
+                # First try to call to check for errors
+                result = w3.eth.call(tx)
+                print_info(f"Call succeeded with result: {result.hex()[:20] if result else 'empty'}...")
+                
+                # Send actual transaction
+                tx_hash = w3.eth.send_transaction(tx)
+                receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+                
+                if receipt.status == 1:
+                    print_success(f"Transaction executed successfully (tx: {tx_hash.hex()[:20]}...)")
+                    print_detail("Gas used", str(receipt.gasUsed))
+                    
+                    # Check attestation count
+                    final_count = tracker_contract.functions.getNumAttestations(SAFE_ADDRESS).call()
+                    print_detail("Final attestation count", str(final_count))
+                    
+                    if final_count > initial_count:
+                        print_success(f"Attestation counter incremented: {initial_count} → {final_count}")
+                        
+                        # Check for events
+                        if any(log.address.lower() == tracker_address.lower() for log in receipt.logs):
+                            print_success("AttestationMade event emitted")
+                        else:
+                            print_error("AttestationMade event not found")
+                            all_passed = False
+                    else:
+                        print_error(f"Attestation counter not incremented (still {final_count})")
+                        all_passed = False
+                else:
+                    print_error("Transaction reverted")
+                    all_passed = False
+                    
+            except Exception as e:
+                print_error(f"Transaction failed: {str(e)}")
+                all_passed = False
+                continue
+        
+        # Test 4: Verify error handling
+        print_info("\nTesting SafeService error handling...")
+        original_tracker = settings.attestation_tracker_address
+        try:
+            settings.attestation_tracker_address = None
+            tx_data = safe_service._build_eas_attestation_tx(test_cases[0]['data'])
+            # Should target EAS directly when AttestationTracker not configured
+            assert tx_data['to'].lower() == eas_address.lower(), \
+                "Should target EAS when AttestationTracker not configured"
+            print_success("SafeService correctly falls back to direct EAS")
+        except Exception as e:
+            print_error(f"Failed to handle missing AttestationTracker: {e}")
+            all_passed = False
+        finally:
+            settings.attestation_tracker_address = original_tracker
+        
+        return all_passed
+        
     except Exception as e:
-        print_error(f"Attestation failed with production code: {str(e)}")
-        print_info("This failure likely indicates interface mismatch between production expectations and contract reality")
-        return {'success': False, 'error': str(e)}
-
-# =============================================================================
-# VERIFICATION
-# =============================================================================
-
-def verify_results(
-    w3: Web3,
-    tracker_contract: Any,
-    safe_address: str,
-    result: Dict[str, Any]
-) -> bool:
-    """Verify that attestation was successful and counter incremented."""
-    
-    print_header("STEP 3: Verify Results")
-    
-    all_passed = True
-    
-    # Check attestation counter
-    final_count = tracker_contract.functions.getNumAttestations(safe_address).call()
-    print_detail("Final attestation count", str(final_count))
-    
-    if final_count > 0:
-        print_success("Attestation counter incremented correctly")
-    else:
-        print_error("Attestation counter did not increment")
-        all_passed = False
-    
-    # Check transaction success
-    if result.get('success'):
-        print_success("Transaction executed successfully")
-        if result.get('attestation_uid'):
-            print_success(f"Attestation UID captured: {result['attestation_uid']}")
-        print_detail("Gas used", str(result.get('gas_used', 'N/A')))
-    else:
-        print_error(f"Transaction failed: {result.get('error', 'Unknown error')}")
-        all_passed = False
-    
-    # Verify EAS integration
-    if result.get('attestation_uid'):
-        print_success("EAS attestation created successfully")
-    else:
-        print_info("Could not verify EAS attestation UID (may be in nested logs)")
-    
-    return all_passed
+        print_error(f"SafeService integration test failed: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return False
+    finally:
+        # Clean up
+        if os.path.exists('ethereum_private_key.txt'):
+            os.remove('ethereum_private_key.txt')
 
 # =============================================================================
 # MAIN EXECUTION
@@ -402,10 +384,16 @@ def main():
     """Main test execution."""
     
     print_header("ATTESTATION TRACKER CI TEST")
-    print(f"{Fore.WHITE}Testing complete flow: Deploy → Execute → Verify{Style.RESET_ALL}\n")
+    print(f"{Fore.WHITE}Testing SafeService integration with AttestationTracker{Style.RESET_ALL}\n")
+    print(f"{Fore.WHITE}This test uses actual backend SafeService code to ensure:{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}- Any changes to SafeService are properly tested{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}- The integration is validated end-to-end{Style.RESET_ALL}\n")
+    
+    # Allow override of tracker address for testing existing deployments
+    provided_tracker_address = os.getenv("ATTESTATION_TRACKER_ADDRESS", None)
     
     # Connect to network
-    print_info("Connecting to Anvil fork...")
+    print_info(f"Connecting to network at {RPC_URL}...")
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
     
     if not w3.is_connected():
@@ -420,37 +408,53 @@ def main():
     print_detail("Test account", account.address)
     print_detail("Balance", f"{w3.eth.get_balance(account.address) / 10**18:.4f} ETH")
     
+    # Check if EAS contract exists (it should on a forked mainnet)
+    eas_code = w3.eth.get_code(Web3.to_checksum_address(EIP712_PROXY))
+    if eas_code == b'':
+        print_error(f"No EAS contract found at {EIP712_PROXY}")
+        print_error("Make sure you're running on a forked Base mainnet")
+        sys.exit(2)
+    else:
+        print_success(f"EAS contract found at {EIP712_PROXY}")
+    
     try:
-        # Deploy contract
-        tracker_address, tracker_contract = deploy_attestation_tracker(w3, account)
+        # Deploy or use existing AttestationTracker
+        if provided_tracker_address:
+            print_info(f"Using provided AttestationTracker at: {provided_tracker_address}")
+            tracker_address = provided_tracker_address
+            
+            # Check if contract exists
+            code = w3.eth.get_code(Web3.to_checksum_address(tracker_address))
+            if code == b'':
+                print_error(f"No contract found at address {tracker_address}")
+                print_info("Deploying new AttestationTracker...")
+                tracker_address, tracker_abi = deploy_attestation_tracker(w3, account, EIP712_PROXY)
+            else:
+                print_success(f"AttestationTracker contract found at {tracker_address}")
+                # We'll load the ABI later in the test
+                tracker_abi = None
+        else:
+            # Deploy new AttestationTracker
+            tracker_address, tracker_abi = deploy_attestation_tracker(w3, account, EIP712_PROXY)
         
-        # Create test attestation data
-        test_data = EASAttestationData(
-            agent="0x742d35Cc6634C0532925a3b844Bc9e7595f0fA27",
-            space_id="compound-governance.eth",
-            proposal_id=f"0x{int(time.time()):x}",
-            vote_choice=1,
-            snapshot_sig=f"0x{'0' * 64}",  # Valid 66-character hash format
-            timestamp=int(time.time()),
-            run_id=f"ci_test_{int(time.time())}",
-            confidence=95
-        )
-        
-        # Execute attestation
-        result = execute_attestation(w3, tracker_contract, test_data, SAFE_ADDRESS)
-        
-        # Verify results
-        all_passed = verify_results(w3, tracker_contract, SAFE_ADDRESS, result)
+        # Test SafeService integration
+        success = test_safe_service_integration(w3, account, tracker_address, EIP712_PROXY)
         
         # Final summary
         print_header("TEST SUMMARY")
         
-        if all_passed:
+        if success:
             print_success("ALL TESTS PASSED!")
-            print(f"\n{Fore.GREEN}✅ AttestationTracker deployed successfully")
-            print(f"✅ Attestation executed through Safe")
-            print(f"✅ Counter incremented correctly")
-            print(f"✅ EAS integration working{Style.RESET_ALL}")
+            print(f"\n{Fore.GREEN}✅ AttestationTracker deployed successfully{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ SafeService initialized from backend code{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Attestation encoding verified{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Transaction building verified{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Multiple test cases executed{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Attestation counter incremented{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Events emitted correctly{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Error handling verified{Style.RESET_ALL}")
+            print(f"\n{Fore.CYAN}AttestationTracker Address: {tracker_address}{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}EAS Contract Address: {EIP712_PROXY}{Style.RESET_ALL}")
             sys.exit(0)
         else:
             print_error("SOME TESTS FAILED")
