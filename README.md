@@ -99,6 +99,150 @@ export MONITORED_DAOS="uniswap.eth" # must be register space on Snapshot
 ```
 
 
+## 🚀 Quick Start - Local Testing
+
+Get Quorum AI running locally in minutes with these steps:
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Node.js and npm (for local testnet)
+- Foundry (`forge`) for smart contract deployment
+- At least 4GB of available RAM
+
+### Step 1: Get the Application
+
+#### Option A: Pull Docker Image (Recommended)
+```bash
+docker pull backlandlabs/quorum:latest
+```
+
+#### Option B: Clone Repository
+```bash
+git clone https://github.com/yourusername/quorum-ai.git
+cd quorum-ai
+```
+
+### Step 2: Set Up Local Fork of Base Mainnet
+
+Start a local fork of Base mainnet using Anvil (from Foundry):
+```bash
+# Fork Base mainnet locally - this will include all deployed contracts
+anvil --fork-url https://mainnet.base.org --host 0.0.0.0 --port 8545
+
+# Or if you have a Base RPC endpoint (e.g., from QuickNode):
+# anvil --fork-url YOUR_BASE_RPC_URL --host 0.0.0.0 --port 8545
+```
+
+Keep this terminal open. Anvil provides test accounts with ETH pre-funded. The forked chain includes all Base mainnet contracts, including the already-deployed AttestationTracker.
+
+### Step 3: Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+# Core Configuration
+MONITORED_DAOS="quorum-ai.eth"  # Default DAO for testing
+OPENROUTER_API_KEY="your_openrouter_api_key_here"  # Get from OpenRouter
+
+# Contract Addresses (already deployed on Base mainnet)
+EAS_CONTRACT_ADDRESS="0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6"
+ATTESTATION_TRACKER_ADDRESS="0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC"
+EAS_SCHEMA_UID="0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4"
+
+# Network Configuration (Local fork of Base mainnet)
+RPC_URL="http://host.docker.internal:8545"  # For Docker to access host's Anvil fork
+BASE_RPC_URL="http://host.docker.internal:8545"
+CHAIN_ID="8453"  # Base mainnet chain ID (preserved in fork)
+
+# Test Account (Anvil account - DO NOT use in production!)
+PRIVATE_KEY="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+AGENT_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+
+# Safe Configuration (optional for local testing)
+BASE_SAFE_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+SAFE_CONTRACT_ADDRESSES='{"base":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"}'
+
+# Server Configuration
+HOST="0.0.0.0"
+PORT="8716"
+DEBUG="true"
+LOG_LEVEL="DEBUG"
+
+# Snapshot Configuration
+SNAPSHOT_GRAPHQL_ENDPOINT=https://testnet.hub.snapshot.org/graphql
+SNAPSHOT_HUB_URL=https://testnet.seq.snapshot.org/
+DRY_RUN_DEFAULT="false"
+```
+
+### Step 4: Run with Docker Compose
+
+```bash
+# If using cloned repository:
+docker-compose up --build
+
+# If using pulled image, create docker-compose.yml:
+cat > docker-compose.yml << 'EOF'
+services:
+  app:
+    image: backlandlabs/quorum:latest
+    container_name: quorum_app
+    env_file:
+      - .env
+    environment:
+      - PUBLIC_API_BASE_URL=http://localhost:8716
+    ports:
+      - "8716:8716"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8716/healthcheck || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Allows Docker to access host's Anvil
+EOF
+
+# Then run:
+docker-compose up
+```
+
+### Step 5: Access the Application
+
+Once the container is running:
+
+1. **Web UI**: Open http://localhost:8716 in your browser
+2. **Health Check**: http://localhost:8716/healthcheck
+3. **API Documentation**: http://localhost:8716/docs
+
+### Step 6: Test the Setup
+
+1. The agent will automatically start monitoring the configured DAO (`quorum-ai.eth`)
+2. Check the logs to see the agent fetching proposals:
+   ```bash
+   docker logs quorum_app
+   ```
+3. The agent will analyze any active proposals and make voting decisions
+4. Voting attestations will be recorded on your local testnet
+
+### Troubleshooting
+
+- **Container can't connect to Anvil**: Ensure you're using `host.docker.internal` in RPC_URL for Docker
+- **Fork fails to start**: Make sure you have a valid Base RPC URL or use the public endpoint `https://mainnet.base.org`
+- **Contract not found errors**: Verify Anvil is running with `--fork-url` to fork Base mainnet (not a regular Anvil instance)
+- **API key errors**: Ensure you've added your OpenRouter API key to the `.env` file
+
+### Stopping the Application
+
+```bash
+# Stop Docker container
+docker-compose down
+
+# Stop Anvil (Ctrl+C in the Anvil terminal)
+```
+
+---
+
 ## QA
 
 [QA Checklist](QA_CHECKLIST.md)
