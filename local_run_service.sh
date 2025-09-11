@@ -289,6 +289,8 @@ echo -e "${BOLD}Step 3.5: Setting default environment variables...${NC}"
 
 # Core defaults from README
 DEFAULT_MONITORED_DAOS="quorum-ai.eth"
+
+#THIS NEEDS TO BE SET.
 DEFAULT_OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-your_openrouter_api_key_here}"
 
 # Contract Addresses (from Base mainnet - as specified in README)
@@ -305,8 +307,8 @@ DEFAULT_CHAIN_ID="8453"
 DEFAULT_PRIVATE_KEY="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 DEFAULT_AGENT_ADDRESS="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 
-# Safe Configuration defaults
-DEFAULT_SAFE_CONTRACT_ADDRESSES='{"base":"0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"}'
+# Safe Configuration defaults. THIS NEEDS TO BE SET.
+DEFAULT_SAFE_CONTRACT_ADDRESSES='{"base":"0x"}'
 
 # Server Configuration defaults
 DEFAULT_HOST="0.0.0.0"
