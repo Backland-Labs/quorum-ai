@@ -247,6 +247,57 @@ class TestSafeServiceActivityTransaction:
             mock_select.assert_called_once()
 
 
+class TestSafeServiceChainValidation:
+    """Test SafeService chain validation methods."""
+    
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    def test_is_chain_fully_configured_success(self, mock_settings, mock_json_loads, mock_file):
+        """Test chain validation for fully configured chain (happy path)."""
+        mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_json_loads.return_value = {"base": "0x123"}
+        
+        service = SafeService()
+        
+        # Base should be fully configured (has Safe address, RPC endpoint, and Safe service URL)
+        assert service.is_chain_fully_configured("base") is True
+        
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    def test_is_chain_fully_configured_missing_safe_service(self, mock_settings, mock_json_loads, mock_file):
+        """Test chain validation fails for chain without Safe service URL (critical edge case)."""
+        mock_settings.safe_contract_addresses = '{"polygon": "0x123"}'
+        mock_settings.polygon_ledger_rpc = "https://polygon.example.com"
+        mock_json_loads.return_value = {"polygon": "0x123"}
+        
+        service = SafeService()
+        service.rpc_endpoints["polygon"] = "https://polygon.example.com"
+        
+        # Polygon should fail validation (no Safe service URL in SAFE_SERVICE_URLS)
+        assert service.is_chain_fully_configured("polygon") is False
+        
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    def test_get_supported_chains(self, mock_settings, mock_json_loads, mock_file):
+        """Test getting list of supported chains (critical for error messages)."""
+        mock_settings.safe_contract_addresses = '{"base": "0x123", "gnosis": "0x456"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_settings.gnosis_ledger_rpc = "https://gnosis.example.com"
+        mock_json_loads.return_value = {"base": "0x123", "gnosis": "0x456"}
+        
+        service = SafeService()
+        supported_chains = service.get_supported_chains()
+        
+        # Should return only fully configured chains with Safe service URLs
+        assert "base" in supported_chains
+        assert "gnosis" in supported_chains
+        assert len(supported_chains) >= 2
+
+
 class TestSafeServiceHelperMethods:
     """Test SafeService helper methods."""
     
