@@ -34,13 +34,48 @@ class TestBlockchainConfiguration:
         assert settings.safe_addresses == {}
         assert isinstance(settings.safe_addresses, dict)
 
-    def test_safe_addresses_loaded_from_env(self):
-        """Test that safe_addresses is loaded from SAFE_CONTRACT_ADDRESSES environment variable."""
+    def test_safe_addresses_loaded_from_env_comma_separated(self):
+        """Test that safe_addresses is loaded from SAFE_CONTRACT_ADDRESSES environment variable (comma-separated format)."""
         test_addresses = "dao1:0x123,dao2:0x456"
         with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
             settings = Settings()
             expected = {"dao1": "0x123", "dao2": "0x456"}
             assert settings.safe_addresses == expected
+
+    def test_safe_addresses_loaded_from_env_json_format(self):
+        """Test that safe_addresses is loaded from SAFE_CONTRACT_ADDRESSES environment variable (JSON format)."""
+        test_addresses = '{"dao1": "0x123", "dao2": "0x456"}'
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+            settings = Settings()
+            expected = {"dao1": "0x123", "dao2": "0x456"}
+            assert settings.safe_addresses == expected
+
+    def test_base_safe_address_auto_assigned_from_json_base_key(self):
+        """Test that base_safe_address is auto-assigned when 'base' key exists in JSON format."""
+        test_addresses = '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca", "gnosis": "0x456"}'
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+            settings = Settings()
+            assert settings.base_safe_address == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            assert settings.safe_addresses["base"] == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+
+    def test_base_safe_address_auto_assigned_from_comma_separated_base_key(self):
+        """Test that base_safe_address is auto-assigned when 'base' key exists in comma-separated format."""
+        test_addresses = "base:0x07edA994E013AbC8619A5038455db3A6FBdd2Bca,gnosis:0x456"
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+            settings = Settings()
+            assert settings.base_safe_address == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            assert settings.safe_addresses["base"] == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+
+    def test_base_safe_address_not_overridden_if_already_set(self):
+        """Test that base_safe_address is not overridden if it's already explicitly set."""
+        test_addresses = '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"}'
+        with patch.dict(os.environ, {
+            "SAFE_CONTRACT_ADDRESSES": test_addresses,
+            "BASE_SAFE_ADDRESS": "0x999"
+        }):
+            settings = Settings()
+            # The explicitly set BASE_SAFE_ADDRESS should take precedence
+            assert settings.base_safe_address == "0x999"
 
     def test_agent_address_defaults_to_none(self):
         """Test that agent_address defaults to None."""
