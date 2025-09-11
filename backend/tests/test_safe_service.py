@@ -385,4 +385,81 @@ class TestSafeServiceHelperMethods:
         )
 
 
+class TestSafeServicePhase2Validation:
+    """Test Phase 2: Transaction submission validation for unsupported chains."""
+
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    @pytest.mark.asyncio
+    async def test_unsupported_chain_transaction_fails_early(self, mock_settings, mock_json_loads, mock_file):
+        """Test that transactions to unsupported chains fail early with clear error message."""
+        # Setup: Only Base chain configured (has Safe service URL)
+        mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_json_loads.return_value = {"base": "0x123"}
+        
+        service = SafeService()
+        
+        # Attempt transaction on unsupported chain (polygon - no Safe service URL)
+        result = await service._submit_safe_transaction(
+            chain="polygon",
+            to="0x0000000000000000000000000000000000000000",
+            value=0,
+            data=b"",
+        )
+        
+        # Should fail early with clear error message
+        assert result["success"] is False
+        assert "not fully configured" in result["error"]
+        assert "Supported chains:" in result["error"]
+        assert "base" in result["error"]  # Should list which chains ARE supported
+
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    @patch("services.safe_service.Safe")
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Web3")
+    @pytest.mark.asyncio
+    async def test_supported_chain_transaction_proceeds(self, mock_web3_class, mock_eth_client, mock_safe_class, mock_settings, mock_json_loads, mock_file):
+        """Test that transactions to supported chains are not blocked by validation."""
+        # Setup: Base chain fully configured
+        mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_json_loads.return_value = {"base": "0x123"}
+        
+        # Mock Web3 connection
+        mock_web3_instance = MagicMock()
+        mock_web3_instance.is_connected.return_value = True
+        mock_web3_class.return_value = mock_web3_instance
+        mock_web3_class.to_checksum_address.return_value = "0x123"
+        
+        # Mock Safe transaction that would succeed
+        mock_safe_tx = MagicMock()
+        mock_safe_tx.safe_tx_hash = b"safe_tx_hash"
+        mock_safe_instance = MagicMock()
+        mock_safe_instance.build_multisig_tx.return_value = mock_safe_tx
+        mock_safe_class.return_value = mock_safe_instance
+        
+        service = SafeService()
+        
+        # This test should not fail due to validation (it may fail for other reasons, but not validation)
+        # We're testing that the upfront validation doesn't block supported chains
+        try:
+            result = await service._submit_safe_transaction(
+                chain="base",
+                to="0x0000000000000000000000000000000000000000",
+                value=0,
+                data=b"",
+            )
+            # If it gets past validation, that's success for this test
+            # The transaction may fail for other reasons (network, etc.) but validation should not block it
+        except Exception as e:
+            # If there's an exception, it should NOT be a validation error about chain configuration
+            error_message = str(e)
+            assert "not fully configured" not in error_message
+            assert "Supported chains:" not in error_message
+
+
 

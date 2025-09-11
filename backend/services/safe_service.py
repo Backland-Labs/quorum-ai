@@ -235,6 +235,28 @@ class SafeService:
         ), "Value must be a non-negative integer"
         assert isinstance(data, bytes), "Data must be bytes"
 
+        # Validate chain is fully configured
+        if not self.is_chain_fully_configured(chain):
+            validation = self.validate_chain_configuration(chain)
+            supported_chains = self.get_supported_chains()
+            
+            missing_components = []
+            if not validation["has_safe_address"]:
+                missing_components.append("Safe contract address")
+            if not validation["has_rpc_endpoint"]:
+                missing_components.append("RPC endpoint")
+            if not validation["has_safe_service_url"]:
+                missing_components.append("Safe Transaction Service URL")
+            
+            error_msg = (
+                f"Chain '{chain}' is not fully configured for Safe transactions. "
+                f"Missing: {', '.join(missing_components)}. "
+                f"Supported chains: {', '.join(supported_chains)}"
+            )
+            
+            self.logger.error(error_msg)
+            return {"success": False, "error": error_msg}
+
         with log_span(
             self.logger, "safe_service._submit_safe_transaction", chain=chain, to=to
         ):
@@ -258,13 +280,8 @@ class SafeService:
                 # Initialize Safe instance
                 safe_instance = Safe(safe_address, eth_client)  # type: ignore
 
-                # Get Safe service for this chain
-                safe_service_url = SAFE_SERVICE_URLS.get(chain)
-                if not safe_service_url:
-                    raise ValueError(
-                        f"No Safe service URL configured for chain: {chain}"
-                    )
-
+                # Get Safe service for this chain (validation already done upfront)
+                safe_service_url = SAFE_SERVICE_URLS[chain]
                 safe_service = TransactionServiceApi(
                     network=chain,  # type: ignore
                     base_url=safe_service_url,
