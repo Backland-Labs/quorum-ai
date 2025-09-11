@@ -184,27 +184,27 @@ class SafeService:
             ValueError: If no valid chain configuration found
         """
         # Priority order: cheapest to most expensive gas fees
-        chain_priority = ["gnosis", "celo", "mode", "base", "ethereum"]
+        # Note: Only include chains that have Safe service URLs
+        chain_priority = ["gnosis", "mode", "base", "ethereum"]
 
         for chain in chain_priority:
-            if (
-                chain in self.safe_addresses
-                and chain in self.rpc_endpoints
-                and self.rpc_endpoints[chain]
-            ):
+            if self.is_chain_fully_configured(chain):
                 return chain
 
-        # Fallback to first available
-        available_chains = [
-            chain
-            for chain in self.safe_addresses.keys()
-            if chain in self.rpc_endpoints and self.rpc_endpoints[chain]
-        ]
+        # Fallback to first available fully configured chain
+        available_chains = self.get_supported_chains()
 
         if available_chains:
             return available_chains[0]
 
-        raise ValueError("No valid chain configuration found")
+        # Provide helpful error with list of what's needed
+        error_msg = (
+            "No valid chain configuration found. "
+            "Ensure at least one chain has: Safe address in SAFE_CONTRACT_ADDRESSES, "
+            "RPC endpoint configured, and is supported by Safe Transaction Service "
+            f"(supported chains: {', '.join(SAFE_SERVICE_URLS.keys())})"
+        )
+        raise ValueError(error_msg)
 
     async def _submit_safe_transaction(
         self,

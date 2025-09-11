@@ -139,6 +139,51 @@ class TestSafeServiceChainSelection:
         with pytest.raises(ValueError, match="No valid chain configuration found"):
             service.select_optimal_chain()
 
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    def test_select_optimal_chain_excludes_celo(self, mock_settings, mock_json_loads, mock_file):
+        """Test that chain selection never returns 'celo' even if configured (critical edge case)."""
+        # Setup: Configure both celo (no Safe service URL) and gnosis (has Safe service URL)
+        mock_settings.safe_contract_addresses = '{"celo": "0x123", "gnosis": "0x456"}'
+        mock_settings.celo_ledger_rpc = "https://celo.example.com"
+        mock_settings.gnosis_ledger_rpc = "https://gnosis.example.com"
+        mock_json_loads.return_value = {"celo": "0x123", "gnosis": "0x456"}
+        
+        service = SafeService()
+        # Manually set celo RPC endpoint to ensure it's "configured"
+        service.rpc_endpoints["celo"] = "https://celo.example.com"
+        
+        result = service.select_optimal_chain()
+        
+        # Should select gnosis, never celo (despite celo being in current priority order)
+        assert result != "celo"
+        assert result == "gnosis"
+    
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    def test_select_optimal_chain_uses_validation_methods(self, mock_settings, mock_json_loads, mock_file):
+        """Test that chain selection uses validation methods from Phase 1 (core business logic)."""
+        # Setup: Multiple chains, only base should be fully configured
+        mock_settings.safe_contract_addresses = '{"base": "0x123", "polygon": "0x456"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_settings.polygon_ledger_rpc = "https://polygon.example.com"
+        mock_json_loads.return_value = {"base": "0x123", "polygon": "0x456"}
+        
+        service = SafeService()
+        # Manually set polygon RPC endpoint
+        service.rpc_endpoints["polygon"] = "https://polygon.example.com"
+        
+        result = service.select_optimal_chain()
+        
+        # Should return base (has Safe service URL), not polygon (no Safe service URL)
+        assert result == "base"
+        
+        # Verify chain is actually fully configured according to Phase 1 validation
+        assert service.is_chain_fully_configured("base") is True
+        assert service.is_chain_fully_configured("polygon") is False
+
 
 class TestSafeServiceActivityTransaction:
     """Test SafeService activity transaction functionality."""
