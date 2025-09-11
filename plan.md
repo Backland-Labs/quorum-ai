@@ -4,6 +4,8 @@
 
 Enhance the `_submit_safe_transaction` method in `SafeService` to properly validate chain configurations before attempting transactions. This ensures transactions can only be submitted to chains that have all required components: Safe contract addresses, RPC endpoints, and Safe Transaction Service URLs.
 
+**Note:** This implementation does not require backwards compatibility. Chains without proper Safe service support will be explicitly blocked.
+
 ## Current State Analysis
 
 The SafeService currently has incomplete chain validation that leads to runtime failures when attempting transactions on misconfigured chains. The system claims to support multiple chains but only 4 chains have Safe service URLs defined, while chain selection logic includes chains without proper support.
@@ -22,12 +24,12 @@ After implementation, the system will:
 - Provide clear error messages indicating which chains are supported and what's missing
 - Prevent selection of chains that lack Safe service URLs
 - Have a public method to check which chains are properly configured
-- Maintain backward compatibility for EAS attestations on Base chain
+- EAS attestations continue to work on Base chain (no changes to this flow)
 
 ### Verification:
 - Attempting to use an unsupported chain returns a clear error listing supported chains
 - Chain selection only returns fully configured chains
-- All existing functionality continues to work
+- Core functionality works with the new validation in place
 - New validation methods are accessible for external use
 
 ## What We're NOT Doing
@@ -37,6 +39,7 @@ After implementation, the system will:
 - Changing the Safe transaction execution logic
 - Modifying how RPC endpoints or Safe addresses are configured
 - Adding dynamic Safe service URL discovery
+- Maintaining backwards compatibility for chains without Safe service URLs (e.g., Celo)
 
 ## Implementation Approach
 
@@ -325,7 +328,7 @@ Use get_supported_chains() to check which chains are available in your configura
 ### Integration Tests:
 - Test full transaction flow with supported chains
 - Test rejection of unsupported chains
-- Verify backward compatibility with existing functionality
+- Test that the new validation properly blocks invalid configurations
 - Test EAS attestations continue to work on Base
 
 ### Manual Testing Steps:
@@ -344,9 +347,10 @@ Use get_supported_chains() to check which chains are available in your configura
 
 ## Migration Notes
 
-No data migration required. Changes are backward compatible:
-- Existing configurations continue to work
-- New validation provides better error messages
+No data migration required. This implementation introduces breaking changes:
+- Chains without Safe service URLs (like Celo) will no longer be selectable
+- Transactions will fail early with validation errors if chain is not fully configured
+- Existing configurations may need adjustment if they rely on unsupported chains
 - EAS attestations unchanged (Base-only)
 
 ## References
