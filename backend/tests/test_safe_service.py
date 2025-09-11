@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock, mock_open
 from web3 import Web3
 import json
 
-from services.safe_service import SafeService
+from services.safe_service import SafeService, SAFE_SERVICE_URLS
 
 
 
@@ -505,6 +505,159 @@ class TestSafeServicePhase2Validation:
             error_message = str(e)
             assert "not fully configured" not in error_message
             assert "Supported chains:" not in error_message
+
+
+class TestSafeServicePhase4Comprehensive:
+    """Test Phase 4: Comprehensive validation tests following plan.md requirements."""
+
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    @pytest.mark.asyncio
+    async def test_chain_validation(self, mock_settings, mock_json_loads, mock_file):
+        """Test chain configuration validation as specified in plan.md Phase 4."""
+        # Setup: Base fully configured, polygon missing Safe service URL
+        mock_settings.safe_contract_addresses = '{"base": "0x123", "polygon": "0x456"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_settings.polygon_ledger_rpc = "https://polygon.example.com"
+        mock_json_loads.return_value = {"base": "0x123", "polygon": "0x456"}
+        
+        service = SafeService()
+        # Manually set polygon RPC endpoint since it's not in default config
+        service.rpc_endpoints["polygon"] = "https://polygon.example.com"
+        
+        # Test fully configured chain
+        if "base" in service.safe_addresses:
+            assert service.is_chain_fully_configured("base") == True
+        
+        # Test unconfigured chain (polygon lacks Safe service URL)
+        assert service.is_chain_fully_configured("polygon") == False
+        
+        # Test supported chains list
+        supported = service.get_supported_chains()
+        assert isinstance(supported, list)
+        assert all(chain in SAFE_SERVICE_URLS for chain in supported)
+        assert "base" in supported
+        assert "polygon" not in supported  # Should not include chains without Safe service URL
+        
+        # Test validation details for fully configured chain
+        validation = service.validate_chain_configuration("base")
+        assert "has_safe_address" in validation
+        assert "has_rpc_endpoint" in validation
+        assert "has_safe_service_url" in validation
+        assert validation["has_safe_address"] is True
+        assert validation["has_rpc_endpoint"] is True
+        assert validation["has_safe_service_url"] is True
+        assert validation["is_fully_configured"] is True
+        
+        # Test validation details for chain missing Safe service URL
+        polygon_validation = service.validate_chain_configuration("polygon")
+        assert polygon_validation["has_safe_address"] is True
+        assert polygon_validation["has_rpc_endpoint"] is True
+        assert polygon_validation["has_safe_service_url"] is False
+        assert polygon_validation["is_fully_configured"] is False
+
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    @pytest.mark.asyncio
+    async def test_unsupported_chain_error(self, mock_settings, mock_json_loads, mock_file):
+        """Test error handling for unsupported chains as specified in plan.md Phase 4."""
+        # Setup: Only base configured
+        mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_json_loads.return_value = {"base": "0x123"}
+        
+        service = SafeService()
+        
+        # Attempt transaction on unsupported chain
+        result = await service._submit_safe_transaction(
+            chain="polygon",
+            to="0x0000000000000000000000000000000000000000",
+            value=0,
+            data=b"",
+        )
+        
+        assert result["success"] == False
+        assert "not fully configured" in result["error"]
+        assert "Supported chains:" in result["error"]
+        
+        # Should list which chains ARE supported
+        assert "base" in result["error"]
+        
+        # Should specify what components are missing
+        assert "Missing:" in result["error"] or "Safe Transaction Service URL" in result["error"]
+
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    def test_validation_method_integration(self, mock_settings, mock_json_loads, mock_file):
+        """Test integration between validation methods for consistency."""
+        # Setup: Multiple chain configurations
+        mock_settings.safe_contract_addresses = '{"base": "0x123", "ethereum": "0x456", "polygon": "0x789"}'
+        mock_settings.base_ledger_rpc = "https://base.example.com"
+        mock_settings.ethereum_ledger_rpc = "https://eth.example.com"
+        mock_settings.polygon_ledger_rpc = "https://polygon.example.com"
+        mock_json_loads.return_value = {"base": "0x123", "ethereum": "0x456", "polygon": "0x789"}
+        
+        service = SafeService()
+        service.rpc_endpoints["polygon"] = "https://polygon.example.com"
+        
+        # Test that supported chains are subset of SAFE_SERVICE_URLS
+        supported_chains = service.get_supported_chains()
+        for chain in supported_chains:
+            assert chain in SAFE_SERVICE_URLS
+            assert service.is_chain_fully_configured(chain) is True
+        
+        # Test that validate_chain_configuration is consistent with is_chain_fully_configured
+        for chain in ["base", "ethereum", "polygon"]:
+            validation = service.validate_chain_configuration(chain)
+            expected_configured = service.is_chain_fully_configured(chain)
+            assert validation["is_fully_configured"] == expected_configured
+
+    @patch("builtins.open", new_callable=mock_open, read_data="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
+    @patch("services.safe_service.json.loads")
+    @patch("services.safe_service.settings")
+    @pytest.mark.parametrize("chain,has_safe,has_rpc,has_service,expected", [
+        ("base", True, True, True, True),      # Fully configured
+        ("ethereum", True, True, True, True),  # Fully configured  
+        ("gnosis", True, True, True, True),    # Fully configured
+        ("mode", True, True, True, True),      # Fully configured
+        ("polygon", True, True, False, False), # Missing Safe service
+        ("celo", True, True, False, False),    # Missing Safe service
+        ("unknown", False, False, False, False), # Completely unconfigured
+    ])
+    def test_chain_configuration_matrix(self, mock_settings, mock_json_loads, mock_file, chain, has_safe, has_rpc, has_service, expected):
+        """Test all possible chain configuration combinations."""
+        # Setup configuration based on test parameters
+        safe_addresses = {}
+        rpc_settings = {}
+        
+        if has_safe:
+            safe_addresses[chain] = "0x123"
+        if has_rpc:
+            rpc_settings[f"{chain}_ledger_rpc"] = f"https://{chain}.example.com"
+            
+        mock_settings.safe_contract_addresses = json.dumps(safe_addresses)
+        mock_json_loads.return_value = safe_addresses
+        
+        # Set RPC endpoint settings
+        for attr, value in rpc_settings.items():
+            setattr(mock_settings, attr, value)
+        
+        service = SafeService()
+        
+        # Manually set RPC endpoints for chains that need them
+        if has_rpc:
+            service.rpc_endpoints[chain] = f"https://{chain}.example.com"
+            
+        result = service.is_chain_fully_configured(chain)
+        assert result == expected
+        
+        # Also test detailed validation matches expectation
+        validation = service.validate_chain_configuration(chain)
+        assert validation["is_fully_configured"] == expected
+        assert validation["has_safe_service_url"] == has_service
 
 
 
