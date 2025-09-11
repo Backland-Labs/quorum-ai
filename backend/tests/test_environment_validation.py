@@ -146,6 +146,7 @@ class TestEnvironmentValidation:
                 assert "Missing required environment variables" in str(exc_info.value)
                 assert "OPENROUTER_API_KEY" in str(exc_info.value)
                 assert "EAS_CONTRACT_ADDRESS" in str(exc_info.value)
+                assert "BASE_SAFE_ADDRESS or SAFE_CONTRACT_ADDRESSES with 'base' key" in str(exc_info.value)
 
     def test_startup_environment_validation_passes_for_complete_config(self):
         """
@@ -237,3 +238,51 @@ class TestEnvironmentValidation:
                 settings.validate_attestation_environment()
             
             assert "Invalid BASE_SAFE_ADDRESS format" in str(exc_info.value)
+
+    def test_validation_fails_when_safe_contract_addresses_missing_base_key(self):
+        """
+        Test that validation fails when SAFE_CONTRACT_ADDRESSES is configured but missing 'base' key.
+        
+        This test verifies that the new validation logic properly detects when 
+        SAFE_CONTRACT_ADDRESSES is provided but doesn't contain the required 'base' key.
+        """
+        config = {
+            "OPENROUTER_API_KEY": "test_key",
+            "EAS_CONTRACT_ADDRESS": "0x4200000000000000000000000000000000000021",
+            "EAS_SCHEMA_UID": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            "SAFE_CONTRACT_ADDRESSES": '{"gnosis": "0x456", "ethereum": "0x789"}',  # Missing 'base' key
+            "BASE_RPC_URL": "https://mainnet.base.org"
+        }
+        
+        with patch.dict(os.environ, config):
+            settings = Settings()
+            
+            with pytest.raises(ValueError) as exc_info:
+                settings.validate_attestation_environment()
+            
+            assert "SAFE_CONTRACT_ADDRESSES must contain 'base' key" in str(exc_info.value)
+
+    def test_validation_passes_with_safe_contract_addresses_containing_base_key(self):
+        """
+        Test that validation passes when SAFE_CONTRACT_ADDRESSES contains 'base' key.
+        
+        This test verifies that the new auto-assignment logic works correctly and
+        validation passes when the 'base' key is present in SAFE_CONTRACT_ADDRESSES.
+        """
+        config = {
+            "OPENROUTER_API_KEY": "test_key",
+            "EAS_CONTRACT_ADDRESS": "0x4200000000000000000000000000000000000021",
+            "EAS_SCHEMA_UID": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            "SAFE_CONTRACT_ADDRESSES": '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca", "gnosis": "0x456"}',
+            "BASE_RPC_URL": "https://mainnet.base.org"
+        }
+        
+        with patch.dict(os.environ, config):
+            settings = Settings()
+            
+            # Should auto-assign base_safe_address from 'base' key
+            assert settings.base_safe_address == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            
+            # Validation should pass
+            result = settings.validate_attestation_environment()
+            assert result is True

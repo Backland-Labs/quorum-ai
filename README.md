@@ -1,8 +1,103 @@
 # Quorum AI
 
-**⚠️ IMPORTANT: This application currently only supports Base network due to the Ethereum Attestation Service (EAS) integration being locked to Base. All voting attestations will be recorded on Base, regardless of which network the DAO operates on.**
+**IMPORTANT: This application currently only supports Base network due to the Ethereum Attestation Service (EAS) integration being locked to Base. All voting attestations will be recorded on Base, regardless of which network the DAO operates on.**
 
-A sophisticated autonomous voting agent for DAO governance on the Olas Pearl platform. This full-stack application enables automated participation in decentralized governance through AI-powered proposal analysis and voting decisions, featuring integration with Snapshot and Google Gemini 2.0 Flash.
+A sophisticated autonomous voting agent for DAO governance on the Olas Pearl platform. This full-stack application enables automated participation in decentralized governance through AI-powered proposal analysis and voting decisions, featuring integration with Snapshot and Google Gemini 2.5 Flash.
+
+## Quick Start - Local Testing
+
+Get Quorum AI running locally in minutes using our automated setup script.
+
+### Prerequisites
+- Docker installed
+- Node.js and npm
+- Foundry (`anvil` and `cast` commands)
+- `curl` command-line tool
+- At least 4GB of available RAM
+- [OpenRouter](https://openrouter.ai/) API KEY
+- Gnosis Safe Address (SAFE_CONTRACT_ADDRESSES)
+
+### Automated Setup (Recommended)
+
+The `local_run_service.sh` script automates the entire quickstart process:
+
+```bash
+# export env vars
+export OPENROUTER_API_KEY=sk-....
+export SAFE_CONTRACT_ADDRESSES='{"base": "0x..."}'
+
+# Clone the repository (or just download the script)
+git clone https://github.com/Backland-Labs/quorum-ai.git
+cd quorum-ai
+
+# Make the script executable
+chmod +x local_run_service.sh
+
+# Start all services
+./local_run_service.sh start
+```
+
+**That's it!** The script will:
+1. Check all prerequisites are installed
+2. Start a local fork of Base mainnet using Anvil
+3. Verify all smart contracts are deployed and accessible
+4. Configure environment variables with secure defaults
+5. Pull/build the Docker image
+6. Fund the Safe multisig for transactions
+7. Start the Quorum AI service
+8. Verify everything is working
+
+### Script Usage
+
+The `local_run_service.sh` script supports multiple commands:
+
+```bash
+# Start all services (default command)
+./local_run_service.sh start
+./local_run_service.sh        # same as 'start'
+
+# Stop all services (Anvil + Docker container)
+./local_run_service.sh stop
+
+# Show live application logs
+./local_run_service.sh logs
+
+# Show detailed status and verify attestations
+./local_run_service.sh status
+```
+
+### Access Points
+
+Once the script completes successfully:
+
+- **Web UI**: http://localhost:8716
+- **Health Check**: http://localhost:8716/healthcheck  
+- **API Documentation**: http://localhost:8716/docs
+- **RPC Endpoint**: http://localhost:8545 (Anvil fork)
+
+### Environment Configuration
+
+The script automatically configures these defaults:
+
+| Variable | Default Value | Description |
+|----------|---------------|-------------|
+| `MONITORED_DAOS` | `quorum-ai.eth` | DAO to monitor for testing |
+| `EAS_CONTRACT_ADDRESS` | `0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6` | Base mainnet EAS contract |
+| `ATTESTATION_TRACKER_ADDRESS` | `0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC` | Our deployed tracker |
+| `CHAIN_ID` | `8453` | Base mainnet (preserved in fork) |
+| `RPC_URL` | `http://host.docker.internal:8545` | Points to local Anvil |
+| `PRIVATE_KEY` | `ac0974bec...` | Default Anvil test account |
+
+To override any defaults, set environment variables before running:
+
+```bash
+# Set your own API key
+export MONITORED_DAOS="uniswap.eth" # must be register space on Snapshot
+
+# Start with your config
+./local_run_service.sh start
+```
+
 
 ## 🚀 Quick Start - Local Testing
 
@@ -156,7 +251,7 @@ docker-compose down
 
 Before running Quorum AI, you need access to the following smart contracts:
 
-### 📋 Required Deployments
+### Required Deployments
 
 
 2. **AttestationTracker** - EAS wrapper contract for vote attestations
@@ -165,7 +260,7 @@ Before running Quorum AI, you need access to the following smart contracts:
    - Required for on-chain vote tracking
 
 
-### 🔑 Key Considerations
+### Key Considerations
 
 - **Network**: Base mainnet/testnet recommended for lower gas costs
 - **Dependencies**: AttestationTracker requires EAS contract address
@@ -177,7 +272,7 @@ Before running Quorum AI, you need access to the following smart contracts:
 
 Quorum AI requires several environment variables for proper operation. Create a `.env` file in the root directory with the following configuration:
 
-### 🔑 Required Variables
+### Required Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -188,13 +283,12 @@ Quorum AI requires several environment variables for proper operation. Create a 
 | `BASE_RPC_URL` or `BASE_LEDGER_RPC` | `https://mainnet.base.org` | Base network RPC endpoint |
 | `RPC_URL` | `https://mainnet.base.org` | Primary RPC endpoint |
 | `CHAIN_ID` | `8453` | Base mainnet chain ID |
-| `PRIVATE_KEY` or `EOA_PRIVATE_KEY` | - | Agent private key (without 0x prefix) - for testing only |
-| `BASE_SAFE_ADDRESS` | - | Gnosis Safe address on Base network |
+| `PRIVATE_KEY` or `EOA_PRIVATE_KEY` | - | Should be provided in `ethereum_private_key.txt`|
 | `SAFE_CONTRACT_ADDRESSES` | - | JSON string of Safe addresses per chain |
 
 **Note**: For production, use `ethereum_private_key.txt` file (permissions 600) instead of `PRIVATE_KEY` or `EOA_PRIVATE_KEY` environment variables.
 
-### ⚙️ Optional Variables
+### Optional Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|

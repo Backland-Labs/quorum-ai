@@ -1,0 +1,144 @@
+{
+    "name": "quorum_ai",
+    "hash": "bafybeie65whvrfjdobhuqadutwpcwx22bnpty2yveu6j4x2dcithfhlnea",
+    "description": "Sophisticated autonomous voting agent for DAO governance with AI-powered proposal analysis",
+    "image": "",
+    "service_version": "v1.0.0",
+    "home_chain": "gnosis",
+    "configurations": {
+        "gnosis": {
+            "agent_id": 1,
+            "nft": "",
+            "threshold": 1,
+            "use_mech_marketplace": false,
+            "fund_requirements": {
+                "0x0000000000000000000000000000000000000000": {
+                    "agent": 0,
+                    "safe": 0
+                }
+            }
+        }
+    },
+    "env_variables": {
+        "SAFE_CONTRACT_ADDRESSES": {
+            "name": "Safe contract addresses",
+            "description": "JSON string of Safe addresses per chain",
+            "value": "{\"base\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\"}",
+            "provision_type": "computed"
+        },
+        "GNOSIS_LEDGER_RPC": {
+            "name": "Gnosis ledger RPC",
+            "description": "Gnosis chain RPC endpoint",
+            "value": "",
+            "provision_type": "computed"
+        },
+        "MONITORED_DAOS": {
+            "name": "Monitored DAOs",
+            "description": "Default DAO for testing",
+            "value": "quorum-ai.eth",
+            "provision_type": "user"
+        },
+        "OPENROUTER_API_KEY": {
+            "name": "OpenRouter API Key",
+            "description": "Get from OpenRouter",
+            "value": "your_openrouter_api_key_here",
+            "provision_type": "user"
+        },
+        "EAS_CONTRACT_ADDRESS": {
+            "name": "EAS Contract Address",
+            "description": "Already deployed on Base mainnet",
+            "value": "0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6",
+            "provision_type": "user"
+        },
+        "ATTESTATION_TRACKER_ADDRESS": {
+            "name": "Attestation Tracker Address",
+            "description": "Already deployed on Base mainnet",
+            "value": "0x9BC8c713a159a028aC5590ffE42DaF0d9A6467AC",
+            "provision_type": "user"
+        },
+        "EAS_SCHEMA_UID": {
+            "name": "EAS Schema UID",
+            "description": "32-byte hex string from EAS schema deployment",
+            "value": "0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4",
+            "provision_type": "user"
+        },
+        "RPC_URL": {
+            "name": "Primary RPC URL",
+            "description": "For Docker to access host's Anvil fork",
+            "value": "http://host.docker.internal:8545",
+            "provision_type": "user"
+        },
+        "BASE_RPC_URL": {
+            "name": "Base RPC URL",
+            "description": "Local fork of Base mainnet",
+            "value": "http://host.docker.internal:8545",
+            "provision_type": "user"
+        },
+        "CHAIN_ID": {
+            "name": "Chain ID",
+            "description": "Base mainnet chain ID (preserved in fork)",
+            "value": "8453",
+            "provision_type": "user"
+        },
+        "PRIVATE_KEY": {
+            "name": "Private Key",
+            "description": "Anvil account - DO NOT use in production!",
+            "value": "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+            "provision_type": "user"
+        },
+        "AGENT_ADDRESS": {
+            "name": "Agent Address",
+            "description": "Test Account Address",
+            "value": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "provision_type": "user"
+        },
+        "BASE_SAFE_ADDRESS": {
+            "name": "Base Safe Address",
+            "description": "Safe Configuration (optional for local testing)",
+            "value": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "provision_type": "user"
+        },
+        "HOST": {
+            "name": "Server Host",
+            "description": "Server Configuration",
+            "value": "0.0.0.0",
+            "provision_type": "user"
+        },
+        "PORT": {
+            "name": "Server Port",
+            "description": "Server Configuration",
+            "value": "8716",
+            "provision_type": "user"
+        },
+        "DEBUG": {
+            "name": "Debug Mode",
+            "description": "Enable debug mode",
+            "value": "true",
+            "provision_type": "user"
+        },
+        "LOG_LEVEL": {
+            "name": "Log Level",
+            "description": "Logging level",
+            "value": "DEBUG",
+            "provision_type": "user"
+        },
+        "SNAPSHOT_GRAPHQL_ENDPOINT": {
+            "name": "Snapshot GraphQL Endpoint",
+            "description": "Snapshot Configuration",
+            "value": "https://testnet.hub.snapshot.org/graphql",
+            "provision_type": "user"
+        },
+        "SNAPSHOT_HUB_URL": {
+            "name": "Snapshot Hub URL",
+            "description": "Snapshot Configuration",
+            "value": "https://testnet.seq.snapshot.org/",
+            "provision_type": "user"
+        },
+        "DRY_RUN_DEFAULT": {
+            "name": "Dry Run Default",
+            "description": "Default dry run mode for testing",
+            "value": "false",
+            "provision_type": "user"
+        }
+    }
+}

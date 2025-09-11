@@ -5,7 +5,74 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-09-08
+## 2025-09-11
+
+### Added
+- **Quickstart Development Infrastructure** (#189):
+  - Local development script (`local_run_service.sh`) for streamlined setup
+  - Comprehensive test planning documentation (`test-plan.md`)
+  - Enhanced QA checklist with improved testing procedures
+  - Local anvil blockchain configuration for development testing
+- **Configuration Management Enhancements**:
+  - JSON parsing support for `SAFE_CONTRACT_ADDRESSES` environment variable
+  - Auto-assignment of base_safe_address when 'base' key exists in configuration
+  - Backward compatibility maintained for comma-separated address format
+  - Simplified configuration with removal of redundant `BASE_SAFE_ADDRESS` env var
+- **Test Infrastructure Improvements**:
+  - CI tests now use production SafeService code for better coverage
+  - Enhanced attestation test coverage with comprehensive field mapping validation
+  - Integration tests support existing deployments via `ATTESTATION_TRACKER_ADDRESS`
+  - Removal of external dependencies (redis, logfire) for cleaner test environment
+- **Documentation and Development Tools**:
+  - Enhanced blockchain specification with detailed contract integration flows
+  - Comprehensive service layer guidance in `backend/services/CLAUDE.md`
+  - Updated development workflow documentation
+  - Improved Docker volume mount configuration
+
+### Changed
+- **EAS Integration Refinements**:
+  - Updated EIP-712 signature parameters to match Base mainnet EAS contract requirements
+  - Domain name changed from 'EAS Attestation' to 'EIP712Proxy'
+  - Version updated from '0.26' to '1.2.0' for contract compatibility
+  - Primary type changed from 'DelegatedAttestation' to 'Attest'
+- **Contract Interface Standardization**:
+  - Removed "Fixed" naming convention from EAS interface (IEAS_Fixed → IEAS)
+  - Clean up of documentation to reflect simplified naming conventions
+  - Standardized contract usage across CI/CD pipeline
+- **Test Suite Optimization**:
+  - Replaced adaptive interface detection with direct production code paths
+  - Enhanced error handling and fallback logic verification
+  - Improved test data management and fixture organization
+
+### Fixed
+- **EAS Attestation Validation Issues**:
+  - Corrected field mapping in `_process_pending_attestations` method
+  - Fixed voter_address → agent and choice → vote_choice mappings
+  - Added missing snapshot_sig field with default "0x" value
+  - Resolved timestamp conversion to proper Unix timestamp format
+  - Added required run_id and confidence fields with appropriate defaults
+- **CI/CD Pipeline Fixes**:
+  - Updated forge install flags from `--no-commit` to `--no-git`
+  - Removed invalid YAML properties from attestation-tracker-ci workflow
+  - Fixed Docker volume mount permissions for private key files
+- **Gas Limit and Network Optimization**:
+  - Increased gas limits for successful transaction execution
+  - Enhanced RPC rate limiting to prevent 429 errors
+- **Development Environment**:
+  - Fixed local_run_service.sh volume mount read-only flag issues
+  - Improved container entrypoint error handling
+
+### Removed
+- **External Dependencies Cleanup**:
+  - Removed redis and logfire dependencies from pyproject.toml
+  - Deleted cache-related test files that depended on external services
+  - Removed claude-code-review.yml GitHub workflow
+  - Cleaned up service-template.json configuration file
+- **Deprecated Configuration**:
+  - Removed BASE_SAFE_ADDRESS environment variable (replaced by JSON parsing)
+  - Eliminated redundant attestation validation logic
+
+## [Previous Releases] - 2025-09-08
 
 ### Added
 - **Continuous Integration**: GitHub Actions workflow for cross-platform binary builds

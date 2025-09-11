@@ -16,6 +16,10 @@ from utils.eas_signature import generate_eas_delegated_signature
 
 from logging_config import setup_pearl_logger, log_span
 
+if not settings.get_base_rpc_endpoint():
+    raise RuntimeError(f"Safe service is disabled in configuration: enable_safe_service={settings.get_base_rpc_endpoint()}")
+
+assert settings.get_base_rpc_endpoint() is not None, "Base RPC endpoint must be set"
 
 # Constants for Safe service URLs
 SAFE_SERVICE_URLS = {
@@ -24,6 +28,10 @@ SAFE_SERVICE_URLS = {
     "base": "https://safe-transaction-base.safe.global/",
     "mode": "https://safe-transaction-mode.safe.global/",
 }
+
+# Gas limit for EAS attestation transactions
+# Increased from 300,000 to handle complex nested calls through AttestationTracker to EAS
+EAS_ATTESTATION_GAS_LIMIT = 1000000
 
 
 # Safe operation types
@@ -41,7 +49,7 @@ class SafeService:
         self.rpc_endpoints = {
             "ethereum": settings.ethereum_ledger_rpc,
             "gnosis": settings.gnosis_ledger_rpc,
-            "base": settings.base_ledger_rpc,
+            "base": settings.get_base_rpc_endpoint(),
             "mode": settings.mode_ledger_rpc,
         }
 
@@ -650,7 +658,7 @@ class SafeService:
             ).build_transaction(
                 {
                     "from": settings.base_safe_address,
-                    "gas": 300000,  # Standard gas limit
+                    "gas": EAS_ATTESTATION_GAS_LIMIT,
                 }
             )
         else:
@@ -702,7 +710,7 @@ class SafeService:
             tx = contract.functions.attestByDelegation(delegated_request).build_transaction(
                 {
                     "from": settings.base_safe_address,
-                    "gas": 300000,  # Standard gas limit
+                    "gas": EAS_ATTESTATION_GAS_LIMIT,
                 }
             )
 

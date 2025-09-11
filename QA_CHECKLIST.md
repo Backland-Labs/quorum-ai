@@ -35,7 +35,8 @@ This checklist outlines the steps required to integrate your AI agent with the P
 
 - [x] All agent components (excluding service components) have been minted on the Olas Registry.
 
-- [ ] Staking contract and activity checker are deployed - Olas is writing/deploying staking contract
+- [x] Staking contract and activity checker are deployed
+    - Base: 0x747262cC12524C571e08faCb6E6994EF2E3B97ab - https://github.com/valory-xyz/autonolas-staking-programmes/blob/65b3045ee92c90ff660fc79eed269bb9fbc9c04e/scripts/deployment/externals/globals_base_mainnet_backland_test.json
 
 - [x] AttestationTrack contract is deployed on Base.
     - **Address:** `0xc16647a4290E4C931aD586713c7d85E0eFbafba0`

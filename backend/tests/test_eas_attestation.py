@@ -27,20 +27,24 @@ class TestEASAttestationData:
         attestation_data = EASAttestationData(
             proposal_id="0x123abc",
             space_id="aave.eth",
-            voter_address="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
-            choice=1,
-            vote_tx_hash="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
-            timestamp=datetime.utcnow(),
+            agent="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
+            vote_choice=1,
+            snapshot_sig="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
+            timestamp=int(datetime.utcnow().timestamp()),
+            run_id="test_run_123",
+            confidence=80,
             retry_count=0
         )
         
         assert attestation_data.proposal_id == "0x123abc"
         assert attestation_data.space_id == "aave.eth"
-        assert attestation_data.voter_address == "0x742d35Cc6634C0532925a3b844Bc9e7595f89590"
-        assert attestation_data.choice == 1
-        assert attestation_data.vote_tx_hash == "0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8"
+        assert attestation_data.agent == "0x742d35Cc6634C0532925a3b844Bc9e7595f89590"
+        assert attestation_data.vote_choice == 1
+        assert attestation_data.snapshot_sig == "0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8"
         assert attestation_data.retry_count == 0
-        assert isinstance(attestation_data.timestamp, datetime)
+        assert isinstance(attestation_data.timestamp, int)
+        assert attestation_data.run_id == "test_run_123"
+        assert attestation_data.confidence == 80
     
     def test_eas_attestation_data_with_transaction_details(self):
         """
@@ -52,10 +56,12 @@ class TestEASAttestationData:
         attestation_data = EASAttestationData(
             proposal_id="0x123abc",
             space_id="aave.eth",
-            voter_address="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
-            choice=1,
-            vote_tx_hash="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
-            timestamp=datetime.utcnow(),
+            agent="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
+            vote_choice=1,
+            snapshot_sig="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
+            timestamp=int(datetime.utcnow().timestamp()),
+            run_id="test_run_123",
+            confidence=80,
             retry_count=0,
             attestation_tx_hash="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             attestation_uid="0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
@@ -77,15 +83,17 @@ class TestEASAttestationData:
         with pytest.raises(ValidationError):
             EASAttestationData()
         
-        # Invalid Ethereum address (too short)
+        # Invalid agent address format
         with pytest.raises(ValidationError):
             EASAttestationData(
                 proposal_id="0x123abc",
                 space_id="aave.eth",
-                voter_address="short",  # Less than 10 characters
-                choice=1,
-                vote_tx_hash="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
-                timestamp=datetime.utcnow(),
+                agent="short",  # Invalid address format
+                vote_choice=1,
+                snapshot_sig="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
+                timestamp=int(datetime.utcnow().timestamp()),
+                run_id="test_run_123",
+                confidence=80,
                 retry_count=0
             )
     
@@ -99,10 +107,12 @@ class TestEASAttestationData:
         attestation_data = EASAttestationData(
             proposal_id="0x123abc",
             space_id="aave.eth",
-            voter_address="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
-            choice=1,
-            vote_tx_hash="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
-            timestamp=datetime.utcnow(),
+            agent="0x742d35Cc6634C0532925a3b844Bc9e7595f89590",
+            vote_choice=1,
+            snapshot_sig="0x742d35Cc6634C0532925a3b844Bc9e7595f89590742d35Cc6634C0532925a3b8",
+            timestamp=int(datetime.utcnow().timestamp()),
+            run_id="test_run_123",
+            confidence=80,
             retry_count=0
         )
         
@@ -110,11 +120,19 @@ class TestEASAttestationData:
         data_dict = attestation_data.model_dump()
         assert isinstance(data_dict, dict)
         assert data_dict["proposal_id"] == "0x123abc"
+        assert data_dict["agent"] == "0x742d35Cc6634C0532925a3b844Bc9e7595f89590"
+        assert data_dict["vote_choice"] == 1
+        assert data_dict["run_id"] == "test_run_123"
+        assert data_dict["confidence"] == 80
         
         # Deserialize from dict
         restored_data = EASAttestationData(**data_dict)
         assert restored_data.proposal_id == attestation_data.proposal_id
         assert restored_data.timestamp == attestation_data.timestamp
+        assert restored_data.agent == attestation_data.agent
+        assert restored_data.vote_choice == attestation_data.vote_choice
+        assert restored_data.run_id == attestation_data.run_id
+        assert restored_data.confidence == attestation_data.confidence
 
 
 class TestVoteDecisionAttestationFields:
