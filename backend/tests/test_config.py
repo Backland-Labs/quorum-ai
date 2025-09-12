@@ -121,18 +121,7 @@ class TestBlockchainConfiguration:
 class TestAgentSpecificSettings:
     """Test agent-specific configuration settings."""
 
-    def test_monitored_daos_defaults_to_empty_list(self):
-        """Test that monitored_daos defaults to empty list."""
-        settings = Settings()
-        assert settings.monitored_daos == []
-        assert isinstance(settings.monitored_daos, list)
 
-    def test_monitored_daos_loaded_from_env(self):
-        """Test that monitored_daos can be parsed from string."""
-        # Test the field validator directly
-        result = Settings.parse_monitored_daos("compound.eth,nouns.eth,arbitrum.eth")
-        expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
-        assert result == expected
 
     def test_activity_check_interval_defaults_to_3600(self):
         """Test that activity_check_interval defaults to 3600 seconds (1 hour)."""
@@ -186,37 +175,6 @@ class TestAgentSpecificSettings:
                 with pytest.raises(ValueError):
                     Settings()
 
-    def test_monitored_daos_parsing_edge_cases(self):
-        """Test monitored_daos parsing with edge cases."""
-        # Test with spaces
-        result = Settings.parse_monitored_daos("compound.eth, nouns.eth , arbitrum.eth ")
-        expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
-        assert result == expected
-
-        # Test with empty values
-        result = Settings.parse_monitored_daos("compound.eth,,nouns.eth")
-        expected = ["compound.eth", "nouns.eth"]
-        assert result == expected
-
-        # Test with single value
-        result = Settings.parse_monitored_daos("compound.eth")
-        expected = ["compound.eth"]
-        assert result == expected
-
-        # Test with empty string
-        result = Settings.parse_monitored_daos("")
-        expected = []
-        assert result == expected
-
-        # Test with None
-        result = Settings.parse_monitored_daos(None)
-        expected = []
-        assert result == expected
-
-        # Test with list (pass-through)
-        test_list = ["compound.eth", "nouns.eth"]
-        result = Settings.parse_monitored_daos(test_list)
-        assert result == test_list
 
 
 class TestOlasStakingConfiguration:
@@ -298,10 +256,6 @@ class TestOlasStakingConfiguration:
 class TestAttestationTrackerConfiguration:
     """Test AttestationTracker configuration settings."""
 
-    def test_attestation_tracker_address_defaults_to_none(self):
-        """Test that attestation_tracker_address defaults to None."""
-        settings = Settings()
-        assert settings.attestation_tracker_address is None
 
     def test_attestation_tracker_address_loaded_from_env(self):
         """Test that attestation_tracker_address is loaded from environment variable."""

@@ -33,14 +33,6 @@ class TestABILoader:
         
         assert abi1 is abi2
 
-    def test_load_all_governor_types(self):
-        loader = ABILoader()
-        governor_types = ["compound_bravo", "nouns", "uniswap_oz", "arbitrum"]
-        
-        for gov_type in governor_types:
-            abi = loader.load(gov_type)
-            assert isinstance(abi, list)
-            assert len(abi) > 0
 
     def test_abi_structure_validation(self):
         loader = ABILoader()

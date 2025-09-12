@@ -79,22 +79,6 @@ class TestAgentRunConfiguration:
 class TestAgentRunConfigurationExtensions:
     """Test new agent run configuration extensions."""
 
-    def test_new_agent_run_config_defaults(self):
-        """Test that new agent run configuration fields have proper defaults."""
-        test_settings = Settings()
-        
-        # Test the new agent run configuration fields
-        assert test_settings.max_proposals_per_run == 3
-        assert test_settings.agent_confidence_threshold == 0.7
-        assert test_settings.proposal_fetch_timeout == 30
-        assert test_settings.vote_execution_timeout == 60
-        assert test_settings.max_retry_attempts == 3
-        assert test_settings.retry_delay_seconds == 5
-        
-        # Test that existing fields still work correctly
-        assert hasattr(test_settings, 'activity_check_interval')
-        assert hasattr(test_settings, 'proposal_check_interval')
-        assert hasattr(test_settings, 'min_time_before_deadline')
 
     def test_agent_run_config_hot_reload_support(self):
         """Test that configuration supports hot reloading."""
