@@ -1416,3 +1416,302 @@ class TestEdgeCasesAndErrorHandling:
         assert result["data"] == ""  # Should handle None data gracefully
         assert result["value"] == 0
         assert result["nonce"] == 0
+
+
+class TestSafeServiceMissingCoverage:
+    """Additional tests to reach 90% coverage for SafeService."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        with patch("services.safe_service.setup_pearl_logger"), \
+             patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"), \
+             patch("services.safe_service.settings") as mock_settings:
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x9876543210987654321098765432109876543210"}'
+            mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+            mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+            mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+            mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+            mock_settings.eas_contract_address = "0xeas123"
+            mock_settings.eas_schema_uid = "0x" + "a" * 64
+            mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
+            mock_settings.attestation_tracker_address = None
+            mock_settings.attestation_chain = "base"
+            self.service = SafeService()
+
+    def test_is_chain_fully_configured_edge_cases(self):
+        """Test edge cases for chain configuration validation."""
+        # Test chain with empty Safe address
+        with patch.object(self.service, 'safe_addresses', {"empty": ""}):
+            assert self.service.is_chain_fully_configured("empty") is False
+            
+        # Test chain with empty RPC endpoint
+        with patch.object(self.service, 'rpc_endpoints', {"empty_rpc": ""}):
+            assert self.service.is_chain_fully_configured("empty_rpc") is False
+
+    def test_validate_chain_configuration_comprehensive(self):
+        """Test comprehensive validate_chain_configuration scenarios."""
+        # Test chain with all missing components
+        validation = self.service.validate_chain_configuration("nonexistent")
+        assert validation["chain"] == "nonexistent"
+        assert validation["has_safe_address"] is False
+        assert validation["has_rpc_endpoint"] is False
+        assert validation["has_safe_service_url"] is False
+        assert validation["is_fully_configured"] is False
+        assert validation["safe_address"] is None
+        assert validation["rpc_endpoint"] is None
+        assert validation["safe_service_url"] is None
+
+    def test_rate_limit_base_rpc_multiple_patterns(self):
+        """Test various Base mainnet URL patterns for rate limiting."""
+        with patch("services.safe_service.time.sleep") as mock_sleep:
+            test_urls = [
+                "https://mainnet.base.org/rpc",
+                "https://base-mainnet.base.org/v1/rpc",  
+                "https://mainnet.base.org/api/v1/rpc",
+                "https://other-base-mainnet.base.org/rpc"
+            ]
+            
+            for url in test_urls:
+                mock_sleep.reset_mock()
+                self.service._rate_limit_base_rpc(url)
+                mock_sleep.assert_called_once_with(1.0)
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    @patch("services.safe_service.TransactionServiceApi")
+    async def test_submit_safe_transaction_no_safe_address_configured(self, mock_tx_service, mock_safe_class, mock_eth_client):
+        """Test _submit_safe_transaction when Safe address is not configured for a chain."""
+        # Mock a scenario where safe address lookup returns None
+        with patch.object(self.service, 'safe_addresses', {"base": None}), \
+             patch.object(self.service, 'is_chain_fully_configured', return_value=True), \
+             patch.object(self.service, 'get_web3_connection'), \
+             patch.object(self.service, '_rate_limit_base_rpc'):
+            
+            # This should trigger the ValueError inside _submit_safe_transaction
+            mock_safe_class.side_effect = ValueError("No Safe address configured for chain: base")
+            
+            result = await self.service._submit_safe_transaction(
+                chain="base", to="0x456", value=0, data=b""
+            )
+            
+            assert result["success"] is False
+            assert "No Safe address configured for chain: base" in result["error"]
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_build_safe_transaction_with_none_data(self, mock_safe_class, mock_eth_client):
+        """Test building Safe transaction when data is None."""
+        mock_safe_tx = Mock()
+        mock_safe_tx.to = "0x456"
+        mock_safe_tx.value = 0
+        mock_safe_tx.data = None  # None data case
+        mock_safe_tx.operation = 0
+        mock_safe_tx.safe_tx_gas = 100000
+        mock_safe_tx.base_gas = 50000
+        mock_safe_tx.gas_price = 1000000000
+        mock_safe_tx.gas_token = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.refund_receiver = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.safe_nonce = 5
+        mock_safe_tx.safe_tx_hash.hex.return_value = "0xabcd"
+        
+        mock_safe = Mock()
+        mock_safe.build_multisig_tx.return_value = mock_safe_tx
+        mock_safe_class.return_value = mock_safe
+        
+        with patch.object(self.service, "_rate_limit_base_rpc"):
+            result = await self.service.build_safe_transaction(
+                chain="base", to="0x456", value=0, data=b"test"
+            )
+            
+        assert result["data"] == ""  # Should handle None gracefully
+
+    async def test_create_eas_attestation_data_hex_conversion(self):
+        """Test EAS attestation data hex conversion scenarios."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=95
+        )
+
+        # Test with hex data starting with 0x
+        with patch.object(self.service, '_build_eas_attestation_tx') as mock_build_tx, \
+             patch.object(self.service, '_submit_safe_transaction', new_callable=AsyncMock) as mock_submit:
+            
+            mock_build_tx.return_value = {
+                "to": "0xeas123",
+                "data": "0x1234abcd",  # Starts with 0x
+                "value": 0
+            }
+            mock_submit.return_value = {"success": True, "tx_hash": "0xtxhash"}
+            
+            result = await self.service.create_eas_attestation(attestation_data)
+            
+            # Verify bytes conversion was called correctly
+            mock_submit.assert_called_once()
+            call_args = mock_submit.call_args
+            assert isinstance(call_args[1]['data'], bytes)
+
+        # Test with hex data not starting with 0x  
+        with patch.object(self.service, '_build_eas_attestation_tx') as mock_build_tx, \
+             patch.object(self.service, '_submit_safe_transaction', new_callable=AsyncMock) as mock_submit:
+            
+            mock_build_tx.return_value = {
+                "to": "0xeas123", 
+                "data": "1234abcd",  # No 0x prefix
+                "value": 0
+            }
+            mock_submit.return_value = {"success": True, "tx_hash": "0xtxhash"}
+            
+            result = await self.service.create_eas_attestation(attestation_data)
+            
+            # Verify bytes conversion handles no 0x prefix
+            mock_submit.assert_called_once()
+            call_args = mock_submit.call_args
+            assert isinstance(call_args[1]['data'], bytes)
+
+    def test_build_delegated_attestation_tx_with_env_private_key(self):
+        """Test _build_delegated_attestation_tx using private key from environment."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=95
+        )
+
+        # Mock Web3 and contract
+        mock_w3 = Mock()
+        mock_w3.eth.get_block.return_value = {"timestamp": 1234567900, "number": 12345}
+        
+        mock_contract = Mock()
+        mock_contract.functions.attestByDelegation.return_value.build_transaction.return_value = {
+            "to": "0xtest123",
+            "data": "0xabcd1234",
+            "value": 0,
+            "gas": 1000000
+        }
+        mock_w3.eth.contract.return_value = mock_contract
+        
+        with patch('utils.web3_provider.get_w3', return_value=mock_w3), \
+             patch('utils.abi_loader.load_abi', return_value=[]), \
+             patch('services.safe_service.settings') as mock_settings, \
+             patch.object(self.service, '_generate_eas_delegated_signature') as mock_generate_sig, \
+             patch('builtins.open', side_effect=FileNotFoundError), \
+             patch.dict('os.environ', {'ETHEREUM_PRIVATE_KEY': 'env_private_key_123'}):
+            
+            mock_settings.attestation_chain = "base"
+            mock_settings.eas_schema_uid = "0x" + "a" * 64
+            mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
+            mock_settings.eas_contract_address = "0xeas123"
+            
+            mock_generate_sig.return_value = b"\x01" * 65
+            
+            result = self.service._build_delegated_attestation_tx(
+                attestation_data, "0xtracker123", "attestation_tracker"
+            )
+            
+            assert result["to"] == "0xtest123"
+            assert result["data"] == "0xabcd1234"
+            assert result["value"] == 0
+
+    def test_build_delegated_attestation_tx_no_private_key(self):
+        """Test _build_delegated_attestation_tx when no private key is found."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=95
+        )
+
+        mock_w3 = Mock()
+        mock_w3.eth.get_block.return_value = {"timestamp": 1234567900, "number": 12345}
+        
+        with patch('utils.web3_provider.get_w3', return_value=mock_w3), \
+             patch('utils.abi_loader.load_abi', return_value=[]), \
+             patch('services.safe_service.settings') as mock_settings, \
+             patch('builtins.open', side_effect=FileNotFoundError), \
+             patch.dict('os.environ', {}, clear=True):
+            
+            mock_settings.attestation_chain = "base"
+            mock_settings.eas_schema_uid = "0x" + "a" * 64
+            mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
+            mock_settings.eas_contract_address = "0xeas123"
+            
+            with pytest.raises(ValueError, match="Private key not found"):
+                self.service._build_delegated_attestation_tx(
+                    attestation_data, "0xtracker123", "attestation_tracker"
+                )
+
+    def test_encode_attestation_data_address_checksumming(self):
+        """Test that attestation data encoding properly checksums addresses."""
+        # Use a lowercase address to test checksumming
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123".lower(),
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=95
+        )
+
+        with patch('services.safe_service.Web3') as mock_web3_class:
+            mock_w3 = Mock()
+            mock_codec = Mock()
+            mock_codec.encode.return_value = b"encoded_data"
+            mock_w3.codec = mock_codec
+            mock_web3_class.return_value = mock_w3
+            
+            result = self.service._encode_attestation_data(attestation_data)
+            
+            # Verify encode was called and first parameter was checksummed
+            mock_codec.encode.assert_called_once()
+            call_args = mock_codec.encode.call_args[0][1]
+            agent_address = call_args[0]
+            # Should be checksummed version
+            assert agent_address == "0x4567890123456789012345678901234567890123"
+
+    @patch("services.safe_service.generate_eas_delegated_signature")
+    @patch("builtins.open", new_callable=mock_open, read_data="test_private_key")
+    def test_generate_eas_delegated_signature_detailed_logging(self, mock_file, mock_generate_sig):
+        """Test _generate_eas_delegated_signature with detailed logging."""
+        mock_w3 = Mock()
+        mock_w3.eth.chain_id = 8453
+        
+        request_data = {
+            "schema": b"\x01" * 32,
+            "recipient": "0x4567890123456789012345678901234567890123",
+            "deadline": 1234567890,
+            "data": b"test_request_data_longer_than_usual_for_testing"
+        }
+        
+        mock_signature = b"\x01" * 32 + b"\x02" * 32 + b"\x1b"  # 65-byte signature
+        mock_generate_sig.return_value = mock_signature
+        
+        result = self.service._generate_eas_delegated_signature(
+            request_data, mock_w3, "0xeas1234567890123456789012345678901234567890"
+        )
+        
+        assert result == mock_signature
+        assert len(result) == 65
+        
+        # Verify the signature generation was called with correct parameters
+        mock_generate_sig.assert_called_once_with(
+            request_data=request_data,
+            w3=mock_w3,
+            eas_contract_address="0xeas1234567890123456789012345678901234567890",
+            private_key="test_private_key"
+        )
