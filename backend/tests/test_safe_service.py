@@ -19,7 +19,7 @@ class TestSafeServiceInitialization:
     """Test SafeService initialization and configuration."""
 
     @patch("services.safe_service.setup_pearl_logger")
-    @patch("builtins.open", new_callable=mock_open, read_data="0xtest_private_key")
+    @patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     @patch("services.safe_service.settings")
     def test_init_with_valid_config(self, mock_settings, mock_file, mock_logger):
         """Test SafeService initialization with valid configuration."""
@@ -32,7 +32,7 @@ class TestSafeServiceInitialization:
         service = SafeService()
         
         assert service.safe_addresses == {"base": "0x123", "ethereum": "0x456"}
-        assert service.private_key == "0xtest_private_key"
+        assert service.private_key == "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
         assert service.account.address is not None
         assert service._web3_connections == {}
 
@@ -541,11 +541,11 @@ class TestEASAttestation:
     async def test_create_eas_attestation_missing_config(self):
         """Test EAS attestation creation with missing configuration."""
         attestation_data = EASAttestationData(
-            agent="0x456",
-            space_id="test.eth",
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
             proposal_id="prop123",
             vote_choice=1,
-            snapshot_sig="sig123",
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             timestamp=1234567890,
             run_id="run123",
             confidence=95
@@ -562,11 +562,11 @@ class TestEASAttestation:
     async def test_create_eas_attestation_missing_safe_address(self):
         """Test EAS attestation creation with missing Safe address."""
         attestation_data = EASAttestationData(
-            agent="0x456",
-            space_id="test.eth",
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
             proposal_id="prop123",
             vote_choice=1,
-            snapshot_sig="sig123",
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             timestamp=1234567890,
             run_id="run123",
             confidence=95
@@ -585,11 +585,11 @@ class TestEASAttestation:
     async def test_create_eas_attestation_success(self, mock_load_abi, mock_get_w3):
         """Test successful EAS attestation creation."""
         attestation_data = EASAttestationData(
-            agent="0x456",
-            space_id="test.eth",
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
             proposal_id="prop123",
             vote_choice=1,
-            snapshot_sig="sig123",
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             timestamp=1234567890,
             run_id="run123",
             confidence=95
@@ -631,11 +631,11 @@ class TestEASAttestation:
     def test_encode_attestation_data(self):
         """Test attestation data encoding."""
         attestation_data = EASAttestationData(
-            agent="0x456",
-            space_id="test.eth",
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
             proposal_id="prop123",
             vote_choice=1,
-            snapshot_sig="sig123",
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             timestamp=1234567890,
             run_id="run123",
             confidence=95
@@ -653,11 +653,11 @@ class TestEASAttestation:
     def test_build_delegated_attestation_tx_eip712proxy(self, mock_file, mock_load_abi, mock_get_w3, mock_generate_sig):
         """Test building delegated attestation transaction for EIP712Proxy."""
         attestation_data = EASAttestationData(
-            agent="0x456",
-            space_id="test.eth",
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
             proposal_id="prop123",
             vote_choice=1,
-            snapshot_sig="sig123",
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             timestamp=1234567890,
             run_id="run123",
             confidence=95
@@ -696,11 +696,11 @@ class TestEASAttestation:
     def test_build_delegated_attestation_tx_attestation_tracker(self, mock_file, mock_load_abi, mock_get_w3, mock_generate_sig):
         """Test building delegated attestation transaction for AttestationTracker."""
         attestation_data = EASAttestationData(
-            agent="0x456",
-            space_id="test.eth",
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
             proposal_id="prop123",
             vote_choice=1,
-            snapshot_sig="sig123",
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
             timestamp=1234567890,
             run_id="run123",
             confidence=95
