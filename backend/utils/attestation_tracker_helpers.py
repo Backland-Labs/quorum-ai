@@ -56,7 +56,10 @@ def get_multisig_info(multisig_address: str) -> Tuple[int, bool]:
 
         # Query multisig attestation count using available function
         logger.debug(f"Calling getNumAttestations for multisig: {multisig_address}")
-        count = contract.functions.getNumAttestations(multisig_address).call()
+
+        # Convert non-checksummed address to checksummed address
+        multisig_checksum_address = Web3.to_checksum_address(multisig_address)
+        count = contract.functions.getNumAttestations(multisig_checksum_address).call()
         logger.info(f"AttestationTracker query successful - multisig={multisig_address}, count={count}")
 
         # Default active status to True since separate active status tracking is not available
