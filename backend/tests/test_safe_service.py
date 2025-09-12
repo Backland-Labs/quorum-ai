@@ -23,7 +23,7 @@ class TestSafeServiceInitialization:
     @patch("services.safe_service.settings")
     def test_init_with_valid_config(self, mock_settings, mock_file, mock_logger):
         """Test SafeService initialization with valid configuration."""
-        mock_settings.safe_contract_addresses = '{"base": "0x123", "ethereum": "0x456"}'
+        mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123"}'
         mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
         mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -31,7 +31,7 @@ class TestSafeServiceInitialization:
         
         service = SafeService()
         
-        assert service.safe_addresses == {"base": "0x123", "ethereum": "0x456"}
+        assert service.safe_addresses == {"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123"}
         assert service.private_key == "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
         assert service.account.address is not None
         assert service._web3_connections == {}
@@ -48,7 +48,7 @@ class TestSafeServiceInitialization:
     @patch("services.safe_service.settings")
     def test_init_with_invalid_private_key(self, mock_settings, mock_file, mock_logger):
         """Test SafeService initialization with invalid private key."""
-        mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+        mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
         
         # Account.from_key should raise an error for invalid key format
@@ -64,7 +64,7 @@ class TestChainConfiguration:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123", "ethereum": "0x456"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123"}'
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = ""  # Missing RPC
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -105,7 +105,7 @@ class TestChainConfiguration:
         assert validation["has_rpc_endpoint"] is True
         assert validation["has_safe_service_url"] is True
         assert validation["is_fully_configured"] is True
-        assert validation["safe_address"] == "0x123"
+        assert validation["safe_address"] == "0x1234567890123456789012345678901234567890"
 
         # Test partially configured chain
         validation = self.service.validate_chain_configuration("gnosis")
@@ -124,7 +124,7 @@ class TestWeb3Connection:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -192,7 +192,7 @@ class TestChainSelection:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123", "ethereum": "0x456", "gnosis": "0x789"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123", "gnosis": "0x7890123456789012345678901234567890123456"}'
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -215,7 +215,8 @@ class TestChainSelection:
 
     def test_select_optimal_chain_no_valid_chains(self):
         """Test error when no valid chains are configured."""
-        with patch.object(self.service, "get_supported_chains", return_value=[]):
+        with patch.object(self.service, "get_supported_chains", return_value=[]), \
+             patch.object(self.service, "is_chain_fully_configured", return_value=False):
             with pytest.raises(ValueError, match="No valid chain configuration found"):
                 self.service.select_optimal_chain()
 
@@ -228,7 +229,7 @@ class TestSafeTransactionBuilding:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -265,7 +266,7 @@ class TestSafeTransactionBuilding:
                 data=b"test_data"
             )
 
-        assert result["safe_address"] == "0x123"
+        assert result["safe_address"] == "0x1234567890123456789012345678901234567890"
         assert result["to"] == "0x456"
         assert result["value"] == 100
         assert result["data"] == "test_data".encode().hex()
@@ -288,7 +289,7 @@ class TestSafeTransactionBuilding:
         mock_safe_class.return_value = mock_safe
 
         with patch.object(self.service, "_rate_limit_base_rpc"):
-            nonce = await self.service.get_safe_nonce("base", "0x123")
+            nonce = await self.service.get_safe_nonce("base", "0x1234567890123456789012345678901234567890")
             
         assert nonce == 10
         mock_safe.retrieve_nonce.assert_called_once()
@@ -302,7 +303,7 @@ class TestSafeTransactionSubmission:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -310,46 +311,42 @@ class TestSafeTransactionSubmission:
             self.service = SafeService()
 
     async def test_submit_safe_transaction_invalid_inputs(self):
-        """Test transaction submission with invalid inputs."""
+        """Test transaction submission with invalid inputs raises assertions."""
         # Test invalid chain
-        result = await self.service._submit_safe_transaction(
-            chain="",
-            to="0x456",
-            value=0,
-            data=b""
-        )
-        assert result["success"] is False
-        assert "Chain must be a non-empty string" in result["error"]
+        with pytest.raises(AssertionError, match="Chain must be a non-empty string"):
+            await self.service._submit_safe_transaction(
+                chain="",
+                to="0x4567890123456789012345678901234567890123",
+                value=0,
+                data=b""
+            )
 
         # Test invalid to address
-        result = await self.service._submit_safe_transaction(
-            chain="base",
-            to="",
-            value=0,
-            data=b""
-        )
-        assert result["success"] is False
-        assert "To address must be a non-empty string" in result["error"]
+        with pytest.raises(AssertionError, match="To address must be a non-empty string"):
+            await self.service._submit_safe_transaction(
+                chain="base",
+                to="",
+                value=0,
+                data=b""
+            )
 
         # Test invalid value
-        result = await self.service._submit_safe_transaction(
-            chain="base",
-            to="0x456",
-            value=-1,
-            data=b""
-        )
-        assert result["success"] is False
-        assert "Value must be a non-negative integer" in result["error"]
+        with pytest.raises(AssertionError, match="Value must be a non-negative integer"):
+            await self.service._submit_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123",
+                value=-1,
+                data=b""
+            )
 
         # Test invalid data type
-        result = await self.service._submit_safe_transaction(
-            chain="base",
-            to="0x456",
-            value=0,
-            data="not_bytes"
-        )
-        assert result["success"] is False
-        assert "Data must be bytes" in result["error"]
+        with pytest.raises(AssertionError, match="Data must be bytes"):
+            await self.service._submit_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123",
+                value=0,
+                data="not_bytes"
+            )
 
     async def test_submit_safe_transaction_unconfigured_chain(self):
         """Test transaction submission with unconfigured chain."""
@@ -470,7 +467,7 @@ class TestActivityTransaction:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -488,7 +485,7 @@ class TestActivityTransaction:
             
             mock_submit.assert_called_once_with(
                 chain="base",
-                to="0x123",  # Safe address
+                to="0x1234567890123456789012345678901234567890",  # Safe address
                 value=0,
                 data=b"",
                 operation=0
@@ -504,7 +501,7 @@ class TestActivityTransaction:
             
             mock_submit.assert_called_once_with(
                 chain="base",
-                to="0x123",
+                to="0x1234567890123456789012345678901234567890",
                 value=0,
                 data=b"",
                 operation=0
@@ -526,14 +523,14 @@ class TestEASAttestation:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
             mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
             mock_settings.eas_contract_address = "0xeas123"
             mock_settings.eas_schema_uid = "0x" + "a" * 64
-            mock_settings.base_safe_address = "0x123"
+            mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
             mock_settings.attestation_tracker_address = None
             mock_settings.attestation_chain = "base"
             self.service = SafeService()
@@ -581,7 +578,7 @@ class TestEASAttestation:
         assert "Base Safe address not configured" in result["error"]
 
     @patch("services.safe_service.get_w3")
-    @patch("services.safe_service.load_abi")
+    @patch("utils.abi_loader.load_abi")
     async def test_create_eas_attestation_success(self, mock_load_abi, mock_get_w3):
         """Test successful EAS attestation creation."""
         attestation_data = EASAttestationData(
@@ -647,8 +644,8 @@ class TestEASAttestation:
         assert len(encoded) > 0
 
     @patch("services.safe_service.generate_eas_delegated_signature")
-    @patch("services.safe_service.get_w3")
-    @patch("services.safe_service.load_abi")
+    @patch("utils.web3_provider.get_w3")
+    @patch("utils.abi_loader.load_abi")
     @patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64)
     def test_build_delegated_attestation_tx_eip712proxy(self, mock_file, mock_load_abi, mock_get_w3, mock_generate_sig):
         """Test building delegated attestation transaction for EIP712Proxy."""
@@ -690,8 +687,8 @@ class TestEASAttestation:
         assert result["value"] == 0
 
     @patch("services.safe_service.generate_eas_delegated_signature")
-    @patch("services.safe_service.get_w3")
-    @patch("services.safe_service.load_abi")
+    @patch("utils.web3_provider.get_w3")
+    @patch("utils.abi_loader.load_abi")
     @patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64)
     def test_build_delegated_attestation_tx_attestation_tracker(self, mock_file, mock_load_abi, mock_get_w3, mock_generate_sig):
         """Test building delegated attestation transaction for AttestationTracker."""
@@ -741,7 +738,7 @@ class TestUtilityMethods:
         with patch("services.safe_service.setup_pearl_logger"), \
              patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64), \
              patch("services.safe_service.settings") as mock_settings:
-            mock_settings.safe_contract_addresses = '{"base": "0x123"}'
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -774,8 +771,9 @@ class TestUtilityMethods:
         
         request_data = {
             "schema": b"\x01" * 32,
-            "recipient": "0x456",
-            "deadline": 1234567890
+            "recipient": "0x4567890123456789012345678901234567890123",
+            "deadline": 1234567890,
+            "data": b"test_request_data"
         }
         
         mock_generate_sig.return_value = b"\x01" * 65
@@ -809,3 +807,612 @@ class TestConstantsAndConfiguration:
         """Test that EAS attestation gas limit is reasonable."""
         assert EAS_ATTESTATION_GAS_LIMIT == 1000000
         assert EAS_ATTESTATION_GAS_LIMIT > 0
+
+
+class TestSafeTransactionSubmissionComprehensive:
+    """Comprehensive tests for Safe transaction submission with high coverage."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        with patch("services.safe_service.setup_pearl_logger"), \
+             patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"), \
+             patch("services.safe_service.settings") as mock_settings:
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
+            mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+            mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+            mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+            mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+            self.service = SafeService()
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    @patch("services.safe_service.TransactionServiceApi")
+    async def test_submit_safe_transaction_complete_flow(self, mock_tx_service, mock_safe_class, mock_eth_client):
+        """Test complete Safe transaction submission flow with all steps."""
+        # Mock transaction receipt
+        mock_receipt = {
+            "blockNumber": 12345,
+            "gasUsed": 100000,
+            "status": 1,
+            "transactionHash": "0xtxhash"
+        }
+        
+        # Mock Web3 connection
+        mock_w3 = Mock()
+        mock_w3.eth.wait_for_transaction_receipt.return_value = mock_receipt
+        
+        # Mock Safe transaction with all required attributes
+        mock_safe_tx = Mock()
+        mock_safe_tx.to = "0x4567890123456789012345678901234567890123"
+        mock_safe_tx.value = 100
+        mock_safe_tx.data = b"test_data"
+        mock_safe_tx.operation = 0
+        mock_safe_tx.safe_tx_gas = 100000
+        mock_safe_tx.base_gas = 50000
+        mock_safe_tx.gas_price = 1000000000
+        mock_safe_tx.gas_token = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.refund_receiver = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.safe_nonce = 5
+        mock_safe_tx.safe_tx_hash = Mock()
+        mock_safe_tx.safe_tx_hash.hex.return_value = "0xsafetx"
+        mock_safe_tx.signatures = b"signature"
+        mock_safe_tx.call = Mock()  # Simulation succeeds
+        
+        # Mock Safe instance
+        mock_safe = Mock()
+        mock_safe.build_multisig_tx.return_value = mock_safe_tx
+        mock_ethereum_tx = Mock()
+        mock_ethereum_tx.tx_hash = Mock()
+        mock_ethereum_tx.tx_hash.hex.return_value = "0xtxhash"
+        mock_safe.send_multisig_tx.return_value = mock_ethereum_tx
+        mock_safe_class.return_value = mock_safe
+        
+        # Mock transaction service
+        mock_service = Mock()
+        mock_tx_service.return_value = mock_service
+        
+        with patch.object(self.service, "get_web3_connection", return_value=mock_w3), \
+             patch.object(self.service, "_rate_limit_base_rpc"):
+            
+            result = await self.service._submit_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123",
+                value=100,
+                data=b"test_data"
+            )
+
+        # Verify the complete flow was executed
+        assert result["success"] is True
+        assert result["tx_hash"] == "0xtxhash"
+        assert result["chain"] == "base"
+        assert result["block_number"] == 12345
+        assert result["gas_used"] == 100000
+        assert result["safe_address"] == "0x1234567890123456789012345678901234567890"
+        
+        # Verify all components were called
+        mock_safe.build_multisig_tx.assert_called_once()
+        mock_service.post_transaction.assert_called_once()
+        mock_safe_tx.call.assert_called_once()  # Simulation
+        mock_safe.send_multisig_tx.assert_called_once()
+        mock_w3.eth.wait_for_transaction_receipt.assert_called_once()
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    @patch("services.safe_service.TransactionServiceApi")
+    async def test_submit_safe_transaction_reverted_receipt(self, mock_tx_service, mock_safe_class, mock_eth_client):
+        """Test handling of reverted transaction receipt."""
+        # Mock failed transaction receipt
+        mock_receipt = {
+            "blockNumber": 12345,
+            "gasUsed": 100000,
+            "status": 0,  # Failed status
+            "transactionHash": "0xtxhash"
+        }
+        
+        mock_w3 = Mock()
+        mock_w3.eth.wait_for_transaction_receipt.return_value = mock_receipt
+        
+        # Mock successful Safe transaction but failed execution
+        mock_safe_tx = Mock()
+        mock_safe_tx.to = "0x4567890123456789012345678901234567890123"
+        mock_safe_tx.value = 0
+        mock_safe_tx.data = b""
+        mock_safe_tx.operation = 0
+        mock_safe_tx.safe_tx_gas = 100000
+        mock_safe_tx.base_gas = 50000
+        mock_safe_tx.gas_price = 1000000000
+        mock_safe_tx.gas_token = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.refund_receiver = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.safe_nonce = 5
+        mock_safe_tx.safe_tx_hash = Mock()
+        mock_safe_tx.safe_tx_hash.hex.return_value = "0xsafetx"
+        mock_safe_tx.signatures = b"signature"
+        mock_safe_tx.call = Mock()  # Simulation succeeds
+        
+        mock_safe = Mock()
+        mock_safe.build_multisig_tx.return_value = mock_safe_tx
+        mock_ethereum_tx = Mock()
+        mock_ethereum_tx.tx_hash = Mock()
+        mock_ethereum_tx.tx_hash.hex.return_value = "0xtxhash"
+        mock_safe.send_multisig_tx.return_value = mock_ethereum_tx
+        mock_safe_class.return_value = mock_safe
+        
+        mock_service = Mock()
+        mock_tx_service.return_value = mock_service
+        
+        with patch.object(self.service, "get_web3_connection", return_value=mock_w3), \
+             patch.object(self.service, "_rate_limit_base_rpc"):
+            
+            result = await self.service._submit_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123",
+                value=0,
+                data=b""
+            )
+
+        assert result["success"] is False
+        assert result["error"] == "Transaction reverted"
+        assert result["tx_hash"] == "0xtxhash"
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_submit_safe_transaction_exception_handling(self, mock_safe_class, mock_eth_client):
+        """Test exception handling in transaction submission."""
+        # Mock Safe that throws exception
+        mock_safe_class.side_effect = Exception("Connection failed")
+        
+        with patch.object(self.service, "get_web3_connection"), \
+             patch.object(self.service, "_rate_limit_base_rpc"):
+            
+            result = await self.service._submit_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123",
+                value=0,
+                data=b""
+            )
+
+        assert result["success"] is False
+        assert "Connection failed" in result["error"]
+
+    async def test_submit_safe_transaction_validation_comprehensive(self):
+        """Test comprehensive input validation assertions."""
+        # Test empty chain - should raise AssertionError
+        with pytest.raises(AssertionError, match="Chain must be a non-empty string"):
+            await self.service._submit_safe_transaction(
+                chain="", to="0x4567890123456789012345678901234567890123", value=0, data=b""
+            )
+        
+        # Test empty to address - should raise AssertionError
+        with pytest.raises(AssertionError, match="To address must be a non-empty string"):
+            await self.service._submit_safe_transaction(
+                chain="base", to="", value=0, data=b""
+            )
+        
+        # Test negative value - should raise AssertionError
+        with pytest.raises(AssertionError, match="Value must be a non-negative integer"):
+            await self.service._submit_safe_transaction(
+                chain="base", to="0x4567890123456789012345678901234567890123", value=-5, data=b""
+            )
+        
+        # Test invalid data type - should raise AssertionError
+        with pytest.raises(AssertionError, match="Data must be bytes"):
+            await self.service._submit_safe_transaction(
+                chain="base", to="0x4567890123456789012345678901234567890123", value=0, data="not_bytes"
+            )
+
+
+class TestSafeTransactionBuildingComprehensive:
+    """Comprehensive tests for Safe transaction building methods."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        with patch("services.safe_service.setup_pearl_logger"), \
+             patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"), \
+             patch("services.safe_service.settings") as mock_settings:
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
+            mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+            mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+            mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+            mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+            self.service = SafeService()
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_build_safe_transaction_with_all_params(self, mock_safe_class, mock_eth_client):
+        """Test building Safe transaction with all parameters."""
+        # Mock Safe transaction with full data
+        mock_safe_tx = Mock()
+        mock_safe_tx.to = "0x4567890123456789012345678901234567890123"
+        mock_safe_tx.value = 500
+        mock_safe_tx.data = b"complex_contract_call_data"
+        mock_safe_tx.operation = 1  # DELEGATECALL
+        mock_safe_tx.safe_tx_gas = 200000
+        mock_safe_tx.base_gas = 75000
+        mock_safe_tx.gas_price = 2000000000
+        mock_safe_tx.gas_token = "0x1111111111111111111111111111111111111111"
+        mock_safe_tx.refund_receiver = "0x2222222222222222222222222222222222222222"
+        mock_safe_tx.safe_nonce = 15
+        mock_safe_tx.safe_tx_hash = Mock()
+        mock_safe_tx.safe_tx_hash.hex.return_value = "0xabcdef123456"
+        
+        mock_safe = Mock()
+        mock_safe.build_multisig_tx.return_value = mock_safe_tx
+        mock_safe_class.return_value = mock_safe
+
+        with patch.object(self.service, "_rate_limit_base_rpc"):
+            result = await self.service.build_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123",
+                value=500,
+                data=b"complex_contract_call_data",
+                operation=1
+            )
+
+        # Verify all fields are properly returned
+        assert result["safe_address"] == "0x1234567890123456789012345678901234567890"
+        assert result["to"] == "0x4567890123456789012345678901234567890123"
+        assert result["value"] == 500
+        assert result["data"] == b"complex_contract_call_data".hex()
+        assert result["operation"] == 1
+        assert result["safe_tx_gas"] == 200000
+        assert result["base_gas"] == 75000
+        assert result["gas_price"] == 2000000000
+        assert result["gas_token"] == "0x1111111111111111111111111111111111111111"
+        assert result["refund_receiver"] == "0x2222222222222222222222222222222222222222"
+        assert result["nonce"] == 15
+        assert result["safe_tx_hash"] == "0xabcdef123456"
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_get_safe_nonce_comprehensive(self, mock_safe_class, mock_eth_client):
+        """Test comprehensive nonce retrieval."""
+        mock_safe = Mock()
+        mock_safe.retrieve_nonce.return_value = 42
+        mock_safe_class.return_value = mock_safe
+
+        with patch.object(self.service, "_rate_limit_base_rpc") as mock_rate_limit:
+            nonce = await self.service.get_safe_nonce(
+                "base", "0x1234567890123456789012345678901234567890"
+            )
+            
+        assert nonce == 42
+        mock_safe.retrieve_nonce.assert_called_once()
+        mock_rate_limit.assert_called_once_with("https://base-rpc.com")
+        
+        # Verify Safe was initialized with checksummed address
+        mock_safe_class.assert_called_once()
+        args = mock_safe_class.call_args[0]
+        assert args[0] == "0x1234567890123456789012345678901234567890"  # Checksummed
+
+
+class TestEASAttestationComprehensive:
+    """Comprehensive tests for EAS attestation functionality."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        with patch("services.safe_service.setup_pearl_logger"), \
+             patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"), \
+             patch("services.safe_service.settings") as mock_settings:
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
+            mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+            mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+            mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+            mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+            mock_settings.eas_contract_address = "0xeas1234567890123456789012345678901234567890"
+            mock_settings.eas_schema_uid = "0x" + "a" * 64
+            mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
+            mock_settings.attestation_tracker_address = None
+            mock_settings.attestation_chain = "base"
+            self.service = SafeService()
+
+    async def test_create_eas_attestation_complete_flow_direct_eas(self):
+        """Test complete EAS attestation creation flow using direct EAS."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=95
+        )
+
+        with patch.object(self.service, "_build_eas_attestation_tx") as mock_build_tx, \
+             patch.object(self.service, "_submit_safe_transaction", new_callable=AsyncMock) as mock_submit:
+            
+            mock_build_tx.return_value = {
+                "to": "0xeas1234567890123456789012345678901234567890",
+                "data": "0x" + "1234" * 100,  # Large hex data
+                "value": 0
+            }
+            mock_submit.return_value = {"success": True, "tx_hash": "0xtxhash123"}
+            
+            result = await self.service.create_eas_attestation(attestation_data)
+            
+        assert result["success"] is True
+        assert result["safe_tx_hash"] == "0xtxhash123"
+        
+        # Verify transaction was built and submitted
+        mock_build_tx.assert_called_once_with(attestation_data)
+        mock_submit.assert_called_once_with(
+            chain="base",
+            to="0xeas1234567890123456789012345678901234567890",
+            data=bytes.fromhex("1234" * 100),
+            value=0
+        )
+
+    async def test_create_eas_attestation_with_attestation_tracker(self):
+        """Test EAS attestation creation using AttestationTracker."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=2,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=85
+        )
+
+        # Configure for AttestationTracker
+        with patch("services.safe_service.settings") as mock_settings:
+            mock_settings.attestation_tracker_address = "0xtracker567890123456789012345678901234567890"
+            mock_settings.eas_contract_address = "0xeas1234567890123456789012345678901234567890"
+            mock_settings.eas_schema_uid = "0x" + "b" * 64
+            mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
+            
+            with patch.object(self.service, "_build_eas_attestation_tx") as mock_build_tx, \
+                 patch.object(self.service, "_submit_safe_transaction", new_callable=AsyncMock) as mock_submit:
+                
+                mock_build_tx.return_value = {
+                    "to": "0xtracker567890123456789012345678901234567890",
+                    "data": "0x" + "5678" * 50,
+                    "value": 0
+                }
+                mock_submit.return_value = {"success": True, "tx_hash": "0xtrackerTx"}
+                
+                result = await self.service.create_eas_attestation(attestation_data)
+                
+            assert result["success"] is True
+            assert result["safe_tx_hash"] == "0xtrackerTx"
+            mock_build_tx.assert_called_once_with(attestation_data)
+
+    async def test_create_eas_attestation_failure_scenarios(self):
+        """Test various failure scenarios for EAS attestation creation."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="test.eth", 
+            proposal_id="prop123",
+            vote_choice=1,
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=1234567890,
+            run_id="run123",
+            confidence=95
+        )
+
+        # Test transaction building failure
+        with patch.object(self.service, "_build_eas_attestation_tx") as mock_build_tx:
+            mock_build_tx.side_effect = Exception("Contract ABI load failed")
+            
+            result = await self.service.create_eas_attestation(attestation_data)
+            
+        assert result["success"] is False
+        assert "Contract ABI load failed" in result["error"]
+
+        # Test Safe transaction submission failure
+        with patch.object(self.service, "_build_eas_attestation_tx") as mock_build_tx, \
+             patch.object(self.service, "_submit_safe_transaction", new_callable=AsyncMock) as mock_submit:
+            
+            mock_build_tx.return_value = {"to": "0xtest", "data": "0x1234", "value": 0}
+            mock_submit.return_value = {"success": False, "error": "Insufficient gas"}
+            
+            result = await self.service.create_eas_attestation(attestation_data)
+            
+        assert result["success"] is False
+
+    def test_encode_attestation_data_comprehensive(self):
+        """Test comprehensive attestation data encoding."""
+        attestation_data = EASAttestationData(
+            agent="0x4567890123456789012345678901234567890123",
+            space_id="complex.space.with.dots.eth", 
+            proposal_id="very-long-proposal-id-with-special-chars-123",
+            vote_choice=255,  # Max uint8
+            snapshot_sig="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            timestamp=9999999999,  # Large timestamp
+            run_id="run-with-special-chars_456",
+            confidence=100
+        )
+
+        encoded = self.service._encode_attestation_data(attestation_data)
+        
+        assert isinstance(encoded, bytes)
+        assert len(encoded) > 32  # Should have substantial data
+        
+        # Verify the encoding includes all fields
+        # Note: This would be more precise with actual ABI decoding, but tests basic functionality
+
+
+class TestUtilityMethodsComprehensive:
+    """Comprehensive tests for utility methods."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        with patch("services.safe_service.setup_pearl_logger"), \
+             patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"), \
+             patch("services.safe_service.settings") as mock_settings:
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890"}'
+            mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+            mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+            mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+            mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+            self.service = SafeService()
+
+    @patch("services.safe_service.Web3")
+    def test_get_web3_instance_comprehensive(self, mock_web3_class):
+        """Test comprehensive Web3 instance creation."""
+        mock_web3 = Mock()
+        mock_web3_class.return_value = mock_web3
+        
+        with patch.object(self.service, "_rate_limit_base_rpc") as mock_rate_limit:
+            # Test different chains
+            for chain in ["base", "ethereum", "gnosis"]:
+                result = self.service._get_web3_instance(chain)
+                assert result == mock_web3
+                
+        # Verify rate limiting was called for each chain
+        assert mock_rate_limit.call_count >= 3
+
+    @patch("services.safe_service.generate_eas_delegated_signature")
+    @patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+    def test_generate_eas_delegated_signature_comprehensive(self, mock_file, mock_generate_sig):
+        """Test comprehensive EAS delegated signature generation."""
+        mock_w3 = Mock()
+        mock_w3.eth.chain_id = 8453
+        
+        request_data = {
+            "schema": b"\x01" * 32,
+            "recipient": "0x4567890123456789012345678901234567890123",
+            "deadline": 1234567890,
+            "data": b"test_attestation_data_with_content",
+            "value": 0,
+            "expirationTime": 0,
+            "revocable": True,
+            "refUID": b"\x00" * 32
+        }
+        
+        mock_signature = b"\x01" * 32 + b"\x02" * 32 + b"\x1b"  # 65-byte signature
+        mock_generate_sig.return_value = mock_signature
+        
+        result = self.service._generate_eas_delegated_signature(
+            request_data, mock_w3, "0xeas1234567890123456789012345678901234567890"
+        )
+        
+        assert result == mock_signature
+        assert len(result) == 65
+        
+        # Verify the shared function was called with correct parameters
+        mock_generate_sig.assert_called_once_with(
+            request_data=request_data,
+            w3=mock_w3,
+            eas_contract_address="0xeas1234567890123456789012345678901234567890",
+            private_key="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        )
+
+    @patch("services.safe_service.time.sleep")
+    def test_rate_limit_base_rpc_comprehensive(self, mock_sleep):
+        """Test comprehensive Base RPC rate limiting scenarios."""
+        test_cases = [
+            ("https://mainnet.base.org/rpc", True),
+            ("https://mainnet.base.org/v1/rpc", True),
+            ("https://base-mainnet.base.org/rpc", True),
+            ("https://ethereum-rpc.com", False),
+            ("https://polygon-rpc.com", False),
+            ("https://gnosis-rpc.com", False),
+        ]
+        
+        for rpc_url, should_rate_limit in test_cases:
+            mock_sleep.reset_mock()
+            self.service._rate_limit_base_rpc(rpc_url)
+            
+            if should_rate_limit:
+                mock_sleep.assert_called_once_with(1.0)
+            else:
+                mock_sleep.assert_not_called()
+
+
+class TestEdgeCasesAndErrorHandling:
+    """Test edge cases and comprehensive error handling."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        with patch("services.safe_service.setup_pearl_logger"), \
+             patch("builtins.open", new_callable=mock_open, read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"), \
+             patch("services.safe_service.settings") as mock_settings:
+            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x9999999999999999999999999999999999999999"}'
+            mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+            mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+            mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+            mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+            self.service = SafeService()
+
+    def test_validate_chain_configuration_edge_cases(self):
+        """Test chain configuration validation edge cases."""
+        # Test chain with Safe address but no service URL
+        validation = self.service.validate_chain_configuration("unsupported_chain")
+        assert validation["chain"] == "unsupported_chain"
+        assert validation["has_safe_service_url"] is False
+        assert validation["is_fully_configured"] is False
+        assert validation["safe_service_url"] is None
+
+        # Test completely valid chain
+        validation = self.service.validate_chain_configuration("base")
+        assert validation["is_fully_configured"] is True
+        assert validation["safe_address"] == "0x1234567890123456789012345678901234567890"
+        assert validation["rpc_endpoint"] == "https://base-rpc.com"
+        assert validation["safe_service_url"] == "https://safe-transaction-base.safe.global/"
+
+    async def test_perform_activity_transaction_edge_cases(self):
+        """Test activity transaction edge cases."""
+        # Test with chain that has no Safe address after initial setup
+        result = await self.service.perform_activity_transaction(chain="mode")
+        assert result["success"] is False
+        assert "No Safe address configured for chain: mode" in result["error"]
+
+        # Test successful activity transaction
+        with patch.object(self.service, "_submit_safe_transaction", new_callable=AsyncMock) as mock_submit:
+            mock_submit.return_value = {"success": True, "tx_hash": "0xactivity"}
+            
+            result = await self.service.perform_activity_transaction(chain="base")
+            
+            assert result["success"] is True
+            mock_submit.assert_called_once_with(
+                chain="base",
+                to="0x1234567890123456789012345678901234567890",
+                value=0,
+                data=b"",
+                operation=0
+            )
+
+    def test_get_supported_chains_dynamic(self):
+        """Test dynamic supported chains calculation."""
+        # Initially should support base and ethereum
+        supported = self.service.get_supported_chains()
+        assert "base" in supported
+        assert "ethereum" in supported
+        
+        # Should not support chains missing components
+        assert "gnosis" not in supported  # No safe address in our test setup
+        assert "mode" not in supported    # No safe address in our test setup
+
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_build_safe_transaction_empty_data_handling(self, mock_safe_class, mock_eth_client):
+        """Test Safe transaction building with empty data."""
+        mock_safe_tx = Mock()
+        mock_safe_tx.to = "0x4567890123456789012345678901234567890123"
+        mock_safe_tx.value = 0
+        mock_safe_tx.data = None  # Empty data case
+        mock_safe_tx.operation = 0
+        mock_safe_tx.safe_tx_gas = 21000
+        mock_safe_tx.base_gas = 0
+        mock_safe_tx.gas_price = 0
+        mock_safe_tx.gas_token = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.refund_receiver = "0x0000000000000000000000000000000000000000"
+        mock_safe_tx.safe_nonce = 0
+        mock_safe_tx.safe_tx_hash = Mock()
+        mock_safe_tx.safe_tx_hash.hex.return_value = "0xemptydata"
+        
+        mock_safe = Mock()
+        mock_safe.build_multisig_tx.return_value = mock_safe_tx
+        mock_safe_class.return_value = mock_safe
+
+        with patch.object(self.service, "_rate_limit_base_rpc"):
+            result = await self.service.build_safe_transaction(
+                chain="base",
+                to="0x4567890123456789012345678901234567890123"
+            )
+
+        assert result["data"] == ""  # Should handle None data gracefully
+        assert result["value"] == 0
+        assert result["nonce"] == 0
