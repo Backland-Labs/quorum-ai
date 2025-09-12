@@ -2,7 +2,7 @@
 
 import json
 import time
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from web3 import Web3
 from eth_account import Account
 from safe_eth.eth import EthereumClient
@@ -40,7 +40,17 @@ SAFE_OPERATION_DELEGATECALL = 1
 
 
 class SafeService:
-    """Service for handling Safe multi-signature wallet transactions."""
+    """Service for handling Safe multi-signature wallet transactions.
+
+    Supports transactions on chains that have:
+    1. Safe contract address configured in SAFE_CONTRACT_ADDRESSES
+    2. RPC endpoint configured
+    3. Safe Transaction Service API available
+
+    Currently supported chains: ethereum, gnosis, base, mode
+
+    Use get_supported_chains() to check which chains are available in your configuration.
+    """
 
     def __init__(self):
         """Initialize Safe service with configuration."""
@@ -71,6 +81,58 @@ class SafeService:
             f"safe_addresses={configured_safes}, "
             f"available_chains={available_chains})"
         )
+
+    def is_chain_fully_configured(self, chain: str) -> bool:
+        """Check if a chain has all required configuration for Safe transactions.
+        
+        Args:
+            chain: Chain name to validate
+            
+        Returns:
+            True if chain has Safe address, RPC endpoint, and Safe service URL
+        """
+        has_safe_address = (
+            chain in self.safe_addresses 
+            and self.safe_addresses[chain]
+        )
+        has_rpc_endpoint = (
+            chain in self.rpc_endpoints 
+            and self.rpc_endpoints[chain]
+        )
+        has_safe_service = chain in SAFE_SERVICE_URLS
+        
+        return has_safe_address and has_rpc_endpoint and has_safe_service
+
+    def get_supported_chains(self) -> List[str]:
+        """Get list of chains that are fully configured for Safe transactions.
+        
+        Returns:
+            List of chain names with complete configuration
+        """
+        return [
+            chain for chain in SAFE_SERVICE_URLS.keys()
+            if self.is_chain_fully_configured(chain)
+        ]
+
+    def validate_chain_configuration(self, chain: str) -> Dict[str, Any]:
+        """Validate chain configuration and return detailed status.
+        
+        Args:
+            chain: Chain name to validate
+            
+        Returns:
+            Dict with validation details including what's missing
+        """
+        return {
+            "chain": chain,
+            "has_safe_address": chain in self.safe_addresses and bool(self.safe_addresses[chain]),
+            "has_rpc_endpoint": chain in self.rpc_endpoints and bool(self.rpc_endpoints[chain]),
+            "has_safe_service_url": chain in SAFE_SERVICE_URLS,
+            "is_fully_configured": self.is_chain_fully_configured(chain),
+            "safe_address": self.safe_addresses.get(chain),
+            "rpc_endpoint": self.rpc_endpoints.get(chain),
+            "safe_service_url": SAFE_SERVICE_URLS.get(chain),
+        }
 
     def _rate_limit_base_rpc(self, rpc_url: str) -> None:
         """Add rate limiting delay for Base mainnet RPC calls to prevent 429 errors.
@@ -122,27 +184,27 @@ class SafeService:
             ValueError: If no valid chain configuration found
         """
         # Priority order: cheapest to most expensive gas fees
-        chain_priority = ["gnosis", "celo", "mode", "base", "ethereum"]
+        # Note: Only include chains that have Safe service URLs
+        chain_priority = ["gnosis", "mode", "base", "ethereum"]
 
         for chain in chain_priority:
-            if (
-                chain in self.safe_addresses
-                and chain in self.rpc_endpoints
-                and self.rpc_endpoints[chain]
-            ):
+            if self.is_chain_fully_configured(chain):
                 return chain
 
-        # Fallback to first available
-        available_chains = [
-            chain
-            for chain in self.safe_addresses.keys()
-            if chain in self.rpc_endpoints and self.rpc_endpoints[chain]
-        ]
+        # Fallback to first available fully configured chain
+        available_chains = self.get_supported_chains()
 
         if available_chains:
             return available_chains[0]
 
-        raise ValueError("No valid chain configuration found")
+        # Provide helpful error with list of what's needed
+        error_msg = (
+            "No valid chain configuration found. "
+            "Ensure at least one chain has: Safe address in SAFE_CONTRACT_ADDRESSES, "
+            "RPC endpoint configured, and is supported by Safe Transaction Service "
+            f"(supported chains: {', '.join(SAFE_SERVICE_URLS.keys())})"
+        )
+        raise ValueError(error_msg)
 
     async def _submit_safe_transaction(
         self,
@@ -173,6 +235,28 @@ class SafeService:
         ), "Value must be a non-negative integer"
         assert isinstance(data, bytes), "Data must be bytes"
 
+        # Validate chain is fully configured
+        if not self.is_chain_fully_configured(chain):
+            validation = self.validate_chain_configuration(chain)
+            supported_chains = self.get_supported_chains()
+            
+            missing_components = []
+            if not validation["has_safe_address"]:
+                missing_components.append("Safe contract address")
+            if not validation["has_rpc_endpoint"]:
+                missing_components.append("RPC endpoint")
+            if not validation["has_safe_service_url"]:
+                missing_components.append("Safe Transaction Service URL")
+            
+            error_msg = (
+                f"Chain '{chain}' is not fully configured for Safe transactions. "
+                f"Missing: {', '.join(missing_components)}. "
+                f"Supported chains: {', '.join(supported_chains)}"
+            )
+            
+            self.logger.error(error_msg)
+            return {"success": False, "error": error_msg}
+
         with log_span(
             self.logger, "safe_service._submit_safe_transaction", chain=chain, to=to
         ):
@@ -196,13 +280,8 @@ class SafeService:
                 # Initialize Safe instance
                 safe_instance = Safe(safe_address, eth_client)  # type: ignore
 
-                # Get Safe service for this chain
-                safe_service_url = SAFE_SERVICE_URLS.get(chain)
-                if not safe_service_url:
-                    raise ValueError(
-                        f"No Safe service URL configured for chain: {chain}"
-                    )
-
+                # Get Safe service for this chain (validation already done upfront)
+                safe_service_url = SAFE_SERVICE_URLS[chain]
                 safe_service = TransactionServiceApi(
                     network=chain,  # type: ignore
                     base_url=safe_service_url,
