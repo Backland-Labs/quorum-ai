@@ -16,11 +16,6 @@ from utils.eas_signature import generate_eas_delegated_signature
 
 from logging_config import setup_pearl_logger, log_span
 
-if not settings.get_base_rpc_endpoint():
-    raise RuntimeError(f"Safe service is disabled in configuration: enable_safe_service={settings.get_base_rpc_endpoint()}")
-
-assert settings.get_base_rpc_endpoint() is not None, "Base RPC endpoint must be set"
-
 # Constants for Safe service URLs
 SAFE_SERVICE_URLS = {
     "ethereum": "https://safe-transaction-mainnet.safe.global/",
@@ -54,6 +49,12 @@ class SafeService:
 
     def __init__(self):
         """Initialize Safe service with configuration."""
+        # Validate configuration early in initialization
+        if not settings.get_base_rpc_endpoint():
+            raise RuntimeError(f"Safe service is disabled in configuration: enable_safe_service={settings.get_base_rpc_endpoint()}")
+        
+        assert settings.get_base_rpc_endpoint() is not None, "Base RPC endpoint must be set"
+        
         self.logger = setup_pearl_logger(__name__)
         self.safe_addresses = json.loads(settings.safe_contract_addresses)
         self.rpc_endpoints = {
