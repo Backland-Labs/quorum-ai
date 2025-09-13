@@ -22,8 +22,10 @@ class Settings(BaseSettings):
 
     # Pearl logging constants
     VALID_LOG_LEVELS: ClassVar[List[str]] = ["DEBUG", "INFO", "WARNING", "ERROR"]
-    DEFAULT_LOG_LEVEL: ClassVar[str] = "INFO"
-    DEFAULT_LOG_FILE_PATH: ClassVar[str] = "log.txt"
+    DEFAULT_LOG_LEVEL: ClassVar[str] = "DEBUG"
+    DEFAULT_LOG_FILE_PATH: ClassVar[str] = "/app/store/logs/pearl/log.txt"
+    FALLBACK_LOG_LEVEL: ClassVar[str] = "INFO"  # For backward compatibility
+    FALLBACK_LOG_FILE_PATH: ClassVar[str] = "log.txt"  # For empty string fallback
 
     # Health check constants
     HEALTH_CHECK_TIMEOUT: int = Field(

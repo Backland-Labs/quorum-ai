@@ -43,4 +43,9 @@ jobs:
       run: uv sync --all-extras
 
     - name: Run tests
+      env:
+        # Clear environment variables that should be tested as defaults
+        SAFE_CONTRACT_ADDRESSES: ""
+        LOG_LEVEL: ""
+        LOG_FILE_PATH: ""
       run: uv run pytest tests/ -v
