@@ -25,11 +25,14 @@ class TestAgentRunConfiguration:
 
     def test_agent_run_config_from_env(self):
         """Test agent run configuration loading from environment variables."""
-        with patch.dict(os.environ, {
-            "ACTIVITY_CHECK_INTERVAL": "7200",
-            "PROPOSAL_CHECK_INTERVAL": "600",
-            "MIN_TIME_BEFORE_DEADLINE": "3600"
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "ACTIVITY_CHECK_INTERVAL": "7200",
+                "PROPOSAL_CHECK_INTERVAL": "600",
+                "MIN_TIME_BEFORE_DEADLINE": "3600",
+            },
+        ):
             test_settings = Settings()
             assert test_settings.activity_check_interval == 7200
             assert test_settings.proposal_check_interval == 600
@@ -69,7 +72,7 @@ class TestAgentRunConfiguration:
         """Test field constraints for agent run configuration."""
         # Test that pydantic field constraints work correctly
         test_settings = Settings()
-        
+
         # All intervals should be positive
         assert test_settings.activity_check_interval > 0
         assert test_settings.proposal_check_interval > 0
@@ -79,26 +82,25 @@ class TestAgentRunConfiguration:
 class TestAgentRunConfigurationExtensions:
     """Test new agent run configuration extensions."""
 
-
     def test_agent_run_config_hot_reload_support(self):
         """Test that configuration supports hot reloading."""
         # Create a test settings instance
         test_settings = Settings()
         original_threshold = test_settings.agent_confidence_threshold
         original_max_proposals = test_settings.max_proposals_per_run
-        
+
         # Test that we can reload configuration without restarting the application
-        with patch.dict(os.environ, {
-            "AGENT_CONFIDENCE_THRESHOLD": "0.9",
-            "MAX_PROPOSALS_PER_RUN": "5"
-        }):
+        with patch.dict(
+            os.environ,
+            {"AGENT_CONFIDENCE_THRESHOLD": "0.9", "MAX_PROPOSALS_PER_RUN": "5"},
+        ):
             # Reload configuration
             test_settings.reload_config()
-            
+
             # Verify that values were updated
             assert test_settings.agent_confidence_threshold == 0.9
             assert test_settings.max_proposals_per_run == 5
-            
+
         # Test get_agent_run_config method
         agent_config = test_settings.get_agent_run_config()
         assert isinstance(agent_config, dict)
@@ -112,17 +114,20 @@ class TestAgentRunConfigurationExtensions:
     def test_agent_run_config_env_var_handling(self):
         """Test environment variable handling for agent run configuration."""
         # Test that environment variables are properly parsed and validated
-        with patch.dict(os.environ, {
-            "ACTIVITY_CHECK_INTERVAL": "5400",  # 1.5 hours
-            "PROPOSAL_CHECK_INTERVAL": "450",   # 7.5 minutes
-            "MIN_TIME_BEFORE_DEADLINE": "2700",  # 45 minutes
-            "MAX_PROPOSALS_PER_RUN": "5",
-            "AGENT_CONFIDENCE_THRESHOLD": "0.8",
-            "PROPOSAL_FETCH_TIMEOUT": "45",
-            "VOTE_EXECUTION_TIMEOUT": "90",
-            "MAX_RETRY_ATTEMPTS": "5",
-            "RETRY_DELAY_SECONDS": "10"
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "ACTIVITY_CHECK_INTERVAL": "5400",  # 1.5 hours
+                "PROPOSAL_CHECK_INTERVAL": "450",  # 7.5 minutes
+                "MIN_TIME_BEFORE_DEADLINE": "2700",  # 45 minutes
+                "MAX_PROPOSALS_PER_RUN": "5",
+                "AGENT_CONFIDENCE_THRESHOLD": "0.8",
+                "PROPOSAL_FETCH_TIMEOUT": "45",
+                "VOTE_EXECUTION_TIMEOUT": "90",
+                "MAX_RETRY_ATTEMPTS": "5",
+                "RETRY_DELAY_SECONDS": "10",
+            },
+        ):
             test_settings = Settings()
             assert test_settings.activity_check_interval == 5400
             assert test_settings.proposal_check_interval == 450
@@ -137,17 +142,17 @@ class TestAgentRunConfigurationExtensions:
     def test_agent_run_config_integration_with_existing_config(self):
         """Test that agent run configuration integrates well with existing configuration."""
         test_settings = Settings()
-        
+
         # Verify that existing configuration still works
-        assert hasattr(test_settings, 'app_name')
-        assert hasattr(test_settings, 'debug')
-        assert hasattr(test_settings, 'host')
-        assert hasattr(test_settings, 'port')
-        
+        assert hasattr(test_settings, "app_name")
+        assert hasattr(test_settings, "debug")
+        assert hasattr(test_settings, "host")
+        assert hasattr(test_settings, "port")
+
         # Verify that agent run configuration is properly integrated
-        assert hasattr(test_settings, 'activity_check_interval')
-        assert hasattr(test_settings, 'proposal_check_interval')
-        assert hasattr(test_settings, 'min_time_before_deadline')
+        assert hasattr(test_settings, "activity_check_interval")
+        assert hasattr(test_settings, "proposal_check_interval")
+        assert hasattr(test_settings, "min_time_before_deadline")
 
     def test_agent_run_config_error_handling(self):
         """Test error handling for invalid agent run configuration."""
@@ -217,17 +222,20 @@ class TestAgentRunConfigurationExtensions:
     def test_agent_run_config_boundary_values(self):
         """Test boundary values for agent run configuration."""
         # Test minimum valid values
-        with patch.dict(os.environ, {
-            "ACTIVITY_CHECK_INTERVAL": "1",
-            "PROPOSAL_CHECK_INTERVAL": "1",
-            "MIN_TIME_BEFORE_DEADLINE": "1",
-            "MAX_PROPOSALS_PER_RUN": "1",
-            "AGENT_CONFIDENCE_THRESHOLD": "0.0",
-            "PROPOSAL_FETCH_TIMEOUT": "1",
-            "VOTE_EXECUTION_TIMEOUT": "1",
-            "MAX_RETRY_ATTEMPTS": "0",
-            "RETRY_DELAY_SECONDS": "1"
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "ACTIVITY_CHECK_INTERVAL": "1",
+                "PROPOSAL_CHECK_INTERVAL": "1",
+                "MIN_TIME_BEFORE_DEADLINE": "1",
+                "MAX_PROPOSALS_PER_RUN": "1",
+                "AGENT_CONFIDENCE_THRESHOLD": "0.0",
+                "PROPOSAL_FETCH_TIMEOUT": "1",
+                "VOTE_EXECUTION_TIMEOUT": "1",
+                "MAX_RETRY_ATTEMPTS": "0",
+                "RETRY_DELAY_SECONDS": "1",
+            },
+        ):
             test_settings = Settings()
             assert test_settings.activity_check_interval == 1
             assert test_settings.proposal_check_interval == 1
@@ -240,17 +248,20 @@ class TestAgentRunConfigurationExtensions:
             assert test_settings.retry_delay_seconds == 1
 
         # Test maximum valid values
-        with patch.dict(os.environ, {
-            "ACTIVITY_CHECK_INTERVAL": "86400",  # 24 hours
-            "PROPOSAL_CHECK_INTERVAL": "3600",   # 1 hour
-            "MIN_TIME_BEFORE_DEADLINE": "86400",  # 24 hours
-            "MAX_PROPOSALS_PER_RUN": "10",
-            "AGENT_CONFIDENCE_THRESHOLD": "1.0",
-            "PROPOSAL_FETCH_TIMEOUT": "300",  # 5 minutes
-            "VOTE_EXECUTION_TIMEOUT": "600",  # 10 minutes
-            "MAX_RETRY_ATTEMPTS": "10",
-            "RETRY_DELAY_SECONDS": "60"  # 1 minute
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "ACTIVITY_CHECK_INTERVAL": "86400",  # 24 hours
+                "PROPOSAL_CHECK_INTERVAL": "3600",  # 1 hour
+                "MIN_TIME_BEFORE_DEADLINE": "86400",  # 24 hours
+                "MAX_PROPOSALS_PER_RUN": "10",
+                "AGENT_CONFIDENCE_THRESHOLD": "1.0",
+                "PROPOSAL_FETCH_TIMEOUT": "300",  # 5 minutes
+                "VOTE_EXECUTION_TIMEOUT": "600",  # 10 minutes
+                "MAX_RETRY_ATTEMPTS": "10",
+                "RETRY_DELAY_SECONDS": "60",  # 1 minute
+            },
+        ):
             test_settings = Settings()
             assert test_settings.activity_check_interval == 86400
             assert test_settings.proposal_check_interval == 3600

@@ -478,19 +478,19 @@ class VoteDecision(BaseModel):
     def _round_confidence_to_precision(confidence: float) -> float:
         """Round confidence value to the specified decimal places."""
         # Runtime assertion: validate input assumptions
-        assert isinstance(
-            confidence, (int, float)
-        ), f"Expected numeric confidence, got {type(confidence)}"
-        assert (
-            0.0 <= confidence <= 1.0
-        ), f"Confidence must be between 0.0 and 1.0, got {confidence}"
+        assert isinstance(confidence, (int, float)), (
+            f"Expected numeric confidence, got {type(confidence)}"
+        )
+        assert 0.0 <= confidence <= 1.0, (
+            f"Confidence must be between 0.0 and 1.0, got {confidence}"
+        )
 
         rounded_value = round(confidence, CONFIDENCE_DECIMAL_PLACES)
 
         # Runtime assertion: validate output assumptions
-        assert (
-            0.0 <= rounded_value <= 1.0
-        ), f"Rounded confidence out of range: {rounded_value}"
+        assert 0.0 <= rounded_value <= 1.0, (
+            f"Rounded confidence out of range: {rounded_value}"
+        )
 
         return rounded_value
 
@@ -649,9 +649,9 @@ class AgentRunRequest(BaseModel):
         """Validate dry_run is boolean type."""
         # Runtime assertion: value must be boolean type
         assert isinstance(v, bool), f"Dry run must be boolean type, got {type(v)}"
-        assert (
-            v is True or v is False
-        ), f"Dry run must be exactly True or False, got {v}"
+        assert v is True or v is False, (
+            f"Dry run must be exactly True or False, got {v}"
+        )
 
         return v
 
@@ -700,9 +700,9 @@ class AgentRunResponse(BaseModel):
         """Validate proposals_analyzed is non-negative integer."""
         # Runtime assertion: value must be integer type
         assert isinstance(v, int), f"Proposals analyzed must be integer, got {type(v)}"
-        assert not isinstance(
-            v, bool
-        ), "Proposals analyzed cannot be boolean disguised as int"
+        assert not isinstance(v, bool), (
+            "Proposals analyzed cannot be boolean disguised as int"
+        )
 
         # Runtime assertion: value must be non-negative
         assert v >= 0, f"Proposals analyzed cannot be negative: {v}"
@@ -714,9 +714,9 @@ class AgentRunResponse(BaseModel):
     def validate_execution_time(cls, v: float) -> float:
         """Validate execution_time is non-negative float."""
         # Runtime assertion: value must be numeric type
-        assert isinstance(
-            v, (int, float)
-        ), f"Execution time must be numeric, got {type(v)}"
+        assert isinstance(v, (int, float)), (
+            f"Execution time must be numeric, got {type(v)}"
+        )
         assert v >= 0.0, f"Execution time cannot be negative: {v}"
 
         # Runtime assertion: value must be valid number
@@ -794,9 +794,9 @@ class UserPreferences(BaseModel):
     def validate_confidence_threshold(cls, v: float) -> float:
         """Validate confidence_threshold is between 0.0 and 1.0."""
         # Runtime assertion: value must be numeric type
-        assert isinstance(
-            v, (int, float)
-        ), f"Confidence threshold must be numeric, got {type(v)}"
+        assert isinstance(v, (int, float)), (
+            f"Confidence threshold must be numeric, got {type(v)}"
+        )
 
         # Check for NaN
         if v != v:  # NaN check
@@ -819,12 +819,12 @@ class UserPreferences(BaseModel):
     def validate_max_proposals_per_run(cls, v: int) -> int:
         """Validate max_proposals_per_run is between 1 and 10."""
         # Runtime assertion: value must be integer type
-        assert isinstance(
-            v, int
-        ), f"Max proposals per run must be integer, got {type(v)}"
-        assert not isinstance(
-            v, bool
-        ), "Max proposals per run cannot be boolean disguised as int"
+        assert isinstance(v, int), (
+            f"Max proposals per run must be integer, got {type(v)}"
+        )
+        assert not isinstance(v, bool), (
+            "Max proposals per run cannot be boolean disguised as int"
+        )
 
         # Runtime assertion: value must be within valid range
         assert 1 <= v <= 10, f"Max proposals per run must be between 1 and 10, got {v}"
@@ -981,8 +981,8 @@ class WithdrawalTransaction(BaseModel):
 
 class EASAttestationData(BaseModel):
     """Data model for EAS (Ethereum Attestation Service) attestations.
-    
-    Schema: address agent, string spaceId, string proposalId, uint8 voteChoice, 
+
+    Schema: address agent, string spaceId, string proposalId, uint8 voteChoice,
             string snapshotSig, uint256 timestamp, string runId, uint8 confidence
     """
 

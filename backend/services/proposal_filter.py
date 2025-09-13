@@ -39,9 +39,9 @@ class ProposalFilter:
             preferences: UserPreferences object containing filtering criteria
         """
         # Runtime assertions for critical initialization validation
-        assert isinstance(
-            preferences, UserPreferences
-        ), "Preferences must be UserPreferences instance"
+        assert isinstance(preferences, UserPreferences), (
+            "Preferences must be UserPreferences instance"
+        )
 
         self.preferences = preferences
 
@@ -72,9 +72,9 @@ class ProposalFilter:
         """
         # Runtime assertions for input validation
         assert isinstance(proposals, list), "Proposals must be a list"
-        assert all(
-            isinstance(p, Proposal) for p in proposals
-        ), "All proposals must be Proposal objects"
+        assert all(isinstance(p, Proposal) for p in proposals), (
+            "All proposals must be Proposal objects"
+        )
 
         if not proposals:
             return []
@@ -94,9 +94,9 @@ class ProposalFilter:
 
             for proposal in proposals:
                 # Runtime assertion: validate proposal object
-                assert isinstance(
-                    proposal, Proposal
-                ), f"Invalid proposal object: {type(proposal)}"
+                assert isinstance(proposal, Proposal), (
+                    f"Invalid proposal object: {type(proposal)}"
+                )
 
                 # Check blacklist first (takes precedence)
                 if proposal.author in self.preferences.blacklisted_proposers:
@@ -138,12 +138,12 @@ class ProposalFilter:
             )
 
             # Runtime assertion: validate output
-            assert isinstance(
-                filtered_proposals, list
-            ), "Filtered proposals must be a list"
-            assert all(
-                isinstance(p, Proposal) for p in filtered_proposals
-            ), "All filtered proposals must be Proposal objects"
+            assert isinstance(filtered_proposals, list), (
+                "Filtered proposals must be a list"
+            )
+            assert all(isinstance(p, Proposal) for p in filtered_proposals), (
+                "All filtered proposals must be Proposal objects"
+            )
 
             return filtered_proposals
 
@@ -163,9 +163,9 @@ class ProposalFilter:
         """
         # Runtime assertions for input validation
         assert isinstance(proposals, list), "Proposals must be a list"
-        assert all(
-            isinstance(p, Proposal) for p in proposals
-        ), "All proposals must be Proposal objects"
+        assert all(isinstance(p, Proposal) for p in proposals), (
+            "All proposals must be Proposal objects"
+        )
 
         if not proposals:
             return []
@@ -207,12 +207,12 @@ class ProposalFilter:
 
             # Runtime assertion: validate output
             assert isinstance(ranked_proposals, list), "Ranked proposals must be a list"
-            assert all(
-                isinstance(p, Proposal) for p in ranked_proposals
-            ), "All ranked proposals must be Proposal objects"
-            assert len(ranked_proposals) == len(
-                proposals
-            ), "Ranking must preserve proposal count"
+            assert all(isinstance(p, Proposal) for p in ranked_proposals), (
+                "All ranked proposals must be Proposal objects"
+            )
+            assert len(ranked_proposals) == len(proposals), (
+                "Ranking must preserve proposal count"
+            )
 
             return ranked_proposals
 
@@ -289,9 +289,9 @@ class ProposalFilter:
             Float urgency factor (higher for more urgent)
         """
         # Runtime assertion: validate input
-        assert isinstance(
-            time_until_deadline, int
-        ), "Time until deadline must be integer"
+        assert isinstance(time_until_deadline, int), (
+            "Time until deadline must be integer"
+        )
 
         if time_until_deadline <= 0:
             # Proposal has already ended (expired)
@@ -348,12 +348,12 @@ class ProposalFilter:
         voting_power_factor = min(log_score / 6.0, 1.0)
 
         # Runtime assertion: validate output
-        assert isinstance(
-            voting_power_factor, float
-        ), "Voting power factor must be float"
-        assert (
-            0.0 <= voting_power_factor <= 1.0
-        ), "Voting power factor must be between 0 and 1"
+        assert isinstance(voting_power_factor, float), (
+            "Voting power factor must be float"
+        )
+        assert 0.0 <= voting_power_factor <= 1.0, (
+            "Voting power factor must be between 0 and 1"
+        )
 
         return voting_power_factor
 
@@ -381,12 +381,12 @@ class ProposalFilter:
         participation_factor = min(log_votes / 3.0, 1.0)
 
         # Runtime assertion: validate output
-        assert isinstance(
-            participation_factor, float
-        ), "Participation factor must be float"
-        assert (
-            0.0 <= participation_factor <= 1.0
-        ), "Participation factor must be between 0 and 1"
+        assert isinstance(participation_factor, float), (
+            "Participation factor must be float"
+        )
+        assert 0.0 <= participation_factor <= 1.0, (
+            "Participation factor must be between 0 and 1"
+        )
 
         return participation_factor
 
@@ -438,8 +438,8 @@ class ProposalFilter:
 
         # Runtime assertion: validate output
         assert isinstance(metrics, dict), "Metrics must be a dictionary"
-        assert all(
-            isinstance(k, str) for k in metrics.keys()
-        ), "All metric keys must be strings"
+        assert all(isinstance(k, str) for k in metrics.keys()), (
+            "All metric keys must be strings"
+        )
 
         return metrics

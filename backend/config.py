@@ -461,10 +461,11 @@ class Settings(BaseSettings):
         safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
         if safe_addresses_env:
             addresses = {}
-            
+
             # Try parsing as JSON first
             try:
                 import json
+
                 parsed_json = json.loads(safe_addresses_env)
                 if isinstance(parsed_json, dict):
                     addresses = parsed_json
@@ -485,7 +486,7 @@ class Settings(BaseSettings):
                             # Auto-assign BASE_SAFE_ADDRESS if "base" key exists and not already set
                             if dao == "base" and not self.base_safe_address:
                                 self.base_safe_address = address
-            
+
             self.safe_addresses = addresses
 
     def _parse_agent_address(self):
@@ -732,7 +733,9 @@ class Settings(BaseSettings):
             if safe_addresses_env:
                 missing_vars.append("SAFE_CONTRACT_ADDRESSES must contain 'base' key")
             else:
-                missing_vars.append("BASE_SAFE_ADDRESS or SAFE_CONTRACT_ADDRESSES with 'base' key")
+                missing_vars.append(
+                    "BASE_SAFE_ADDRESS or SAFE_CONTRACT_ADDRESSES with 'base' key"
+                )
 
         # Check that at least one Base RPC endpoint is configured
         if not self.get_base_rpc_endpoint():

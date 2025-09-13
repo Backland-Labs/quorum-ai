@@ -124,9 +124,9 @@ class AgentRunService:
         """
         # Runtime assertions for critical method validation
         assert request is not None, "Request cannot be None"
-        assert isinstance(
-            request, AgentRunRequest
-        ), f"Request must be AgentRunRequest, got {type(request)}"
+        assert isinstance(request, AgentRunRequest), (
+            f"Request must be AgentRunRequest, got {type(request)}"
+        )
 
         start_time = time.time()
         errors = []
@@ -489,9 +489,9 @@ class AgentRunService:
             ProposalFetchError: When fetching proposals fails
         """
         # Runtime assertions for critical method validation
-        assert isinstance(
-            space_id, str
-        ), f"Space ID must be string, got {type(space_id)}"
+        assert isinstance(space_id, str), (
+            f"Space ID must be string, got {type(space_id)}"
+        )
         assert space_id.strip(), "Space ID must be non-empty string"
         assert isinstance(limit, int), f"Limit must be integer, got {type(limit)}"
         assert limit > 0, "Limit must be positive integer"
@@ -514,12 +514,12 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(
-                    proposals, list
-                ), f"Expected list of proposals, got {type(proposals)}"
-                assert all(
-                    isinstance(p, Proposal) for p in proposals
-                ), "All items must be Proposal objects"
+                assert isinstance(proposals, list), (
+                    f"Expected list of proposals, got {type(proposals)}"
+                )
+                assert all(isinstance(p, Proposal) for p in proposals), (
+                    "All items must be Proposal objects"
+                )
 
                 return proposals
 
@@ -547,15 +547,15 @@ class AgentRunService:
             AgentRunServiceError: When filtering or ranking proposals fails
         """
         # Runtime assertions for critical method validation
-        assert isinstance(
-            proposals, list
-        ), f"Proposals must be a list, got {type(proposals)}"
-        assert isinstance(
-            preferences, UserPreferences
-        ), f"Preferences must be UserPreferences, got {type(preferences)}"
-        assert all(
-            isinstance(p, Proposal) for p in proposals
-        ), "All proposals must be Proposal objects"
+        assert isinstance(proposals, list), (
+            f"Proposals must be a list, got {type(proposals)}"
+        )
+        assert isinstance(preferences, UserPreferences), (
+            f"Preferences must be UserPreferences, got {type(preferences)}"
+        )
+        assert all(isinstance(p, Proposal) for p in proposals), (
+            "All proposals must be Proposal objects"
+        )
 
         if not proposals:
             return []
@@ -619,15 +619,15 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(
-                    final_proposals, list
-                ), f"Expected list of proposals, got {type(final_proposals)}"
-                assert all(
-                    isinstance(p, Proposal) for p in final_proposals
-                ), "All filtered proposals must be Proposal objects"
-                assert len(final_proposals) <= len(
-                    proposals
-                ), "Filtered count cannot exceed original count"
+                assert isinstance(final_proposals, list), (
+                    f"Expected list of proposals, got {type(final_proposals)}"
+                )
+                assert all(isinstance(p, Proposal) for p in final_proposals), (
+                    "All filtered proposals must be Proposal objects"
+                )
+                assert len(final_proposals) <= len(proposals), (
+                    "Filtered count cannot exceed original count"
+                )
 
                 return final_proposals
 
@@ -657,15 +657,15 @@ class AgentRunService:
             VotingDecisionError: When making voting decisions fails
         """
         # Runtime assertions for critical method validation
-        assert isinstance(
-            proposals, list
-        ), f"Proposals must be a list, got {type(proposals)}"
-        assert isinstance(
-            preferences, UserPreferences
-        ), f"Preferences must be UserPreferences, got {type(preferences)}"
-        assert all(
-            isinstance(p, Proposal) for p in proposals
-        ), "All proposals must be Proposal objects"
+        assert isinstance(proposals, list), (
+            f"Proposals must be a list, got {type(proposals)}"
+        )
+        assert isinstance(preferences, UserPreferences), (
+            f"Preferences must be UserPreferences, got {type(preferences)}"
+        )
+        assert all(isinstance(p, Proposal) for p in proposals), (
+            "All proposals must be Proposal objects"
+        )
 
         if not proposals:
             return []
@@ -712,12 +712,12 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(
-                    vote_decisions, list
-                ), f"Expected list of vote decisions, got {type(vote_decisions)}"
-                assert all(
-                    isinstance(d, VoteDecision) for d in vote_decisions
-                ), "All decisions must be VoteDecision objects"
+                assert isinstance(vote_decisions, list), (
+                    f"Expected list of vote decisions, got {type(vote_decisions)}"
+                )
+                assert all(isinstance(d, VoteDecision) for d in vote_decisions), (
+                    "All decisions must be VoteDecision objects"
+                )
 
                 return vote_decisions
 
@@ -747,18 +747,18 @@ class AgentRunService:
             VoteExecutionError: When executing votes fails
         """
         # Runtime assertions for critical method validation
-        assert isinstance(
-            decisions, list
-        ), f"Decisions must be a list, got {type(decisions)}"
-        assert (
-            isinstance(space_id, str) and space_id.strip()
-        ), f"Space ID must be non-empty string, got {space_id}"
-        assert isinstance(
-            dry_run, bool
-        ), f"Dry run must be boolean, got {type(dry_run)}"
-        assert all(
-            isinstance(d, VoteDecision) for d in decisions
-        ), "All decisions must be VoteDecision objects"
+        assert isinstance(decisions, list), (
+            f"Decisions must be a list, got {type(decisions)}"
+        )
+        assert isinstance(space_id, str) and space_id.strip(), (
+            f"Space ID must be non-empty string, got {space_id}"
+        )
+        assert isinstance(dry_run, bool), (
+            f"Dry run must be boolean, got {type(dry_run)}"
+        )
+        assert all(isinstance(d, VoteDecision) for d in decisions), (
+            "All decisions must be VoteDecision objects"
+        )
 
         if not decisions:
             return []
@@ -818,9 +818,11 @@ class AgentRunService:
                             if submission_result.get("success"):
                                 response = submission_result.get("response", {})
                                 vote_id = response.get("id")
-                            
+
                             # Queue attestation for successful vote with vote ID
-                            await self._queue_attestation(decision, space_id, run_id, vote_id)
+                            await self._queue_attestation(
+                                decision, space_id, run_id, vote_id
+                            )
                         else:
                             self.logger.log_vote_execution(
                                 decision, False, vote_result.get("error")
@@ -837,12 +839,12 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(
-                    executed_decisions, list
-                ), f"Expected list of executed decisions, got {type(executed_decisions)}"
-                assert all(
-                    isinstance(d, VoteDecision) for d in executed_decisions
-                ), "All executed decisions must be VoteDecision objects"
+                assert isinstance(executed_decisions, list), (
+                    f"Expected list of executed decisions, got {type(executed_decisions)}"
+                )
+                assert all(isinstance(d, VoteDecision) for d in executed_decisions), (
+                    "All executed decisions must be VoteDecision objects"
+                )
 
                 return executed_decisions
 
@@ -915,7 +917,7 @@ class AgentRunService:
             space_id: The space ID to process attestations for
         """
         print(f"DEBUG: _process_pending_attestations called for space_id={space_id}")
-        
+
         if not self.state_manager:
             print("DEBUG: No state_manager, returning early")
             return
@@ -925,25 +927,31 @@ class AgentRunService:
             checkpoint_name = f"agent_checkpoint_{space_id}"
             print(f"DEBUG: Loading checkpoint '{checkpoint_name}'")
             checkpoint = await self.state_manager.load_checkpoint(checkpoint_name)
-            
+
             if not checkpoint:
                 print(f"DEBUG: No checkpoint found for '{checkpoint_name}'")
                 return
-                
+
             if "pending_attestations" not in checkpoint:
-                print(f"DEBUG: No 'pending_attestations' key in checkpoint")
+                print("DEBUG: No 'pending_attestations' key in checkpoint")
                 return
-                
-            print(f"DEBUG: Checkpoint loaded successfully with keys: {list(checkpoint.keys())}")
-            print(f"DEBUG: Found {len(checkpoint['pending_attestations'])} pending attestations")
+
+            print(
+                f"DEBUG: Checkpoint loaded successfully with keys: {list(checkpoint.keys())}"
+            )
+            print(
+                f"DEBUG: Found {len(checkpoint['pending_attestations'])} pending attestations"
+            )
 
             pending_attestations = checkpoint["pending_attestations"]
             if not pending_attestations:
                 print("DEBUG: No pending attestations to process")
                 return
 
-            print(f"DEBUG: Starting to process {len(pending_attestations)} pending attestations")
-            
+            print(
+                f"DEBUG: Starting to process {len(pending_attestations)} pending attestations"
+            )
+
             self.pearl_logger.info(
                 f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
             )
@@ -968,10 +976,14 @@ class AgentRunService:
                         proposal_id=attestation["proposal_id"],
                         vote_choice=attestation["vote_choice"],
                         snapshot_sig=attestation["vote_tx_hash"],
-                        timestamp=int(datetime.fromisoformat(attestation["timestamp"]).timestamp())
+                        timestamp=int(
+                            datetime.fromisoformat(attestation["timestamp"]).timestamp()
+                        )
                         if isinstance(attestation["timestamp"], str)
                         else int(attestation["timestamp"]),
-                        run_id=attestation.get("run_id", f"{space_id}_{int(time.time())}"),
+                        run_id=attestation.get(
+                            "run_id", f"{space_id}_{int(time.time())}"
+                        ),
                         confidence=int(attestation.get("confidence", 80)),
                         retry_count=attestation.get("retry_count", 0),
                     )
@@ -1023,7 +1035,11 @@ class AgentRunService:
             )
 
     async def _queue_attestation(
-        self, decision: VoteDecision, space_id: str, run_id: str, vote_tx_hash: Optional[str] = None
+        self,
+        decision: VoteDecision,
+        space_id: str,
+        run_id: str,
+        vote_tx_hash: Optional[str] = None,
     ) -> None:
         """Queue an attestation for a successful vote.
 
@@ -1039,7 +1055,9 @@ class AgentRunService:
 
         try:
             # Load current checkpoint
-            checkpoint = await self.state_manager.load_checkpoint(f"agent_checkpoint_{space_id}")
+            checkpoint = await self.state_manager.load_checkpoint(
+                f"agent_checkpoint_{space_id}"
+            )
             if checkpoint is None:
                 checkpoint = {}
 
@@ -1056,7 +1074,7 @@ class AgentRunService:
             # Create attestation data
             # Use provided vote_tx_hash or create a valid placeholder
             tx_hash = vote_tx_hash if vote_tx_hash else "0x" + "0" * 64
-            
+
             attestation_data = {
                 "proposal_id": decision.proposal_id,
                 "vote_choice": VOTE_CHOICE_MAPPING[
@@ -1074,7 +1092,9 @@ class AgentRunService:
             checkpoint["pending_attestations"].append(attestation_data)
 
             # Save updated checkpoint
-            await self.state_manager.save_checkpoint(f"agent_checkpoint_{space_id}", checkpoint)
+            await self.state_manager.save_checkpoint(
+                f"agent_checkpoint_{space_id}", checkpoint
+            )
 
             self.pearl_logger.info(
                 f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: agent_checkpoint_{space_id}"

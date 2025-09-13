@@ -290,9 +290,9 @@ class TallyService:
     ) -> tuple[List[Proposal], Optional[str]]:
         """Fetch proposals based on filters."""
         assert filters, "Filters cannot be None"
-        assert isinstance(
-            filters, ProposalFilters
-        ), "Filters must be ProposalFilters instance"
+        assert isinstance(filters, ProposalFilters), (
+            "Filters must be ProposalFilters instance"
+        )
 
         query = self._build_proposals_query()
 
@@ -1397,9 +1397,9 @@ class TallyService:
         try:
             proposal = await self.get_proposal_by_id(proposal_id)
             if proposal:
-                assert isinstance(
-                    proposal.state, ProposalState
-                ), "Proposal state must be ProposalState enum"
+                assert isinstance(proposal.state, ProposalState), (
+                    "Proposal state must be ProposalState enum"
+                )
                 return proposal.state
             # Default to ACTIVE if proposal not found
             return ProposalState.ACTIVE
@@ -1411,9 +1411,9 @@ class TallyService:
     def _get_proposal_votes_cache_ttl(self, state: ProposalState) -> int:
         """Get cache TTL for proposal votes based on proposal state."""
         assert state, "Proposal state is required"
-        assert isinstance(
-            state, ProposalState
-        ), "State must be ProposalState enum instance"
+        assert isinstance(state, ProposalState), (
+            "State must be ProposalState enum instance"
+        )
 
         # Active proposals: configurable TTL (default 15 minutes)
         if state == ProposalState.ACTIVE:

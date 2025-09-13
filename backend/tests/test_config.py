@@ -52,27 +52,41 @@ class TestBlockchainConfiguration:
 
     def test_base_safe_address_auto_assigned_from_json_base_key(self):
         """Test that base_safe_address is auto-assigned when 'base' key exists in JSON format."""
-        test_addresses = '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca", "gnosis": "0x456"}'
+        test_addresses = (
+            '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca", "gnosis": "0x456"}'
+        )
         with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
             settings = Settings()
-            assert settings.base_safe_address == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
-            assert settings.safe_addresses["base"] == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            assert (
+                settings.base_safe_address
+                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            )
+            assert (
+                settings.safe_addresses["base"]
+                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            )
 
     def test_base_safe_address_auto_assigned_from_comma_separated_base_key(self):
         """Test that base_safe_address is auto-assigned when 'base' key exists in comma-separated format."""
         test_addresses = "base:0x07edA994E013AbC8619A5038455db3A6FBdd2Bca,gnosis:0x456"
         with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
             settings = Settings()
-            assert settings.base_safe_address == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
-            assert settings.safe_addresses["base"] == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            assert (
+                settings.base_safe_address
+                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            )
+            assert (
+                settings.safe_addresses["base"]
+                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+            )
 
     def test_base_safe_address_not_overridden_if_already_set(self):
         """Test that base_safe_address is not overridden if it's already explicitly set."""
         test_addresses = '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"}'
-        with patch.dict(os.environ, {
-            "SAFE_CONTRACT_ADDRESSES": test_addresses,
-            "BASE_SAFE_ADDRESS": "0x999"
-        }):
+        with patch.dict(
+            os.environ,
+            {"SAFE_CONTRACT_ADDRESSES": test_addresses, "BASE_SAFE_ADDRESS": "0x999"},
+        ):
             settings = Settings()
             # The explicitly set BASE_SAFE_ADDRESS should take precedence
             assert settings.base_safe_address == "0x999"
@@ -100,19 +114,25 @@ class TestBlockchainConfiguration:
     def test_safe_addresses_parsing_edge_cases(self):
         """Test safe_addresses parsing with edge cases."""
         # Test with spaces
-        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": "dao1: 0x123 , dao2: 0x456 "}):
+        with patch.dict(
+            os.environ, {"SAFE_CONTRACT_ADDRESSES": "dao1: 0x123 , dao2: 0x456 "}
+        ):
             settings = Settings()
             expected = {"dao1": "0x123", "dao2": "0x456"}
             assert settings.safe_addresses == expected
 
         # Test with empty values
-        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": "dao1:0x123,,dao2:0x456"}):
+        with patch.dict(
+            os.environ, {"SAFE_CONTRACT_ADDRESSES": "dao1:0x123,,dao2:0x456"}
+        ):
             settings = Settings()
             expected = {"dao1": "0x123", "dao2": "0x456"}
             assert settings.safe_addresses == expected
 
         # Test with malformed entries
-        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": "dao1:0x123,invalid,dao2:0x456"}):
+        with patch.dict(
+            os.environ, {"SAFE_CONTRACT_ADDRESSES": "dao1:0x123,invalid,dao2:0x456"}
+        ):
             settings = Settings()
             expected = {"dao1": "0x123", "dao2": "0x456"}
             assert settings.safe_addresses == expected
@@ -120,8 +140,6 @@ class TestBlockchainConfiguration:
 
 class TestAgentSpecificSettings:
     """Test agent-specific configuration settings."""
-
-
 
     def test_activity_check_interval_defaults_to_3600(self):
         """Test that activity_check_interval defaults to 3600 seconds (1 hour)."""
@@ -176,7 +194,6 @@ class TestAgentSpecificSettings:
                     Settings()
 
 
-
 class TestOlasStakingConfiguration:
     """Test Olas staking configuration settings."""
 
@@ -200,7 +217,9 @@ class TestOlasStakingConfiguration:
     def test_activity_checker_contract_address_loaded_from_env(self):
         """Test that activity_checker_contract_address is loaded from environment variable."""
         test_address = "0x987654321fedcba"
-        with patch.dict(os.environ, {"ACTIVITY_CHECKER_CONTRACT_ADDRESS": test_address}):
+        with patch.dict(
+            os.environ, {"ACTIVITY_CHECKER_CONTRACT_ADDRESS": test_address}
+        ):
             settings = Settings()
             assert settings.activity_checker_contract_address == test_address
 
@@ -212,7 +231,9 @@ class TestOlasStakingConfiguration:
     def test_service_registry_token_utility_contract_loaded_from_env(self):
         """Test that service_registry_token_utility_contract is loaded from environment variable."""
         test_address = "0xabcdef123456789"
-        with patch.dict(os.environ, {"SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_address}):
+        with patch.dict(
+            os.environ, {"SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_address}
+        ):
             settings = Settings()
             assert settings.service_registry_token_utility_contract == test_address
 
@@ -221,13 +242,13 @@ class TestOlasStakingConfiguration:
         test_staking = "0x111111111111111"
         test_activity = "0x222222222222222"
         test_registry = "0x333333333333333"
-        
+
         env_vars = {
             "STAKING_TOKEN_CONTRACT_ADDRESS": test_staking,
             "ACTIVITY_CHECKER_CONTRACT_ADDRESS": test_activity,
             "SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_registry,
         }
-        
+
         with patch.dict(os.environ, env_vars):
             settings = Settings()
             assert settings.staking_token_contract_address == test_staking
@@ -243,12 +264,12 @@ class TestOlasStakingConfiguration:
     def test_staking_contract_addresses_are_optional(self):
         """Test that all staking contract addresses are optional."""
         settings = Settings()
-        
+
         # All should be None by default
         assert settings.staking_token_contract_address is None
         assert settings.activity_checker_contract_address is None
         assert settings.service_registry_token_utility_contract is None
-        
+
         # Should be able to create settings without any staking config
         assert isinstance(settings, Settings)
 
@@ -256,11 +277,10 @@ class TestOlasStakingConfiguration:
 class TestAttestationTrackerConfiguration:
     """Test AttestationTracker configuration settings."""
 
-
     def test_attestation_tracker_address_loaded_from_env(self):
         """Test that attestation_tracker_address is loaded from environment variable."""
         test_address = "0x1234567890abcdef1234567890abcdef12345678"
-        expected_checksum = "0x1234567890AbcdEF1234567890aBcdef12345678" 
+        expected_checksum = "0x1234567890AbcdEF1234567890aBcdef12345678"
         with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": test_address}):
             settings = Settings()
             assert settings.attestation_tracker_address == expected_checksum
@@ -268,8 +288,14 @@ class TestAttestationTrackerConfiguration:
     def test_attestation_tracker_address_validation_valid_address(self):
         """Test that valid Ethereum addresses are accepted and converted to checksum format."""
         test_cases = [
-            ("0x1234567890abcdef1234567890abcdef12345678", "0x1234567890AbcdEF1234567890aBcdef12345678"),
-            ("0xAbCdEf123456789ABCDef123456789abcdef1234", "0xABCDEF123456789abcdeF123456789ABCDEf1234")
+            (
+                "0x1234567890abcdef1234567890abcdef12345678",
+                "0x1234567890AbcdEF1234567890aBcdef12345678",
+            ),
+            (
+                "0xAbCdEf123456789ABCDef123456789abcdef1234",
+                "0xABCDEF123456789abcdeF123456789ABCDEf1234",
+            ),
         ]
         for input_address, expected_address in test_cases:
             with patch.dict(os.environ, {"ATTESTATION_TRACKER_ADDRESS": input_address}):
@@ -326,13 +352,13 @@ class TestPropertyMethods:
         # Test the property logic directly by mocking os.getenv for specific calls
         test_daos = "test1.eth,test2.eth,test3.eth"
         settings = Settings(_env_file=None)
-        
+
         def mock_getenv(key, default=""):
             if key == "MONITORED_DAOS":
                 return test_daos
             return os.getenv(key, default)
-        
-        with patch('config.os.getenv', side_effect=mock_getenv):
+
+        with patch("config.os.getenv", side_effect=mock_getenv):
             expected = ["test1.eth", "test2.eth", "test3.eth"]
             result = settings.monitored_daos_list
             assert result == expected
@@ -355,13 +381,13 @@ class TestPropertyMethods:
         """Test that monitored_daos_list property handles spaces and empty values."""
         test_daos = " compound.eth , , nouns.eth , arbitrum.eth "
         settings = Settings(_env_file=None)
-        
+
         def mock_getenv(key, default=""):
             if key == "MONITORED_DAOS":
                 return test_daos
             return os.getenv(key, default)
-        
-        with patch('config.os.getenv', side_effect=mock_getenv):
+
+        with patch("config.os.getenv", side_effect=mock_getenv):
             expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
             result = settings.monitored_daos_list
             assert result == expected
@@ -399,15 +425,15 @@ class TestPropertyMethods:
     def test_property_methods_return_types(self):
         """Test that property methods return correct types."""
         settings = Settings(_env_file=None)
-        
+
         # Test return types
         assert isinstance(settings.monitored_daos_list, list)
         assert isinstance(settings.safe_addresses_dict, dict)
-        
+
         # Test that all items in list are strings
         for dao in settings.monitored_daos_list:
             assert isinstance(dao, str)
-        
+
         # Test that all dict keys and values are strings
         for key, value in settings.safe_addresses_dict.items():
             assert isinstance(key, str)
@@ -415,7 +441,7 @@ class TestPropertyMethods:
 
     def test_monitored_daos_list_property_with_empty_string(self):
         """Test that monitored_daos_list property handles empty string."""
-        with patch('config.os.getenv') as mock_getenv:
+        with patch("config.os.getenv") as mock_getenv:
             mock_getenv.return_value = ""
             settings = Settings(_env_file=None)
             # When empty, should fall back to default
