@@ -59,7 +59,7 @@ class TestBlockchainConfiguration:
             settings = Settings()
             assert (
                 settings.base_safe_address
-                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+                == "0x9876543210fedcba9876543210fedcba98765432"
             )
             assert (
                 settings.safe_addresses["base"]
@@ -73,7 +73,7 @@ class TestBlockchainConfiguration:
             settings = Settings()
             assert (
                 settings.base_safe_address
-                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+                == "0x9876543210fedcba9876543210fedcba98765432"
             )
             assert (
                 settings.safe_addresses["base"]
