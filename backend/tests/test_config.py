@@ -55,11 +55,11 @@ class TestBlockchainConfiguration:
         test_addresses = (
             '{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca", "gnosis": "0x456"}'
         )
-        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses, "BASE_SAFE_ADDRESS": ""}, clear=False):
             settings = Settings()
             assert (
                 settings.base_safe_address
-                == "0x9876543210fedcba9876543210fedcba98765432"
+                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
             )
             assert (
                 settings.safe_addresses["base"]
@@ -69,11 +69,11 @@ class TestBlockchainConfiguration:
     def test_base_safe_address_auto_assigned_from_comma_separated_base_key(self):
         """Test that base_safe_address is auto-assigned when 'base' key exists in comma-separated format."""
         test_addresses = "base:0x07edA994E013AbC8619A5038455db3A6FBdd2Bca,gnosis:0x456"
-        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
+        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses, "BASE_SAFE_ADDRESS": ""}, clear=False):
             settings = Settings()
             assert (
                 settings.base_safe_address
-                == "0x9876543210fedcba9876543210fedcba98765432"
+                == "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
             )
             assert (
                 settings.safe_addresses["base"]
