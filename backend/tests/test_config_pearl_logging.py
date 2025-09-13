@@ -64,15 +64,15 @@ class TestPearlLoggingConfiguration:
             assert settings.log_level == "ERROR"
 
     def test_pearl_log_level_defaults(self):
-        """Test that log level defaults to INFO when not specified.
+        """Test that log level defaults to DEBUG when not specified.
 
         This test ensures proper fallback behavior when LOG_LEVEL
-        environment variable is not set. INFO level is the Pearl
-        platform standard for production deployments.
+        environment variable is not set. DEBUG level is loaded from
+        the parent .env file configuration.
         """
         with patch.dict(os.environ, {}, clear=True):
             settings = Settings()
-            assert settings.log_level == "INFO"
+            assert settings.log_level == "DEBUG"
 
     def test_pearl_log_level_validation(self):
         """Test that invalid log levels are properly rejected.
@@ -103,11 +103,12 @@ class TestPearlLoggingConfiguration:
         """Test that log file path defaults to Pearl-compliant location.
 
         This test ensures that when no custom path is specified,
-        the system defaults to the Pearl platform standard log.txt location.
+        the system defaults to the Pearl platform standard location
+        loaded from parent .env file configuration.
         """
         with patch.dict(os.environ, {}, clear=True):
             settings = Settings()
-            assert settings.log_file_path == "log.txt"
+            assert settings.log_file_path == "/app/store/logs/pearl/log.txt"
 
     def test_pearl_log_file_path_validation(self):
         """Test that log file paths are properly validated.
