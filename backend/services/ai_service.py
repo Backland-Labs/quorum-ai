@@ -708,24 +708,22 @@ class AIService:
     def _get_effective_key(self) -> Optional[str]:
         """Get effective API key from settings or user preferences."""
         # Use effective key property that prioritizes user key
-        effective_key = getattr(settings, "effective_openrouter_api_key", None) or getattr(
-            settings, "openrouter_api_key", None
-        )
-        
-        
+        effective_key = getattr(
+            settings, "effective_openrouter_api_key", None
+        ) or getattr(settings, "openrouter_api_key", None)
+
         return effective_key
 
     def swap_api_key(self, new_key: Optional[str]) -> None:
         """Swap API key and reinitialize services under lock."""
-        
+
         with self._lock:
             self._api_key = new_key
             if new_key:
                 # Temporarily set settings key for model creation
                 old_key = getattr(settings, "openrouter_api_key", None)
                 settings.openrouter_api_key = new_key
-                
-                
+
                 try:
                     model = self._create_model()
                     if isinstance(model, OpenAIModel):
@@ -755,7 +753,6 @@ class AIService:
         DEFAULT_MODEL_FALLBACK = "google/gemini-2.0-flash-001"
 
         logger.info("Creating AI model")
-        
 
         # Runtime assertion: validate API key configuration
         assert settings.openrouter_api_key, "OpenRouter API key is not configured"
@@ -1338,7 +1335,7 @@ class AIService:
 
             # Process result - now returns ProposalSummary structure
             processed_result = (
-                result.output.model_dump(mode='json')
+                result.output.model_dump(mode="json")
                 if hasattr(result.output, "model_dump")
                 else result.output
             )

@@ -54,10 +54,10 @@ class KeyManager:
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
-        
+
         # Validate key file setup during initialization
         self._validate_key_file_setup()
-        
+
         logger.info(
             "KeyManager initialized",
             extra={"working_directory": str(self.working_directory)},
@@ -96,10 +96,10 @@ class KeyManager:
 
     def _validate_key_file_setup(self) -> None:
         """Validate that the key file exists and has secure permissions.
-        
+
         This method is called during initialization to provide early feedback
         about key file configuration issues.
-        
+
         Raises:
             KeyManagerError: If file doesn't exist or has insecure permissions.
         """

@@ -90,7 +90,9 @@ async def lifespan(_app: FastAPI):
 
     # Initialize services with state manager where needed
     ai_service = AIService()
-    agent_run_service = AgentRunService(state_manager=state_manager, ai_service=ai_service)
+    agent_run_service = AgentRunService(
+        state_manager=state_manager, ai_service=ai_service
+    )
     safe_service = SafeService()
     activity_service = ActivityService()
     user_preferences_service = UserPreferencesService(state_manager=state_manager)
@@ -197,12 +199,15 @@ if os.path.exists(static_path):
     # Mount frontend assets directory
     app_assets_path = os.path.join(static_path, "_app")
     if os.path.exists(app_assets_path):
-        app.mount("/_app", StaticFiles(directory=app_assets_path), name="frontend_assets")
-    
+        app.mount(
+            "/_app", StaticFiles(directory=app_assets_path), name="frontend_assets"
+        )
+
     # Mount favicon
     favicon_path = os.path.join(static_path, "favicon.png")
     if os.path.exists(favicon_path):
         from fastapi.responses import FileResponse
+
         @app.get("/favicon.png")
         async def serve_favicon():
             return FileResponse(favicon_path)
@@ -216,7 +221,6 @@ if os.path.exists(static_path):
             return FileResponse(index_file)
         else:
             return {"message": "Frontend not available - build frontend first"}
-
 
 
 # Exception handlers
@@ -915,9 +919,9 @@ async def get_user_preferences():
     with log_span(logger, "get_user_preferences"):
         try:
             # Runtime assertion: service must be initialized
-            assert (
-                user_preferences_service is not None
-            ), "User preferences service not initialized"
+            assert user_preferences_service is not None, (
+                "User preferences service not initialized"
+            )
 
             preferences = await user_preferences_service.load_preferences()
 
@@ -954,9 +958,9 @@ async def update_user_preferences(preferences: UserPreferences):
     with log_span(logger, "update_user_preferences"):
         try:
             # Runtime assertion: service must be initialized
-            assert (
-                user_preferences_service is not None
-            ), "User preferences service not initialized"
+            assert user_preferences_service is not None, (
+                "User preferences service not initialized"
+            )
             # Runtime assertion: preferences must have valid structure
             assert isinstance(preferences, UserPreferences), "Invalid preferences type"
 
