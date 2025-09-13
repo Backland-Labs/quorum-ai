@@ -7,14 +7,14 @@ on:
       - develop
     paths:
       - 'backend/**'
-      - '.github/workflows/backend-tests.yml'
+      - '.github/workflows/tests.yml'
   pull_request:
     branches:
       - main
       - develop
     paths:
       - 'backend/**'
-      - '.github/workflows/backend-tests.yml'
+      - '.github/workflows/tests.yml'
 
 defaults:
   run:
