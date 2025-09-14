@@ -44,9 +44,13 @@ class ABILoader:
             elif isinstance(data, dict) and "abi" in data:
                 abi = data["abi"]
                 if not isinstance(abi, list):
-                    raise ABILoaderError(f"Invalid ABI format for '{name}': 'abi' field is not a list")
+                    raise ABILoaderError(
+                        f"Invalid ABI format for '{name}': 'abi' field is not a list"
+                    )
             else:
-                raise ABILoaderError(f"Invalid ABI format for '{name}': expected list or object with 'abi' field")
+                raise ABILoaderError(
+                    f"Invalid ABI format for '{name}': expected list or object with 'abi' field"
+                )
 
             return abi
         except json.JSONDecodeError as e:

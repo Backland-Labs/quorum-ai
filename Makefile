@@ -28,8 +28,6 @@ clean-frontend:
 	@echo "🧹 Cleaning frontend files..."
 	rm -rf frontend/node_modules/
 	rm -rf frontend/build/
-	rm -f frontend/bun.lockb
-	rm -f frontend/package-lock.json
 	@echo "✅ Frontend cache files cleaned"
 
 clean-contracts:

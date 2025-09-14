@@ -168,9 +168,9 @@ class VotingService:
         """
         # Runtime assertions
         assert snapshot_message, "Snapshot message must not be empty"
-        assert (
-            "message" in snapshot_message
-        ), "Snapshot message must contain 'message' field"
+        assert "message" in snapshot_message, (
+            "Snapshot message must contain 'message' field"
+        )
 
         # Constants
         HEX_PREFIX = "0x"

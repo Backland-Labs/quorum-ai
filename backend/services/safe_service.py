@@ -2,7 +2,7 @@
 
 import json
 import time
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from web3 import Web3
 from eth_account import Account
 from safe_eth.eth import EthereumClient
@@ -17,7 +17,7 @@ from utils.eas_signature import generate_eas_delegated_signature
 from logging_config import setup_pearl_logger, log_span
 
 if not settings.get_base_rpc_endpoint():
-    raise RuntimeError(f"Safe service is disabled in configuration: enable_safe_service={settings.get_base_rpc_endpoint()}")
+    raise RuntimeError(f"Set the BASE_RPC_URL. enable_safe_service={settings.get_base_rpc_endpoint()}")
 
 assert settings.get_base_rpc_endpoint() is not None, "Base RPC endpoint must be set"
 
@@ -40,10 +40,30 @@ SAFE_OPERATION_DELEGATECALL = 1
 
 
 class SafeService:
-    """Service for handling Safe multi-signature wallet transactions."""
+    """Service for handling Safe multi-signature wallet transactions.
+
+    Supports transactions on chains that have:
+    1. Safe contract address configured in SAFE_CONTRACT_ADDRESSES
+    2. RPC endpoint configured
+    3. Safe Transaction Service API available
+
+    Currently supported chains: ethereum, gnosis, base, mode
+
+    Use get_supported_chains() to check which chains are available in your configuration.
+    """
 
     def __init__(self):
         """Initialize Safe service with configuration."""
+        # Validate configuration early in initialization
+        if not settings.get_base_rpc_endpoint():
+            raise RuntimeError(
+                f"Safe service is disabled in configuration: enable_safe_service={settings.get_base_rpc_endpoint()}"
+            )
+
+        assert settings.get_base_rpc_endpoint() is not None, (
+            "Base RPC endpoint must be set"
+        )
+
         self.logger = setup_pearl_logger(__name__)
         self.safe_addresses = json.loads(settings.safe_contract_addresses)
         self.rpc_endpoints = {
@@ -72,14 +92,65 @@ class SafeService:
             f"available_chains={available_chains})"
         )
 
+    def is_chain_fully_configured(self, chain: str) -> bool:
+        """Check if a chain has all required configuration for Safe transactions.
+
+        Args:
+            chain: Chain name to validate
+
+        Returns:
+            True if chain has Safe address, RPC endpoint, and Safe service URL
+        """
+        has_safe_address = chain in self.safe_addresses and self.safe_addresses[chain]
+        has_rpc_endpoint = chain in self.rpc_endpoints and self.rpc_endpoints[chain]
+        has_safe_service = chain in SAFE_SERVICE_URLS
+
+        return has_safe_address and has_rpc_endpoint and has_safe_service
+
+    def get_supported_chains(self) -> List[str]:
+        """Get list of chains that are fully configured for Safe transactions.
+
+        Returns:
+            List of chain names with complete configuration
+        """
+        return [
+            chain
+            for chain in SAFE_SERVICE_URLS.keys()
+            if self.is_chain_fully_configured(chain)
+        ]
+
+    def validate_chain_configuration(self, chain: str) -> Dict[str, Any]:
+        """Validate chain configuration and return detailed status.
+
+        Args:
+            chain: Chain name to validate
+
+        Returns:
+            Dict with validation details including what's missing
+        """
+        return {
+            "chain": chain,
+            "has_safe_address": chain in self.safe_addresses
+            and bool(self.safe_addresses[chain]),
+            "has_rpc_endpoint": chain in self.rpc_endpoints
+            and bool(self.rpc_endpoints[chain]),
+            "has_safe_service_url": chain in SAFE_SERVICE_URLS,
+            "is_fully_configured": self.is_chain_fully_configured(chain),
+            "safe_address": self.safe_addresses.get(chain),
+            "rpc_endpoint": self.rpc_endpoints.get(chain),
+            "safe_service_url": SAFE_SERVICE_URLS.get(chain),
+        }
+
     def _rate_limit_base_rpc(self, rpc_url: str) -> None:
         """Add rate limiting delay for Base mainnet RPC calls to prevent 429 errors.
-        
+
         Args:
             rpc_url: The RPC endpoint URL to check
         """
         if "mainnet.base.org" in rpc_url:
-            self.logger.debug(f"Adding 1-second delay for Base mainnet RPC call to {rpc_url}")
+            self.logger.debug(
+                f"Adding 1-second delay for Base mainnet RPC call to {rpc_url}"
+            )
             time.sleep(1.0)
 
     def get_web3_connection(self, chain: str) -> Web3:
@@ -122,27 +193,27 @@ class SafeService:
             ValueError: If no valid chain configuration found
         """
         # Priority order: cheapest to most expensive gas fees
-        chain_priority = ["gnosis", "celo", "mode", "base", "ethereum"]
+        # Note: Only include chains that have Safe service URLs
+        chain_priority = ["gnosis", "mode", "base", "ethereum"]
 
         for chain in chain_priority:
-            if (
-                chain in self.safe_addresses
-                and chain in self.rpc_endpoints
-                and self.rpc_endpoints[chain]
-            ):
+            if self.is_chain_fully_configured(chain):
                 return chain
 
-        # Fallback to first available
-        available_chains = [
-            chain
-            for chain in self.safe_addresses.keys()
-            if chain in self.rpc_endpoints and self.rpc_endpoints[chain]
-        ]
+        # Fallback to first available fully configured chain
+        available_chains = self.get_supported_chains()
 
         if available_chains:
             return available_chains[0]
 
-        raise ValueError("No valid chain configuration found")
+        # Provide helpful error with list of what's needed
+        error_msg = (
+            "No valid chain configuration found. "
+            "Ensure at least one chain has: Safe address in SAFE_CONTRACT_ADDRESSES, "
+            "RPC endpoint configured, and is supported by Safe Transaction Service "
+            f"(supported chains: {', '.join(SAFE_SERVICE_URLS.keys())})"
+        )
+        raise ValueError(error_msg)
 
     async def _submit_safe_transaction(
         self,
@@ -168,10 +239,32 @@ class SafeService:
         # Runtime assertions for critical inputs
         assert isinstance(chain, str) and chain, "Chain must be a non-empty string"
         assert isinstance(to, str) and to, "To address must be a non-empty string"
-        assert (
-            isinstance(value, int) and value >= 0
-        ), "Value must be a non-negative integer"
+        assert isinstance(value, int) and value >= 0, (
+            "Value must be a non-negative integer"
+        )
         assert isinstance(data, bytes), "Data must be bytes"
+
+        # Validate chain is fully configured
+        if not self.is_chain_fully_configured(chain):
+            validation = self.validate_chain_configuration(chain)
+            supported_chains = self.get_supported_chains()
+
+            missing_components = []
+            if not validation["has_safe_address"]:
+                missing_components.append("Safe contract address")
+            if not validation["has_rpc_endpoint"]:
+                missing_components.append("RPC endpoint")
+            if not validation["has_safe_service_url"]:
+                missing_components.append("Safe Transaction Service URL")
+
+            error_msg = (
+                f"Chain '{chain}' is not fully configured for Safe transactions. "
+                f"Missing: {', '.join(missing_components)}. "
+                f"Supported chains: {', '.join(supported_chains)}"
+            )
+
+            self.logger.error(error_msg)
+            return {"success": False, "error": error_msg}
 
         with log_span(
             self.logger, "safe_service._submit_safe_transaction", chain=chain, to=to
@@ -187,7 +280,7 @@ class SafeService:
 
                 # Get Web3 and Ethereum client
                 w3 = self.get_web3_connection(chain)
-                
+
                 # Add rate limiting before creating EthereumClient
                 rpc_url = self.rpc_endpoints[chain]
                 self._rate_limit_base_rpc(rpc_url)
@@ -196,13 +289,8 @@ class SafeService:
                 # Initialize Safe instance
                 safe_instance = Safe(safe_address, eth_client)  # type: ignore
 
-                # Get Safe service for this chain
-                safe_service_url = SAFE_SERVICE_URLS.get(chain)
-                if not safe_service_url:
-                    raise ValueError(
-                        f"No Safe service URL configured for chain: {chain}"
-                    )
-
+                # Get Safe service for this chain (validation already done upfront)
+                safe_service_url = SAFE_SERVICE_URLS[chain]
                 safe_service = TransactionServiceApi(
                     network=chain,  # type: ignore
                     base_url=safe_service_url,
@@ -244,11 +332,13 @@ class SafeService:
                     safe_tx.call()  # This will reveal the specific revert reason if transaction would fail
                     self.logger.info("Transaction simulation successful")
                 except Exception as simulation_error:
-                    self.logger.error(f"Transaction simulation failed: {str(simulation_error)}")
+                    self.logger.error(
+                        f"Transaction simulation failed: {str(simulation_error)}"
+                    )
                     return {
-                        "success": False, 
+                        "success": False,
                         "error": f"Transaction would revert: {str(simulation_error)}",
-                        "simulation_failed": True
+                        "simulation_failed": True,
                     }
 
                 # Execute Safe transaction on-chain
@@ -295,7 +385,9 @@ class SafeService:
                         "gas_used": gas_used,
                     }
                 else:
-                    self.logger.exception(f"Transaction reverted (tx_hash={tx_hash_hex})")
+                    self.logger.exception(
+                        f"Transaction reverted (tx_hash={tx_hash_hex})"
+                    )
                     return {
                         "success": False,
                         "error": "Transaction reverted",
@@ -353,7 +445,7 @@ class SafeService:
         # Add rate limiting for Base mainnet RPC calls
         rpc_url = self.rpc_endpoints[chain]
         self._rate_limit_base_rpc(rpc_url)
-        
+
         eth_client = EthereumClient(rpc_url)  # type: ignore
         safe_instance = Safe(Web3.to_checksum_address(safe_address), eth_client)  # type: ignore
         return safe_instance.retrieve_nonce()
@@ -378,11 +470,11 @@ class SafeService:
             raise ValueError(f"No Safe address configured for chain: {chain}")
 
         safe_address = Web3.to_checksum_address(safe_address)
-        
+
         # Add rate limiting for Base mainnet RPC calls
         rpc_url = self.rpc_endpoints[chain]
         self._rate_limit_base_rpc(rpc_url)
-        
+
         eth_client = EthereumClient(rpc_url)  # type: ignore
         safe_instance = Safe(safe_address, eth_client)  # type: ignore
 
@@ -425,7 +517,7 @@ class SafeService:
                 f"space_id={attestation_data.space_id}, vote_choice={attestation_data.vote_choice}, "
                 f"agent={attestation_data.agent})"
             )
-            
+
             # Check if EAS configuration is available
             if not settings.eas_contract_address or not settings.eas_schema_uid:
                 self.logger.error(
@@ -438,7 +530,7 @@ class SafeService:
                 }
 
             if not settings.base_safe_address:
-                self.logger.error(f"Base Safe address not configured")
+                self.logger.error("Base Safe address not configured")
                 return {"success": False, "error": "Base Safe address not configured"}
 
             self.logger.info(
@@ -456,9 +548,15 @@ class SafeService:
             )
 
             # Convert hex string to bytes for Safe transaction
-            tx_data_bytes = bytes.fromhex(tx_data["data"][2:]) if tx_data["data"].startswith("0x") else bytes.fromhex(tx_data["data"])
+            tx_data_bytes = (
+                bytes.fromhex(tx_data["data"][2:])
+                if tx_data["data"].startswith("0x")
+                else bytes.fromhex(tx_data["data"])
+            )
 
-            self.logger.debug(f"Converted transaction data to bytes, length={len(tx_data_bytes)}")
+            self.logger.debug(
+                f"Converted transaction data to bytes, length={len(tx_data_bytes)}"
+            )
 
             # Submit through Safe
             self.logger.info("Submitting EAS attestation transaction through Safe")
@@ -479,7 +577,10 @@ class SafeService:
                     f"EAS attestation transaction failed - error={result.get('error')}"
                 )
 
-            return {"success": result.get("success", False), "safe_tx_hash": result.get("tx_hash")}
+            return {
+                "success": result.get("success", False),
+                "safe_tx_hash": result.get("tx_hash"),
+            }
 
         except Exception as e:
             self.logger.exception(
@@ -506,7 +607,7 @@ class SafeService:
             f"Building EAS attestation transaction - attestation_tracker_address={settings.attestation_tracker_address}, "
             f"eas_contract_address={settings.eas_contract_address}"
         )
-        
+
         # Use AttestationTracker if configured, otherwise direct EAS
         if settings.attestation_tracker_address:
             # Assertion for type checking
@@ -522,9 +623,11 @@ class SafeService:
             )
         else:
             if not settings.eas_contract_address:
-                self.logger.error("EAS contract address not configured for direct EAS call")
+                self.logger.error(
+                    "EAS contract address not configured for direct EAS call"
+                )
                 raise ValueError("EAS contract address not configured")
-            
+
             self.logger.info(
                 f"Using EIP712Proxy contract for attestation - "
                 f"proxy_address={settings.eas_contract_address}"
@@ -552,15 +655,19 @@ class SafeService:
             f"Building delegated attestation transaction - target_address={target_address}, "
             f"abi_name={abi_name}, attestation_chain={settings.attestation_chain}"
         )
-        
+
         from utils.web3_provider import get_w3
         from utils.abi_loader import load_abi
 
         # Get Web3 connection
-        self.logger.debug(f"Getting Web3 connection for chain: {settings.attestation_chain}")
+        self.logger.debug(
+            f"Getting Web3 connection for chain: {settings.attestation_chain}"
+        )
         w3 = get_w3(settings.attestation_chain)
-        current_block = w3.eth.get_block('latest')
-        self.logger.debug(f"Current block number: {current_block['number']}, timestamp: {current_block['timestamp']}")
+        current_block = w3.eth.get_block("latest")
+        self.logger.debug(
+            f"Current block number: {current_block['number']}, timestamp: {current_block['timestamp']}"
+        )
 
         # Load ABI using existing utility
         self.logger.debug(f"Loading ABI for contract type: {abi_name}")
@@ -573,9 +680,13 @@ class SafeService:
         self.logger.info(f"Created contract instance at address: {target_address}")
 
         eas_schema_uid = Web3.to_bytes(hexstr=settings.eas_schema_uid)
-        assert isinstance(eas_schema_uid, bytes), f"eas_schema_uid must be bytes, got {type(eas_schema_uid)}"
-        
-        self.logger.debug(f"EAS schema UID: {settings.eas_schema_uid} (as bytes: {eas_schema_uid.hex()})")
+        assert isinstance(eas_schema_uid, bytes), (
+            f"eas_schema_uid must be bytes, got {type(eas_schema_uid)}"
+        )
+
+        self.logger.debug(
+            f"EAS schema UID: {settings.eas_schema_uid} (as bytes: {eas_schema_uid.hex()})"
+        )
 
         # Encode attestation data
         self.logger.debug("Encoding attestation data")
@@ -583,7 +694,7 @@ class SafeService:
         self.logger.debug(f"Encoded attestation data length: {len(encoded_data)} bytes")
 
         # Build delegated attestation request with proper signature
-        deadline = int(current_block['timestamp']) + 3600  # 1 hour deadline
+        deadline = int(current_block["timestamp"]) + 3600  # 1 hour deadline
         attestation_request_data = {
             "schema": eas_schema_uid,
             "data": encoded_data,
@@ -594,36 +705,39 @@ class SafeService:
             "value": 0,
             "deadline": deadline,
         }
-        
+
         self.logger.info(
             f"Built attestation request data - schema={settings.eas_schema_uid}, "
             f"recipient={attestation_data.agent}, deadline={deadline}, "
             f"data_length={len(encoded_data)}"
         )
-        
+
         # Generate EAS delegated signature (always sign for EAS contract, not wrapper)
         eas_address = settings.eas_contract_address
         if not eas_address:
-            self.logger.error("EAS contract address not configured for signature generation")
+            self.logger.error(
+                "EAS contract address not configured for signature generation"
+            )
             raise ValueError("EAS contract address not configured")
-        
-        self.logger.debug(f"Generating EAS delegated signature for EAS contract: {eas_address}")
-        signature = self._generate_eas_delegated_signature(
-            attestation_request_data, 
-            w3, 
-            eas_address
+
+        self.logger.debug(
+            f"Generating EAS delegated signature for EAS contract: {eas_address}"
         )
-        
+        signature = self._generate_eas_delegated_signature(
+            attestation_request_data, w3, eas_address
+        )
+
         # For AttestationTracker, we need to use the new interface with 12 separate parameters
         if abi_name == "attestation_tracker":
             # Parse signature bytes into v, r, s components
             v = signature[64]
             r = signature[:32]
             s = signature[32:64]
-            
+
             # Get attester address from private key
             from eth_account import Account
             import os
+
             # Load private key from file or env
             private_key = None
             if os.path.exists("ethereum_private_key.txt"):
@@ -633,15 +747,17 @@ class SafeService:
                 private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
             else:
                 raise ValueError("Private key not found in file or environment")
-            
+
             attester = Account.from_key(private_key).address
-            
+
             self.logger.info(
                 f"Built delegated request for AttestationTracker with 12 params - attester={attester}, deadline={deadline}"
             )
-            
+
             # Build transaction with 12 separate parameters
-            self.logger.debug("Building attestByDelegation transaction with 12-parameter interface")
+            self.logger.debug(
+                "Building attestByDelegation transaction with 12-parameter interface"
+            )
             tx = contract.functions.attestByDelegation(
                 eas_schema_uid,  # schema
                 attestation_request_data["recipient"],  # recipient
@@ -654,7 +770,7 @@ class SafeService:
                 r,  # r
                 s,  # s
                 attester,  # attester
-                deadline  # deadline
+                deadline,  # deadline
             ).build_transaction(
                 {
                     "from": settings.base_safe_address,
@@ -666,10 +782,11 @@ class SafeService:
             v = signature[64]
             r = signature[:32]
             s = signature[32:64]
-            
+
             # Get attester address from private key
             from eth_account import Account
             import os
+
             private_key = None
             if os.path.exists("ethereum_private_key.txt"):
                 with open("ethereum_private_key.txt", "r") as f:
@@ -678,9 +795,9 @@ class SafeService:
                 private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
             else:
                 raise ValueError("Private key not found in file or environment")
-            
+
             attester = Account.from_key(private_key).address
-            
+
             # Build delegated request for EIP712Proxy with nested structure
             delegated_request = {
                 "schema": attestation_request_data["schema"],
@@ -707,7 +824,9 @@ class SafeService:
 
             # Build transaction
             self.logger.debug("Building attestByDelegation transaction")
-            tx = contract.functions.attestByDelegation(delegated_request).build_transaction(
+            tx = contract.functions.attestByDelegation(
+                delegated_request
+            ).build_transaction(
                 {
                     "from": settings.base_safe_address,
                     "gas": EAS_ATTESTATION_GAS_LIMIT,
@@ -726,7 +845,7 @@ class SafeService:
 
         The schema encodes:
         - agent (address)
-        - space_id (string) 
+        - space_id (string)
         - proposal_id (string)
         - vote_choice (uint8)
         - snapshot_sig (string)
@@ -744,10 +863,19 @@ class SafeService:
 
         # Ensure agent address is checksummed
         agent_address = Web3.to_checksum_address(attestation_data.agent)
-        
+
         # Encode the attestation data with new schema
         encoded = w3.codec.encode(
-            ["address", "string", "string", "uint8", "string", "uint256", "string", "uint8"],
+            [
+                "address",
+                "string",
+                "string",
+                "uint8",
+                "string",
+                "uint256",
+                "string",
+                "uint8",
+            ],
             [
                 agent_address,
                 attestation_data.space_id,
@@ -777,22 +905,22 @@ class SafeService:
 
         # Add rate limiting for Base mainnet RPC calls
         self._rate_limit_base_rpc(rpc_url)
-        
+
         return Web3(Web3.HTTPProvider(rpc_url))
 
     def _generate_eas_delegated_signature(
         self, request_data: Dict[str, Any], w3: Web3, eas_contract_address: str
     ) -> bytes:
         """Generate EIP-712 signature for EAS delegated attestation.
-        
+
         This method now delegates to the shared utility function to ensure
         consistency between SafeService and test scripts.
-        
+
         Args:
             request_data: The attestation request data (without signature)
             w3: Web3 instance
             eas_contract_address: EAS contract address
-            
+
         Returns:
             EIP-712 signature bytes
         """
@@ -800,28 +928,28 @@ class SafeService:
             f"Generating EAS delegated signature - chain_id={w3.eth.chain_id}, "
             f"eas_contract={eas_contract_address}, signer={self.account.address}"
         )
-        
+
         self.logger.debug(
             f"EIP-712 message - schema={request_data['schema'].hex()}, "
             f"recipient={request_data['recipient']}, deadline={request_data['deadline']}, "
             f"data_length={len(request_data['data'])}"
         )
-        
+
         # Use the shared signature generation function
         # Pass the private key from the loaded file
         with open("ethereum_private_key.txt", "r") as f:
             private_key = f.read().strip()
-        
+
         signature = generate_eas_delegated_signature(
             request_data=request_data,
             w3=w3,
             eas_contract_address=eas_contract_address,
-            private_key=private_key
+            private_key=private_key,
         )
-        
+
         self.logger.info(
             f"Generated EAS delegated signature successfully - signature_length={len(signature)}, "
             f"signature_hex={signature.hex()[:20]}..."
         )
-        
+
         return signature

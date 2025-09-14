@@ -81,12 +81,12 @@ class SnapshotService:
     def _parse_graphql_errors(self, error_details: list) -> str:
         """Parse GraphQL errors and return formatted error message."""
         # Runtime assertions for critical method validation
-        assert isinstance(
-            error_details, list
-        ), f"Error details must be a list, got {type(error_details)}"
-        assert all(
-            isinstance(error, dict) for error in error_details
-        ), "Each error must be a dictionary"
+        assert isinstance(error_details, list), (
+            f"Error details must be a list, got {type(error_details)}"
+        )
+        assert all(isinstance(error, dict) for error in error_details), (
+            "Each error must be a dictionary"
+        )
 
         error_messages = []
 
@@ -166,9 +166,9 @@ class SnapshotService:
         assert query and query.strip(), "GraphQL query cannot be empty or whitespace"
         assert self.client is not None, "HTTP client must be initialized"
         if variables is not None:
-            assert isinstance(
-                variables, dict
-            ), f"Variables must be dict or None, got {type(variables)}"
+            assert isinstance(variables, dict), (
+                f"Variables must be dict or None, got {type(variables)}"
+            )
 
     def _prepare_graphql_payload(
         self, query: str, variables: Optional[Dict[str, Any]]
@@ -225,9 +225,9 @@ class SnapshotService:
         """Validate GraphQL response structure and handle errors."""
         # Runtime assertions for critical validation
         assert isinstance(response_data, dict), "Response data must be a dictionary"
-        assert (
-            "data" in response_data or "errors" in response_data
-        ), "Response must contain 'data' or 'errors'"
+        assert "data" in response_data or "errors" in response_data, (
+            "Response must contain 'data' or 'errors'"
+        )
 
         # Check for GraphQL errors returned by Snapshot API
         errors = response_data.get("errors", [])
@@ -456,9 +456,9 @@ class SnapshotService:
             Space object if found, None otherwise
         """
         # Runtime assertion for critical input
-        assert space_id and isinstance(
-            space_id, str
-        ), "Space ID must be a non-empty string"
+        assert space_id and isinstance(space_id, str), (
+            "Space ID must be a non-empty string"
+        )
 
         variables = {"id": space_id}
 
@@ -498,9 +498,9 @@ class SnapshotService:
             Proposal object if found, None otherwise
         """
         # Runtime assertion for critical input
-        assert proposal_id and isinstance(
-            proposal_id, str
-        ), "Proposal ID must be a non-empty string"
+        assert proposal_id and isinstance(proposal_id, str), (
+            "Proposal ID must be a non-empty string"
+        )
 
         variables = {"id": proposal_id}
 

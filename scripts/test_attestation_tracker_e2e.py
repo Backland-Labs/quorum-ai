@@ -512,16 +512,14 @@ def main():
     # Use the provided attestation tracker address if available
     provided_tracker_address = os.getenv("ATTESTATION_TRACKER_ADDRESS", None)
     
-    # Start Anvil if needed
-    anvil_process = None
-    if os.getenv("AUTO_START_ANVIL", "false").lower() == "true":
-        anvil_process = start_anvil_if_needed()
+    # Always start Anvil if needed (no longer requires AUTO_START_ANVIL env var)
+    anvil_process = start_anvil_if_needed()
     
     # Connect to network
     print_info(f"Connecting to network at {RPC_URL}...")
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
     if not w3.is_connected():
-        print_error("Failed to connect to network. Make sure Anvil is running or set AUTO_START_ANVIL=true")
+        print_error("Failed to connect to network. Anvil failed to start.")
         if anvil_process:
             anvil_process.terminate()
         return 1
