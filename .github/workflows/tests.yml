@@ -48,4 +48,5 @@ jobs:
         SAFE_CONTRACT_ADDRESSES: ""
         LOG_LEVEL: ""
         LOG_FILE_PATH: ""
+        BASE_RPC_URL: "https://mainnet.base.org"
       run: uv run pytest tests/ -v
