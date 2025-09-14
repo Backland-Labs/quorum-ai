@@ -539,7 +539,7 @@ if docker image inspect backlandlabs/quorum:latest >/dev/null 2>&1; then
     echo "Using existing Docker image"
 else
     echo "Pulling Docker image..."
-    docker pull backlandlabs/quorum:latest || {
+    docker pull backlandlabs/quorum:bafybeie65whvrfjdobhuqadutwpcwx22bnpty2yveu6j4x2dcithfhlnea || {
         echo -e "${YELLOW}WARNING: Could not pull image, will try to build locally${NC}"
         if [ -f Dockerfile ]; then
             docker build -t backlandlabs/quorum:latest .
