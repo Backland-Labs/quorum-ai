@@ -47,7 +47,6 @@ class TestEASAttestationData:
         assert isinstance(attestation_data.timestamp, int)
         assert attestation_data.run_id == "test_run_123"
         assert attestation_data.confidence == 80
-
     def test_eas_attestation_data_with_transaction_details(self):
         """
         Test that EASAttestationData can track attestation transaction details.
@@ -90,7 +89,6 @@ class TestEASAttestationData:
         # Missing required fields
         with pytest.raises(ValidationError):
             EASAttestationData()
-
         # Invalid agent address format
         with pytest.raises(ValidationError):
             EASAttestationData(
@@ -132,7 +130,6 @@ class TestEASAttestationData:
         assert data_dict["vote_choice"] == 1
         assert data_dict["run_id"] == "test_run_123"
         assert data_dict["confidence"] == 80
-
         # Deserialize from dict
         restored_data = EASAttestationData(**data_dict)
         assert restored_data.proposal_id == attestation_data.proposal_id
