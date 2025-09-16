@@ -97,6 +97,35 @@ class TestSafeServiceInitialization:
         with pytest.raises(ValueError):
             SafeService()
 
+    @patch("services.safe_service.setup_pearl_logger")
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    )
+    @patch("services.safe_service.settings")
+    def test_init_with_non_checksummed_safe_addresses(
+        self, mock_settings, mock_file, mock_logger
+    ):
+        """Test SafeService initialization with non-checksummed addresses in config."""
+        # Use lowercase addresses to test that they are stored as-is but used with checksumming
+        mock_settings.safe_contract_addresses = (
+            '{"base": "0xae4acfd463525c9a160c78eb62b269578f6f5bbe", '  # lowercase version
+            '"gnosis": "0xe66364a0e0dec9a22713f3bac43f0d3f0790c1bd"}'  # lowercase version
+        )
+        mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
+        mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
+        mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
+        mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
+
+        service = SafeService()
+
+        # Verify addresses are stored as provided (lowercase)
+        assert service.safe_addresses == {
+            "base": "0xae4acfd463525c9a160c78eb62b269578f6f5bbe",
+            "gnosis": "0xe66364a0e0dec9a22713f3bac43f0d3f0790c1bd",
+        }
+
 
 class TestChainConfiguration:
     """Test chain configuration validation methods."""
@@ -339,6 +368,60 @@ class TestSafeTransactionBuilding:
         ):
             await self.service.build_safe_transaction(chain="unknown", to="0x456")
 
+    @patch("services.safe_service.Web3")
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_build_safe_transaction_with_non_checksummed_address(
+        self, mock_safe_class, mock_eth_client, mock_web3_class
+    ):
+        """Test that build_safe_transaction properly checksums non-checksummed addresses."""
+        # Setup service with lowercase (non-checksummed) addresses
+        with patch.object(
+            self.service,
+            "safe_addresses",
+            {"base": "0xae4acfd463525c9a160c78eb62b269578f6f5bbe"},  # lowercase address
+        ):
+            # Mock Web3.to_checksum_address to return checksummed version
+            mock_web3_class.to_checksum_address.return_value = (
+                "0xAe4aCFD463525c9a160C78eB62B269578F6f5BBE"  # checksummed version
+            )
+
+            # Mock Safe instance and transaction
+            mock_safe_tx = Mock()
+            mock_safe_tx.to = "0x456"
+            mock_safe_tx.value = 100
+            mock_safe_tx.data = b"test_data"
+            mock_safe_tx.operation = 0
+            mock_safe_tx.safe_tx_gas = 100000
+            mock_safe_tx.base_gas = 50000
+            mock_safe_tx.gas_price = 1000000000
+            mock_safe_tx.gas_token = "0x0000000000000000000000000000000000000000"
+            mock_safe_tx.refund_receiver = "0x0000000000000000000000000000000000000000"
+            mock_safe_tx.safe_nonce = 5
+            mock_safe_tx.safe_tx_hash = MockHash("0xabcd")
+
+            mock_safe = Mock()
+            mock_safe.build_multisig_tx.return_value = mock_safe_tx
+            mock_safe_class.return_value = mock_safe
+
+            with patch.object(self.service, "_rate_limit_base_rpc"):
+                result = await self.service.build_safe_transaction(
+                    chain="base", to="0x456", value=100, data=b"test_data"
+                )
+
+            # Verify Web3.to_checksum_address was called with the lowercase address
+            mock_web3_class.to_checksum_address.assert_called_once_with(
+                "0xae4acfd463525c9a160c78eb62b269578f6f5bbe"
+            )
+
+            # Verify Safe class was instantiated with the checksummed address
+            mock_safe_class.assert_called_once()
+            safe_init_args = mock_safe_class.call_args[0]
+            assert safe_init_args[0] == "0xAe4aCFD463525c9a160C78eB62B269578F6f5BBE"
+
+            # Verify the result contains the checksummed address
+            assert result["safe_address"] == "0xAe4aCFD463525c9a160C78eB62B269578F6f5BBE"
+
     @patch("services.safe_service.EthereumClient")
     @patch("services.safe_service.Safe")
     async def test_get_safe_nonce(self, mock_safe_class, mock_eth_client):
@@ -354,6 +437,40 @@ class TestSafeTransactionBuilding:
 
         assert nonce == 10
         mock_safe.retrieve_nonce.assert_called_once()
+
+    @patch("services.safe_service.Web3")
+    @patch("services.safe_service.EthereumClient")
+    @patch("services.safe_service.Safe")
+    async def test_get_safe_nonce_with_non_checksummed_address(
+        self, mock_safe_class, mock_eth_client, mock_web3_class
+    ):
+        """Test that get_safe_nonce properly checksums non-checksummed addresses."""
+        # Mock Web3.to_checksum_address to return checksummed version
+        mock_web3_class.to_checksum_address.return_value = (
+            "0xE66364a0E0dEC9a22713f3baC43F0d3F0790c1bD"  # checksummed version
+        )
+
+        mock_safe = Mock()
+        mock_safe.retrieve_nonce.return_value = 42
+        mock_safe_class.return_value = mock_safe
+
+        with patch.object(self.service, "_rate_limit_base_rpc"):
+            # Pass a lowercase (non-checksummed) address
+            nonce = await self.service.get_safe_nonce(
+                "base", "0xe66364a0e0dec9a22713f3bac43f0d3f0790c1bd"  # lowercase version
+            )
+
+        assert nonce == 42
+        
+        # Verify Web3.to_checksum_address was called with the lowercase address
+        mock_web3_class.to_checksum_address.assert_called_once_with(
+            "0xe66364a0e0dec9a22713f3bac43f0d3f0790c1bd"
+        )
+        
+        # Verify Safe class was instantiated with the checksummed address
+        mock_safe_class.assert_called_once()
+        safe_init_args = mock_safe_class.call_args[0]
+        assert safe_init_args[0] == "0xE66364a0E0dEC9a22713f3baC43F0d3F0790c1bD"
 
 
 class TestSafeTransactionSubmission:
