@@ -1,0 +1,21 @@
+name: Enforce Branch Policy
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR is from develop branch
+        if: github.head_ref != 'develop'
+        run: |
+          echo "❌ PRs to main must come from develop branch only"
+          echo "Current branch: ${{ github.head_ref }}"
+          exit 1
+      
+      - name: Approve branch source
+        if: github.head_ref == 'develop'
+        run: |
+          echo "✅ PR from develop branch approved"
