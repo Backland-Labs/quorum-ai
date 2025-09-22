@@ -1,0 +1,96 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.24;
+
+import {Script, console} from "forge-std/Script.sol";
+
+/**
+ * @title DeployStakingTokenScript
+ * @dev Deployment script for StakingToken contract with proper initialization.
+ * This script deploys and initializes a StakingToken instance for local testing.
+ */
+contract DeployStakingTokenScript is Script {
+    
+    /**
+     * @notice Main deployment function.
+     * @dev Deploys and initializes StakingToken contract with production-like parameters.
+     * @return stakingToken The deployed and initialized StakingToken contract.
+     */
+    function run() public returns (StakingToken stakingToken) {
+        // Get deployment parameters from environment
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployer = vm.addr(deployerPrivateKey);
+        
+        // Contract addresses from Base mainnet (for fork testing)
+        address serviceRegistry = 0x3C1fF68f5aa342D296d4DEe4Bb1cACCA912D95fE;
+        address activityChecker = 0x747262cC12524C571e08faCb6E6994EF2E3B97ab;
+        address serviceRegistryTokenUtility = 0x63e66d7ad413C01A7b49C7FF4e3Bb765C4E4bd1b;
+        address olasToken = 0x54330d28ca3357F294334BDC454a032e7f353416;
+        
+        console.log("=== StakingToken Deployment ===");
+        console.log("Deployer:", deployer);
+        console.log("Service Registry:", serviceRegistry);
+        console.log("Activity Checker:", activityChecker);
+        console.log("OLAS Token:", olasToken);
+        
+        // Prepare staking parameters (matching production values from docs)
+        StakingBase.StakingParams memory stakingParams = StakingBase.StakingParams({
+            metadataHash: keccak256("QuorumAI Staking Token Local"), // Unique metadata hash
+            maxNumServices: 2,                          // Max 2 services can stake
+            rewardsPerSecond: 824652777778,             // ~2.13 OLAS/month per service
+            minStakingDeposit: 10 ether,                // 10 OLAS minimum deposit
+            minNumStakingPeriods: 3,                    // Min 3 periods before unstaking
+            maxNumInactivityPeriods: 2,                 // Evicted after 2 inactive periods
+            livenessPeriod: 86400,                      // 24 hour activity check window
+            timeForEmissions: 2592000,                  // 30 day emission period
+            numAgentInstances: 1,                       // 1 agent instance per service
+            agentIds: new uint256[](0),                 // No specific agent requirements
+            threshold: 1,                               // Multisig threshold of 1
+            configHash: bytes32(0),                     // No specific config hash required
+            proxyHash: bytes32(0),                      // No specific proxy hash required
+            serviceRegistry: serviceRegistry,
+            activityChecker: activityChecker
+        });
+        
+        vm.startBroadcast(deployerPrivateKey);
+        
+        // Deploy StakingToken contract
+        stakingToken = new StakingToken();
+        
+        // Initialize the contract with parameters
+        stakingToken.initialize(
+            stakingParams,
+            serviceRegistryTokenUtility,
+            olasToken
+        );
+        
+        vm.stopBroadcast();
+        
+        // Log deployment information
+        console.log("StakingToken deployed to:", address(stakingToken));
+        console.log("Initialization successful!");
+        
+        // Verify deployment
+        require(address(stakingToken) != address(0), "Deployment failed");
+        require(stakingToken.serviceRegistry() == serviceRegistry, "Service Registry not set correctly");
+        require(stakingToken.activityChecker() == activityChecker, "Activity Checker not set correctly");
+        require(stakingToken.stakingToken() == olasToken, "Staking token not set correctly");
+        require(stakingToken.serviceRegistryTokenUtility() == serviceRegistryTokenUtility, "Token utility not set correctly");
+        
+        console.log("=== Deployment Verification ===");
+        console.log("Service Registry verified:", stakingToken.serviceRegistry());
+        console.log("Activity Checker verified:", stakingToken.activityChecker());
+        console.log("Staking Token verified:", stakingToken.stakingToken());
+        console.log("Min Staking Deposit:", stakingToken.minStakingDeposit());
+        console.log("Max Num Services:", stakingToken.maxNumServices());
+        console.log("Rewards Per Second:", stakingToken.rewardsPerSecond());
+        console.log("Liveness Period:", stakingToken.livenessPeriod());
+        
+        // Test state queries
+        console.log("=== Contract State ===");
+        console.log("Current Balance:", stakingToken.balance());
+        console.log("Available Rewards:", stakingToken.availableRewards());
+        console.log("Number of Services:", stakingToken.getNumServices());
+        
+        return stakingToken;
+    }
+}
