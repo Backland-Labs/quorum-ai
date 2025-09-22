@@ -51,6 +51,7 @@ coverage.xml
 
 # Logs
 *.log
+log.txt
 logs/
 
 # Database
