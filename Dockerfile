@@ -60,8 +60,7 @@ COPY --from=frontend-builder /app/frontend/build ./static/
 # Create necessary directories and set permissions
 RUN mkdir -p /app/logs && \
     chmod +x entrypoint.sh && \
-    chmod -R 777 /app/.venv && \
-    chmod -R 777 /app/.cache
+    chmod -R 777 /app
 
 # Expose the application port
 EXPOSE 8716
