@@ -106,7 +106,8 @@ class StateManager:
         if store_path_env:
             self.store_path = Path(store_path_env)
         else:
-            self.store_path = Path.home() / ".quorum_ai" / "state"
+            # Use /app/.quorum_ai/state as default (Docker-friendly)
+            self.store_path = Path("/app/.quorum_ai/state")
 
         # Ensure store path exists
         self.store_path.mkdir(parents=True, exist_ok=True)
