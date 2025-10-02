@@ -7,10 +7,10 @@
     "home_chain": "base",
     "configurations": {
         "base": {
-            "agent_id": 51,
-            "nft": "",
+            "agent_id": 76,
+            "nft": "bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
             "threshold": 1,
-            "use_mech_marketplace": false,
+            "use_mech_marketplace": true,
             "fund_requirements": {
                 "0x0000000000000000000000000000000000000000": {
                     "agent": 5000000000000000,
@@ -24,7 +24,7 @@
             "name": "Safe contract addresses",
             "description": "JSON string of Safe addresses per chain",
             "value": "{\"base\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\"}",
-            "provision_type": "user"
+            "provision_type": "computed"
         },
         "MONITORED_DAOS": {
             "name": "Monitored DAOs",
