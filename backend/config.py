@@ -450,17 +450,27 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def parse_env_settings(self):
         """Parse environment-specific settings after model initialization."""
+        self._parse_openrouter_api_key()
         self._parse_safe_addresses()
         self._parse_agent_address()
         self._parse_intervals()
         self._parse_agent_run_config()
         self._parse_pearl_logging_config()
         self._parse_olas_config()
+        self._parse_eas_config()
+        self._parse_rpc_config()
+        self._parse_chain_config()
         return self
+
+    def _parse_openrouter_api_key(self):
+        """Parse OpenRouter API key from OPENROUTER_API_KEY environment variable."""
+        api_key_env = get_env_with_prefix("OPENROUTER_API_KEY")
+        if api_key_env:
+            self.openrouter_api_key = api_key_env
 
     def _parse_safe_addresses(self):
         """Parse safe addresses from SAFE_CONTRACT_ADDRESSES environment variable."""
-        safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
+        safe_addresses_env = get_env_with_prefix("SAFE_CONTRACT_ADDRESSES")
         if safe_addresses_env:
             addresses = {}
             
@@ -492,7 +502,7 @@ class Settings(BaseSettings):
 
     def _parse_agent_address(self):
         """Parse agent address from AGENT_ADDRESS environment variable."""
-        agent_address_env = os.getenv("AGENT_ADDRESS")
+        agent_address_env = get_env_with_prefix("AGENT_ADDRESS")
         if agent_address_env:
             self.agent_address = agent_address_env
 
@@ -504,7 +514,7 @@ class Settings(BaseSettings):
 
     def _parse_activity_interval(self):
         """Parse activity check interval from ACTIVITY_CHECK_INTERVAL environment variable."""
-        activity_interval_env = os.getenv("ACTIVITY_CHECK_INTERVAL")
+        activity_interval_env = get_env_with_prefix("ACTIVITY_CHECK_INTERVAL")
         if activity_interval_env:
             interval = int(activity_interval_env)
             if interval <= 0:
@@ -515,7 +525,7 @@ class Settings(BaseSettings):
 
     def _parse_proposal_interval(self):
         """Parse proposal check interval from PROPOSAL_CHECK_INTERVAL environment variable."""
-        proposal_interval_env = os.getenv("PROPOSAL_CHECK_INTERVAL")
+        proposal_interval_env = get_env_with_prefix("PROPOSAL_CHECK_INTERVAL")
         if proposal_interval_env:
             interval = int(proposal_interval_env)
             if interval <= 0:
@@ -526,7 +536,7 @@ class Settings(BaseSettings):
 
     def _parse_deadline_time(self):
         """Parse minimum time before deadline from MIN_TIME_BEFORE_DEADLINE environment variable."""
-        deadline_time_env = os.getenv("MIN_TIME_BEFORE_DEADLINE")
+        deadline_time_env = get_env_with_prefix("MIN_TIME_BEFORE_DEADLINE")
         if deadline_time_env:
             time_val = int(deadline_time_env)
             if time_val <= 0:
@@ -546,7 +556,7 @@ class Settings(BaseSettings):
 
     def _parse_max_proposals_per_run(self):
         """Parse max proposals per run from MAX_PROPOSALS_PER_RUN environment variable."""
-        max_proposals_env = os.getenv("MAX_PROPOSALS_PER_RUN")
+        max_proposals_env = get_env_with_prefix("MAX_PROPOSALS_PER_RUN")
         if max_proposals_env:
             max_proposals = int(max_proposals_env)
             if not (1 <= max_proposals <= 10):
@@ -557,7 +567,7 @@ class Settings(BaseSettings):
 
     def _parse_agent_confidence_threshold(self):
         """Parse agent confidence threshold from AGENT_CONFIDENCE_THRESHOLD environment variable."""
-        confidence_threshold_env = os.getenv("AGENT_CONFIDENCE_THRESHOLD")
+        confidence_threshold_env = get_env_with_prefix("AGENT_CONFIDENCE_THRESHOLD")
         if confidence_threshold_env:
             threshold = float(confidence_threshold_env)
             if not (0.0 <= threshold <= 1.0):
@@ -568,7 +578,7 @@ class Settings(BaseSettings):
 
     def _parse_proposal_fetch_timeout(self):
         """Parse proposal fetch timeout from PROPOSAL_FETCH_TIMEOUT environment variable."""
-        timeout_env = os.getenv("PROPOSAL_FETCH_TIMEOUT")
+        timeout_env = get_env_with_prefix("PROPOSAL_FETCH_TIMEOUT")
         if timeout_env:
             timeout = int(timeout_env)
             if timeout <= 0:
@@ -579,7 +589,7 @@ class Settings(BaseSettings):
 
     def _parse_vote_execution_timeout(self):
         """Parse vote execution timeout from VOTE_EXECUTION_TIMEOUT environment variable."""
-        timeout_env = os.getenv("VOTE_EXECUTION_TIMEOUT")
+        timeout_env = get_env_with_prefix("VOTE_EXECUTION_TIMEOUT")
         if timeout_env:
             timeout = int(timeout_env)
             if timeout <= 0:
@@ -590,7 +600,7 @@ class Settings(BaseSettings):
 
     def _parse_max_retry_attempts(self):
         """Parse max retry attempts from MAX_RETRY_ATTEMPTS environment variable."""
-        max_retry_env = os.getenv("MAX_RETRY_ATTEMPTS")
+        max_retry_env = get_env_with_prefix("MAX_RETRY_ATTEMPTS")
         if max_retry_env:
             max_retry = int(max_retry_env)
             if not (0 <= max_retry <= 10):
@@ -601,7 +611,7 @@ class Settings(BaseSettings):
 
     def _parse_retry_delay_seconds(self):
         """Parse retry delay seconds from RETRY_DELAY_SECONDS environment variable."""
-        delay_env = os.getenv("RETRY_DELAY_SECONDS")
+        delay_env = get_env_with_prefix("RETRY_DELAY_SECONDS")
         if delay_env:
             delay = int(delay_env)
             if delay <= 0:
@@ -611,7 +621,7 @@ class Settings(BaseSettings):
     @property
     def monitored_daos_list(self) -> List[str]:
         """Parse comma-separated DAO list from environment."""
-        daos_env = os.getenv("MONITORED_DAOS", "")
+        daos_env = get_env_with_prefix("MONITORED_DAOS") or ""
         default_monitored_daos = "compound.eth,nouns.eth,arbitrum.eth"
         if not daos_env.strip():
             # Fall back to default when empty
@@ -621,7 +631,7 @@ class Settings(BaseSettings):
     @property
     def safe_addresses_dict(self) -> Dict[str, str]:
         """Parse safe addresses from environment variable."""
-        safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
+        safe_addresses_env = get_env_with_prefix("SAFE_CONTRACT_ADDRESSES") or ""
         if not safe_addresses_env:
             return {}
 
@@ -665,7 +675,7 @@ class Settings(BaseSettings):
 
     def _parse_pearl_logging_config(self):
         """Parse Pearl logging configuration from environment variables."""
-        log_level_env = os.getenv("LOG_LEVEL")
+        log_level_env = get_env_with_prefix("LOG_LEVEL")
         if log_level_env:
             level = log_level_env.upper()
             if level not in self.VALID_LOG_LEVELS:
@@ -674,7 +684,7 @@ class Settings(BaseSettings):
                 )
             self.log_level = level
 
-        log_file_path_env = os.getenv("LOG_FILE_PATH")
+        log_file_path_env = get_env_with_prefix("LOG_FILE_PATH")
         if log_file_path_env:
             if (
                 not log_file_path_env.strip()
@@ -730,7 +740,7 @@ class Settings(BaseSettings):
         # Check required Base network configuration for attestation transactions
         if not self.base_safe_address:
             # Check if SAFE_CONTRACT_ADDRESSES is configured but missing 'base' key
-            safe_addresses_env = os.getenv("SAFE_CONTRACT_ADDRESSES", "")
+            safe_addresses_env = get_env_with_prefix("SAFE_CONTRACT_ADDRESSES") or ""
             if safe_addresses_env:
                 missing_vars.append("SAFE_CONTRACT_ADDRESSES must contain 'base' key")
             else:
@@ -809,6 +819,112 @@ class Settings(BaseSettings):
                 addr.strip() for addr in dao_addresses_env.split(",") if addr.strip()
             ]
             self.dao_addresses = addresses
+
+        # Parse store_path with prefix support
+        store_path_env = get_env_with_prefix("STORE_PATH")
+        if store_path_env:
+            self.store_path = store_path_env
+
+    def _parse_eas_config(self):
+        """Parse EAS configuration from environment variables with prefix support."""
+        # Parse EAS contract address
+        eas_contract_env = get_env_with_prefix("EAS_CONTRACT_ADDRESS")
+        if eas_contract_env:
+            self.eas_contract_address = eas_contract_env
+
+        # Parse EAS schema UID
+        eas_schema_env = get_env_with_prefix("EAS_SCHEMA_UID")
+        if eas_schema_env:
+            self.eas_schema_uid = eas_schema_env
+
+        # Parse Base Safe address (skip Olas placeholder values)
+        base_safe_env = get_env_with_prefix("BASE_SAFE_ADDRESS")
+        if base_safe_env and not base_safe_env.startswith("str:"):
+            self.base_safe_address = base_safe_env
+
+        # Parse attestation tracker address
+        attestation_tracker_env = get_env_with_prefix("ATTESTATION_TRACKER_ADDRESS")
+        if attestation_tracker_env:
+            self.attestation_tracker_address = attestation_tracker_env
+
+        # Parse attestation chain
+        attestation_chain_env = get_env_with_prefix("ATTESTATION_CHAIN")
+        if attestation_chain_env:
+            self.attestation_chain = attestation_chain_env
+
+    def _parse_rpc_config(self):
+        """Parse RPC configuration from environment variables with prefix support."""
+        # Parse Base RPC URL
+        base_rpc_env = get_env_with_prefix("BASE_RPC_URL")
+        if base_rpc_env:
+            self.base_rpc_url = base_rpc_env
+
+        # Parse Base Ledger RPC
+        base_ledger_env = get_env_with_prefix("BASE_LEDGER_RPC")
+        if base_ledger_env:
+            self.base_ledger_rpc = base_ledger_env
+
+        # Parse Ethereum Ledger RPC
+        eth_ledger_env = get_env_with_prefix("ETHEREUM_LEDGER_RPC")
+        if eth_ledger_env:
+            self.ethereum_ledger_rpc = eth_ledger_env
+
+        # Parse Gnosis Ledger RPC
+        gnosis_ledger_env = get_env_with_prefix("GNOSIS_LEDGER_RPC")
+        if gnosis_ledger_env:
+            self.gnosis_ledger_rpc = gnosis_ledger_env
+
+        # Parse Mode Ledger RPC
+        mode_ledger_env = get_env_with_prefix("MODE_LEDGER_RPC")
+        if mode_ledger_env:
+            self.mode_ledger_rpc = mode_ledger_env
+
+        # Parse Celo Ledger RPC
+        celo_ledger_env = get_env_with_prefix("CELO_LEDGER_RPC")
+        if celo_ledger_env:
+            self.celo_ledger_rpc = celo_ledger_env
+
+        # Parse RPC URL (generic)
+        rpc_url_env = get_env_with_prefix("RPC_URL")
+        if rpc_url_env:
+            self.rpc_url = rpc_url_env
+
+    def _parse_chain_config(self):
+        """Parse chain and service configuration from environment variables with prefix support."""
+        # Parse chain ID
+        chain_id_env = get_env_with_prefix("CHAIN_ID")
+        if chain_id_env:
+            self.chain_id = int(chain_id_env)
+
+        # Parse debug flag
+        debug_env = get_env_with_prefix("DEBUG")
+        if debug_env:
+            self.debug = debug_env.lower() in ["true", "1", "yes"]
+
+        # Parse host
+        host_env = get_env_with_prefix("HOST")
+        if host_env:
+            self.host = host_env
+
+        # Parse port
+        port_env = get_env_with_prefix("PORT")
+        if port_env:
+            self.port = int(port_env)
+
+        # Parse staking token contract address
+        staking_token_env = get_env_with_prefix("STAKING_TOKEN_CONTRACT_ADDRESS")
+        if staking_token_env:
+            self.staking_token_contract_address = staking_token_env
+
+        # Parse activity checker contract address
+        activity_checker_env = get_env_with_prefix("ACTIVITY_CHECKER_CONTRACT_ADDRESS")
+        if activity_checker_env:
+            self.activity_checker_contract_address = activity_checker_env
+
+        # Parse service registry token utility contract
+        service_registry_env = get_env_with_prefix("SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT")
+        if service_registry_env:
+            self.service_registry_token_utility_contract = service_registry_env
 
     @property
     def effective_openrouter_api_key(self) -> Optional[str]:

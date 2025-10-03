@@ -31,6 +31,18 @@ def mock_safe_instance():
 
 
 @pytest.fixture
+def mock_key_manager():
+    """Create a mock KeyManager for SafeService tests."""
+    from unittest.mock import Mock, patch
+
+    with patch("services.safe_service.KeyManager") as mock_km_class:
+        mock_km = Mock()
+        mock_km.get_private_key.return_value = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        mock_km_class.return_value = mock_km
+        yield mock_km_class
+
+
+@pytest.fixture
 async def async_client():
     """Create an async FastAPI test client."""
     from httpx import ASGITransport

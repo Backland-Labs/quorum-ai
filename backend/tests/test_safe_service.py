@@ -8,6 +8,16 @@ import pytest
 from unittest.mock import Mock, patch, mock_open, AsyncMock
 
 
+@pytest.fixture(autouse=True)
+def _mock_key_manager_for_safe_service():
+    """Auto-mock KeyManager for all SafeService tests."""
+    with patch("services.safe_service.KeyManager") as mock_km_class:
+        mock_km = Mock()
+        mock_km.get_private_key.return_value = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        mock_km_class.return_value = mock_km
+        yield mock_km_class
+
+
 class MockHash(bytes):
     """Mock class for hash objects that support both hex() and direct bytes usage."""
 
@@ -40,13 +50,8 @@ class TestSafeServiceInitialization:
     """Test SafeService initialization and configuration."""
 
     @patch("services.safe_service.setup_pearl_logger")
-    @patch(
-        "builtins.open",
-        new_callable=mock_open,
-        read_data="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-    )
     @patch("services.safe_service.settings")
-    def test_init_with_valid_config(self, mock_settings, mock_file, mock_logger):
+    def test_init_with_valid_config(self, mock_settings, mock_logger):
         """Test SafeService initialization with valid configuration."""
         mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123"}'
         mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
@@ -62,16 +67,21 @@ class TestSafeServiceInitialization:
         }
         assert (
             service.private_key
-            == "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+            == "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
         )
         assert service.account.address is not None
         assert service._web3_connections == {}
 
     @patch("services.safe_service.setup_pearl_logger")
-    @patch("builtins.open", side_effect=FileNotFoundError)
+    @patch("services.safe_service.KeyManager")
     @patch("services.safe_service.settings")
-    def test_init_missing_private_key_file(self, mock_settings, mock_file, mock_logger):
+    def test_init_missing_private_key_file(self, mock_settings, mock_key_manager_class, mock_logger):
         """Test that SafeService raises error when private key file is missing."""
+        from services.key_manager import KeyManagerError
+
+        # Override autouse fixture to raise error
+        mock_key_manager_class.side_effect = KeyManagerError("Key file not found")
+
         mock_settings.safe_contract_addresses = (
             '{"base": "0x1234567890123456789012345678901234567890"}'
         )
@@ -80,14 +90,19 @@ class TestSafeServiceInitialization:
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
         mock_settings.mode_ledger_rpc = "https://mode-rpc.com"
 
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(KeyManagerError):
             SafeService()
 
     @patch("services.safe_service.setup_pearl_logger")
-    @patch("builtins.open", new_callable=mock_open, read_data="invalid_key")
+    @patch("services.safe_service.KeyManager")
     @patch("services.safe_service.settings")
-    def test_init_with_invalid_private_key(self, mock_settings, mock_file, mock_logger):
+    def test_init_with_invalid_private_key(self, mock_settings, mock_key_manager_class, mock_logger):
         """Test SafeService initialization with invalid private key."""
+        # Override autouse fixture to return invalid key
+        mock_key_manager = Mock()
+        mock_key_manager.get_private_key.return_value = "invalid_key"
+        mock_key_manager_class.return_value = mock_key_manager
+
         mock_settings.safe_contract_addresses = (
             '{"base": "0x1234567890123456789012345678901234567890"}'
         )
@@ -1004,8 +1019,7 @@ class TestUtilityMethods:
             self.service._get_web3_instance("unknown")
 
     @patch("services.safe_service.generate_eas_delegated_signature")
-    @patch("builtins.open", new_callable=mock_open, read_data="0xtest_key")
-    def test_generate_eas_delegated_signature(self, mock_file, mock_generate_sig):
+    def test_generate_eas_delegated_signature(self, mock_generate_sig):
         """Test EAS delegated signature generation."""
         mock_w3 = Mock()
         mock_w3.eth.chain_id = 8453
@@ -1028,7 +1042,7 @@ class TestUtilityMethods:
             request_data=request_data,
             w3=mock_w3,
             eas_contract_address="0x1234567890123456789012345678901234567890",
-            private_key="0xtest_key",
+            private_key="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
         )
 
 
@@ -1632,7 +1646,7 @@ class TestUtilityMethodsComprehensive:
             request_data=request_data,
             w3=mock_w3,
             eas_contract_address="0x12345678901234567890123456789012345678904567890123456789012345678901234567890",
-            private_key="ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+            private_key="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
         )
 
     @patch("services.safe_service.time.sleep")
@@ -2017,6 +2031,7 @@ class TestSafeServiceMissingCoverage:
             assert result["data"] == "0xabcd1234"
             assert result["value"] == 0
 
+    @pytest.mark.skip(reason="Obsolete: SafeService now uses KeyManager, private key loaded at init")
     def test_build_delegated_attestation_tx_no_private_key(self):
         """Test _build_delegated_attestation_tx when no private key is found."""
         attestation_data = EASAttestationData(
@@ -2098,9 +2113,8 @@ class TestSafeServiceMissingCoverage:
             assert agent_address == "0x4567890123456789012345678901234567890123"
 
     @patch("services.safe_service.generate_eas_delegated_signature")
-    @patch("builtins.open", new_callable=mock_open, read_data="test_private_key")
     def test_generate_eas_delegated_signature_detailed_logging(
-        self, mock_file, mock_generate_sig
+        self, mock_generate_sig
     ):
         """Test _generate_eas_delegated_signature with detailed logging."""
         mock_w3 = Mock()
@@ -2130,5 +2144,5 @@ class TestSafeServiceMissingCoverage:
             request_data=request_data,
             w3=mock_w3,
             eas_contract_address="0x12345678901234567890123456789012345678904567890123456789012345678901234567890",
-            private_key="test_private_key",
+            private_key="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
         )

@@ -25,6 +25,7 @@ WORKDIR /app
 # Set environment variables for UV and Python
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
+ENV UV_CACHE_DIR=/app/.cache/uv
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
@@ -41,6 +42,9 @@ RUN apt-get update && apt-get install -y \
 # Copy backend dependency files first for better Docker layer caching
 COPY backend/pyproject.toml backend/uv.lock ./
 
+# Create cache directory early with proper permissions
+RUN mkdir -p /app/.cache/uv
+
 # Install Python dependencies using UV
 RUN uv sync --frozen --no-install-project --no-dev
 
@@ -53,16 +57,10 @@ RUN uv sync --frozen --no-dev
 # Copy built frontend files from stage 1
 COPY --from=frontend-builder /app/frontend/build ./static/
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m appuser
-
 # Create necessary directories and set permissions
 RUN mkdir -p /app/logs && \
     chmod +x entrypoint.sh && \
-    chown -R appuser:appuser /app
-
-# Switch to non-root user
-USER appuser
+    chmod -R 777 /app
 
 # Expose the application port
 EXPOSE 8716

@@ -13,6 +13,7 @@ from config import settings
 
 from models import EASAttestationData
 from utils.eas_signature import generate_eas_delegated_signature
+from services.key_manager import KeyManager
 
 from logging_config import setup_pearl_logger, log_span
 
@@ -73,12 +74,10 @@ class SafeService:
             "mode": settings.mode_ledger_rpc,
         }
 
-        # Initialize account from private key
-        with open("ethereum_private_key.txt", "r") as f:
-            private_key = f.read().strip()
-
-        self.private_key = private_key
-        self.account = Account.from_key(private_key)
+        # Initialize account from private key using KeyManager
+        self.key_manager = KeyManager()
+        self.private_key = self.key_manager.get_private_key()
+        self.account = Account.from_key(self.private_key)
         self._web3_connections = {}
 
         # Log initialization details
@@ -735,20 +734,7 @@ class SafeService:
             s = signature[32:64]
 
             # Get attester address from private key
-            from eth_account import Account
-            import os
-
-            # Load private key from file or env
-            private_key = None
-            if os.path.exists("ethereum_private_key.txt"):
-                with open("ethereum_private_key.txt", "r") as f:
-                    private_key = f.read().strip()
-            elif os.getenv("ETHEREUM_PRIVATE_KEY"):
-                private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
-            else:
-                raise ValueError("Private key not found in file or environment")
-
-            attester = Account.from_key(private_key).address
+            attester = self.account.address
 
             self.logger.info(
                 f"Built delegated request for AttestationTracker with 12 params - attester={attester}, deadline={deadline}"
@@ -784,19 +770,7 @@ class SafeService:
             s = signature[32:64]
 
             # Get attester address from private key
-            from eth_account import Account
-            import os
-
-            private_key = None
-            if os.path.exists("ethereum_private_key.txt"):
-                with open("ethereum_private_key.txt", "r") as f:
-                    private_key = f.read().strip()
-            elif os.getenv("ETHEREUM_PRIVATE_KEY"):
-                private_key = os.getenv("ETHEREUM_PRIVATE_KEY")
-            else:
-                raise ValueError("Private key not found in file or environment")
-
-            attester = Account.from_key(private_key).address
+            attester = self.account.address
 
             # Build delegated request for EIP712Proxy with nested structure
             delegated_request = {
@@ -936,15 +910,11 @@ class SafeService:
         )
 
         # Use the shared signature generation function
-        # Pass the private key from the loaded file
-        with open("ethereum_private_key.txt", "r") as f:
-            private_key = f.read().strip()
-
         signature = generate_eas_delegated_signature(
             request_data=request_data,
             w3=w3,
             eas_contract_address=eas_contract_address,
-            private_key=private_key,
+            private_key=self.private_key,
         )
 
         self.logger.info(

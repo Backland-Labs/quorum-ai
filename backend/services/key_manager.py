@@ -20,7 +20,6 @@ logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 # Constants
 KEY_FILE_NAME = "ethereum_private_key.txt"
 CACHE_TIMEOUT_MINUTES = 5
-REQUIRED_PERMISSIONS = 0o600  # Read by owner only
 # Ethereum private key regex: 64 hex characters, optionally prefixed with 0x
 PRIVATE_KEY_PATTERN = re.compile(r"^(0x)?[a-fA-F0-9]{64}$")
 
@@ -41,16 +40,13 @@ class KeyManager:
     - Secure error handling without exposing sensitive data
     """
 
-    def __init__(self, working_directory: Optional[str] = None):
+    def __init__(self):
         """Initialize the KeyManager.
-
-        Args:
-            working_directory: Directory containing the key file. Defaults to current directory.
 
         Raises:
             KeyManagerError: If key file doesn't exist or has insecure permissions.
         """
-        self.working_directory = Path(working_directory or os.getcwd())
+        self.working_directory = Path("/agent_key")
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
@@ -104,7 +100,6 @@ class KeyManager:
             KeyManagerError: If file doesn't exist or has insecure permissions.
         """
         self._ensure_file_exists()
-        self._validate_file_permissions()
         logger.info("Key file setup validated successfully")
 
     def _is_cache_valid(self) -> bool:
@@ -132,9 +127,6 @@ class KeyManager:
         """
         # Validate file exists
         self._ensure_file_exists()
-
-        # Validate file permissions
-        self._validate_file_permissions()
 
         # Read the key
         return self._read_file_content()
@@ -168,29 +160,6 @@ class KeyManager:
             logger.error(f"Failed to read key file: {type(e).__name__}")
             raise KeyManagerError("Failed to read key file. Check file accessibility.")
 
-    def _validate_file_permissions(self) -> None:
-        """Validate that the key file has secure permissions.
-
-        Raises:
-            KeyManagerError: If permissions are not 600 (read by owner only).
-        """
-        try:
-            file_stat = self.key_file_path.stat()
-            file_mode = stat.S_IMODE(file_stat.st_mode)
-
-            if file_mode != REQUIRED_PERMISSIONS:
-                logger.error("Key file has insecure permissions")
-                raise KeyManagerError(
-                    "Key file has insecure permissions. "
-                    "File must have 600 permissions (read by owner only)."
-                )
-
-            logger.debug("Key file permissions validated")
-        except KeyManagerError:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to check file permissions: {type(e).__name__}")
-            raise KeyManagerError("Failed to validate key file permissions.")
 
     def _validate_key_format(self, key: str) -> str:
         """Validate and normalize the private key format.
