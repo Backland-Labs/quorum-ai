@@ -40,16 +40,13 @@ class KeyManager:
     - Secure error handling without exposing sensitive data
     """
 
-    def __init__(self, working_directory: Optional[str] = None):
+    def __init__(self):
         """Initialize the KeyManager.
-
-        Args:
-            working_directory: Directory containing the key file. Defaults to /agent_key.
 
         Raises:
             KeyManagerError: If key file doesn't exist or has insecure permissions.
         """
-        self.working_directory = Path(working_directory or "/agent_key")
+        self.working_directory = Path("/agent_key")
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
