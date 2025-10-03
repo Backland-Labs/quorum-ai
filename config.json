@@ -8,7 +8,7 @@
     "configurations": {
         "base": {
             "agent_id": 76,
-            "nft": "bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
+            "nft": "bafybeieslz435auxe2eb5jci5pq64so4bt66fqjpdn2gvymc46aupcsiwm",
             "threshold": 1,
             "use_mech_marketplace": true,
             "fund_requirements": {
