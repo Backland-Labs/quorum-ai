@@ -408,9 +408,14 @@ class Settings(BaseSettings):
         description="EAS contract address on Base network",
     )
     eas_schema_uid: Optional[str] = Field(
-        default="7d917fcbc9a29a9705ff9936ffa599500e4fd902e4486bae317414fe967b307c",
+        default="0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4",
         alias="EAS_SCHEMA_UID",
         description="EAS schema UID for vote attestations",
+    )
+    connection_configs_config_eas_schema_uid: Optional[str] = Field(
+        default="0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4",
+        alias="CONNECTION_CONFIGS_CONFIG_EAS_SCHEMA_UID",
+        description="EAS schema UID for connection configs",
     )
     base_safe_address: Optional[str] = Field(
         default=None,
