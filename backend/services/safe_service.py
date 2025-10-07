@@ -306,7 +306,7 @@ class SafeService:
                     value=value,
                     data=data,
                     operation=operation,
-                    safe_tx_gas=100000,  # Set reasonable gas limit to avoid GS013
+                    safe_tx_gas=1000000,  # Increased for EAS attestation through AttestationTracker
                 )
 
                 # Sign Safe transaction hash
