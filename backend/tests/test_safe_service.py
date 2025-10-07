@@ -53,7 +53,10 @@ class TestSafeServiceInitialization:
     @patch("services.safe_service.settings")
     def test_init_with_valid_config(self, mock_settings, mock_logger):
         """Test SafeService initialization with valid configuration."""
-        mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123"}'
+        mock_settings.safe_contract_addresses = {
+            "base": "0x1234567890123456789012345678901234567890",
+            "ethereum": "0x4567890123456789012345678901234567890123"
+        }
         mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
         mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -82,9 +85,9 @@ class TestSafeServiceInitialization:
         # Override autouse fixture to raise error
         mock_key_manager_class.side_effect = KeyManagerError("Key file not found")
 
-        mock_settings.safe_contract_addresses = (
-            '{"base": "0x1234567890123456789012345678901234567890"}'
-        )
+        mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
         mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
         mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -103,9 +106,9 @@ class TestSafeServiceInitialization:
         mock_key_manager.get_private_key.return_value = "invalid_key"
         mock_key_manager_class.return_value = mock_key_manager
 
-        mock_settings.safe_contract_addresses = (
-            '{"base": "0x1234567890123456789012345678901234567890"}'
-        )
+        mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
 
         # Account.from_key should raise an error for invalid key format
@@ -124,10 +127,10 @@ class TestSafeServiceInitialization:
     ):
         """Test SafeService initialization with non-checksummed addresses in config."""
         # Use lowercase addresses to test that they are stored as-is but used with checksumming
-        mock_settings.safe_contract_addresses = (
-            '{"base": "0xae4acfd463525c9a160c78eb62b269578f6f5bbe", '  # lowercase version
-            '"gnosis": "0xe66364a0e0dec9a22713f3bac43f0d3f0790c1bd"}'  # lowercase version
-        )
+        mock_settings.safe_contract_addresses = {
+            "base": "0xae4acfd463525c9a160c78eb62b269578f6f5bbe",  # lowercase version
+            "gnosis": "0xe66364a0e0dec9a22713f3bac43f0d3f0790c1bd"  # lowercase version
+        }
         mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
         mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
         mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -152,7 +155,10 @@ class TestChainConfiguration:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123"}'
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890",
+                "ethereum": "0x4567890123456789012345678901234567890123"
+            }
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = ""  # Missing RPC
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -216,9 +222,9 @@ class TestWeb3Connection:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -292,7 +298,11 @@ class TestChainSelection:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x4567890123456789012345678901234567890123", "gnosis": "0x7890123456789012345678901234567890123456"}'
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890",
+                "ethereum": "0x4567890123456789012345678901234567890123",
+                "gnosis": "0x7890123456789012345678901234567890123456"
+            }
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
@@ -333,9 +343,9 @@ class TestSafeTransactionBuilding:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -498,9 +508,9 @@ class TestSafeTransactionSubmission:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -663,9 +673,9 @@ class TestActivityTransaction:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -728,9 +738,9 @@ class TestEASAttestation:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -990,9 +1000,9 @@ class TestUtilityMethods:
             patch("builtins.open", new_callable=mock_open, read_data="0x" + "a" * 64),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -1078,9 +1088,9 @@ class TestSafeTransactionSubmissionComprehensive:
             ),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -1298,9 +1308,9 @@ class TestSafeTransactionBuildingComprehensive:
             ),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -1392,9 +1402,9 @@ class TestEASAttestationComprehensive:
             ),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -1581,9 +1591,9 @@ class TestUtilityMethodsComprehensive:
             ),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = (
-                '{"base": "0x1234567890123456789012345678901234567890"}'
-            )
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -1685,7 +1695,10 @@ class TestEdgeCasesAndErrorHandling:
             ),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x9999999999999999999999999999999999999999"}'
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890",
+                "ethereum": "0x9999999999999999999999999999999999999999"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"
@@ -1796,7 +1809,10 @@ class TestSafeServiceMissingCoverage:
             ),
             patch("services.safe_service.settings") as mock_settings,
         ):
-            mock_settings.safe_contract_addresses = '{"base": "0x1234567890123456789012345678901234567890", "ethereum": "0x9876543210987654321098765432109876543210"}'
+            mock_settings.safe_contract_addresses = {
+                "base": "0x1234567890123456789012345678901234567890",
+                "ethereum": "0x9876543210987654321098765432109876543210"
+            }
             mock_settings.get_base_rpc_endpoint.return_value = "https://base-rpc.com"
             mock_settings.ethereum_ledger_rpc = "https://eth-rpc.com"
             mock_settings.gnosis_ledger_rpc = "https://gnosis-rpc.com"

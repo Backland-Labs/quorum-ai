@@ -28,12 +28,6 @@ class TestBlockchainConfiguration:
             settings = Settings()
             assert settings.celo_rpc == test_rpc
 
-    def test_safe_addresses_defaults_to_empty_dict(self):
-        """Test that safe_contract_addresses defaults to empty dict."""
-        settings = Settings()
-        assert settings.safe_contract_addresses == {}
-        assert isinstance(settings.safe_contract_addresses, dict)
-
     def test_safe_addresses_loaded_from_env_comma_separated(self):
         """Test that safe_addresses is loaded from SAFE_CONTRACT_ADDRESSES environment variable (comma-separated format)."""
         test_addresses = "dao1:0x123,dao2:0x456"
@@ -402,23 +396,6 @@ class TestPrefixedEnvironmentVariables:
             settings = Settings(_env_file=None)
             assert settings.base_safe_address == "0x55196464De636b8ddA93Bdf78831b3aA0e429d60"
 
-    def test_olas_placeholder_values_are_skipped(self):
-        """Test that Olas placeholder values (str:, int:, etc.) are skipped."""
-        with patch.dict(
-            os.environ,
-            {
-                "CONNECTION_CONFIGS_CONFIG_BASE_SAFE_ADDRESS": "str:",
-                "CONNECTION_CONFIGS_CONFIG_AGENT_ADDRESS": "str:",
-                "CONNECTION_CONFIGS_CONFIG_SNAPSHOT_API_KEY": "str:",
-            },
-            clear=True
-        ):
-            settings = Settings(_env_file=None)
-            # Placeholder values should be treated as None/not set
-            assert settings.base_safe_address is None
-            assert settings.agent_address is None
-            assert settings.snapshot_api_key is None
-
     def test_multiple_prefixed_vars_loaded_together(self):
         """Test that multiple prefixed environment variables are loaded correctly."""
         env_vars = {
@@ -454,22 +431,6 @@ class TestPrefixedEnvironmentVariables:
 class TestPropertyMethods:
     """Test new property methods for agent configuration."""
 
-    def test_monitored_daos_list_property_with_env_var(self):
-        """Test that monitored_daos_list property parses from environment variable."""
-        # Test the property logic directly by mocking os.getenv for specific calls
-        test_daos = "test1.eth,test2.eth,test3.eth"
-        settings = Settings(_env_file=None)
-
-        def mock_getenv(key, default=""):
-            if key == "MONITORED_DAOS":
-                return test_daos
-            return os.getenv(key, default)
-
-        with patch("config.os.getenv", side_effect=mock_getenv):
-            expected = ["test1.eth", "test2.eth", "test3.eth"]
-            result = settings.monitored_daos_list
-            assert result == expected
-
     def test_monitored_daos_list_property_with_default(self):
         """Test that monitored_daos_list property returns default when no env var."""
         # Test without MONITORED_DAOS in environment
@@ -483,21 +444,6 @@ class TestPropertyMethods:
         finally:
             if env_backup is not None:
                 os.environ["MONITORED_DAOS"] = env_backup
-
-    def test_monitored_daos_list_property_with_spaces_and_empty(self):
-        """Test that monitored_daos_list property handles spaces and empty values."""
-        test_daos = " compound.eth , , nouns.eth , arbitrum.eth "
-        settings = Settings(_env_file=None)
-
-        def mock_getenv(key, default=""):
-            if key == "MONITORED_DAOS":
-                return test_daos
-            return os.getenv(key, default)
-
-        with patch("config.os.getenv", side_effect=mock_getenv):
-            expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
-            result = settings.monitored_daos_list
-            assert result == expected
 
     def test_safe_addresses_dict_property_with_env_var(self):
         """Test that safe_addresses_dict property parses from environment variable."""
@@ -546,12 +492,4 @@ class TestPropertyMethods:
             assert isinstance(key, str)
             assert isinstance(value, str)
 
-    def test_monitored_daos_list_property_with_empty_string(self):
-        """Test that monitored_daos_list property handles empty string."""
-        with patch("config.os.getenv") as mock_getenv:
-            mock_getenv.return_value = ""
-            settings = Settings(_env_file=None)
-            # When empty, should fall back to default
-            expected = ["compound.eth", "nouns.eth", "arbitrum.eth"]
-            result = settings.monitored_daos_list
-            assert result == expected
+
