@@ -23,7 +23,7 @@
         "SAFE_CONTRACT_ADDRESSES": {
             "name": "Safe contract addresses",
             "description": "JSON string of Safe addresses per chain",
-            "value": "{\"base\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\"}",
+            "value": "{\"base\":\"0x55196464De636b8ddA93Bdf78831b3aA0e429d60\"}",
             "provision_type": "computed"
         },
         "MONITORED_DAOS": {

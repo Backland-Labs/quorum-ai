@@ -40,6 +40,11 @@ SAFE_OPERATION_CALL = 0
 SAFE_OPERATION_DELEGATECALL = 1
 
 
+class SignatureValidationError(Exception):
+    """Raised when EAS signature validation fails."""
+    pass
+
+
 class SafeService:
     """Service for handling Safe multi-signature wallet transactions.
 
@@ -321,9 +326,15 @@ class SafeService:
                     f"nonce={nonce}, safe_tx_hash={tx_hash})"
                 )
 
-                # Propose transaction to Safe Transaction Service
-                safe_service.post_transaction(safe_tx)
-                self.logger.info("Proposed transaction to Safe service")
+                # Propose transaction to Safe Transaction Service (skip for local testing)
+                rpc_url = self.rpc_endpoints[chain]
+                is_local = any(host in rpc_url for host in ["localhost", "127.0.0.1", "host.docker.internal"])
+                
+                if is_local:
+                    self.logger.info("Skipping Safe Transaction Service (local RPC detected - direct execution only)")
+                else:
+                    safe_service.post_transaction(safe_tx)
+                    self.logger.info("Proposed transaction to Safe service")
 
                 # Simulate transaction before execution to catch revert reasons
                 try:
@@ -706,9 +717,15 @@ class SafeService:
         }
 
         self.logger.info(
-            f"Built attestation request data - schema={settings.eas_schema_uid}, "
-            f"recipient={attestation_data.agent}, deadline={deadline}, "
-            f"data_length={len(encoded_data)}"
+            "Building attestation request, schema=%s, recipient=%s, deadline=%s, data_length=%s, expiration=%s, revocable=%s, refUID=%s, value=%s",
+            eas_schema_uid.hex(),
+            attestation_request_data["recipient"],
+            deadline,
+            len(encoded_data),
+            attestation_request_data["expirationTime"],
+            attestation_request_data["revocable"],
+            attestation_request_data["refUID"].hex(),
+            attestation_request_data["value"]
         )
 
         # Generate EAS delegated signature (always sign for EAS contract, not wrapper)
@@ -726,6 +743,10 @@ class SafeService:
             attestation_request_data, w3, eas_address
         )
 
+        # Validate signature before building transaction
+        self.logger.info("Validating signature before building transaction")
+        self._validate_signature_match(signature, attestation_request_data, deadline)
+
         # For AttestationTracker, we need to use the new interface with 12 separate parameters
         if abi_name == "attestation_tracker":
             # Parse signature bytes into v, r, s components
@@ -733,11 +754,12 @@ class SafeService:
             r = signature[:32]
             s = signature[32:64]
 
-            # Get attester address from private key
+            # Attester is the EOA that signs the attestation
+            # The Safe is the transaction sender (msg.sender) but not the attester
             attester = self.account.address
 
             self.logger.info(
-                f"Built delegated request for AttestationTracker with 12 params - attester={attester}, deadline={deadline}"
+                f"Built delegated request for AttestationTracker with 12 params - attester={attester}, deadline={deadline}, signer={self.account.address}"
             )
 
             # Build transaction with 12 separate parameters
@@ -769,7 +791,7 @@ class SafeService:
             r = signature[:32]
             s = signature[32:64]
 
-            # Get attester address from private key
+            # Attester is the EOA that signs the attestation
             attester = self.account.address
 
             # Build delegated request for EIP712Proxy with nested structure
@@ -882,6 +904,61 @@ class SafeService:
 
         return Web3(Web3.HTTPProvider(rpc_url))
 
+    def _validate_signature_match(
+        self, signature: bytes, request_data: Dict[str, Any], deadline: int
+    ) -> None:
+        """Validate signature components before sending to contract.
+        
+        Args:
+            signature: The generated signature bytes
+            request_data: The attestation request data that was signed
+            deadline: The deadline that should match in both signature and transaction
+            
+        Raises:
+            SignatureValidationError: If signature validation fails
+        """
+        # Extract signature components
+        v = signature[64]
+        r = signature[:32]
+        s = signature[32:64]
+        
+        self.logger.info(
+            "Validating signature components, v=%s, r_first_4_bytes=%s, s_first_4_bytes=%s",
+            v,
+            r[:4].hex(),
+            s[:4].hex()
+        )
+        
+        # Check for invalid signature components (all zeros)
+        if r == b"\x00" * 32:
+            self.logger.error("Signature validation failed: r component is all zeros")
+            raise SignatureValidationError("Invalid signature: r component is all zeros")
+            
+        if s == b"\x00" * 32:
+            self.logger.error("Signature validation failed: s component is all zeros")
+            raise SignatureValidationError("Invalid signature: s component is all zeros")
+            
+        # Validate v component (should be 27 or 28, or 0 or 1 in some implementations)
+        if v not in [0, 1, 27, 28]:
+            self.logger.error("Signature validation failed: invalid v value=%s", v)
+            raise SignatureValidationError(f"Invalid signature: v={v} not in [0, 1, 27, 28]")
+        
+        # Verify deadline matches between signature and transaction
+        if request_data["deadline"] != deadline:
+            self.logger.error(
+                "Signature validation failed: deadline mismatch, request_data_deadline=%s, expected_deadline=%s",
+                request_data["deadline"],
+                deadline
+            )
+            raise SignatureValidationError(
+                f"Deadline mismatch: signed deadline={request_data['deadline']}, expected={deadline}"
+            )
+        
+        self.logger.info(
+            "Signature validation passed, all components valid, deadline=%s",
+            deadline
+        )
+
     def _generate_eas_delegated_signature(
         self, request_data: Dict[str, Any], w3: Web3, eas_contract_address: str
     ) -> bytes:
@@ -899,14 +976,22 @@ class SafeService:
             EIP-712 signature bytes
         """
         self.logger.info(
-            f"Generating EAS delegated signature - chain_id={w3.eth.chain_id}, "
-            f"eas_contract={eas_contract_address}, signer={self.account.address}"
+            "Generating EAS delegated signature, chain_id=%s, eas_contract=%s, signer=%s",
+            w3.eth.chain_id,
+            eas_contract_address,
+            self.account.address
         )
 
-        self.logger.debug(
-            f"EIP-712 message - schema={request_data['schema'].hex()}, "
-            f"recipient={request_data['recipient']}, deadline={request_data['deadline']}, "
-            f"data_length={len(request_data['data'])}"
+        self.logger.info(
+            "Signing request data, schema=%s, recipient=%s, deadline=%s, data_length=%s, expirationTime=%s, revocable=%s, refUID=%s, value=%s",
+            request_data['schema'].hex(),
+            request_data['recipient'],
+            request_data['deadline'],
+            len(request_data['data']),
+            request_data.get('expirationTime', 'N/A'),
+            request_data.get('revocable', 'N/A'),
+            request_data.get('refUID', b'').hex() if request_data.get('refUID') else 'N/A',
+            request_data.get('value', 'N/A')
         )
 
         # Use the shared signature generation function
@@ -917,9 +1002,17 @@ class SafeService:
             private_key=self.private_key,
         )
 
+        # Extract and log signature components
+        v = signature[64]
+        r = signature[:32]
+        s = signature[32:64]
+        
         self.logger.info(
-            f"Generated EAS delegated signature successfully - signature_length={len(signature)}, "
-            f"signature_hex={signature.hex()[:20]}..."
+            "Generated EAS delegated signature, signature_length=%s, v=%s, r=%s, s=%s",
+            len(signature),
+            v,
+            r.hex(),
+            s.hex()
         )
 
         return signature
