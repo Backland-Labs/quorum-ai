@@ -66,7 +66,7 @@ class SafeService:
         )
 
         self.logger = setup_pearl_logger(__name__)
-        self.safe_addresses = json.loads(settings.safe_contract_addresses)
+        self.safe_addresses = settings.safe_contract_addresses
         self.rpc_endpoints = {
             "ethereum": settings.ethereum_ledger_rpc,
             "gnosis": settings.gnosis_ledger_rpc,

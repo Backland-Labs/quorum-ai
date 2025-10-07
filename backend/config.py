@@ -1,13 +1,64 @@
 """Configuration management following 12-factor app principles."""
 
 import os
-from typing import ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
 
 from pydantic import Field, field_validator, model_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
 from web3 import Web3
 
 from utils.env_helper import get_env_with_prefix
+
+
+class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
+    """Custom settings source that checks prefixed env vars first, then non-prefixed."""
+
+    def get_field_value(self, field_info: Any, field_name: str) -> Tuple[Any, str, bool]:
+        """Get field value from environment with prefix fallback."""
+        # Get the environment variable name from FieldInfo
+        # Pydantic FieldInfo stores alias in the 'alias' attribute
+        env_name = field_name.upper()  # Default to uppercase field name
+
+        # Check if field_info has an alias attribute
+        if hasattr(field_info, 'alias') and field_info.alias:
+            env_name = field_info.alias
+
+        # Use the helper function to get value with prefix fallback
+        env_value = get_env_with_prefix(env_name)
+
+        # Skip Olas placeholder values (str:, int:, float:, bool:, etc.)
+        if env_value is not None and isinstance(env_value, str):
+            if env_value.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
+                return None, field_name, False
+            
+            # Parse JSON strings to match Pydantic's dotenv behavior
+            # This ensures validators receive consistent types (dict/list not str)
+            if env_value.startswith(('{', '[')):
+                try:
+                    import json
+                    env_value = json.loads(env_value)
+                except (json.JSONDecodeError, ValueError):
+                    # Keep as string if parsing fails - validator will handle it
+                    pass
+
+        if env_value is not None:
+            return env_value, field_name, False
+
+        return None, field_name, False
+
+    def __call__(self) -> Dict[str, Any]:
+        """Return all environment variables for settings fields."""
+        d = {}
+
+        for field_name, field_info in self.settings_cls.model_fields.items():
+            field_value, _, _ = self.get_field_value(field_info, field_name)
+            if field_value is not None:
+                # Use alias as key if present, otherwise use field name
+                # This ensures Pydantic can match the value to the correct field
+                key = field_info.alias if field_info.alias else field_name
+                d[key] = field_value
+
+        return d
 
 
 class Settings(BaseSettings):
@@ -19,6 +70,23 @@ class Settings(BaseSettings):
         "env_parse_none_str": "None",
         "env_nested_delimiter": "__",
     }
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> Tuple[PydanticBaseSettingsSource, ...]:
+        """Customize the settings sources to use prefixed environment variables."""
+        return (
+            init_settings,
+            PrefixedEnvSettingsSource(settings_cls),
+            dotenv_settings,
+            file_secret_settings,
+        )
 
     # Pearl logging constants
     VALID_LOG_LEVELS: ClassVar[List[str]] = ["DEBUG", "INFO", "WARNING", "ERROR"]
@@ -70,16 +138,20 @@ class Settings(BaseSettings):
     request_timeout: int = 30
 
     # OpenRouter configuration
-    openrouter_api_key: Optional[str] = None
+    openrouter_api_key: Optional[str] = Field(
+        default=None,
+        alias="OPENROUTER_API_KEY",
+        description="OpenRouter API key for AI model access",
+    )
 
     # Snapshot API configuration
     snapshot_graphql_endpoint: str = Field(
-        default="https://hub.snapshot.org/graphql",
+        default="https://testnet.hub.snapshot.org/graphql",
         alias="SNAPSHOT_GRAPHQL_ENDPOINT",
         description="Snapshot GraphQL API endpoint",
     )
     snapshot_hub_url: str = Field(
-        default="https://seq.snapshot.org/",
+        default="https://testnet.seq.snapshot.org/",
         alias="SNAPSHOT_HUB_URL",
         description="Snapshot Hub API endpoint for vote submissions",
     )
@@ -116,11 +188,51 @@ class Settings(BaseSettings):
     min_top_voters_limit: int = MIN_TOP_VOTERS_LIMIT
 
     # Safe wallet configuration
-    # the safe_addresses come from the pearl runtime env
+    # the safe_contract_addresses come from the pearl runtime env
     # the agent_address comes from The private key is stored in a file called ethereum_private_key.txt in the agent's working directory
-    safe_addresses: Dict[str, str] = Field(
-        default_factory=dict, description="Parsed from SAFE_CONTRACT_ADDRESSES"
+    safe_contract_addresses: Dict[str, str] = Field(
+        default_factory=dict,
+        alias="SAFE_CONTRACT_ADDRESSES",
+        description="Parsed from SAFE_CONTRACT_ADDRESSES - supports both JSON and comma-separated formats"
     )
+
+    @field_validator("safe_contract_addresses", mode="before")
+    @classmethod
+    def parse_safe_contract_addresses(cls, v):
+        """Parse safe contract addresses from JSON or comma-separated format.
+
+        Supports:
+        - JSON format: {"base": "0x123", "gnosis": "0x456"}
+        - Comma-separated: base:0x123,gnosis:0x456
+        """
+        if v is None or v == "":
+            return {}
+
+        if isinstance(v, dict):
+            return v
+
+        if isinstance(v, str):
+            # Try JSON format first
+            if v.startswith('{'):
+                import json
+                try:
+                    return json.loads(v)
+                except json.JSONDecodeError:
+                    return {}
+
+            # Try comma-separated format
+            addresses = {}
+            for pair in v.split(","):
+                if ":" in pair:
+                    chain, address = pair.split(":", 1)
+                    chain = chain.strip()
+                    address = address.strip()
+                    if chain and address:
+                        addresses[chain] = address
+            return addresses
+
+        return {}
+
     agent_address: Optional[str] = Field(
         default=None, description="The agent's EOA address"
     )
@@ -168,11 +280,6 @@ class Settings(BaseSettings):
     )
 
     # OLAS configuration for new services
-    safe_contract_addresses: str = Field(
-        default="{}",
-        alias="SAFE_CONTRACT_ADDRESSES",
-        description="JSON string of Safe addresses by chain",
-    )
     store_path: Optional[str] = Field(
         default=None,
         alias="STORE_PATH",
@@ -450,7 +557,6 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def parse_env_settings(self):
         """Parse environment-specific settings after model initialization."""
-        self._parse_openrouter_api_key()
         self._parse_safe_addresses()
         self._parse_agent_address()
         self._parse_intervals()
@@ -462,43 +568,13 @@ class Settings(BaseSettings):
         self._parse_chain_config()
         return self
 
-    def _parse_openrouter_api_key(self):
-        """Parse OpenRouter API key from OPENROUTER_API_KEY environment variable."""
-        api_key_env = get_env_with_prefix("OPENROUTER_API_KEY")
-        if api_key_env:
-            self.openrouter_api_key = api_key_env
-
     def _parse_safe_addresses(self):
-        """Parse safe addresses from SAFE_CONTRACT_ADDRESSES environment variable."""
-        safe_addresses_env = get_env_with_prefix("SAFE_CONTRACT_ADDRESSES")
-        if safe_addresses_env:
-            addresses = {}
-            
-            # Try parsing as JSON first
-            try:
-                import json
-                parsed_json = json.loads(safe_addresses_env)
-                if isinstance(parsed_json, dict):
-                    addresses = parsed_json
-                    # Auto-assign BASE_SAFE_ADDRESS if "base" key exists and not already set
-                    if "base" in addresses and not self.base_safe_address:
-                        self.base_safe_address = addresses["base"]
-                else:
-                    raise ValueError("JSON must be a dictionary")
-            except (json.JSONDecodeError, ValueError):
-                # Fallback to comma-separated format
-                for pair in safe_addresses_env.split(","):
-                    if ":" in pair:
-                        dao, address = pair.split(":", 1)
-                        dao = dao.strip()
-                        address = address.strip()
-                        if dao and address:
-                            addresses[dao] = address
-                            # Auto-assign BASE_SAFE_ADDRESS if "base" key exists and not already set
-                            if dao == "base" and not self.base_safe_address:
-                                self.base_safe_address = address
-            
-            self.safe_addresses = addresses
+        """Auto-assign BASE_SAFE_ADDRESS from safe_contract_addresses if available."""
+        # The safe_contract_addresses dict is now loaded automatically by PrefixedEnvSettingsSource
+        # We just need to set base_safe_address if it exists in the dict
+        if self.safe_contract_addresses and "base" in self.safe_contract_addresses:
+            if not self.base_safe_address:
+                self.base_safe_address = self.safe_contract_addresses["base"]
 
     def _parse_agent_address(self):
         """Parse agent address from AGENT_ADDRESS environment variable."""
@@ -627,6 +703,11 @@ class Settings(BaseSettings):
             # Fall back to default when empty
             daos_env = default_monitored_daos
         return [dao.strip() for dao in daos_env.split(",") if dao.strip()]
+
+    @property
+    def safe_addresses(self) -> Dict[str, str]:
+        """Alias for safe_contract_addresses for backward compatibility."""
+        return self.safe_contract_addresses
 
     @property
     def safe_addresses_dict(self) -> Dict[str, str]:

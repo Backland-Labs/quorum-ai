@@ -805,28 +805,40 @@ class AgentRunService:
                             choice=vote_choice,
                         )
 
-                        if vote_result.get("success"):
+                        # Extract vote ID from the Snapshot response
+                        vote_id = None
+                        vote_succeeded = vote_result.get("success", False)
+                        submission_result = vote_result.get("submission_result", {})
+
+                        if vote_succeeded:
                             executed_decisions.append(decision)
                             self.logger.log_vote_execution(decision, True)
 
-                            # Track successful vote cast activity
-                            pass
-
-                            # Extract vote ID from the Snapshot response
-                            vote_id = None
-                            submission_result = vote_result.get("submission_result", {})
                             if submission_result.get("success"):
                                 response = submission_result.get("response", {})
                                 vote_id = response.get("id")
-
-                            # Queue attestation for successful vote with vote ID
-                            await self._queue_attestation(
-                                decision, space_id, run_id, vote_id
-                            )
+                                self.pearl_logger.info(
+                                    f"Vote submitted successfully (proposal={decision.proposal_id}, "
+                                    f"vote_id={vote_id}, choice={vote_choice})"
+                                )
                         else:
-                            self.logger.log_vote_execution(
-                                decision, False, vote_result.get("error")
+                            error_msg = vote_result.get("error", "Unknown error")
+                            self.logger.log_vote_execution(decision, False, error_msg)
+                            self.pearl_logger.warning(
+                                f"Vote submission failed (proposal={decision.proposal_id}, "
+                                f"error={error_msg}, choice={vote_choice})"
                             )
+
+                        # Always queue attestation regardless of vote success/failure
+                        # This creates an audit trail of all voting decisions
+                        await self._queue_attestation(
+                            decision, space_id, run_id, vote_id
+                        )
+
+                        self.pearl_logger.info(
+                            f"Attestation queued for vote attempt (proposal={decision.proposal_id}, "
+                            f"vote_succeeded={vote_succeeded}, vote_id={vote_id or 'None'})"
+                        )
 
                     except Exception as e:
                         self.logger.log_vote_execution(decision, False, str(e))

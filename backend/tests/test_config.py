@@ -29,10 +29,10 @@ class TestBlockchainConfiguration:
             assert settings.celo_rpc == test_rpc
 
     def test_safe_addresses_defaults_to_empty_dict(self):
-        """Test that safe_addresses defaults to empty dict."""
+        """Test that safe_contract_addresses defaults to empty dict."""
         settings = Settings()
-        assert settings.safe_addresses == {}
-        assert isinstance(settings.safe_addresses, dict)
+        assert settings.safe_contract_addresses == {}
+        assert isinstance(settings.safe_contract_addresses, dict)
 
     def test_safe_addresses_loaded_from_env_comma_separated(self):
         """Test that safe_addresses is loaded from SAFE_CONTRACT_ADDRESSES environment variable (comma-separated format)."""
@@ -43,12 +43,12 @@ class TestBlockchainConfiguration:
             assert settings.safe_addresses == expected
 
     def test_safe_addresses_loaded_from_env_json_format(self):
-        """Test that safe_addresses is loaded from SAFE_CONTRACT_ADDRESSES environment variable (JSON format)."""
-        test_addresses = '{"dao1": "0x123", "dao2": "0x456"}'
-        with patch.dict(os.environ, {"SAFE_CONTRACT_ADDRESSES": test_addresses}):
-            settings = Settings()
-            expected = {"dao1": "0x123", "dao2": "0x456"}
-            assert settings.safe_addresses == expected
+        """Test that safe_contract_addresses is loaded from prefixed env var with JSON format."""
+        test_addresses = '{"base":"0x55196464De636b8ddA93Bdf78831b3aA0e429d60"}'
+        with patch.dict(os.environ, {"CONNECTION_CONFIGS_CONFIG_SAFE_CONTRACT_ADDRESSES": test_addresses}, clear=False):
+            settings = Settings(_env_file=None)
+            expected = {"base": "0x55196464De636b8ddA93Bdf78831b3aA0e429d60"}
+            assert settings.safe_contract_addresses == expected
 
     def test_base_safe_address_auto_assigned_from_json_base_key(self):
         """Test that base_safe_address is auto-assigned when 'base' key exists in JSON format."""
@@ -342,6 +342,113 @@ class TestAttestationTrackerConfiguration:
         with patch.dict(os.environ, {"ATTESTATION_CHAIN": test_chain}):
             settings = Settings()
             assert settings.attestation_chain == test_chain
+
+
+class TestPrefixedEnvironmentVariables:
+    """Test environment variable loading with CONNECTION_CONFIGS_CONFIG_ prefix."""
+
+    def test_openrouter_api_key_loaded_from_prefixed_env(self):
+        """Test that openrouter_api_key is loaded from CONNECTION_CONFIGS_CONFIG_OPENROUTER_API_KEY."""
+        test_api_key = "sk-or-v1-test123456789"
+        with patch.dict(os.environ, {"CONNECTION_CONFIGS_CONFIG_OPENROUTER_API_KEY": test_api_key}, clear=True):
+            settings = Settings(_env_file=None)
+            assert settings.openrouter_api_key == test_api_key
+
+    def test_openrouter_api_key_fallback_to_non_prefixed(self):
+        """Test that openrouter_api_key falls back to OPENROUTER_API_KEY if prefixed not found."""
+        test_api_key = "sk-or-v1-fallback123"
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": test_api_key}, clear=True):
+            settings = Settings(_env_file=None)
+            assert settings.openrouter_api_key == test_api_key
+
+    def test_openrouter_api_key_prefixed_takes_precedence(self):
+        """Test that prefixed env var takes precedence over non-prefixed."""
+        prefixed_key = "sk-or-v1-prefixed123"
+        non_prefixed_key = "sk-or-v1-nonprefixed456"
+        with patch.dict(
+            os.environ,
+            {
+                "CONNECTION_CONFIGS_CONFIG_OPENROUTER_API_KEY": prefixed_key,
+                "OPENROUTER_API_KEY": non_prefixed_key,
+            },
+            clear=True
+        ):
+            settings = Settings(_env_file=None)
+            assert settings.openrouter_api_key == prefixed_key
+
+    def test_safe_addresses_loaded_from_prefixed_env_json(self):
+        """Test that safe_addresses is loaded and parsed from CONNECTION_CONFIGS_CONFIG_SAFE_CONTRACT_ADDRESSES."""
+        test_json = '{"base":"0x55196464De636b8ddA93Bdf78831b3aA0e429d60","ethereum":"0x123"}'
+        with patch.dict(
+            os.environ,
+            {"CONNECTION_CONFIGS_CONFIG_SAFE_CONTRACT_ADDRESSES": test_json},
+            clear=True
+        ):
+            settings = Settings(_env_file=None)
+            assert settings.safe_addresses == {
+                "base": "0x55196464De636b8ddA93Bdf78831b3aA0e429d60",
+                "ethereum": "0x123"
+            }
+            assert isinstance(settings.safe_addresses, dict)
+
+    def test_safe_addresses_auto_sets_base_safe_address(self):
+        """Test that base_safe_address is auto-set from safe_addresses['base']."""
+        test_json = '{"base":"0x55196464De636b8ddA93Bdf78831b3aA0e429d60"}'
+        with patch.dict(
+            os.environ,
+            {"CONNECTION_CONFIGS_CONFIG_SAFE_CONTRACT_ADDRESSES": test_json},
+            clear=True
+        ):
+            settings = Settings(_env_file=None)
+            assert settings.base_safe_address == "0x55196464De636b8ddA93Bdf78831b3aA0e429d60"
+
+    def test_olas_placeholder_values_are_skipped(self):
+        """Test that Olas placeholder values (str:, int:, etc.) are skipped."""
+        with patch.dict(
+            os.environ,
+            {
+                "CONNECTION_CONFIGS_CONFIG_BASE_SAFE_ADDRESS": "str:",
+                "CONNECTION_CONFIGS_CONFIG_AGENT_ADDRESS": "str:",
+                "CONNECTION_CONFIGS_CONFIG_SNAPSHOT_API_KEY": "str:",
+            },
+            clear=True
+        ):
+            settings = Settings(_env_file=None)
+            # Placeholder values should be treated as None/not set
+            assert settings.base_safe_address is None
+            assert settings.agent_address is None
+            assert settings.snapshot_api_key is None
+
+    def test_multiple_prefixed_vars_loaded_together(self):
+        """Test that multiple prefixed environment variables are loaded correctly."""
+        env_vars = {
+            "CONNECTION_CONFIGS_CONFIG_OPENROUTER_API_KEY": "sk-or-v1-test123",
+            "CONNECTION_CONFIGS_CONFIG_SAFE_CONTRACT_ADDRESSES": '{"base":"0x123"}',
+            "CONNECTION_CONFIGS_CONFIG_BASE_RPC_URL": "http://localhost:8545",
+            "CONNECTION_CONFIGS_CONFIG_CHAIN_ID": "8453",
+            "CONNECTION_CONFIGS_CONFIG_LOG_LEVEL": "DEBUG",
+        }
+        with patch.dict(os.environ, env_vars, clear=True):
+            settings = Settings(_env_file=None)
+            assert settings.openrouter_api_key == "sk-or-v1-test123"
+            assert settings.safe_addresses == {"base": "0x123"}
+            assert settings.base_rpc_url == "http://localhost:8545"
+            assert settings.chain_id == 8453
+            assert settings.log_level == "DEBUG"
+
+    def test_json_parsing_in_custom_settings_source(self):
+        """Test that JSON strings are automatically parsed for dict/list fields."""
+        json_addresses = '{"base":"0xABC","gnosis":"0xDEF"}'
+        with patch.dict(
+            os.environ,
+            {"CONNECTION_CONFIGS_CONFIG_SAFE_CONTRACT_ADDRESSES": json_addresses},
+            clear=True
+        ):
+            settings = Settings(_env_file=None)
+            # Should be parsed as dict, not string
+            assert isinstance(settings.safe_addresses, dict)
+            assert settings.safe_addresses["base"] == "0xABC"
+            assert settings.safe_addresses["gnosis"] == "0xDEF"
 
 
 class TestPropertyMethods:
