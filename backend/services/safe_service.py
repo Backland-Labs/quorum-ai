@@ -339,7 +339,7 @@ class SafeService:
                 # Simulate transaction before execution to catch revert reasons
                 try:
                     self.logger.info("Simulating Safe transaction before execution")
-                    safe_tx.call()  # This will reveal the specific revert reason if transaction would fail
+                    safe_tx.call(tx_sender_address=self.account.address)  # Pass sender address for proper simulation
                     self.logger.info("Transaction simulation successful")
                 except Exception as simulation_error:
                     self.logger.error(
