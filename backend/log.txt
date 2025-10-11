@@ -198,3 +198,8 @@
 [2025-10-08 16:22:10,564] [INFO] [agent] Pearl logger initialized successfully
 [2025-10-08 16:22:10,816] [INFO] [agent] Pearl logger initialized successfully
 [2025-10-08 16:22:10,817] [INFO] [agent] Pearl logger initialized successfully
+[2025-10-08 19:53:44,327] [INFO] [agent] Pearl logger initialized successfully
+[2025-10-08 19:53:44,751] [INFO] [agent] Pearl logger initialized successfully
+[2025-10-08 19:53:45,210] [INFO] [agent] Pearl logger initialized successfully
+[2025-10-08 19:53:45,211] [INFO] [agent] Pearl logger initialized successfully
+[2025-10-08 19:53:45,213] [ERROR] [agent] Key file not found

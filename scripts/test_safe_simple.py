@@ -22,8 +22,7 @@ from safe_eth.eth import EthereumClient
 
 def main():
     # Get environment variables
-    safe_address = "0x7dF2A42C5a9006B16E6c7e6Ac750cdf336489c80"
-    private_key = "0x7cf2b3a1127073e28389fae537fc7f68e1425a8da00f95f789cb5582cfc370ab"
+    safe_address = ""
     rpc_url = os.getenv("RPC_URL", "https://cosmopolitan-cosmological-resonance.base-mainnet.quiknode.pro/b4c827323f0a8012212429b0bd4a72a060c5373c/")
     
     if not safe_address or not private_key:
