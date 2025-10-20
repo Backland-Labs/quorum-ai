@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y \
     make \
     build-essential \
     wget \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend dependency files first for better Docker layer caching
