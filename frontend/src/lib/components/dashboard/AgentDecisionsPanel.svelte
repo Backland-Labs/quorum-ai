@@ -70,8 +70,8 @@
       Loading decisions...
     </div>
   {:else if storeState.errors.decisions}
-    <div data-testid="error-state" class="text-red-600 text-sm p-4 sm:p-6 text-center">
-      {storeState.errors.decisions}
+    <div data-testid="error-state" class="text-gray-500 text-sm p-4 sm:p-6 text-center italic">
+      Backend unavailable - no decisions to display
     </div>
   {:else if storeState.decisions.length === 0}
     <div data-testid="empty-state" class="text-gray-500 text-sm p-4 sm:p-6 text-center">

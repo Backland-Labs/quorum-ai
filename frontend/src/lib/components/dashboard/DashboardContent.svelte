@@ -4,7 +4,6 @@
   import RecentProposals from './RecentProposals.svelte';
   import EmptyState from './EmptyState.svelte';
   import AgentStatusWidget from './AgentStatusWidget.svelte';
-  import AgentDecisionsPanel from './AgentDecisionsPanel.svelte';
   import AgentStatistics from './AgentStatistics.svelte';
   import AgentQuickActions from './AgentQuickActions.svelte';
   import { agentStatusStore } from '$lib/stores/agentStatus';
@@ -73,11 +72,6 @@
     <div class="grid gap-6 mb-6 lg:grid-cols-2">
       <AgentStatusWidget />
       <AgentStatistics />
-    </div>
-
-    <!-- Agent Decisions Panel -->
-    <div class="mb-6">
-      <AgentDecisionsPanel />
     </div>
   </div>
 

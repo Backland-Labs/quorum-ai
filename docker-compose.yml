@@ -7,7 +7,102 @@ services:
     env_file:
       - .env
     environment:
+      # Application settings
       - PUBLIC_API_BASE_URL=http://localhost:8716
+      - APP_NAME=${APP_NAME:-Quorum AI}
+      - DEBUG=${DEBUG:-false}
+      - HOST=${HOST:-0.0.0.0}
+      - PORT=${PORT:-8716}
+
+      # AI Model Configuration
+      - AI_MODEL=${AI_MODEL:-google/gemini-2.0-flash-001}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+
+      # Snapshot API Configuration
+      - SNAPSHOT_GRAPHQL_ENDPOINT=${SNAPSHOT_GRAPHQL_ENDPOINT:-https://testnet.hub.snapshot.org/graphql}
+      - SNAPSHOT_HUB_URL=${SNAPSHOT_HUB_URL:-https://testnet.seq.snapshot.org/}
+      - SNAPSHOT_API_KEY=${SNAPSHOT_API_KEY:-}
+
+      # Blockchain Configuration
+      - CHAIN_ID=${CHAIN_ID:-8453}
+      - RPC_URL=${RPC_URL:-http://localhost:8545}
+
+      # RPC Endpoints (Multi-chain support)
+      - BASE_RPC_URL=${BASE_RPC_URL}
+      - BASE_LEDGER_RPC=${BASE_LEDGER_RPC}
+      - ETHEREUM_LEDGER_RPC=${ETHEREUM_LEDGER_RPC:-}
+      - GNOSIS_LEDGER_RPC=${GNOSIS_LEDGER_RPC:-}
+      - MODE_LEDGER_RPC=${MODE_LEDGER_RPC:-}
+      - CELO_LEDGER_RPC=${CELO_LEDGER_RPC:-}
+
+      # Wallet Configuration
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - AGENT_ADDRESS=${AGENT_ADDRESS:-}
+
+      # Safe Wallet Configuration
+      - SAFE_CONTRACT_ADDRESSES=${SAFE_CONTRACT_ADDRESSES}
+      - BASE_SAFE_ADDRESS=${BASE_SAFE_ADDRESS:-}
+
+      # EAS (Ethereum Attestation Service) Configuration
+      - EAS_CONTRACT_ADDRESS=${EAS_CONTRACT_ADDRESS:-0xF095fE4b23958b08D38e52d5d5674bBF0C03cbF6}
+      - EAS_SCHEMA_UID=${EAS_SCHEMA_UID:-0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4}
+      - CONNECTION_CONFIGS_CONFIG_EAS_SCHEMA_UID=${CONNECTION_CONFIGS_CONFIG_EAS_SCHEMA_UID:-0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4}
+      - ATTESTATION_TRACKER_ADDRESS=${ATTESTATION_TRACKER_ADDRESS:-0x08E7C36CDC1649428c6a056B8465d478ADE0Fae8}
+      - ATTESTATION_CHAIN=${ATTESTATION_CHAIN:-base}
+
+      # DAO Monitoring Configuration
+      - MONITORED_DAOS=${MONITORED_DAOS:-quorum-ai.eth}
+      - DRY_RUN_DEFAULT=${DRY_RUN_DEFAULT:-false}
+      - VOTING_STRATEGY=${VOTING_STRATEGY:-balanced}
+
+      # Agent Run Configuration
+      - MAX_PROPOSALS_PER_RUN=${MAX_PROPOSALS_PER_RUN:-3}
+      - AGENT_CONFIDENCE_THRESHOLD=${AGENT_CONFIDENCE_THRESHOLD:-0.2}
+      - PROPOSAL_FETCH_TIMEOUT=${PROPOSAL_FETCH_TIMEOUT:-30}
+      - VOTE_EXECUTION_TIMEOUT=${VOTE_EXECUTION_TIMEOUT:-60}
+      - MAX_RETRY_ATTEMPTS=${MAX_RETRY_ATTEMPTS:-3}
+      - RETRY_DELAY_SECONDS=${RETRY_DELAY_SECONDS:-5}
+
+      # Activity Tracking Configuration
+      - ACTIVITY_CHECK_INTERVAL=${ACTIVITY_CHECK_INTERVAL:-3600}
+      - PROPOSAL_CHECK_INTERVAL=${PROPOSAL_CHECK_INTERVAL:-300}
+      - MIN_TIME_BEFORE_DEADLINE=${MIN_TIME_BEFORE_DEADLINE:-1800}
+
+      # Health Check Configuration
+      - HEALTH_CHECK_PORT=${HEALTH_CHECK_PORT:-8716}
+      - HEALTH_CHECK_PATH=${HEALTH_CHECK_PATH:-/healthcheck}
+      - HEALTH_CHECK_TIMEOUT=${HEALTH_CHECK_TIMEOUT:-50}
+      - HEALTH_CHECK_ENABLED=${HEALTH_CHECK_ENABLED:-true}
+      - FAST_TRANSITION_THRESHOLD=${FAST_TRANSITION_THRESHOLD:-5}
+
+      # Pearl-Compliant Logging Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
+      - LOG_FILE_PATH=${LOG_FILE_PATH:-/app/store/logs/pearl/log.txt}
+      - PEARL_LOG_FORMAT=${PEARL_LOG_FORMAT:-[%Y-%m-%d %H:%M:%S,%f] [%levelname] [agent] %message}
+
+      # Decision Output Configuration
+      - DECISION_OUTPUT_DIR=${DECISION_OUTPUT_DIR:-decisions}
+      - DECISION_FILE_FORMAT=${DECISION_FILE_FORMAT:-json}
+      - MAX_DECISION_FILES=${MAX_DECISION_FILES:-100}
+
+      # Olas Staking Configuration
+      - STAKING_TOKEN_CONTRACT_ADDRESS=${STAKING_TOKEN_CONTRACT_ADDRESS:-}
+      - ACTIVITY_CHECKER_CONTRACT_ADDRESS=${ACTIVITY_CHECKER_CONTRACT_ADDRESS:-}
+      - SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT=${SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT:-}
+      - STORE_PATH=${STORE_PATH:-}
+
+      # Performance Settings
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-30}
+    volumes:
+      # Mount the ethereum private key file from host
+      # Create this file locally: echo "your_private_key_without_0x" > ./ethereum_private_key.txt
+      - ./ethereum_private_key.txt:/agent_key/ethereum_private_key.txt
+
+      # Optional: Mount logs directory for persistence
+      - ./logs:/app/logs
+
+      # Optional: Mount store directory for state persistence
+      - ./store:/app/store
     ports:
       - "8716:8716"
     healthcheck:

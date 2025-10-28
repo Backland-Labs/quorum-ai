@@ -55,8 +55,8 @@
       Loading agent status...
     </div>
   {:else if storeState.errors.status}
-    <div data-testid="error-state" class="text-red-600 text-sm">
-      {storeState.errors.status}
+    <div data-testid="error-state" class="text-gray-500 text-sm italic">
+      Backend unavailable - agent status unknown
     </div>
   {:else if storeState.status}
     <div role="status" class="space-y-4">

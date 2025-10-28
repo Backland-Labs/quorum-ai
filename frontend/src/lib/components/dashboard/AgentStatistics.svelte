@@ -25,9 +25,8 @@
       <p class="text-gray-500 dark:text-gray-400 text-sm">Loading statistics...</p>
     </div>
   {:else if storeState.errors.statistics}
-    <div data-testid="error-state" class="text-center p-4 sm:p-6" role="alert" aria-live="assertive">
-      <p class="text-red-600 dark:text-red-400 text-sm sm:text-base">{storeState.errors.statistics}</p>
-      <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">{RETRY_MESSAGE}</p>
+    <div data-testid="error-state" class="text-center p-4 sm:p-6" role="status">
+      <p class="text-gray-500 dark:text-gray-400 text-sm italic">Backend unavailable - statistics unknown</p>
     </div>
   {:else if storeState.statistics}
     <dl data-testid="statistics-grid" class="grid grid-cols-2 gap-6" aria-label="Agent performance metrics">

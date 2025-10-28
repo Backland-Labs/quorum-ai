@@ -54,6 +54,13 @@ coverage.xml
 log.txt
 logs/
 
+# Private keys and secrets
+ethereum_private_key.txt
+*_private_key.txt
+
+# State and storage
+store/
+
 # Database
 *.db
 *.sqlite3
