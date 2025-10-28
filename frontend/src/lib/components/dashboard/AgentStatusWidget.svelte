@@ -11,28 +11,22 @@
   // Subscribe to the store
   const storeState = $state($agentStatusStore);
 
-  // Format timestamp to human-readable format with local time
-  function formatTimestamp(timestamp: string | null): string {
-    if (!timestamp) return 'Never';
+  // Calculate time to next checkpoint (24 hours from last run)
+  function formatTimeToCheckpoint(timestamp: string | null): string {
+    if (!timestamp) return 'Unknown';
 
-    const date = new Date(timestamp);
+    const lastRun = new Date(timestamp);
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const nextCheckpoint = new Date(lastRun.getTime() + 24 * 60 * 60 * 1000); // 24 hours later
+    const diff = nextCheckpoint.getTime() - now.getTime();
 
-    const minutes = Math.floor(diff / 60000);
+    // If checkpoint is overdue
+    if (diff < 0) return 'Overdue';
+
     const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
 
-    // Format local datetime
-    const localTime = date.toLocaleString();
-
-    let relativeTime: string;
-    if (minutes < 1) relativeTime = 'Just now';
-    else if (minutes < 60) relativeTime = `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    else if (hours < 24) relativeTime = `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    else relativeTime = `${days} day${days > 1 ? 's' : ''} ago`;
-
-    return `${relativeTime} (${localTime})`;
+    return `${hours}h ${minutes}m`;
   }
 
   // Format state to human-readable format
@@ -66,34 +60,19 @@
     </div>
   {:else if storeState.status}
     <div role="status" class="space-y-4">
-      <div data-testid="status-content" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <p class="text-xs sm:text-sm text-gray-500">Current State</p>
-          <p data-testid="agent-state" class="text-xs sm:text-sm font-medium text-gray-900">
-            {formatState(storeState.status.current_state)}
-          </p>
-        </div>
-        {#if storeState.status.is_active}
-          <div data-testid="active-indicator" class="flex items-center">
-            <div class="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="ml-2 text-xs sm:text-sm text-green-600">Active</span>
-          </div>
-        {/if}
-      </div>
-
       <div>
-        <p class="text-xs sm:text-sm text-gray-500">Last Run</p>
-        <p data-testid="last-run-timestamp" class="text-xs sm:text-sm font-medium text-gray-900">
-          {formatTimestamp(storeState.status.last_run_timestamp)}
+        <p class="text-xs sm:text-sm text-gray-500">Current State</p>
+        <p data-testid="agent-state" class="text-base sm:text-lg font-semibold text-gray-900">
+          {formatState(storeState.status.current_state)}
         </p>
       </div>
 
-      {#if storeState.status.current_space_id}
-        <div>
-          <p class="text-xs sm:text-sm text-gray-500">Space ID</p>
-          <p class="text-xs sm:text-sm font-mono text-gray-700 break-all">{storeState.status.current_space_id}</p>
-        </div>
-      {/if}
+      <div>
+        <p class="text-xs sm:text-sm text-gray-500">Time to Checkpoint</p>
+        <p data-testid="time-to-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
+          {formatTimeToCheckpoint(storeState.status.last_run_timestamp)}
+        </p>
+      </div>
     </div>
   {/if}
 </div>

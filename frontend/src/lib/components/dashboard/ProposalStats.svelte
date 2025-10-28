@@ -16,26 +16,18 @@
 </script>
 
 <div class="bg-white rounded-lg shadow p-6">
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-semibold text-secondary-900">Proposal Statistics</h3>
-  </div>
-
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <p class="text-2xl font-bold text-secondary-900">{stats.total}</p>
-      <p class="text-sm text-secondary-600">Total Proposals</p>
+  <div class="grid grid-cols-3 gap-8">
+    <div class="text-center">
+      <p class="text-5xl font-semibold text-gray-900 mb-2">{stats.total}</p>
+      <p class="text-sm text-gray-600">Total Proposals</p>
     </div>
-    <div>
-      <p class="text-2xl font-bold text-success-600">{stats.active}</p>
-      <p class="text-sm text-secondary-600">Active</p>
+    <div class="text-center">
+      <p class="text-5xl font-semibold text-gray-900 mb-2">{stats.active}</p>
+      <p class="text-sm text-gray-600">Active</p>
     </div>
-    <div>
-      <p class="text-2xl font-bold text-secondary-500">{stats.closed}</p>
-      <p class="text-sm text-secondary-600">Closed</p>
-    </div>
-    <div>
-      <p class="text-2xl font-bold text-warning-600">{stats.pending}</p>
-      <p class="text-sm text-secondary-600">Pending</p>
+    <div class="text-center">
+      <p class="text-5xl font-semibold text-gray-900 mb-2">{stats.closed}</p>
+      <p class="text-sm text-gray-600">Closed</p>
     </div>
   </div>
 </div>

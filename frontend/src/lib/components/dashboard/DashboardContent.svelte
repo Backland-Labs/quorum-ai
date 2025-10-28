@@ -55,6 +55,16 @@
 </script>
 
 <div>
+  <!-- Reconsider Proposals Button -->
+  <div class="mb-6">
+    <button
+      class="w-full px-6 py-4 text-base font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition-all duration-200"
+      aria-label="Reconsider proposals"
+    >
+      Reconsider Proposals
+    </button>
+  </div>
+
   <!-- Autonomous Voting Agent Section -->
   <div class="mb-8">
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Autonomous Voting Agent</h2>
@@ -63,11 +73,6 @@
     <div class="grid gap-6 mb-6 lg:grid-cols-2">
       <AgentStatusWidget />
       <AgentStatistics />
-    </div>
-
-    <!-- Agent Quick Actions -->
-    <div class="mb-6">
-      <AgentQuickActions spaceId={currentSpaceId} />
     </div>
 
     <!-- Agent Decisions Panel -->

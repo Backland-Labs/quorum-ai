@@ -30,38 +30,26 @@
       <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">{RETRY_MESSAGE}</p>
     </div>
   {:else if storeState.statistics}
-    <dl data-testid="statistics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" aria-label="Agent performance metrics">
-      <!-- Total Runs -->
-      <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Total runs">
+    <dl data-testid="statistics-grid" class="grid grid-cols-2 gap-6" aria-label="Agent performance metrics">
+      <!-- Reconsider Proposals -->
+      <div data-testid="stat-card" class="w-full" role="group" aria-label="Reconsider proposals">
         <div data-testid="stat-content" class="flex flex-col space-y-1">
-          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Total Runs</dt>
-          <dd data-testid="stat-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Total runs: {storeState.statistics.total_runs}">
-            {storeState.statistics.total_runs}
-          </dd>
-        </div>
-      </div>
-
-      <!-- Proposals Reviewed -->
-      <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Proposals reviewed">
-        <div data-testid="stat-content" class="flex flex-col space-y-1">
-          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Proposals Reviewed</dt>
-          <dd data-testid="stat-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Proposals reviewed: {storeState.statistics.total_proposals_evaluated}">
+          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Reconsider Proposals</dt>
+          <dd data-testid="stat-value" class="text-3xl sm:text-4xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Reconsider proposals: {storeState.statistics.total_proposals_evaluated}">
             {storeState.statistics.total_proposals_evaluated}
           </dd>
         </div>
       </div>
 
       <!-- Votes Cast -->
-      <div data-testid="stat-card" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 w-full" role="group" aria-label="Votes cast">
+      <div data-testid="stat-card" class="w-full" role="group" aria-label="Votes cast">
         <div data-testid="stat-content" class="flex flex-col space-y-1">
           <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Votes Cast</dt>
-          <dd data-testid="stat-value" class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Votes cast: {storeState.statistics.total_votes_cast}">
+          <dd data-testid="stat-value" class="text-3xl sm:text-4xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Votes cast: {storeState.statistics.total_votes_cast}">
             {storeState.statistics.total_votes_cast}
           </dd>
         </div>
       </div>
-
-
     </dl>
   {/if}
 </section>

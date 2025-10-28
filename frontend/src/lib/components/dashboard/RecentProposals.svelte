@@ -32,22 +32,20 @@
 </script>
 
 {#if hasProposals()}
-  <div class="card lg:col-span-2">
-    <div class="flex items-center justify-between mb-6">
-      <h4 class="text-lg font-semibold text-secondary-900">Recent Proposals</h4>
-      <span class="text-sm text-secondary-500">{proposals.length} total</span>
+  <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+    <div class="mb-6">
+      <h3 class="text-base font-medium text-gray-900">Recent Proposals</h3>
     </div>
 
-    <div class="space-y-6">
+    <div class="space-y-4">
       {#each getDisplayProposals() as proposal}
         <ProposalCard
           {proposal}
           summary={proposalSummaries.get(proposal.id)}
           onClick={() => onProposalClick(proposal.id)}
-          variant="detailed"
+          variant="compact"
         />
       {/each}
     </div>
-
   </div>
 {/if}
