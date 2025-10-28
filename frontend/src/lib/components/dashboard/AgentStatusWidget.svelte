@@ -1,5 +1,6 @@
 <script lang="ts">
   import { agentStatusStore } from '$lib/stores/agentStatus';
+  import { onMount } from 'svelte';
 
   interface Props {
     // Allow override for testing
@@ -8,8 +9,12 @@
 
   let { testMode = false }: Props = $props();
 
-  // Subscribe to the store
+  // Subscribe to the store for last_run_timestamp
   const storeState = $state($agentStatusStore);
+
+  // State for staking KPI
+  let isStakingKpiMet = $state<boolean | null>(null);
+  let healthcheckLoading = $state(true);
 
   // Calculate time to next checkpoint (24 hours from last run)
   function formatTimeToCheckpoint(timestamp: string | null): string {
@@ -29,17 +34,26 @@
     return `${hours}h ${minutes}m`;
   }
 
-  // Format state to human-readable format
-  function formatState(state: string): string {
-    const stateMap: Record<string, string> = {
-      'idle': 'Idle',
-      'fetching_proposals': 'Fetching Proposals',
-      'analyzing_proposals': 'Analyzing Proposals',
-      'executing_votes': 'Executing Votes',
-      'completed': 'Completed'
-    };
-    return stateMap[state] || state;
+  // Fetch staking KPI status from healthcheck
+  async function fetchHealthcheck() {
+    try {
+      const response = await fetch('/healthcheck');
+      const data = await response.json();
+      isStakingKpiMet = data.agent_health?.is_staking_kpi_met ?? null;
+    } catch (error) {
+      console.error('Failed to fetch healthcheck:', error);
+      isStakingKpiMet = null;
+    } finally {
+      healthcheckLoading = false;
+    }
   }
+
+  onMount(() => {
+    fetchHealthcheck();
+    // Refresh every 30 minutes
+    const interval = setInterval(fetchHealthcheck, 30 * 60 * 1000);
+    return () => clearInterval(interval);
+  });
 </script>
 
 <div
@@ -50,7 +64,7 @@
 >
   <h3 data-testid="widget-title" class="text-sm sm:text-base font-medium text-gray-900 mb-4">Agent Status</h3>
 
-  {#if storeState.loading.status}
+  {#if storeState.loading.status || healthcheckLoading}
     <div data-testid="loading-state" class="text-gray-500 text-sm">
       Loading agent status...
     </div>
@@ -61,9 +75,14 @@
   {:else if storeState.status}
     <div role="status" class="space-y-4">
       <div>
-        <p class="text-xs sm:text-sm text-gray-500">Current State</p>
-        <p data-testid="agent-state" class="text-base sm:text-lg font-semibold text-gray-900">
-          {formatState(storeState.status.current_state)}
+        <p class="text-xs sm:text-sm text-gray-500">Current Status</p>
+        <p
+          data-testid="activity-threshold"
+          class="text-base sm:text-lg font-semibold {isStakingKpiMet ? 'text-green-600' : 'text-yellow-600'}"
+        >
+          {isStakingKpiMet !== null
+            ? (isStakingKpiMet ? 'Meeting Activity Threshold' : 'Not Meeting Activity Threshold')
+            : 'Unknown'}
         </p>
       </div>
 
