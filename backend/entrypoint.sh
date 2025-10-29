@@ -36,19 +36,38 @@ if [ -f "/app/scripts/checkpoint.py" ]; then
     echo "Setting up checkpoint service"
     echo "================================"
 
+    # Log current user information for debugging
+    echo "Current UID: $(id -u), GID: $(id -g), User: $(whoami 2>&1 || echo 'unknown')"
+    echo "Checking /etc/passwd entry..."
+    grep "^.*:x:$(id -u):" /etc/passwd || echo "WARNING: Current UID $(id -u) not found in /etc/passwd"
+
     # Calculate time 24 hours from now
     FUTURE_MINUTE=$(date -d "+24 hours" +%M)
     FUTURE_HOUR=$(date -d "+24 hours" +%H)
 
     # Create dynamic crontab to run daily at this time
-    echo "$FUTURE_MINUTE $FUTURE_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/checkpoint.py >> /app/logs/checkpoint.log 2>&1" | crontab -
+    echo "Installing crontab entry: $FUTURE_MINUTE $FUTURE_HOUR * * *"
+    if echo "$FUTURE_MINUTE $FUTURE_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/checkpoint.py >> /app/logs/checkpoint.log 2>&1" | crontab - 2>&1; then
+        echo "✓ Crontab entry installed successfully"
+
+        # Verify crontab was installed
+        echo "Current crontab:"
+        crontab -l 2>&1 | sed 's/^/  /'
+    else
+        echo "✗ Failed to install crontab entry"
+    fi
 
     # Start cron daemon
-    service cron start
+    echo "Starting cron daemon..."
+    if service cron start 2>&1; then
+        echo "✓ Cron daemon started"
+    else
+        echo "✗ Failed to start cron daemon"
+    fi
 
     # Log the schedule
     FIRST_RUN=$(date -d "+24 hours" '+%Y-%m-%d %H:%M:%S %Z')
-    echo "✓ Checkpoint configured"
+    echo "First checkpoint run: $FIRST_RUN"
     echo "================================"
 fi
 
@@ -63,13 +82,21 @@ if [ -f "/app/scripts/trigger_agent_run.py" ]; then
     AGENT_HOUR=$(date -d "+1 hour" +%H)
 
     # Append to existing crontab to run daily at this time
-    (crontab -l 2>/dev/null; echo "$AGENT_MINUTE $AGENT_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/trigger_agent_run.py") | crontab -
+    echo "Adding agent-run crontab entry: $AGENT_MINUTE $AGENT_HOUR * * *"
+    if (crontab -l 2>/dev/null; echo "$AGENT_MINUTE $AGENT_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/trigger_agent_run.py") | crontab - 2>&1; then
+        echo "✓ Agent-run crontab entry installed successfully"
+
+        # Verify final crontab
+        echo "Final crontab contents:"
+        crontab -l 2>&1 | sed 's/^/  /'
+    else
+        echo "✗ Failed to install agent-run crontab entry"
+    fi
 
     # Log the schedule
     AGENT_FIRST_RUN=$(date -d "+1 hour" '+%Y-%m-%d %H:%M:%S %Z')
-    echo "✓ Agent-run configured"
-    echo "  First run: $AGENT_FIRST_RUN"
-    echo "  Schedule: Daily at ${AGENT_HOUR}:${AGENT_MINUTE} UTC"
+    echo "First agent-run: $AGENT_FIRST_RUN"
+    echo "Schedule: Daily at ${AGENT_HOUR}:${AGENT_MINUTE} UTC"
     echo "================================"
 fi
 
