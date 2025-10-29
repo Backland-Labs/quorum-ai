@@ -53,7 +53,7 @@
       }
 
       preferences = response.data || null;
-      successMessage = 'Preferences saved successfully';
+      successMessage = 'Preferences saved. Reconsider proposals with new preferences on main dashboard';
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to save preferences';
     }

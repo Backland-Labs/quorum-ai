@@ -1,0 +1,15 @@
+# Ethereum Private Key Template
+#
+# INSTRUCTIONS:
+# 1. Copy this file: cp ethereum_private_key.txt.example ethereum_private_key.txt
+# 2. Replace the placeholder below with your actual private key (64 hex characters)
+# 3. IMPORTANT: DO NOT include the '0x' prefix
+# 4. Keep this file secure and never commit it to version control
+#
+# Example format (this is NOT a real key):
+# ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+#
+# For testing, you can use Anvil's first test account private key:
+# ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+YOUR_PRIVATE_KEY_HERE_WITHOUT_0x_PREFIX
