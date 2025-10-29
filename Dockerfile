@@ -58,6 +58,12 @@ RUN uv sync --frozen --no-dev
 # Copy built frontend files from stage 1
 COPY --from=frontend-builder /app/frontend/build ./static/
 
+# Create user entries for common UIDs (500-502, 1000-1001) to support cron with Olas scaffolding
+# The 'x' means no password - entries just need to exist in /etc/passwd for cron to work
+# This covers most macOS (501) and Linux (1000) default user IDs
+RUN echo "user501:x:501:20:User 501:/tmp:/bin/bash" >> /etc/passwd && \
+    echo "user1000:x:1000:1000:User 1000:/tmp:/bin/bash" >> /etc/passwd
+
 # Create necessary directories and set permissions
 RUN mkdir -p /app/logs && \
     chmod +x entrypoint.sh && \
