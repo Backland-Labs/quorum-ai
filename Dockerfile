@@ -37,8 +37,15 @@ RUN apt-get update && apt-get install -y \
     make \
     build-essential \
     wget \
-    cron \
     && rm -rf /var/lib/apt/lists/*
+
+# Install supercronic for user-space cron scheduling (works without root)
+ARG SUPERCRONIC_VERSION=v0.2.30
+ARG SUPERCRONIC_SHA256=21a665f278fd2feb95012df3d3e0de28df2d7968acd84eea47d732c521257974
+RUN curl -fsSL -o /usr/local/bin/supercronic \
+    "https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-arm64" \
+    && echo "${SUPERCRONIC_SHA256}  /usr/local/bin/supercronic" | sha256sum -c - \
+    && chmod +x /usr/local/bin/supercronic
 
 # Copy backend dependency files first for better Docker layer caching
 COPY backend/pyproject.toml backend/uv.lock ./
