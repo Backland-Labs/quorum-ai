@@ -5,11 +5,16 @@
   import type { components } from '$lib/api/client';
   import { hasApiError, getApiErrorStatus } from '$lib/utils/api';
   import { onMount } from 'svelte';
+  import { agentStatusStore } from '$lib/stores/agentStatus';
 
   let preferences = $state<components['schemas']['UserPreferences'] | null>(null);
   let loading = $state(true);
   let error = $state<string | null>(null);
   let successMessage = $state<string | null>(null);
+
+  const storeState = $state($agentStatusStore);
+  const isAgentActive = $derived(storeState.status?.is_active || false);
+  const currentSpaceId = $derived(storeState.currentSpaceId);
 
   onMount(() => {
     loadPreferences();
@@ -53,9 +58,49 @@
       }
 
       preferences = response.data || null;
-      successMessage = 'Preferences saved. Reconsider proposals with new preferences on main dashboard';
+      successMessage = 'Preferences saved successfully.';
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to save preferences';
+    }
+  }
+
+  async function handleSaveAndReconsider(data: components['schemas']['UserPreferences']) {
+    // First save the preferences
+    await handleSave(data);
+    
+    // If save failed, return early
+    if (error) {
+      return;
+    }
+
+    // Check conditions for reconsideration
+    if (!currentSpaceId) {
+      successMessage = 'Preferences saved. Select a space on the dashboard to run reconsideration.';
+      return;
+    }
+
+    if (isAgentActive) {
+      successMessage = 'Preferences saved. Agent is currently running; reconsideration will be available when it\'s idle.';
+      return;
+    }
+
+    // Trigger reconsideration
+    try {
+      const response = await apiClient.POST('/agent-run', {
+        body: {
+          space_id: currentSpaceId,
+          dry_run: false
+        }
+      });
+
+      if (hasApiError(response)) {
+        throw new Error('Failed to trigger reconsideration');
+      }
+
+      successMessage = 'Preferences saved and reconsideration started.';
+      agentStatusStore.fetchAll();
+    } catch (e) {
+      error = 'Failed to trigger reconsideration. Preferences were saved.';
     }
   }
 </script>
@@ -91,6 +136,8 @@
     <PreferenceForm
       initialValues={preferences}
       onSubmit={handleSave}
+      onSubmitAndReconsider={handleSaveAndReconsider}
+      reconsiderDisabled={!currentSpaceId || isAgentActive}
     />
   {/if}
 </div>
