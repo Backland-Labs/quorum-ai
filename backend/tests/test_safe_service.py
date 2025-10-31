@@ -771,6 +771,8 @@ class TestEASAttestation:
 
         with patch("services.safe_service.settings") as mock_settings:
             mock_settings.eas_contract_address = None
+            mock_settings.mock_mode = False  # Disable mock mode for this test
+            mock_settings.dry_run_default = False
 
             result = await self.service.create_eas_attestation(attestation_data)
 
@@ -792,6 +794,8 @@ class TestEASAttestation:
 
         with patch("services.safe_service.settings") as mock_settings:
             mock_settings.base_safe_address = None
+            mock_settings.mock_mode = False  # Disable mock mode for this test
+            mock_settings.dry_run_default = False
 
             result = await self.service.create_eas_attestation(attestation_data)
 
@@ -813,6 +817,8 @@ class TestEASAttestation:
         mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
         mock_settings.attestation_tracker_address = None
         mock_settings.attestation_chain = "base"
+        mock_settings.mock_mode = False  # Disable mock mode for this test
+        mock_settings.dry_run_default = False
 
         attestation_data = EASAttestationData(
             agent="0x4567890123456789012345678901234567890123",
@@ -1427,6 +1433,8 @@ class TestEASAttestationComprehensive:
         mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
         mock_settings.attestation_tracker_address = None
         mock_settings.attestation_chain = "base"
+        mock_settings.mock_mode = False  # Disable mock mode for this test
+        mock_settings.dry_run_default = False
 
         attestation_data = EASAttestationData(
             agent="0x4567890123456789012345678901234567890123",
@@ -1489,6 +1497,8 @@ class TestEASAttestationComprehensive:
             mock_settings.base_safe_address = (
                 "0x1234567890123456789012345678901234567890"
             )
+            mock_settings.mock_mode = False  # Disable mock mode for this test
+            mock_settings.dry_run_default = False
 
             with (
                 patch.object(
@@ -1520,6 +1530,8 @@ class TestEASAttestationComprehensive:
         mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
         mock_settings.attestation_tracker_address = None
         mock_settings.attestation_chain = "base"
+        mock_settings.mock_mode = False  # Disable mock mode for this test
+        mock_settings.dry_run_default = False
 
         attestation_data = EASAttestationData(
             agent="0x4567890123456789012345678901234567890123",
@@ -1936,6 +1948,8 @@ class TestSafeServiceMissingCoverage:
         mock_settings.base_safe_address = "0x1234567890123456789012345678901234567890"
         mock_settings.attestation_tracker_address = None
         mock_settings.attestation_chain = "base"
+        mock_settings.mock_mode = False  # Disable mock mode for this test
+        mock_settings.dry_run_default = False
 
         attestation_data = EASAttestationData(
             agent="0x4567890123456789012345678901234567890123",

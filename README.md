@@ -6,7 +6,7 @@ A sophisticated autonomous voting agent for DAO governance on the Olas Pearl pla
 
 ## Quick Start - Local Testing
 
-Get Quorum AI running locally in minutes using our automated setup script.
+Get Quorum AI running locally in minutes with simplified testing workflows.
 
 ### Prerequisites
 - Docker installed
@@ -14,12 +14,43 @@ Get Quorum AI running locally in minutes using our automated setup script.
 - Foundry (`anvil` and `cast` commands)
 - `curl` command-line tool
 - At least 4GB of available RAM
-- [OpenRouter](https://openrouter.ai/) API KEY
+- [OpenRouter](https://openrouter.ai/) API KEY (optional for mock mode)
 - Gnosis Safe Address (SAFE_CONTRACT_ADDRESSES)
 
-### Automated Setup (Recommended)
+### New Testing Workflow (Recommended)
 
-The `local_run_service.sh` script automates the entire quickstart process:
+The new `./scripts/quorum` command provides streamlined testing with three modes:
+
+**Mock Mode** - Fastest testing, no external dependencies:
+```bash
+./scripts/quorum mock up        # Start in mock mode
+./scripts/quorum mock test      # Run self-test
+```
+
+**Fork Mode** - Local blockchain with real data:
+```bash
+./scripts/quorum fork up        # Starts Anvil + app
+./scripts/quorum fork test      # Run self-test
+./scripts/quorum fork verify    # Check attestations
+```
+
+**Testnet Mode** - Real Base network:
+```bash
+./scripts/quorum testnet up     # Uses real Base network
+```
+
+Or use Makefile shortcuts:
+```bash
+make up              # Start in fork mode (default)
+make test            # Run self-test
+make verify          # Verify attestation count
+make run             # Execute agent run
+make down            # Stop all services
+```
+
+### Legacy Automated Setup
+
+The `local_run_service.sh` script still works for traditional setup:
 
 ```bash
 # export env vars

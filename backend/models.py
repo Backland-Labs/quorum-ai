@@ -1257,3 +1257,23 @@ class ValidationError(Exception):
     """Validation errors."""
 
     pass
+
+
+class AttestationVerificationResponse(BaseModel):
+    """Verification result for an attestation."""
+
+    is_valid: bool = Field(description="Whether the attestation is valid on-chain")
+    attestation_data: Optional[dict] = Field(
+        default=None, description="Attestation data if found"
+    )
+    error: Optional[str] = Field(default=None, description="Error message if any")
+
+
+class AttestationCountResponse(BaseModel):
+    """Response for attestation count verification."""
+
+    total_count: int = Field(description="Total number of attestations")
+    multisig_address: Optional[str] = Field(
+        default=None, description="Multisig address queried"
+    )
+    error: Optional[str] = Field(default=None, description="Error message if any")

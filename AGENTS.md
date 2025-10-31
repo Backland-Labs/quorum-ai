@@ -167,6 +167,41 @@ ATTESTATION_TRACKER_ADDRESS=0x...  # AttestationTracker contract address on Base
 - Use `const` for function definitions
 - Implement accessibility features (aria-label, tabindex, etc.)
 
+## Rapid Testing Workflow
+
+### Quick Start
+```bash
+# Fastest: Mock mode (no keys needed)
+./scripts/quorum mock up
+curl http://localhost:8716/self-test
+
+# Full: Fork mode (local blockchain)
+./scripts/quorum fork up
+curl -X POST http://localhost:8716/agent-run-once
+curl http://localhost:8716/verify/count
+
+# Using Makefile
+make up              # Start in fork mode
+make test            # Run self-test
+make verify          # Check attestation count
+make down            # Stop services
+```
+
+### Testing Commands
+- **Start services**: `./scripts/quorum [mock|fork|testnet] up`
+- **Self-test**: `curl http://localhost:8716/self-test`
+- **Run agent**: `curl -X POST http://localhost:8716/agent-run`
+- **Verify attestations**: `curl http://localhost:8716/verify/count`
+- **View logs**: `./scripts/quorum fork logs`
+- **Stop services**: `./scripts/quorum fork down`
+
+### Auditor Verification Steps
+1. Start: `make up`
+2. Test: `make test` (should show all checks passing)
+3. Run: `make run` (triggers agent run)
+4. Verify: `make verify` (confirms attestation on-chain)
+5. Logs: `make logs` (Pearl-compliant audit trail)
+
 ## Testing
 
 - When writing tests, write out the meaning and the importance of the test explaining what it's trying to do.

@@ -17,10 +17,9 @@ from services.key_manager import KeyManager
 
 from logging_config import setup_pearl_logger, log_span
 
-if not settings.get_base_rpc_endpoint():
+# Only enforce RPC URL requirement if not in mock mode
+if not settings.mock_mode and not settings.get_base_rpc_endpoint():
     raise RuntimeError(f"Set the BASE_RPC_URL. enable_safe_service={settings.get_base_rpc_endpoint()}")
-
-assert settings.get_base_rpc_endpoint() is not None, "Base RPC endpoint must be set"
 
 # Constants for Safe service URLs
 SAFE_SERVICE_URLS = {
@@ -521,6 +520,15 @@ class SafeService:
         Returns:
             Dict containing success status and transaction details or error
         """
+        # Check for mock mode
+        if settings.mock_mode:
+            self.logger.info("MOCK/DRY_RUN: skipping on-chain attestation")
+            stub_uid = "0x" + "0" * 64
+            return {
+                "success": True,
+                "safe_tx_hash": stub_uid,
+            }
+
         try:
             self.logger.info(
                 f"Creating EAS attestation (proposal_id={attestation_data.proposal_id}, "
@@ -1016,3 +1024,4 @@ class SafeService:
         )
 
         return signature
+# Cache buster: 1761946155

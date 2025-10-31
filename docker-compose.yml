@@ -1,8 +1,20 @@
 services:
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    profiles: ["fork"]
+    command: anvil --fork-url ${BASE_RPC_URL:-https://mainnet.base.org} --host 0.0.0.0 --port 8545 --block-time 2
+    healthcheck:
+      test: ["CMD-SHELL", "cast block-number --rpc-url http://127.0.0.1:8545 > /dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    ports:
+      - "8545:8545"
+    restart: unless-stopped
+
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: quorum-ai:latest
     container_name: quorum_app
     env_file:
       - .env
@@ -54,6 +66,7 @@ services:
       - MONITORED_DAOS=${MONITORED_DAOS:-quorum-ai.eth}
       - DRY_RUN_DEFAULT=${DRY_RUN_DEFAULT:-false}
       - VOTING_STRATEGY=${VOTING_STRATEGY:-balanced}
+      - MOCK_MODE=${MOCK_MODE:-0}
 
       # Agent Run Configuration
       - MAX_PROPOSALS_PER_RUN=${MAX_PROPOSALS_PER_RUN:-3}
