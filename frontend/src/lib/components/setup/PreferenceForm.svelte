@@ -248,14 +248,14 @@
 						type={showApiKey ? 'text' : 'password'}
 						bind:value={apiKey}
 						placeholder="sk-or-..."
-						class="block w-full pr-20 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+						class="block w-full pr-32 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
 						class:border-red-500={apiKeyError}
 						disabled={apiKeySaving}
 					/>
 					<button
 						type="button"
 						onclick={() => showApiKey = !showApiKey}
-						class="absolute right-12 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
+						class="absolute right-20 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
 						disabled={apiKeySaving}
 					>
 						{showApiKey ? 'Hide' : 'Show'}
@@ -304,24 +304,22 @@
 	{/if}
 
 
-	<!-- Conditional Action Buttons -->
-	{#if isDirty}
-		<div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-			<button
-				type="submit"
-				disabled={isSubmitting}
-				class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-			>
-				{isSubmitting ? 'Saving...' : 'Save Preferences'}
-			</button>
-			<button
-				type="button"
-				onclick={handleSubmitAndReconsider}
-				disabled={isSubmitting || reconsiderDisabled || !onSubmitAndReconsider}
-				class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-			>
-				{isSubmitting ? 'Saving...' : 'Save Settings and Reconsider Proposals'}
-			</button>
-		</div>
-	{/if}
+	<!-- Action Buttons -->
+	<div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+		<button
+			type="submit"
+			disabled={isSubmitting || !isDirty}
+			class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+		>
+			{isSubmitting ? 'Saving...' : 'Save Preferences'}
+		</button>
+		<button
+			type="button"
+			onclick={handleSubmitAndReconsider}
+			disabled={isSubmitting || !isDirty || reconsiderDisabled || !onSubmitAndReconsider}
+			class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+		>
+			{isSubmitting ? 'Saving...' : 'Save Settings and Reconsider Proposals'}
+		</button>
+	</div>
 </form>

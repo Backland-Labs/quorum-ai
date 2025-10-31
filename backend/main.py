@@ -30,7 +30,6 @@ from models import (
     SummarizeRequest,
     SummarizeResponse,
     UserPreferences,
-    SelfTestResponse,
     AttestationVerificationResponse,
     AttestationCountResponse,
 )
