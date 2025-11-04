@@ -1136,7 +1136,7 @@ class AgentRunService:
 
         checkpoint_data = {
             "space_id": response.space_id,
-            "proposals_analyzed": response.proposals_analyzed,
+            "proposals_evaluated": response.proposals_analyzed,
             "votes_cast": votes_with_timestamps,
             "execution_time": response.execution_time,
             "timestamp": datetime.utcnow().isoformat(),
