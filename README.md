@@ -39,13 +39,27 @@ The new `./scripts/quorum` command provides streamlined testing with three modes
 ./scripts/quorum testnet up     # Uses real Base network
 ```
 
-Or use Makefile shortcuts:
+### Using Make Commands (Recommended)
+
+For convenience, use the Makefile commands:
+
 ```bash
-make up              # Start in fork mode (default)
-make test            # Run self-test
+make build           # Build Docker image
+make up              # Build and start services (fork mode by default)
+make down            # Stop and remove services
+make logs            # Show live application logs
+make status          # Show service status and health check
+make test            # Run health check
 make verify          # Verify attestation count
 make run             # Execute agent run
-make down            # Stop all services
+make clean           # Stop services and clean up data
+```
+
+**Change the profile** using the `PROFILE` variable:
+```bash
+make up PROFILE=mock      # Start in mock mode (fastest)
+make up PROFILE=fork      # Start in fork mode (default)
+make up PROFILE=testnet   # Start with real Base network
 ```
 
 ### Legacy Automated Setup
