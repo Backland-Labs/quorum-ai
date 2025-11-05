@@ -1146,7 +1146,7 @@ class AgentRunService:
 
         checkpoint_data = {
             "space_id": response.space_id,
-            "proposals_evaluated": response.proposals_analyzed,
+            "proposals_analyzed": response.proposals_analyzed,
             "votes_cast": votes_with_timestamps,
             "execution_time": response.execution_time,
             "timestamp": datetime.utcnow().isoformat(),
@@ -1400,10 +1400,10 @@ class AgentRunService:
                         total_runs += 1
 
                         # Count proposals evaluated
-                        proposals_evaluated = checkpoint_data.get(
-                            "proposals_evaluated", 0
+                        proposals_analyzed = checkpoint_data.get(
+                            "proposals_analyzed", 0
                         )
-                        total_proposals_evaluated += proposals_evaluated
+                        total_proposals_evaluated += proposals_analyzed
 
                         # Count votes cast and aggregate confidence scores
                         votes_cast = checkpoint_data.get("votes_cast", [])
