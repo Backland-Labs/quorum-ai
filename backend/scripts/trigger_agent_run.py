@@ -41,7 +41,7 @@ def main():
             sys.exit(1)
 
         space_id = dao_list[0]
-        logger.info(f"Triggering agent-run for space: {space_id}")
+        logger.info(f" Automatic triggering agent-run for space: {space_id}")
 
         # Prepare request
         url = "http://localhost:8716/agent-run"
@@ -58,11 +58,11 @@ def main():
             if response.status_code == 200:
                 result = response.json()
                 logger.info(
-                    f"Autonomous Agent-run completed successfully"
+                    f"Automatic Triggering agent-run for space: {space_id} completed successfully"
                 )
             else:
                 logger.error(
-                    f"Autonomous Agent-run failed"
+                    f"Automatic Triggering agent-run for space: {space_id} failed"
                 )
                 sys.exit(1)
 
