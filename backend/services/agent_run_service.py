@@ -25,6 +25,7 @@ from services.snapshot_service import SnapshotService
 from services.ai_service import AIService
 from services.voting_service import VotingService
 from services.safe_service import SafeService
+from services.activity_service import ActivityService
 from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
@@ -86,6 +87,7 @@ class AgentRunService:
         self.ai_service = ai_service or AIService()
         self.voting_service = VotingService()
         self.safe_service = SafeService()
+        self.activity_service = ActivityService()
         self.user_preferences_service = UserPreferencesService()
         self.logger = AgentRunLogger(store_path=settings.store_path)
         self.state_manager = state_manager
@@ -1012,6 +1014,14 @@ class AgentRunService:
                             f"Successfully created attestation for proposal {attestation['proposal_id']}: "
                             f"tx_hash={result.get('safe_tx_hash')}, success={result.get('success')}"
                         )
+
+                        # Mark daily activity as completed for OLAS staking compliance
+                        tx_hash = result.get('safe_tx_hash')
+                        if tx_hash:
+                            self.activity_service.mark_activity_completed(tx_hash)
+                            self.pearl_logger.info(
+                                f"Marked daily activity as completed (tx_hash={tx_hash})"
+                            )
                     else:
                         self.pearl_logger.error(
                             f"Failed to create attestation for proposal {attestation['proposal_id']}: "
@@ -1390,10 +1400,10 @@ class AgentRunService:
                         total_runs += 1
 
                         # Count proposals evaluated
-                        proposals_evaluated = checkpoint_data.get(
-                            "proposals_evaluated", 0
+                        proposals_analyzed = checkpoint_data.get(
+                            "proposals_analyzed", 0
                         )
-                        total_proposals_evaluated += proposals_evaluated
+                        total_proposals_evaluated += proposals_analyzed
 
                         # Count votes cast and aggregate confidence scores
                         votes_cast = checkpoint_data.get("votes_cast", [])

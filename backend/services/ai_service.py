@@ -844,6 +844,18 @@ class AIService:
             f"Expected VotingStrategy enum, got {type(strategy)}"
         )
 
+        # Check for mock mode or missing API key
+        if settings.mock_mode:
+            logger.warning("AI in MOCK_MODE: returning stubbed decision")
+            choice_value = proposal.choices[0] if proposal.choices else "For"
+            return VoteDecision(
+                proposal_id=proposal.id,
+                vote=VoteType.FOR,
+                confidence=0.85,
+                reasoning="[MOCK] Auto-approved for testing",
+                risk_assessment=RiskLevel.LOW,
+            )
+
         try:
             # Extract logging context
             model_type_name = type(self.model).__name__
@@ -1133,6 +1145,19 @@ class AIService:
         # Constants for default values
         DEFAULT_CONFIDENCE_SCORE = 0.85
         DEFAULT_RECOMMENDATION = ""
+
+        # Check for mock mode or missing API key
+        if settings.mock_mode:
+            logger.warning("AI in MOCK_MODE: returning stubbed summary")
+            return ProposalSummary(
+                proposal_id=proposal.id,
+                title=proposal.title,
+                summary="[MOCK] This is a test proposal summary",
+                key_points=["Mock key point 1", "Mock key point 2", "Mock key point 3"],
+                risk_assessment=RiskLevel.LOW,
+                recommendation="[MOCK] approve",
+                confidence=0.85,
+            )
 
         try:
             # Extract model type for logging

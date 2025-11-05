@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROFILE="${1:-mock}"
+CMD="${2:-up}"
+DEV_FLAG="${3:-}"
+
+ENV_FILE="env/${PROFILE}.env"
+
+# Determine compose files and profiles
+if [[ "$PROFILE" == "fork" ]]; then
+    COMPOSE_FILES="-f docker-compose.yml -f docker-compose.fork.yml"
+    PROFILES="--profile fork"
+else
+    COMPOSE_FILES="-f docker-compose.yml"
+    PROFILES=""
+fi
+
+# Enable dev overrides
+if [[ "$DEV_FLAG" == "--dev" ]]; then 
+    COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.dev.yml"
+fi
+
+case "$CMD" in
+  build)
+    echo "Building Quorum AI Docker image..."
+    docker build -t quorum-ai:latest .
+    ;;
+  up)
+    echo "Building Quorum AI Docker image..."
+    docker build -t quorum-ai:latest . || { echo "Build failed"; exit 1; }
+    echo "Starting Quorum AI in $PROFILE mode..."
+    docker compose $COMPOSE_FILES --env-file "$ENV_FILE" $PROFILES up -d
+    echo "Waiting for service to be ready..."
+    sleep 5
+    curl -sf http://localhost:8716/healthcheck && echo "✓ Service is healthy" || echo "✗ Service not responding"
+    ;;
+  down)
+    echo "Stopping Quorum AI..."
+    docker compose $COMPOSE_FILES --env-file "$ENV_FILE" $PROFILES down -v
+    ;;
+  logs)
+    docker compose $COMPOSE_FILES --env-file "$ENV_FILE" $PROFILES logs -f app
+    ;;
+  status)
+    echo "=== Service Status ==="
+    docker compose $COMPOSE_FILES --env-file "$ENV_FILE" $PROFILES ps
+    echo ""
+    echo "=== Health Check ==="
+    curl -sf http://localhost:8716/healthcheck | jq '.' || echo "Service not responding"
+    echo ""
+    if [[ "$PROFILE" == "fork" ]]; then
+      echo "=== Anvil Status ==="
+      curl -s -X POST http://localhost:8545 -H 'Content-Type: application/json' \
+        -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq '.'
+    fi
+    ;;
+  test)
+    echo "=== Running Health Check ==="
+    curl -sf http://localhost:8716/healthcheck | jq '.'
+    ;;
+  verify)
+    echo "=== Verifying Attestation Count ==="
+    curl -sf http://localhost:8716/verify/count | jq '.'
+    ;;
+  run)
+    echo "=== Running Agent ==="
+    curl -sf -X POST http://localhost:8716/agent-run | jq '.'
+    ;;
+  *)
+    echo "Quorum AI Testing Script"
+    echo ""
+    echo "Usage: ./quorum [PROFILE] [COMMAND] [--dev]"
+    echo ""
+    echo "Profiles:"
+    echo "  mock     - Fastest, no external dependencies (default)"
+    echo "  fork     - Local Anvil fork of Base"
+    echo "  testnet  - Real Base network"
+    echo ""
+    echo "Commands:"
+    echo "  build    - Build Docker image"
+    echo "  up       - Build and start services (default)"
+    echo "  down     - Stop services"
+    echo "  logs     - Show live logs"
+    echo "  status   - Show service status"
+    echo "  test     - Run self-test"
+    echo "  verify   - Verify attestation count"
+    echo "  run      - Run agent (existing endpoint)"
+    echo ""
+    echo "Examples:"
+    echo "  ./quorum mock build      # Build image"
+    echo "  ./quorum mock up         # Build and start in mock mode"
+    echo "  ./quorum fork up --dev   # Start with hot reload"
+    echo "  ./quorum fork test       # Run self-test"
+    echo "  ./quorum fork verify     # Check attestation count"
+    exit 1
+    ;;
+esac

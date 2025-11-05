@@ -4,6 +4,7 @@ import json
 import time
 from typing import Dict, Optional, Any, List
 from web3 import Web3
+from web3.exceptions import BadFunctionCallOutput
 from eth_account import Account
 from safe_eth.eth import EthereumClient
 from safe_eth.safe import Safe
@@ -17,10 +18,9 @@ from services.key_manager import KeyManager
 
 from logging_config import setup_pearl_logger, log_span
 
-if not settings.get_base_rpc_endpoint():
+# Only enforce RPC URL requirement if not in mock mode
+if not settings.mock_mode and not settings.get_base_rpc_endpoint():
     raise RuntimeError(f"Set the BASE_RPC_URL. enable_safe_service={settings.get_base_rpc_endpoint()}")
-
-assert settings.get_base_rpc_endpoint() is not None, "Base RPC endpoint must be set"
 
 # Constants for Safe service URLs
 SAFE_SERVICE_URLS = {
@@ -301,13 +301,26 @@ class SafeService:
                 )
 
                 # Build Safe transaction with proper gas estimation
-                safe_tx = safe_instance.build_multisig_tx(
-                    to=to,
-                    value=value,
-                    data=data,
-                    operation=operation,
-                    safe_tx_gas=1000000,  # Increased for EAS attestation through AttestationTracker
-                )
+                try:
+                    safe_tx = safe_instance.build_multisig_tx(
+                        to=to,
+                        value=value,
+                        data=data,
+                        operation=operation,
+                        safe_tx_gas=1000000,  # Increased for EAS attestation through AttestationTracker
+                    )
+                except BadFunctionCallOutput as e:
+                    error_msg = (
+                        f"Safe contract not found at address {safe_address} on {chain}. "
+                        f"The address may be an EOA (externally owned account) or the contract may not exist. "
+                        f"Please verify SAFE_CONTRACT_ADDRESSES environment variable is correct. "
+                        f"Original error: {str(e)}"
+                    )
+                    self.logger.error(
+                        f"Safe contract validation failed - chain={chain}, "
+                        f"safe_address={safe_address}, error={error_msg}"
+                    )
+                    raise ValueError(error_msg) from e
 
                 # Sign Safe transaction hash
                 signed_safe_tx_hash = self.account.unsafe_sign_hash(
@@ -458,7 +471,20 @@ class SafeService:
 
         eth_client = EthereumClient(rpc_url)  # type: ignore
         safe_instance = Safe(Web3.to_checksum_address(safe_address), eth_client)  # type: ignore
-        return safe_instance.retrieve_nonce()
+        try:
+            return safe_instance.retrieve_nonce()
+        except BadFunctionCallOutput as e:
+            error_msg = (
+                f"Safe contract not found at address {safe_address} on {chain}. "
+                f"The address may be an EOA (externally owned account) or the contract may not exist. "
+                f"Please verify SAFE_CONTRACT_ADDRESSES environment variable is correct. "
+                f"Original error: {str(e)}"
+            )
+            self.logger.error(
+                f"Safe contract validation failed - chain={chain}, "
+                f"safe_address={safe_address}, error={error_msg}"
+            )
+            raise ValueError(error_msg) from e
 
     async def build_safe_transaction(
         self, chain: str, to: str, value: int = 0, data: bytes = b"", operation: int = 0
@@ -488,12 +514,25 @@ class SafeService:
         eth_client = EthereumClient(rpc_url)  # type: ignore
         safe_instance = Safe(safe_address, eth_client)  # type: ignore
 
-        safe_tx = safe_instance.build_multisig_tx(
-            to=to,
-            value=value,
-            data=data,
-            operation=operation,
-        )
+        try:
+            safe_tx = safe_instance.build_multisig_tx(
+                to=to,
+                value=value,
+                data=data,
+                operation=operation,
+            )
+        except BadFunctionCallOutput as e:
+            error_msg = (
+                f"Safe contract not found at address {safe_address} on {chain}. "
+                f"The address may be an EOA (externally owned account) or the contract may not exist. "
+                f"Please verify SAFE_CONTRACT_ADDRESSES environment variable is correct. "
+                f"Original error: {str(e)}"
+            )
+            self.logger.error(
+                f"Safe contract validation failed - chain={chain}, "
+                f"safe_address={safe_address}, error={error_msg}"
+            )
+            raise ValueError(error_msg) from e
 
         return {
             "safe_address": safe_address,
@@ -521,6 +560,15 @@ class SafeService:
         Returns:
             Dict containing success status and transaction details or error
         """
+        # Check for mock mode
+        if settings.mock_mode:
+            self.logger.info("MOCK/DRY_RUN: skipping on-chain attestation")
+            stub_uid = "0x" + "0" * 64
+            return {
+                "success": True,
+                "safe_tx_hash": stub_uid,
+            }
+
         try:
             self.logger.info(
                 f"Creating EAS attestation (proposal_id={attestation_data.proposal_id}, "
@@ -1016,3 +1064,4 @@ class SafeService:
         )
 
         return signature
+# Cache buster: 1761946155

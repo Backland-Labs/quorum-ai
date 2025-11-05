@@ -10,7 +10,7 @@
   let { testMode = false }: Props = $props();
 
   // Subscribe to the store for last_run_timestamp
-  const storeState = $state($agentStatusStore);
+  const storeState = $derived($agentStatusStore);
 
   // State for staking KPI
   let isStakingKpiMet = $state<boolean | null>(null);

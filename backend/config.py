@@ -113,6 +113,13 @@ class Settings(BaseSettings):
         description="Pearl-compliant log format string",
     )
 
+    # Mock mode - stubs AI and blockchain for testing without keys
+    mock_mode: bool = Field(
+        default=False,
+        alias="MOCK_MODE",
+        description="Enable mock mode for testing without external dependencies",
+    )
+
     # Application settings
     app_name: str = "Quorum AI"
     debug: bool = False
@@ -439,6 +446,18 @@ class Settings(BaseSettings):
         alias="ATTESTATION_CHAIN",
         description="Chain to use for attestation transactions (e.g., 'base', 'ethereum')",
     )
+
+    @field_validator("mock_mode", mode="before")
+    @classmethod
+    def validate_mock_mode(cls, v):
+        """Parse MOCK_MODE environment variable."""
+        if v is None:
+            return False
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, str):
+            return v.strip() == "1" or v.strip().lower() == "true"
+        return False
 
     @field_validator("log_level", mode="before")
     @classmethod

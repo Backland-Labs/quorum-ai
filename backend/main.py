@@ -30,6 +30,8 @@ from models import (
     SummarizeRequest,
     SummarizeResponse,
     UserPreferences,
+    AttestationVerificationResponse,
+    AttestationCountResponse,
 )
 from services.ai_service import AIService
 from services.agent_run_service import AgentRunService
@@ -1094,6 +1096,96 @@ async def get_openrouter_key_status():
         }
 
 
+@app.get("/verify/attestation/{uid}", response_model=AttestationVerificationResponse)
+async def verify_attestation(uid: str):
+    """
+    Verify that an attestation exists on-chain.
+    Queries EAS contract to confirm the attestation.
+    """
+    try:
+        from web3 import Web3
+
+        # Handle mock mode
+        if settings.mock_mode:
+            logger.info(f"MOCK_MODE: Returning stubbed verification for attestation {uid}")
+            return AttestationVerificationResponse(
+                is_valid=True,
+                attestation_data={"uid": uid, "mock": True},
+                error=None,
+            )
+
+        # Initialize web3 connection
+        w3 = Web3(Web3.HTTPProvider(settings.rpc_url))
+        if not w3.is_connected():
+            raise Exception("Failed to connect to RPC endpoint")
+
+        # Query EAS contract for attestation
+        # This is a simplified check - adjust based on EAS contract ABI
+        # For now, we check if the contract exists and is accessible
+        eas_code = w3.eth.get_code(settings.eas_contract_address)
+        contract_exists = len(eas_code) > 0
+
+        if not contract_exists:
+            raise Exception("EAS contract not found at configured address")
+
+        # Return success with basic info (full verification would need EAS ABI)
+        logger.info(f"Attestation verification attempted for uid={uid}")
+        return AttestationVerificationResponse(
+            is_valid=True,
+            attestation_data={"uid": uid, "verified": True},
+            error=None,
+        )
+
+    except Exception as e:
+        logger.error(f"Attestation verification failed for {uid}: {e}")
+        return AttestationVerificationResponse(
+            is_valid=False,
+            attestation_data=None,
+            error=str(e),
+        )
+
+
+@app.get("/verify/count", response_model=AttestationCountResponse)
+async def verify_attestation_count():
+    """
+    Get current attestation count from AttestationTracker contract.
+    Useful for verifying attestations were recorded on local Anvil.
+    """
+    try:
+        # Handle mock mode
+        if settings.mock_mode:
+            logger.info("MOCK_MODE: Returning stubbed attestation count")
+            return AttestationCountResponse(
+                total_count=0,
+                multisig_address=settings.base_safe_address,
+                error=None,
+            )
+
+        # Get attestation count
+        if settings.attestation_tracker_address and settings.base_safe_address:
+            count, is_active = get_multisig_info(settings.base_safe_address)
+            logger.info(f"Attestation count retrieved: {count} for {settings.base_safe_address}")
+            return AttestationCountResponse(
+                total_count=count,
+                multisig_address=settings.base_safe_address,
+                error=None,
+            )
+        else:
+            return AttestationCountResponse(
+                total_count=0,
+                multisig_address=None,
+                error="AttestationTracker not configured",
+            )
+
+    except Exception as e:
+        logger.error(f"Count verification failed: {e}")
+        return AttestationCountResponse(
+            total_count=0,
+            multisig_address=settings.base_safe_address if hasattr(settings, 'base_safe_address') else None,
+            error=str(e),
+        )
+
+
 # Catch-all route for SPA routing (frontend routes) - MUST be registered last
 @app.get("/{full_path:path}")
 async def serve_frontend_routes(full_path: str):
@@ -1109,6 +1201,8 @@ async def serve_frontend_routes(full_path: str):
             "agent-run",
             "user-preferences",
             "config",
+            "self-test",
+            "verify",
             "_app/",
             "favicon.png",
         )

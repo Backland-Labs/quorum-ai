@@ -1,0 +1,6 @@
+# Fork-specific overrides
+services:
+  app:
+    depends_on:
+      anvil:
+        condition: service_healthy

@@ -1,0 +1,7 @@
+services:
+  app:
+    command: uv run uvicorn main:app --host 0.0.0.0 --port 8716 --reload
+    volumes:
+      - ./backend:/app/backend
+      - ./logs:/app/logs
+      - ./store:/app/store

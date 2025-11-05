@@ -6,7 +6,7 @@
   const RETRY_MESSAGE = 'Please try again later';
 
   // Get data from the store
-  const storeState = $state($agentStatusStore);
+  const storeState = $derived($agentStatusStore);
 
 </script>
 
