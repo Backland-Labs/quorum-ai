@@ -26,9 +26,9 @@ const initialState: AgentDashboardState = {
   decisions: [],
   statistics: null,
   loading: {
-    status: false,
-    decisions: false,
-    statistics: false
+    status: true,
+    decisions: true,
+    statistics: true
   },
   errors: {
     status: null,
