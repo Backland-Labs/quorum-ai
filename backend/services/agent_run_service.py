@@ -8,9 +8,10 @@ import time
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from datetime import datetime, timezone
+from datetime import datetime
 from logging_config import setup_pearl_logger, log_span
 from config import settings
+import config
 
 from models import (
     AgentRunRequest,
@@ -30,10 +31,6 @@ from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
 from services.state_transition_tracker import StateTransitionTracker, AgentState
-
-
-# Constants
-MAX_ATTESTATION_RETRIES = 3
 
 
 # Custom exceptions for better error handling
@@ -126,9 +123,9 @@ class AgentRunService:
         """
         # Runtime assertions for critical method validation
         assert request is not None, "Request cannot be None"
-        assert isinstance(request, AgentRunRequest), (
-            f"Request must be AgentRunRequest, got {type(request)}"
-        )
+        assert isinstance(
+            request, AgentRunRequest
+        ), f"Request must be AgentRunRequest, got {type(request)}"
 
         start_time = time.time()
         errors = []
@@ -156,8 +153,6 @@ class AgentRunService:
             dry_run=request.dry_run,
         ):
             try:
-                # Process any pending attestations from previous runs
-                await self._process_pending_attestations(request.space_id)
                 # Step 1: Load user preferences
                 self.state_tracker.transition(
                     AgentState.LOADING_PREFERENCES, {"run_id": run_id}
@@ -491,9 +486,9 @@ class AgentRunService:
             ProposalFetchError: When fetching proposals fails
         """
         # Runtime assertions for critical method validation
-        assert isinstance(space_id, str), (
-            f"Space ID must be string, got {type(space_id)}"
-        )
+        assert isinstance(
+            space_id, str
+        ), f"Space ID must be string, got {type(space_id)}"
         assert space_id.strip(), "Space ID must be non-empty string"
         assert isinstance(limit, int), f"Limit must be integer, got {type(limit)}"
         assert limit > 0, "Limit must be positive integer"
@@ -516,12 +511,12 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(proposals, list), (
-                    f"Expected list of proposals, got {type(proposals)}"
-                )
-                assert all(isinstance(p, Proposal) for p in proposals), (
-                    "All items must be Proposal objects"
-                )
+                assert isinstance(
+                    proposals, list
+                ), f"Expected list of proposals, got {type(proposals)}"
+                assert all(
+                    isinstance(p, Proposal) for p in proposals
+                ), "All items must be Proposal objects"
 
                 return proposals
 
@@ -532,6 +527,47 @@ class AgentRunService:
                 raise ProposalFetchError(
                     f"Failed to fetch active proposals from {space_id}: {str(e)}"
                 ) from e
+
+    def _validate_filter_params(
+        self, proposals: List[Proposal], preferences: UserPreferences
+    ) -> None:
+        """Validate filter and rank parameters.
+
+        Args:
+            proposals: List of Proposal objects to validate
+            preferences: UserPreferences to validate
+        """
+        assert isinstance(
+            proposals, list
+        ), f"Proposals must be a list, got {type(proposals)}"
+        assert isinstance(
+            preferences, UserPreferences
+        ), f"Preferences must be UserPreferences, got {type(preferences)}"
+        assert all(
+            isinstance(p, Proposal) for p in proposals
+        ), "All proposals must be Proposal objects"
+
+    def _apply_proposal_limit(
+        self, ranked_proposals: List[Proposal], preferences: UserPreferences
+    ) -> List[Proposal]:
+        """Apply max_proposals_per_run limit to ranked proposals.
+
+        Args:
+            ranked_proposals: List of ranked proposals
+            preferences: User preferences containing max_proposals_per_run
+
+        Returns:
+            Limited list of proposals
+        """
+        if preferences.max_proposals_per_run > 0:
+            final_proposals = ranked_proposals[: preferences.max_proposals_per_run]
+            self.pearl_logger.info(
+                f"Proposals limited to max per run (original_ranked_count={len(ranked_proposals)}, "
+                f"final_count={len(final_proposals)}, "
+                f"max_proposals_per_run={preferences.max_proposals_per_run})"
+            )
+            return final_proposals
+        return ranked_proposals
 
     async def _filter_and_rank_proposals(
         self, proposals: List[Proposal], preferences: UserPreferences
@@ -548,16 +584,7 @@ class AgentRunService:
         Raises:
             AgentRunServiceError: When filtering or ranking proposals fails
         """
-        # Runtime assertions for critical method validation
-        assert isinstance(proposals, list), (
-            f"Proposals must be a list, got {type(proposals)}"
-        )
-        assert isinstance(preferences, UserPreferences), (
-            f"Preferences must be UserPreferences, got {type(preferences)}"
-        )
-        assert all(isinstance(p, Proposal) for p in proposals), (
-            "All proposals must be Proposal objects"
-        )
+        self._validate_filter_params(proposals, preferences)
 
         if not proposals:
             return []
@@ -580,7 +607,6 @@ class AgentRunService:
 
                 # Step 1: Filter proposals based on user preferences
                 filtered_proposals = proposal_filter.filter_proposals(proposals)
-
                 self.pearl_logger.info(
                     f"Proposals filtered (original_count={len(proposals)}, "
                     f"filtered_count={len(filtered_proposals)})"
@@ -588,30 +614,19 @@ class AgentRunService:
 
                 # Step 2: Rank filtered proposals by importance and urgency
                 ranked_proposals = proposal_filter.rank_proposals(filtered_proposals)
-
                 self.pearl_logger.info(
                     f"Proposals ranked (ranked_count={len(ranked_proposals)})"
                 )
 
                 # Step 3: Limit to max_proposals_per_run if specified
-                if preferences.max_proposals_per_run > 0:
-                    final_proposals = ranked_proposals[
-                        : preferences.max_proposals_per_run
-                    ]
-                    self.pearl_logger.info(
-                        f"Proposals limited to max per run (original_ranked_count={len(ranked_proposals)}, "
-                        f"final_count={len(final_proposals)}, "
-                        f"max_proposals_per_run={preferences.max_proposals_per_run})"
-                    )
-                else:
-                    final_proposals = ranked_proposals
+                final_proposals = self._apply_proposal_limit(
+                    ranked_proposals, preferences
+                )
 
                 # Get filtering metrics for logging
                 filtering_metrics = proposal_filter.get_filtering_metrics(
                     proposals, filtered_proposals
                 )
-
-                # Format filtering metrics as string
                 metrics_str = ", ".join(
                     f"{k}={v}" for k, v in filtering_metrics.items()
                 )
@@ -621,15 +636,15 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(final_proposals, list), (
-                    f"Expected list of proposals, got {type(final_proposals)}"
-                )
-                assert all(isinstance(p, Proposal) for p in final_proposals), (
-                    "All filtered proposals must be Proposal objects"
-                )
-                assert len(final_proposals) <= len(proposals), (
-                    "Filtered count cannot exceed original count"
-                )
+                assert isinstance(
+                    final_proposals, list
+                ), f"Expected list of proposals, got {type(final_proposals)}"
+                assert all(
+                    isinstance(p, Proposal) for p in final_proposals
+                ), "All filtered proposals must be Proposal objects"
+                assert len(final_proposals) <= len(
+                    proposals
+                ), "Filtered count cannot exceed original count"
 
                 return final_proposals
 
@@ -659,15 +674,15 @@ class AgentRunService:
             VotingDecisionError: When making voting decisions fails
         """
         # Runtime assertions for critical method validation
-        assert isinstance(proposals, list), (
-            f"Proposals must be a list, got {type(proposals)}"
-        )
-        assert isinstance(preferences, UserPreferences), (
-            f"Preferences must be UserPreferences, got {type(preferences)}"
-        )
-        assert all(isinstance(p, Proposal) for p in proposals), (
-            "All proposals must be Proposal objects"
-        )
+        assert isinstance(
+            proposals, list
+        ), f"Proposals must be a list, got {type(proposals)}"
+        assert isinstance(
+            preferences, UserPreferences
+        ), f"Preferences must be UserPreferences, got {type(preferences)}"
+        assert all(
+            isinstance(p, Proposal) for p in proposals
+        ), "All proposals must be Proposal objects"
 
         if not proposals:
             return []
@@ -714,12 +729,12 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(vote_decisions, list), (
-                    f"Expected list of vote decisions, got {type(vote_decisions)}"
-                )
-                assert all(isinstance(d, VoteDecision) for d in vote_decisions), (
-                    "All decisions must be VoteDecision objects"
-                )
+                assert isinstance(
+                    vote_decisions, list
+                ), f"Expected list of vote decisions, got {type(vote_decisions)}"
+                assert all(
+                    isinstance(d, VoteDecision) for d in vote_decisions
+                ), "All decisions must be VoteDecision objects"
 
                 return vote_decisions
 
@@ -731,6 +746,290 @@ class AgentRunService:
                 raise VotingDecisionError(
                     f"Failed to make voting decisions: {str(e)}"
                 ) from e
+
+    async def _create_immediate_attestation(
+        self,
+        decision: VoteDecision,
+        space_id: str,
+        run_id: str,
+        vote_id: Optional[str],
+        vote_succeeded: bool,
+        vote_choice: int,
+    ) -> None:
+        """Create immediate EAS attestation for a vote decision.
+
+        Args:
+            decision: The vote decision to attest
+            space_id: The space ID where vote was cast
+            run_id: The agent run ID
+            vote_id: The Snapshot vote ID (if vote succeeded)
+            vote_succeeded: Whether the vote submission succeeded
+            vote_choice: The numeric vote choice (from VOTE_CHOICE_MAPPING)
+        """
+        try:
+            self.pearl_logger.info(
+                f"Creating immediate EAS attestation (proposal={decision.proposal_id}, "
+                f"vote_succeeded={vote_succeeded}, vote_id={vote_id or 'None'}, "
+                f"agent={self.voting_service.account.address}, space={space_id})"
+            )
+
+            # Build EAS attestation data
+            eas_data = EASAttestationData(
+                agent=self.voting_service.account.address,
+                space_id=space_id,
+                proposal_id=decision.proposal_id,
+                vote_choice=vote_choice,
+                snapshot_sig=vote_id if vote_id else "0x" + "0" * 64,
+                timestamp=int(time.time()),
+                run_id=run_id,
+                confidence=int(decision.confidence * 100),
+            )
+
+            # Submit attestation through Safe service
+            attestation_result = await self.safe_service.create_eas_attestation(
+                eas_data
+            )
+
+            if attestation_result.get("success"):
+                safe_tx_hash = attestation_result.get("safe_tx_hash")
+                self.pearl_logger.info(
+                    f"Successfully created EAS attestation (proposal={decision.proposal_id}, "
+                    f"safe_tx_hash={safe_tx_hash}, schema_uid={config.settings.eas_schema_uid})"
+                )
+
+                # Mark daily activity as completed for OLAS staking compliance
+                if safe_tx_hash:
+                    self.activity_service.mark_activity_completed(safe_tx_hash)
+                    self.pearl_logger.info(
+                        f"Marked daily activity as completed (tx_hash={safe_tx_hash}, "
+                        f"proposal={decision.proposal_id})"
+                    )
+            else:
+                self._log_attestation_error(
+                    attestation_result.get("error", "Unknown error"),
+                    decision.proposal_id,
+                    space_id,
+                )
+
+        except Exception as e:
+            self.pearl_logger.exception(
+                f"Unexpected exception during immediate attestation. "
+                f"proposal={decision.proposal_id}, space={space_id}, "
+                f"vote_id={vote_id or 'None'}, agent={self.voting_service.account.address}, "
+                f"eas_contract={config.settings.eas_contract_address or 'NOT_SET'}, "
+                f"schema_uid={config.settings.eas_schema_uid or 'NOT_SET'}, "
+                f"safe_address={config.settings.safe_contract_addresses.get('base') if config.settings.safe_contract_addresses else 'NOT_SET'}. "
+                f"Exception: {str(e)}"
+            )
+
+    def _get_safe_address(self) -> str:
+        """Get Safe address for error messages."""
+        return (
+            config.settings.safe_contract_addresses.get("base")
+            if config.settings.safe_contract_addresses
+            else "UNKNOWN"
+        )
+
+    def _get_error_category(self, error_msg: str) -> str:
+        """Categorize attestation error message.
+
+        Args:
+            error_msg: The error message to categorize
+
+        Returns:
+            Error category: 'contract_address', 'schema', 'safe_address',
+            'timeout', 'funds', 'nonce', or 'generic'
+        """
+        error_lower = error_msg.lower()
+        if "EAS_CONTRACT_ADDRESS" in error_msg or "contract address" in error_lower:
+            return "contract_address"
+        if "EAS_SCHEMA_UID" in error_msg or "schema" in error_lower:
+            return "schema"
+        if "SAFE_CONTRACT_ADDRESSES" in error_msg or "safe address" in error_lower:
+            return "safe_address"
+        if "timeout" in error_lower:
+            return "timeout"
+        if "insufficient funds" in error_lower:
+            return "funds"
+        if "nonce" in error_lower:
+            return "nonce"
+        return "generic"
+
+    def _log_attestation_error(
+        self, error_msg: str, proposal_id: str, space_id: str
+    ) -> None:
+        """Log categorized attestation errors with actionable guidance.
+
+        Args:
+            error_msg: The error message from attestation failure
+            proposal_id: The proposal ID
+            space_id: The space ID
+        """
+        category = self._get_error_category(error_msg)
+
+        error_messages = {
+            "contract_address": (
+                f"Cannot create EAS attestation: EAS_CONTRACT_ADDRESS not configured. "
+                f"Set EAS_CONTRACT_ADDRESS environment variable to the EAS contract address "
+                f"on Base network (0x4200000000000000000000000000000000000021). "
+                f"proposal={proposal_id}, space={space_id}"
+            ),
+            "schema": (
+                f"Cannot create EAS attestation: EAS_SCHEMA_UID not configured. "
+                f"Set EAS_SCHEMA_UID environment variable to your registered schema UID. "
+                f"Register schema at https://base.easscan.org/schema/create. "
+                f"proposal={proposal_id}, space={space_id}"
+            ),
+            "safe_address": (
+                f"Cannot create EAS attestation: SAFE_CONTRACT_ADDRESSES not configured. "
+                f"Set SAFE_CONTRACT_ADDRESSES environment variable with Safe address JSON. "
+                f'Example: SAFE_CONTRACT_ADDRESSES=\'{{"base":"0xYourSafeAddress"}}\'. '
+                f"proposal={proposal_id}, space={space_id}"
+            ),
+            "timeout": (
+                f"EAS attestation failed due to RPC timeout. "
+                f"Check RPC_URL is responsive: {config.settings.rpc_url}. "
+                f"Try increasing timeout or switching RPC provider. "
+                f"proposal={proposal_id}, error={error_msg}"
+            ),
+            "funds": (
+                f"EAS attestation failed: Safe has insufficient ETH for gas. "
+                f"Fund Safe address with ETH: {self._get_safe_address()}. "
+                f"Check balance at https://basescan.org/address/{self._get_safe_address()}. "
+                f"proposal={proposal_id}, error={error_msg}"
+            ),
+            "nonce": (
+                f"EAS attestation failed due to nonce mismatch. "
+                f"This may indicate a pending transaction or concurrent execution. "
+                f"Check Safe Transaction Service for pending txs: "
+                f"https://safe-transaction-base.safe.global/api/v1/safes/{self._get_safe_address()}/multisig-transactions/. "
+                f"proposal={proposal_id}, error={error_msg}"
+            ),
+            "generic": (
+                f"Failed to create EAS attestation (proposal={proposal_id}, "
+                f"space={space_id}, agent={self.voting_service.account.address}, "
+                f"eas_contract={config.settings.eas_contract_address or 'NOT_SET'}, "
+                f"schema_uid={config.settings.eas_schema_uid or 'NOT_SET'}, "
+                f"rpc_url={config.settings.rpc_url}, error={error_msg}). "
+                f"Check configuration and network connectivity."
+            ),
+        }
+
+        self.pearl_logger.error(error_messages[category])
+
+    async def _execute_single_vote(
+        self,
+        decision: VoteDecision,
+        space_id: str,
+        run_id: str,
+    ) -> bool:
+        """Execute a single vote and create attestation.
+
+        Args:
+            decision: The vote decision to execute
+            space_id: The space ID where vote will be cast
+            run_id: The agent run ID
+
+        Returns:
+            True if vote was successfully executed
+        """
+        # Track vote submission state
+        self.state_tracker.transition(
+            AgentState.SUBMITTING_VOTE,
+            {
+                "run_id": run_id,
+                "proposal_id": decision.proposal_id,
+                "vote_type": decision.vote.value,
+            },
+        )
+
+        # Convert VoteType to Snapshot choice format
+        vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
+
+        # Execute vote through voting service
+        vote_result = await self.voting_service.vote_on_proposal(
+            space=space_id,
+            proposal=decision.proposal_id,
+            choice=vote_choice,
+        )
+
+        # Extract vote ID from the Snapshot response
+        vote_id = None
+        vote_succeeded = vote_result.get("success", False)
+        submission_result = vote_result.get("submission_result", {})
+
+        if vote_succeeded:
+            self.logger.log_vote_execution(decision, True)
+            if submission_result.get("success"):
+                response = submission_result.get("response", {})
+                vote_id = response.get("id")
+                self.pearl_logger.info(
+                    f"Vote submitted successfully (proposal={decision.proposal_id}, "
+                    f"vote_id={vote_id}, choice={vote_choice})"
+                )
+        else:
+            error_msg = vote_result.get("error", "Unknown error")
+            self.logger.log_vote_execution(decision, False, error_msg)
+            self.pearl_logger.warning(
+                f"Vote submission failed (proposal={decision.proposal_id}, "
+                f"error={error_msg}, choice={vote_choice})"
+            )
+
+        # Always attempt immediate attestation regardless of vote success/failure
+        await self._create_immediate_attestation(
+            decision, space_id, run_id, vote_id, vote_succeeded, vote_choice
+        )
+
+        return vote_succeeded
+
+    def _validate_execute_votes_params(
+        self, decisions: List[VoteDecision], space_id: str, dry_run: bool
+    ) -> None:
+        """Validate parameters for execute_votes.
+
+        Args:
+            decisions: List of VoteDecision objects to validate
+            space_id: The space ID to validate
+            dry_run: The dry_run flag to validate
+        """
+        assert isinstance(
+            decisions, list
+        ), f"Decisions must be a list, got {type(decisions)}"
+        assert (
+            isinstance(space_id, str) and space_id.strip()
+        ), f"Space ID must be non-empty string, got {space_id}"
+        assert isinstance(
+            dry_run, bool
+        ), f"Dry run must be boolean, got {type(dry_run)}"
+        assert all(
+            isinstance(d, VoteDecision) for d in decisions
+        ), "All decisions must be VoteDecision objects"
+
+    async def _process_vote_decisions(
+        self, decisions: List[VoteDecision], space_id: str, run_id: str
+    ) -> List[VoteDecision]:
+        """Process and execute all vote decisions.
+
+        Args:
+            decisions: List of VoteDecision objects to execute
+            space_id: The space ID where votes will be cast
+            run_id: The agent run ID
+
+        Returns:
+            List of successfully executed VoteDecision objects
+        """
+        executed_decisions = []
+        for decision in decisions:
+            try:
+                vote_succeeded = await self._execute_single_vote(
+                    decision, space_id, run_id
+                )
+                if vote_succeeded:
+                    executed_decisions.append(decision)
+            except Exception as e:
+                self.logger.log_vote_execution(decision, False, str(e))
+                continue
+        return executed_decisions
 
     async def _execute_votes(
         self, decisions: List[VoteDecision], space_id: str, dry_run: bool, run_id: str
@@ -748,19 +1047,7 @@ class AgentRunService:
         Raises:
             VoteExecutionError: When executing votes fails
         """
-        # Runtime assertions for critical method validation
-        assert isinstance(decisions, list), (
-            f"Decisions must be a list, got {type(decisions)}"
-        )
-        assert isinstance(space_id, str) and space_id.strip(), (
-            f"Space ID must be non-empty string, got {space_id}"
-        )
-        assert isinstance(dry_run, bool), (
-            f"Dry run must be boolean, got {type(dry_run)}"
-        )
-        assert all(isinstance(d, VoteDecision) for d in decisions), (
-            "All decisions must be VoteDecision objects"
-        )
+        self._validate_execute_votes_params(decisions, space_id, dry_run)
 
         if not decisions:
             return []
@@ -778,74 +1065,14 @@ class AgentRunService:
                 )
 
                 if dry_run:
-                    self.pearl_logger.info("Dry run mode - simulating vote execution")
-                    # In dry run, we skip actual submission but still return decisions
+                    self.pearl_logger.info(
+                        "Dry run mode - simulating vote execution, skipping attestation"
+                    )
                     return decisions
 
-                # Execute actual votes
-                executed_decisions = []
-
-                for decision in decisions:
-                    try:
-                        # Track vote submission state
-                        self.state_tracker.transition(
-                            AgentState.SUBMITTING_VOTE,
-                            {
-                                "run_id": run_id,
-                                "proposal_id": decision.proposal_id,
-                                "vote_type": decision.vote.value,
-                            },
-                        )
-
-                        # Convert VoteType to Snapshot choice format
-                        vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
-
-                        # Execute vote through voting service
-                        vote_result = await self.voting_service.vote_on_proposal(
-                            space=space_id,
-                            proposal=decision.proposal_id,
-                            choice=vote_choice,
-                        )
-
-                        # Extract vote ID from the Snapshot response
-                        vote_id = None
-                        vote_succeeded = vote_result.get("success", False)
-                        submission_result = vote_result.get("submission_result", {})
-
-                        if vote_succeeded:
-                            executed_decisions.append(decision)
-                            self.logger.log_vote_execution(decision, True)
-
-                            if submission_result.get("success"):
-                                response = submission_result.get("response", {})
-                                vote_id = response.get("id")
-                                self.pearl_logger.info(
-                                    f"Vote submitted successfully (proposal={decision.proposal_id}, "
-                                    f"vote_id={vote_id}, choice={vote_choice})"
-                                )
-                        else:
-                            error_msg = vote_result.get("error", "Unknown error")
-                            self.logger.log_vote_execution(decision, False, error_msg)
-                            self.pearl_logger.warning(
-                                f"Vote submission failed (proposal={decision.proposal_id}, "
-                                f"error={error_msg}, choice={vote_choice})"
-                            )
-
-                        # Always queue attestation regardless of vote success/failure
-                        # This creates an audit trail of all voting decisions
-                        await self._queue_attestation(
-                            decision, space_id, run_id, vote_id
-                        )
-
-                        self.pearl_logger.info(
-                            f"Attestation queued for vote attempt (proposal={decision.proposal_id}, "
-                            f"vote_succeeded={vote_succeeded}, vote_id={vote_id or 'None'})"
-                        )
-
-                    except Exception as e:
-                        self.logger.log_vote_execution(decision, False, str(e))
-                        # Continue with other votes
-                        continue
+                executed_decisions = await self._process_vote_decisions(
+                    decisions, space_id, run_id
+                )
 
                 self.pearl_logger.info(
                     f"Vote execution completed (total_decisions={len(decisions)}, "
@@ -853,12 +1080,12 @@ class AgentRunService:
                 )
 
                 # Runtime assertion: validate output
-                assert isinstance(executed_decisions, list), (
-                    f"Expected list of executed decisions, got {type(executed_decisions)}"
-                )
-                assert all(isinstance(d, VoteDecision) for d in executed_decisions), (
-                    "All executed decisions must be VoteDecision objects"
-                )
+                assert isinstance(
+                    executed_decisions, list
+                ), f"Expected list of executed decisions, got {type(executed_decisions)}"
+                assert all(
+                    isinstance(d, VoteDecision) for d in executed_decisions
+                ), "All executed decisions must be VoteDecision objects"
 
                 return executed_decisions
 
@@ -924,210 +1151,6 @@ class AgentRunService:
         self._active_run = False
         await self.save_state()
 
-    async def _process_pending_attestations(self, space_id: str) -> None:
-        """Process any pending attestations from previous runs.
-
-        Args:
-            space_id: The space ID to process attestations for
-        """
-        print(f"DEBUG: _process_pending_attestations called for space_id={space_id}")
-
-        if not self.state_manager:
-            print("DEBUG: No state_manager, returning early")
-            return
-
-        try:
-            # Load checkpoint with any pending attestations
-            checkpoint_name = f"agent_checkpoint_{space_id}"
-            print(f"DEBUG: Loading checkpoint '{checkpoint_name}'")
-            checkpoint = await self.state_manager.load_checkpoint(checkpoint_name)
-
-            if not checkpoint:
-                print(f"DEBUG: No checkpoint found for '{checkpoint_name}'")
-                return
-
-            if "pending_attestations" not in checkpoint:
-                print("DEBUG: No 'pending_attestations' key in checkpoint")
-                return
-
-            print(
-                f"DEBUG: Checkpoint loaded successfully with keys: {list(checkpoint.keys())}"
-            )
-            print(
-                f"DEBUG: Found {len(checkpoint['pending_attestations'])} pending attestations"
-            )
-
-            pending_attestations = checkpoint["pending_attestations"]
-            if not pending_attestations:
-                print("DEBUG: No pending attestations to process")
-                return
-
-            print(
-                f"DEBUG: Starting to process {len(pending_attestations)} pending attestations"
-            )
-
-            self.pearl_logger.info(
-                f"Processing {len(pending_attestations)} pending attestations for space {space_id}"
-            )
-
-            processed_attestations = []
-            remaining_attestations = []
-
-            for attestation in pending_attestations:
-                # Check retry count
-                retry_count = attestation.get("retry_count", 0)
-                if retry_count >= MAX_ATTESTATION_RETRIES:
-                    self.pearl_logger.warning(
-                        f"Attestation for proposal {attestation['proposal_id']} exceeded max retries, dropping"
-                    )
-                    continue
-
-                try:
-                    # Create EAS attestation data
-                    eas_data = EASAttestationData(
-                        agent=attestation["voter_address"],
-                        space_id=space_id,
-                        proposal_id=attestation["proposal_id"],
-                        vote_choice=attestation["vote_choice"],
-                        snapshot_sig=attestation["vote_tx_hash"],
-                        timestamp=int(
-                            datetime.fromisoformat(attestation["timestamp"]).timestamp()
-                        )
-                        if isinstance(attestation["timestamp"], str)
-                        else int(attestation["timestamp"]),
-                        run_id=attestation.get(
-                            "run_id", f"{space_id}_{int(time.time())}"
-                        ),
-                        confidence=int(attestation.get("confidence", 80)),
-                        retry_count=attestation.get("retry_count", 0),
-                    )
-
-                    # Submit attestation
-                    self.pearl_logger.info(
-                        f"Submitting EAS attestation for proposal {attestation['proposal_id']} "
-                        f"(attempt {retry_count + 1}/{MAX_ATTESTATION_RETRIES})"
-                    )
-                    result = await self.safe_service.create_eas_attestation(eas_data)
-
-                    if result.get("success"):
-                        self.pearl_logger.info(
-                            f"Successfully created attestation for proposal {attestation['proposal_id']}: "
-                            f"tx_hash={result.get('safe_tx_hash')}, success={result.get('success')}"
-                        )
-
-                        # Mark daily activity as completed for OLAS staking compliance
-                        tx_hash = result.get('safe_tx_hash')
-                        if tx_hash:
-                            self.activity_service.mark_activity_completed(tx_hash)
-                            self.pearl_logger.info(
-                                f"Marked daily activity as completed (tx_hash={tx_hash})"
-                            )
-                    else:
-                        self.pearl_logger.error(
-                            f"Failed to create attestation for proposal {attestation['proposal_id']}: "
-                            f"error={result.get('error')}"
-                        )
-                        raise Exception(f"Attestation failed: {result.get('error')}")
-
-                    processed_attestations.append(attestation["proposal_id"])
-
-                except Exception as e:
-                    self.pearl_logger.exception(
-                        f"Failed to process attestation for proposal {attestation['proposal_id']}: {str(e)}"
-                    )
-
-                    # Increment retry count and keep in queue
-                    attestation["retry_count"] = retry_count + 1
-                    remaining_attestations.append(attestation)
-
-            # Update checkpoint with remaining attestations
-            checkpoint["pending_attestations"] = remaining_attestations
-            await self.state_manager.save_checkpoint(
-                f"agent_checkpoint_{space_id}", checkpoint
-            )
-
-            if processed_attestations:
-                self.pearl_logger.info(
-                    f"Processed {len(processed_attestations)} attestations successfully"
-                )
-
-        except Exception as e:
-            self.pearl_logger.error(
-                f"Error processing pending attestations for space {space_id}: {str(e)}"
-            )
-
-    async def _queue_attestation(
-        self,
-        decision: VoteDecision,
-        space_id: str,
-        run_id: str,
-        vote_tx_hash: Optional[str] = None,
-    ) -> None:
-        """Queue an attestation for a successful vote.
-
-        Args:
-            decision: The vote decision that was executed
-            space_id: The space ID where the vote was cast
-            run_id: The current agent run ID
-            vote_tx_hash: The vote transaction hash/ID from Snapshot (optional)
-        """
-        if not self.state_manager:
-            self.pearl_logger.warning("No state manager, skipping attestation queue")
-            return
-
-        try:
-            # Load current checkpoint
-            checkpoint = await self.state_manager.load_checkpoint(
-                f"agent_checkpoint_{space_id}"
-            )
-            if checkpoint is None:
-                checkpoint = {}
-
-            # Initialize pending_attestations if not present
-            if "pending_attestations" not in checkpoint:
-                checkpoint["pending_attestations"] = []
-
-            # Get voter address from voting service account
-            voter_address = self.voting_service.account.address
-
-            # For now, use the same address as delegate (can be configured later)
-            delegate_address = voter_address
-
-            # Create attestation data
-            # Use provided vote_tx_hash or create a valid placeholder
-            tx_hash = vote_tx_hash if vote_tx_hash else "0x" + "0" * 64
-
-            attestation_data = {
-                "proposal_id": decision.proposal_id,
-                "vote_choice": VOTE_CHOICE_MAPPING[
-                    decision.vote
-                ],  # Convert VoteType to choice number
-                "voter_address": voter_address,
-                "delegate_address": delegate_address,
-                "vote_tx_hash": tx_hash,
-                "reasoning": decision.reasoning,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "retry_count": 0,
-            }
-
-            # Add to pending attestations
-            checkpoint["pending_attestations"].append(attestation_data)
-
-            # Save updated checkpoint
-            await self.state_manager.save_checkpoint(
-                f"agent_checkpoint_{space_id}", checkpoint
-            )
-
-            self.pearl_logger.info(
-                f"Queued attestation for vote on proposal {decision.proposal_id} - checkpoint key: agent_checkpoint_{space_id}"
-            )
-
-        except Exception as e:
-            self.pearl_logger.error(
-                f"Failed to queue attestation for proposal {decision.proposal_id}: {str(e)}"
-            )
-            # Don't raise - attestation failures should not block voting
-
     async def _save_checkpoint_state(self, response: AgentRunResponse) -> None:
         """Save checkpoint state during agent run.
 
@@ -1151,7 +1174,6 @@ class AgentRunService:
             "execution_time": response.execution_time,
             "timestamp": datetime.utcnow().isoformat(),
             "errors": response.errors,
-            "pending_attestations": [],  # Initialize empty if not loaded
         }
 
         await self.state_manager.save_state(
@@ -1333,6 +1355,132 @@ class AgentRunService:
             self.pearl_logger.error(f"Error retrieving recent decisions: {e}")
             return []
 
+    def _get_empty_statistics(self) -> dict:
+        """Return empty statistics dict when no data available."""
+        return {
+            "total_runs": 0,
+            "total_proposals_evaluated": 0,
+            "total_votes_cast": 0,
+            "average_confidence_score": 0.0,
+            "success_rate": 0.0,
+            "average_runtime_seconds": 0.0,
+        }
+
+    async def _aggregate_checkpoint_data(self, checkpoint_file: str) -> dict:
+        """Aggregate data from a single checkpoint file.
+
+        Args:
+            checkpoint_file: The checkpoint filename to process
+
+        Returns:
+            Dictionary with aggregated counters for this checkpoint
+        """
+        checkpoint_key = checkpoint_file.replace(".json", "")
+        checkpoint_data = await self.state_manager.load_state(
+            checkpoint_key, allow_recovery=True
+        )
+
+        if not checkpoint_data:
+            return {}
+
+        # Count proposals evaluated
+        proposals_analyzed = checkpoint_data.get("proposals_analyzed", 0)
+
+        # Count votes cast and aggregate confidence scores
+        votes_cast = checkpoint_data.get("votes_cast", [])
+        votes_count = len(votes_cast) if isinstance(votes_cast, list) else 0
+
+        confidence_sum = 0.0
+        if isinstance(votes_cast, list):
+            for vote in votes_cast:
+                if isinstance(vote, dict):
+                    confidence_sum += vote.get("confidence", 0.0)
+
+        # Check if run was successful (no errors)
+        errors = checkpoint_data.get("errors", [])
+        is_successful = not errors
+
+        # Get runtime
+        runtime = checkpoint_data.get("runtime_seconds", 0.0)
+
+        return {
+            "proposals_evaluated": proposals_analyzed,
+            "votes_cast": votes_count,
+            "confidence_sum": confidence_sum,
+            "is_successful": is_successful,
+            "runtime_seconds": runtime,
+        }
+
+    async def _collect_checkpoint_totals(self, checkpoint_files: List[str]) -> dict:
+        """Collect totals from all checkpoint files.
+
+        Args:
+            checkpoint_files: List of checkpoint filenames to process
+
+        Returns:
+            Dictionary with aggregated totals
+        """
+        totals = {
+            "runs": 0,
+            "proposals_evaluated": 0,
+            "votes_cast": 0,
+            "confidence_sum": 0.0,
+            "successful_runs": 0,
+            "runtime_seconds": 0.0,
+        }
+
+        for checkpoint_file in checkpoint_files:
+            try:
+                aggregated = await self._aggregate_checkpoint_data(checkpoint_file)
+                if not aggregated:
+                    continue
+
+                totals["runs"] += 1
+                totals["proposals_evaluated"] += aggregated["proposals_evaluated"]
+                totals["votes_cast"] += aggregated["votes_cast"]
+                totals["confidence_sum"] += aggregated["confidence_sum"]
+                if aggregated["is_successful"]:
+                    totals["successful_runs"] += 1
+                totals["runtime_seconds"] += aggregated["runtime_seconds"]
+
+            except Exception as e:
+                self.pearl_logger.warning(
+                    f"Error loading checkpoint {checkpoint_file}: {e}"
+                )
+                continue
+
+        return totals
+
+    def _calculate_statistics_from_totals(self, totals: dict) -> dict:
+        """Calculate final statistics from totals.
+
+        Args:
+            totals: Dictionary with aggregated totals
+
+        Returns:
+            Dictionary with calculated statistics
+        """
+        average_confidence_score = (
+            totals["confidence_sum"] / totals["votes_cast"]
+            if totals["votes_cast"] > 0
+            else 0.0
+        )
+        success_rate = (
+            totals["successful_runs"] / totals["runs"] if totals["runs"] > 0 else 0.0
+        )
+        average_runtime_seconds = (
+            totals["runtime_seconds"] / totals["runs"] if totals["runs"] > 0 else 0.0
+        )
+
+        return {
+            "total_runs": totals["runs"],
+            "total_proposals_evaluated": totals["proposals_evaluated"],
+            "total_votes_cast": totals["votes_cast"],
+            "average_confidence_score": round(average_confidence_score, 3),
+            "success_rate": round(success_rate, 3),
+            "average_runtime_seconds": round(average_runtime_seconds, 2),
+        }
+
     async def get_agent_run_statistics(self) -> dict:
         """Calculate aggregated statistics from all agent checkpoint files.
 
@@ -1345,117 +1493,28 @@ class AgentRunService:
             - success_rate: Percentage of runs without errors (0.0 to 1.0)
             - average_runtime_seconds: Average runtime per run
         """
-        if not self.state_manager:
-            return {
-                "total_runs": 0,
-                "total_proposals_evaluated": 0,
-                "total_votes_cast": 0,
-                "average_confidence_score": 0.0,
-                "success_rate": 0.0,
-                "average_runtime_seconds": 0.0,
-            }
-
-        # Initialize counters
-        total_runs = 0
-        total_proposals_evaluated = 0
-        total_votes_cast = 0
-        total_confidence_sum = 0.0
-        successful_runs = 0
-        total_runtime_seconds = 0.0
+        if not self.state_manager or not hasattr(self.state_manager, "list_files"):
+            if not self.state_manager:
+                return self._get_empty_statistics()
+            self.pearl_logger.warning(
+                "StateManager missing list_files method, returning empty statistics"
+            )
+            return self._get_empty_statistics()
 
         try:
-            # Check if list_files method exists
-            if not hasattr(self.state_manager, "list_files"):
-                self.pearl_logger.warning(
-                    "StateManager missing list_files method, returning empty statistics"
-                )
-                return {
-                    "total_runs": 0,
-                    "total_proposals_evaluated": 0,
-                    "total_votes_cast": 0,
-                    "average_confidence_score": 0.0,
-                    "success_rate": 0.0,
-                    "average_runtime_seconds": 0.0,
-                }
-
             # List all checkpoint files
             checkpoint_files = await self.state_manager.list_files()
             checkpoint_pattern = re.compile(r"^agent_checkpoint_.*\.json$")
-
-            # Filter for checkpoint files
             checkpoint_files = [
                 f for f in checkpoint_files if checkpoint_pattern.match(f)
             ]
 
-            # Load and aggregate data from each checkpoint
-            for checkpoint_file in checkpoint_files:
-                try:
-                    # Remove .json extension to get the key name
-                    checkpoint_key = checkpoint_file.replace(".json", "")
-                    checkpoint_data = await self.state_manager.load_state(
-                        checkpoint_key, allow_recovery=True
-                    )
+            # Collect totals from all checkpoints
+            totals = await self._collect_checkpoint_totals(checkpoint_files)
 
-                    if checkpoint_data:
-                        total_runs += 1
-
-                        # Count proposals evaluated
-                        proposals_analyzed = checkpoint_data.get(
-                            "proposals_analyzed", 0
-                        )
-                        total_proposals_evaluated += proposals_analyzed
-
-                        # Count votes cast and aggregate confidence scores
-                        votes_cast = checkpoint_data.get("votes_cast", [])
-                        if isinstance(votes_cast, list):
-                            total_votes_cast += len(votes_cast)
-
-                            # Sum confidence scores
-                            for vote in votes_cast:
-                                if isinstance(vote, dict):
-                                    confidence = vote.get("confidence", 0.0)
-                                    total_confidence_sum += confidence
-
-                        # Check if run was successful (no errors)
-                        errors = checkpoint_data.get("errors", [])
-                        if not errors:
-                            successful_runs += 1
-
-                        # Aggregate runtime
-                        runtime = checkpoint_data.get("runtime_seconds", 0.0)
-                        total_runtime_seconds += runtime
-
-                except Exception as e:
-                    self.pearl_logger.warning(
-                        f"Error loading checkpoint {checkpoint_file}: {e}"
-                    )
-                    continue
-
-            # Calculate averages
-            average_confidence_score = (
-                total_confidence_sum / total_votes_cast if total_votes_cast > 0 else 0.0
-            )
-            success_rate = successful_runs / total_runs if total_runs > 0 else 0.0
-            average_runtime_seconds = (
-                total_runtime_seconds / total_runs if total_runs > 0 else 0.0
-            )
-
-            return {
-                "total_runs": total_runs,
-                "total_proposals_evaluated": total_proposals_evaluated,
-                "total_votes_cast": total_votes_cast,
-                "average_confidence_score": round(average_confidence_score, 3),
-                "success_rate": round(success_rate, 3),
-                "average_runtime_seconds": round(average_runtime_seconds, 2),
-            }
+            # Calculate and return statistics
+            return self._calculate_statistics_from_totals(totals)
 
         except Exception as e:
             self.pearl_logger.error(f"Error calculating agent statistics: {e}")
-            return {
-                "total_runs": 0,
-                "total_proposals_evaluated": 0,
-                "total_votes_cast": 0,
-                "average_confidence_score": 0.0,
-                "success_rate": 0.0,
-                "average_runtime_seconds": 0.0,
-            }
+            return self._get_empty_statistics()
