@@ -845,7 +845,7 @@ class AIService:
         )
 
         # Check for mock mode or missing API key
-        if settings.mock_mode or not settings.openrouter_api_key:
+        if settings.mock_mode:
             logger.warning("AI in MOCK_MODE: returning stubbed decision")
             choice_value = proposal.choices[0] if proposal.choices else "For"
             return VoteDecision(
