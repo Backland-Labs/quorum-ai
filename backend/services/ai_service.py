@@ -1147,7 +1147,7 @@ class AIService:
         DEFAULT_RECOMMENDATION = ""
 
         # Check for mock mode or missing API key
-        if settings.mock_mode or not settings.openrouter_api_key:
+        if settings.mock_mode:
             logger.warning("AI in MOCK_MODE: returning stubbed summary")
             return ProposalSummary(
                 proposal_id=proposal.id,
