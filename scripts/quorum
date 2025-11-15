@@ -65,7 +65,11 @@ case "$CMD" in
     ;;
   run)
     echo "=== Running Agent ==="
-    curl -sf -X POST http://localhost:8716/agent-run | jq '.'
+    # Extract space_id from environment config
+    SPACE_ID=$(grep "MONITORED_DAOS=" "$ENV_FILE" | cut -d'=' -f2)
+    curl -sf -X POST http://localhost:8716/agent-run \
+      -H "Content-Type: application/json" \
+      -d "{\"space_id\": \"$SPACE_ID\", \"dry_run\": false}" | jq '.'
     ;;
   *)
     echo "Quorum AI Testing Script"
