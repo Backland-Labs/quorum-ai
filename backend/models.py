@@ -1277,3 +1277,34 @@ class AttestationCountResponse(BaseModel):
         default=None, description="Multisig address queried"
     )
     error: Optional[str] = Field(default=None, description="Error message if any")
+
+
+class StakingCheckpoint(BaseModel):
+    """Staking checkpoint data."""
+
+    checkpoint_num: int = Field(description="Checkpoint number")
+    timestamp: int = Field(description="Unix timestamp of checkpoint")
+    datetime: str = Field(description="ISO datetime string of checkpoint")
+    hours_elapsed: float = Field(description="Hours elapsed since staking started")
+    staking_state: str = Field(description="Staking state (Staked, Unstaked, Evicted)")
+    attestations_total: int = Field(description="Total attestations")
+    accrued_rewards_olas: str = Field(description="Accrued rewards in OLAS")
+    passes_liveness: bool = Field(description="Whether liveness check passes")
+
+
+class StakingCheckpointsResponse(BaseModel):
+    """Response containing staking checkpoint information."""
+
+    latest_checkpoint: Optional[StakingCheckpoint] = Field(
+        default=None, description="Most recent checkpoint data"
+    )
+    checkpoint_interval_hours: int = Field(
+        default=24, description="Interval between checkpoints in hours"
+    )
+    current_blockchain_time: Optional[int] = Field(
+        default=None, description="Current blockchain timestamp (for Anvil time-shifted chains)"
+    )
+    next_checkpoint_timestamp: Optional[int] = Field(
+        default=None, description="Next checkpoint timestamp from staking contract"
+    )
+    error: Optional[str] = Field(default=None, description="Error message if any")

@@ -30,11 +30,11 @@
     </div>
   {:else if storeState.statistics}
     <dl data-testid="statistics-grid" class="grid grid-cols-2 gap-6" aria-label="Agent performance metrics">
-      <!-- Reconsider Proposals -->
-      <div data-testid="stat-card" class="w-full" role="group" aria-label="Reconsider proposals">
+      <!-- Runs -->
+      <div data-testid="stat-card" class="w-full" role="group" aria-label="Runs">
         <div data-testid="stat-content" class="flex flex-col space-y-1">
-          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Reconsider Proposals</dt>
-          <dd data-testid="stat-value" class="text-3xl sm:text-4xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Reconsider proposals: {storeState.statistics.total_proposals_evaluated}">
+          <dt data-testid="stat-label" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Runs</dt>
+          <dd data-testid="stat-value" class="text-3xl sm:text-4xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums" aria-label="Runs: {storeState.statistics.total_proposals_evaluated}">
             {storeState.statistics.total_proposals_evaluated}
           </dd>
         </div>

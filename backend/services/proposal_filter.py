@@ -259,6 +259,19 @@ class ProposalFilter:
                 + participation_factor * PARTICIPATION_WEIGHT
             )
 
+            # Add console logging for visibility
+            hours_until_deadline = time_until_deadline / 3600
+            days_until_deadline = hours_until_deadline / 24
+            time_str = f"{days_until_deadline:.1f}d" if days_until_deadline > 1 else f"{hours_until_deadline:.1f}h"
+            if time_until_deadline < 0:
+                time_str = "EXPIRED"
+
+            print(f"   📊 Scoring {proposal.id[:16]}...")
+            print(f"      Time until end: {time_str} → urgency={urgency_factor:.2f}")
+            print(f"      Voting power: {proposal.scores_total} → power_factor={voting_power_factor:.2f}")
+            print(f"      Participation: {proposal.votes} votes → participation={participation_factor:.2f}")
+            print(f"      ➡️  Composite score: {composite_score:.3f}")
+
             logger.debug(
                 "Proposal score calculated",
                 extra={
@@ -304,18 +317,23 @@ class ProposalFilter:
         if hours_until_deadline <= 1:
             # Very urgent (< 1 hour)
             urgency_factor = 1.0
+            urgency_label = "VERY_URGENT"
         elif hours_until_deadline <= 6:
             # Urgent (1-6 hours)
             urgency_factor = 0.8
+            urgency_label = "URGENT"
         elif hours_until_deadline <= 24:
             # Medium urgency (6-24 hours)
             urgency_factor = 0.6
+            urgency_label = "MEDIUM"
         elif hours_until_deadline <= 72:
             # Low urgency (1-3 days)
             urgency_factor = 0.4
+            urgency_label = "LOW"
         else:
             # Very low urgency (> 3 days)
             urgency_factor = 0.2
+            urgency_label = "VERY_LOW"
 
         # Runtime assertion: validate output
         assert isinstance(urgency_factor, float), "Urgency factor must be float"

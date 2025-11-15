@@ -1,7 +1,15 @@
 #!/usr/bin/env -S uv run --quiet --script
 # /// script
 # dependencies = [
-#   "web3>=6.0.0",
+#   "web3>=7.12.0",
+#   "eth-account>=0.13.7",
+#   "pydantic>=2.10.0",
+#   "pydantic-settings>=2.6.0",
+#   "pydantic-ai",
+#   "python-dotenv>=1.0.0",
+#   "httpx>=0.28.0",
+#   "safe-eth-py>=7.7.0",
+#   "requests>=2.32.4",
 # ]
 # ///
 """Call checkpoint on staking contract every 24 hours."""
@@ -93,7 +101,7 @@ def main():
         signed_tx = account.sign_transaction(tx)
 
         # Send transaction
-        tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 
         logger.info(f"Transaction sent: {tx_hash.hex()}")
         print(f"Transaction sent: {tx_hash.hex()}")

@@ -46,7 +46,13 @@ class KeyManager:
         Raises:
             KeyManagerError: If key file doesn't exist or has insecure permissions.
         """
-        self.working_directory = Path("/agent_key")
+        # Get key directory from environment or use default
+        key_dir_env = os.environ.get("AGENT_KEY_DIR")
+        if key_dir_env:
+            self.working_directory = Path(key_dir_env)
+        else:
+            # Use /agent_key as default (Docker-friendly)
+            self.working_directory = Path("/agent_key")
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
