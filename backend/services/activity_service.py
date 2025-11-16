@@ -164,6 +164,9 @@ class ActivityService:
         Returns:
             True if activity is required for current checkpoint window, False if already completed
         """
+        # Reload state to ensure we have the latest activity information
+        self.load_state()
+
         current_time = int(time.time())
 
         # No previous activity - activity is needed
@@ -223,6 +226,9 @@ class ActivityService:
         Returns:
             Dict containing activity status information
         """
+        # Reload state to ensure we have the latest activity information
+        self.load_state()
+
         days_since = self._calculate_days_since_activity()
         hours_since = self._calculate_hours_since_activity()
 
