@@ -287,8 +287,11 @@ class Settings(BaseSettings):
     )
 
     # OLAS configuration for new services
-    store_path: Optional[str] = Field(
-        default=None,
+    store_path: str = Field(
+        default_factory=lambda: (
+            "/app/.quorum_ai/state" if os.path.exists("/app")
+            else os.path.expanduser("~/.quorum_ai/state")
+        ),
         alias="STORE_PATH",
         description="Path for persistent data storage",
     )

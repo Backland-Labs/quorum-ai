@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from logging_config import setup_pearl_logger
+from config import settings
 
 
 class StateCorruptionError(Exception):
@@ -101,13 +102,8 @@ class StateManager:
         # Set up Pearl-compliant logging
         self.logger = setup_pearl_logger("state_manager")
 
-        # Get store path from environment or use default
-        store_path_env = os.environ.get("STORE_PATH")
-        if store_path_env:
-            self.store_path = Path(store_path_env)
-        else:
-            # Use /app/.quorum_ai/state as default (Docker-friendly)
-            self.store_path = Path("/app/.quorum_ai/state")
+        # Use centralized config for store path
+        self.store_path = Path(settings.store_path)
 
         # Ensure store path exists
         self.store_path.mkdir(parents=True, exist_ok=True)

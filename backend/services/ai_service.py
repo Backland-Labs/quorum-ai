@@ -1482,7 +1482,7 @@ class AIService:
 
         # Prepare file path
         output_dir = (
-            base_path or Path(settings.store_path or ".") / settings.decision_output_dir
+            base_path or Path(settings.store_path) / settings.decision_output_dir
         )
         output_dir.mkdir(parents=True, exist_ok=True)
 

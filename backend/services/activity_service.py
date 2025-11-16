@@ -36,9 +36,7 @@ class ActivityService:
         Returns:
             Path to the activity tracker JSON file
         """
-        if settings.store_path:
-            return os.path.join(settings.store_path, ACTIVITY_TRACKER_FILENAME)
-        return ACTIVITY_TRACKER_FILENAME
+        return os.path.join(settings.store_path, ACTIVITY_TRACKER_FILENAME)
 
     def _log_initialization(self) -> None:
         """Log service initialization details."""
