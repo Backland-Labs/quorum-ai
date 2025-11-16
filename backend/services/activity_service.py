@@ -32,6 +32,16 @@ class ActivityService:
         self.persistent_file = self._get_persistent_file_path()
 
         self.load_state()
+
+        # Set checkpoint start to container launch time if not already set
+        if self.checkpoint_start_timestamp is None:
+            self.checkpoint_start_timestamp = int(time.time())
+            self.save_state()
+            self.logger.info(
+                "Checkpoint window initialized at container start (checkpoint_start_timestamp=%s)",
+                self.checkpoint_start_timestamp,
+            )
+
         self._log_initialization()
 
     def _get_persistent_file_path(self) -> str:
@@ -197,10 +207,6 @@ class ActivityService:
         self.last_activity_timestamp = current_time
         self.last_activity_date = date.today()  # Keep for backward compatibility
         self.last_tx_hash = tx_hash
-
-        # Initialize checkpoint start if not set (first activity ever)
-        if self.checkpoint_start_timestamp is None:
-            self.checkpoint_start_timestamp = current_time
 
         self.save_state()
 
