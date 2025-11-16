@@ -30,7 +30,11 @@ class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
         if env_value is not None and isinstance(env_value, str):
             if env_value.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
                 return None, field_name, False
-            
+
+            # Skip empty strings - let Pydantic use the default value
+            if not env_value.strip():
+                return None, field_name, False
+
             # Parse JSON strings to match Pydantic's dotenv behavior
             # This ensures validators receive consistent types (dict/list not str)
             if env_value.startswith(('{', '[')):
