@@ -83,7 +83,7 @@ function createFallbackProposal(proposal: any) {
     summary: proposal.summary || proposal.description || 'No summary available',
     key_points: proposal.key_points || [],
     risk_level: proposal.risk_level || 'MEDIUM',
-    recommendation: proposal.recommendation || 'ANALYZE',
+    recommendation: proposal.recommendation || 'REVIEW',
     confidence_score: proposal.confidence_score || 0.5
   };
 }
