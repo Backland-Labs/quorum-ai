@@ -2,7 +2,8 @@
 
 import os
 import json
-from datetime import date
+import time
+from datetime import date, datetime
 from typing import Dict, Optional, Any
 
 from config import settings
@@ -10,9 +11,10 @@ from logging_config import setup_pearl_logger, log_span
 
 # Constants for repeated strings
 ACTIVITY_TRACKER_FILENAME = "activity_tracker.json"
-DAILY_ACTIVITY_REQUIRED_MSG = "Daily activity required for OLAS staking"
-DAILY_ACTIVITY_COMPLETED_MSG = "Daily activity completed"
+DAILY_ACTIVITY_REQUIRED_MSG = "Activity required for 24-hour checkpoint window"
+DAILY_ACTIVITY_COMPLETED_MSG = "Activity completed for current checkpoint window"
 SAFE_TRANSACTION_ACTION = "safe_transaction"
+CHECKPOINT_INTERVAL_SECONDS = 24 * 3600  # 24 hours in seconds
 
 
 class ActivityService:
@@ -23,8 +25,10 @@ class ActivityService:
         # Initialize Pearl-compliant logger
         self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
 
-        self.last_activity_date: Optional[date] = None
+        self.last_activity_timestamp: Optional[int] = None  # Unix timestamp
+        self.last_activity_date: Optional[date] = None  # For backward compatibility
         self.last_tx_hash: Optional[str] = None
+        self.checkpoint_start_timestamp: Optional[int] = None  # When current window started
         self.persistent_file = self._get_persistent_file_path()
 
         self.load_state()
@@ -64,21 +68,34 @@ class ActivityService:
             if os.path.exists(self.persistent_file):
                 with open(self.persistent_file, "r") as f:
                     data = json.load(f)
-                    if data.get("last_activity_date"):
+
+                    # Load timestamp (new format)
+                    if data.get("last_activity_timestamp"):
+                        self.last_activity_timestamp = data["last_activity_timestamp"]
+                    # Fallback to date for backward compatibility
+                    elif data.get("last_activity_date"):
                         self.last_activity_date = date.fromisoformat(
                             data["last_activity_date"]
                         )
+                        # Convert date to timestamp (start of day)
+                        dt = datetime.combine(self.last_activity_date, datetime.min.time())
+                        self.last_activity_timestamp = int(dt.timestamp())
+
+                    self.checkpoint_start_timestamp = data.get("checkpoint_start_timestamp")
                     self.last_tx_hash = data.get("last_tx_hash")
 
                 self.logger.info(
-                    "Activity state loaded from file (last_activity_date=%s, last_tx_hash=%s)",
-                    self._format_date(self.last_activity_date),
+                    "Activity state loaded from file (last_activity_timestamp=%s, last_tx_hash=%s, checkpoint_start=%s)",
+                    self.last_activity_timestamp,
                     self.last_tx_hash,
+                    self.checkpoint_start_timestamp,
                 )
         except Exception as e:
             self.logger.warning("Could not load activity state: %s", str(e))
             # Reset to defaults on any error
+            self.last_activity_timestamp = None
             self.last_activity_date = None
+            self.checkpoint_start_timestamp = None
             self.last_tx_hash = None
 
     def save_state(self) -> None:
@@ -103,7 +120,9 @@ class ActivityService:
             Dictionary with serializable state data
         """
         return {
-            "last_activity_date": self._format_date(self.last_activity_date),
+            "last_activity_timestamp": self.last_activity_timestamp,
+            "last_activity_date": self._format_date(self.last_activity_date) if self.last_activity_date else None,  # Backward compat
+            "checkpoint_start_timestamp": self.checkpoint_start_timestamp,
             "last_tx_hash": self.last_tx_hash,
         }
 
@@ -119,23 +138,53 @@ class ActivityService:
     def _log_state_saved(self) -> None:
         """Log that state has been saved."""
         self.logger.info(
-            "Activity state saved to file (last_activity_date=%s, last_tx_hash=%s)",
-            self._format_date(self.last_activity_date),
+            "Activity state saved to file (last_activity_timestamp=%s, last_tx_hash=%s, checkpoint_start=%s)",
+            self.last_activity_timestamp,
             self.last_tx_hash,
+            self.checkpoint_start_timestamp,
         )
 
     def is_daily_activity_needed(self) -> bool:
-        """Check if we need to create activity for today for OLAS staking.
+        """Check if we need to create activity for the current 24-hour checkpoint window.
+
+        Uses a 24-hour checkpoint window aligned with OLAS staking requirements.
+        Activity is needed if more than 24 hours have passed since last activity,
+        or if we're in a new checkpoint window.
 
         Returns:
-            True if daily activity is required, False if already completed today
+            True if activity is required for current checkpoint window, False if already completed
         """
-        today = date.today()
-        activity_needed = self.last_activity_date != today
-        return activity_needed
+        current_time = int(time.time())
+
+        # No previous activity - activity is needed
+        if self.last_activity_timestamp is None:
+            return True
+
+        # Calculate time elapsed since last activity
+        time_since_activity = current_time - self.last_activity_timestamp
+
+        # Activity needed if more than 24 hours have elapsed
+        if time_since_activity >= CHECKPOINT_INTERVAL_SECONDS:
+            return True
+
+        # If we have a checkpoint start time, check if we've crossed into a new window
+        if self.checkpoint_start_timestamp is not None:
+            # Calculate the current checkpoint number
+            time_since_checkpoint_start = current_time - self.checkpoint_start_timestamp
+            current_checkpoint_window = time_since_checkpoint_start // CHECKPOINT_INTERVAL_SECONDS
+
+            # Calculate which window the last activity was in
+            activity_time_since_start = self.last_activity_timestamp - self.checkpoint_start_timestamp
+            last_activity_window = activity_time_since_start // CHECKPOINT_INTERVAL_SECONDS
+
+            # If we're in a different window, activity is needed
+            if current_checkpoint_window > last_activity_window:
+                return True
+
+        return False
 
     def mark_activity_completed(self, tx_hash: str) -> None:
-        """Mark daily activity as completed for OLAS tracking.
+        """Mark activity as completed for current 24-hour checkpoint window.
 
         Args:
             tx_hash: Transaction hash of the completed activity transaction
@@ -144,13 +193,21 @@ class ActivityService:
         assert tx_hash, "Transaction hash must not be empty"
         assert isinstance(tx_hash, str), "Transaction hash must be a string"
 
-        self.last_activity_date = date.today()
+        current_time = int(time.time())
+        self.last_activity_timestamp = current_time
+        self.last_activity_date = date.today()  # Keep for backward compatibility
         self.last_tx_hash = tx_hash
+
+        # Initialize checkpoint start if not set (first activity ever)
+        if self.checkpoint_start_timestamp is None:
+            self.checkpoint_start_timestamp = current_time
+
         self.save_state()
 
         self.logger.info(
-            "Activity marked as completed (tx_hash=%s, date=%s)",
+            "Activity marked as completed (tx_hash=%s, timestamp=%s, date=%s)",
             tx_hash,
+            current_time,
             date.today().isoformat(),
         )
 
@@ -161,24 +218,46 @@ class ActivityService:
             Dict containing activity status information
         """
         days_since = self._calculate_days_since_activity()
+        hours_since = self._calculate_hours_since_activity()
 
         return {
             "daily_activity_needed": self.is_daily_activity_needed(),
+            "last_activity_timestamp": self.last_activity_timestamp,
             "last_activity_date": self._format_date(self.last_activity_date),
             "last_tx_hash": self.last_tx_hash,
-            "days_since_activity": days_since,
+            "checkpoint_start_timestamp": self.checkpoint_start_timestamp,
+            "hours_since_activity": hours_since,
+            "days_since_activity": days_since,  # Kept for backward compatibility
         }
 
+    def _calculate_hours_since_activity(self) -> Optional[float]:
+        """Calculate hours since last activity.
+
+        Returns:
+            Number of hours since last activity, or None if no activity recorded
+        """
+        if self.last_activity_timestamp is None:
+            return None
+
+        current_time = int(time.time())
+        seconds_elapsed = current_time - self.last_activity_timestamp
+        hours_elapsed = seconds_elapsed / 3600
+        return round(hours_elapsed, 2)
+
     def _calculate_days_since_activity(self) -> Optional[int]:
-        """Calculate days since last activity.
+        """Calculate days since last activity (backward compatibility).
 
         Returns:
             Number of days since last activity, or None if no activity recorded
         """
-        if not self.last_activity_date:
+        if self.last_activity_timestamp is None:
             return None
 
-        days_elapsed = (date.today() - self.last_activity_date).days
+        hours = self._calculate_hours_since_activity()
+        if hours is None:
+            return None
+
+        days_elapsed = int(hours // 24)
         return days_elapsed
 
     def check_olas_compliance(self) -> Dict[str, Any]:
