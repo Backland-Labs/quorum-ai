@@ -56,13 +56,9 @@
       const response = await fetch('/staking/checkpoints');
       const data = await response.json();
 
-      if (data.latest_checkpoint) {
-        blockchainTime = data.current_blockchain_time;
-        nextCheckpointTimestamp = data.next_checkpoint_timestamp;
-      } else {
-        blockchainTime = null;
-        nextCheckpointTimestamp = null;
-      }
+      // Always use blockchain time and checkpoint data if available
+      blockchainTime = data.current_blockchain_time || null;
+      nextCheckpointTimestamp = data.next_checkpoint_timestamp || null;
     } catch (error) {
       console.error('Failed to fetch checkpoint data:', error);
       blockchainTime = null;
