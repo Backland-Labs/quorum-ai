@@ -17,7 +17,6 @@
   let healthcheckLoading = $state(true);
 
   // State for checkpoint data
-  let checkpointTimestamp = $state<number | null>(null);
   let blockchainTime = $state<number | null>(null);
   let nextCheckpointTimestamp = $state<number | null>(null);
   let checkpointLoading = $state(true);
@@ -25,25 +24,6 @@
   // Reactive "now" timestamp that updates every minute to trigger time recalculation
   let now = $state(Date.now());
 
-  // Calculate time since last checkpoint using unix timestamp
-  function formatTimeSinceCheckpoint(timestamp: number | null): string {
-    if (!timestamp) {
-      return checkpointLoading ? 'Loading...' : 'No checkpoints yet';
-    }
-
-    // Use blockchain time if available (for Anvil time-shifted chains), otherwise system time
-    // Add 'now' as dependency to make this reactive to time changes
-    const nowMs = blockchainTime ? blockchainTime * 1000 : now;
-    const diff = nowMs - (timestamp * 1000); // Convert unix timestamp to ms
-
-    // If timestamp is in the future, checkpoint hasn't run yet
-    if (diff < 0) return 'No checkpoints yet';
-
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-
-    return `${hours}h ${minutes}m`;
-  }
 
   // Calculate time to next checkpoint using timestamp from staking contract
   function formatTimeToCheckpoint(nextTimestamp: number | null): string {
@@ -77,17 +57,14 @@
       const data = await response.json();
 
       if (data.latest_checkpoint) {
-        checkpointTimestamp = data.latest_checkpoint.timestamp;
         blockchainTime = data.current_blockchain_time;
         nextCheckpointTimestamp = data.next_checkpoint_timestamp;
       } else {
-        checkpointTimestamp = null;
         blockchainTime = null;
         nextCheckpointTimestamp = null;
       }
     } catch (error) {
       console.error('Failed to fetch checkpoint data:', error);
-      checkpointTimestamp = null;
       blockchainTime = null;
       nextCheckpointTimestamp = null;
     } finally {
@@ -153,13 +130,7 @@
         </p>
       </div>
 
-      <div>
-        <p class="text-xs sm:text-sm text-gray-500">Time Since Last Checkpoint</p>
-        <p data-testid="time-since-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
-          {formatTimeSinceCheckpoint(checkpointTimestamp)}
-        </p>
-      </div>
-
+      
       <div>
         <p class="text-xs sm:text-sm text-gray-500">Time to Next Checkpoint</p>
         <p data-testid="time-to-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
