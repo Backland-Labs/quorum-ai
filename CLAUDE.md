@@ -16,3 +16,4 @@ export $(cat .env | xargs) && export SAFE_CONTRACT_ADDRESSES='{"base":          
 
 - Use `uv` to run python files
 - For one off scripts, use a uv single file excutable.
+- When using docker or the make up command. You can exec into the quorum container to read detailed logs at app/log.txt
