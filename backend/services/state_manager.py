@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from logging_config import setup_pearl_logger
+from config import settings
 
 
 class StateCorruptionError(Exception):
@@ -101,13 +102,8 @@ class StateManager:
         # Set up Pearl-compliant logging
         self.logger = setup_pearl_logger("state_manager")
 
-        # Get store path from environment or use default
-        store_path_env = os.environ.get("STORE_PATH")
-        if store_path_env:
-            self.store_path = Path(store_path_env)
-        else:
-            # Use /app/.quorum_ai/state as default (Docker-friendly)
-            self.store_path = Path("/app/.quorum_ai/state")
+        # Use centralized config for store path
+        self.store_path = Path(settings.store_path)
 
         # Ensure store path exists
         self.store_path.mkdir(parents=True, exist_ok=True)
@@ -459,87 +455,3 @@ class StateManager:
         # Use the standard load_state method with checkpoint prefix
         checkpoint_name = f"checkpoint_{name}"
         return await self.load_state(checkpoint_name, allow_recovery=True)
-
-
-# Example usage:
-"""
-async def example_usage():
-    # Initialize state manager
-    manager = StateManager()
-
-    # Save simple state
-    await manager.save_state("agent_config", {
-        "poll_interval": 300,
-        "max_retries": 3,
-        "enabled": True
-    })
-
-    # Save sensitive state with permissions
-    await manager.save_state("api_keys", {
-        "openrouter": "secret_key",
-        "snapshot": "another_key"
-    }, sensitive=True)
-
-    # Define schema for validation
-    preferences_schema = StateSchema(
-        required_fields=['voting_strategy', 'risk_threshold'],
-        field_types={
-            'voting_strategy': str,
-            'risk_threshold': float,
-            'auto_vote_enabled': bool
-        },
-        validators={
-            'risk_threshold': lambda x: 0.0 <= x <= 1.0,
-            'voting_strategy': lambda x: x in ['balanced', 'conservative', 'aggressive']
-        }
-    )
-
-    # Save with schema validation
-    await manager.save_state("user_preferences", {
-        'voting_strategy': 'balanced',
-        'risk_threshold': 0.7,
-        'auto_vote_enabled': True
-    }, schema=preferences_schema)
-
-    # Load state
-    config = await manager.load_state("agent_config")
-    print(f"Agent config: {config}")
-
-    # Load with schema validation
-    prefs = await manager.load_state("user_preferences", schema=preferences_schema)
-    print(f"User preferences: {prefs}")
-
-    # Handle versioning
-    await manager.save_state("versioned_data",
-        {"format": "v1", "data": "example"},
-        version=StateVersion(1, 0, 0)
-    )
-
-    # Define migration
-    def migrate_v1_to_v2(data):
-        data['format'] = 'v2'
-        data['migrated'] = True
-        return data
-
-    manager.register_migration(
-        StateVersion(1, 0, 0),
-        StateVersion(2, 0, 0),
-        migrate_v1_to_v2
-    )
-
-    # Load with migration
-    migrated = await manager.load_state("versioned_data",
-        target_version=StateVersion(2, 0, 0)
-    )
-    print(f"Migrated data: {migrated}")
-
-    # List backups
-    backups = await manager.list_backups("user_preferences")
-    if backups:
-        # Restore from latest backup
-        restored = await manager.restore_from_backup("user_preferences", backups[0])
-        print(f"Restored from backup: {restored}")
-
-    # Cleanup
-    await manager.cleanup()
-"""

@@ -146,6 +146,10 @@ class AgentRunService:
             "run_id": run_id,
         }
 
+        self.pearl_logger.info(
+            f"Agent Run Starting (dry_run={request.dry_run}, space_id={request.space_id}, run_id={run_id})"
+        )
+
         with log_span(
             self.pearl_logger,
             "agent_run_execution",
@@ -194,7 +198,8 @@ class AgentRunService:
                 if not filtered_proposals:
                     # No proposals available to vote on
                     pass
-
+                else:
+                    pass
                 # Step 3: Make and execute voting decisions
                 (
                     vote_decisions,
@@ -248,6 +253,8 @@ class AgentRunService:
                 return response
 
             except Exception as e:
+                import traceback
+
                 # Track error state
                 self.state_tracker.transition(
                     AgentState.ERROR,
@@ -310,6 +317,18 @@ class AgentRunService:
             proposals = await self._fetch_active_proposals(
                 space_id, user_preferences.max_proposals_per_run
             )
+
+            if proposals:
+                import time
+                current_time = int(time.time())
+
+                self.pearl_logger.info(
+                    f"Fetched {len(proposals)} proposals from {space_id}. "
+                    f"States: {[p.state for p in proposals]}"
+                )
+            else:
+                self.pearl_logger.warning(f"No proposals found for space {space_id}")
+
         except Exception as e:
             error_msg = f"Failed to fetch active proposals: {str(e)}"
             errors.append(error_msg)
@@ -329,6 +348,8 @@ class AgentRunService:
                 self.logger.log_error("filter_proposals", e, space_id=space_id)
                 # Fall back to original proposals if filtering fails
                 filtered_proposals = proposals
+        else:
+            pass
 
         return proposals, filtered_proposals, errors
 
@@ -355,8 +376,15 @@ class AgentRunService:
         vote_decisions = []
         final_decisions = []
 
+
+        self.pearl_logger.info(
+            f"Processing voting decisions (proposals={len(proposals)}, "
+            f"dry_run={dry_run}, space_id={space_id}, run_id={run_id})"
+        )
+
         # Make voting decisions
         if proposals:
+            self.pearl_logger.info(f"Making voting decisions for {len(proposals)} proposals")
             try:
                 vote_decisions = await self._make_voting_decisions(
                     proposals, user_preferences, space_id
@@ -395,14 +423,22 @@ class AgentRunService:
 
         # Execute votes
         if vote_decisions:
+            self.pearl_logger.info(
+                f"Executing {len(vote_decisions)} votes (dry_run={dry_run}, space_id={space_id})"
+            )
             try:
                 final_decisions = await self._execute_votes(
                     vote_decisions, space_id, dry_run, run_id
+                )
+                self.pearl_logger.info(
+                    f"Vote execution completed ({len(final_decisions)}/{len(vote_decisions)} successful)"
                 )
             except Exception as e:
                 error_msg = f"Failed to execute votes: {str(e)}"
                 errors.append(error_msg)
                 self.logger.log_error("execute_votes", e)
+        else:
+            self.pearl_logger.warning("No vote decisions to execute - vote_decisions list is empty")
 
         return vote_decisions, final_decisions, errors
 
@@ -595,6 +631,7 @@ class AgentRunService:
             proposal_count=len(proposals),
         ):
             try:
+
                 self.pearl_logger.info(
                     f"Starting proposal filtering and ranking (proposal_count={len(proposals)}, "
                     f"blacklisted_count={len(preferences.blacklisted_proposers)}, "
@@ -607,13 +644,15 @@ class AgentRunService:
 
                 # Step 1: Filter proposals based on user preferences
                 filtered_proposals = proposal_filter.filter_proposals(proposals)
+
                 self.pearl_logger.info(
                     f"Proposals filtered (original_count={len(proposals)}, "
-                    f"filtered_count={len(filtered_proposals)})"
+                    f"filtered_count={len(filtered_proposals)}, removed={len(proposals) - len(filtered_proposals)})"
                 )
 
                 # Step 2: Rank filtered proposals by importance and urgency
                 ranked_proposals = proposal_filter.rank_proposals(filtered_proposals)
+
                 self.pearl_logger.info(
                     f"Proposals ranked (ranked_count={len(ranked_proposals)})"
                 )
@@ -627,6 +666,14 @@ class AgentRunService:
                 filtering_metrics = proposal_filter.get_filtering_metrics(
                     proposals, filtered_proposals
                 )
+
+                if len(final_proposals) == 0 and len(proposals) > 0:
+                    self.pearl_logger.warning(
+                        f"ALL PROPOSALS FILTERED OUT: Started with {len(proposals)}, ended with 0. "
+                        f"Blacklisted: {filtering_metrics['blacklisted_count']}, "
+                        f"Whitelist filtered: {filtering_metrics['whitelist_filtered_count']}"
+                    )
+
                 metrics_str = ", ".join(
                     f"{k}={v}" for k, v in filtering_metrics.items()
                 )
@@ -716,7 +763,6 @@ class AgentRunService:
                         )
                     else:
                         # Proposal was evaluated but not voted on due to low confidence
-                        pass
                         self.pearl_logger.info(
                             f"Vote decision rejected due to low confidence "
                             f"(proposal_id={proposal.id}, confidence={decision.confidence}, "
@@ -933,6 +979,7 @@ class AgentRunService:
         Returns:
             True if vote was successfully executed
         """
+
         # Track vote submission state
         self.state_tracker.transition(
             AgentState.SUBMITTING_VOTE,
@@ -946,11 +993,21 @@ class AgentRunService:
         # Convert VoteType to Snapshot choice format
         vote_choice = VOTE_CHOICE_MAPPING[decision.vote]
 
+        self.pearl_logger.info(
+            f"Attempting vote submission (space={space_id}, proposal={decision.proposal_id}, "
+            f"choice={vote_choice}, vote_type={decision.vote}, confidence={decision.confidence})"
+        )
+
         # Execute vote through voting service
         vote_result = await self.voting_service.vote_on_proposal(
             space=space_id,
             proposal=decision.proposal_id,
             choice=vote_choice,
+        )
+
+        self.pearl_logger.info(
+            f"Vote service returned (proposal={decision.proposal_id}, "
+            f"success={vote_result.get('success')}, result_keys={list(vote_result.keys())})"
         )
 
         # Extract vote ID from the Snapshot response
@@ -967,11 +1024,16 @@ class AgentRunService:
                     f"Vote submitted successfully (proposal={decision.proposal_id}, "
                     f"vote_id={vote_id}, choice={vote_choice})"
                 )
+            else:
+                self.pearl_logger.warning(
+                    f"Vote succeeded but submission_result failed (proposal={decision.proposal_id}, "
+                    f"submission_result={submission_result})"
+                )
         else:
             error_msg = vote_result.get("error", "Unknown error")
             self.logger.log_vote_execution(decision, False, error_msg)
-            self.pearl_logger.warning(
-                f"Vote submission failed (proposal={decision.proposal_id}, "
+            self.pearl_logger.error(
+                f"Vote submission FAILED (proposal={decision.proposal_id}, "
                 f"error={error_msg}, choice={vote_choice})"
             )
 
@@ -1019,16 +1081,37 @@ class AgentRunService:
             List of successfully executed VoteDecision objects
         """
         executed_decisions = []
-        for decision in decisions:
+        for i, decision in enumerate(decisions):
             try:
+                self.pearl_logger.info(
+                    f"Processing vote {i+1}/{len(decisions)} (proposal_id={decision.proposal_id}, "
+                    f"vote={decision.vote}, confidence={decision.confidence})"
+                )
                 vote_succeeded = await self._execute_single_vote(
                     decision, space_id, run_id
                 )
                 if vote_succeeded:
                     executed_decisions.append(decision)
+                    self.pearl_logger.info(
+                        f"Vote {i+1}/{len(decisions)} executed successfully (proposal_id={decision.proposal_id})"
+                    )
+                else:
+                    self.pearl_logger.warning(
+                        f"Vote {i+1}/{len(decisions)} failed to execute (proposal_id={decision.proposal_id})"
+                    )
             except Exception as e:
+                import traceback
+                self.pearl_logger.error(
+                    f"Exception during vote {i+1}/{len(decisions)} execution "
+                    f"(proposal_id={decision.proposal_id}, error={str(e)})"
+                )
+                self.pearl_logger.error(f"Traceback: {traceback.format_exc()}")
                 self.logger.log_vote_execution(decision, False, str(e))
                 continue
+
+        self.pearl_logger.info(
+            f"Vote processing complete (total={len(decisions)}, successful={len(executed_decisions)})"
+        )
         return executed_decisions
 
     async def _execute_votes(
@@ -1061,14 +1144,18 @@ class AgentRunService:
         ):
             try:
                 self.pearl_logger.info(
-                    f"Executing votes (space_id={space_id}, decision_count={len(decisions)}, dry_run={dry_run})"
+                    f"Executing votes (space_id={space_id}, decision_count={len(decisions)}, "
+                    f"dry_run={dry_run}, dry_run_type={type(dry_run).__name__})"
                 )
 
                 if dry_run:
                     self.pearl_logger.info(
-                        "Dry run mode - simulating vote execution, skipping attestation"
+                        "DRY RUN MODE - Simulating vote execution without actual submission. "
+                        f"Skipping {len(decisions)} vote submissions and attestations."
                     )
                     return decisions
+
+                self.pearl_logger.info(f"Normal mode - executing {len(decisions)} votes")
 
                 executed_decisions = await self._process_vote_decisions(
                     decisions, space_id, run_id

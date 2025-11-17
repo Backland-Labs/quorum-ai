@@ -16,22 +16,67 @@
   let isStakingKpiMet = $state<boolean | null>(null);
   let healthcheckLoading = $state(true);
 
-  // Calculate time to next checkpoint (24 hours from last run)
-  function formatTimeToCheckpoint(timestamp: string | null): string {
-    if (!timestamp) return 'Unknown';
+  // State for checkpoint data
+  let blockchainTime = $state<number | null>(null);
+  let nextCheckpointTimestamp = $state<number | null>(null);
+  let checkpointLoading = $state(false);
+  let checkpointError = $state<string | null>(null);
 
-    const lastRun = new Date(timestamp);
-    const now = new Date();
-    const nextCheckpoint = new Date(lastRun.getTime() + 24 * 60 * 60 * 1000); // 24 hours later
-    const diff = nextCheckpoint.getTime() - now.getTime();
+  // Reactive "now" timestamp that updates every minute to trigger time recalculation
+  let now = $state(Date.now());
 
-    // If checkpoint is overdue
-    if (diff < 0) return 'Overdue';
 
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
+  // Calculate time to next checkpoint using timestamp from staking contract
+  function formatTimeToCheckpoint(nextTimestamp: number | null): string {
+    // Better null handling for nextCheckpointTimestamp
+    if (!nextTimestamp) {
+      return '~24h 0m (estimated)';
+    }
+
+    const nextCheckpointMs = nextTimestamp * 1000; // Convert unix timestamp to ms
+    // Use blockchain time if available (for Anvil time-shifted chains), otherwise system time
+    // Add 'now' as dependency to make this reactive to time changes
+    const nowMs = blockchainTime ? blockchainTime * 1000 : now;
+
+    const timeRemaining = nextCheckpointMs - nowMs;
+
+    // Show "Checkpoint imminent" when timeRemaining <= 0
+    if (timeRemaining <= 0) return 'Checkpoint imminent';
+
+    const hours = Math.floor(timeRemaining / 3600000);
+    const minutes = Math.floor((timeRemaining % 3600000) / 60000);
 
     return `${hours}h ${minutes}m`;
+  }
+
+  // Fetch checkpoint data from staking endpoint
+  async function fetchCheckpointData() {
+    checkpointLoading = true;
+    checkpointError = null;
+
+    try {
+      const response = await fetch('/staking/checkpoints');
+      const data = await response.json();
+
+      // Check if response contains an error
+      if (data.error) {
+        checkpointError = data.error;
+        blockchainTime = null;
+        nextCheckpointTimestamp = null;
+        return;
+      }
+
+      // Always use blockchain time and checkpoint data if available
+      blockchainTime = data.current_blockchain_time || null;
+      nextCheckpointTimestamp = data.next_checkpoint_timestamp || null;
+    } catch (error) {
+      console.error('Failed to fetch checkpoint data:', error);
+      checkpointError = 'Unable to fetch checkpoint data. Please try again.';
+      blockchainTime = null;
+      nextCheckpointTimestamp = null;
+    } finally {
+      checkpointLoading = false;
+    }
   }
 
   // Fetch staking KPI status from healthcheck
@@ -50,9 +95,19 @@
 
   onMount(() => {
     fetchHealthcheck();
+    fetchCheckpointData();
     // Refresh every 30 minutes
-    const interval = setInterval(fetchHealthcheck, 30 * 60 * 1000);
-    return () => clearInterval(interval);
+    const healthInterval = setInterval(fetchHealthcheck, 30 * 60 * 1000);
+    const checkpointInterval = setInterval(fetchCheckpointData, 30 * 60 * 1000);
+    // Update "now" every minute to trigger time recalculation
+    const clockInterval = setInterval(() => {
+      now = Date.now();
+    }, 60 * 1000);
+    return () => {
+      clearInterval(healthInterval);
+      clearInterval(checkpointInterval);
+      clearInterval(clockInterval);
+    };
   });
 </script>
 
@@ -64,33 +119,49 @@
 >
   <h3 data-testid="widget-title" class="text-sm sm:text-base font-medium text-gray-900 mb-4">Agent Status</h3>
 
-  {#if storeState.loading.status || healthcheckLoading}
+  {#if healthcheckLoading || checkpointLoading}
     <div data-testid="loading-state" class="text-gray-500 text-sm">
       Loading agent status...
     </div>
-  {:else if storeState.errors.status}
-    <div data-testid="error-state" class="text-gray-500 text-sm italic">
-      Backend unavailable - agent status unknown
-    </div>
-  {:else if storeState.status}
+  {:else}
     <div role="status" class="space-y-4">
       <div>
         <p class="text-xs sm:text-sm text-gray-500">Current Status</p>
         <p
           data-testid="activity-threshold"
-          class="text-base sm:text-lg font-semibold {isStakingKpiMet ? 'text-green-600' : 'text-yellow-600'}"
+          class="text-base sm:text-lg font-semibold {isStakingKpiMet === null ? 'text-gray-500' : isStakingKpiMet ? 'text-green-600' : 'text-yellow-600'}"
         >
           {isStakingKpiMet !== null
             ? (isStakingKpiMet ? 'Meeting Activity Threshold' : 'Not Meeting Activity Threshold')
-            : 'Unknown'}
+            : (healthcheckLoading ? 'Loading...' : 'Activity Tracking Unavailable')}
         </p>
       </div>
 
+
       <div>
-        <p class="text-xs sm:text-sm text-gray-500">Time to Checkpoint</p>
-        <p data-testid="time-to-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
-          {formatTimeToCheckpoint(storeState.status.last_run_timestamp)}
-        </p>
+        <p class="text-xs sm:text-sm text-gray-500">Time to Next Checkpoint</p>
+        {#if checkpointLoading}
+          <p data-testid="checkpoint-loading" class="text-base sm:text-lg font-semibold text-gray-500">
+            Loading checkpoint info...
+          </p>
+        {:else if checkpointError}
+          <div data-testid="checkpoint-error">
+            <p class="text-base sm:text-lg font-semibold text-red-500">
+              {checkpointError}
+            </p>
+            <button
+              onclick={fetchCheckpointData}
+              class="text-sm text-blue-500 underline mt-1 hover:text-blue-700"
+              data-testid="retry-button"
+            >
+              Retry
+            </button>
+          </div>
+        {:else}
+          <p data-testid="time-to-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
+            {formatTimeToCheckpoint(nextCheckpointTimestamp)}
+          </p>
+        {/if}
       </div>
     </div>
   {/if}

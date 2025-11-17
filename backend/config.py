@@ -30,7 +30,11 @@ class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
         if env_value is not None and isinstance(env_value, str):
             if env_value.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
                 return None, field_name, False
-            
+
+            # Skip empty strings - let Pydantic use the default value
+            if not env_value.strip():
+                return None, field_name, False
+
             # Parse JSON strings to match Pydantic's dotenv behavior
             # This ensures validators receive consistent types (dict/list not str)
             if env_value.startswith(('{', '[')):
@@ -127,7 +131,7 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    ai_model: str = "google/gemini-2.0-flash-001"
+    ai_model: str = "google/gemini-2.5-flash-lite"
 
     # Pearl logging settings
     log_level: str = Field(
@@ -287,8 +291,11 @@ class Settings(BaseSettings):
     )
 
     # OLAS configuration for new services
-    store_path: Optional[str] = Field(
-        default=None,
+    store_path: str = Field(
+        default_factory=lambda: (
+            "/app/.quorum_ai/state" if os.path.exists("/app")
+            else os.path.expanduser("~/.quorum_ai/state")
+        ),
         alias="STORE_PATH",
         description="Path for persistent data storage",
     )

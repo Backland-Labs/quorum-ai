@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { parseProposalSummary, cleanProposalTitle, calculateConfidencePercentage } from '$lib/utils/proposals.js';
+  import { parseProposalSummary, cleanProposalTitle } from '$lib/utils/proposals.js';
   import VotingIndicator from './VotingIndicator.svelte';
   import type { components } from '$lib/api/client';
   import type { ExtendedProposal } from '$lib/types/dashboard';
@@ -31,17 +31,7 @@
     return riskClasses[riskLevel] || riskClasses['MEDIUM'];
   }
 
-  function getRecommendationClasses(recommendation: string): string {
-    console.assert(typeof recommendation === 'string', 'Recommendation must be a string');
-    console.assert(recommendation.length > 0, 'Recommendation should not be empty');
-
-    const recClasses: Record<string, string> = {
-      'APPROVE': 'bg-green-100 text-green-800',
-      'REJECT': 'bg-red-100 text-red-800'
-    };
-    return recClasses[recommendation] || 'bg-gray-100 text-gray-800';
-  }
-
+  
   function formatDate(dateInput: string | number): string {
     let date: Date;
     if (typeof dateInput === 'number') {
@@ -129,43 +119,30 @@
       </div>
     {/if}
 
-    <!-- Footer with recommendation and confidence -->
-    <div class="flex items-center justify-between pt-3 border-t border-secondary-100">
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {getRecommendationClasses(parsedProposal.recommendation)}">
-          {parsedProposal.recommendation}
-        </span>
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="flex items-center text-xs text-secondary-500">
-          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 00-2 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6a2 2 0 00-2-2H5a2 2 0 01-2-2V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2z" />
+    <!-- Footer -->
+    <div class="flex items-center justify-end pt-3 border-t border-secondary-100">
+      {#if onClick}
+        <button
+          class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+          onclick={(e) => { e.stopPropagation(); onClick(); }}
+        >
+          View Details
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
-          {calculateConfidencePercentage(parsedProposal.confidence_score)}% confidence
-        </div>
-        {#if onClick}
-          <button
-            class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
-            onclick={(e) => { e.stopPropagation(); onClick(); }}
-          >
-            View Details
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        {:else if fullProposal?.id || proposal.id}
-          <a
-            href="/proposals/{fullProposal?.id || proposal.id}"
-            class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
-            onclick={(e) => e.stopPropagation()}
-          >
-            View Details
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        {/if}
-      </div>
+        </button>
+      {:else if fullProposal?.id || proposal.id}
+        <a
+          href="/proposals/{fullProposal?.id || proposal.id}"
+          class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+          onclick={(e) => e.stopPropagation()}
+        >
+          View Details
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      {/if}
     </div>
   </div>
 </div>

@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
+backend/.quorum_ai
 build/
 develop-eggs/
 dist/

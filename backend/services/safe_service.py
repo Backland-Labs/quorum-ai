@@ -364,6 +364,19 @@ class SafeService:
                         "simulation_failed": True,
                     }
 
+                # Log balance information before execution
+                safe_balance = w3.eth.get_balance(safe_address)
+                executor_balance = w3.eth.get_balance(self.account.address)
+                self.logger.info(
+                    f"Pre-execution balances: safe={safe_address} has {w3.from_wei(safe_balance, 'ether')} ETH, "
+                    f"executor={self.account.address} has {w3.from_wei(executor_balance, 'ether')} ETH"
+                )
+                self.logger.info(
+                    f"Transaction details: to={safe_tx.to}, value={safe_tx.value} wei, "
+                    f"safe_tx_gas={safe_tx.safe_tx_gas}, base_gas={safe_tx.base_gas}, "
+                    f"gas_price={safe_tx.gas_price}, data_length={len(safe_tx.data)}"
+                )
+
                 # Execute Safe transaction on-chain
                 ethereum_tx_sent = safe_instance.send_multisig_tx(
                     to=safe_tx.to,
@@ -418,9 +431,41 @@ class SafeService:
                     }
 
             except Exception as e:
-                self.logger.exception(f"Error creating Safe transaction: {str(e)}")
+                error_msg = str(e)
 
-                return {"success": False, "error": str(e)}
+                # Enhanced logging for insufficient funds errors
+                if "insufficient funds" in error_msg.lower():
+                    try:
+                        safe_balance = w3.eth.get_balance(safe_address)
+                        executor_balance = w3.eth.get_balance(self.account.address)
+                        gas_price = w3.eth.gas_price
+
+                        self.logger.error(
+                            f"INSUFFICIENT FUNDS ERROR - "
+                            f"Safe address: {safe_address}, balance: {w3.from_wei(safe_balance, 'ether')} ETH ({safe_balance} wei), "
+                            f"Executor address: {self.account.address}, balance: {w3.from_wei(executor_balance, 'ether')} ETH ({executor_balance} wei), "
+                            f"Current gas price: {w3.from_wei(gas_price, 'gwei')} gwei ({gas_price} wei), "
+                            f"Transaction value: {value} wei, "
+                            f"Estimated gas needed for Safe execution: ~{safe_tx.safe_tx_gas + safe_tx.base_gas} gas units"
+                        )
+
+                        # Calculate approximate costs
+                        estimated_gas = safe_tx.safe_tx_gas + safe_tx.base_gas
+                        estimated_cost_wei = estimated_gas * gas_price
+                        total_needed = value + estimated_cost_wei
+
+                        self.logger.error(
+                            f"Cost breakdown: tx value={value} wei, "
+                            f"estimated gas cost={w3.from_wei(estimated_cost_wei, 'ether')} ETH ({estimated_cost_wei} wei), "
+                            f"total needed={w3.from_wei(total_needed, 'ether')} ETH ({total_needed} wei), "
+                            f"executor shortfall={w3.from_wei(max(0, total_needed - executor_balance), 'ether')} ETH"
+                        )
+                    except Exception as log_error:
+                        self.logger.error(f"Failed to gather balance details: {log_error}")
+
+                self.logger.exception(f"Error creating Safe transaction: {error_msg}")
+
+                return {"success": False, "error": error_msg}
 
     async def perform_activity_transaction(
         self, chain: Optional[str] = None

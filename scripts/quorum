@@ -34,6 +34,13 @@ case "$CMD" in
     echo "Waiting for service to be ready..."
     sleep 5
     curl -sf http://localhost:8716/healthcheck && echo "✓ Service is healthy" || echo "✗ Service not responding"
+
+    # Fund Safe contract in fork/testnet modes
+    if [[ "$PROFILE" == "fork" ]] || [[ "$PROFILE" == "testnet" ]]; then
+      echo ""
+      echo "Funding Safe contract..."
+      ./scripts/fund_safe.sh || echo "⚠ Warning: Safe funding failed, but continuing..."
+    fi
     ;;
   down)
     echo "Stopping Quorum AI..."
@@ -49,10 +56,20 @@ case "$CMD" in
     echo "=== Health Check ==="
     curl -sf http://localhost:8716/healthcheck | jq '.' || echo "Service not responding"
     echo ""
-    if [[ "$PROFILE" == "fork" ]]; then
+    if [[ "$PROFILE" == "fork" ]] || [[ "$PROFILE" == "testnet" ]]; then
       echo "=== Anvil Status ==="
       curl -s -X POST http://localhost:8545 -H 'Content-Type: application/json' \
         -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq '.'
+      echo ""
+      echo "=== Safe Balance ==="
+      if command -v cast &> /dev/null; then
+        SAFE_BALANCE=$(cast balance 0x07edA994E013AbC8619A5038455db3A6FBdd2Bca --rpc-url http://localhost:8545 2>/dev/null || echo "0")
+        SAFE_BALANCE_ETH=$(cast to-unit "$SAFE_BALANCE" ether 2>/dev/null || echo "0")
+        echo "Safe Address: 0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"
+        echo "Balance: $SAFE_BALANCE_ETH ETH"
+      else
+        echo "Install Foundry to check Safe balance (https://book.getfoundry.sh/)"
+      fi
     fi
     ;;
   test)
@@ -65,7 +82,19 @@ case "$CMD" in
     ;;
   run)
     echo "=== Running Agent ==="
-    curl -sf -X POST http://localhost:8716/agent-run | jq '.'
+    # Extract space_id from environment config
+    SPACE_ID=$(grep "MONITORED_DAOS=" "$ENV_FILE" | cut -d'=' -f2)
+    curl -sf -X POST http://localhost:8716/agent-run \
+      -H "Content-Type: application/json" \
+      -d "{\"space_id\": \"$SPACE_ID\", \"dry_run\": false}" | jq '.'
+    ;;
+  fund)
+    if [[ "$PROFILE" == "mock" ]]; then
+      echo "Funding not needed in mock mode"
+      exit 0
+    fi
+    echo "=== Funding Safe Contract ==="
+    ./scripts/fund_safe.sh
     ;;
   *)
     echo "Quorum AI Testing Script"
@@ -86,6 +115,7 @@ case "$CMD" in
     echo "  test     - Run self-test"
     echo "  verify   - Verify attestation count"
     echo "  run      - Run agent (existing endpoint)"
+    echo "  fund     - Fund Safe contract with ETH"
     echo ""
     echo "Examples:"
     echo "  ./quorum mock build      # Build image"
@@ -93,6 +123,7 @@ case "$CMD" in
     echo "  ./quorum fork up --dev   # Start with hot reload"
     echo "  ./quorum fork test       # Run self-test"
     echo "  ./quorum fork verify     # Check attestation count"
+    echo "  ./quorum fork fund       # Manually fund Safe contract"
     exit 1
     ;;
 esac

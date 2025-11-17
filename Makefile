@@ -1,4 +1,4 @@
-.PHONY: help build up down logs status test verify run clean
+.PHONY: help build up down logs status test verify run fund clean
 
 PROFILE ?= fork
 
@@ -13,6 +13,7 @@ help:
 	@echo "  make test       - Run health check"
 	@echo "  make verify     - Verify attestation count"
 	@echo "  make run        - Run agent (existing endpoint)"
+	@echo "  make fund       - Fund Safe contract with ETH"
 	@echo "  make clean      - Stop and remove all data"
 	@echo ""
 	@echo "Set PROFILE=mock|fork|testnet to change mode"
@@ -40,6 +41,9 @@ verify:
 
 run:
 	./scripts/quorum $(PROFILE) run
+
+fund:
+	./scripts/quorum $(PROFILE) fund
 
 clean: down
 	rm -rf logs/* store/* .anvil.pid

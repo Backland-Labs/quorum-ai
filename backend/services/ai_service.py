@@ -69,9 +69,6 @@ class VotingDependencies:
 class VotingAgent:
     """Pydantic AI Agent for autonomous voting decisions."""
 
-    # Model configuration constants
-    GEMINI_MODEL_NAME: str = "google/gemini-2.0-flash-001"
-
     def __init__(self, model: OpenAIModel) -> None:
         """Initialize VotingAgent with shared model instance."""
         self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
@@ -389,9 +386,6 @@ class SummarizationDependencies:
 
 class SummarizationAgent:
     """Pydantic AI Agent for proposal summarization."""
-
-    # Shared model constant with VotingAgent
-    GEMINI_MODEL_NAME: str = "google/gemini-2.0-flash-001"
 
     def __init__(self, model: OpenAIModel) -> None:
         """Initialize SummarizationAgent with shared model instance."""
@@ -746,13 +740,12 @@ class AIService:
                 self.voting_agent = None
                 self.summarization_agent = None
 
-    def _create_model(self) -> Union[OpenAIModel, str]:
+    def _create_model(self) -> OpenAIModel:
         """Create the AI model with OpenRouter configuration."""
-        # Constants for model configuration
-        GEMINI_MODEL_NAME = "google/gemini-2.0-flash-001"
-        DEFAULT_MODEL_FALLBACK = "google/gemini-2.0-flash-001"
+        # Get model name from settings
+        model_name = settings.ai_model
 
-        logger.info("Creating AI model")
+        logger.info("Creating AI model, model_name=%s", model_name)
 
         # Runtime assertion: validate API key configuration
         assert settings.openrouter_api_key, "OpenRouter API key is not configured"
@@ -760,41 +753,38 @@ class AIService:
             f"API key must be string, got {type(settings.openrouter_api_key)}"
         )
 
-        if settings.openrouter_api_key:
-            logger.info("Using OpenRouter")
-            try:
-                # Create OpenRouter provider
-                provider = OpenRouterProvider(api_key=settings.openrouter_api_key)
+        logger.info("Using OpenRouter")
+        try:
+            # Create OpenRouter provider
+            provider = OpenRouterProvider(api_key=settings.openrouter_api_key)
 
-                # Create model with provider
-                model = OpenAIModel(GEMINI_MODEL_NAME, provider=provider)
+            # Create model with provider using configured model name
+            model = OpenAIModel(model_name, provider=provider)
 
-                # Get model type name for logging
-                model_type_name = type(model).__name__
-                logger.info(
-                    "Successfully created OpenRouter model, model_type=%s",
-                    model_type_name,
-                )
+            # Get model type name for logging
+            model_type_name = type(model).__name__
+            logger.info(
+                "Successfully created OpenRouter model, model_type=%s, model_name=%s",
+                model_type_name,
+                model_name,
+            )
 
-                # Runtime assertion: validate model creation
-                assert model is not None, "OpenRouter model creation returned None"
-                assert hasattr(model, "__class__"), (
-                    "Model must be a valid object instance"
-                )
+            # Runtime assertion: validate model creation
+            assert model is not None, "OpenRouter model creation returned None"
+            assert hasattr(model, "__class__"), (
+                "Model must be a valid object instance"
+            )
 
-                return model
-            except Exception as e:
-                error_message = str(e)
-                error_type = type(e).__name__
-                logger.error(
-                    "Failed to create OpenRouter model, error=%s, error_type=%s",
-                    error_message,
-                    error_type,
-                )
-                raise e
-        else:
-            logger.warning("No AI API keys configured, using default model")
-            return DEFAULT_MODEL_FALLBACK  # TODO: need to fix how this is handled
+            return model
+        except Exception as e:
+            error_message = str(e)
+            error_type = type(e).__name__
+            logger.error(
+                "Failed to create OpenRouter model, error=%s, error_type=%s",
+                error_message,
+                error_type,
+            )
+            raise e
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI agent."""
@@ -1492,7 +1482,7 @@ class AIService:
 
         # Prepare file path
         output_dir = (
-            base_path or Path(settings.store_path or ".") / settings.decision_output_dir
+            base_path or Path(settings.store_path) / settings.decision_output_dir
         )
         output_dir.mkdir(parents=True, exist_ok=True)
 

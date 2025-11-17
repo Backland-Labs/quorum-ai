@@ -235,13 +235,24 @@ class VotingService:
                 },
             }
 
+            self.logger.info(
+                f"Snapshot vote submission starting (url={url}, from={from_address}, "
+                f"proposal={snapshot_message.get('message', {}).get('proposal')})"
+            )
+
             # Submit Snapshot vote
             try:
-                async with httpx.AsyncClient() as client:
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    self.logger.info(f"Sending POST request to {url}")
                     response = await client.post(
                         url,
                         json=request_body,
                         headers={"Content-Type": "application/json"},
+                    )
+
+                    self.logger.info(
+                        f"Received response (status={response.status_code}, "
+                        f"headers={dict(response.headers)})"
                     )
 
                 # Constants for HTTP status
@@ -256,9 +267,10 @@ class VotingService:
 
                 # Handle error response
                 error_text = response.text
+
                 self.logger.error(
                     f"Snapshot vote submission failed (status_code={response.status_code}, "
-                    f"response_text={error_text})"
+                    f"response_text={error_text}, request_body_keys={list(request_body.keys())})"
                 )
                 return {
                     "success": False,
@@ -267,8 +279,11 @@ class VotingService:
                 }
 
             except Exception as e:
-                self.logger.error(f"Snapshot vote submission error: {e}")
-                return {"success": False, "error": str(e)}
+                import traceback
+                self.logger.error(
+                    f"Snapshot vote submission exception: {e}\n{traceback.format_exc()}"
+                )
+                return {"success": False, "error": str(e), "exception_type": type(e).__name__}
 
     async def vote_on_proposal(
         self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None
