@@ -19,7 +19,8 @@
   // State for checkpoint data
   let blockchainTime = $state<number | null>(null);
   let nextCheckpointTimestamp = $state<number | null>(null);
-  let checkpointLoading = $state(true);
+  let checkpointLoading = $state(false);
+  let checkpointError = $state<string | null>(null);
 
   // Reactive "now" timestamp that updates every minute to trigger time recalculation
   let now = $state(Date.now());
@@ -27,9 +28,7 @@
 
   // Calculate time to next checkpoint using timestamp from staking contract
   function formatTimeToCheckpoint(nextTimestamp: number | null): string {
-    if (checkpointLoading) return 'Loading...';
-
-    // If no timestamp provided, estimate 24 hours from now
+    // Better null handling for nextCheckpointTimestamp
     if (!nextTimestamp) {
       return '~24h 0m (estimated)';
     }
@@ -39,28 +38,40 @@
     // Add 'now' as dependency to make this reactive to time changes
     const nowMs = blockchainTime ? blockchainTime * 1000 : now;
 
-    const diff = nextCheckpointMs - nowMs;
+    const timeRemaining = nextCheckpointMs - nowMs;
 
-    // If checkpoint is overdue
-    if (diff < 0) return 'Overdue';
+    // Show "Checkpoint imminent" when timeRemaining <= 0
+    if (timeRemaining <= 0) return 'Checkpoint imminent';
 
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
+    const hours = Math.floor(timeRemaining / 3600000);
+    const minutes = Math.floor((timeRemaining % 3600000) / 60000);
 
     return `${hours}h ${minutes}m`;
   }
 
   // Fetch checkpoint data from staking endpoint
   async function fetchCheckpointData() {
+    checkpointLoading = true;
+    checkpointError = null;
+
     try {
       const response = await fetch('/staking/checkpoints');
       const data = await response.json();
+
+      // Check if response contains an error
+      if (data.error) {
+        checkpointError = data.error;
+        blockchainTime = null;
+        nextCheckpointTimestamp = null;
+        return;
+      }
 
       // Always use blockchain time and checkpoint data if available
       blockchainTime = data.current_blockchain_time || null;
       nextCheckpointTimestamp = data.next_checkpoint_timestamp || null;
     } catch (error) {
       console.error('Failed to fetch checkpoint data:', error);
+      checkpointError = 'Unable to fetch checkpoint data. Please try again.';
       blockchainTime = null;
       nextCheckpointTimestamp = null;
     } finally {
@@ -126,12 +137,31 @@
         </p>
       </div>
 
-      
+
       <div>
         <p class="text-xs sm:text-sm text-gray-500">Time to Next Checkpoint</p>
-        <p data-testid="time-to-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
-          {formatTimeToCheckpoint(nextCheckpointTimestamp)}
-        </p>
+        {#if checkpointLoading}
+          <p data-testid="checkpoint-loading" class="text-base sm:text-lg font-semibold text-gray-500">
+            Loading checkpoint info...
+          </p>
+        {:else if checkpointError}
+          <div data-testid="checkpoint-error">
+            <p class="text-base sm:text-lg font-semibold text-red-500">
+              {checkpointError}
+            </p>
+            <button
+              onclick={fetchCheckpointData}
+              class="text-sm text-blue-500 underline mt-1 hover:text-blue-700"
+              data-testid="retry-button"
+            >
+              Retry
+            </button>
+          </div>
+        {:else}
+          <p data-testid="time-to-checkpoint" class="text-base sm:text-lg font-semibold text-gray-900">
+            {formatTimeToCheckpoint(nextCheckpointTimestamp)}
+          </p>
+        {/if}
       </div>
     </div>
   {/if}
