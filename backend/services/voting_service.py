@@ -212,15 +212,10 @@ class VotingService:
         HEX_PREFIX = "0x"
 
         with log_span(self.logger, "voting_service.submit_vote_to_snapshot"):
-            print(f"\n{'='*80}")
-            print(f"📤 SUBMITTING VOTE TO SNAPSHOT")
-            print(f"{'='*80}\n")
-
             self.logger.info("Submitting Snapshot vote")
 
             # Snapshot Hub API endpoint
             url = settings.snapshot_hub_url
-            print(f"🌐 Snapshot Hub URL: {url}")
 
             # Prepare Snapshot vote request
             from_address = Web3.to_checksum_address(self.account.address)
@@ -240,15 +235,6 @@ class VotingService:
                 },
             }
 
-            print(f"📝 Request details:")
-            print(f"   From address: {from_address}")
-            print(f"   Signature: {clean_signature[:20]}...{clean_signature[-10:]}")
-            print(f"   Space: {snapshot_message.get('message', {}).get('space')}")
-            print(f"   Proposal: {snapshot_message.get('message', {}).get('proposal')}")
-            print(f"   Choice: {snapshot_message.get('message', {}).get('choice')}")
-            print(f"   Timestamp: {snapshot_message.get('message', {}).get('timestamp')}")
-            print()
-
             self.logger.info(
                 f"Snapshot vote submission starting (url={url}, from={from_address}, "
                 f"proposal={snapshot_message.get('message', {}).get('proposal')})"
@@ -257,15 +243,12 @@ class VotingService:
             # Submit Snapshot vote
             try:
                 async with httpx.AsyncClient(timeout=30.0) as client:
-                    print(f"📡 Sending POST request to {url}...")
                     self.logger.info(f"Sending POST request to {url}")
                     response = await client.post(
                         url,
                         json=request_body,
                         headers={"Content-Type": "application/json"},
                     )
-                    print(f"📡 Received response: HTTP {response.status_code}")
-                    print(f"   Response headers: {dict(response.headers)}\n")
 
                     self.logger.info(
                         f"Received response (status={response.status_code}, "
@@ -277,8 +260,6 @@ class VotingService:
 
                 if response.status_code == HTTP_OK:
                     result_data = response.json()
-                    print(f"✅ SUCCESS! Vote submitted to Snapshot")
-                    print(f"   Response data: {result_data}\n")
                     self.logger.info(
                         f"Snapshot vote submitted successfully (response_data={result_data})"
                     )
@@ -286,14 +267,6 @@ class VotingService:
 
                 # Handle error response
                 error_text = response.text
-                print(f"❌ FAILED! Snapshot API returned error")
-                print(f"   Status code: {response.status_code}")
-                print(f"   Error response: {error_text}")
-                print(f"   This could mean:")
-                print(f"     - Already voted on this proposal")
-                print(f"     - No voting power in this space")
-                print(f"     - Proposal not active")
-                print(f"     - Invalid signature or message\n")
 
                 self.logger.error(
                     f"Snapshot vote submission failed (status_code={response.status_code}, "
@@ -307,11 +280,6 @@ class VotingService:
 
             except Exception as e:
                 import traceback
-                print(f"❌ EXCEPTION during vote submission!")
-                print(f"   Exception type: {type(e).__name__}")
-                print(f"   Error message: {str(e)}")
-                print(f"   Traceback:\n{traceback.format_exc()}\n")
-
                 self.logger.error(
                     f"Snapshot vote submission exception: {e}\n{traceback.format_exc()}"
                 )
