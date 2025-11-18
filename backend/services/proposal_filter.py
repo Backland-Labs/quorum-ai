@@ -266,12 +266,6 @@ class ProposalFilter:
             if time_until_deadline < 0:
                 time_str = "EXPIRED"
 
-            print(f"   📊 Scoring {proposal.id[:16]}...")
-            print(f"      Time until end: {time_str} → urgency={urgency_factor:.2f}")
-            print(f"      Voting power: {proposal.scores_total} → power_factor={voting_power_factor:.2f}")
-            print(f"      Participation: {proposal.votes} votes → participation={participation_factor:.2f}")
-            print(f"      ➡️  Composite score: {composite_score:.3f}")
-
             logger.debug(
                 "Proposal score calculated",
                 extra={
