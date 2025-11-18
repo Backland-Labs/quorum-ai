@@ -1,10 +1,10 @@
 """Configuration management following 12-factor app principles."""
 
 import os
-from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Optional, Tuple
 
 from pydantic import Field, field_validator, model_validator
-from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from web3 import Web3
 
 from utils.env_helper import get_env_with_prefix

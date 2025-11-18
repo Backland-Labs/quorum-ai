@@ -11,15 +11,14 @@
 
   interface Props {
     proposals: components['schemas']['Proposal'][];
-    proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
-    onProposalClick: (proposalId: string) => void;
+    agentDecisions: Map<string, components['schemas']['AgentDecisionResponse']>;
     currentSpaceId?: string | null;
   }
 
-  let { proposals, proposalSummaries, onProposalClick, currentSpaceId = null }: Props = $props();
+  let { proposals, agentDecisions, currentSpaceId = null }: Props = $props();
 
   function validateProps(): void {
-    console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
+    console.assert(agentDecisions instanceof Map, 'agentDecisions must be a Map');
   }
 
   function hasProposals(): boolean {
@@ -77,8 +76,7 @@
 
         <RecentProposals
           {proposals}
-          {proposalSummaries}
-          {onProposalClick}
+          {agentDecisions}
         />
       </div>
     {:else}

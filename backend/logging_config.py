@@ -11,7 +11,6 @@ from datetime import datetime
 from contextlib import contextmanager
 from typing import Optional, Any, Dict, Tuple
 import os
-import re
 
 
 class PearlFormatter(logging.Formatter):

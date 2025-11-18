@@ -1,7 +1,6 @@
 """Main FastAPI application for Quorum AI backend."""
 
 import hashlib
-import json
 import os
 import time
 from contextlib import asynccontextmanager
@@ -28,13 +27,10 @@ from models import (
     ProposalVoter,
     Vote,
     VoteType,
-    SummarizeRequest,
-    SummarizeResponse,
     UserPreferences,
     AttestationVerificationResponse,
     AttestationCountResponse,
     StakingCheckpointsResponse,
-    StakingCheckpoint,
 )
 from services.ai_service import AIService
 from services.agent_run_service import AgentRunService
@@ -519,61 +515,7 @@ async def get_proposal_by_id(proposal_id: str):
 
 
 # AI Summarization endpoints
-@app.post("/proposals/summarize", response_model=SummarizeResponse)
-async def summarize_proposals(request: SummarizeRequest):
-    """Summarize multiple proposals using AI."""
-    start_time = time.time()
 
-    # Log the incoming request
-    logger.info(
-        f"Received summarize request proposal_ids={request.proposal_ids} "
-        f"proposal_count={len(request.proposal_ids)}"
-    )
-
-    try:
-        with log_span(
-            logger, "summarize_proposals", proposal_count=len(request.proposal_ids)
-        ):
-            # Fetch proposals
-            logger.info("Fetching proposals for summarization")
-            proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
-
-            if not proposals:
-                logger.warning(f"No proposals found for IDs: {request.proposal_ids}")
-                raise HTTPException(
-                    status_code=404, detail="No proposals found for the provided IDs"
-                )
-
-            logger.info(f"Successfully fetched {len(proposals)} proposals")
-
-            # Generate summaries
-            logger.info("Starting AI summarization")
-            summaries = await _generate_proposal_summaries(proposals)
-
-            processing_time = time.time() - start_time
-            logger.info(
-                f"Successfully completed summarization "
-                f"summary_count={len(summaries)} "
-                f"processing_time={processing_time:.2f}s"
-            )
-
-            return SummarizeResponse(
-                summaries=summaries,
-                processing_time=processing_time,
-                model_used=settings.ai_model,
-            )
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(
-            f"Failed to summarize proposals error={str(e)} "
-            f"exception_type={type(e).__name__} "
-            f"proposal_ids={request.proposal_ids}"
-        )
-        raise HTTPException(
-            status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
-        )
 
 
 @app.get("/proposals/{proposal_id}/top-voters", response_model=ProposalTopVoters)
@@ -862,30 +804,7 @@ def _convert_voting_power_to_wei(voting_power: float) -> str:
 # Private helper functions
 
 
-async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:
-    """Fetch proposals for summarization using Snapshot."""
-    with log_span(logger, "fetch_proposals_for_summarization"):
-        proposals = []
 
-        for proposal_id in proposal_ids:
-            try:
-                proposal = await snapshot_service.get_proposal(proposal_id)
-                if proposal:
-                    proposals.append(proposal)
-            except Exception:
-                pass  # Skip if Snapshot fails
-
-        logger.info(f"Fetched proposals for summarization count={len(proposals)}")
-        return proposals
-
-
-async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
-    """Generate AI summaries for proposals."""
-    with log_span(logger, "generate_proposal_summaries"):
-        summaries = await ai_service.summarize_multiple_proposals(proposals)
-
-        logger.info(f"Generated proposal summaries count={len(summaries)}")
-        return summaries
 
 
 def _log_preferences_retrieval(preferences: UserPreferences) -> None:

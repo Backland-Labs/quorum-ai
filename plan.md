@@ -1,1375 +1,1629 @@
-# Switch to Immediate Attestations (Remove Queue) Implementation Plan
+# Consolidate Proposals on Main Dashboard - Implementation Plan
 
 ## Overview
 
-This plan details the migration from queued attestations to immediate attestation processing in the Quorum AI autonomous voting agent. Currently, vote attestations are queued in checkpoint state and processed at the start of subsequent agent runs. The new approach will create EAS attestations immediately after each successful vote submission, simplifying the architecture and providing faster on-chain auditability.
+Remove the dedicated proposal detail page (`/proposals/[id]`) and AI summarization system, consolidating all proposal information into an expandable card interface on the main dashboard. Each proposal card will display the agent's voting decision (FOR/AGAINST/ABSTAIN) with reasoning in an expandable format. Only proposals with voting decisions will be displayed (proposals without decisions are filtered out).
+
+## Implementation Phases
+
+1. **Backend Cleanup** - Remove AI summarization endpoints, models, and services
+2. **Frontend Data Layer** - Refactor dashboard hook to fetch agent decisions instead of summaries
+3. **ProposalCard Enhancement** - Transform into expandable component with agent decision display
+4. **Dashboard Updates** - Show all proposals (not just top 3) with decision integration
+5. **Navigation Cleanup** - Remove proposal detail page and all navigation links
+6. **Testing & Validation** - Verify all changes work correctly
 
 ## Current State Analysis
 
-### Existing Queue Mechanism
+### Existing Architecture
 
-Based on code analysis of `backend/services/agent_run_service.py`:
+**Proposal Detail Page:**
+- Location: `frontend/src/routes/proposals/[id]/+page.svelte`
+- Fetches individual proposal + agent decision from API
+- Displays: proposal title, voting decision badge, agent reasoning
+- Used by: Navigation from ProposalCard "View Details" link
 
-**Queue Lifecycle (Lines 159-160, 927-1058)**:
-- Line 159-160: `_process_pending_attestations()` called at start of each agent run
-- Lines 927-1058: `_process_pending_attestations()` method loads checkpoint, retries failed attestations up to `MAX_ATTESTATION_RETRIES` (3 attempts)
-- Lines 1059-1129: `_queue_attestation()` method stores attestation data in checkpoint's `pending_attestations` array
-- Line 836-838: Called after each vote submission in `_execute_votes()` regardless of vote success/failure
+**AI Summarization System:**
+- Backend endpoint: `POST /proposals/summarize` (`backend/main.py:522-576`)
+- Service layer: `backend/services/ai_service.py` (summarize methods)
+- Data models: `backend/models.py:300-333` (ProposalSummary, SummarizeRequest, SummarizeResponse)
+- Frontend integration: `useDashboardData.ts:73-95` (auto-fetches summaries after loading proposals)
+- Display: ProposalCard shows summary text and risk level badge
 
-**Checkpoint State (Lines 1131-1161)**:
-- Line 1154: `pending_attestations` field initialized as empty array in checkpoint
-- Lines 1143-1145: Vote decisions serialized with timestamps
-- Line 1157-1159: Checkpoint saved to StateManager with pending attestations
+**Current Dashboard Display:**
+- Shows top 3 recent proposals only (`RecentProposals.svelte:28`)
+- Uses compact variant of ProposalCard
+- Navigation via `onProposalClick` callback that routes to detail page
 
-**Retry Logic (Lines 978-983, 1039-1041)**:
-- Lines 978-983: Max retries check, attestations exceeding limit are dropped
-- Lines 1039-1041: Retry count incremented on failure, attestation re-queued
-- Line 36: `MAX_ATTESTATION_RETRIES = 3` constant
+**Agent Decisions:**
+- Backend: `GET /agent-run/decisions?limit={n}` (`backend/main.py:715-768`)
+- Stored as: JSON files in `decisions/` directory (`decision_*.json`)
+- Service: `agent_run_service.py:1372-1443` reads and parses decision files
+- Frontend store: `agentStatus.ts` polls decisions but NOT used on dashboard currently
+- Current limitation: No proposal_id filtering supported (fetches all, filters client-side)
 
 ### Key Discoveries
 
-1. **Attestation Data Structure** (Lines 1096-1111):
-   - Proposal ID, vote choice (mapped from VoteType enum)
-   - Voter address, delegate address
-   - Vote transaction hash (vote_id from Snapshot or 0x+64 zeros placeholder)
-   - Reasoning, timestamp, retry_count
-   - Uses `datetime.now(timezone.utc)` for timestamp
-
-2. **Vote Execution Flow** (Lines 735-870):
-   - Lines 788-843: Each vote submission extracts vote_id from Snapshot response
-   - Line 820-821: Vote_id extracted from `submission_result.response.id`
-   - Lines 834-843: Attestation queued regardless of vote success with proper vote_id or placeholder
-   - Line 782-783: Dry run mode returns early, skipping both voting and attestation
-
-3. **EAS Integration** (via SafeService):
-   - SafeService.create_eas_attestation() expects EASAttestationData model
-   - Returns dict with `success`, `safe_tx_hash` (optional)
-   - Already handles config validation and error cases
-   - Lines 1005-1031: Activity service marking happens after successful attestation
+1. **ProposalCard already has variant system** (`ProposalCard.svelte:11`) - can leverage for expansion
+2. **VotingIndicator component exists** (`VotingIndicator.svelte`) - can reuse for vote display
+3. **OrganizationDropdown provides expandable pattern** - use as reference for toggle/animation
+4. **Decision files include all needed data** - proposal_id, vote, reasoning, confidence, strategy
+5. **No tests exist** for ProposalCard, RecentProposals, or useDashboardData (must add)
 
 ## Desired End State
 
-### Immediate Attestation Flow
+### User Experience
+Users see all proposals with voting decisions on the main dashboard in a card grid. Each card displays:
+- **Compact state:** Proposal title, agent vote badge (FOR/AGAINST/ABSTAIN)
+- **Expanded state (on click):** Full agent reasoning, confidence level, strategy used
+- **Filtering:** Only proposals with voting decisions are shown (proposals without decisions are hidden)
 
-After this implementation:
-1. Agent run starts → No queue processing
-2. Proposal analyzed → Vote decision made
-3. Vote submitted → Immediate attestation attempt
-4. Attestation success → Activity marked complete (if tx hash present)
-5. Attestation failure → Logged, execution continues
-6. Checkpoint saved → No pending_attestations field
+### Technical State
+- No proposal detail route (`/proposals/[id]`)
+- No AI summarization (endpoints, services, models removed)
+- Dashboard fetches decisions alongside proposals and filters proposals to only show those with decisions
+- ProposalCard handles expand/collapse with keyboard accessibility
+- All proposal data accessible without navigation
 
-### Success Verification
-
-#### Automated Verification:
-- [ ] All unit tests pass: `uv run pytest backend/tests/test_agent_run_service.py -v`
-- [ ] Integration tests pass: `uv run pytest backend/tests/ -k "integration" -v`
-- [ ] No linting errors: `pre-commit run --all-files` (only on modified files)
-- [ ] Type checking passes: `uv run mypy backend/services/agent_run_service.py`
-- [ ] Code builds successfully: `docker build -t quorum-ai .`
-
-#### Manual Verification:
-- [ ] Agent run executes end-to-end without errors in dry run mode
-- [ ] Immediate attestation occurs after vote with proper logging
-- [ ] Checkpoint files contain no pending_attestations field
-- [ ] Failed attestation does not block subsequent votes
-- [ ] Mock mode produces expected stub attestation response
-- [ ] Real attestation (testnet) creates on-chain record within same run
+### Verification
+- Dashboard loads and displays only proposals with voting decisions
+- Clicking a proposal card expands it inline (no page navigation)
+- Agent decisions display correctly for each proposal
+- Frontend tests pass: `cd frontend && npm run test`
+- Frontend linting passes: `cd frontend && npm run lint`
+- Type checking passes: `cd frontend && npm run check`
+- Backend tests pass: `cd backend && uv run pytest tests/ -v`
+- Backend linting passes: `cd backend && ruff check .`
 
 ## What We're NOT Doing
 
-Explicitly out of scope to prevent scope creep:
-- Not changing EASAttestationData model schema
-- Not modifying SafeService attestation creation logic (only adding error categorization in agent_run_service)
-- Not refactoring existing error messages in SafeService, VotingService, or other components
-- Not altering VoteDecision model or API response structure
-- Not implementing parallel/concurrent attestations
-- Not adding a separate attestation retry mechanism
-- Not creating new database tables for attestation tracking
-- Not modifying frontend components
-- Not changing API endpoint signatures
-- Not implementing attestation result aggregation in responses
-- Not updating error messages throughout the entire codebase (only immediate attestation errors)
+- NOT modifying backend agent decision service logic (file reading, parsing)
+- NOT changing how decisions are generated or stored
+- NOT implementing advanced proposal filtering/sorting beyond decision filtering (e.g., by date, state)
+- NOT adding pagination (showing all proposals with decisions, likely < 20 active at once)
+- NOT displaying Snapshot voting data (top voters, vote percentages) - only agent decision
+- NOT implementing search functionality
+- NOT creating E2E tests (only unit tests)
+- NOT running frontend tests in CI (out of scope)
 
 ## Implementation Approach
 
-### Rationale for Immediate Attestation
+**Strategy:** Bottom-up, test-driven approach starting with backend cleanup (safest), then data layer, then UI components, ending with navigation removal.
 
-**Benefits**:
-- **Simpler Architecture**: Eliminates queue state management, retry logic, and checkpoint complexity
-- **Faster Auditability**: Attestations appear on-chain immediately after votes
-- **Clearer Logging**: Attestation success/failure logged in context with vote execution
-- **Reduced State**: No need to persist pending attestations across runs
-- **Better Error Visibility**: Attestation failures visible immediately, not delayed
+**Why this order:**
+1. Backend cleanup has no frontend dependencies - safe to do first
+2. Data layer changes enable all frontend work - must come before UI
+3. ProposalCard enhancement is isolated - can be developed/tested independently
+4. Dashboard integration brings it all together
+5. Navigation cleanup is final step - only after new flow works
 
-**Trade-offs**:
-- **Longer Run Time**: Attestation latency extends per-proposal processing time
-- **No Retry Mechanism**: Failed attestations are logged but not automatically retried
-- **Config Dependency**: Missing EAS config causes failures during run (logged, not blocking)
+**Risk mitigation:**
+- Each phase is independently testable
+- No database migrations required (file-based storage)
+- All changes are additions/removals, not complex refactoring
+- Can validate each phase before proceeding
 
-**Mitigation Strategies**:
-- Keep sequential execution for now (consider parallelization in future)
-- Clear logging of attestation failures for manual investigation
-- Graceful degradation when EAS config missing (log warning, continue)
+## Files to Edit
 
-## Phase 1: Remove Queue Infrastructure
+### Backend (Removal)
+- `backend/main.py:522-576` - Delete `POST /proposals/summarize` endpoint
+- `backend/services/ai_service.py` - Delete `summarize_proposal()` and `summarize_multiple_proposals()` methods
+- `backend/models.py:300-333` - Delete ProposalSummary, SummarizeRequest, SummarizeResponse models
+
+### Frontend Data Layer
+- `frontend/src/lib/hooks/useDashboardData.ts` - Entire file refactor:
+  - Remove: Lines 11, 29, 85-94 (proposalSummaries state and fetching)
+  - Remove: Lines 73-95 (POST /proposals/summarize call)
+  - Add: Decision fetching logic
+  - Add: Decision Map creation (`Map<string, AgentDecisionResponse>`)
+
+### Frontend Components
+- `frontend/src/lib/components/dashboard/ProposalCard.svelte` - Major refactor:
+  - Remove: Lines 9, 15, 51-57 (summary prop and parsing)
+  - Remove: Lines 78-80, 85-87 (risk badge, summary text)
+  - Remove: Lines 122-146 (footer with "View Details" link)
+  - Add: `decision` prop (AgentDecisionResponse | undefined)
+  - Add: `isExpanded` state with toggle handler
+  - Add: Agent vote badge in header (compact view)
+  - Add: Expandable section with reasoning (expanded view)
+  - Add: Keyboard accessibility (Enter, Space, Escape)
+
+- `frontend/src/lib/components/dashboard/RecentProposals.svelte` - Updates:
+  - Remove: Line 8 (`onProposalClick` prop)
+  - Remove: Line 28 (`.slice(0, 3)` - show all proposals)
+  - Remove: Line 45 (`onClick` prop passing)
+  - Change: Line 7 to accept `decisions` Map instead of `proposalSummaries`
+  - Change: Line 37 heading to "All Proposals" or similar
+  - Add: Pass `decision` to each ProposalCard
+
+- `frontend/src/lib/components/dashboard/DashboardContent.svelte` - Updates:
+  - Remove: Lines 15, 19, 22 (`onProposalClick` prop)
+  - Remove: Line 81 (prop passing to RecentProposals)
+  - Add: Access decisions from dashboard store
+  - Change: Pass `decisions` Map to RecentProposals
+
+- `frontend/src/routes/+page.svelte` - Updates:
+  - Remove: Line 2 (`import { goto }`)
+  - Remove: Lines 79-84 (`handleProposalClick` function)
+  - Remove: Line 129 (`onProposalClick` prop)
+
+### Frontend Routes (Deletion)
+- `frontend/src/routes/proposals/[id]/+page.svelte` - Delete entire file/directory
+
+### Frontend Types
+- `frontend/src/lib/types/dashboard.ts` - Review and potentially remove unused ProposalSummary type references
+
+---
+
+## Phase 1: Backend Cleanup - Remove AI Summarization
 
 ### Overview
-Remove all queue-related code, constants, and state management from agent_run_service.py.
+Remove all AI summarization functionality from backend (endpoint, service methods, data models). This is safe to do first as we'll remove frontend consumers immediately after.
 
 ### Changes Required
 
-#### 1. Remove Queue Constants and Methods
-**File**: `backend/services/agent_run_service.py`
+#### 1. Remove Summarization Endpoint
 
-**Delete**:
-- Line 36: `MAX_ATTESTATION_RETRIES = 3` constant
-- Lines 159-160: Call to `await self._process_pending_attestations(request.space_id)`
-- Lines 927-1058: Entire `_process_pending_attestations()` method
-- Lines 1059-1129: Entire `_queue_attestation()` method
+**File:** `backend/main.py`
 
-**Rationale**: These components implement the queue lifecycle and retry mechanism, which are no longer needed with immediate attestation.
+**Lines to Delete:** 522-577
 
-#### 2. Update Checkpoint State Structure
-**File**: `backend/services/agent_run_service.py`
-
-**Changes in `_save_checkpoint_state()` (Lines 1131-1161)**:
-- Line 1154: Remove `"pending_attestations": []` from checkpoint_data dict
-- Remove any queue-related aggregation logic if present
-
-**Before**:
 ```python
-checkpoint_data = {
-    "space_id": response.space_id,
-    "proposals_analyzed": response.proposals_analyzed,
-    "votes_cast": votes_with_timestamps,
-    "execution_time": response.execution_time,
-    "timestamp": datetime.utcnow().isoformat(),
-    "errors": response.errors,
-    "pending_attestations": [],  # Remove this line
+# Delete entire block:
+@app.post("/proposals/summarize", response_model=SummarizeResponse)
+async def summarize_proposals(request: SummarizeRequest):
+    # ... entire method ...
+```
+
+**Also delete helper functions** if they exist later in the file:
+- `_fetch_proposals_for_summarization()`
+- `_generate_proposal_summaries()`
+
+Search file for these functions and remove if found.
+
+#### 2. Remove Summarization Models
+
+**File:** `backend/models.py`
+
+**Lines to Delete:** 300-333 (approximate - verify exact line numbers)
+
+```python
+# Delete these model definitions:
+class ProposalSummary(BaseModel):
+    # ...
+
+class SummarizeRequest(BaseModel):
+    # ...
+
+class SummarizeResponse(BaseModel):
+    # ...
+```
+
+#### 3. Remove AI Service Methods
+
+**File:** `backend/services/ai_service.py`
+
+**Methods to Delete:**
+- `summarize_proposal(self, proposal) -> ProposalSummary`
+- `summarize_multiple_proposals(self, proposals) -> List[ProposalSummary]`
+
+**Note:** Do NOT delete the entire `ai_service.py`. Only remove summarization methods.
+
+**Search strategy:**
+```bash
+ast-grep run --lang python -p 'def summarize_proposal'
+ast-grep run --lang python -p 'def summarize_multiple_proposals'
+```
+
+#### 4. Remove Summarization Tests
+
+**Search for test files:**
+```bash
+cd backend && grep -r "summarize" tests/ --include="*.py"
+```
+
+**Tests to remove:**
+- Any test functions that test `POST /proposals/summarize` endpoint
+- Any test functions that test `summarize_proposal()` or `summarize_multiple_proposals()` methods
+- Any fixtures or mocks specifically for summarization
+
+**Common test patterns to look for:**
+- `test_summarize_proposals`
+- `test_summarize_proposal`
+- `test_proposal_summary`
+- Mock objects like `mock_summarize_response`
+
+**Note:** Do NOT remove tests for other AI service functionality (if any exists).
+
+### Success Criteria
+
+#### Automated Verification:
+- [ ] Backend starts without errors: `cd backend && export $(cat ../.env | xargs) && uv run uvicorn main:app --host 0.0.0.0 --port 8000`
+- [ ] Backend tests pass: `cd backend && uv run pytest tests/ -v`
+- [ ] Backend linting passes: `cd backend && ruff check .` (or applicable linter)
+- [ ] Type checking passes (if using mypy): `cd backend && uv run mypy .`
+- [ ] Summarization endpoint no longer exists: `curl -X POST http://localhost:8000/proposals/summarize -d '{"proposal_ids":["test"]}' -H "Content-Type: application/json"` returns 404
+- [ ] No test failures related to summarization
+
+#### Manual Verification:
+- [ ] API docs (`http://localhost:8000/docs`) no longer show `/proposals/summarize` endpoint
+- [ ] No import errors when starting backend
+- [ ] Backend logs show clean startup
+- [ ] No orphaned test files remain
+
+---
+
+## Phase 2: Frontend Data Layer - Replace Summaries with Decisions
+
+### Overview
+Refactor `useDashboardData` hook to fetch agent decisions instead of proposal summaries. Create a Map for efficient decision lookup by proposal_id.
+
+### Changes Required
+
+#### 1. Update DashboardState Interface
+
+**File:** `frontend/src/lib/hooks/useDashboardData.ts`
+
+**Lines 6-17:** Update interface
+
+**Old:**
+```typescript
+interface DashboardState {
+  loading: boolean;
+  error: string | null;
+  currentSpaceId: string;
+  allProposals: components['schemas']['Proposal'][];
+  proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;  // REMOVE
+  proposalsLoading: boolean;
+  proposalsError: string | null;
+  proposalFilters: {
+    state?: components['schemas']['ProposalState'];
+  };
 }
 ```
 
-**After**:
-```python
-checkpoint_data = {
-    "space_id": response.space_id,
-    "proposals_analyzed": response.proposals_analyzed,
-    "votes_cast": votes_with_timestamps,
-    "execution_time": response.execution_time,
-    "timestamp": datetime.utcnow().isoformat(),
-    "errors": response.errors,
+**New:**
+```typescript
+interface DashboardState {
+  loading: boolean;
+  error: string | null;
+  currentSpaceId: string;
+  allProposals: components['schemas']['Proposal'][];
+  agentDecisions: Map<string, components['schemas']['AgentDecisionResponse']>;  // ADD
+  decisionsLoading: boolean;  // ADD
+  decisionsError: string | null;  // ADD
+  proposalsLoading: boolean;
+  proposalsError: string | null;
+  proposalFilters: {
+    state?: components['schemas']['ProposalState'];
+  };
 }
 ```
 
+#### 2. Update Initial State
+
+**Lines 24-33:** Update initialState
+
+**Old:**
+```typescript
+const initialState: DashboardState = {
+  loading: true,
+  error: null,
+  currentSpaceId: 'quorum-ai.eth',
+  allProposals: [],
+  proposalSummaries: new Map(),  // REMOVE
+  proposalsLoading: false,
+  proposalsError: null,
+  proposalFilters: {}
+};
+```
+
+**New:**
+```typescript
+const initialState: DashboardState = {
+  loading: true,
+  error: null,
+  currentSpaceId: 'quorum-ai.eth',
+  allProposals: [],
+  agentDecisions: new Map(),  // ADD
+  decisionsLoading: false,  // ADD
+  decisionsError: null,  // ADD
+  proposalsLoading: false,
+  proposalsError: null,
+  proposalFilters: {}
+};
+```
+
+#### 3. Replace Summary Fetching with Decision Fetching
+
+**Lines 73-95:** Delete entire summary fetching block
+
+**Delete:**
+```typescript
+// Load summaries for proposals
+const proposalIds = data.proposals.map(p => p.id);
+if (proposalIds.length > 0) {
+  const { data: summaryData } = await apiClient.POST("/proposals/summarize", {
+    body: {
+      proposal_ids: proposalIds,
+      include_risk_assessment: true,
+      include_recommendations: true
+    }
+  });
+
+  if (summaryData) {
+    const newSummaries = new Map<string, components['schemas']['ProposalSummary']>();
+    summaryData.summaries.forEach(summary => {
+      newSummaries.set(summary.proposal_id, summary);
+    });
+
+    update(s => ({
+      ...s,
+      proposalSummaries: newSummaries
+    }));
+  }
+}
+```
+
+**Add after line 71 (after setting allProposals):**
+```typescript
+// Load agent decisions for proposals and filter proposals
+await loadDecisions();
+```
+
+#### 4. Add New loadDecisions() Function
+
+**Add new function after loadProposals():**
+
+```typescript
+/**
+ * Loads agent voting decisions from API and filters proposals to only show those with decisions
+ */
+async function loadDecisions(): Promise<void> {
+  console.assert(typeof apiClient.GET === 'function', 'API client should have GET method');
+
+  try {
+    update(state => ({
+      ...state,
+      decisionsLoading: true,
+      decisionsError: null
+    }));
+
+    const { data, error: apiError } = await apiClient.GET("/agent-run/decisions", {
+      params: {
+        query: {
+          limit: 100  // Fetch enough to cover all proposals
+        }
+      }
+    });
+
+    if (apiError) {
+      const errorMessage = extractApiErrorMessage(apiError);
+      update(state => ({
+        ...state,
+        decisionsError: errorMessage,
+        decisionsLoading: false
+      }));
+      return;
+    }
+
+    if (data?.decisions) {
+      // Create Map for O(1) lookup by proposal_id
+      const decisionsMap = new Map<string, components['schemas']['AgentDecisionResponse']>();
+      data.decisions.forEach(decision => {
+        decisionsMap.set(decision.proposal_id, decision);
+      });
+
+      // Filter proposals to only show those with voting decisions
+      let currentState: DashboardState;
+      const unsubscribe = subscribe(s => { currentState = s; });
+      unsubscribe();
+
+      const proposalsWithDecisions = currentState!.allProposals.filter(proposal =>
+        decisionsMap.has(proposal.id)
+      );
+
+      update(state => ({
+        ...state,
+        allProposals: proposalsWithDecisions,  // Update with filtered list
+        agentDecisions: decisionsMap,
+        decisionsLoading: false
+      }));
+    }
+  } catch (err) {
+    console.error('Failed to load decisions:', err);
+    update(state => ({
+      ...state,
+      decisionsError: 'Failed to load voting decisions',
+      decisionsLoading: false
+    }));
+  }
+}
+```
+
+#### 5. Add Type Import
+
+**Line 4:** Add AgentDecisionResponse import
+
+**Old:**
+```typescript
+import type { components } from '$lib/api/client';
+```
+
+**New:**
+```typescript
+import type { components } from '$lib/api/client';
+// Type already available via components['schemas']['AgentDecisionResponse']
+```
+
+#### 6. Export loadDecisions Method
+
+**Lines 143-149:** Update return object
+
+**Old:**
+```typescript
+return {
+  subscribe,
+  loadProposals,
+  changeSpace,
+  updateProposalFilters
+};
+```
+
+**New:**
+```typescript
+return {
+  subscribe,
+  loadProposals,
+  loadDecisions,  // ADD
+  changeSpace,
+  updateProposalFilters
+};
+```
+
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] Code compiles without import errors: `python -m py_compile backend/services/agent_run_service.py`
-- [ ] No references to deleted methods: `rg "_process_pending_attestations|_queue_attestation" backend/services/`
-- [ ] No references to MAX_ATTESTATION_RETRIES: `rg "MAX_ATTESTATION_RETRIES" backend/services/`
-- [ ] Checkpoint structure simplified: `rg "pending_attestations" backend/services/agent_run_service.py` returns no results
+- [ ] TypeScript compiles without errors: `cd frontend && npm run check`
+- [ ] Frontend linting passes: `cd frontend && npm run lint` (if available)
+- [ ] No unused import warnings for ProposalSummary
+- [ ] Store can be instantiated without errors
 
 #### Manual Verification:
-- [ ] Review git diff to confirm only queue-related code removed
-- [ ] Verify no unintended deletions of attestation-related imports
-- [ ] Confirm checkpoint save logic still present and functional
+- [ ] Dashboard loads without console errors
+- [ ] Network tab shows `GET /agent-run/decisions` request (not `POST /proposals/summarize`)
+- [ ] Decisions are fetched and stored in state
+- [ ] Console logging shows decisions Map populated correctly
+- [ ] Only proposals with voting decisions are displayed (proposals without decisions are filtered out)
+- [ ] Proposal count matches number of proposals with decisions
 
 ---
 
-## Phase 2: Implement Immediate Attestation
+## Phase 3: ProposalCard Enhancement - Add Expandable Agent Decision
 
 ### Overview
-Add immediate attestation logic to `_execute_votes()` method, called directly after each vote submission.
+Transform ProposalCard into an expandable component that displays agent voting decisions. Remove summary and risk badge display. Add expand/collapse functionality with keyboard accessibility.
 
 ### Changes Required
 
-#### 1. Add Immediate Attestation to Vote Execution Loop
-**File**: `backend/services/agent_run_service.py`
+#### 1. Update Props Interface
 
-**Location**: In `_execute_votes()` method (Lines 735-870), after vote submission
+**File:** `frontend/src/lib/components/dashboard/ProposalCard.svelte`
 
-**Insert after Line 843** (after current attestation queue call):
+**Lines 7-13:**
 
-```python
-# Always attempt immediate attestation regardless of vote success/failure
-# This creates an audit trail of all voting decisions
-try:
-    self.pearl_logger.info(
-        f"Creating immediate EAS attestation (proposal={decision.proposal_id}, "
-        f"vote_succeeded={vote_succeeded}, vote_id={vote_id or 'None'}, "
-        f"agent={self.voting_service.account.address}, space={space_id})"
-    )
-
-    # Build EAS attestation data
-    eas_data = EASAttestationData(
-        agent=self.voting_service.account.address,
-        space_id=space_id,
-        proposal_id=decision.proposal_id,
-        vote_choice=vote_choice,  # Already converted via VOTE_CHOICE_MAPPING
-        snapshot_sig=vote_id if vote_id else "0x" + "0" * 64,
-        timestamp=int(time.time()),
-        run_id=run_id,
-        confidence=int(decision.confidence * 100),  # Convert 0.0-1.0 to 0-100
-    )
-
-    # Submit attestation through Safe service
-    attestation_result = await self.safe_service.create_eas_attestation(eas_data)
-
-    if attestation_result.get("success"):
-        safe_tx_hash = attestation_result.get("safe_tx_hash")
-        self.pearl_logger.info(
-            f"Successfully created EAS attestation (proposal={decision.proposal_id}, "
-            f"safe_tx_hash={safe_tx_hash}, schema_uid={config.EAS_SCHEMA_UID})"
-        )
-
-        # Mark daily activity as completed for OLAS staking compliance
-        if safe_tx_hash:
-            self.activity_service.mark_activity_completed(safe_tx_hash)
-            self.pearl_logger.info(
-                f"Marked daily activity as completed (tx_hash={safe_tx_hash}, "
-                f"proposal={decision.proposal_id})"
-            )
-    else:
-        # Provide precise, actionable error messages based on failure type
-        # Note: We're categorizing errors returned by SafeService, not modifying SafeService itself
-        error_msg = attestation_result.get("error", "Unknown error")
-
-        # Categorize error and provide specific guidance
-        if "EAS_CONTRACT_ADDRESS" in error_msg or "contract address" in error_msg.lower():
-            self.pearl_logger.error(
-                f"Cannot create EAS attestation: EAS_CONTRACT_ADDRESS not configured. "
-                f"Set EAS_CONTRACT_ADDRESS environment variable to the EAS contract address "
-                f"on Base network (0x4200000000000000000000000000000000000021). "
-                f"proposal={decision.proposal_id}, space={space_id}"
-            )
-        elif "EAS_SCHEMA_UID" in error_msg or "schema" in error_msg.lower():
-            self.pearl_logger.error(
-                f"Cannot create EAS attestation: EAS_SCHEMA_UID not configured. "
-                f"Set EAS_SCHEMA_UID environment variable to your registered schema UID. "
-                f"Register schema at https://base.easscan.org/schema/create. "
-                f"proposal={decision.proposal_id}, space={space_id}"
-            )
-        elif "SAFE_CONTRACT_ADDRESSES" in error_msg or "safe address" in error_msg.lower():
-            self.pearl_logger.error(
-                f"Cannot create EAS attestation: SAFE_CONTRACT_ADDRESSES not configured. "
-                f"Set SAFE_CONTRACT_ADDRESSES environment variable with Safe address JSON. "
-                f"Example: SAFE_CONTRACT_ADDRESSES='{{\"base\":\"0xYourSafeAddress\"}}'. "
-                f"proposal={decision.proposal_id}, space={space_id}"
-            )
-        elif "timeout" in error_msg.lower():
-            self.pearl_logger.error(
-                f"EAS attestation failed due to RPC timeout. "
-                f"Check RPC_URL is responsive: {config.RPC_URL}. "
-                f"Try increasing timeout or switching RPC provider. "
-                f"proposal={decision.proposal_id}, error={error_msg}"
-            )
-        elif "insufficient funds" in error_msg.lower():
-            safe_addr = config.SAFE_CONTRACT_ADDRESSES.get('base') if config.SAFE_CONTRACT_ADDRESSES else 'UNKNOWN'
-            self.pearl_logger.error(
-                f"EAS attestation failed: Safe has insufficient ETH for gas. "
-                f"Fund Safe address with ETH: {safe_addr}. "
-                f"Check balance at https://basescan.org/address/{safe_addr}. "
-                f"proposal={decision.proposal_id}, error={error_msg}"
-            )
-        elif "nonce" in error_msg.lower():
-            safe_addr = config.SAFE_CONTRACT_ADDRESSES.get('base') if config.SAFE_CONTRACT_ADDRESSES else 'UNKNOWN'
-            self.pearl_logger.error(
-                f"EAS attestation failed due to nonce mismatch. "
-                f"This may indicate a pending transaction or concurrent execution. "
-                f"Check Safe Transaction Service for pending txs: "
-                f"https://safe-transaction-base.safe.global/api/v1/safes/{safe_addr}/multisig-transactions/. "
-                f"proposal={decision.proposal_id}, error={error_msg}"
-            )
-        else:
-            # Generic failure with full debugging context
-            self.pearl_logger.error(
-                f"Failed to create EAS attestation (proposal={decision.proposal_id}, "
-                f"space={space_id}, agent={self.voting_service.account.address}, "
-                f"eas_contract={config.EAS_CONTRACT_ADDRESS or 'NOT_SET'}, "
-                f"schema_uid={config.EAS_SCHEMA_UID or 'NOT_SET'}, "
-                f"rpc_url={config.RPC_URL}, error={error_msg}). "
-                f"Check configuration and network connectivity."
-            )
-        # Do not raise - continue with other votes
-
-except Exception as e:
-    self.pearl_logger.exception(
-        f"Unexpected exception during immediate attestation. "
-        f"proposal={decision.proposal_id}, space={space_id}, "
-        f"vote_id={vote_id or 'None'}, agent={self.voting_service.account.address}, "
-        f"eas_contract={config.EAS_CONTRACT_ADDRESS or 'NOT_SET'}, "
-        f"schema_uid={config.EAS_SCHEMA_UID or 'NOT_SET'}, "
-        f"safe_address={config.SAFE_CONTRACT_ADDRESSES.get('base') if config.SAFE_CONTRACT_ADDRESSES else 'NOT_SET'}. "
-        f"Exception: {str(e)}"
-    )
-    # Do not raise - attestation failures should not block voting
+**Old:**
+```typescript
+interface Props {
+  proposal: components['schemas']['Proposal'];
+  summary?: components['schemas']['ProposalSummary'];  // REMOVE
+  fullProposal?: ExtendedProposal;
+  variant?: 'compact' | 'detailed';  // KEEP but repurpose
+  onClick?: () => void;  // REMOVE (no navigation)
+}
 ```
 
-**Replace Lines 834-843** (remove old queue call):
-```python
-# Delete these lines:
-# Always queue attestation regardless of vote success/failure
-# This creates an audit trail of all voting decisions
-await self._queue_attestation(
-    decision, space_id, run_id, vote_id
-)
-
-self.pearl_logger.info(
-    f"Attestation queued for vote attempt (proposal={decision.proposal_id}, "
-    f"vote_succeeded={vote_succeeded}, vote_id={vote_id or 'None'})"
-)
+**New:**
+```typescript
+interface Props {
+  proposal: components['schemas']['Proposal'];
+  decision?: components['schemas']['AgentDecisionResponse'];  // ADD
+  fullProposal?: ExtendedProposal;
+}
 ```
 
-#### 2. Ensure Dry Run Skips Attestation
-**File**: `backend/services/agent_run_service.py`
+**Note:** Remove `variant` and `onClick` props as we're replacing with expand/collapse behavior.
 
-**Verification**: Lines 780-783 already handle dry run early return:
-```python
-if dry_run:
-    self.pearl_logger.info("Dry run mode - simulating vote execution")
-    # In dry run, we skip actual submission but still return decisions
-    return decisions
+#### 2. Update Props Destructuring and State
+
+**Lines 15-16:**
+
+**Old:**
+```typescript
+let { proposal, summary, fullProposal, variant = 'compact', onClick }: Props = $props();
 ```
 
-**No changes needed** - this early return prevents both voting and attestation in dry run mode.
+**New:**
+```typescript
+let { proposal, decision, fullProposal }: Props = $props();
+
+// Add expandable state
+let isExpanded = $state(false);
+```
+
+#### 3. Remove Summary Parsing Logic
+
+**Lines 51-57:** Delete
+
+**Delete:**
+```typescript
+const parsedProposal = summary ? {
+  summary: summary.summary,
+  key_points: summary.key_points,
+  risk_level: summary.risk_assessment || 'MEDIUM',
+  recommendation: summary.recommendation || 'REVIEW',
+  confidence_score: summary.confidence
+} : parseProposalSummary(proposal);
+```
+
+#### 4. Remove Unnecessary Imports
+
+**Lines 2, 3:**
+
+**Old:**
+```typescript
+import { parseProposalSummary, cleanProposalTitle } from '$lib/utils/proposals.js';
+import VotingIndicator from './VotingIndicator.svelte';
+```
+
+**New:**
+```typescript
+import { cleanProposalTitle } from '$lib/utils/proposals.js';
+// Keep VotingIndicator if still needed, otherwise remove
+```
+
+#### 5. Add Toggle Handler
+
+**Add after validateProps() function:**
+
+```typescript
+/**
+ * Toggles card expansion state
+ */
+const handleToggle = () => {
+  isExpanded = !isExpanded;
+};
+
+/**
+ * Handles keyboard navigation for accessibility
+ */
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleToggle();
+  } else if (event.key === 'Escape' && isExpanded) {
+    isExpanded = false;
+  }
+};
+
+/**
+ * Gets vote badge CSS classes based on vote type
+ */
+function getVoteBadgeClasses(vote: string): string {
+  console.assert(typeof vote === 'string', 'Vote must be a string');
+
+  const voteClasses: Record<string, string> = {
+    'FOR': 'bg-green-50 text-green-700 border-green-200',
+    'AGAINST': 'bg-red-50 text-red-700 border-red-200',
+    'ABSTAIN': 'bg-gray-50 text-gray-700 border-gray-200'
+  };
+  return voteClasses[vote] || voteClasses['ABSTAIN'];
+}
+```
+
+#### 6. Update Template Structure
+
+**Lines 61-148:** Complete template replacement
+
+**New Template:**
+```svelte
+<div
+  class="group relative"
+  role="button"
+  tabindex="0"
+  onclick={handleToggle}
+  onkeydown={handleKeydown}
+  aria-expanded={isExpanded}
+>
+  <div class="relative bg-white border border-secondary-200 rounded-lg p-5 hover:border-primary-300 hover:shadow-md transition-all duration-200 cursor-pointer">
+
+    <!-- Header with title and decision badge -->
+    <div class="flex items-start justify-between mb-3">
+      <div class="flex-1">
+        <h5 class="font-semibold text-secondary-900 text-base leading-tight pr-4">
+          {cleanProposalTitle(proposal.title)}
+        </h5>
+        {#if fullProposal}
+          <div class="flex items-center gap-3 mt-1 text-xs text-gray-500">
+            <span>{fullProposal?.dao_name || ''}</span>
+            <span>•</span>
+            <span>Created {formatDate(fullProposal?.created_at || proposal.created)}</span>
+          </div>
+        {/if}
+      </div>
+
+      <!-- Agent Vote Badge -->
+      <!-- Note: We can simplify this since all proposals have decisions (filtered in Phase 2) -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border {getVoteBadgeClasses(decision.vote)}">
+          {decision.vote}
+        </span>
+
+        <!-- Expand/Collapse Chevron -->
+        <svg
+          class="w-4 h-4 text-gray-400 transition-transform duration-200 {isExpanded ? 'rotate-90' : 'rotate-0'}"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Expandable Agent Decision Details -->
+    <!-- Note: All proposals have decisions (filtered in Phase 2), so no need for else case -->
+    {#if isExpanded}
+      <div class="mt-4 pt-4 border-t border-secondary-100 space-y-3">
+
+        <!-- Reasoning -->
+        <div>
+          <h6 class="text-xs font-medium text-secondary-700 mb-2">Agent Reasoning</h6>
+          <p class="text-sm text-secondary-600 leading-relaxed whitespace-pre-wrap">
+            {decision.reasoning}
+          </p>
+        </div>
+
+        <!-- Metadata Grid -->
+        <div class="grid grid-cols-2 gap-3 pt-3">
+          <div>
+            <span class="text-xs text-secondary-500">Confidence</span>
+            <p class="text-sm font-medium text-secondary-900">
+              {(decision.confidence * 100).toFixed(0)}%
+            </p>
+          </div>
+          <div>
+            <span class="text-xs text-secondary-500">Strategy</span>
+            <p class="text-sm font-medium text-secondary-900 capitalize">
+              {decision.strategy_used}
+            </p>
+          </div>
+        </div>
+
+        <!-- Timestamp -->
+        <div class="pt-2 text-xs text-secondary-500">
+          Voted: {new Date(decision.timestamp).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </div>
+      </div>
+    {/if}
+
+  </div>
+</div>
+```
+
+#### 7. Remove Old Functions
+
+**Delete these functions entirely:**
+- `getRiskLevelClasses()` (lines 22-32) - no longer needed
+- Any references to `parsedProposal` variable
 
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] Unit test passes for immediate attestation with vote success: `uv run pytest backend/tests/test_agent_run_service.py::test_immediate_attestation_success -v`
-- [ ] Unit test passes for immediate attestation with vote failure: `uv run pytest backend/tests/test_agent_run_service.py::test_immediate_attestation_vote_failure -v`
-- [ ] Unit test passes for attestation failure continuing execution: `uv run pytest backend/tests/test_agent_run_service.py::test_attestation_failure_continues -v`
-- [ ] Dry run test confirms no attestation: `uv run pytest backend/tests/test_agent_run_service.py::test_dry_run_skips_attestation -v`
-- [ ] Mock SafeService.create_eas_attestation called with correct data: Verified via mock assertions
-- [ ] Mock ActivityService.mark_activity_completed called on success: Verified via mock assertions
-- [ ] Code compiles without syntax errors: `python -m py_compile backend/services/agent_run_service.py`
+- [ ] Component renders without errors: `cd frontend && npm run test`
+- [ ] TypeScript type checking passes: `cd frontend && npm run check`
+- [ ] Frontend linting passes: `cd frontend && npm run lint` (if available)
+- [ ] No console warnings about unused props
 
 #### Manual Verification:
-- [ ] Immediate attestation logs appear with clear success/failure messages
-- [ ] Vote execution continues after attestation failure
-- [ ] Dry run mode produces expected behavior (no votes, no attestations)
-- [ ] EAS data structure matches expected schema (agent, space_id, proposal_id, etc.)
-- [ ] Error messages categorize failures correctly (config vs network vs blockchain)
-- [ ] Error messages include actionable remediation steps
-- [ ] Error logs include all debugging context (addresses, RPC URLs, config state)
+- [ ] Card displays proposal title and agent vote badge
+- [ ] Clicking card expands to show reasoning
+- [ ] Clicking again collapses the card
+- [ ] Keyboard navigation works (Enter/Space to toggle, Escape to collapse)
+- [ ] Chevron icon rotates smoothly when expanding/collapsing
+- [ ] All displayed proposals have voting decisions (no "No Vote" badges should appear since we filter)
+- [ ] Confidence displays as percentage correctly
+- [ ] Strategy displays with proper capitalization
+- [ ] Timestamp formats correctly
 
 ---
 
-## Phase 3: Update Tests
+## Phase 4: Dashboard Updates - Show All Proposals with Decisions
 
 ### Overview
-Remove queue-related tests and add comprehensive tests for immediate attestation behavior.
+Update RecentProposals to display all proposals with voting decisions (not just top 3) and pass agent decisions to each ProposalCard. Remove navigation props from component chain. Note: Proposals are already filtered to only include those with decisions from Phase 2.
 
 ### Changes Required
 
-#### 1. Remove Queue-Related Tests
-**File**: `backend/tests/test_agent_run_service.py` (or similar test files)
-
-**Delete any tests that**:
-- Test `_process_pending_attestations()` functionality
-- Test `_queue_attestation()` functionality
-- Test retry logic with MAX_ATTESTATION_RETRIES
-- Verify pending_attestations in checkpoint state
-- Test queue persistence across runs
-
-#### 2. Add Immediate Attestation Tests
-**File**: `backend/tests/test_agent_run_service.py`
-
-**New Test Cases**:
-
-```python
-class TestImmediateAttestationFlow:
-    """Test immediate attestation after vote submission."""
-
-    @pytest.mark.asyncio
-    async def test_immediate_attestation_after_successful_vote(
-        self, agent_run_service, sample_proposal, user_preferences
-    ):
-        """Test that attestation is created immediately after successful vote.
-
-        Importance: Verifies the core immediate attestation flow works correctly
-        when votes succeed, ensuring on-chain audit trail is created promptly.
-        """
-        # Mock vote success
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={
-                "success": True,
-                "submission_result": {"success": True, "response": {"id": "0xabc123"}},
-            }
-        )
-
-        # Mock successful attestation
-        agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-            return_value={"success": True, "safe_tx_hash": "0xdef456"}
-        )
-
-        # Mock activity marking
-        agent_run_service.activity_service.mark_activity_completed = Mock()
-
-        # Execute votes
-        decision = VoteDecision(
-            proposal_id="test-proposal",
-            vote=VoteType.FOR,
-            confidence=0.85,
-            reasoning="Test reasoning",
-            strategy_used=VotingStrategy.BALANCED,
-        )
-
-        await agent_run_service._execute_votes(
-            decisions=[decision],
-            space_id="test.eth",
-            dry_run=False,
-            run_id="test_run_123",
-        )
-
-        # Verify attestation was called with correct data
-        assert agent_run_service.safe_service.create_eas_attestation.called
-        call_args = agent_run_service.safe_service.create_eas_attestation.call_args[0][0]
-        assert isinstance(call_args, EASAttestationData)
-        assert call_args.proposal_id == "test-proposal"
-        assert call_args.vote_choice == 1  # FOR = 1
-        assert call_args.snapshot_sig == "0xabc123"
-        assert call_args.confidence == 85  # 0.85 * 100
-
-        # Verify activity was marked
-        agent_run_service.activity_service.mark_activity_completed.assert_called_once_with(
-            "0xdef456"
-        )
-
-    @pytest.mark.asyncio
-    async def test_immediate_attestation_after_failed_vote(
-        self, agent_run_service, sample_proposal
-    ):
-        """Test that attestation still attempted after vote failure with placeholder sig.
-
-        Importance: Ensures failed votes are also attested for complete audit trail,
-        using placeholder signature when no vote_id available.
-        """
-        # Mock vote failure
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={"success": False, "error": "Snapshot API error"}
-        )
-
-        # Mock successful attestation
-        agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-            return_value={"success": True, "safe_tx_hash": "0xabc123"}
-        )
-
-        decision = VoteDecision(
-            proposal_id="test-proposal",
-            vote=VoteType.FOR,
-            confidence=0.85,
-            reasoning="Test reasoning",
-            strategy_used=VotingStrategy.BALANCED,
-        )
-
-        await agent_run_service._execute_votes(
-            decisions=[decision],
-            space_id="test.eth",
-            dry_run=False,
-            run_id="test_run_123",
-        )
-
-        # Verify attestation was called with placeholder signature
-        assert agent_run_service.safe_service.create_eas_attestation.called
-        call_args = agent_run_service.safe_service.create_eas_attestation.call_args[0][0]
-        assert call_args.snapshot_sig == "0x" + "0" * 64  # Placeholder for failed vote
-
-    @pytest.mark.asyncio
-    async def test_attestation_failure_does_not_block_execution(
-        self, agent_run_service, sample_proposal
-    ):
-        """Test that attestation failure does not prevent subsequent votes.
-
-        Importance: Critical for resilience - attestation issues should not
-        stop the agent from processing remaining proposals.
-        """
-        # Mock vote success
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={
-                "success": True,
-                "submission_result": {"success": True, "response": {"id": "0xabc123"}},
-            }
-        )
-
-        # Mock attestation failure
-        agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-            return_value={"success": False, "error": "EAS contract not configured"}
-        )
-
-        # Create two decisions
-        decisions = [
-            VoteDecision(
-                proposal_id="proposal-1",
-                vote=VoteType.FOR,
-                confidence=0.85,
-                reasoning="Test",
-                strategy_used=VotingStrategy.BALANCED,
-            ),
-            VoteDecision(
-                proposal_id="proposal-2",
-                vote=VoteType.AGAINST,
-                confidence=0.75,
-                reasoning="Test",
-                strategy_used=VotingStrategy.BALANCED,
-            ),
-        ]
-
-        # Execute votes - should not raise exception
-        result = await agent_run_service._execute_votes(
-            decisions=decisions,
-            space_id="test.eth",
-            dry_run=False,
-            run_id="test_run_123",
-        )
-
-        # Verify both votes were attempted
-        assert agent_run_service.voting_service.vote_on_proposal.call_count == 2
-
-        # Verify both attestations were attempted despite first failure
-        assert agent_run_service.safe_service.create_eas_attestation.call_count == 2
-
-        # Verify execution completed with both decisions
-        assert len(result) == 2
-
-    @pytest.mark.asyncio
-    async def test_dry_run_skips_attestation(self, agent_run_service):
-        """Test that dry run mode skips both voting and attestation.
-
-        Importance: Ensures test mode doesn't create any on-chain transactions.
-        """
-        decision = VoteDecision(
-            proposal_id="test-proposal",
-            vote=VoteType.FOR,
-            confidence=0.85,
-            reasoning="Test",
-            strategy_used=VotingStrategy.BALANCED,
-        )
-
-        # Execute in dry run mode
-        result = await agent_run_service._execute_votes(
-            decisions=[decision],
-            space_id="test.eth",
-            dry_run=True,
-            run_id="test_run_123",
-        )
-
-        # Verify no vote was attempted
-        agent_run_service.voting_service.vote_on_proposal.assert_not_called()
-
-        # Verify no attestation was attempted
-        agent_run_service.safe_service.create_eas_attestation.assert_not_called()
-
-        # Verify decisions returned unchanged
-        assert result == [decision]
-
-    @pytest.mark.asyncio
-    async def test_attestation_exception_handling(self, agent_run_service):
-        """Test that exceptions during attestation are caught and logged.
-
-        Importance: Ensures unexpected errors don't crash the agent run.
-        """
-        # Mock vote success
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={
-                "success": True,
-                "submission_result": {"success": True, "response": {"id": "0xabc123"}},
-            }
-        )
-
-        # Mock attestation raising exception
-        agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-            side_effect=Exception("Unexpected error")
-        )
-
-        decision = VoteDecision(
-            proposal_id="test-proposal",
-            vote=VoteType.FOR,
-            confidence=0.85,
-            reasoning="Test",
-            strategy_used=VotingStrategy.BALANCED,
-        )
-
-        # Execute votes - should not raise exception
-        result = await agent_run_service._execute_votes(
-            decisions=[decision],
-            space_id="test.eth",
-            dry_run=False,
-            run_id="test_run_123",
-        )
-
-        # Verify vote was attempted
-        assert agent_run_service.voting_service.vote_on_proposal.called
-
-        # Verify execution completed despite exception
-        assert len(result) == 1
-
-    @pytest.mark.asyncio
-    async def test_error_messages_are_actionable_config_missing(
-        self, agent_run_service, caplog
-    ):
-        """Test that configuration error messages include actionable guidance.
-
-        Importance: Verifies error messages help users resolve configuration issues
-        without requiring code inspection or external documentation.
-        """
-        import logging
-
-        # Mock vote success
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={
-                "success": True,
-                "submission_result": {"success": True, "response": {"id": "0xabc123"}},
-            }
-        )
-
-        # Mock attestation failure with config error
-        agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-            return_value={
-                "success": False,
-                "error": "EAS_CONTRACT_ADDRESS not configured"
-            }
-        )
-
-        decision = VoteDecision(
-            proposal_id="test-proposal",
-            vote=VoteType.FOR,
-            confidence=0.85,
-            reasoning="Test",
-            strategy_used=VotingStrategy.BALANCED,
-        )
-
-        with caplog.at_level(logging.ERROR):
-            await agent_run_service._execute_votes(
-                decisions=[decision],
-                space_id="test.eth",
-                dry_run=False,
-                run_id="test_run_123",
-            )
-
-        # Verify error message contains actionable information
-        error_logs = [record.message for record in caplog.records if record.levelname == "ERROR"]
-        assert len(error_logs) > 0
-
-        error_msg = error_logs[0]
-        # Must contain the environment variable name
-        assert "EAS_CONTRACT_ADDRESS" in error_msg
-        # Must contain example or instruction
-        assert "Set EAS_CONTRACT_ADDRESS" in error_msg or "0x42000000" in error_msg
-        # Must contain proposal context
-        assert "proposal=test-proposal" in error_msg
-
-    @pytest.mark.asyncio
-    async def test_error_messages_include_debugging_context(
-        self, agent_run_service, caplog
-    ):
-        """Test that error messages include debugging context for investigation.
-
-        Importance: Ensures operators have sufficient information to debug issues
-        from log files without needing to reproduce the error.
-        """
-        import logging
-
-        # Mock vote success
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={
-                "success": True,
-                "submission_result": {"success": True, "response": {"id": "0xabc123"}},
-            }
-        )
-
-        # Mock generic attestation failure
-        agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-            return_value={
-                "success": False,
-                "error": "Network timeout"
-            }
-        )
-
-        decision = VoteDecision(
-            proposal_id="test-proposal",
-            vote=VoteType.FOR,
-            confidence=0.85,
-            reasoning="Test",
-            strategy_used=VotingStrategy.BALANCED,
-        )
-
-        with caplog.at_level(logging.ERROR):
-            await agent_run_service._execute_votes(
-                decisions=[decision],
-                space_id="test.eth",
-                dry_run=False,
-                run_id="test_run_123",
-            )
-
-        error_logs = [record.message for record in caplog.records if record.levelname == "ERROR"]
-        assert len(error_logs) > 0
-
-        error_msg = error_logs[0]
-        # Must contain proposal ID for tracing
-        assert "proposal=" in error_msg and "test-proposal" in error_msg
-        # Must contain space ID for context
-        assert "space=" in error_msg and "test.eth" in error_msg
-        # Must suggest checking RPC or network
-        assert "RPC" in error_msg or "timeout" in error_msg.lower()
-
-    @pytest.mark.asyncio
-    async def test_error_messages_distinguish_failure_types(
-        self, agent_run_service, caplog
-    ):
-        """Test that different failure types produce distinct error messages.
-
-        Importance: Users should be able to quickly identify the type of problem
-        from the error message without analyzing generic stack traces.
-        """
-        import logging
-
-        # Mock vote success
-        agent_run_service.voting_service.vote_on_proposal = AsyncMock(
-            return_value={
-                "success": True,
-                "submission_result": {"success": True, "response": {"id": "0xabc123"}},
-            }
-        )
-
-        # Test different error types
-        error_scenarios = [
-            ("EAS_SCHEMA_UID not set", ["schema", "EAS_SCHEMA_UID"]),
-            ("insufficient funds for gas", ["insufficient", "fund", "ETH"]),
-            ("nonce too low", ["nonce", "pending", "Safe Transaction Service"]),
-            ("timeout", ["timeout", "RPC_URL"])
-        ]
-
-        for error_message, expected_keywords in error_scenarios:
-            caplog.clear()
-
-            agent_run_service.safe_service.create_eas_attestation = AsyncMock(
-                return_value={"success": False, "error": error_message}
-            )
-
-            decision = VoteDecision(
-                proposal_id="test-proposal",
-                vote=VoteType.FOR,
-                confidence=0.85,
-                reasoning="Test",
-                strategy_used=VotingStrategy.BALANCED,
-            )
-
-            with caplog.at_level(logging.ERROR):
-                await agent_run_service._execute_votes(
-                    decisions=[decision],
-                    space_id="test.eth",
-                    dry_run=False,
-                    run_id="test_run_123",
-                )
-
-            error_logs = [record.message for record in caplog.records if record.levelname == "ERROR"]
-            assert len(error_logs) > 0
-
-            error_msg = error_logs[0].lower()
-            # Verify error message contains expected keywords for this error type
-            keywords_found = [kw for kw in expected_keywords if kw.lower() in error_msg]
-            assert len(keywords_found) > 0, \
-                f"Error message for '{error_message}' should contain at least one of {expected_keywords}"
-
-
-class TestCheckpointStateSimplification:
-    """Test that checkpoint state no longer includes pending attestations."""
-
-    @pytest.mark.asyncio
-    async def test_checkpoint_excludes_pending_attestations(
-        self, agent_run_service, state_manager
-    ):
-        """Test that saved checkpoint does not contain pending_attestations field.
-
-        Importance: Verifies queue infrastructure fully removed from state persistence.
-        """
-        response = AgentRunResponse(
-            space_id="test.eth",
-            proposals_analyzed=2,
-            votes_cast=[],
-            user_preferences_applied=True,
-            execution_time=1.5,
-            errors=[],
-        )
-
-        await agent_run_service._save_checkpoint_state(response)
-
-        # Load checkpoint and verify structure
-        checkpoint = await state_manager.load_checkpoint("agent_checkpoint_test.eth")
-
-        assert checkpoint is not None
-        assert "pending_attestations" not in checkpoint
-        assert "space_id" in checkpoint
-        assert "votes_cast" in checkpoint
+#### 1. Update RecentProposals Props
+
+**File:** `frontend/src/lib/components/dashboard/RecentProposals.svelte`
+
+**Lines 5-9:**
+
+**Old:**
+```typescript
+interface Props {
+  proposals: components['schemas']['Proposal'][];
+  proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
+  onProposalClick: (proposalId: string) => void;
+}
 ```
 
-### Integration Test
-**File**: `backend/tests/test_agent_run_integration.py`
+**New:**
+```typescript
+interface Props {
+  proposals: components['schemas']['Proposal'][];
+  agentDecisions: Map<string, components['schemas']['AgentDecisionResponse']>;
+}
+```
 
-```python
-@pytest.mark.asyncio
-@pytest.mark.integration
-async def test_agent_run_with_immediate_attestation_integration(httpx_mock):
-    """Integration test: complete agent run with immediate attestations.
+#### 2. Update Props Destructuring
 
-    Importance: Validates end-to-end flow with immediate attestation after each vote,
-    ensuring all components work together correctly.
-    """
-    # Mock Snapshot API for proposal fetch
-    httpx_mock.add_response(
-        method="POST",
-        url="https://hub.snapshot.org/graphql",
-        json={
-            "data": {
-                "proposals": [
-                    AgentTestFixtures.create_sample_proposal().__dict__,
-                ]
-            }
-        },
-    )
+**Line 11:**
 
-    # Create agent run service with mocked dependencies
-    agent_service = AgentRunService()
+**Old:**
+```typescript
+let { proposals, proposalSummaries, onProposalClick }: Props = $props();
+```
 
-    # Mock SafeService attestation to succeed
-    agent_service.safe_service.create_eas_attestation = AsyncMock(
-        return_value={"success": True, "safe_tx_hash": "0xtest123"}
-    )
+**New:**
+```typescript
+let { proposals, agentDecisions }: Props = $props();
+```
 
-    # Execute agent run
-    request = AgentRunRequest(space_id="test.eth", dry_run=False)
-    response = await agent_service.execute_agent_run(request)
+#### 3. Update Validation
 
-    # Verify attestations were created immediately (no queue)
-    assert agent_service.safe_service.create_eas_attestation.call_count > 0
+**Lines 15-16:**
 
-    # Verify response successful
-    assert len(response.votes_cast) > 0
-    assert len(response.errors) == 0
+**Old:**
+```typescript
+console.assert(proposalSummaries instanceof Map, 'Proposal summaries should be a Map');
+```
+
+**New:**
+```typescript
+console.assert(agentDecisions instanceof Map, 'Agent decisions should be a Map');
+```
+
+#### 4. Update Display Logic to Show All Proposals
+
+**Lines 24-29:**
+
+**Old:**
+```typescript
+function getDisplayProposals() {
+  console.assert(hasProposals(), 'Should have proposals when calling getDisplayProposals');
+  console.assert(Array.isArray(proposals), 'Proposals should be an array');
+
+  return proposals.slice(0, 3);  // Only show 3
+}
+```
+
+**New:**
+```typescript
+function getDisplayProposals() {
+  console.assert(hasProposals(), 'Should have proposals when calling getDisplayProposals');
+  console.assert(Array.isArray(proposals), 'Proposals should be an array');
+
+  return proposals;  // Show all proposals
+}
+```
+
+#### 5. Update Template
+
+**Lines 34-51:**
+
+**Old:**
+```svelte
+{#if hasProposals()}
+  <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+    <div class="mb-6">
+      <h3 class="text-base font-medium text-gray-900">Recent Proposals</h3>
+    </div>
+
+    <div class="space-y-4">
+      {#each getDisplayProposals() as proposal}
+        <ProposalCard
+          {proposal}
+          summary={proposalSummaries.get(proposal.id)}
+          onClick={() => onProposalClick(proposal.id)}
+          variant="compact"
+        />
+      {/each}
+    </div>
+  </div>
+{/if}
+```
+
+**New:**
+```svelte
+{#if hasProposals()}
+  <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+    <div class="mb-6">
+      <h3 class="text-base font-medium text-gray-900">All Proposals</h3>
+      <p class="text-sm text-gray-500 mt-1">
+        {proposals.length} {proposals.length === 1 ? 'proposal' : 'proposals'}
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      {#each getDisplayProposals() as proposal}
+        <ProposalCard
+          {proposal}
+          decision={agentDecisions.get(proposal.id)}
+        />
+      {/each}
+    </div>
+  </div>
+{/if}
+```
+
+#### 6. Update DashboardContent Component
+
+**File:** `frontend/src/lib/components/dashboard/DashboardContent.svelte`
+
+**Lines 15, 19, 22:** Remove onProposalClick prop
+
+**Old:**
+```typescript
+interface Props {
+  // ... other props
+  onProposalClick: (proposalId: string) => void;
+}
+
+let { /* ... */, onProposalClick }: Props = $props();
+
+console.assert(typeof onProposalClick === 'function', 'onProposalClick must be a function');
+```
+
+**New:**
+```typescript
+interface Props {
+  // ... other props (remove onProposalClick)
+}
+
+let { /* ... */ }: Props = $props();
+
+// Remove assertion for onProposalClick
+```
+
+**Line 81:** Update RecentProposals usage
+
+**Old:**
+```svelte
+<RecentProposals
+  proposals={$dashboardStore.allProposals}
+  proposalSummaries={$dashboardStore.proposalSummaries}
+  {onProposalClick}
+/>
+```
+
+**New:**
+```svelte
+<RecentProposals
+  proposals={$dashboardStore.allProposals}
+  agentDecisions={$dashboardStore.agentDecisions}
+/>
+```
+
+#### 7. Update Root Page Component
+
+**File:** `frontend/src/routes/+page.svelte`
+
+**Line 2:** Remove goto import
+
+**Old:**
+```typescript
+import { goto } from "$app/navigation";
+```
+
+**New:**
+```typescript
+// Remove this import entirely
+```
+
+**Lines 79-84:** Remove handleProposalClick function
+
+**Delete:**
+```typescript
+function handleProposalClick(proposalId: string): void {
+  console.assert(typeof proposalId === 'string', 'Proposal ID must be a string');
+  console.assert(proposalId.length > 0, 'Proposal ID should not be empty');
+  goto(`/proposals/${proposalId}`);
+}
+```
+
+**Line 129:** Remove onProposalClick prop
+
+**Old:**
+```svelte
+<DashboardContent
+  {selectedOrganization}
+  {currentSpaceId}
+  {spaces}
+  organizations={$organizations}
+  onOrganizationChange={handleOrganizationChange}
+  onProposalClick={handleProposalClick}
+/>
+```
+
+**New:**
+```svelte
+<DashboardContent
+  {selectedOrganization}
+  {currentSpaceId}
+  {spaces}
+  organizations={$organizations}
+  onOrganizationChange={handleOrganizationChange}
+/>
 ```
 
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] All new tests pass: `uv run pytest backend/tests/test_agent_run_service.py::TestImmediateAttestationFlow -v`
-- [ ] Error message tests pass: `uv run pytest backend/tests/test_agent_run_service.py::TestImmediateAttestationFlow::test_error_messages -v -k "error_message"`
-- [ ] Checkpoint test passes: `uv run pytest backend/tests/test_agent_run_service.py::TestCheckpointStateSimplification -v`
-- [ ] Integration test passes: `uv run pytest backend/tests/test_agent_run_integration.py::test_agent_run_with_immediate_attestation_integration -v`
-- [ ] No queue-related tests remain: `rg "test.*queue.*attestation|test.*pending.*attestation" backend/tests/` returns no results
-- [ ] Overall test coverage maintained: `uv run pytest --cov=backend/services/agent_run_service --cov-report=term-missing` shows >90%
+- [ ] TypeScript compiles: `cd frontend && npm run check`
+- [ ] Frontend linting passes: `cd frontend && npm run lint` (if available)
+- [ ] No unused variable warnings
+- [ ] Component tests pass (after writing tests in Phase 6)
 
 #### Manual Verification:
-- [ ] Test names clearly describe what is being tested
-- [ ] Test importance documented in docstrings
-- [ ] All edge cases covered (vote success, vote failure, attestation failure, exceptions, dry run)
-- [ ] Mock assertions verify correct method calls and arguments
-- [ ] Error messages include environment variable names for config issues
-- [ ] Error messages include remediation steps or links to relevant services
-- [ ] Error messages include full context (proposal ID, space, agent address, config values)
+- [ ] Dashboard displays all proposals with voting decisions (not just 3)
+- [ ] Only proposals with decisions are shown (filtered in Phase 2)
+- [ ] Proposal count displays correctly in header (matches filtered count)
+- [ ] Each card shows appropriate vote badge (FOR/AGAINST/ABSTAIN)
+- [ ] No "No Vote" badges appear (all proposals have decisions)
+- [ ] Cards can be expanded/collapsed individually
+- [ ] No navigation occurs when clicking cards
+- [ ] No console errors about missing props
 
 ---
 
-## Phase 4: Documentation Updates
+## Phase 5: Navigation Cleanup - Remove Proposal Detail Page
 
 ### Overview
-Update all documentation to reflect immediate attestation workflow and remove queue references.
+Delete the proposal detail page route and clean up all references to it in the codebase.
 
 ### Changes Required
 
-#### 1. Update AGENTS.md
-**File**: `AGENTS.md`
+#### 1. Delete Proposal Detail Route
 
-**Section**: "Autonomous Voting Agent" workflow description (around line 290-300)
+**Directory to delete:** `frontend/src/routes/proposals/`
 
-**Changes**:
-- Remove mentions of attestation queue
-- Remove mentions of pending attestation processing
-- Remove mentions of retry mechanism
-- Add description of immediate attestation
-- Note that failed attestations are logged but not retried
-
-**Before** (example):
-```markdown
-### Autonomous Voting Agent
-The application includes a comprehensive autonomous voting system:
-- **Queue Processing**: Processes pending attestations from previous runs
-- **Retry Mechanism**: Retries failed attestations up to 3 times
-- **Checkpoint State**: Persists pending attestations across runs
+**Command:**
+```bash
+rm -rf frontend/src/routes/proposals
 ```
 
-**After**:
-```markdown
-### Autonomous Voting Agent
-The application includes a comprehensive autonomous voting system:
-- **Immediate Attestation**: Creates on-chain attestations immediately after each vote
-- **Audit Trail**: All voting decisions attested on-chain for transparency
-- **Graceful Degradation**: Attestation failures logged but do not block voting
-- **Simplified State**: No queue state management or retry logic
+This removes:
+- `frontend/src/routes/proposals/[id]/+page.svelte`
+- Any other files in the proposals route directory
+
+#### 2. Verify No Remaining References
+
+**Search for references:**
+```bash
+# Search for route references
+cd frontend && grep -r "/proposals/" src/
+
+# Search for navigation to proposals
+cd frontend && grep -r "goto.*proposals" src/
+
+# Search for href to proposals
+cd frontend && grep -r 'href="/proposals' src/
 ```
 
-#### 2. Update Architecture Documentation
-**File**: `AGENTS.md`
+**Expected result:** No matches (all references removed in previous phases)
 
-**Section**: "Backend Architecture" service descriptions (around line 85-90)
+#### 3. Update API Client Types (If Needed)
 
-**Changes**:
-- Update agent_run_service description to reflect streamlined architecture
-- Note immediate attestation as part of vote execution
-- Remove any mention of queue processing or retry logic
+**File:** `frontend/src/lib/api/client.ts`
 
-**Before** (example):
-```markdown
-- `agent_run_service.py`: Orchestrates autonomous voting workflow with attestation queue
-```
+**Note:** The API endpoint types are typically auto-generated. If they reference `/proposals/{proposal_id}`, they can stay as the backend endpoint still exists (used programmatically, just not by frontend UI).
 
-**After**:
-```markdown
-- `agent_run_service.py`: Orchestrates autonomous voting workflow with immediate attestation
-```
-
-#### 3. Update Code Comments
-**File**: `backend/services/agent_run_service.py`
-
-**Changes**:
-- Update docstring of `_execute_votes()` method (around line 735) to mention immediate attestation
-- Remove any comments referencing queue or pending attestations
-- Add comments explaining immediate attestation flow
-
-**Updated docstring**:
-```python
-async def _execute_votes(
-    self, decisions: List[VoteDecision], space_id: str, dry_run: bool, run_id: str
-) -> List[VoteDecision]:
-    """Execute votes for the given decisions with immediate attestation.
-
-    For each vote decision:
-    1. Submit vote to Snapshot
-    2. Immediately create EAS attestation (regardless of vote success)
-    3. Mark activity completed if attestation succeeds
-    4. Log errors but continue with remaining votes
-
-    Args:
-        decisions: List of VoteDecision objects to execute
-        space_id: The space ID where votes will be cast
-        dry_run: If True, simulate voting without actual execution
-        run_id: Unique identifier for this agent run
-
-    Returns:
-        List of successfully executed VoteDecision objects
-
-    Raises:
-        VoteExecutionError: When vote execution fails critically
-
-    Note:
-        - In dry run mode, returns decisions without execution
-        - Attestation failures are logged but do not block voting
-        - Each attestation is attempted immediately after vote submission
-    """
-```
+**Verification:** Ensure no TypeScript errors about missing route types
 
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] No mentions of queue in AGENTS.md: `rg -i "queue.*attestation|attestation.*queue" AGENTS.md` returns no results
-- [ ] No mentions of pending attestations: `rg "pending.*attestation" AGENTS.md` returns no results
-- [ ] No mentions of retry in attestation context: `rg "retry.*attestation|attestation.*retry" AGENTS.md` returns no results
-- [ ] Immediate attestation mentioned: `rg -i "immediate.*attestation" AGENTS.md` returns results
+- [ ] Directory does not exist: `ls frontend/src/routes/proposals/` returns error
+- [ ] TypeScript compiles: `cd frontend && npm run check`
+- [ ] Frontend linting passes: `cd frontend && npm run lint` (if available)
+- [ ] No broken imports or missing route errors
+- [ ] Search for `/proposals/` in frontend returns no UI references
 
 #### Manual Verification:
-- [ ] Documentation accurately describes new immediate attestation flow
-- [ ] No contradictory information about queue or retries
-- [ ] Code comments are clear and accurate
-- [ ] Workflow descriptions match actual implementation
+- [ ] Navigating to `/proposals/any-id` in browser shows 404 page
+- [ ] No console errors about missing routes
+- [ ] No broken links in UI
+- [ ] Dashboard functions normally without proposal detail page
 
 ---
 
-## Logging and Error Handling
+## Phase 6: Testing & Validation
 
-### Scope
+### Overview
+Add comprehensive tests for modified components and validate the entire feature works end-to-end.
 
-This section applies **only to the immediate attestation implementation** added in this migration. Existing error messages in SafeService, VotingService, and other components are out of scope unless they directly relate to attestation failures.
+### Changes Required
 
-### Error Message Standards
+#### 1. Create ProposalCard Tests
 
-All error messages for immediate attestation must be **precise, actionable, and include debugging context**. Follow these principles:
+**File to create:** `frontend/src/lib/components/dashboard/ProposalCard.test.ts`
 
-1. **State the Problem Clearly**: What failed and why
-2. **Provide Context**: Include relevant IDs, addresses, and state
-3. **Suggest Solutions**: What the user should check or fix
-4. **Include Debugging Info**: Configuration values, network details, etc.
+**Test cases:**
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/svelte';
+import ProposalCard from './ProposalCard.svelte';
+import type { components } from '$lib/api/client';
 
-### Logging Requirements
+describe('ProposalCard', () => {
+  const mockProposal: components['schemas']['Proposal'] = {
+    id: 'test-proposal-1',
+    title: 'Test Proposal Title',
+    created: 1234567890,
+    state: 'active'
+  };
 
-Following Pearl-compliant logging standards, all attestation operations must emit structured logs:
+  const mockDecision: components['schemas']['AgentDecisionResponse'] = {
+    proposal_id: 'test-proposal-1',
+    vote: 'FOR',
+    confidence: 0.85,
+    reasoning: 'This proposal aligns with our strategic objectives.',
+    strategy_used: 'balanced',
+    timestamp: '2024-01-15T10:30:00Z',
+    proposal_title: 'Test Proposal Title'
+  };
 
-**Success Logs** (INFO level):
-```python
-self.pearl_logger.info(
-    f"Creating immediate EAS attestation (proposal={decision.proposal_id}, "
-    f"vote_succeeded={vote_succeeded}, vote_id={vote_id or 'None'}, "
-    f"agent={self.voting_service.account.address}, space={space_id})"
-)
+  it('renders proposal title correctly', () => {
+    render(ProposalCard, {
+      props: { proposal: mockProposal }
+    });
 
-self.pearl_logger.info(
-    f"Successfully created EAS attestation (proposal={decision.proposal_id}, "
-    f"safe_tx_hash={safe_tx_hash}, schema_uid={config.EAS_SCHEMA_UID})"
-)
+    expect(screen.getByText(/Test Proposal Title/i)).toBeInTheDocument();
+  });
 
-self.pearl_logger.info(
-    f"Marked daily activity as completed (tx_hash={safe_tx_hash}, "
-    f"proposal={decision.proposal_id})"
-)
+  it('displays vote badge when decision is provided', () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    expect(screen.getByText('FOR')).toBeInTheDocument();
+  });
+
+  // Note: We don't test "No Vote" case since proposals without decisions are filtered out in Phase 2
+
+  it('expands to show reasoning when clicked', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    // Initially reasoning should not be visible
+    expect(screen.queryByText(/This proposal aligns/i)).not.toBeInTheDocument();
+
+    // Click to expand
+    const card = screen.getByRole('button');
+    await fireEvent.click(card);
+
+    // Reasoning should now be visible
+    expect(screen.getByText(/This proposal aligns/i)).toBeInTheDocument();
+  });
+
+  it('collapses when clicked again', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    const card = screen.getByRole('button');
+
+    // Expand
+    await fireEvent.click(card);
+    expect(screen.getByText(/This proposal aligns/i)).toBeInTheDocument();
+
+    // Collapse
+    await fireEvent.click(card);
+    expect(screen.queryByText(/This proposal aligns/i)).not.toBeInTheDocument();
+  });
+
+  it('supports keyboard navigation with Enter key', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    const card = screen.getByRole('button');
+
+    // Press Enter to expand
+    await fireEvent.keyDown(card, { key: 'Enter' });
+    expect(screen.getByText(/This proposal aligns/i)).toBeInTheDocument();
+  });
+
+  it('supports keyboard navigation with Space key', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    const card = screen.getByRole('button');
+
+    // Press Space to expand
+    await fireEvent.keyDown(card, { key: ' ' });
+    expect(screen.getByText(/This proposal aligns/i)).toBeInTheDocument();
+  });
+
+  it('collapses with Escape key when expanded', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    const card = screen.getByRole('button');
+
+    // Expand first
+    await fireEvent.click(card);
+    expect(screen.getByText(/This proposal aligns/i)).toBeInTheDocument();
+
+    // Press Escape to collapse
+    await fireEvent.keyDown(card, { key: 'Escape' });
+    expect(screen.queryByText(/This proposal aligns/i)).not.toBeInTheDocument();
+  });
+
+  it('displays confidence as percentage', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    const card = screen.getByRole('button');
+    await fireEvent.click(card);
+
+    expect(screen.getByText('85%')).toBeInTheDocument();
+  });
+
+  it('displays strategy with proper capitalization', async () => {
+    render(ProposalCard, {
+      props: {
+        proposal: mockProposal,
+        decision: mockDecision
+      }
+    });
+
+    const card = screen.getByRole('button');
+    await fireEvent.click(card);
+
+    expect(screen.getByText('Balanced')).toBeInTheDocument();
+  });
+
+  // Note: We don't test the "no decision" message case since proposals without decisions are filtered out
+});
 ```
 
-**Failure Logs with Actionable Guidance** (ERROR level):
+#### 2. Create RecentProposals Tests
 
-```python
-# Configuration errors - provide clear remediation steps
-if not config.EAS_CONTRACT_ADDRESS:
-    self.pearl_logger.error(
-        f"Cannot create EAS attestation: EAS_CONTRACT_ADDRESS not configured. "
-        f"Set EAS_CONTRACT_ADDRESS environment variable to the EAS contract address "
-        f"on Base network (0x4200000000000000000000000000000000000021). "
-        f"proposal={decision.proposal_id}, space={space_id}"
-    )
-elif not config.EAS_SCHEMA_UID:
-    self.pearl_logger.error(
-        f"Cannot create EAS attestation: EAS_SCHEMA_UID not configured. "
-        f"Set EAS_SCHEMA_UID environment variable to your registered schema UID. "
-        f"Register schema at https://base.easscan.org/schema/create. "
-        f"proposal={decision.proposal_id}, space={space_id}"
-    )
-elif not config.SAFE_CONTRACT_ADDRESSES:
-    self.pearl_logger.error(
-        f"Cannot create EAS attestation: SAFE_CONTRACT_ADDRESSES not configured. "
-        f"Set SAFE_CONTRACT_ADDRESSES environment variable with Safe address JSON. "
-        f"Example: SAFE_CONTRACT_ADDRESSES='{{\"base\":\"0xYourSafeAddress\"}}'. "
-        f"proposal={decision.proposal_id}, space={space_id}"
-    )
+**File to create:** `frontend/src/lib/components/dashboard/RecentProposals.test.ts`
 
-# Network/blockchain errors - include debugging context
-elif "timeout" in error_msg.lower():
-    self.pearl_logger.error(
-        f"EAS attestation failed due to RPC timeout. "
-        f"Check RPC_URL is responsive: {config.RPC_URL}. "
-        f"Try increasing timeout or switching RPC provider. "
-        f"proposal={decision.proposal_id}, safe_tx_hash={safe_tx_hash or 'None'}, "
-        f"error={error_msg}"
-    )
-elif "insufficient funds" in error_msg.lower():
-    self.pearl_logger.error(
-        f"EAS attestation failed: Safe has insufficient ETH for gas. "
-        f"Fund Safe address with ETH: {config.SAFE_CONTRACT_ADDRESSES.get('base')}. "
-        f"Check balance at https://basescan.org/address/{config.SAFE_CONTRACT_ADDRESSES.get('base')}. "
-        f"proposal={decision.proposal_id}, error={error_msg}"
-    )
-elif "nonce" in error_msg.lower():
-    self.pearl_logger.error(
-        f"EAS attestation failed due to nonce mismatch. "
-        f"This may indicate a pending transaction or concurrent execution. "
-        f"Check Safe Transaction Service for pending txs: "
-        f"https://safe-transaction-base.safe.global/api/v1/safes/{config.SAFE_CONTRACT_ADDRESSES.get('base')}/multisig-transactions/. "
-        f"proposal={decision.proposal_id}, error={error_msg}"
-    )
+**Test cases:**
+```typescript
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/svelte';
+import RecentProposals from './RecentProposals.svelte';
+import type { components } from '$lib/api/client';
 
-# Generic failure with full context
-else:
-    self.pearl_logger.error(
-        f"Failed to create EAS attestation (proposal={decision.proposal_id}, "
-        f"space={space_id}, agent={self.voting_service.account.address}, "
-        f"eas_contract={config.EAS_CONTRACT_ADDRESS}, "
-        f"schema_uid={config.EAS_SCHEMA_UID}, "
-        f"rpc_url={config.RPC_URL}, error={error_msg}). "
-        f"Check configuration and network connectivity."
-    )
+describe('RecentProposals', () => {
+  const mockProposals: components['schemas']['Proposal'][] = [
+    { id: '1', title: 'Proposal 1', created: 1234567890, state: 'active' },
+    { id: '2', title: 'Proposal 2', created: 1234567891, state: 'active' },
+    { id: '3', title: 'Proposal 3', created: 1234567892, state: 'active' },
+    { id: '4', title: 'Proposal 4', created: 1234567893, state: 'active' }
+  ];
+
+  const mockDecisions = new Map();
+
+  it('renders all proposals', () => {
+    render(RecentProposals, {
+      props: {
+        proposals: mockProposals,
+        agentDecisions: mockDecisions
+      }
+    });
+
+    expect(screen.getByText(/Proposal 1/i)).toBeInTheDocument();
+    expect(screen.getByText(/Proposal 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/Proposal 3/i)).toBeInTheDocument();
+    expect(screen.getByText(/Proposal 4/i)).toBeInTheDocument();
+  });
+
+  it('displays correct proposal count', () => {
+    render(RecentProposals, {
+      props: {
+        proposals: mockProposals,
+        agentDecisions: mockDecisions
+      }
+    });
+
+    expect(screen.getByText('4 proposals')).toBeInTheDocument();
+  });
+
+  it('displays singular "proposal" for single item', () => {
+    render(RecentProposals, {
+      props: {
+        proposals: [mockProposals[0]],
+        agentDecisions: mockDecisions
+      }
+    });
+
+    expect(screen.getByText('1 proposal')).toBeInTheDocument();
+  });
+
+  it('does not render when no proposals', () => {
+    const { container } = render(RecentProposals, {
+      props: {
+        proposals: [],
+        agentDecisions: mockDecisions
+      }
+    });
+
+    expect(container.firstChild).toBeNull();
+  });
+});
 ```
 
-**Exception Logs with Debugging Context** (EXCEPTION level):
-```python
-self.pearl_logger.exception(
-    f"Unexpected exception during immediate attestation. "
-    f"proposal={decision.proposal_id}, space={space_id}, "
-    f"vote_id={vote_id or 'None'}, agent={self.voting_service.account.address}, "
-    f"eas_contract={config.EAS_CONTRACT_ADDRESS or 'NOT_SET'}, "
-    f"schema_uid={config.EAS_SCHEMA_UID or 'NOT_SET'}, "
-    f"safe_address={config.SAFE_CONTRACT_ADDRESSES.get('base') if config.SAFE_CONTRACT_ADDRESSES else 'NOT_SET'}. "
-    f"Exception: {str(e)}"
-)
+#### 3. Create useDashboardData Tests
+
+**File to create:** `frontend/src/lib/hooks/useDashboardData.test.ts`
+
+**Test cases:**
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { get } from 'svelte/store';
+import { createDashboardStore } from './useDashboardData';
+import apiClient from '$lib/api';
+
+// Mock API client
+vi.mock('$lib/api', () => ({
+  default: {
+    GET: vi.fn()
+  }
+}));
+
+describe('useDashboardData', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('initializes with correct default state', () => {
+    const store = createDashboardStore();
+    const state = get(store);
+
+    expect(state.loading).toBe(true);
+    expect(state.currentSpaceId).toBe('quorum-ai.eth');
+    expect(state.allProposals).toEqual([]);
+    expect(state.agentDecisions).toBeInstanceOf(Map);
+    expect(state.agentDecisions.size).toBe(0);
+  });
+
+  it('loads proposals and decisions successfully and filters proposals', async () => {
+    const mockProposals = [
+      { id: '1', title: 'Proposal 1', created: 1234567890, state: 'active' },
+      { id: '2', title: 'Proposal 2', created: 1234567891, state: 'active' }
+    ];
+
+    const mockDecisions = [
+      {
+        proposal_id: '1',
+        vote: 'FOR',
+        confidence: 0.9,
+        reasoning: 'Good proposal',
+        strategy_used: 'balanced',
+        timestamp: '2024-01-15T10:30:00Z',
+        proposal_title: 'Proposal 1'
+      }
+      // Note: No decision for proposal 2
+    ];
+
+    vi.mocked(apiClient.GET).mockImplementation(async (path: string) => {
+      if (path === '/proposals') {
+        return { data: { proposals: mockProposals }, error: null };
+      }
+      if (path === '/agent-run/decisions') {
+        return { data: { decisions: mockDecisions }, error: null };
+      }
+      return { data: null, error: null };
+    });
+
+    const store = createDashboardStore();
+    await store.loadProposals();
+
+    const state = get(store);
+    // Should only include proposal 1 (has decision), not proposal 2 (no decision)
+    expect(state.allProposals).toEqual([mockProposals[0]]);
+    expect(state.allProposals.length).toBe(1);
+    expect(state.agentDecisions.get('1')).toEqual(mockDecisions[0]);
+    expect(state.loading).toBe(false);
+  });
+
+  it('handles API errors gracefully', async () => {
+    vi.mocked(apiClient.GET).mockResolvedValue({
+      data: null,
+      error: { message: 'API Error' }
+    });
+
+    const store = createDashboardStore();
+    await store.loadProposals();
+
+    const state = get(store);
+    expect(state.error).toBeTruthy();
+    expect(state.loading).toBe(false);
+  });
+
+  it('creates decision map correctly', async () => {
+    const mockDecisions = [
+      { proposal_id: '1', vote: 'FOR', confidence: 0.9, reasoning: 'Good', strategy_used: 'balanced', timestamp: '2024-01-15T10:30:00Z', proposal_title: 'P1' },
+      { proposal_id: '2', vote: 'AGAINST', confidence: 0.8, reasoning: 'Bad', strategy_used: 'conservative', timestamp: '2024-01-15T11:30:00Z', proposal_title: 'P2' }
+    ];
+
+    vi.mocked(apiClient.GET).mockImplementation(async (path: string) => {
+      if (path === '/proposals') {
+        return { data: { proposals: [] }, error: null };
+      }
+      if (path === '/agent-run/decisions') {
+        return { data: { decisions: mockDecisions }, error: null };
+      }
+      return { data: null, error: null };
+    });
+
+    const store = createDashboardStore();
+    await store.loadProposals();
+
+    const state = get(store);
+    expect(state.agentDecisions.size).toBe(2);
+    expect(state.agentDecisions.get('1')?.vote).toBe('FOR');
+    expect(state.agentDecisions.get('2')?.vote).toBe('AGAINST');
+  });
+});
 ```
 
-### Error Message Examples
+#### 4. Update Existing Tests
 
-**Bad Error Message** (vague, not actionable):
-```python
-self.pearl_logger.error("Attestation failed")
+**Files to check and update:**
+- `frontend/src/lib/components/dashboard/DashboardContent.test.ts` (if exists)
+- `frontend/src/routes/+page.test.ts` (if exists)
+
+**Changes needed:**
+- Remove any tests that reference `handleProposalClick`
+- Update any snapshot tests to reflect new component structure
+- Add tests for decision display if not covered above
+
+#### 5. Backend Test Validation
+
+**Run existing backend tests:**
+```bash
+cd backend && uv run pytest tests/ -v
 ```
 
-**Good Error Message** (precise, actionable, contextual):
-```python
-self.pearl_logger.error(
-    f"EAS attestation failed: Missing schema UID configuration. "
-    f"Set EAS_SCHEMA_UID environment variable to your registered schema UID. "
-    f"Register schema at https://base.easscan.org/schema/create with fields: "
-    f"agent (address), space_id (string), proposal_id (string), vote_choice (uint8), "
-    f"snapshot_sig (bytes32), timestamp (uint256), run_id (string), confidence (uint8). "
-    f"proposal={decision.proposal_id}, space={space_id}"
-)
-```
+**Expected:** All tests pass (none should break from removing summarization)
 
-### Error Handling Strategy
+**If tests fail:**
+- Check for tests that explicitly test summarization endpoint
+- Remove or update those specific tests
+- Ensure no other tests depended on summarization
 
-**Non-Blocking Errors**:
-- Attestation creation failures do NOT raise exceptions
-- Execution continues with remaining votes
-- All errors logged with full context for debugging and auditing
-- Each error log includes:
-  - What failed (operation)
-  - Why it failed (root cause)
-  - How to fix it (remediation steps)
-  - Debugging context (IDs, addresses, config values)
+### Success Criteria
 
-**Configuration Errors**:
-- Missing EAS config (contract address, schema UID) logged with setup instructions
-- SafeService handles missing config gracefully with clear error messages
-- Agent run continues without attestations if config missing
-- Error messages include:
-  - Which config variable is missing
-  - What value to set (with examples)
-  - Where to get the value (links to Base Sepolia explorer, Safe UI, etc.)
+#### Automated Verification:
+- [ ] All frontend tests pass: `cd frontend && npm run test`
+- [ ] All backend tests pass: `cd backend && uv run pytest tests/ -v`
+- [ ] TypeScript type checking passes: `cd frontend && npm run check`
+- [ ] Frontend linting passes: `cd frontend && npm run lint` (if available)
+- [ ] Backend linting passes: `cd backend && ruff check .` (or applicable linter)
+- [ ] Test coverage for ProposalCard includes expandable functionality
+- [ ] Test coverage for RecentProposals includes decision passing
+- [ ] Test coverage for useDashboardData includes decision fetching and filtering
 
-**Network/Blockchain Errors**:
-- Transient errors (timeouts, network issues) logged with RPC URL and suggestions
-- Insufficient funds errors include Safe address and funding instructions
-- Nonce errors include Safe Transaction Service URL for investigation
-- No retry mechanism - failures logged for manual investigation
-- Error messages include:
-  - Network/chain being used
-  - RPC endpoint URL
-  - Transaction details if available
-  - Links to block explorers or transaction services
-
-**Safe/Multisig Errors**:
-- Safe address validation errors include correct format examples
-- Threshold/signer errors include current Safe configuration
-- Pending transaction conflicts include Safe Transaction Service link
-- Error messages include:
-  - Safe address being used
-  - Current Safe configuration (owners, threshold)
-  - Link to Safe UI for manual inspection
-
-### Graceful Degradation
-
-When attestation fails:
-1. Log detailed error message with:
-   - Proposal context (ID, space, agent)
-   - Failure reason with specific error details
-   - Configuration state (what's set, what's missing)
-   - Suggested remediation steps with examples
-   - Links to relevant tools/explorers
-2. Continue processing remaining proposals
-3. Complete agent run successfully
-4. Return standard AgentRunResponse (no attestation results in response)
-
-When EAS config missing:
-1. SafeService logs warning:
-   ```python
-   self.pearl_logger.warning(
-       f"EAS attestation disabled: Configuration incomplete. "
-       f"EAS_CONTRACT_ADDRESS: {'SET' if config.EAS_CONTRACT_ADDRESS else 'MISSING (set to 0x4200000000000000000000000000000000000021 for Base)'}, "
-       f"EAS_SCHEMA_UID: {'SET' if config.EAS_SCHEMA_UID else 'MISSING (register schema at https://base.easscan.org)'}, "
-       f"SAFE_CONTRACT_ADDRESSES: {'SET' if config.SAFE_CONTRACT_ADDRESSES else 'MISSING (set Safe address JSON)'}. "
-       f"Agent will continue without on-chain attestations."
-   )
-   ```
-2. Returns `{"success": False, "error": "EAS configuration incomplete. See logs for required environment variables."}`
-3. Agent run logs failure but continues
-4. User receives actionable guidance via logs with exact config variable names and example values
-
-### Error Testing Requirements
-
-Tests must verify error messages are actionable:
-- Assert error logs contain configuration variable names
-- Assert error logs include remediation steps or links
-- Assert error logs include all relevant context (IDs, addresses)
-- Assert error messages distinguish between different failure modes
-- Verify users can resolve issues from error message alone
+#### Manual Verification:
+- [ ] Dashboard loads without errors
+- [ ] Only proposals with voting decisions are displayed (no proposals without decisions)
+- [ ] All proposals display with correct vote badges (FOR/AGAINST/ABSTAIN)
+- [ ] No "No Vote" badges appear (all proposals filtered to have decisions)
+- [ ] Clicking proposals expands them inline (no navigation)
+- [ ] Agent reasoning displays correctly when expanded
+- [ ] Confidence displays as percentage (0-100%)
+- [ ] Strategy displays with correct capitalization
+- [ ] Timestamp formats correctly
+- [ ] Keyboard navigation works (Enter, Space, Escape)
+- [ ] Chevron icon rotates smoothly
+- [ ] Multiple proposals can be expanded simultaneously
+- [ ] No console errors or warnings
+- [ ] Network tab shows only /proposals and /agent-run/decisions requests (no summarize)
+- [ ] Backend starts and runs without errors
+- [ ] API docs no longer show /proposals/summarize endpoint
 
 ---
 
 ## Testing Strategy
 
-### Unit Test Coverage
+### Unit Tests
 
-**Required Tests**:
-- ✅ Immediate attestation after successful vote
-- ✅ Immediate attestation after failed vote (with placeholder signature)
-- ✅ Attestation failure does not block subsequent votes
-- ✅ Exception during attestation caught and logged
-- ✅ Dry run mode skips attestation
-- ✅ Checkpoint excludes pending_attestations field
-- ✅ EASAttestationData constructed with correct fields
-- ✅ Activity marked completed when attestation succeeds
+**Backend:**
+- No new tests required (only removing functionality)
+- Verify existing tests still pass after removing summarization
 
-**Mock Strategy**:
-- Mock `VotingService.vote_on_proposal()` for vote outcomes
-- Mock `SafeService.create_eas_attestation()` for attestation results
-- Mock `ActivityService.mark_activity_completed()` for activity tracking
-- Use `AsyncMock` for all async methods
-- Verify mock calls with assertions on arguments
+**Frontend:**
+- **ProposalCard**: Rendering, expansion, keyboard navigation, decision display
+- **RecentProposals**: Proposal list rendering, count display, decision passing
+- **useDashboardData**: State management, API calls, decision map creation
 
-### Integration Test Coverage
+### Integration Tests
 
-**Required Tests**:
-- ✅ End-to-end agent run with immediate attestations
-- ✅ Multiple proposals processed with attestations
-- ✅ Mixed success/failure scenarios
+**Manual Testing Flows:**
 
-**Integration Test Setup**:
-- Use `httpx_mock` for Snapshot API responses
-- Mock only external APIs (Snapshot, blockchain)
-- Allow real service interactions internally
-- Verify attestations created for each vote
+1. **Dashboard Load Flow:**
+   - Navigate to dashboard
+   - Verify proposals load
+   - Verify decisions load
+   - Verify cards display correctly
 
-### Manual Testing Checklist
+2. **Expansion Flow:**
+   - Click a proposal card
+   - Verify it expands inline
+   - Verify reasoning displays
+   - Click again to collapse
+   - Verify it collapses
 
-**Mock Mode Testing**:
-1. Set `MOCK_MODE=true` in environment
-2. Run agent: `curl -X POST http://localhost:8716/agent-run -H "Content-Type: application/json" -d '{"space_id":"test.eth","dry_run":false}'`
-3. Verify logs show "MOCK/DRY_RUN: skipping on-chain attestation"
-4. Verify stub UID returned: `0x0000...`
-5. Verify no actual blockchain transactions
+3. **Keyboard Navigation Flow:**
+   - Tab to a proposal card
+   - Press Enter to expand
+   - Press Escape to collapse
+   - Verify focus management
 
-**Dry Run Testing**:
-1. Run agent with dry_run=true: `curl -X POST http://localhost:8716/agent-run -H "Content-Type: application/json" -d '{"space_id":"test.eth","dry_run":true}'`
-2. Verify logs show "Dry run mode - simulating vote execution"
-3. Verify no vote submissions to Snapshot
-4. Verify no attestation attempts
-5. Verify decisions returned in response
+4. **Decision States Flow:**
+   - View proposal with decision (FOR/AGAINST/ABSTAIN)
+   - View proposal without decision
+   - Verify appropriate badges and messages
 
-**Real Testnet Testing**:
-1. Configure Base testnet RPC and Safe address
-2. Fund Safe with testnet ETH
-3. Run agent on testnet space
-4. Verify attestation tx appears in Safe Transaction Service
-5. Verify attestation on-chain via BaseScan
-6. Verify activity marked completed
-7. Check logs for successful attestation messages
+5. **Error Handling Flow:**
+   - Stop backend server
+   - Verify dashboard shows error message
+   - Restart backend
+   - Verify dashboard recovers
+
+### Manual Testing Steps
+
+**Setup:**
+```bash
+# Terminal 1: Start backend
+cd backend
+export $(cat ../.env | xargs)
+export SAFE_CONTRACT_ADDRESSES='{"base": "0x07edA994E013AbC8619A5038455db3A6FBdd2Bca"}'
+uv run uvicorn main:app --host 0.0.0.0 --port 8000
+
+# Terminal 2: Start frontend
+cd frontend
+npm run dev
+```
+
+**Test Checklist:**
+
+1. **Visual Verification:**
+   - [ ] Dashboard displays "All Proposals" heading
+   - [ ] Proposal count displays correctly (e.g., "5 proposals")
+   - [ ] Each card shows proposal title
+   - [ ] Each card shows vote badge (FOR/AGAINST/ABSTAIN/No Vote)
+   - [ ] Chevron icon appears on each card
+   - [ ] Cards have hover effect
+
+2. **Interaction Verification:**
+   - [ ] Clicking card expands it
+   - [ ] Reasoning text displays
+   - [ ] Confidence displays as percentage
+   - [ ] Strategy displays capitalized
+   - [ ] Timestamp displays correctly formatted
+   - [ ] Clicking again collapses card
+   - [ ] Multiple cards can be expanded at once
+
+3. **Keyboard Verification:**
+   - [ ] Tab navigates between cards
+   - [ ] Enter key expands focused card
+   - [ ] Space key expands focused card
+   - [ ] Escape key collapses expanded card
+   - [ ] Focus indicator visible
+
+4. **Edge Cases:**
+   - [ ] Proposals without decisions are not displayed (filtered out)
+   - [ ] Very long reasoning text displays properly (scrollable/wrapped)
+   - [ ] Empty proposal list handled (shouldn't crash)
+   - [ ] Dashboard shows appropriate message when no proposals have decisions yet
+
+5. **Network Verification:**
+   - [ ] Open DevTools Network tab
+   - [ ] Reload dashboard
+   - [ ] Verify `GET /proposals` request
+   - [ ] Verify `GET /agent-run/decisions` request
+   - [ ] Verify NO `POST /proposals/summarize` request
+   - [ ] Check backend logs for clean requests
+
+6. **Navigation Verification:**
+   - [ ] No "View Details" links appear
+   - [ ] Clicking cards doesn't navigate away
+   - [ ] Browser URL stays on dashboard
+   - [ ] Navigating to `/proposals/any-id` shows 404
 
 
 ## Migration Notes
 
-### No Breaking Changes
+**No data migration required** - all changes are to frontend UI and backend API endpoints. No database schema changes.
 
-**API Compatibility**:
-- No changes to API endpoints or request/response schemas
-- `POST /agent-run` works identically
-- Frontend requires no updates
-- Existing API consumers unaffected
+**Deployment strategy:**
+1. Deploy backend changes first (remove summarization endpoint)
+2. Deploy frontend changes second (no longer calls removed endpoint)
+3. Verify dashboard loads correctly
+4. Monitor error logs for any issues
 
-**Configuration Compatibility**:
-- Same environment variables required
-- No new config needed for basic operation
-- Attestation behavior transparent to users
+**Rollback strategy:**
+- Backend rollback: Re-deploy previous version (summarization endpoint returns)
+- Frontend rollback: Re-deploy previous version (calls summarization endpoint again)
+- No data loss risk - decision files remain unchanged
 
-### Deployment Strategy
-
-**Zero-Downtime Deployment**:
-1. Deploy new code with immediate attestation
-2. Old checkpoints with pending_attestations ignored
-3. New runs create immediate attestations
-4. No migration script needed
-
-**Rollback Plan**:
-1. If issues arise, deploy previous version
-2. System reverts to queue-based attestation
-3. No data loss (checkpoints preserved)
-4. Re-deploy after fixing issues
-
-### Monitoring Post-Deployment
-
-**Key Metrics**:
-- Attestation success rate (log analysis)
-- Average run time per proposal
-- Attestation failure reasons
-- Activity completion rate
-
-**Log Analysis**:
-- Monitor for "Failed to create EAS attestation" errors
-- Check for exceptions during attestation
-- Verify "Successfully created EAS attestation" frequency
-- Track activity completion markers
-
----
-
-## Risks and Mitigations
-
-### Risk 1: Longer Run Time Per Proposal
-
-**Impact**: Medium - Attestations add latency to each proposal processing
-
-**Probability**: High - This is expected behavior
-
-**Mitigation**:
-- Accept longer run time as trade-off for simpler architecture
-- Document expected run time increase
-- Consider parallel attestations in future enhancement
-- Monitor run time metrics
-
-### Risk 2: Config Mis-Set (Missing EAS/Safe Settings)
-
-**Impact**: Medium - Attestations will fail if config missing
-
-**Probability**: Low - Config validated at service initialization
-
-**Mitigation**:
-- SafeService validates config early
-- Clear error messages in logs
-- Agent run continues without attestations
-- Health endpoint reports config status
-- Documentation updated with required config
-
-### Risk 3: Audit Trail Gaps (Failed Attestations)
-
-**Impact**: Low - Some votes may not have on-chain attestations
-
-**Probability**: Medium - Network/blockchain issues can cause failures
-
-**Mitigation**:
-- All attestation attempts logged with details
-- Failed attestations visible in logs for investigation
-- Consider manual retry process for critical votes
-- Future enhancement: retry mechanism
-
-### Risk 4: Attestation Failures Accumulating Over Time
-
-**Impact**: Low - Without retry, some attestations never succeed
-
-**Probability**: Medium - Transient failures will occur
-
-**Mitigation**:
-- Monitor attestation failure rate
-- Alert on high failure rates
-- Manual investigation and correction process
-- Consider future retry mechanism if failure rate too high
-
----
+**User impact:**
+- Improved UX: Faster loading (fewer API calls), no navigation required
+- All information accessible on one page
+- Better mobile experience (no multi-page navigation)
 
 ## References
 
-### Original Code Analysis
-- `backend/services/agent_run_service.py`: Lines 36, 159-160, 735-870, 927-1161
-- `backend/models.py`: Lines 982-1048 (EASAttestationData)
-- `backend/services/safe_service.py`: Lines 552-649 (create_eas_attestation)
+### Research Documents
+- Original exploration: Research tasks completed in this session
+- Decision API analysis: `backend/main.py:715-768`
+- Decision service: `backend/services/agent_run_service.py:1372-1443`
+- Decision models: `backend/models.py:387-455`
 
-### Related Specifications
-- `specs/logging.md`: Pearl-compliant logging requirements
-- `specs/error-handling.md`: Error handling patterns
-- `specs/testing.md`: Testing strategies and coverage requirements
-- `AGENTS.md`: Architecture overview and workflow documentation
+### Similar Implementations
+- OrganizationDropdown: Expandable pattern reference (`frontend/src/lib/components/OrganizationDropdown.svelte`)
+- VotingIndicator: Vote display component (`frontend/src/lib/components/dashboard/VotingIndicator.svelte`)
+- AgentStatusWidget: Dashboard widget pattern (`frontend/src/lib/components/dashboard/AgentStatusWidget.svelte`)
 
-### External References
-- EAS Documentation: https://docs.attest.sh/
-- Safe Transaction Service: https://safe-docs.safe.global/
-- Snapshot API: https://docs.snapshot.box/
+### Documentation
+- Component guidelines: `frontend/src/lib/components/CLAUDE.md`
+- API specification: `specs/api.md`
+- Frontend specification: `specs/frontend.md`
+
+### Key Files Modified
+- Backend: `main.py`, `ai_service.py`, `models.py`
+- Frontend hooks: `useDashboardData.ts`
+- Frontend components: `ProposalCard.svelte`, `RecentProposals.svelte`, `DashboardContent.svelte`
+- Frontend routes: `+page.svelte`, delete `proposals/[id]/+page.svelte`
