@@ -1193,95 +1193,66 @@ async def verify_attestation_count():
 async def get_staking_checkpoints():
     """Get the latest staking checkpoint information.
 
-    Queries the staking contract directly to get the next checkpoint timestamp
-    using the getNextRewardCheckpointTimestamp() function and liveness period.
+    Reads the next checkpoint timestamp from the cron schedule file
+    written by the container's entrypoint script. This reflects when
+    the checkpoint job will actually run.
     """
     try:
-        return await _get_checkpoint_from_contract()
+        return await _get_checkpoint_from_cron_schedule()
     except Exception as e:
-        logger.error(f"Failed to get checkpoint data from contract: {e}")
+        logger.error(f"Failed to get checkpoint data: {e}")
         return StakingCheckpointsResponse(
             latest_checkpoint=None,
             error=str(e)
         )
 
 
-async def _get_checkpoint_from_contract() -> StakingCheckpointsResponse:
-    """Get checkpoint info directly from staking contract.
+async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
+    """Get checkpoint info from the cron schedule file.
 
-    Queries the contract for the next checkpoint timestamp and liveness period.
-    Returns checkpoint information without relying on any file-based data.
+    Reads the next checkpoint timestamp from /app/next_checkpoint_time.txt,
+    which is written by the container's entrypoint script. This reflects
+    when the checkpoint cron job will actually execute.
     """
+    checkpoint_file = "/app/next_checkpoint_time.txt"
+    checkpoint_interval_hours = 24  # Checkpoint runs every 24 hours
+
     try:
-        from web3 import Web3
-        rpc_url = settings.get_base_rpc_endpoint()
+        # Read next checkpoint timestamp from file
+        with open(checkpoint_file, 'r') as f:
+            next_checkpoint_ts = int(f.read().strip())
 
-        if not rpc_url:
-            raise ValueError("No RPC endpoint configured")
+        # Get current time
+        current_time = int(time.time())
 
-        w3 = Web3(Web3.HTTPProvider(rpc_url))
-        if not w3.is_connected():
-            raise ConnectionError("Failed to connect to blockchain RPC")
-
-        # Get current blockchain time
-        blockchain_time = w3.eth.get_block('latest')['timestamp']
-
-        # Query contract for checkpoint info
-        staking_contract_address = getattr(settings, 'staking_contract_address', None)
-        if not staking_contract_address:
-            staking_contract_address = "0xeF662b5266db0AeFe55554c50cA6Ad25c1DA16fb"
-
-        staking_abi = [
-            {
-                "inputs": [],
-                "name": "getNextRewardCheckpointTimestamp",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "livenessPeriod",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ]
-
-        staking_contract = w3.eth.contract(address=staking_contract_address, abi=staking_abi)
-
-        # Get next checkpoint and liveness period
-        next_checkpoint_ts = staking_contract.functions.getNextRewardCheckpointTimestamp().call()
-        liveness_period = staking_contract.functions.livenessPeriod().call()
-
-        # Calculate checkpoint interval in hours
-        checkpoint_interval_hours = int(liveness_period / 3600)
-
-        # Validate next checkpoint timestamp
-        if next_checkpoint_ts == 0:
-            next_checkpoint_ts = blockchain_time + liveness_period
-            logger.info("Contract not initialized - using estimated next checkpoint")
-        elif next_checkpoint_ts < blockchain_time:
-            logger.warning(f"Next checkpoint {next_checkpoint_ts} is in the past (current: {blockchain_time})")
-
-        logger.info(f"Successfully fetched checkpoint data from contract: next={next_checkpoint_ts}, interval={checkpoint_interval_hours}h")
+        logger.info(f"Successfully read checkpoint schedule: next={next_checkpoint_ts}, current={current_time}")
 
         return StakingCheckpointsResponse(
             latest_checkpoint=None,
             checkpoint_interval_hours=checkpoint_interval_hours,
-            current_blockchain_time=blockchain_time,
+            current_blockchain_time=current_time,
             next_checkpoint_timestamp=next_checkpoint_ts
         )
 
-    except Exception as e:
-        logger.error(f"Failed to get checkpoint data from contract: {e}")
-        # Return error response with fallback values
+    except FileNotFoundError:
+        logger.warning(f"Checkpoint schedule file not found at {checkpoint_file}")
+        # Return fallback values
         return StakingCheckpointsResponse(
             latest_checkpoint=None,
-            checkpoint_interval_hours=24,
+            checkpoint_interval_hours=checkpoint_interval_hours,
             current_blockchain_time=int(time.time()),
             next_checkpoint_timestamp=None,
-            error=f"Error querying staking contract: {str(e)}"
+            error="Checkpoint schedule file not found - container may need to restart"
+        )
+    except (ValueError, IOError) as e:
+        logger.error(f"Failed to read checkpoint schedule file: {e}")
+        # Return fallback values
+        return StakingCheckpointsResponse(
+            latest_checkpoint=None,
+            checkpoint_interval_hours=checkpoint_interval_hours,
+            current_blockchain_time=int(time.time()),
+            next_checkpoint_timestamp=None,
+            error=f"Error reading checkpoint schedule: {str(e)}"
         )
 
 

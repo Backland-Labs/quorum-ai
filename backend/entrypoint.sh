@@ -52,7 +52,11 @@ if [ -f "/app/scripts/checkpoint.py" ] || [ -f "/app/scripts/trigger_agent_run.p
         # Calculate time 24 hours from now
         FUTURE_MINUTE=$(date -d "+24 hours" +%M)
         FUTURE_HOUR=$(date -d "+24 hours" +%H)
-        
+        NEXT_CHECKPOINT_TIMESTAMP=$(date -d "+24 hours" +%s)
+
+        # Write next checkpoint timestamp to file for API
+        echo "$NEXT_CHECKPOINT_TIMESTAMP" > /app/next_checkpoint_time.txt
+
         echo "$FUTURE_MINUTE $FUTURE_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/checkpoint.py >> /app/logs/checkpoint.log 2>&1" >> "$CRON_FILE"
         
         FIRST_RUN=$(date -d "+24 hours" '+%Y-%m-%d %H:%M:%S %Z')
