@@ -35,10 +35,10 @@
 
   function getStatusColor(status: string): string {
     switch (status) {
-      case 'meeting_threshold': return 'text-green-700 bg-green-50 border-green-200';
-      case 'not_meeting_threshold': return 'text-red-700 bg-red-50 border-red-200';
-      case 'unstaked': return 'text-gray-600 bg-gray-50 border-gray-200';
-      default: return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+      case 'meeting_threshold': return 'text-green-600 bg-green-50 border-green-100';
+      case 'not_meeting_threshold': return 'text-red-600 bg-red-50 border-red-100';
+      case 'unstaked': return 'text-gray-500 bg-gray-50 border-gray-100';
+      default: return 'text-yellow-600 bg-yellow-50 border-yellow-100';
     }
   }
   
@@ -56,8 +56,8 @@
   <div class="flex items-center justify-between mb-4">
     <h3 class="text-base font-semibold text-secondary-900">Service Status</h3>
     {#if data?.service_id}
-      <span class="text-xs font-mono text-secondary-500 bg-secondary-100 px-2 py-1 rounded">
-        ID: {data.service_id}
+      <span class="text-xs font-mono text-secondary-400 bg-secondary-50 px-1.5 py-0.5 rounded">
+        {data.service_id}
       </span>
     {/if}
   </div>
@@ -83,13 +83,13 @@
         </span>
       </div>
 
-      <div class={`px-4 py-3 rounded-lg border text-sm font-medium flex items-center justify-center gap-2 ${getStatusColor(data.status)}`}>
+      <div class={`px-3 py-2 rounded-lg border text-xs font-normal flex items-center justify-center gap-1.5 ${getStatusColor(data.status)}`}>
         {#if data.status === 'meeting_threshold'}
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
         {:else if data.status === 'not_meeting_threshold'}
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
         {/if}
