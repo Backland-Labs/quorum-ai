@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from web3 import Web3
 
 from utils.env_helper import get_env_with_prefix
-from services.service_discovery import ServiceDiscovery
+
 
 
 logger = logging.getLogger(__name__)
@@ -280,12 +280,12 @@ class Settings(BaseSettings):
     # Staking contracts (from Olas env vars)
     staking_token_contract_address: Optional[str] = Field(
         default=None,
-        alias="STAKING_TOKEN_CONTRACT_ADDRESS",
+        alias="STAKING_CONTRACT",
         description="Olas staking token contract",
     )
     # There is the attestation_tracker_address below where activity is checked. This address is currently unused.
     activity_checker_contract_address: Optional[str] = Field(
-        default=None,
+        default="0x747262cC12524C571e08faCb6E6994EF2E3B97ab",
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
         description="Olas activity checker contract",
     )
@@ -605,7 +605,7 @@ class Settings(BaseSettings):
         """Parse environment-specific settings after model initialization."""
         self._parse_safe_addresses()
         self._parse_agent_address()
-        self._parse_service_id()
+        # self._parse_service_id() - Moved to main.py to avoid circular imports
         self._parse_intervals()
         self._parse_agent_run_config()
         self._parse_pearl_logging_config()
@@ -650,29 +650,34 @@ class Settings(BaseSettings):
         if not self.service_registry_address:
             raise ValueError("SERVICE_REGISTRY_ADDRESS must be configured for service discovery")
 
-        discovery = ServiceDiscovery(
-            service_registry_address=self.service_registry_address,
-            rpc_url=rpc_endpoint,
-        )
-        discovered_service_id = discovery.get_service_id_from_safe_address(
-            self.base_safe_address
-        )
-
-        if discovered_service_id is None:
-            raise ValueError(
-                f"Unable to discover service ID for Safe {self.base_safe_address} "
-                f"using registry {self.service_registry_address}"
+        try:
+            from services.service_discovery import ServiceDiscovery
+            discovery = ServiceDiscovery(
+                service_registry_address=self.service_registry_address,
+                rpc_url=rpc_endpoint,
+            )
+            discovered_service_id = discovery.get_service_id_from_safe_address(
+                self.base_safe_address
             )
 
-        self.service_id = discovered_service_id
-        logger.info(
-            "Auto-discovered service ID",
-            extra={
-                "service_id": self.service_id,
-                "service_registry": self.service_registry_address,
-                "safe_address": self.base_safe_address,
-            },
-        )
+            if discovered_service_id is None:
+                logger.warning(
+                    f"Unable to discover service ID for Safe {self.base_safe_address} "
+                    f"using registry {self.service_registry_address}"
+                )
+            else:
+                self.service_id = discovered_service_id
+                logger.info(
+                    "Auto-discovered service ID",
+                    extra={
+                        "service_id": self.service_id,
+                        "service_registry": self.service_registry_address,
+                        "safe_address": self.base_safe_address,
+                    },
+                )
+        except Exception as e:
+            logger.warning(f"Service discovery failed during startup: {e}")
+            # Do not raise, allow app to start without service ID
 
     def _parse_intervals(self):
         """Parse interval settings from environment variables."""

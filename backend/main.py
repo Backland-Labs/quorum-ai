@@ -43,10 +43,13 @@ from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
+from services.state_transition_tracker import StateTransitionTracker
 from services.health_status_service import HealthStatusService
+from services.staking_service import StakingService, ServiceStatus
+from services.service_discovery import ServiceDiscovery
 
 # Initialize Pearl-compliant logger
-logger = setup_pearl_logger(__name__)
+logger = setup_pearl_logger(__name__, log_file_path=settings.log_file_path)
 
 # Global service instances
 ai_service: AIService
@@ -61,7 +64,10 @@ signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
+withdrawal_service: WithdrawalService
+state_transition_tracker: Optional[StateTransitionTracker] = None
 health_status_service: Optional[HealthStatusService] = None
+staking_service: Optional[StakingService] = None
 
 
 @asynccontextmanager
@@ -81,7 +87,11 @@ async def lifespan(_app: FastAPI):
         shutdown_coordinator, \
         withdrawal_service, \
         state_transition_tracker, \
-        health_status_service
+        shutdown_coordinator, \
+        withdrawal_service, \
+        state_transition_tracker, \
+        health_status_service, \
+        staking_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -119,6 +129,35 @@ async def lifespan(_app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to initialize HealthStatusService: {e}")
         health_status_service = None
+
+    # Initialize StakingService
+    try:
+        staking_service = StakingService()
+        logger.info("StakingService initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize StakingService: {e}")
+        staking_service = None
+
+    # Perform Service Discovery if needed
+    if settings.service_id is None:
+        try:
+            logger.info("Attempting service discovery...")
+            rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
+            if settings.base_safe_address and settings.service_registry_address:
+                discovery = ServiceDiscovery(
+                    service_registry_address=settings.service_registry_address,
+                    rpc_url=rpc_endpoint,
+                )
+                service_id = discovery.get_service_id_from_safe_address(
+                    settings.base_safe_address
+                )
+                if service_id is not None:
+                    settings.service_id = service_id
+                    logger.info(f"Service ID discovered and set: {service_id}")
+                else:
+                    logger.warning("Service ID not found during startup discovery")
+        except Exception as e:
+            logger.warning(f"Service discovery failed during startup: {e}")
 
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -453,6 +492,58 @@ async def healthcheck():
         }
 
         return error_response
+
+
+@app.get("/api/status/discovery")
+async def get_discovery_status():
+    """Get service discovery and staking status."""
+    try:
+        # 1. Get Service ID
+        service_id = settings.service_id
+        
+        # If not in settings, try to discover it now (retry logic)
+        if service_id is None:
+            try:
+                rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
+                if settings.base_safe_address and settings.service_registry_address:
+                    discovery = ServiceDiscovery(
+                        service_registry_address=settings.service_registry_address,
+                        rpc_url=rpc_endpoint,
+                    )
+                    service_id = discovery.get_service_id_from_safe_address(
+                        settings.base_safe_address
+                    )
+                    # Update settings if found
+                    if service_id is not None:
+                        settings.service_id = service_id
+            except Exception as e:
+                logger.warning(f"Runtime service discovery failed: {e}")
+
+        if service_id is None:
+            return {
+                "service_id": None,
+                "state": "UNKNOWN",
+                "status": ServiceStatus.UNKNOWN.value,
+                "is_live": False,
+                "message": "Service ID not found. Please ensure Safe is registered."
+            }
+
+        # 2. Get Staking Status
+        if staking_service:
+            status_data = staking_service.get_service_staking_state(service_id)
+            return status_data
+        else:
+            return {
+                "service_id": service_id,
+                "state": "UNKNOWN",
+                "status": ServiceStatus.UNKNOWN.value,
+                "is_live": False,
+                "message": "Staking service unavailable"
+            }
+
+    except Exception as e:
+        logger.error(f"Error in discovery status endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # Proposal endpoints

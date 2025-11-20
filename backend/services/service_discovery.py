@@ -65,7 +65,7 @@ class ServiceDiscovery:
 
         total_services = self.registry.functions.totalSupply().call()
         self.logger.info(
-            "Discovering service ID from ServiceRegistry", total_services=total_services
+            f"Discovering service ID from ServiceRegistry total_services={total_services}"
         )
 
         for service_id in range(total_services):
@@ -74,9 +74,9 @@ class ServiceDiscovery:
 
             if multisig_address and multisig_address.lower() == safe_address.lower():
                 self.logger.info(
-                    "Found service ID for Safe", service_id=service_id, safe=safe_address
+                    f"Found service ID for Safe service_id={service_id} safe={safe_address}"
                 )
                 return service_id
 
-        self.logger.warning("No service ID found for Safe", safe=safe_address)
+        self.logger.warning(f"No service ID found for Safe safe={safe_address}")
         return None
