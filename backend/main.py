@@ -1,5 +1,6 @@
 """Main FastAPI application for Quorum AI backend."""
 
+import asyncio
 import hashlib
 import os
 import time
@@ -70,6 +71,33 @@ health_status_service: Optional[HealthStatusService] = None
 staking_service: Optional[StakingService] = None
 
 
+async def run_service_discovery_background():
+    """Run service discovery in the background without blocking startup."""
+    try:
+        # Small delay to ensure other services are initialized
+        await asyncio.sleep(0.5)
+
+        logger.info("Starting background service discovery...")
+        rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
+        if settings.base_safe_address and settings.service_registry_address:
+            discovery = ServiceDiscovery(
+                service_registry_address=settings.service_registry_address,
+                rpc_url=rpc_endpoint,
+            )
+            service_id = discovery.get_service_id_from_safe_address(
+                settings.base_safe_address
+            )
+            if service_id is not None:
+                settings.service_id = service_id
+                logger.info(f"Background service discovery completed: service_id={service_id}")
+            else:
+                logger.warning("Background service discovery: Service ID not found")
+        else:
+            logger.info("Skipping service discovery: missing base_safe_address or service_registry_address")
+    except Exception as e:
+        logger.warning(f"Background service discovery failed: {e}")
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     """Application lifespan context manager."""
@@ -138,26 +166,12 @@ async def lifespan(_app: FastAPI):
         logger.error(f"Failed to initialize StakingService: {e}")
         staking_service = None
 
-    # Perform Service Discovery if needed
+    # Launch service discovery in background (non-blocking)
     if settings.service_id is None:
-        try:
-            logger.info("Attempting service discovery...")
-            rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
-            if settings.base_safe_address and settings.service_registry_address:
-                discovery = ServiceDiscovery(
-                    service_registry_address=settings.service_registry_address,
-                    rpc_url=rpc_endpoint,
-                )
-                service_id = discovery.get_service_id_from_safe_address(
-                    settings.base_safe_address
-                )
-                if service_id is not None:
-                    settings.service_id = service_id
-                    logger.info(f"Service ID discovered and set: {service_id}")
-                else:
-                    logger.warning("Service ID not found during startup discovery")
-        except Exception as e:
-            logger.warning(f"Service discovery failed during startup: {e}")
+        logger.info("Launching service discovery in background...")
+        asyncio.create_task(run_service_discovery_background())
+    else:
+        logger.info(f"Service ID already configured: {settings.service_id}")
 
     # Initialize signal handling
     signal_handler = SignalHandler()
