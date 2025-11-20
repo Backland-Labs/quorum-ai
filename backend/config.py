@@ -457,6 +457,20 @@ class Settings(BaseSettings):
         description="Base network RPC endpoint (alternative to BASE_LEDGER_RPC)",
     )
 
+    @field_validator("base_safe_address", mode="before")
+    @classmethod
+    def validate_base_safe_address(cls, v):
+        """Filter out Olas placeholder values for BASE_SAFE_ADDRESS."""
+        if v is None or v == "":
+            return None
+        if isinstance(v, str):
+            # Filter out Olas placeholder (str:, int:, etc.)
+            if v.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
+                return None
+            # Return cleaned value
+            return v.strip() if v.strip() else None
+        return v
+
     # AttestationTracker Configuration
     attestation_tracker_address: Optional[str] = Field(
         default="0x08E7C36CDC1649428c6a056B8465d478ADE0Fae8",
