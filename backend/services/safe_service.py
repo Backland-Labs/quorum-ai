@@ -1,6 +1,5 @@
 """Safe transaction service for handling multi-signature wallet operations."""
 
-import json
 import time
 from typing import Dict, Optional, Any, List
 from web3 import Web3

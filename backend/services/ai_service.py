@@ -1,13 +1,12 @@
 """AI service for proposal analysis with dual functionality: summarization and autonomous voting."""
 
-import asyncio
 import hashlib
 import json
 import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Any, Optional
 
 from pydantic_ai import Agent, NativeOutput, RunContext
 from pydantic_ai.models.openai import OpenAIModel
@@ -17,7 +16,6 @@ from config import settings
 from logging_config import setup_pearl_logger, log_span
 from models import (
     Proposal,
-    ProposalSummary,
     VoteDecision,
     VoteType,
     VotingStrategy,
@@ -373,134 +371,7 @@ class VotingAgent:
 
 
 @dataclass
-class SummarizationDependencies:
-    """Dependencies for SummarizationAgent operations."""
 
-    snapshot_service: SnapshotService
-    # Note: Unlike VotingDependencies, summarization doesn't need user_preferences
-
-    def __post_init__(self):
-        """Runtime assertions for dependency validation."""
-        assert self.snapshot_service is not None, "SnapshotService required"
-
-
-class SummarizationAgent:
-    """Pydantic AI Agent for proposal summarization."""
-
-    def __init__(self, model: OpenAIModel) -> None:
-        """Initialize SummarizationAgent with shared model instance."""
-        # Initialize Pearl-compliant logger (matches VotingAgent pattern)
-        self.logger = setup_pearl_logger(__name__, store_path=settings.store_path)
-        self.model = model  # Use shared model instance
-        self.agent: Agent[SummarizationDependencies, ProposalSummary] = (
-            self._create_agent()
-        )
-
-        # No tools registration needed (unlike VotingAgent)
-        self.logger.info("SummarizationAgent initialized with shared model")
-
-    def _create_agent(self) -> Agent[SummarizationDependencies, ProposalSummary]:
-        """Create and configure the summarization agent."""
-        assert self.model is not None, "Model must be initialized before creating agent"
-
-        self.logger.info("Creating SummarizationAgent with ProposalSummary output")
-
-        system_prompt = self._get_system_prompt()
-        output_config = NativeOutput(ProposalSummary, strict=False)
-
-        agent = Agent[SummarizationDependencies, ProposalSummary](
-            model=self.model,
-            system_prompt=system_prompt,
-            output_type=output_config,
-            deps_type=SummarizationDependencies,
-        )
-
-        assert agent is not None, "Agent creation returned None"
-        assert hasattr(agent, "run"), "Agent must have run method"
-
-        return agent
-
-    def _get_system_prompt(self) -> str:
-        """Get summarization-specific system prompt."""
-        return """You are an AI assistant specialized in analyzing DAO governance proposals for summarization.
-
-        Your role is to provide clear, comprehensive summaries that help users understand:
-        - The main purpose and goals of the proposal
-        - Key changes or actions being proposed
-        - Potential risks and benefits
-        - Voting recommendations based on the analysis
-
-        Always provide structured responses with all required fields populated."""
-
-    async def summarize_proposal(
-        self, proposal: Proposal, deps: SummarizationDependencies
-    ) -> ProposalSummary:
-        """Generate proposal summary using the summarization agent."""
-        self.logger.info(f"Processing proposal summary, proposal_id={proposal.id}")
-
-        try:
-            prompt = self._build_summary_prompt(proposal)
-            result = await self.agent.run(prompt, deps=deps)
-
-            self.logger.info(
-                f"Successfully generated summary for proposal {proposal.id}"
-            )
-            return result.output
-
-        except Exception as e:
-            self.logger.error(
-                f"Failed to generate summary for proposal {proposal.id}, error={str(e)}"
-            )
-            raise e
-
-    def _build_summary_prompt(self, proposal: Proposal) -> str:
-        """Build prompt for proposal summarization."""
-        proposal_info = self._format_proposal_info(proposal)
-
-        return f"""
-        Please analyze the following DAO proposal and provide a comprehensive summary:
-
-        {proposal_info}
-
-        Please provide your analysis in the required ProposalSummary format with:
-        - proposal_id: "{proposal.id}"
-        - title: "{proposal.title}"
-        - summary: A comprehensive summary of the proposal in 2-3 sentences
-        - key_points: List of the most important points from the proposal
-        - risk_assessment: Risk level (LOW, MEDIUM, or HIGH)
-        - recommendation: Optional voting recommendation for users
-        - confidence: Your confidence in the analysis (0.0-1.0)
-        """
-
-    def _format_proposal_info(self, proposal: Proposal) -> str:
-        """Format proposal information for the AI prompt."""
-        vote_breakdown = self._extract_vote_breakdown(proposal)
-        proposal_description = self._get_proposal_description(proposal)
-
-        return f"""**Proposal Title:** {proposal.title}
-        **Space:** {proposal.space_id}
-        **Current Status:** {proposal.state}
-
-        **Voting Results:**
-        - Votes For: {vote_breakdown["for"]:,.0f}
-        - Votes Against: {vote_breakdown["against"]:,.0f}
-        - Abstain: {vote_breakdown["abstain"]:,.0f}
-        - Total Votes: {proposal.votes}
-
-        **Proposal Description:**
-        {proposal_description}"""
-
-    def _extract_vote_breakdown(self, proposal: Proposal) -> Dict[str, float]:
-        """Extract individual vote counts from proposal scores array."""
-        votes_for = proposal.scores[0] if len(proposal.scores) > 0 else 0
-        votes_against = proposal.scores[1] if len(proposal.scores) > 1 else 0
-        votes_abstain = proposal.scores[2] if len(proposal.scores) > 2 else 0
-
-        return {"for": votes_for, "against": votes_against, "abstain": votes_abstain}
-
-    def _get_proposal_description(self, proposal: Proposal) -> str:
-        """Get proposal description with fallback."""
-        return proposal.body or "No description available"
 
 
 class AIResponseProcessor:
@@ -670,7 +541,6 @@ class AIService:
 
         # Agent composition - replace single self.agent with separate agents
         self.voting_agent: Optional[VotingAgent] = None
-        self.summarization_agent: Optional[SummarizationAgent] = None
 
         # Try to initialize if API key is available
         self._initialize_if_key_available()
@@ -685,11 +555,10 @@ class AIService:
                     model = self._create_model()
                     if isinstance(model, OpenAIModel):
                         self.model = model
-                        # Initialize both agents with shared model
+                        # Initialize voting agent with shared model
                         self.voting_agent = VotingAgent(self.model)
-                        self.summarization_agent = SummarizationAgent(self.model)
                         logger.info(
-                            "Both voting and summarization agents initialized with shared model"
+                            "Voting agent initialized with shared model"
                         )
                     else:
                         logger.warning(
@@ -722,11 +591,10 @@ class AIService:
                     model = self._create_model()
                     if isinstance(model, OpenAIModel):
                         self.model = model
-                        # Initialize both agents with shared model
+                        # Initialize voting agent with shared model
                         self.voting_agent = VotingAgent(self.model)
-                        self.summarization_agent = SummarizationAgent(self.model)
                         logger.info(
-                            "OpenRouter API key set successfully for both agents"
+                            "OpenRouter API key set successfully for voting agent"
                         )
                     else:
                         logger.warning(
@@ -738,7 +606,6 @@ class AIService:
             else:
                 self.model = None
                 self.voting_agent = None
-                self.summarization_agent = None
 
     def _create_model(self) -> OpenAIModel:
         """Create the AI model with OpenRouter configuration."""
@@ -1124,356 +991,7 @@ class AIService:
             logger.error("VotingAgent call failed, error=%s", str(e))
             raise e
 
-    async def summarize_proposal(self, proposal: Proposal) -> ProposalSummary:
-        """Generate a summary for a single proposal."""
-        # Runtime assertion: validate input parameters
-        assert proposal is not None, "Proposal cannot be None"
-        assert isinstance(proposal, Proposal), (
-            f"Expected Proposal object, got {type(proposal)}"
-        )
 
-        # Constants for default values
-        DEFAULT_CONFIDENCE_SCORE = 0.85
-        DEFAULT_RECOMMENDATION = ""
-
-        # Check for mock mode or missing API key
-        if settings.mock_mode:
-            logger.warning("AI in MOCK_MODE: returning stubbed summary")
-            return ProposalSummary(
-                proposal_id=proposal.id,
-                title=proposal.title,
-                summary="[MOCK] This is a test proposal summary",
-                key_points=["Mock key point 1", "Mock key point 2", "Mock key point 3"],
-                risk_assessment=RiskLevel.LOW,
-                recommendation="[MOCK] approve",
-                confidence=0.85,
-            )
-
-        try:
-            # Extract model type for logging
-            model_type_name = type(self.model).__name__
-
-            with log_span(logger, "ai_proposal_summary", proposal_id=proposal.id):
-                logger.info(
-                    "Starting proposal summarization, proposal_id=%s, proposal_title=%s, model_type=%s",
-                    proposal.id,
-                    proposal.title,
-                    model_type_name,
-                )
-
-                # Generate summary data
-                summary_data = await self._generate_proposal_summary(proposal)
-
-                # Extract metrics for logging
-                summary_text = summary_data.get("summary", "")
-                key_points_list = summary_data.get("key_points", [])
-                summary_length = len(summary_text)
-                key_points_count = len(key_points_list)
-
-                logger.info(
-                    "Successfully generated proposal summary, proposal_id=%s, summary_length=%s, key_points_count=%s",
-                    proposal.id,
-                    summary_length,
-                    key_points_count,
-                )
-
-                # Create proposal summary object
-                proposal_summary = self._create_proposal_summary_from_data(
-                    proposal,
-                    summary_data,
-                    DEFAULT_CONFIDENCE_SCORE,
-                    DEFAULT_RECOMMENDATION,
-                )
-
-                # Runtime assertion: validate output
-                assert proposal_summary is not None, (
-                    "ProposalSummary creation returned None"
-                )
-                assert proposal_summary.proposal_id == proposal.id, (
-                    "ProposalSummary proposal_id mismatch"
-                )
-                assert hasattr(proposal_summary, "summary"), (
-                    "ProposalSummary must have summary attribute"
-                )
-
-                return proposal_summary
-
-        except Exception as e:
-            error_message = str(e)
-            error_type = type(e).__name__
-
-            logger.error(
-                "Failed to summarize proposal, proposal_id=%s, proposal_title=%s, error=%s, error_type=%s",
-                proposal.id,
-                proposal.title,
-                error_message,
-                error_type,
-            )
-            raise e
-
-    def _create_proposal_summary_from_data(
-        self,
-        proposal: Proposal,
-        summary_data: Dict[str, Any],
-        default_confidence: float,
-        default_recommendation: str,
-    ) -> ProposalSummary:
-        """Create ProposalSummary object from summary data."""
-        return ProposalSummary(
-            proposal_id=proposal.id,
-            title=proposal.title,
-            summary=summary_data["summary"],
-            key_points=summary_data["key_points"],
-            risk_assessment=summary_data["risk_assessment"],
-            recommendation=summary_data.get("recommendation", default_recommendation),
-            confidence=default_confidence,
-        )
-
-    async def summarize_multiple_proposals(
-        self, proposals: List[Proposal]
-    ) -> List[ProposalSummary]:
-        """Generate summaries for multiple proposals concurrently."""
-        # Runtime assertion: validate input parameters
-        assert proposals is not None, "Proposals list cannot be None"
-        assert isinstance(proposals, list), (
-            f"Expected list of Proposals, got {type(proposals)}"
-        )
-        assert len(proposals) > 0, "Proposals list cannot be empty"
-
-        try:
-            # Extract context for logging
-            proposal_count = len(proposals)
-            model_type_name = type(self.model).__name__
-
-            # Check if API key is configured
-            if not settings.openrouter_api_key:
-                logger.error("OpenRouter API key is not configured")
-                raise ValueError(
-                    "OpenRouter API key is not configured. Please set OPENROUTER_API_KEY environment variable."
-                )
-
-            with log_span(
-                logger, "ai_multiple_proposal_summaries", proposal_count=proposal_count
-            ):
-                logger.info(
-                    "Starting multiple proposal summarization, proposal_count=%s, model_type=%s",
-                    proposal_count,
-                    model_type_name,
-                )
-
-                # Create tasks for concurrent processing
-                logger.debug("Creating summary tasks for concurrent processing")
-                summary_tasks = self._create_summary_tasks(proposals)
-
-                logger.debug(f"Executing {len(summary_tasks)} concurrent summary tasks")
-                results = await asyncio.gather(*summary_tasks, return_exceptions=True)
-
-                # Check for any exceptions in the results
-                errors = [r for r in results if isinstance(r, Exception)]
-                if errors:
-                    logger.error(f"Errors occurred during summarization: {errors}")
-                    raise errors[0]
-
-                # Filter out exceptions and None values, ensure type safety
-                summaries: List[ProposalSummary] = [
-                    r
-                    for r in results
-                    if isinstance(r, ProposalSummary) and r is not None
-                ]
-
-                # Extract summary count for validation
-                summary_count = len(summaries)
-
-                logger.info(
-                    "Successfully generated multiple proposal summaries, proposal_count=%s, summary_count=%s",
-                    proposal_count,
-                    summary_count,
-                )
-
-                # Runtime assertion: validate output
-                assert summary_count == proposal_count, (
-                    "Summary count must match proposal count"
-                )
-                assert all(isinstance(s, ProposalSummary) for s in summaries), (
-                    "All items must be ProposalSummary objects"
-                )
-
-                return summaries
-
-        except Exception as e:
-            error_message = str(e)
-            error_type = type(e).__name__
-            import traceback
-
-            tb_str = "".join(traceback.format_exception(type(e), e, e.__traceback__))
-
-            logger.error(
-                "Failed to summarize multiple proposals, proposal_count=%s, error=%s, error_type=%s\nTraceback:\n%s",
-                len(proposals),
-                error_message,
-                error_type,
-                tb_str,
-            )
-            raise e
-
-    def _create_summary_tasks(self, proposals: List[Proposal]) -> List[Any]:
-        """Create async tasks for summarizing proposals."""
-        return [self.summarize_proposal(proposal) for proposal in proposals]
-
-    async def _generate_proposal_summary(self, proposal: Proposal) -> Dict[str, Any]:
-        """Generate summary data for a proposal."""
-        prompt = self._build_summary_prompt(proposal)
-        ai_response = await self._call_ai_model_for_summary(prompt)
-        return self._parse_and_validate_summary_response(ai_response)
-
-    async def _call_ai_model_for_summary(self, prompt: str) -> Dict[str, Any]:
-        """Call the AI model with the given prompt for summarization."""
-        assert prompt is not None, "Prompt cannot be None"
-        assert isinstance(prompt, str), f"Prompt must be string, got {type(prompt)}"
-
-        try:
-            prompt_length = len(prompt)
-            logger.info(
-                "Calling SummarizationAgent for summary, prompt_length=%s",
-                prompt_length,
-            )
-
-            # Check if summarization agent is initialized
-            if not self.summarization_agent:
-                raise ValueError("AI service not initialized - API key required")
-
-            # Create dependencies for summarization
-            deps = SummarizationDependencies(snapshot_service=self.snapshot_service)
-
-            # Use dedicated summarization agent instead of self.agent
-            result = await self.summarization_agent.agent.run(prompt, deps=deps)
-
-            # Process result - now returns ProposalSummary structure
-            processed_result = (
-                result.output.model_dump(mode="json")
-                if hasattr(result.output, "model_dump")
-                else result.output
-            )
-
-            assert isinstance(processed_result, dict), "AI result must be a dictionary"
-            logger.info("Successfully processed summarization agent response")
-
-            return processed_result
-
-        except Exception as e:
-            logger.error("Summarization agent call failed, error=%s", str(e))
-            raise e
-
-    def _process_summary_ai_result(self, result: Any) -> Dict[str, Any]:
-        """Process AI model result specifically for summarization."""
-        # Runtime assertion: validate input
-        assert result is not None, "AI result cannot be None"
-
-        try:
-            if hasattr(result, "output"):
-                logger.debug("Processing AI result with output attribute")
-                output = result.output
-                if isinstance(output, str):
-                    return json.loads(output)
-                return output
-            else:
-                # Fallback: try to parse the result directly as JSON string
-                if isinstance(result, str):
-                    return json.loads(result)
-                # If it's already a dict, return it
-                elif isinstance(result, dict):
-                    return result
-                else:
-                    # Create a summary fallback response
-                    return self._create_summary_fallback_response(str(result))
-        except json.JSONDecodeError as e:
-            logger.warning(f"Failed to parse AI result as JSON: {e}")
-            # Create a summary fallback response
-            return self._create_summary_fallback_response(str(result))
-
-    def _create_summary_fallback_response(self, raw_output: str) -> Dict[str, Any]:
-        """Create a fallback summary response when AI output cannot be parsed."""
-        logger.debug(
-            f"Creating fallback response for raw output: {raw_output[:100]}..."
-        )
-        return {
-            "summary": "Unable to generate structured summary from AI response",
-            "key_points": [
-                "AI response processing failed",
-                "Raw output available in logs",
-            ],
-            "risk_level": "MEDIUM",
-            "recommendation": "Manual review recommended due to parsing failure",
-        }
-
-    def _build_summary_prompt(self, proposal: Proposal) -> str:
-        """Build the complete prompt for proposal summarization."""
-        proposal_info = self._format_proposal_info(proposal)
-        json_format = self._get_summary_json_format()
-
-        return f"""
-        Please analyze the following DAO proposal and provide a comprehensive summary:
-
-        {proposal_info}
-
-        {json_format}
-        """
-
-    def _get_summary_json_format(self) -> str:
-        """Get the JSON response format specification for summarization."""
-        return """Please respond in the following JSON format:
-        {
-            "summary": "A comprehensive summary of the proposal in 2-3 sentences",
-            "key_points": ["Key point 1", "Key point 2", "Key point 3"],
-            "risk_level": "LOW|MEDIUM|HIGH",
-            "recommendation": "Optional recommendation for voters"
-        }"""
-
-    def _parse_and_validate_summary_response(
-        self, ai_response: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """Parse and validate AI summary response from SummarizationAgent."""
-        logger.info("Parsing and validating ProposalSummary response")
-
-        assert ai_response is not None, "AI response cannot be None"
-        assert isinstance(ai_response, dict), (
-            f"Expected dict response, got {type(ai_response)}"
-        )
-
-        # Extract fields from ProposalSummary structure (not AiVoteResponse)
-        proposal_id = ai_response.get("proposal_id", "")
-        title = ai_response.get("title", "")
-        summary = ai_response.get("summary", "No summary provided")
-        key_points = ai_response.get("key_points", [])
-        risk_assessment = ai_response.get("risk_assessment", None)
-        recommendation = ai_response.get("recommendation", None)
-        confidence = ai_response.get("confidence", 0.5)
-
-        # Validate required fields with Pearl logging
-        if not summary or summary == "No summary provided":
-            logger.warning("AI response missing summary field")
-        if not key_points:
-            logger.warning("AI response missing key_points field")
-        if not isinstance(confidence, (int, float)) or not (0.0 <= confidence <= 1.0):
-            logger.warning("Invalid confidence value %s, using default", confidence)
-            confidence = 0.5
-
-        # Ensure key_points is a list
-        if not isinstance(key_points, list):
-            key_points = [str(key_points)] if key_points else []
-
-        logger.info("Successfully validated ProposalSummary response structure")
-
-        # Return structure for downstream ProposalSummary creation
-        return {
-            "proposal_id": proposal_id,
-            "title": title,
-            "summary": summary,
-            "key_points": key_points,
-            "risk_assessment": risk_assessment,
-            "recommendation": recommendation,
-            "confidence": confidence,
-        }
 
     async def save_decision_file(
         self, decision: VotingDecisionFile, base_path: Optional[Path] = None

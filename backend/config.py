@@ -1,13 +1,18 @@
 """Configuration management following 12-factor app principles."""
 
+import logging
 import os
-from typing import Any, ClassVar, Dict, List, Optional, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Optional, Tuple
 
 from pydantic import Field, field_validator, model_validator
-from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from web3 import Web3
 
 from utils.env_helper import get_env_with_prefix
+
+
+
+logger = logging.getLogger(__name__)
 
 
 class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
@@ -275,12 +280,12 @@ class Settings(BaseSettings):
     # Staking contracts (from Olas env vars)
     staking_token_contract_address: Optional[str] = Field(
         default=None,
-        alias="STAKING_TOKEN_CONTRACT_ADDRESS",
+        alias="STAKING_CONTRACT",
         description="Olas staking token contract",
     )
     # There is the attestation_tracker_address below where activity is checked. This address is currently unused.
     activity_checker_contract_address: Optional[str] = Field(
-        default=None,
+        default="0x747262cC12524C571e08faCb6E6994EF2E3B97ab",
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
         description="Olas activity checker contract",
     )
@@ -288,6 +293,16 @@ class Settings(BaseSettings):
         default=None,
         alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
         description="Olas service registry contract",
+    )
+    service_registry_address: str = Field(
+        default="0x3d77596beb0f130a4415df3D2D8232B3d3D31e44",
+        alias="SERVICE_REGISTRY_ADDRESS",
+        description="Primary Olas service registry contract address",
+    )
+    service_id: Optional[int] = Field(
+        default=None,
+        alias="SERVICE_ID",
+        description="Olas service ID for staking compliance",
     )
 
     # OLAS configuration for new services
@@ -590,6 +605,7 @@ class Settings(BaseSettings):
         """Parse environment-specific settings after model initialization."""
         self._parse_safe_addresses()
         self._parse_agent_address()
+        # self._parse_service_id() - Moved to main.py to avoid circular imports
         self._parse_intervals()
         self._parse_agent_run_config()
         self._parse_pearl_logging_config()
@@ -612,6 +628,56 @@ class Settings(BaseSettings):
         agent_address_env = get_env_with_prefix("AGENT_ADDRESS")
         if agent_address_env:
             self.agent_address = agent_address_env
+
+    def _parse_service_id(self) -> None:
+        """Resolve service ID via env overrides or ServiceRegistry discovery."""
+
+        if self.service_id is not None:
+            # Explicit SERVICE_ID provided
+            self.service_id = int(self.service_id)
+            logger.info("Using SERVICE_ID from environment", extra={"service_id": self.service_id})
+            return
+
+        rpc_endpoint = self.get_base_rpc_endpoint() or self.rpc_url
+        if not rpc_endpoint:
+            raise ValueError("RPC_URL or BASE_RPC_URL is required for service ID discovery")
+
+        if not self.base_safe_address:
+            raise ValueError(
+                "BASE_SAFE_ADDRESS is required for automatic service ID discovery."
+            )
+
+        if not self.service_registry_address:
+            raise ValueError("SERVICE_REGISTRY_ADDRESS must be configured for service discovery")
+
+        try:
+            from services.service_discovery import ServiceDiscovery
+            discovery = ServiceDiscovery(
+                service_registry_address=self.service_registry_address,
+                rpc_url=rpc_endpoint,
+            )
+            discovered_service_id = discovery.get_service_id_from_safe_address(
+                self.base_safe_address
+            )
+
+            if discovered_service_id is None:
+                logger.warning(
+                    f"Unable to discover service ID for Safe {self.base_safe_address} "
+                    f"using registry {self.service_registry_address}"
+                )
+            else:
+                self.service_id = discovered_service_id
+                logger.info(
+                    "Auto-discovered service ID",
+                    extra={
+                        "service_id": self.service_id,
+                        "service_registry": self.service_registry_address,
+                        "safe_address": self.base_safe_address,
+                    },
+                )
+        except Exception as e:
+            logger.warning(f"Service discovery failed during startup: {e}")
+            # Do not raise, allow app to start without service ID
 
     def _parse_intervals(self):
         """Parse interval settings from environment variables."""

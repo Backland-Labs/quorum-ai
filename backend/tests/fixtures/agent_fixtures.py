@@ -14,7 +14,6 @@ from models import (
     UserPreferences,
     VotingStrategy,
     VoteType,
-    SummarizeResponse,
     AiVoteResponse,
 )
 
@@ -158,20 +157,6 @@ class AgentTestFixtures:
             )
 
         return voters
-
-    @staticmethod
-    def create_sample_ai_summary_response() -> SummarizeResponse:
-        """Create a sample AI summary response."""
-        return SummarizeResponse(
-            summary="This proposal aims to improve the protocol's efficiency and security.",
-            key_points=[
-                "Implements new optimization techniques",
-                "Enhances security measures",
-                "Reduces gas costs by 30%",
-            ],
-            potential_impact="High positive impact on user experience and protocol sustainability",
-            voter_recommendation="Consider supporting if technical review is positive",
-        )
 
     @staticmethod
     def create_sample_ai_vote_response(

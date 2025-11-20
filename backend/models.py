@@ -297,40 +297,7 @@ class Proposal(BaseModel):
         return self
 
 
-class ProposalSummary(BaseModel):
-    """AI-generated summary of a proposal."""
 
-    proposal_id: str = Field(..., description="The proposal ID being summarized")
-    title: str = Field(..., description="Original proposal title")
-    summary: str = Field(..., description="AI-generated concise summary")
-    key_points: List[str] = Field(
-        ..., description="List of key points from the proposal"
-    )
-    risk_assessment: Optional[RiskLevel] = Field(
-        None, description="Risk level assessment"
-    )
-    recommendation: Optional[str] = Field(
-        None, description="AI-generated voting recommendation"
-    )
-    confidence: float = Field(
-        ..., ge=0.0, le=1.0, description="Confidence in the analysis"
-    )
-
-
-class SummarizeRequest(BaseModel):
-    """Request model for proposal summarization."""
-
-    proposal_ids: List[str] = Field(..., min_length=1, max_length=50)
-    include_risk_assessment: bool = Field(default=True)
-    include_recommendations: bool = Field(default=True)
-
-
-class SummarizeResponse(BaseModel):
-    """Response model for proposal summarization."""
-
-    summaries: List[ProposalSummary] = Field(..., description="AI-generated summaries")
-    processing_time: float = Field(..., description="Time taken to process in seconds")
-    model_used: str = Field(..., description="AI model used for summarization")
 
 
 class ProposalVoter(BaseModel):

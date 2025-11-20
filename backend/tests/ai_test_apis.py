@@ -161,62 +161,6 @@ class APITester:
             self.log_result("Proposal by ID", False, f"Error: {str(e)}")
             return False
 
-    def test_proposal_summarize(self, proposal_id: str) -> bool:
-        """Test AI proposal summarization."""
-        try:
-            start = time.time()
-            response = requests.post(
-                f"{self.base_url}/proposals/summarize",
-                json={
-                    "proposal_ids": [proposal_id],
-                    "include_risk_assessment": True,
-                    "include_recommendations": True,
-                },
-                timeout=TIMEOUT,
-            )
-            response_time = time.time() - start
-
-            if response.status_code == 200:
-                data = response.json()
-                if "summaries" in data and len(data["summaries"]) > 0:
-                    summary = data["summaries"][0]
-                    if "summary" in summary and "proposal_id" in summary:
-                        self.log_result(
-                            "AI Summarization",
-                            True,
-                            f"Generated summary for {summary['proposal_id']}",
-                            response_time,
-                        )
-                        return True
-                    else:
-                        self.log_result(
-                            "AI Summarization",
-                            False,
-                            f"Invalid summary structure: {summary}",
-                            response_time,
-                        )
-                        return False
-                else:
-                    self.log_result(
-                        "AI Summarization",
-                        False,
-                        f"No summaries returned: {data}",
-                        response_time,
-                    )
-                    return False
-            else:
-                self.log_result(
-                    "AI Summarization",
-                    False,
-                    f"HTTP {response.status_code}: {response.text}",
-                    response_time,
-                )
-                return False
-
-        except Exception as e:
-            self.log_result("AI Summarization", False, f"Error: {str(e)}")
-            return False
-
     def test_top_voters(self, proposal_id: str) -> bool:
         """Test top voters endpoint."""
         try:
@@ -279,10 +223,7 @@ class APITester:
         # Test 3: Get specific proposal
         proposal_ok = self.test_proposal_by_id(proposal_id)
 
-        # Test 4: AI summarization
-        summarize_ok = self.test_proposal_summarize(proposal_id)
-
-        # Test 5: Top voters
+        # Test 4: Top voters
         voters_ok = self.test_top_voters(proposal_id)
 
         # Summary
