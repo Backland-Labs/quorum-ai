@@ -63,13 +63,13 @@ class StakingService:
         self.web3 = Web3(Web3.HTTPProvider(rpc_url))
         
         # Initialize Staking Contract
-        if settings.staking_token_contract_address:
+        if settings.staking_contract_address:
             self.staking_contract = self.web3.eth.contract(
-                address=settings.staking_token_contract_address,
+                address=settings.staking_contract_address,
                 abi=STAKING_CONTRACT_ABI
             )
         else:
-            self.logger.warning("STAKING_TOKEN_CONTRACT_ADDRESS not set. Staking features disabled.")
+            self.logger.warning("STAKING_CONTRACT_ADDRESS not set. Staking features disabled.")
             self.staking_contract = None
 
         # Initialize Activity Checker Contract

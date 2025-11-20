@@ -10,7 +10,7 @@ def mock_web3():
 @pytest.fixture
 def mock_settings():
     with patch("services.staking_service.settings") as mock:
-        mock.staking_token_contract_address = "0xStakingToken"
+        mock.staking_contract_address = "0xStakingToken"
         mock.activity_checker_contract_address = "0xActivityChecker"
         yield mock
 

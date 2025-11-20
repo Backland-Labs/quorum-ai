@@ -277,16 +277,11 @@ class Settings(BaseSettings):
         description="30 minutes before 24h deadline",
     )
 
-    # Staking contracts (from Olas env vars)
-    staking_token_contract_address: Optional[str] = Field(
-        default=None,
-        alias="STAKING_CONTRACT",
-        description="Olas staking token contract",
-    )
+    # Staking contract (from Olas env vars)
     staking_contract_address: Optional[str] = Field(
         default="0xeF662b5266db0AeFe55554c50cA6Ad25c1DA16fb",
         alias="STAKING_CONTRACT_ADDRESS",
-        description="Olas staking contract address for checkpoint tracking",
+        description="Olas staking contract address for checkpoint tracking and staking operations",
     )
     # There is the attestation_tracker_address below where activity is checked. This address is currently unused.
     activity_checker_contract_address: Optional[str] = Field(
@@ -1093,11 +1088,6 @@ class Settings(BaseSettings):
         port_env = get_env_with_prefix("PORT")
         if port_env:
             self.port = int(port_env)
-
-        # Parse staking token contract address
-        staking_token_env = get_env_with_prefix("STAKING_TOKEN_CONTRACT_ADDRESS")
-        if staking_token_env:
-            self.staking_token_contract_address = staking_token_env
 
         # Parse staking contract address
         staking_contract_env = get_env_with_prefix("STAKING_CONTRACT_ADDRESS")
