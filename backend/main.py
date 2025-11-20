@@ -1218,51 +1218,103 @@ async def get_staking_checkpoints():
 
 
 async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
-    """Get checkpoint info from the cron schedule file.
+    """Get checkpoint info directly from the staking contract.
 
-    Reads the next checkpoint timestamp from /app/next_checkpoint_time.txt,
-    which is written by the container's entrypoint script. This reflects
-    when the checkpoint cron job will actually execute.
+    Reads tsCheckpoint and livenessPeriod from the staking contract
+    to calculate when the next checkpoint will occur.
     """
-    checkpoint_file = "/app/next_checkpoint_time.txt"
     checkpoint_interval_hours = 24  # Checkpoint runs every 24 hours
 
     try:
-        # Read next checkpoint timestamp from file
-        with open(checkpoint_file, 'r') as f:
-            next_checkpoint_ts = int(f.read().strip())
+        from web3 import Web3
 
-        # Get current time
-        current_time = int(time.time())
+        # Get RPC endpoint
+        rpc_url = settings.get_base_rpc_endpoint()
+        if not rpc_url:
+            logger.warning("No RPC configured")
+            return StakingCheckpointsResponse(
+                latest_checkpoint=None,
+                checkpoint_interval_hours=checkpoint_interval_hours,
+                current_blockchain_time=int(time.time()),
+                next_checkpoint_timestamp=None,
+                error="No RPC configured - unable to fetch checkpoint data"
+            )
 
-        logger.info(f"Successfully read checkpoint schedule: next={next_checkpoint_ts}, current={current_time}")
+        # Connect to blockchain
+        w3 = Web3(Web3.HTTPProvider(rpc_url))
+        if not w3.is_connected():
+            logger.warning("Cannot connect to RPC")
+            return StakingCheckpointsResponse(
+                latest_checkpoint=None,
+                checkpoint_interval_hours=checkpoint_interval_hours,
+                current_blockchain_time=int(time.time()),
+                next_checkpoint_timestamp=None,
+                error="Cannot connect to RPC - unable to fetch checkpoint data"
+            )
 
-        return StakingCheckpointsResponse(
-            latest_checkpoint=None,
-            checkpoint_interval_hours=checkpoint_interval_hours,
-            current_blockchain_time=current_time,
-            next_checkpoint_timestamp=next_checkpoint_ts
-        )
+        # Get current blockchain time
+        blockchain_time = w3.eth.get_block('latest')['timestamp']
 
-    except FileNotFoundError:
-        logger.warning(f"Checkpoint schedule file not found at {checkpoint_file}")
-        # Return fallback values
+        # Get staking contract address from settings
+        staking_contract_address = settings.staking_contract_address or "0xeF662b5266db0AeFe55554c50cA6Ad25c1DA16fb"
+        logger.info(f"Reading checkpoint data from staking contract: {staking_contract_address}")
+
+        # Minimal ABI for the staking contract
+        staking_abi = [
+            {
+                "inputs": [],
+                "name": "getNextRewardCheckpointTimestamp",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+
+        # Initialize contract
+        staking_contract = w3.eth.contract(address=staking_contract_address, abi=staking_abi)
+
+        # Get next checkpoint timestamp directly from contract
+        next_checkpoint_ts = staking_contract.functions.getNextRewardCheckpointTimestamp().call()
+
+        # Check if checkpoint has been set
+        if next_checkpoint_ts > 0:
+
+            # Check if checkpoint is overdue
+            error_msg = None
+            if next_checkpoint_ts < blockchain_time:
+                time_overdue = blockchain_time - next_checkpoint_ts
+                error_msg = f"Checkpoint overdue by {time_overdue // 3600} hours"
+
+            logger.info(f"Next checkpoint from contract getNextRewardCheckpointTimestamp(): {next_checkpoint_ts}")
+
+            return StakingCheckpointsResponse(
+                latest_checkpoint=None,
+                checkpoint_interval_hours=checkpoint_interval_hours,
+                current_blockchain_time=blockchain_time,
+                next_checkpoint_timestamp=next_checkpoint_ts,
+                error=error_msg
+            )
+        else:
+            # Contract hasn't been initialized yet
+            logger.info("No checkpoint set in contract yet")
+            next_checkpoint_ts = blockchain_time + (24 * 3600)
+
+            return StakingCheckpointsResponse(
+                latest_checkpoint=None,
+                checkpoint_interval_hours=checkpoint_interval_hours,
+                current_blockchain_time=blockchain_time,
+                next_checkpoint_timestamp=next_checkpoint_ts,
+                error="No checkpoint set in contract yet - showing estimated"
+            )
+
+    except Exception as e:
+        logger.error(f"Failed to read checkpoint data from contract: {e}")
         return StakingCheckpointsResponse(
             latest_checkpoint=None,
             checkpoint_interval_hours=checkpoint_interval_hours,
             current_blockchain_time=int(time.time()),
             next_checkpoint_timestamp=None,
-            error="Checkpoint schedule file not found - container may need to restart"
-        )
-    except (ValueError, IOError) as e:
-        logger.error(f"Failed to read checkpoint schedule file: {e}")
-        # Return fallback values
-        return StakingCheckpointsResponse(
-            latest_checkpoint=None,
-            checkpoint_interval_hours=checkpoint_interval_hours,
-            current_blockchain_time=int(time.time()),
-            next_checkpoint_timestamp=None,
-            error=f"Error reading checkpoint schedule: {str(e)}"
+            error=f"Error reading contract: {str(e)}"
         )
 
 
