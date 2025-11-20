@@ -253,7 +253,6 @@ class AgentRunService:
                 return response
 
             except Exception as e:
-                import traceback
 
                 # Track error state
                 self.state_tracker.transition(
@@ -1384,7 +1383,7 @@ class AgentRunService:
 
         try:
             # Get the decisions directory path
-            decisions_dir = Path(settings.decision_output_dir)
+            decisions_dir = Path(settings.store_path) / settings.decision_output_dir
             if not decisions_dir.exists():
                 self.pearl_logger.warning(
                     f"Decisions directory does not exist: {decisions_dir}"

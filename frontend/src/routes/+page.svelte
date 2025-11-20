@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import DashboardHeader from "$lib/components/dashboard/DashboardHeader.svelte";
   import LoadingState from "$lib/components/dashboard/LoadingState.svelte";
   import ErrorState from "$lib/components/dashboard/ErrorState.svelte";
+
   import DashboardContent from "$lib/components/dashboard/DashboardContent.svelte";
+  import ServiceStatus from "$lib/components/dashboard/ServiceStatus.svelte";
   import { createDashboardStore } from "$lib/hooks/useDashboardData.js";
   import apiClient from "$lib/api";
 
@@ -76,15 +77,9 @@
     dashboardStore.changeSpace(spaceId);
   }
 
-  function handleProposalClick(proposalId: string): void {
-    console.assert(typeof proposalId === 'string', 'Proposal ID must be a string');
-    console.assert(proposalId.length > 0, 'Proposal ID should not be empty');
-
-    goto(`/proposals/${proposalId}`);
-  }
-
   // Derived values from store
   const proposals = $derived($dashboardState.allProposals);
+  const agentDecisions = $derived($dashboardState.agentDecisions);
   const currentSpaceId = $derived($dashboardState.currentSpaceId);
 </script>
 
@@ -100,6 +95,8 @@
     spaces={spaces}
     onSpaceChange={handleSpaceChange}
   />
+
+  <ServiceStatus />
 
   {#if $dashboardState.loading}
     <LoadingState />
@@ -125,8 +122,7 @@
     <div class="mt-6">
       <DashboardContent
         {proposals}
-        proposalSummaries={$dashboardState.proposalSummaries}
-        onProposalClick={handleProposalClick}
+        {agentDecisions}
         {currentSpaceId}
       />
     </div>

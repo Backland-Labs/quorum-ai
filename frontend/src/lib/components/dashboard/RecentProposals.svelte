@@ -4,48 +4,53 @@
 
   interface Props {
     proposals: components['schemas']['Proposal'][];
-    proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
-    onProposalClick: (proposalId: string) => void;
+    agentDecisions: Map<string, components['schemas']['AgentDecisionResponse']>;
   }
 
-  let { proposals, proposalSummaries, onProposalClick }: Props = $props();
+  let { proposals, agentDecisions }: Props = $props();
 
   function validateProps(): void {
     console.assert(Array.isArray(proposals), 'Proposals should be an array');
-    console.assert(proposalSummaries instanceof Map, 'Proposal summaries should be a Map');
-  }
-
-  function hasProposals(): boolean {
-    console.assert(Array.isArray(proposals), 'Proposals should be an array');
-
-    return proposals.length > 0;
+    console.assert(agentDecisions instanceof Map, 'Agent decisions should be a Map');
   }
 
   function getDisplayProposals() {
-    console.assert(hasProposals(), 'Should have proposals when calling getDisplayProposals');
     console.assert(Array.isArray(proposals), 'Proposals should be an array');
+    console.assert(agentDecisions instanceof Map, 'Agent decisions should be a Map');
 
-    return proposals.slice(0, 3);
+    // Filter proposals to only show those with decisions
+    return proposals.filter(p => agentDecisions.has(p.id));
   }
+
+  const displayProposals = $derived(getDisplayProposals());
+  const hasProposals = $derived(displayProposals.length > 0);
 
   validateProps();
 </script>
 
-{#if hasProposals()}
+{#if hasProposals}
   <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
-    <div class="mb-6">
-      <h3 class="text-base font-medium text-gray-900">Recent Proposals</h3>
+    <div class="mb-6 flex items-center justify-between">
+      <h3 class="text-base font-medium text-gray-900">All Proposals</h3>
+      <span class="text-sm text-gray-500">
+        {displayProposals.length} {displayProposals.length === 1 ? 'proposal' : 'proposals'}
+      </span>
     </div>
 
     <div class="space-y-4">
-      {#each getDisplayProposals() as proposal}
+      {#each displayProposals as proposal}
         <ProposalCard
           {proposal}
-          summary={proposalSummaries.get(proposal.id)}
-          onClick={() => onProposalClick(proposal.id)}
           variant="compact"
+          decision={agentDecisions.get(proposal.id)}
         />
       {/each}
+    </div>
+  </div>
+{:else}
+  <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+    <div class="text-center py-8">
+      <p class="text-gray-500 text-sm">No proposals with agent decisions yet</p>
     </div>
   </div>
 {/if}

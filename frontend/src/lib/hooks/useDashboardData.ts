@@ -8,12 +8,12 @@ interface DashboardState {
   error: string | null;
   currentSpaceId: string;
   allProposals: components['schemas']['Proposal'][];
-  proposalSummaries: Map<string, components['schemas']['ProposalSummary']>;
   proposalsLoading: boolean;
   proposalsError: string | null;
   proposalFilters: {
-    state?: components['schemas']['ProposalState'];
+    state?: string;
   };
+  agentDecisions: Map<string, components['schemas']['AgentDecisionResponse']>;
 }
 
 /**
@@ -26,10 +26,10 @@ export function createDashboardStore() {
     error: null,
     currentSpaceId: 'quorum-ai.eth', // Default Snapshot space - can be made configurable
     allProposals: [],
-    proposalSummaries: new Map(),
     proposalsLoading: false,
     proposalsError: null,
-    proposalFilters: {}
+    proposalFilters: {},
+    agentDecisions: new Map()
   };
 
   const { subscribe, set, update } = writable(initialState);
@@ -64,35 +64,16 @@ export function createDashboardStore() {
       }
 
       if (data) {
+        // @ts-ignore - API response type is unknown but we know the structure
+        const proposals = data.proposals || [];
         update(state => ({
           ...state,
-          allProposals: data.proposals,
+          allProposals: proposals,
           loading: false
         }));
 
-        // Load summaries for proposals
-        const proposalIds = data.proposals.map(p => p.id);
-        if (proposalIds.length > 0) {
-          const { data: summaryData } = await apiClient.POST("/proposals/summarize", {
-            body: {
-              proposal_ids: proposalIds,
-              include_risk_assessment: true,
-              include_recommendations: true
-            }
-          });
-
-          if (summaryData) {
-            const newSummaries = new Map<string, components['schemas']['ProposalSummary']>();
-            summaryData.summaries.forEach(summary => {
-              newSummaries.set(summary.proposal_id, summary);
-            });
-
-            update(s => ({
-              ...s,
-              proposalSummaries: newSummaries
-            }));
-          }
-        }
+        // Load agent decisions for the proposals
+        await loadAgentDecisions();
       }
     } catch (err) {
       console.error('Failed to load proposals:', err);
@@ -101,6 +82,51 @@ export function createDashboardStore() {
         error: 'Failed to load proposals',
         loading: false
       }));
+    }
+  }
+
+  /**
+   * Loads agent decisions from API
+   */
+  async function loadAgentDecisions(): Promise<void> {
+    console.assert(typeof apiClient.GET === 'function', 'API client should have GET method');
+
+    try {
+      const { data, error: apiError } = await apiClient.GET("/agent-run/decisions", {
+        params: {
+          query: {
+            limit: 100
+          }
+        }
+      });
+
+      if (apiError) {
+        console.error('Failed to load agent decisions:', apiError);
+        return;
+      }
+
+      if (data?.decisions) {
+        // Build a Map keyed by proposal_id, keeping the latest decision per proposal
+        const decisionsMap = new Map<string, components['schemas']['AgentDecisionResponse']>();
+        
+        for (const decision of data.decisions) {
+          const proposalId = decision.proposal_id;
+          const existing = decisionsMap.get(proposalId);
+          
+          // Keep the latest decision (assuming array is ordered, or compare timestamps)
+          if (!existing || !decision.timestamp || !existing.timestamp || 
+              new Date(decision.timestamp) > new Date(existing.timestamp)) {
+            decisionsMap.set(proposalId, decision);
+          }
+        }
+
+        update(state => ({
+          ...state,
+          agentDecisions: decisionsMap
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to load agent decisions:', err);
     }
   }
 

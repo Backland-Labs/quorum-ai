@@ -6,29 +6,31 @@
 
   interface Props {
     proposal: components['schemas']['Proposal'];
-    summary?: components['schemas']['ProposalSummary'];
     fullProposal?: ExtendedProposal;
     variant?: 'compact' | 'detailed';
-    onClick?: () => void;
+    decision?: components['schemas']['AgentDecisionResponse'];
   }
 
-  let { proposal, summary, fullProposal, variant = 'compact', onClick }: Props = $props();
+  let { proposal, fullProposal, variant = 'compact', decision }: Props = $props();
+
+  let isExpanded = $state(false);
+
+  const handleToggle = () => {
+    isExpanded = !isExpanded;
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleToggle();
+    } else if (event.key === 'Escape') {
+      isExpanded = false;
+    }
+  };
 
   function validateProps(): void {
     console.assert(proposal !== null, 'Proposal should not be null');
     console.assert(proposal !== undefined, 'Proposal should not be undefined');
-  }
-
-  function getRiskLevelClasses(riskLevel: string): string {
-    console.assert(typeof riskLevel === 'string', 'Risk level must be a string');
-    console.assert(riskLevel.length > 0, 'Risk level should not be empty');
-
-    const riskClasses: Record<string, string> = {
-      'LOW': 'bg-green-50 text-green-700 border-green-200',
-      'MEDIUM': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-      'HIGH': 'bg-red-50 text-red-700 border-red-200'
-    };
-    return riskClasses[riskLevel] || riskClasses['MEDIUM'];
   }
 
   
@@ -48,20 +50,22 @@
     });
   }
 
-  const parsedProposal = summary ? {
-    summary: summary.summary,
-    key_points: summary.key_points,
-    risk_level: summary.risk_assessment || 'MEDIUM',
-    recommendation: summary.recommendation || 'REVIEW',
-    confidence_score: summary.confidence
-  } : parseProposalSummary(proposal);
+  const parsedProposal = parseProposalSummary(proposal);
   validateProps();
 </script>
 
-<div class="group relative" role={onClick ? 'button' : undefined} onclick={onClick} tabindex={onClick ? 0 : undefined}>
+<div class="group relative">
   <div class="relative bg-white border border-secondary-200 rounded-lg p-5 hover:border-primary-300 hover:shadow-md transition-all duration-200">
     <!-- Header with title and badges -->
-    <div class="flex items-start justify-between mb-3">
+    <div 
+      class="flex items-start justify-between mb-3 cursor-pointer"
+      role="button"
+      tabindex="0"
+      aria-expanded={isExpanded}
+      aria-controls="proposal-details-{proposal.id}"
+      onclick={handleToggle}
+      onkeydown={handleKeyDown}
+    >
       <div class="flex-1">
         <h5 class="font-semibold text-secondary-900 text-base leading-tight pr-4">
           {cleanProposalTitle(proposal.title)}
@@ -74,17 +78,19 @@
           </div>
         {/if}
       </div>
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border {getRiskLevelClasses(parsedProposal.risk_level)}">
-          {parsedProposal.risk_level} Risk
-        </span>
-      </div>
+      {#if decision}
+        {@const voteColors = {
+          FOR: 'bg-green-100 text-green-700',
+          AGAINST: 'bg-red-100 text-red-700',
+          ABSTAIN: 'bg-gray-100 text-gray-700'
+        }}
+        <div class="ml-4">
+          <span class="px-2.5 py-1 text-xs font-medium rounded-full {voteColors[decision.vote]}">
+            {decision.vote}
+          </span>
+        </div>
+      {/if}
     </div>
-
-    <!-- Summary -->
-    <p class="text-sm text-secondary-600 leading-relaxed mb-4">
-      {parsedProposal.summary}
-    </p>
 
     <!-- Voting Indicator for detailed variant -->
     {#if variant === 'detailed' && fullProposal}
@@ -119,30 +125,39 @@
       </div>
     {/if}
 
-    <!-- Footer -->
-    <div class="flex items-center justify-end pt-3 border-t border-secondary-100">
-      {#if onClick}
-        <button
-          class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
-          onclick={(e) => { e.stopPropagation(); onClick(); }}
-        >
-          View Details
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      {:else if fullProposal?.id || proposal.id}
-        <a
-          href="/proposals/{fullProposal?.id || proposal.id}"
-          class="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
-          onclick={(e) => e.stopPropagation()}
-        >
-          View Details
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
-      {/if}
-    </div>
+    <!-- Expandable Decision Section -->
+    {#if decision && isExpanded}
+      <div 
+        id="proposal-details-{proposal.id}"
+        class="mt-4 pt-4 border-t border-secondary-100 space-y-3 animate-in slide-in-from-top-2 duration-200"
+      >
+        <div>
+          <h6 class="text-xs font-semibold text-secondary-700 mb-1">Reasoning</h6>
+          <p class="text-sm text-secondary-600 leading-relaxed">{decision.reasoning || 'No reasoning provided'}</p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <h6 class="text-xs font-semibold text-secondary-700 mb-1">Confidence</h6>
+            <div class="flex items-center gap-2">
+              <div class="flex-1 bg-gray-200 rounded-full h-2">
+                <div 
+                  class="bg-primary-500 h-2 rounded-full transition-all duration-300" 
+                  style="width: {(decision.confidence * 100).toFixed(0)}%"
+                ></div>
+              </div>
+              <span class="text-sm font-medium text-secondary-900">{(decision.confidence * 100).toFixed(0)}%</span>
+            </div>
+          </div>
+          
+          <div>
+            <h6 class="text-xs font-semibold text-secondary-700 mb-1">Strategy</h6>
+            <span class="inline-block px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded">
+              {decision.strategy_used || 'Unknown'}
+            </span>
+          </div>
+        </div>
+      </div>
+    {/if}
   </div>
 </div>

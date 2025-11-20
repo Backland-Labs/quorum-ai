@@ -7,7 +7,6 @@ and caching with expiration.
 
 import os
 import re
-import stat
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional

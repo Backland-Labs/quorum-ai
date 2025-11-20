@@ -1,7 +1,6 @@
 """Main FastAPI application for Quorum AI backend."""
 
 import hashlib
-import json
 import os
 import time
 from contextlib import asynccontextmanager
@@ -28,13 +27,10 @@ from models import (
     ProposalVoter,
     Vote,
     VoteType,
-    SummarizeRequest,
-    SummarizeResponse,
     UserPreferences,
     AttestationVerificationResponse,
     AttestationCountResponse,
     StakingCheckpointsResponse,
-    StakingCheckpoint,
 )
 from services.ai_service import AIService
 from services.agent_run_service import AgentRunService
@@ -47,10 +43,13 @@ from services.state_manager import StateManager
 from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
+from services.state_transition_tracker import StateTransitionTracker
 from services.health_status_service import HealthStatusService
+from services.staking_service import StakingService, ServiceStatus
+from services.service_discovery import ServiceDiscovery
 
 # Initialize Pearl-compliant logger
-logger = setup_pearl_logger(__name__)
+logger = setup_pearl_logger(__name__, log_file_path=settings.log_file_path)
 
 # Global service instances
 ai_service: AIService
@@ -65,7 +64,10 @@ signal_handler: SignalHandler
 shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
+withdrawal_service: WithdrawalService
+state_transition_tracker: Optional[StateTransitionTracker] = None
 health_status_service: Optional[HealthStatusService] = None
+staking_service: Optional[StakingService] = None
 
 
 @asynccontextmanager
@@ -85,7 +87,11 @@ async def lifespan(_app: FastAPI):
         shutdown_coordinator, \
         withdrawal_service, \
         state_transition_tracker, \
-        health_status_service
+        shutdown_coordinator, \
+        withdrawal_service, \
+        state_transition_tracker, \
+        health_status_service, \
+        staking_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -123,6 +129,35 @@ async def lifespan(_app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to initialize HealthStatusService: {e}")
         health_status_service = None
+
+    # Initialize StakingService
+    try:
+        staking_service = StakingService()
+        logger.info("StakingService initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize StakingService: {e}")
+        staking_service = None
+
+    # Perform Service Discovery if needed
+    if settings.service_id is None:
+        try:
+            logger.info("Attempting service discovery...")
+            rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
+            if settings.base_safe_address and settings.service_registry_address:
+                discovery = ServiceDiscovery(
+                    service_registry_address=settings.service_registry_address,
+                    rpc_url=rpc_endpoint,
+                )
+                service_id = discovery.get_service_id_from_safe_address(
+                    settings.base_safe_address
+                )
+                if service_id is not None:
+                    settings.service_id = service_id
+                    logger.info(f"Service ID discovered and set: {service_id}")
+                else:
+                    logger.warning("Service ID not found during startup discovery")
+        except Exception as e:
+            logger.warning(f"Service discovery failed during startup: {e}")
 
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -459,6 +494,58 @@ async def healthcheck():
         return error_response
 
 
+@app.get("/api/status/discovery")
+async def get_discovery_status():
+    """Get service discovery and staking status."""
+    try:
+        # 1. Get Service ID
+        service_id = settings.service_id
+        
+        # If not in settings, try to discover it now (retry logic)
+        if service_id is None:
+            try:
+                rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
+                if settings.base_safe_address and settings.service_registry_address:
+                    discovery = ServiceDiscovery(
+                        service_registry_address=settings.service_registry_address,
+                        rpc_url=rpc_endpoint,
+                    )
+                    service_id = discovery.get_service_id_from_safe_address(
+                        settings.base_safe_address
+                    )
+                    # Update settings if found
+                    if service_id is not None:
+                        settings.service_id = service_id
+            except Exception as e:
+                logger.warning(f"Runtime service discovery failed: {e}")
+
+        if service_id is None:
+            return {
+                "service_id": None,
+                "state": "UNKNOWN",
+                "status": ServiceStatus.UNKNOWN.value,
+                "is_live": False,
+                "message": "Service ID not found. Please ensure Safe is registered."
+            }
+
+        # 2. Get Staking Status
+        if staking_service:
+            status_data = staking_service.get_service_staking_state(service_id)
+            return status_data
+        else:
+            return {
+                "service_id": service_id,
+                "state": "UNKNOWN",
+                "status": ServiceStatus.UNKNOWN.value,
+                "is_live": False,
+                "message": "Staking service unavailable"
+            }
+
+    except Exception as e:
+        logger.error(f"Error in discovery status endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Proposal endpoints
 @app.get("/proposals")
 async def get_proposals(
@@ -519,61 +606,7 @@ async def get_proposal_by_id(proposal_id: str):
 
 
 # AI Summarization endpoints
-@app.post("/proposals/summarize", response_model=SummarizeResponse)
-async def summarize_proposals(request: SummarizeRequest):
-    """Summarize multiple proposals using AI."""
-    start_time = time.time()
 
-    # Log the incoming request
-    logger.info(
-        f"Received summarize request proposal_ids={request.proposal_ids} "
-        f"proposal_count={len(request.proposal_ids)}"
-    )
-
-    try:
-        with log_span(
-            logger, "summarize_proposals", proposal_count=len(request.proposal_ids)
-        ):
-            # Fetch proposals
-            logger.info("Fetching proposals for summarization")
-            proposals = await _fetch_proposals_for_summarization(request.proposal_ids)
-
-            if not proposals:
-                logger.warning(f"No proposals found for IDs: {request.proposal_ids}")
-                raise HTTPException(
-                    status_code=404, detail="No proposals found for the provided IDs"
-                )
-
-            logger.info(f"Successfully fetched {len(proposals)} proposals")
-
-            # Generate summaries
-            logger.info("Starting AI summarization")
-            summaries = await _generate_proposal_summaries(proposals)
-
-            processing_time = time.time() - start_time
-            logger.info(
-                f"Successfully completed summarization "
-                f"summary_count={len(summaries)} "
-                f"processing_time={processing_time:.2f}s"
-            )
-
-            return SummarizeResponse(
-                summaries=summaries,
-                processing_time=processing_time,
-                model_used=settings.ai_model,
-            )
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(
-            f"Failed to summarize proposals error={str(e)} "
-            f"exception_type={type(e).__name__} "
-            f"proposal_ids={request.proposal_ids}"
-        )
-        raise HTTPException(
-            status_code=500, detail=f"Failed to summarize proposals: {str(e)}"
-        )
 
 
 @app.get("/proposals/{proposal_id}/top-voters", response_model=ProposalTopVoters)
@@ -862,30 +895,7 @@ def _convert_voting_power_to_wei(voting_power: float) -> str:
 # Private helper functions
 
 
-async def _fetch_proposals_for_summarization(proposal_ids: List[str]) -> List[Proposal]:
-    """Fetch proposals for summarization using Snapshot."""
-    with log_span(logger, "fetch_proposals_for_summarization"):
-        proposals = []
 
-        for proposal_id in proposal_ids:
-            try:
-                proposal = await snapshot_service.get_proposal(proposal_id)
-                if proposal:
-                    proposals.append(proposal)
-            except Exception:
-                pass  # Skip if Snapshot fails
-
-        logger.info(f"Fetched proposals for summarization count={len(proposals)}")
-        return proposals
-
-
-async def _generate_proposal_summaries(proposals: List[Proposal]) -> List:
-    """Generate AI summaries for proposals."""
-    with log_span(logger, "generate_proposal_summaries"):
-        summaries = await ai_service.summarize_multiple_proposals(proposals)
-
-        logger.info(f"Generated proposal summaries count={len(summaries)}")
-        return summaries
 
 
 def _log_preferences_retrieval(preferences: UserPreferences) -> None:
