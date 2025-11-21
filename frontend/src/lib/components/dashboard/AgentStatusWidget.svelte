@@ -1,6 +1,7 @@
 <script lang="ts">
   import { agentStatusStore } from '$lib/stores/agentStatus';
   import { onMount } from 'svelte';
+  import apiClient from '$lib/api';
 
   interface Props {
     // Allow override for testing
@@ -21,6 +22,9 @@
   let nextCheckpointTimestamp = $state<number | null>(null);
   let checkpointLoading = $state(false);
   let checkpointError = $state<string | null>(null);
+
+  // State for service ID
+  let serviceId = $state<number | null>(null);
 
   // Reactive "now" timestamp that updates every minute to trigger time recalculation
   let now = $state(Date.now());
@@ -93,12 +97,27 @@
     }
   }
 
+  // Fetch service ID from discovery endpoint
+  async function fetchServiceId() {
+    try {
+      const { data: responseData, error: responseError } = await apiClient.GET('/api/status/discovery');
+
+      if (!responseError && responseData) {
+        serviceId = responseData.service_id ?? null;
+      }
+    } catch (error) {
+      console.error('Failed to fetch service ID:', error);
+    }
+  }
+
   onMount(() => {
     fetchHealthcheck();
     fetchCheckpointData();
+    fetchServiceId();
     // Refresh every 30 minutes
     const healthInterval = setInterval(fetchHealthcheck, 30 * 60 * 1000);
     const checkpointInterval = setInterval(fetchCheckpointData, 30 * 60 * 1000);
+    const serviceIdInterval = setInterval(fetchServiceId, 30 * 60 * 1000);
     // Update "now" every minute to trigger time recalculation
     const clockInterval = setInterval(() => {
       now = Date.now();
@@ -106,6 +125,7 @@
     return () => {
       clearInterval(healthInterval);
       clearInterval(checkpointInterval);
+      clearInterval(serviceIdInterval);
       clearInterval(clockInterval);
     };
   });
@@ -117,7 +137,14 @@
   aria-label="Agent Status"
   class="bg-white shadow rounded-lg p-3 sm:p-4 w-full sm:w-auto"
 >
-  <h3 data-testid="widget-title" class="text-sm sm:text-base font-medium text-gray-900 mb-4">Agent Status</h3>
+  <div class="flex items-center justify-between mb-4">
+    <h3 data-testid="widget-title" class="text-sm sm:text-base font-medium text-gray-900">Agent Status</h3>
+    {#if serviceId}
+      <span class="text-xs font-mono text-secondary-500 bg-secondary-100 px-2 py-1 rounded">
+        ID: {serviceId}
+      </span>
+    {/if}
+  </div>
 
   {#if healthcheckLoading || checkpointLoading}
     <div data-testid="loading-state" class="text-gray-500 text-sm">
