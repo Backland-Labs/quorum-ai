@@ -11,21 +11,22 @@ from web3 import Web3
 from utils.env_helper import get_env_with_prefix
 
 
-
 logger = logging.getLogger(__name__)
 
 
 class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
     """Custom settings source that checks prefixed env vars first, then non-prefixed."""
 
-    def get_field_value(self, field_info: Any, field_name: str) -> Tuple[Any, str, bool]:
+    def get_field_value(
+        self, field_info: Any, field_name: str
+    ) -> Tuple[Any, str, bool]:
         """Get field value from environment with prefix fallback."""
         # Get the environment variable name from FieldInfo
         # Pydantic FieldInfo stores alias in the 'alias' attribute
         env_name = field_name.upper()  # Default to uppercase field name
 
         # Check if field_info has an alias attribute
-        if hasattr(field_info, 'alias') and field_info.alias:
+        if hasattr(field_info, "alias") and field_info.alias:
             env_name = field_info.alias
 
         # Use the helper function to get value with prefix fallback
@@ -33,7 +34,9 @@ class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
 
         # Skip Olas placeholder values (str:, int:, float:, bool:, etc.)
         if env_value is not None and isinstance(env_value, str):
-            if env_value.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
+            if env_value.startswith(
+                ("str:", "int:", "float:", "bool:", "list:", "dict:")
+            ):
                 return None, field_name, False
 
             # Skip empty strings - let Pydantic use the default value
@@ -42,9 +45,10 @@ class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
 
             # Parse JSON strings to match Pydantic's dotenv behavior
             # This ensures validators receive consistent types (dict/list not str)
-            if env_value.startswith(('{', '[')):
+            if env_value.startswith(("{", "[")):
                 try:
                     import json
+
                     env_value = json.loads(env_value)
                 except (json.JSONDecodeError, ValueError):
                     # Keep as string if parsing fails - validator will handle it
@@ -209,7 +213,7 @@ class Settings(BaseSettings):
     safe_contract_addresses: Dict[str, str] = Field(
         default_factory=dict,
         alias="SAFE_CONTRACT_ADDRESSES",
-        description="Parsed from SAFE_CONTRACT_ADDRESSES - supports both JSON and comma-separated formats"
+        description="Parsed from SAFE_CONTRACT_ADDRESSES - supports both JSON and comma-separated formats",
     )
 
     @field_validator("safe_contract_addresses", mode="before")
@@ -229,8 +233,9 @@ class Settings(BaseSettings):
 
         if isinstance(v, str):
             # Try JSON format first
-            if v.startswith('{'):
+            if v.startswith("{"):
                 import json
+
                 try:
                     return json.loads(v)
                 except json.JSONDecodeError:
@@ -304,11 +309,17 @@ class Settings(BaseSettings):
         alias="SERVICE_ID",
         description="Olas service ID for staking compliance",
     )
+    enable_service_discovery: bool = Field(
+        default=True,
+        alias="ENABLE_SERVICE_DISCOVERY",
+        description="Enable automatic service ID discovery from ServiceRegistry",
+    )
 
     # OLAS configuration for new services
     store_path: str = Field(
         default_factory=lambda: (
-            "/app/.quorum_ai/state" if os.path.exists("/app")
+            "/app/.quorum_ai/state"
+            if os.path.exists("/app")
             else os.path.expanduser("~/.quorum_ai/state")
         ),
         alias="STORE_PATH",
@@ -649,12 +660,17 @@ class Settings(BaseSettings):
         if self.service_id is not None:
             # Explicit SERVICE_ID provided
             self.service_id = int(self.service_id)
-            logger.info("Using SERVICE_ID from environment", extra={"service_id": self.service_id})
+            logger.info(
+                "Using SERVICE_ID from environment",
+                extra={"service_id": self.service_id},
+            )
             return
 
         rpc_endpoint = self.get_base_rpc_endpoint() or self.rpc_url
         if not rpc_endpoint:
-            raise ValueError("RPC_URL or BASE_RPC_URL is required for service ID discovery")
+            raise ValueError(
+                "RPC_URL or BASE_RPC_URL is required for service ID discovery"
+            )
 
         if not self.base_safe_address:
             raise ValueError(
@@ -662,10 +678,22 @@ class Settings(BaseSettings):
             )
 
         if not self.service_registry_address:
-            raise ValueError("SERVICE_REGISTRY_ADDRESS must be configured for service discovery")
+            raise ValueError(
+                "SERVICE_REGISTRY_ADDRESS must be configured for service discovery"
+            )
 
         try:
             from services.service_discovery import ServiceDiscovery
+
+            logger.debug(
+                "Starting service discovery",
+                extra={
+                    "service_registry": self.service_registry_address,
+                    "rpc_endpoint": rpc_endpoint,
+                    "safe_address": self.base_safe_address,
+                    "chain_id": self.chain_id,
+                },
+            )
             discovery = ServiceDiscovery(
                 service_registry_address=self.service_registry_address,
                 rpc_url=rpc_endpoint,
@@ -676,8 +704,12 @@ class Settings(BaseSettings):
 
             if discovered_service_id is None:
                 logger.warning(
-                    f"Unable to discover service ID for Safe {self.base_safe_address} "
-                    f"using registry {self.service_registry_address}"
+                    "Unable to discover service ID for Safe %s using registry %s. "
+                    "This may be normal if the Safe is not registered in the ServiceRegistry. "
+                    "RPC endpoint: %s",
+                    self.base_safe_address,
+                    self.service_registry_address,
+                    rpc_endpoint,
                 )
             else:
                 self.service_id = discovered_service_id
@@ -689,8 +721,27 @@ class Settings(BaseSettings):
                         "safe_address": self.base_safe_address,
                     },
                 )
+        except RuntimeError as e:
+            # More specific error for contract/RPC issues
+            logger.warning(
+                "Service discovery failed during startup: %s. "
+                "Configuration: registry=%s, rpc=%s, safe=%s. "
+                "Check that the ServiceRegistry contract exists at this address on the configured network.",
+                e,
+                self.service_registry_address,
+                rpc_endpoint,
+                self.base_safe_address,
+            )
+            # Do not raise, allow app to start without service ID
         except Exception as e:
-            logger.warning(f"Service discovery failed during startup: {e}")
+            logger.warning(
+                "Service discovery failed during startup: %s. "
+                "Configuration: registry=%s, rpc=%s, safe=%s",
+                e,
+                self.service_registry_address,
+                rpc_endpoint,
+                self.base_safe_address,
+            )
             # Do not raise, allow app to start without service ID
 
     def _parse_intervals(self):
@@ -1114,7 +1165,9 @@ class Settings(BaseSettings):
             self.activity_checker_contract_address = activity_checker_env
 
         # Parse service registry token utility contract
-        service_registry_env = get_env_with_prefix("SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT")
+        service_registry_env = get_env_with_prefix(
+            "SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT"
+        )
         if service_registry_env:
             self.service_registry_token_utility_contract = service_registry_env
 
