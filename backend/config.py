@@ -855,7 +855,7 @@ class Settings(BaseSettings):
     def monitored_daos_list(self) -> List[str]:
         """Parse comma-separated DAO list from environment."""
         daos_env = get_env_with_prefix("MONITORED_DAOS") or ""
-        default_monitored_daos = "compound.eth,nouns.eth,arbitrum.eth"
+        default_monitored_daos = "quorum-ai.eth"
         if not daos_env.strip():
             # Fall back to default when empty
             daos_env = default_monitored_daos
