@@ -16,7 +16,6 @@
 
   onMount(async () => {
     try {
-      // @ts-ignore - Endpoint added dynamically
       const { data: responseData, error: responseError } = await apiClient.GET('/api/status/discovery');
       
       if (responseError) {
