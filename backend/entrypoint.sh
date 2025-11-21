@@ -64,15 +64,15 @@ if [ -f "/app/scripts/checkpoint.py" ] || [ -f "/app/scripts/trigger_agent_run.p
         echo "First checkpoint run: $FIRST_RUN"
     fi
 
-    # Setup agent-run service with 2-minute delay
+    # Setup agent-run service with 4-minute delay
     if [ -f "/app/scripts/trigger_agent_run.py" ]; then
-        # Calculate time 2 minutes from now
-        AGENT_MINUTE=$(date -d "+2 minutes" +%M)
-        AGENT_HOUR=$(date -d "+2 minutes" +%H)
+        # Calculate time 4 minutes from now
+        AGENT_MINUTE=$(date -d "+4 minutes" +%M)
+        AGENT_HOUR=$(date -d "+4 minutes" +%H)
 
         echo "$AGENT_MINUTE $AGENT_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/trigger_agent_run.py >> /app/logs/agent_run.log 2>&1" >> "$CRON_FILE"
 
-        AGENT_FIRST_RUN=$(date -d "+2 minutes" '+%Y-%m-%d %H:%M:%S %Z')
+        AGENT_FIRST_RUN=$(date -d "+4 minutes" '+%Y-%m-%d %H:%M:%S %Z')
         echo "Agent-run schedule: Daily at ${AGENT_HOUR}:${AGENT_MINUTE} UTC"
         echo "First agent-run: $AGENT_FIRST_RUN"
     fi
