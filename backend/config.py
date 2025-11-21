@@ -294,13 +294,8 @@ class Settings(BaseSettings):
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
         description="Olas activity checker contract",
     )
-    service_registry_token_utility_contract: Optional[str] = Field(
-        default=None,
-        alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
-        description="Olas service registry contract",
-    )
     service_registry_address: str = Field(
-        default="0x3d77596beb0f130a4415df3D2D8232B3d3D31e44",
+        default="0x3C1fF68f5aa342D296d4DEe4Bb1cACCA912D95fE",
         alias="SERVICE_REGISTRY_ADDRESS",
         description="Primary Olas service registry contract address",
     )

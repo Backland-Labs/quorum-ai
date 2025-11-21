@@ -235,12 +235,10 @@ class TestOlasStakingConfiguration:
         """Test that all staking contract addresses can be loaded together."""
         test_staking = "0x111111111111111"
         test_activity = "0x222222222222222"
-        test_registry = "0x333333333333333"
 
         env_vars = {
             "STAKING_CONTRACT_ADDRESS": test_staking,
             "ACTIVITY_CHECKER_CONTRACT_ADDRESS": test_activity,
-            "SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_registry,
         }
 
         with patch.dict(os.environ, env_vars):
