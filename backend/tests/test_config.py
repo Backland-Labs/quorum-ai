@@ -217,19 +217,6 @@ class TestOlasStakingConfiguration:
             settings = Settings()
             assert settings.activity_checker_contract_address == test_address
 
-    def test_service_registry_token_utility_contract_defaults_to_none(self):
-        """Test that service_registry_token_utility_contract defaults to None."""
-        settings = Settings()
-        assert settings.service_registry_token_utility_contract is None
-
-    def test_service_registry_token_utility_contract_loaded_from_env(self):
-        """Test that service_registry_token_utility_contract is loaded from environment variable."""
-        test_address = "0xabcdef123456789"
-        with patch.dict(
-            os.environ, {"SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT": test_address}
-        ):
-            settings = Settings()
-            assert settings.service_registry_token_utility_contract == test_address
 
     def test_all_staking_contracts_loaded_together(self):
         """Test that all staking contract addresses can be loaded together."""
@@ -245,7 +232,6 @@ class TestOlasStakingConfiguration:
             settings = Settings()
             assert settings.staking_contract_address == test_staking
             assert settings.activity_checker_contract_address == test_activity
-            assert settings.service_registry_token_utility_contract == test_registry
 
     def test_staking_contract_addresses_validation(self):
         """Test that contract addresses can be overridden with environment variables."""

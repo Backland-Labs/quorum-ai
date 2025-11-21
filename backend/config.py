@@ -1159,12 +1159,6 @@ class Settings(BaseSettings):
         if activity_checker_env:
             self.activity_checker_contract_address = activity_checker_env
 
-        # Parse service registry token utility contract
-        service_registry_env = get_env_with_prefix(
-            "SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT"
-        )
-        if service_registry_env:
-            self.service_registry_token_utility_contract = service_registry_env
 
     @property
     def effective_openrouter_api_key(self) -> Optional[str]:
