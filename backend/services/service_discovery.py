@@ -120,8 +120,8 @@ class ServiceDiscovery:
                     f"Error: {total_supply_error}"
                 ) from total_supply_error
 
-            # Iterate through services
-            for service_id in range(total_services):
+            # Iterate through services (include total_services since service IDs may be 1-indexed)
+            for service_id in range(total_services + 1):
                 try:
                     service_info = self.registry.functions.getService(service_id).call()
                     multisig_address = service_info[1]

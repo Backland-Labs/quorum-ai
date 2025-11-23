@@ -140,7 +140,7 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    ai_model: str = "google/gemini-2.0-flash-exp:free"
+    ai_model: str = os.getenv("AI_MODEL", "google/gemini-2.0-flash-exp:free")
 
     # Pearl logging settings
     log_level: str = Field(

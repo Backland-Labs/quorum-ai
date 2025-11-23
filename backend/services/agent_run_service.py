@@ -1235,7 +1235,7 @@ class AgentRunService:
     async def stop(self) -> None:
         """Stop the service gracefully."""
         self._active_run = False
-        await self.save_state()
+        await self.save_service_state()
 
     async def _save_checkpoint_state(self, response: AgentRunResponse) -> None:
         """Save checkpoint state during agent run.
