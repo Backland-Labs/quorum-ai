@@ -294,13 +294,8 @@ class Settings(BaseSettings):
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
         description="Olas activity checker contract",
     )
-    service_registry_token_utility_contract: Optional[str] = Field(
-        default=None,
-        alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
-        description="Olas service registry contract",
-    )
     service_registry_address: str = Field(
-        default="0x3d77596beb0f130a4415df3D2D8232B3d3D31e44",
+        default="0x3C1fF68f5aa342D296d4DEe4Bb1cACCA912D95fE",
         alias="SERVICE_REGISTRY_ADDRESS",
         description="Primary Olas service registry contract address",
     )
@@ -860,7 +855,7 @@ class Settings(BaseSettings):
     def monitored_daos_list(self) -> List[str]:
         """Parse comma-separated DAO list from environment."""
         daos_env = get_env_with_prefix("MONITORED_DAOS") or ""
-        default_monitored_daos = "compound.eth,nouns.eth,arbitrum.eth"
+        default_monitored_daos = "quorum-ai.eth"
         if not daos_env.strip():
             # Fall back to default when empty
             daos_env = default_monitored_daos
@@ -1164,12 +1159,6 @@ class Settings(BaseSettings):
         if activity_checker_env:
             self.activity_checker_contract_address = activity_checker_env
 
-        # Parse service registry token utility contract
-        service_registry_env = get_env_with_prefix(
-            "SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT"
-        )
-        if service_registry_env:
-            self.service_registry_token_utility_contract = service_registry_env
 
     @property
     def effective_openrouter_api_key(self) -> Optional[str]:

@@ -4,6 +4,43 @@
  */
 
 export interface paths {
+    "/favicon.png": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Serve Favicon */
+        get: operations["serve_favicon_favicon_png_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Serve Frontend
+         * @description Serve the frontend application at root path.
+         */
+        get: operations["serve_frontend__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/healthcheck": {
         parameters: {
             query?: never;
@@ -32,6 +69,26 @@ export interface paths {
          *         - rounds_info: Additional round metadata
          */
         get: operations["healthcheck_healthcheck_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/status/discovery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Discovery Status
+         * @description Get service discovery and staking status.
+         */
+        get: operations["get_discovery_status_api_status_discovery_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -74,26 +131,6 @@ export interface paths {
         get: operations["get_proposal_by_id_proposals__proposal_id__get"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/proposals/summarize": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Summarize Proposals
-         * @description Summarize multiple proposals using AI.
-         */
-        post: operations["summarize_proposals_proposals_summarize_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -314,6 +351,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/verify/attestation/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify Attestation
+         * @description Verify that an attestation exists on-chain.
+         *     Queries EAS contract to confirm the attestation.
+         */
+        get: operations["verify_attestation_verify_attestation__uid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/verify/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify Attestation Count
+         * @description Get current attestation count from AttestationTracker contract.
+         *     Useful for verifying attestations were recorded on local Anvil.
+         */
+        get: operations["verify_attestation_count_verify_count_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/staking/checkpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Staking Checkpoints
+         * @description Get the latest staking checkpoint information.
+         *
+         *     Reads the next checkpoint timestamp from the cron schedule file
+         *     written by the container's entrypoint script. This reflects when
+         *     the checkpoint job will actually run.
+         */
+        get: operations["get_staking_checkpoints_staking_checkpoints_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/{full_path}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Serve Frontend Routes
+         * @description Serve frontend for client-side routing, excluding API routes.
+         */
+        get: operations["serve_frontend_routes__full_path__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -484,6 +607,50 @@ export interface components {
              */
             current_space_id?: string | null;
         };
+        /**
+         * AttestationCountResponse
+         * @description Response for attestation count verification.
+         */
+        AttestationCountResponse: {
+            /**
+             * Total Count
+             * @description Total number of attestations
+             */
+            total_count: number;
+            /**
+             * Multisig Address
+             * @description Multisig address queried
+             */
+            multisig_address?: string | null;
+            /**
+             * Error
+             * @description Error message if any
+             */
+            error?: string | null;
+        };
+        /**
+         * AttestationVerificationResponse
+         * @description Verification result for an attestation.
+         */
+        AttestationVerificationResponse: {
+            /**
+             * Is Valid
+             * @description Whether the attestation is valid on-chain
+             */
+            is_valid: boolean;
+            /**
+             * Attestation Data
+             * @description Attestation data if found
+             */
+            attestation_data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Error
+             * @description Error message if any
+             */
+            error?: string | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -594,44 +761,6 @@ export interface components {
             vote_choices?: components["schemas"]["VoteChoice"][];
         };
         /**
-         * ProposalSummary
-         * @description AI-generated summary of a proposal.
-         */
-        ProposalSummary: {
-            /**
-             * Proposal Id
-             * @description The proposal ID being summarized
-             */
-            proposal_id: string;
-            /**
-             * Title
-             * @description Original proposal title
-             */
-            title: string;
-            /**
-             * Summary
-             * @description AI-generated concise summary
-             */
-            summary: string;
-            /**
-             * Key Points
-             * @description List of key points from the proposal
-             */
-            key_points: string[];
-            /** @description Risk level assessment */
-            risk_assessment?: components["schemas"]["RiskLevel"] | null;
-            /**
-             * Recommendation
-             * @description AI-generated voting recommendation
-             */
-            recommendation?: string | null;
-            /**
-             * Confidence
-             * @description Confidence in the analysis
-             */
-            confidence: number;
-        };
-        /**
          * ProposalTopVoters
          * @description Collection of top voters for a proposal.
          *
@@ -678,43 +807,79 @@ export interface components {
          */
         RiskLevel: "LOW" | "MEDIUM" | "HIGH";
         /**
-         * SummarizeRequest
-         * @description Request model for proposal summarization.
+         * StakingCheckpoint
+         * @description Staking checkpoint data.
          */
-        SummarizeRequest: {
-            /** Proposal Ids */
-            proposal_ids: string[];
+        StakingCheckpoint: {
             /**
-             * Include Risk Assessment
-             * @default true
+             * Checkpoint Num
+             * @description Checkpoint number
              */
-            include_risk_assessment: boolean;
+            checkpoint_num: number;
             /**
-             * Include Recommendations
-             * @default true
+             * Timestamp
+             * @description Unix timestamp of checkpoint
              */
-            include_recommendations: boolean;
+            timestamp: number;
+            /**
+             * Datetime
+             * @description ISO datetime string of checkpoint
+             */
+            datetime: string;
+            /**
+             * Hours Elapsed
+             * @description Hours elapsed since staking started
+             */
+            hours_elapsed: number;
+            /**
+             * Staking State
+             * @description Staking state (Staked, Unstaked, Evicted)
+             */
+            staking_state: string;
+            /**
+             * Attestations Total
+             * @description Total attestations
+             */
+            attestations_total: number;
+            /**
+             * Accrued Rewards Olas
+             * @description Accrued rewards in OLAS
+             */
+            accrued_rewards_olas: string;
+            /**
+             * Passes Liveness
+             * @description Whether liveness check passes
+             */
+            passes_liveness: boolean;
         };
         /**
-         * SummarizeResponse
-         * @description Response model for proposal summarization.
+         * StakingCheckpointsResponse
+         * @description Response containing staking checkpoint information.
          */
-        SummarizeResponse: {
+        StakingCheckpointsResponse: {
+            /** @description Most recent checkpoint data */
+            latest_checkpoint?: components["schemas"]["StakingCheckpoint"] | null;
             /**
-             * Summaries
-             * @description AI-generated summaries
+             * Checkpoint Interval Hours
+             * @description Interval between checkpoints in hours
+             * @default 24
              */
-            summaries: components["schemas"]["ProposalSummary"][];
+            checkpoint_interval_hours: number;
             /**
-             * Processing Time
-             * @description Time taken to process in seconds
+             * Current Blockchain Time
+             * @description Current blockchain timestamp (for Anvil time-shifted chains)
              */
-            processing_time: number;
+            current_blockchain_time?: number | null;
             /**
-             * Model Used
-             * @description AI model used for summarization
+             * Next Checkpoint Timestamp
+             * @description Next checkpoint timestamp from staking contract
              */
-            model_used: string;
+            next_checkpoint_timestamp?: number | null;
+            /**
+             * Error
+             * @description Error message if any
+             */
+            error?: string | null;
         };
         /**
          * UserPreferences
@@ -866,7 +1031,67 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    serve_favicon_favicon_png_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    serve_frontend__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     healthcheck_healthcheck_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    get_discovery_status_api_status_discovery_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -940,39 +1165,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Proposal"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    summarize_proposals_proposals_summarize_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SummarizeRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SummarizeResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1230,6 +1422,108 @@ export interface operations {
                 };
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_attestation_verify_attestation__uid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttestationVerificationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_attestation_count_verify_count_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttestationCountResponse"];
+                };
+            };
+        };
+    };
+    get_staking_checkpoints_staking_checkpoints_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StakingCheckpointsResponse"];
+                };
+            };
+        };
+    };
+    serve_frontend_routes__full_path__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                full_path: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

@@ -4,7 +4,6 @@
   import ErrorState from "$lib/components/dashboard/ErrorState.svelte";
 
   import DashboardContent from "$lib/components/dashboard/DashboardContent.svelte";
-  import ServiceStatus from "$lib/components/dashboard/ServiceStatus.svelte";
   import { createDashboardStore } from "$lib/hooks/useDashboardData.js";
   import apiClient from "$lib/api";
 
@@ -95,8 +94,6 @@
     spaces={spaces}
     onSpaceChange={handleSpaceChange}
   />
-
-  <ServiceStatus />
 
   {#if $dashboardState.loading}
     <LoadingState />
