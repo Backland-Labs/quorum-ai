@@ -168,9 +168,9 @@ class VotingService:
         """
         # Runtime assertions
         assert snapshot_message, "Snapshot message must not be empty"
-        assert "message" in snapshot_message, (
-            "Snapshot message must contain 'message' field"
-        )
+        assert (
+            "message" in snapshot_message
+        ), "Snapshot message must contain 'message' field"
 
         # Constants
         HEX_PREFIX = "0x"
@@ -280,10 +280,15 @@ class VotingService:
 
             except Exception as e:
                 import traceback
+
                 self.logger.error(
                     f"Snapshot vote submission exception: {e}\n{traceback.format_exc()}"
                 )
-                return {"success": False, "error": str(e), "exception_type": type(e).__name__}
+                return {
+                    "success": False,
+                    "error": str(e),
+                    "exception_type": type(e).__name__,
+                }
 
     async def vote_on_proposal(
         self, space: str, proposal: str, choice: int, timestamp: Optional[int] = None

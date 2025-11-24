@@ -11,21 +11,22 @@ from web3 import Web3
 from utils.env_helper import get_env_with_prefix
 
 
-
 logger = logging.getLogger(__name__)
 
 
 class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
     """Custom settings source that checks prefixed env vars first, then non-prefixed."""
 
-    def get_field_value(self, field_info: Any, field_name: str) -> Tuple[Any, str, bool]:
+    def get_field_value(
+        self, field_info: Any, field_name: str
+    ) -> Tuple[Any, str, bool]:
         """Get field value from environment with prefix fallback."""
         # Get the environment variable name from FieldInfo
         # Pydantic FieldInfo stores alias in the 'alias' attribute
         env_name = field_name.upper()  # Default to uppercase field name
 
         # Check if field_info has an alias attribute
-        if hasattr(field_info, 'alias') and field_info.alias:
+        if hasattr(field_info, "alias") and field_info.alias:
             env_name = field_info.alias
 
         # Use the helper function to get value with prefix fallback
@@ -33,7 +34,9 @@ class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
 
         # Skip Olas placeholder values (str:, int:, float:, bool:, etc.)
         if env_value is not None and isinstance(env_value, str):
-            if env_value.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
+            if env_value.startswith(
+                ("str:", "int:", "float:", "bool:", "list:", "dict:")
+            ):
                 return None, field_name, False
 
             # Skip empty strings - let Pydantic use the default value
@@ -42,9 +45,10 @@ class PrefixedEnvSettingsSource(PydanticBaseSettingsSource):
 
             # Parse JSON strings to match Pydantic's dotenv behavior
             # This ensures validators receive consistent types (dict/list not str)
-            if env_value.startswith(('{', '[')):
+            if env_value.startswith(("{", "[")):
                 try:
                     import json
+
                     env_value = json.loads(env_value)
                 except (json.JSONDecodeError, ValueError):
                     # Keep as string if parsing fails - validator will handle it
@@ -136,7 +140,7 @@ class Settings(BaseSettings):
     port: int = 8716
 
     # AI settings
-    ai_model: str = "google/gemini-2.0-flash-exp:free"
+    ai_model: str = os.getenv("AI_MODEL", "google/gemini-2.0-flash-exp:free")
 
     # Pearl logging settings
     log_level: str = Field(
@@ -209,7 +213,7 @@ class Settings(BaseSettings):
     safe_contract_addresses: Dict[str, str] = Field(
         default_factory=dict,
         alias="SAFE_CONTRACT_ADDRESSES",
-        description="Parsed from SAFE_CONTRACT_ADDRESSES - supports both JSON and comma-separated formats"
+        description="Parsed from SAFE_CONTRACT_ADDRESSES - supports both JSON and comma-separated formats",
     )
 
     @field_validator("safe_contract_addresses", mode="before")
@@ -229,8 +233,9 @@ class Settings(BaseSettings):
 
         if isinstance(v, str):
             # Try JSON format first
-            if v.startswith('{'):
+            if v.startswith("{"):
                 import json
+
                 try:
                     return json.loads(v)
                 except json.JSONDecodeError:
@@ -289,13 +294,8 @@ class Settings(BaseSettings):
         alias="ACTIVITY_CHECKER_CONTRACT_ADDRESS",
         description="Olas activity checker contract",
     )
-    service_registry_token_utility_contract: Optional[str] = Field(
-        default=None,
-        alias="SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT",
-        description="Olas service registry contract",
-    )
     service_registry_address: str = Field(
-        default="0x3d77596beb0f130a4415df3D2D8232B3d3D31e44",
+        default="0x3C1fF68f5aa342D296d4DEe4Bb1cACCA912D95fE",
         alias="SERVICE_REGISTRY_ADDRESS",
         description="Primary Olas service registry contract address",
     )
@@ -304,11 +304,17 @@ class Settings(BaseSettings):
         alias="SERVICE_ID",
         description="Olas service ID for staking compliance",
     )
+    enable_service_discovery: bool = Field(
+        default=True,
+        alias="ENABLE_SERVICE_DISCOVERY",
+        description="Enable automatic service ID discovery from ServiceRegistry",
+    )
 
     # OLAS configuration for new services
     store_path: str = Field(
         default_factory=lambda: (
-            "/app/.quorum_ai/state" if os.path.exists("/app")
+            "/app/.quorum_ai/state"
+            if os.path.exists("/app")
             else os.path.expanduser("~/.quorum_ai/state")
         ),
         alias="STORE_PATH",
@@ -456,6 +462,20 @@ class Settings(BaseSettings):
         alias="BASE_RPC_URL",
         description="Base network RPC endpoint (alternative to BASE_LEDGER_RPC)",
     )
+
+    @field_validator("base_safe_address", mode="before")
+    @classmethod
+    def validate_base_safe_address(cls, v):
+        """Filter out Olas placeholder values for BASE_SAFE_ADDRESS."""
+        if v is None or v == "":
+            return None
+        if isinstance(v, str):
+            # Filter out Olas placeholder (str:, int:, etc.)
+            if v.startswith(("str:", "int:", "float:", "bool:", "list:", "dict:")):
+                return None
+            # Return cleaned value
+            return v.strip() if v.strip() else None
+        return v
 
     # AttestationTracker Configuration
     attestation_tracker_address: Optional[str] = Field(
@@ -635,12 +655,17 @@ class Settings(BaseSettings):
         if self.service_id is not None:
             # Explicit SERVICE_ID provided
             self.service_id = int(self.service_id)
-            logger.info("Using SERVICE_ID from environment", extra={"service_id": self.service_id})
+            logger.info(
+                "Using SERVICE_ID from environment",
+                extra={"service_id": self.service_id},
+            )
             return
 
         rpc_endpoint = self.get_base_rpc_endpoint() or self.rpc_url
         if not rpc_endpoint:
-            raise ValueError("RPC_URL or BASE_RPC_URL is required for service ID discovery")
+            raise ValueError(
+                "RPC_URL or BASE_RPC_URL is required for service ID discovery"
+            )
 
         if not self.base_safe_address:
             raise ValueError(
@@ -648,10 +673,22 @@ class Settings(BaseSettings):
             )
 
         if not self.service_registry_address:
-            raise ValueError("SERVICE_REGISTRY_ADDRESS must be configured for service discovery")
+            raise ValueError(
+                "SERVICE_REGISTRY_ADDRESS must be configured for service discovery"
+            )
 
         try:
             from services.service_discovery import ServiceDiscovery
+
+            logger.debug(
+                "Starting service discovery",
+                extra={
+                    "service_registry": self.service_registry_address,
+                    "rpc_endpoint": rpc_endpoint,
+                    "safe_address": self.base_safe_address,
+                    "chain_id": self.chain_id,
+                },
+            )
             discovery = ServiceDiscovery(
                 service_registry_address=self.service_registry_address,
                 rpc_url=rpc_endpoint,
@@ -662,8 +699,12 @@ class Settings(BaseSettings):
 
             if discovered_service_id is None:
                 logger.warning(
-                    f"Unable to discover service ID for Safe {self.base_safe_address} "
-                    f"using registry {self.service_registry_address}"
+                    "Unable to discover service ID for Safe %s using registry %s. "
+                    "This may be normal if the Safe is not registered in the ServiceRegistry. "
+                    "RPC endpoint: %s",
+                    self.base_safe_address,
+                    self.service_registry_address,
+                    rpc_endpoint,
                 )
             else:
                 self.service_id = discovered_service_id
@@ -675,8 +716,27 @@ class Settings(BaseSettings):
                         "safe_address": self.base_safe_address,
                     },
                 )
+        except RuntimeError as e:
+            # More specific error for contract/RPC issues
+            logger.warning(
+                "Service discovery failed during startup: %s. "
+                "Configuration: registry=%s, rpc=%s, safe=%s. "
+                "Check that the ServiceRegistry contract exists at this address on the configured network.",
+                e,
+                self.service_registry_address,
+                rpc_endpoint,
+                self.base_safe_address,
+            )
+            # Do not raise, allow app to start without service ID
         except Exception as e:
-            logger.warning(f"Service discovery failed during startup: {e}")
+            logger.warning(
+                "Service discovery failed during startup: %s. "
+                "Configuration: registry=%s, rpc=%s, safe=%s",
+                e,
+                self.service_registry_address,
+                rpc_endpoint,
+                self.base_safe_address,
+            )
             # Do not raise, allow app to start without service ID
 
     def _parse_intervals(self):
@@ -795,7 +855,7 @@ class Settings(BaseSettings):
     def monitored_daos_list(self) -> List[str]:
         """Parse comma-separated DAO list from environment."""
         daos_env = get_env_with_prefix("MONITORED_DAOS") or ""
-        default_monitored_daos = "compound.eth,nouns.eth,arbitrum.eth"
+        default_monitored_daos = "quorum-ai.eth"
         if not daos_env.strip():
             # Fall back to default when empty
             daos_env = default_monitored_daos
@@ -1106,10 +1166,6 @@ class Settings(BaseSettings):
         if activity_checker_env:
             self.activity_checker_contract_address = activity_checker_env
 
-        # Parse service registry token utility contract
-        service_registry_env = get_env_with_prefix("SERVICE_REGISTRY_TOKEN_UTILITY_CONTRACT")
-        if service_registry_env:
-            self.service_registry_token_utility_contract = service_registry_env
 
     @property
     def effective_openrouter_api_key(self) -> Optional[str]:

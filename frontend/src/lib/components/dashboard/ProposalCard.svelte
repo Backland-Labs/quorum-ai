@@ -135,28 +135,37 @@
           <h6 class="text-xs font-semibold text-secondary-700 mb-1">Reasoning</h6>
           <p class="text-sm text-secondary-600 leading-relaxed">{decision.reasoning || 'No reasoning provided'}</p>
         </div>
-        
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <h6 class="text-xs font-semibold text-secondary-700 mb-1">Confidence</h6>
-            <div class="flex items-center gap-2">
-              <div class="flex-1 bg-gray-200 rounded-full h-2">
-                <div 
-                  class="bg-primary-500 h-2 rounded-full transition-all duration-300" 
-                  style="width: {(decision.confidence * 100).toFixed(0)}%"
-                ></div>
+
+        {#if variant === 'detailed'}
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <h6 class="text-xs font-semibold text-secondary-700 mb-1">Confidence</h6>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                  <div
+                    class="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                    style="width: {(decision.confidence * 100).toFixed(0)}%"
+                  ></div>
+                </div>
+                <span class="text-sm font-medium text-secondary-900">{(decision.confidence * 100).toFixed(0)}%</span>
               </div>
-              <span class="text-sm font-medium text-secondary-900">{(decision.confidence * 100).toFixed(0)}%</span>
+            </div>
+
+            <div>
+              <h6 class="text-xs font-semibold text-secondary-700 mb-1">Strategy</h6>
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded">
+                {decision.strategy_used || 'Unknown'}
+              </span>
             </div>
           </div>
-          
+        {:else}
           <div>
             <h6 class="text-xs font-semibold text-secondary-700 mb-1">Strategy</h6>
             <span class="inline-block px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded">
               {decision.strategy_used || 'Unknown'}
             </span>
           </div>
-        </div>
+        {/if}
       </div>
     {/if}
   </div>

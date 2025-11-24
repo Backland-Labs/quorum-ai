@@ -74,24 +74,7 @@ staking_service: Optional[StakingService] = None
 async def lifespan(_app: FastAPI):
     """Application lifespan context manager."""
     # Startup
-    global \
-        ai_service, \
-        agent_run_service, \
-        safe_service, \
-        activity_service, \
-        user_preferences_service, \
-        voting_service, \
-        snapshot_service, \
-        state_manager, \
-        signal_handler, \
-        shutdown_coordinator, \
-        withdrawal_service, \
-        state_transition_tracker, \
-        shutdown_coordinator, \
-        withdrawal_service, \
-        state_transition_tracker, \
-        health_status_service, \
-        staking_service
+    global ai_service, agent_run_service, safe_service, activity_service, user_preferences_service, voting_service, snapshot_service, state_manager, signal_handler, shutdown_coordinator, withdrawal_service, state_transition_tracker, shutdown_coordinator, withdrawal_service, state_transition_tracker, health_status_service, staking_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -139,11 +122,18 @@ async def lifespan(_app: FastAPI):
         staking_service = None
 
     # Perform Service Discovery if needed
-    if settings.service_id is None:
+    if settings.service_id is None and settings.enable_service_discovery:
         try:
-            logger.info("Attempting service discovery...")
             rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
             if settings.base_safe_address and settings.service_registry_address:
+                logger.info(
+                    "Attempting service discovery...",
+                    extra={
+                        "service_registry": settings.service_registry_address,
+                        "rpc_endpoint": rpc_endpoint,
+                        "safe_address": settings.base_safe_address,
+                    },
+                )
                 discovery = ServiceDiscovery(
                     service_registry_address=settings.service_registry_address,
                     rpc_url=rpc_endpoint,
@@ -155,9 +145,29 @@ async def lifespan(_app: FastAPI):
                     settings.service_id = service_id
                     logger.info(f"Service ID discovered and set: {service_id}")
                 else:
-                    logger.warning("Service ID not found during startup discovery")
+                    logger.warning(
+                        f"Service ID not found during startup discovery. "
+                        f"Safe {settings.base_safe_address} may not be registered in "
+                        f"ServiceRegistry {settings.service_registry_address}"
+                    )
+            else:
+                logger.debug(
+                    "Service discovery skipped: missing base_safe_address or service_registry_address"
+                )
+        except RuntimeError as e:
+            logger.warning(
+                f"Service discovery failed during startup: {e}. "
+                f"Check that the ServiceRegistry contract exists at {settings.service_registry_address} "
+                f"on the configured network (RPC: {rpc_endpoint})"
+            )
         except Exception as e:
-            logger.warning(f"Service discovery failed during startup: {e}")
+            logger.warning(
+                f"Service discovery failed during startup: {e}. "
+                f"Configuration: registry={settings.service_registry_address}, "
+                f"rpc={rpc_endpoint}, safe={settings.base_safe_address}"
+            )
+    elif settings.service_id is None:
+        logger.info("Service discovery disabled via ENABLE_SERVICE_DISCOVERY=false")
 
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -500,12 +510,20 @@ async def get_discovery_status():
     try:
         # 1. Get Service ID
         service_id = settings.service_id
-        
+
         # If not in settings, try to discover it now (retry logic)
         if service_id is None:
             try:
                 rpc_endpoint = settings.get_base_rpc_endpoint() or settings.rpc_url
                 if settings.base_safe_address and settings.service_registry_address:
+                    logger.debug(
+                        "Attempting runtime service discovery",
+                        extra={
+                            "service_registry": settings.service_registry_address,
+                            "rpc_endpoint": rpc_endpoint,
+                            "safe_address": settings.base_safe_address,
+                        },
+                    )
                     discovery = ServiceDiscovery(
                         service_registry_address=settings.service_registry_address,
                         rpc_url=rpc_endpoint,
@@ -516,8 +534,20 @@ async def get_discovery_status():
                     # Update settings if found
                     if service_id is not None:
                         settings.service_id = service_id
+                        logger.info(
+                            f"Runtime service discovery succeeded: service_id={service_id}"
+                        )
+            except RuntimeError as e:
+                logger.warning(
+                    f"Runtime service discovery failed: {e}. "
+                    f"Check that ServiceRegistry contract exists at {settings.service_registry_address}"
+                )
             except Exception as e:
-                logger.warning(f"Runtime service discovery failed: {e}")
+                logger.warning(
+                    f"Runtime service discovery failed: {e}. "
+                    f"Configuration: registry={settings.service_registry_address}, "
+                    f"rpc={rpc_endpoint}, safe={settings.base_safe_address}"
+                )
 
         if service_id is None:
             return {
@@ -525,7 +555,7 @@ async def get_discovery_status():
                 "state": "UNKNOWN",
                 "status": ServiceStatus.UNKNOWN.value,
                 "is_live": False,
-                "message": "Service ID not found. Please ensure Safe is registered."
+                "message": "Service ID not found. Please ensure Safe is registered.",
             }
 
         # 2. Get Staking Status
@@ -538,7 +568,7 @@ async def get_discovery_status():
                 "state": "UNKNOWN",
                 "status": ServiceStatus.UNKNOWN.value,
                 "is_live": False,
-                "message": "Staking service unavailable"
+                "message": "Staking service unavailable",
             }
 
     except Exception as e:
@@ -606,7 +636,6 @@ async def get_proposal_by_id(proposal_id: str):
 
 
 # AI Summarization endpoints
-
 
 
 @app.get("/proposals/{proposal_id}/top-voters", response_model=ProposalTopVoters)
@@ -895,9 +924,6 @@ def _convert_voting_power_to_wei(voting_power: float) -> str:
 # Private helper functions
 
 
-
-
-
 def _log_preferences_retrieval(preferences: UserPreferences) -> None:
     """Log successful preferences retrieval."""
     logger.info(
@@ -934,9 +960,9 @@ async def get_user_preferences():
     with log_span(logger, "get_user_preferences"):
         try:
             # Runtime assertion: service must be initialized
-            assert user_preferences_service is not None, (
-                "User preferences service not initialized"
-            )
+            assert (
+                user_preferences_service is not None
+            ), "User preferences service not initialized"
 
             preferences = await user_preferences_service.load_preferences()
 
@@ -973,9 +999,9 @@ async def update_user_preferences(preferences: UserPreferences):
     with log_span(logger, "update_user_preferences"):
         try:
             # Runtime assertion: service must be initialized
-            assert user_preferences_service is not None, (
-                "User preferences service not initialized"
-            )
+            assert (
+                user_preferences_service is not None
+            ), "User preferences service not initialized"
             # Runtime assertion: preferences must have valid structure
             assert isinstance(preferences, UserPreferences), "Invalid preferences type"
 
@@ -1091,11 +1117,9 @@ async def get_openrouter_key_status():
             "status": "success",
             "data": {
                 "configured": has_user_key or has_env_key,
-                "source": "user"
-                if has_user_key
-                else "environment"
-                if has_env_key
-                else None,
+                "source": (
+                    "user" if has_user_key else "environment" if has_env_key else None
+                ),
             },
         }
 
@@ -1120,7 +1144,9 @@ async def verify_attestation(uid: str):
 
         # Handle mock mode
         if settings.mock_mode:
-            logger.info(f"MOCK_MODE: Returning stubbed verification for attestation {uid}")
+            logger.info(
+                f"MOCK_MODE: Returning stubbed verification for attestation {uid}"
+            )
             return AttestationVerificationResponse(
                 is_valid=True,
                 attestation_data={"uid": uid, "mock": True},
@@ -1177,7 +1203,9 @@ async def verify_attestation_count():
         # Get attestation count
         if settings.attestation_tracker_address and settings.base_safe_address:
             count, is_active = get_multisig_info(settings.base_safe_address)
-            logger.info(f"Attestation count retrieved: {count} for {settings.base_safe_address}")
+            logger.info(
+                f"Attestation count retrieved: {count} for {settings.base_safe_address}"
+            )
             return AttestationCountResponse(
                 total_count=count,
                 multisig_address=settings.base_safe_address,
@@ -1194,7 +1222,11 @@ async def verify_attestation_count():
         logger.error(f"Count verification failed: {e}")
         return AttestationCountResponse(
             total_count=0,
-            multisig_address=settings.base_safe_address if hasattr(settings, 'base_safe_address') else None,
+            multisig_address=(
+                settings.base_safe_address
+                if hasattr(settings, "base_safe_address")
+                else None
+            ),
             error=str(e),
         )
 
@@ -1211,10 +1243,7 @@ async def get_staking_checkpoints():
         return await _get_checkpoint_from_cron_schedule()
     except Exception as e:
         logger.error(f"Failed to get checkpoint data: {e}")
-        return StakingCheckpointsResponse(
-            latest_checkpoint=None,
-            error=str(e)
-        )
+        return StakingCheckpointsResponse(latest_checkpoint=None, error=str(e))
 
 
 async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
@@ -1237,7 +1266,7 @@ async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
                 checkpoint_interval_hours=checkpoint_interval_hours,
                 current_blockchain_time=int(time.time()),
                 next_checkpoint_timestamp=None,
-                error="No RPC configured - unable to fetch checkpoint data"
+                error="No RPC configured - unable to fetch checkpoint data",
             )
 
         # Connect to blockchain
@@ -1249,15 +1278,20 @@ async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
                 checkpoint_interval_hours=checkpoint_interval_hours,
                 current_blockchain_time=int(time.time()),
                 next_checkpoint_timestamp=None,
-                error="Cannot connect to RPC - unable to fetch checkpoint data"
+                error="Cannot connect to RPC - unable to fetch checkpoint data",
             )
 
         # Get current blockchain time
-        blockchain_time = w3.eth.get_block('latest')['timestamp']
+        blockchain_time = w3.eth.get_block("latest")["timestamp"]
 
         # Get staking contract address from settings
-        staking_contract_address = settings.staking_contract_address or "0xeF662b5266db0AeFe55554c50cA6Ad25c1DA16fb"
-        logger.info(f"Reading checkpoint data from staking contract: {staking_contract_address}")
+        staking_contract_address = (
+            settings.staking_contract_address
+            or "0xeF662b5266db0AeFe55554c50cA6Ad25c1DA16fb"
+        )
+        logger.info(
+            f"Reading checkpoint data from staking contract: {staking_contract_address}"
+        )
 
         # Minimal ABI for the staking contract
         staking_abi = [
@@ -1266,15 +1300,19 @@ async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
                 "name": "getNextRewardCheckpointTimestamp",
                 "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
                 "stateMutability": "view",
-                "type": "function"
+                "type": "function",
             }
         ]
 
         # Initialize contract
-        staking_contract = w3.eth.contract(address=staking_contract_address, abi=staking_abi)
+        staking_contract = w3.eth.contract(
+            address=staking_contract_address, abi=staking_abi
+        )
 
         # Get next checkpoint timestamp directly from contract
-        next_checkpoint_ts = staking_contract.functions.getNextRewardCheckpointTimestamp().call()
+        next_checkpoint_ts = (
+            staking_contract.functions.getNextRewardCheckpointTimestamp().call()
+        )
 
         # Check if checkpoint has been set
         if next_checkpoint_ts > 0:
@@ -1285,14 +1323,16 @@ async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
                 time_overdue = blockchain_time - next_checkpoint_ts
                 error_msg = f"Checkpoint overdue by {time_overdue // 3600} hours"
 
-            logger.info(f"Next checkpoint from contract getNextRewardCheckpointTimestamp(): {next_checkpoint_ts}")
+            logger.info(
+                f"Next checkpoint from contract getNextRewardCheckpointTimestamp(): {next_checkpoint_ts}"
+            )
 
             return StakingCheckpointsResponse(
                 latest_checkpoint=None,
                 checkpoint_interval_hours=checkpoint_interval_hours,
                 current_blockchain_time=blockchain_time,
                 next_checkpoint_timestamp=next_checkpoint_ts,
-                error=error_msg
+                error=error_msg,
             )
         else:
             # Contract hasn't been initialized yet
@@ -1304,7 +1344,7 @@ async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
                 checkpoint_interval_hours=checkpoint_interval_hours,
                 current_blockchain_time=blockchain_time,
                 next_checkpoint_timestamp=next_checkpoint_ts,
-                error="No checkpoint set in contract yet - showing estimated"
+                error="No checkpoint set in contract yet - showing estimated",
             )
 
     except Exception as e:
@@ -1314,7 +1354,7 @@ async def _get_checkpoint_from_cron_schedule() -> StakingCheckpointsResponse:
             checkpoint_interval_hours=checkpoint_interval_hours,
             current_blockchain_time=int(time.time()),
             next_checkpoint_timestamp=None,
-            error=f"Error reading contract: {str(e)}"
+            error=f"Error reading contract: {str(e)}",
         )
 
 
