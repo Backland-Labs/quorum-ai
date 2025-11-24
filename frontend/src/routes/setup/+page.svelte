@@ -2,11 +2,30 @@
 	import { goto } from '$app/navigation';
 	import PreferenceForm from '$lib/components/setup/PreferenceForm.svelte';
 	import type { UserPreferences } from '$lib/types/preferences';
-	import { extractApiErrorMessage, hasApiError } from '$lib/utils/api';
+	import { extractApiErrorMessage, hasApiError, getApiErrorStatus } from '$lib/utils/api';
 	import apiClient from '$lib/api';
+	import { onMount } from 'svelte';
 
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let existingPreferences = $state<UserPreferences | null>(null);
+	let loading = $state(true);
+
+	// Load existing preferences on mount
+	onMount(async () => {
+		try {
+			const response = await apiClient.GET('/user-preferences');
+			
+			if (!hasApiError(response) && response.data) {
+				existingPreferences = response.data;
+			}
+		} catch (error) {
+			// If preferences don't exist, that's expected for new users
+			console.log('No existing preferences found, using defaults');
+		} finally {
+			loading = false;
+		}
+	});
 
 	const handleSubmit = async (data: UserPreferences) => {
 		errorMessage = '';
@@ -39,45 +58,57 @@
 <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 	<div class="sm:mx-auto sm:w-full sm:max-w-md">
 		<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-			Welcome to Quorum AI
+			{existingPreferences ? 'Update Your Preferences' : 'Welcome to Quorum AI'}
 		</h2>
 		<p class="mt-2 text-center text-sm text-gray-600">
-			Configure your autonomous voting preferences to get started
+			{existingPreferences ? 'Update your autonomous voting preferences' : 'Configure your autonomous voting preferences to get started'}
 		</p>
 	</div>
 
 	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-			{#if errorMessage}
-				<div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-					<p class="text-sm text-red-800">{errorMessage}</p>
-				</div>
-			{/if}
-
-			{#if successMessage}
-				<div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
-					<p class="text-sm text-green-800">{successMessage}</p>
-				</div>
-			{/if}
-
-			<PreferenceForm onSubmit={handleSubmit} />
-
-			<div class="mt-6">
-				<div class="relative">
-					<div class="absolute inset-0 flex items-center">
-						<div class="w-full border-t border-gray-300"></div>
-					</div>
-					<div class="relative flex justify-center text-sm">
-						<span class="px-2 bg-white text-gray-500">Need help?</span>
+			{#if loading}
+				<div class="flex justify-center items-center min-h-[200px]">
+					<div class="text-center">
+						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+						<p class="text-gray-600">Loading preferences...</p>
 					</div>
 				</div>
+			{:else}
+				{#if errorMessage}
+					<div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+						<p class="text-sm text-red-800">{errorMessage}</p>
+					</div>
+				{/if}
 
-				<div class="mt-6 text-center">
-					<a href="/docs" class="text-indigo-600 hover:text-indigo-500">
-						View documentation
-					</a>
+				{#if successMessage}
+					<div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+						<p class="text-sm text-green-800">{successMessage}</p>
+					</div>
+				{/if}
+
+				<PreferenceForm 
+					initialValues={existingPreferences || undefined} 
+					onSubmit={handleSubmit} 
+				/>
+
+				<div class="mt-6">
+					<div class="relative">
+						<div class="absolute inset-0 flex items-center">
+							<div class="w-full border-t border-gray-300"></div>
+						</div>
+						<div class="relative flex justify-center text-sm">
+							<span class="px-2 bg-white text-gray-500">Need help?</span>
+						</div>
+					</div>
+
+					<div class="mt-6 text-center">
+						<a href="/docs" class="text-indigo-600 hover:text-indigo-500">
+							View documentation
+						</a>
+					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 	</div>
 </div>
