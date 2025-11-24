@@ -1126,6 +1126,13 @@ class Settings(BaseSettings):
         rpc_url_env = get_env_with_prefix("RPC_URL")
         if rpc_url_env:
             self.rpc_url = rpc_url_env
+            
+            # Log source of RPC URL for debugging
+            conn_config_rpc = os.getenv("CONNECTION_CONFIGS_CONFIG_RPC_URL")
+            if conn_config_rpc:
+                logger.info(f"Found CONNECTION_CONFIGS_CONFIG_RPC_URL: {conn_config_rpc}")
+            else:
+                logger.info(f"Using RPC_URL: {self.rpc_url}")
 
     def _parse_chain_config(self):
         """Parse chain and service configuration from environment variables with prefix support."""

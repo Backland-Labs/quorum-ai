@@ -60,8 +60,27 @@ class StakingService:
 
     def __init__(self, rpc_url: str = settings.rpc_url) -> None:
         self.logger = setup_pearl_logger(__name__)
-        self.web3 = Web3(Web3.HTTPProvider(rpc_url))
-        
+
+        # Check for Olas placeholder values which cause confusing ENS errors in Web3
+        if rpc_url and isinstance(rpc_url, str) and rpc_url.startswith(("str:", "int:", "float:")):
+            raise ValueError(
+                f"Invalid RPC configuration. The 'rpc_url' parameter contains an Olas placeholder value: '{rpc_url}'. "
+                "Please ensure the RPC_URL environment variable is set to a valid URL (e.g., http://localhost:8545)."
+            )
+
+        try:
+            self.web3 = Web3(Web3.HTTPProvider(rpc_url))
+        except Exception as e:
+            # Enhance error message if it looks like an ENS error
+            if "ENS name" in str(e) and "invalid" in str(e):
+                raise ValueError(
+                    f"Web3 initialization failed. The RPC URL '{rpc_url}' was interpreted as an invalid ENS name. "
+                    "This usually happens when the URL is not properly formatted (missing http:// prefix) "
+                    "or contains invalid characters. Check your RPC_URL environment variable."
+                ) from e
+            self.logger.error(f"Failed to initialize Web3 provider with URL '{rpc_url}': {e}")
+            raise e
+
         # Initialize Staking Contract
         if settings.staking_contract_address:
             self.staking_contract = self.web3.eth.contract(
