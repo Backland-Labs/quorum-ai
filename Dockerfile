@@ -13,6 +13,9 @@ RUN bun install
 # Copy frontend source code
 COPY frontend/ ./
 
+# Rebuild esbuild to fix version mismatch between host and binary
+RUN cd node_modules/esbuild && bun install --force
+
 # Build frontend for production
 RUN bun run build
 
