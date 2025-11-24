@@ -6,16 +6,22 @@
 	interface Props {
 		initialValues?: {
 			voting_strategy: VotingStrategy;
+			confidence_threshold: number;
+			max_proposals_per_run: number;
 			blacklisted_proposers?: string[];
 			whitelisted_proposers?: string[];
 		};
 		onSubmit?: (data: {
 			voting_strategy: VotingStrategy;
+			confidence_threshold: number;
+			max_proposals_per_run: number;
 			blacklisted_proposers: string[];
 			whitelisted_proposers: string[];
 		}) => void | Promise<void>;
 		onSubmitAndReconsider?: (data: {
 			voting_strategy: VotingStrategy;
+			confidence_threshold: number;
+			max_proposals_per_run: number;
 			blacklisted_proposers: string[];
 			whitelisted_proposers: string[];
 		}) => void | Promise<void>;
@@ -27,34 +33,15 @@
 
 	// Default configuration values
 	const DEFAULT_VOTING_STRATEGY: VotingStrategy = 'balanced';
+	const DEFAULT_CONFIDENCE_THRESHOLD: number = 0.7;
+	const DEFAULT_MAX_PROPOSALS_PER_RUN: number = 5;
 
 	// Form state with defaults
 	let votingStrategy = $state<VotingStrategy>(initialValues?.voting_strategy || DEFAULT_VOTING_STRATEGY);
+	let confidenceThreshold = $state<number>(initialValues?.confidence_threshold || DEFAULT_CONFIDENCE_THRESHOLD);
+	let maxProposalsPerRun = $state<number>(initialValues?.max_proposals_per_run || DEFAULT_MAX_PROPOSALS_PER_RUN);
 	let blacklistedProposers = $state(initialValues?.blacklisted_proposers?.join('\n') || '');
 	let whitelistedProposers = $state(initialValues?.whitelisted_proposers?.join('\n') || '');
-
-	// Baseline snapshot for dirty-state tracking
-	interface Baseline {
-		votingStrategy: VotingStrategy;
-		blacklistedProposers: string;
-		whitelistedProposers: string;
-	}
-	let baseline = $state<Baseline>({
-		votingStrategy: votingStrategy,
-		blacklistedProposers: blacklistedProposers,
-		whitelistedProposers: whitelistedProposers
-	});
-
-	// Update baseline when initialValues changes
-	$effect(() => {
-		if (initialValues) {
-			baseline = {
-				votingStrategy: initialValues.voting_strategy || DEFAULT_VOTING_STRATEGY,
-				blacklistedProposers: initialValues.blacklisted_proposers?.join('\n') || '',
-				whitelistedProposers: initialValues.whitelisted_proposers?.join('\n') || ''
-			};
-		}
-	});
 
 	// Normalize list for comparison (case-insensitive, order-insensitive)
 	const normalizeList = (text: string): string[] => {
@@ -65,9 +52,40 @@
 			.sort();
 	};
 
+	// Baseline snapshot for dirty-state tracking
+	interface Baseline {
+		votingStrategy: VotingStrategy;
+		confidenceThreshold: number;
+		maxProposalsPerRun: number;
+		blacklistedProposers: string;
+		whitelistedProposers: string;
+	}
+	let baseline = $state<Baseline>({
+		get votingStrategy() { return votingStrategy; },
+		get confidenceThreshold() { return confidenceThreshold; },
+		get maxProposalsPerRun() { return maxProposalsPerRun; },
+		get blacklistedProposers() { return blacklistedProposers; },
+		get whitelistedProposers() { return whitelistedProposers; }
+	});
+
+	// Update baseline when initialValues changes
+	$effect(() => {
+		if (initialValues) {
+			baseline = {
+				votingStrategy: initialValues.voting_strategy || DEFAULT_VOTING_STRATEGY,
+				confidenceThreshold: initialValues.confidence_threshold || DEFAULT_CONFIDENCE_THRESHOLD,
+				maxProposalsPerRun: initialValues.max_proposals_per_run || DEFAULT_MAX_PROPOSALS_PER_RUN,
+				blacklistedProposers: initialValues.blacklisted_proposers?.join('\n') || '',
+				whitelistedProposers: initialValues.whitelisted_proposers?.join('\n') || ''
+			};
+		}
+	});
+
 	// Check if form is dirty
 	const isDirty = $derived(
 		votingStrategy !== baseline.votingStrategy ||
+		confidenceThreshold !== baseline.confidenceThreshold ||
+		maxProposalsPerRun !== baseline.maxProposalsPerRun ||
 		normalizeList(blacklistedProposers).join('\n') !== normalizeList(baseline.blacklistedProposers).join('\n') ||
 		normalizeList(whitelistedProposers).join('\n') !== normalizeList(baseline.whitelistedProposers).join('\n')
 	);
@@ -186,6 +204,8 @@
 		try {
 			await onSubmit({
 				voting_strategy: votingStrategy,
+				confidence_threshold: confidenceThreshold,
+				max_proposals_per_run: maxProposalsPerRun,
 				blacklisted_proposers: parseAddressList(blacklistedProposers),
 				whitelisted_proposers: parseAddressList(whitelistedProposers)
 			});
@@ -205,6 +225,8 @@
 		try {
 			await onSubmitAndReconsider({
 				voting_strategy: votingStrategy,
+				confidence_threshold: confidenceThreshold,
+				max_proposals_per_run: maxProposalsPerRun,
 				blacklisted_proposers: parseAddressList(blacklistedProposers),
 				whitelisted_proposers: parseAddressList(whitelistedProposers)
 			});
@@ -232,6 +254,49 @@
 		</select>
 		<p class="mt-1 text-sm text-gray-500">
 			Determines how the agent evaluates proposal risk
+		</p>
+	</div>
+
+	<!-- Confidence Threshold -->
+	<div>
+		<label for="confidence-threshold" class="block text-sm font-medium text-gray-700 mb-2">
+			Confidence Threshold: {confidenceThreshold.toFixed(2)}
+		</label>
+		<input
+			id="confidence-threshold"
+			type="range"
+			min="0.1"
+			max="1.0"
+			step="0.1"
+			bind:value={confidenceThreshold}
+			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+			disabled={isSubmitting}
+		/>
+		<div class="flex justify-between text-xs text-gray-500 mt-1">
+			<span>0.1 (Low confidence)</span>
+			<span>1.0 (High confidence)</span>
+		</div>
+		<p class="mt-1 text-sm text-gray-500">
+			Minimum confidence required to cast a vote
+		</p>
+	</div>
+
+	<!-- Max Proposals Per Run -->
+	<div>
+		<label for="max-proposals" class="block text-sm font-medium text-gray-700 mb-2">
+			Max Proposals Per Run
+		</label>
+		<input
+			id="max-proposals"
+			type="number"
+			min="1"
+			max="10"
+			bind:value={maxProposalsPerRun}
+			class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+			disabled={isSubmitting}
+		/>
+		<p class="mt-1 text-sm text-gray-500">
+			Maximum number of proposals to analyze per agent run (1-10)
 		</p>
 	</div>
 
