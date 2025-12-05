@@ -80,7 +80,8 @@ class SafeService:
         }
 
         # Initialize account from private key using KeyManager
-        self.key_manager = KeyManager()
+        # Pass password from settings for encrypted V3 Keystore support
+        self.key_manager = KeyManager(password=settings.agent_password)
         self.private_key = self.key_manager.get_private_key()
         self.account = Account.from_key(self.private_key)
         self._web3_connections = {}

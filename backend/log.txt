@@ -223,3 +223,135 @@
 [2025-10-31 14:15:33,556] [INFO] [agent] Pearl logger initialized successfully
 [2025-10-31 14:15:33,979] [INFO] [agent] Pearl logger initialized successfully
 [2025-10-31 14:15:33,980] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:34,885] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:35,460] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:36,250] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:49,443] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:49,631] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:49,877] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:49,886] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:03:49,902] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:49,902] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:49,903] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:49,903] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:49,904] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:49,904] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:49,904] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:49,904] [ERROR] [agent] Invalid key format detected
+[2025-12-05 11:03:50,534] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:50,534] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:50,923] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:03:50,923] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:51,293] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:51,293] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:51,655] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:03:51,655] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:52,027] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:52,027] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:52,389] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:03:52,389] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:53,189] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:53,189] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:53,604] [ERROR] [agent] Failed to decrypt keystore: incorrect password
+[2025-12-05 11:03:53,968] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:53,968] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:54,328] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:03:54,329] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:54,330] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:54,330] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:54,330] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:54,331] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:54,331] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:54,698] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:54,698] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:55,068] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:03:55,068] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:55,451] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,451] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:55,928] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:03:55,928] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:55,929] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,930] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:55,931] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,931] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:55,931] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,931] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:03:55,931] [ERROR] [agent] Unexpected error decrypting keystore: KeyError
+[2025-12-05 11:03:55,932] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,932] [ERROR] [agent] Invalid key format detected
+[2025-12-05 11:03:55,933] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,933] [ERROR] [agent] Invalid key format detected
+[2025-12-05 11:03:55,933] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,933] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:55,934] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:03:55,934] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:03:55,934] [INFO] [agent] Private key cache cleared
+[2025-12-05 11:04:08,444] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:04:08,632] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:04:09,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:04:09,326] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:04:09,332] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:09,332] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:09,333] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:09,333] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:09,334] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:09,334] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:09,335] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:09,335] [ERROR] [agent] Invalid key format detected
+[2025-12-05 11:04:09,733] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:09,733] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:10,103] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:04:10,103] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:10,486] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:10,486] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:10,847] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:04:10,847] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:11,219] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:11,220] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:11,578] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:04:11,578] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:11,965] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:11,965] [ERROR] [agent] Encrypted key detected but no password provided
+[2025-12-05 11:04:13,051] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:13,051] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:13,419] [ERROR] [agent] Failed to decrypt keystore: incorrect password
+[2025-12-05 11:04:13,792] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:13,792] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:14,171] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:04:14,171] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:14,172] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:14,173] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:14,173] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:14,173] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:14,174] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:14,556] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:14,556] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:14,914] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:04:14,914] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:15,290] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,290] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:15,658] [INFO] [agent] Successfully decrypted V3 Keystore
+[2025-12-05 11:04:15,658] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:15,659] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,659] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:15,660] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,660] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:15,661] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,661] [INFO] [agent] Decrypting V3 Keystore
+[2025-12-05 11:04:15,661] [ERROR] [agent] Unexpected error decrypting keystore: KeyError
+[2025-12-05 11:04:15,661] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,662] [ERROR] [agent] Invalid key format detected
+[2025-12-05 11:04:15,662] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,662] [ERROR] [agent] Invalid key format detected
+[2025-12-05 11:04:15,663] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,663] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:15,663] [INFO] [agent] KeyManager initialized
+[2025-12-05 11:04:15,663] [INFO] [agent] Private key loaded and cached
+[2025-12-05 11:04:15,664] [INFO] [agent] Private key cache cleared
+[2025-12-05 11:04:31,904] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:04:32,097] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:04:32,312] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:05:26,089] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:05:26,281] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:05:26,516] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-05 11:05:26,516] [INFO] [agent] Pearl logger initialized successfully

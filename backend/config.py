@@ -194,6 +194,13 @@ class Settings(BaseSettings):
     max_top_voters_limit: int = MAX_TOP_VOTERS_LIMIT
     min_top_voters_limit: int = MIN_TOP_VOTERS_LIMIT
 
+    # Agent private key password (for encrypted V3 Keystore format)
+    agent_password: Optional[str] = Field(
+        default=None,
+        alias="AGENT_PASSWORD",
+        description="Password to decrypt the Ethereum private key (V3 Keystore format)",
+    )
+
     # Safe wallet configuration
     # the safe_contract_addresses come from the pearl runtime env
     # the agent_address comes from The private key is stored in a file called ethereum_private_key.txt in the agent's working directory

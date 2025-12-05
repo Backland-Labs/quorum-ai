@@ -3,8 +3,12 @@
 This module provides centralized management of Ethereum private keys with
 security features including permission validation, secure memory handling,
 and caching with expiration.
+
+Supports both plaintext private keys and encrypted V3 Keystore JSON format.
+For encrypted keys, set the AGENT_PASSWORD environment variable.
 """
 
+import json
 import os
 import re
 import stat
@@ -38,10 +42,15 @@ class KeyManager:
     - Key format validation
     - Memory caching with expiration
     - Secure error handling without exposing sensitive data
+    - Support for encrypted V3 Keystore JSON format
     """
 
-    def __init__(self):
+    def __init__(self, password: Optional[str] = None):
         """Initialize the KeyManager.
+
+        Args:
+            password: Optional password to decrypt encrypted V3 Keystore keys.
+                     If not provided, will check AGENT_PASSWORD environment variable.
 
         Raises:
             KeyManagerError: If key file doesn't exist or has insecure permissions.
@@ -50,6 +59,7 @@ class KeyManager:
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
+        self._password = password
 
         # Validate key file setup during initialization
         self._validate_key_file_setup()
@@ -59,23 +69,36 @@ class KeyManager:
             extra={"working_directory": str(self.working_directory)},
         )
 
-    def get_private_key(self) -> str:
+    def get_private_key(self, password: Optional[str] = None) -> str:
         """Get the Ethereum private key.
+
+        Supports both plaintext keys and encrypted V3 Keystore JSON format.
+        For encrypted keys, a password must be provided either as a parameter,
+        during KeyManager initialization, or via AGENT_PASSWORD environment variable.
+
+        Args:
+            password: Optional password to decrypt encrypted keys. Takes precedence
+                     over constructor password and environment variable.
 
         Returns:
             The private key as a hex string (with 0x prefix).
 
         Raises:
-            KeyManagerError: If the key cannot be read or is invalid.
+            KeyManagerError: If the key cannot be read, decrypted, or is invalid.
         """
         # Check cache first
         if self._is_cache_valid():
             logger.debug("Using cached private key")
             return self._cached_key
 
-        # Read and validate key
-        key = self._read_key_file()
-        key = self._validate_key_format(key)
+        # Read key file content
+        content = self._read_key_file()
+
+        # Detect format and process accordingly
+        if self._is_encrypted_keystore(content):
+            key = self._decrypt_keystore(content, password)
+        else:
+            key = self._validate_key_format(content)
 
         # Update cache
         self._cached_key = key
@@ -186,3 +209,82 @@ class KeyManager:
 
         logger.debug("Key format validated")
         return key
+
+    def _is_encrypted_keystore(self, content: str) -> bool:
+        """Detect if content is a V3 Keystore JSON format.
+
+        The V3 Keystore format contains a 'crypto' or 'Crypto' field with
+        encryption parameters.
+
+        Args:
+            content: The file content to check.
+
+        Returns:
+            True if content appears to be V3 Keystore JSON, False otherwise.
+        """
+        try:
+            data = json.loads(content)
+            # V3 Keystore uses 'crypto' (lowercase) per spec, but some tools use 'Crypto'
+            is_keystore = "crypto" in data or "Crypto" in data
+            if is_keystore:
+                logger.debug("Detected encrypted V3 Keystore format")
+            return is_keystore
+        except json.JSONDecodeError:
+            return False
+
+    def _decrypt_keystore(self, content: str, password: Optional[str] = None) -> str:
+        """Decrypt a V3 Keystore JSON to extract the private key.
+
+        Args:
+            content: The V3 Keystore JSON content.
+            password: Optional password override. If not provided, uses password
+                     from constructor or AGENT_PASSWORD environment variable.
+
+        Returns:
+            The decrypted private key with 0x prefix.
+
+        Raises:
+            KeyManagerError: If password is missing or decryption fails.
+        """
+        from eth_account import Account
+        from utils.env_helper import get_env_with_prefix
+
+        # Resolve password: parameter > constructor > environment
+        effective_password = password or self._password or get_env_with_prefix("AGENT_PASSWORD")
+
+        if effective_password is None:
+            logger.error("Encrypted key detected but no password provided")
+            raise KeyManagerError(
+                "Encrypted key detected but no password provided. "
+                "Set AGENT_PASSWORD environment variable or provide password parameter."
+            )
+
+        try:
+            logger.info("Decrypting V3 Keystore")
+            private_key = Account.decrypt(content, effective_password)
+
+            # Convert bytes to hex string with 0x prefix
+            if isinstance(private_key, bytes):
+                key_hex = "0x" + private_key.hex()
+            else:
+                key_hex = private_key if private_key.startswith("0x") else "0x" + private_key
+
+            logger.info("Successfully decrypted V3 Keystore")
+            return key_hex
+
+        except ValueError as e:
+            # eth_account raises ValueError for wrong password or invalid keystore
+            error_msg = str(e)
+            if "password" in error_msg.lower() or "mac" in error_msg.lower():
+                logger.error("Failed to decrypt keystore: incorrect password")
+                raise KeyManagerError(
+                    "Failed to decrypt keystore: incorrect password or corrupted file."
+                ) from e
+            else:
+                logger.error(f"Failed to decrypt keystore: {error_msg}")
+                raise KeyManagerError(f"Failed to decrypt keystore: {error_msg}") from e
+        except Exception as e:
+            logger.error(f"Unexpected error decrypting keystore: {type(e).__name__}")
+            raise KeyManagerError(
+                "Failed to decrypt keystore. Check file format and password."
+            ) from e
