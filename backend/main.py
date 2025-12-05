@@ -45,6 +45,7 @@ from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
 from services.health_status_service import HealthStatusService
+from services.performance_tracker import PerformanceTracker
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -63,6 +64,7 @@ shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
 health_status_service: Optional[HealthStatusService] = None
+performance_tracker: Optional[PerformanceTracker] = None
 
 
 @asynccontextmanager
@@ -82,7 +84,8 @@ async def lifespan(_app: FastAPI):
         shutdown_coordinator, \
         withdrawal_service, \
         state_transition_tracker, \
-        health_status_service
+        health_status_service, \
+        performance_tracker
 
     # Initialize state manager
     state_manager = StateManager()
@@ -120,6 +123,24 @@ async def lifespan(_app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to initialize HealthStatusService: {e}")
         health_status_service = None
+
+    # Initialize PerformanceTracker for Pearl v1 compliance
+    try:
+        if settings.performance_file_enabled:
+            performance_tracker = PerformanceTracker(
+                file_path=settings.performance_file_path
+            )
+            # Attach to agent_run_service for metrics updates after runs
+            agent_run_service.performance_tracker = performance_tracker
+            logger.info(
+                f"PerformanceTracker initialized at {settings.performance_file_path}"
+            )
+        else:
+            logger.info("PerformanceTracker disabled via PERFORMANCE_FILE_ENABLED=False")
+            performance_tracker = None
+    except Exception as e:
+        logger.error(f"Failed to initialize PerformanceTracker: {e}")
+        performance_tracker = None
 
     # Initialize signal handling
     signal_handler = SignalHandler()
@@ -779,6 +800,36 @@ async def get_agent_run_statistics():
         logger.error(f"Error getting agent statistics: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to calculate agent statistics"
+        )
+
+
+@app.get(
+    "/agent-run/performance",
+    summary="Get agent performance metrics",
+    description="Returns Pearl v1 performance data from agent_performance.json",
+    tags=["Agent Run"],
+)
+async def get_agent_performance():
+    """Get current agent performance metrics.
+
+    Returns data from agent_performance.json file for Pearl v1 compliance.
+    Includes metrics like total attestations and proposals analyzed,
+    plus current agent behavior description.
+    """
+    if not performance_tracker:
+        raise HTTPException(
+            status_code=503,
+            detail="Performance tracking not enabled",
+        )
+
+    try:
+        data = performance_tracker.read()
+        return data.model_dump(mode="json")
+    except Exception as e:
+        logger.error(f"Failed to read performance data: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to read performance data: {str(e)}",
         )
 
 

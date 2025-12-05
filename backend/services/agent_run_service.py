@@ -31,6 +31,7 @@ from services.user_preferences_service import UserPreferencesService
 from services.proposal_filter import ProposalFilter
 from services.agent_run_logger import AgentRunLogger
 from services.state_transition_tracker import StateTransitionTracker, AgentState
+from utils.attestation_tracker_helpers import get_attestation_count
 
 
 # Custom exceptions for better error handling
@@ -99,6 +100,9 @@ class AgentRunService:
         # Track active operations for graceful shutdown
         self._active_run = False
         self._current_run_data = None
+
+        # PerformanceTracker will be injected from main.py
+        self.performance_tracker = None
 
         # Initialize Pearl-compliant logger
         self.pearl_logger = setup_pearl_logger(name="agent_run_service")
@@ -227,6 +231,9 @@ class AgentRunService:
                 # Log completion summary
                 self.logger.log_agent_completion(response)
 
+                # Update performance metrics (Pearl v1 compliance)
+                await self._update_performance_metrics()
+
                 # Track completion
                 self.state_tracker.transition(
                     AgentState.COMPLETED,
@@ -288,6 +295,54 @@ class AgentRunService:
             user_preferences = UserPreferences()
             self.logger.log_agent_start(request, user_preferences)
             return user_preferences, error_msg
+
+    async def _update_performance_metrics(self) -> None:
+        """Update agent_performance.json after agent run.
+
+        Collects metrics from various sources and updates the Pearl v1
+        compliant performance file.
+        """
+        if not self.performance_tracker:
+            return
+
+        try:
+            # Get attestation count from AttestationTracker contract
+            attestation_count = None
+            if settings.base_safe_address:
+                try:
+                    attestation_count = get_attestation_count(settings.base_safe_address)
+                except Exception as e:
+                    self.pearl_logger.warning(
+                        f"Could not fetch attestation count: {e}"
+                    )
+
+            # Get proposals analyzed count from statistics
+            proposals_analyzed = None
+            try:
+                stats = await self.get_agent_run_statistics()
+                proposals_analyzed = stats.get("total_proposals_evaluated", 0)
+            except Exception as e:
+                self.pearl_logger.warning(
+                    f"Could not fetch agent statistics: {e}"
+                )
+
+            # Get monitored DAOs from settings
+            monitored_daos = settings.monitored_daos_list
+
+            # Update performance file
+            self.performance_tracker.update_from_run_data(
+                attestation_count=attestation_count,
+                proposals_analyzed=proposals_analyzed,
+                monitored_daos=monitored_daos,
+            )
+
+            self.pearl_logger.info(
+                f"Performance metrics updated: attestations={attestation_count}, "
+                f"proposals={proposals_analyzed}, daos={len(monitored_daos)}"
+            )
+
+        except Exception as e:
+            self.pearl_logger.error(f"Failed to update performance metrics: {e}")
 
     async def _fetch_and_process_proposals(
         self, space_id: str, user_preferences: UserPreferences

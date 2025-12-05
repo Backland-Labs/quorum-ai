@@ -447,6 +447,23 @@ class Settings(BaseSettings):
         description="Chain to use for attestation transactions (e.g., 'base', 'ethereum')",
     )
 
+    # Performance tracking configuration (Pearl v1)
+    performance_file_enabled: bool = Field(
+        default=True,
+        alias="PERFORMANCE_FILE_ENABLED",
+        description="Enable agent_performance.json tracking for Pearl v1 compliance",
+    )
+
+    @property
+    def performance_file_path(self) -> str:
+        """Get path to agent_performance.json file."""
+        store_path = get_env_with_prefix("STORE_PATH")
+        if not store_path:
+            # Fallback to current store_path
+            store_path = self.store_path or "/app/store"
+
+        return f"{store_path}/agent_performance.json"
+
     @field_validator("mock_mode", mode="before")
     @classmethod
     def validate_mock_mode(cls, v):
