@@ -8,6 +8,7 @@ from models import AgentHealth, HealthCheckResponse
 from services.safe_service import SafeService
 from services.activity_service import ActivityService
 from services.state_transition_tracker import StateTransitionTracker
+from config import settings
 
 
 class HealthStatusService:
@@ -25,6 +26,7 @@ class HealthStatusService:
         safe_service: Optional[SafeService] = None,
         activity_service: Optional[ActivityService] = None,
         state_transition_tracker: Optional[StateTransitionTracker] = None,
+        funds_service: Optional["FundsService"] = None,
     ):
         """
         Initialize HealthStatusService with dependency injection.
@@ -33,17 +35,20 @@ class HealthStatusService:
             safe_service: Service for Safe multi-signature wallet operations
             activity_service: Service for tracking daily activity requirements
             state_transition_tracker: Service for tracking agent state transitions
+            funds_service: Service for checking fund balances and deficits
         """
         self.logger = setup_pearl_logger(__name__)
         self.safe_service = safe_service
         self.activity_service = activity_service
         self.state_transition_tracker = state_transition_tracker
+        self.funds_service = funds_service
 
         # Log initialization with dependency status
         dependencies_status = {
             "safe_service": safe_service is not None,
             "activity_service": activity_service is not None,
             "state_transition_tracker": state_transition_tracker is not None,
+            "funds_service": funds_service is not None,
         }
 
         self.logger.info(
@@ -180,17 +185,20 @@ class HealthStatusService:
                     except Exception:
                         has_recent_activity = True  # Safe default
 
+                # Check if agent has required funds
+                has_required_funds = self._check_funds_status()
+
                 agent_health = AgentHealth(
                     is_making_on_chain_transactions=has_recent_activity,
                     is_staking_kpi_met=is_staking_kpi_met,
-                    has_required_funds=True,  # Safe default - would need balance check
+                    has_required_funds=has_required_funds,
                 )
 
                 self.logger.debug(
                     "Agent health check completed (transactions=%s, staking=%s, funds=%s)",
                     has_recent_activity,
                     is_staking_kpi_met,
-                    True,
+                    has_required_funds,
                 )
 
                 return agent_health
@@ -198,6 +206,41 @@ class HealthStatusService:
         except Exception as e:
             self.logger.warning("Agent health check failed: %s", str(e))
             return AgentHealth()  # Safe defaults
+
+    def _check_funds_status(self) -> bool:
+        """
+        Check if agent has required funds using FundsService.
+
+        Returns:
+            True if all balances are healthy, False if any deficits exist.
+            Returns True (safe default) on error or if FundsService unavailable.
+        """
+        if not self.funds_service:
+            self.logger.debug("FundsService not available, using safe default")
+            return True
+
+        if not settings.fund_requirements:
+            self.logger.debug("No fund requirements configured, returning healthy")
+            return True
+
+        try:
+            funds_status = self.funds_service.compute_funds_status(
+                settings.fund_requirements
+            )
+            # Empty dict means all balances healthy
+            has_required_funds = len(funds_status) == 0
+
+            if not has_required_funds:
+                self.logger.warning(
+                    "Funding deficits detected: %s", funds_status
+                )
+
+            return has_required_funds
+
+        except Exception as e:
+            self.logger.error(f"Failed to check funds status: {e}")
+            # Default to True to avoid false alarms
+            return True
 
     async def _get_rounds_info(self) -> List[Dict[str, Any]]:
         """

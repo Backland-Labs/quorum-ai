@@ -4,7 +4,7 @@ import hashlib
 import os
 import time
 from contextlib import asynccontextmanager
-from typing import List, Optional, Any
+from typing import Dict, List, Optional, Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,6 +45,7 @@ from services.signal_handler import SignalHandler, ShutdownCoordinator
 from services.withdrawal_service import WithdrawalService
 from services.state_transition_tracker import StateTransitionTracker
 from services.health_status_service import HealthStatusService
+from services.funds_service import FundsService
 
 # Initialize Pearl-compliant logger
 logger = setup_pearl_logger(__name__)
@@ -63,6 +64,7 @@ shutdown_coordinator: ShutdownCoordinator
 withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
 health_status_service: Optional[HealthStatusService] = None
+funds_service: Optional[FundsService] = None
 
 
 @asynccontextmanager
@@ -82,7 +84,8 @@ async def lifespan(_app: FastAPI):
         shutdown_coordinator, \
         withdrawal_service, \
         state_transition_tracker, \
-        health_status_service
+        health_status_service, \
+        funds_service
 
     # Initialize state manager
     state_manager = StateManager()
@@ -105,6 +108,8 @@ async def lifespan(_app: FastAPI):
         safe_service=safe_service,
         snapshot_service=snapshot_service,
     )
+    funds_service = FundsService()
+    logger.info("FundsService initialized")
 
     # Initialize HealthStatusService with dependency injection
     try:
@@ -113,6 +118,7 @@ async def lifespan(_app: FastAPI):
                 safe_service=safe_service,
                 activity_service=activity_service,
                 state_transition_tracker=state_transition_tracker,
+                funds_service=funds_service,
             )
             logger.info("HealthStatusService initialized successfully")
         else:
@@ -454,6 +460,42 @@ async def healthcheck():
         }
 
         return error_response
+
+
+# Funds status endpoint
+@app.get(
+    "/funds-status",
+    response_model=Dict[str, Dict[str, Dict[str, str]]],
+    summary="Get agent funding status",
+    description=(
+        "Returns deficits for addresses that need funding. "
+        "Empty object {} means all balances are healthy."
+    ),
+    tags=["Status"],
+)
+async def get_funds_status() -> Dict[str, Dict[str, Dict[str, str]]]:
+    """
+    Pearl v1 compliance endpoint.
+
+    Returns nested dict of chain -> address -> asset -> deficit.
+    Only includes entries where balance < threshold.
+    """
+    try:
+        if funds_service is None:
+            logger.warning("FundsService not initialized, returning empty status")
+            return {}
+
+        if not settings.fund_requirements:
+            logger.debug("No fund requirements configured, returning empty status")
+            return {}
+
+        status = funds_service.compute_funds_status(settings.fund_requirements)
+        return status
+
+    except Exception as e:
+        logger.error(f"Failed to compute funds status: {e}")
+        # Return empty dict to avoid breaking health checks
+        return {}
 
 
 # Proposal endpoints

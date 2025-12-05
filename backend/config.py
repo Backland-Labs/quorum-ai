@@ -447,6 +447,16 @@ class Settings(BaseSettings):
         description="Chain to use for attestation transactions (e.g., 'base', 'ethereum')",
     )
 
+    # Fund requirements for balance monitoring
+    fund_requirements: Dict[str, Dict[str, Dict[str, Dict[str, str]]]] = Field(
+        default_factory=dict,
+        alias="FUND_REQUIREMENTS",
+        description=(
+            "Nested dict defining funding thresholds and top-up amounts. "
+            "Structure: {chain: {address: {asset: {threshold, topup}}}}"
+        ),
+    )
+
     @field_validator("mock_mode", mode="before")
     @classmethod
     def validate_mock_mode(cls, v):

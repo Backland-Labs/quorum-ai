@@ -11,7 +11,7 @@ def get_w3(chain: str = "base") -> Web3:
     """Get Web3 instance for a specific chain.
 
     Args:
-        chain: The chain name (e.g., 'base', 'ethereum')
+        chain: The chain name (e.g., 'base', 'ethereum', 'optimism', 'gnosis', 'mode', 'celo')
 
     Returns:
         Web3 instance connected to the chain
@@ -24,6 +24,10 @@ def get_w3(chain: str = "base") -> Web3:
         "base": settings.get_base_rpc_endpoint()
         or "http://localhost:8545",  # Default to localhost for tests
         "ethereum": settings.ethereum_ledger_rpc,
+        "gnosis": settings.gnosis_ledger_rpc,
+        "optimism": settings.ethereum_ledger_rpc,  # Optimism uses Ethereum Ledger RPC in some configs
+        "mode": settings.mode_ledger_rpc,
+        "celo": settings.celo_ledger_rpc,
     }
 
     rpc_url = rpc_endpoints.get(chain)
