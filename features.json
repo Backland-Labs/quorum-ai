@@ -1,0 +1,188 @@
+[
+  {
+    "category": "functional",
+    "description": "Plaintext private key loading continues to work without password (backwards compatibility)",
+    "plan_ref": "Task 2 - Add V3 Keystore Detection and Decryption to KeyManager",
+    "steps": [
+      "Step 1: Create a temp directory with a plaintext ethereum_private_key.txt containing a valid 64-hex key",
+      "Step 2: Instantiate KeyManager with AGENT_KEY_DIR pointing to temp directory (no password)",
+      "Step 3: Call get_private_key() and verify it returns the key with 0x prefix",
+      "Step 4: Verify no errors are raised"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "V3 Keystore JSON format is automatically detected by KeyManager",
+    "plan_ref": "Task 2 - Add V3 Keystore Detection and Decryption to KeyManager",
+    "steps": [
+      "Step 1: Create a V3 keystore JSON file and place in ethereum_private_key.txt",
+      "Step 2: Instantiate KeyManager without password",
+      "Step 3: Call get_private_key() and verify it raises KeyManagerError with message about encrypted key requiring password"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "V3 Keystore decryption works with correct password via --password CLI argument",
+    "plan_ref": "Task 1 - CLI Argument Handling, Task 2 - KeyManager Decryption",
+    "steps": [
+      "Step 1: Create a V3 keystore JSON file encrypted with password 'test_password'",
+      "Step 2: Place V3 keystore in ethereum_private_key.txt",
+      "Step 3: Start application with --password test_password argument",
+      "Step 4: Verify KeyManager decrypts and returns the correct private key"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "V3 Keystore decryption fails with clear error when wrong password provided",
+    "plan_ref": "Task 2 - KeyManager Decryption",
+    "steps": [
+      "Step 1: Create a V3 keystore JSON file encrypted with password 'correct_password'",
+      "Step 2: Instantiate KeyManager with password='wrong_password'",
+      "Step 3: Call get_private_key() and verify it raises KeyManagerError with message about incorrect password"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "KEY_PASSWORD environment variable is used as fallback when --password not provided",
+    "plan_ref": "Task 1 - CLI Argument Handling",
+    "steps": [
+      "Step 1: Set KEY_PASSWORD environment variable to 'env_password'",
+      "Step 2: Create V3 keystore encrypted with 'env_password'",
+      "Step 3: Start application without --password argument",
+      "Step 4: Verify KeyManager uses KEY_PASSWORD and successfully decrypts the key"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "SafeService correctly passes password to KeyManager for V3 keystore decryption",
+    "plan_ref": "Task 3 - Update Service Consumers",
+    "steps": [
+      "Step 1: Set up V3 keystore with known password",
+      "Step 2: Configure get_key_password() to return the correct password",
+      "Step 3: Instantiate SafeService",
+      "Step 4: Verify SafeService.account is correctly loaded from decrypted key"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "VotingService correctly passes password to KeyManager for V3 keystore decryption",
+    "plan_ref": "Task 3 - Update Service Consumers",
+    "steps": [
+      "Step 1: Set up V3 keystore with known password",
+      "Step 2: Configure get_key_password() to return the correct password",
+      "Step 3: Instantiate VotingService without passing KeyManager",
+      "Step 4: Access VotingService.account property",
+      "Step 5: Verify account is correctly loaded from decrypted key"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "checkpoint.py script accepts --password argument and passes to KeyManager",
+    "plan_ref": "Task 4 - Update checkpoint.py Script",
+    "steps": [
+      "Step 1: Verify checkpoint.py --help shows --password argument",
+      "Step 2: Set up V3 keystore with known password",
+      "Step 3: Run checkpoint.py with --password argument",
+      "Step 4: Verify script successfully loads the encrypted key"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "entrypoint.sh passes KEY_PASSWORD to main.py when environment variable is set",
+    "plan_ref": "Task 5 - Update entrypoint.sh",
+    "steps": [
+      "Step 1: Verify entrypoint.sh contains conditional logic for KEY_PASSWORD",
+      "Step 2: Set KEY_PASSWORD environment variable",
+      "Step 3: Trace the command that would be executed",
+      "Step 4: Verify --password $KEY_PASSWORD is included in the command"
+    ],
+    "passes": true
+  },
+  {
+    "category": "functional",
+    "description": "KeyManager caching works correctly with V3 keystore decryption",
+    "plan_ref": "Task 2 - KeyManager Decryption",
+    "steps": [
+      "Step 1: Set up V3 keystore with password",
+      "Step 2: Create KeyManager with correct password",
+      "Step 3: Call get_private_key() multiple times",
+      "Step 4: Verify decryption only happens once (cached)",
+      "Step 5: Call clear_cache() and get_private_key() again",
+      "Step 6: Verify decryption happens again after cache clear"
+    ],
+    "passes": true
+  },
+  {
+    "category": "unit_test",
+    "description": "Unit tests exist and pass for plaintext key loading",
+    "plan_ref": "Task 6 - Create Comprehensive Unit Tests",
+    "steps": [
+      "Step 1: Run uv run pytest backend/tests/test_key_manager.py::test_plaintext_key_* -v",
+      "Step 2: Verify all plaintext key tests pass"
+    ],
+    "passes": true
+  },
+  {
+    "category": "unit_test",
+    "description": "Unit tests exist and pass for V3 keystore detection",
+    "plan_ref": "Task 6 - Create Comprehensive Unit Tests",
+    "steps": [
+      "Step 1: Run uv run pytest backend/tests/test_key_manager.py::test_v3_keystore_detection* -v",
+      "Step 2: Verify V3 detection tests pass"
+    ],
+    "passes": true
+  },
+  {
+    "category": "unit_test",
+    "description": "Unit tests exist and pass for V3 keystore decryption",
+    "plan_ref": "Task 6 - Create Comprehensive Unit Tests",
+    "steps": [
+      "Step 1: Run uv run pytest backend/tests/test_key_manager.py::test_v3_keystore_decryption* -v",
+      "Step 2: Verify V3 decryption tests pass including correct password, wrong password, and no password scenarios"
+    ],
+    "passes": true
+  },
+  {
+    "category": "unit_test",
+    "description": "All existing backend tests continue to pass after changes",
+    "plan_ref": "All Tasks - Backwards Compatibility",
+    "steps": [
+      "Step 1: Run uv run pytest backend/tests/ -v",
+      "Step 2: Verify no test regressions",
+      "Step 3: All tests should pass (249 passed, 4 pre-existing failures unrelated to V3 keystore)"
+    ],
+    "passes": true
+  },
+  {
+    "category": "integration",
+    "description": "Application starts successfully with plaintext key (no password)",
+    "plan_ref": "All Tasks - Backwards Compatibility",
+    "steps": [
+      "Step 1: Set up plaintext ethereum_private_key.txt",
+      "Step 2: Start application without --password",
+      "Step 3: Verify application starts without errors",
+      "Step 4: Verify healthcheck endpoint responds"
+    ],
+    "passes": true
+  },
+  {
+    "category": "integration",
+    "description": "Application starts successfully with V3 keystore and --password",
+    "plan_ref": "Task 1 - CLI Argument Handling, Task 2 - KeyManager Decryption",
+    "steps": [
+      "Step 1: Create V3 keystore encrypted with 'test_password'",
+      "Step 2: Start application with --password test_password",
+      "Step 3: Verify application starts without errors",
+      "Step 4: Verify healthcheck endpoint responds"
+    ],
+    "passes": true
+  }
+]

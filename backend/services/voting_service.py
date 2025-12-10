@@ -38,9 +38,16 @@ class VotingService:
             key_manager: Optional KeyManager instance. If not provided, creates a new one.
         """
         # Initialize KeyManager
-        from services.key_manager import KeyManager
-
-        self.key_manager = key_manager or KeyManager()
+        if key_manager:
+            self.key_manager = key_manager
+        else:
+            try:
+                from main import create_key_manager
+                self.key_manager = create_key_manager()
+            except Exception:
+                # Fallback for tests or when main module not fully initialized
+                from services.key_manager import KeyManager
+                self.key_manager = KeyManager(password=None)
 
         # Initialize account lazily
         self._account = None

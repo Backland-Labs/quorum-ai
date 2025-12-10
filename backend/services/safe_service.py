@@ -79,7 +79,12 @@ class SafeService:
         }
 
         # Initialize account from private key using KeyManager
-        self.key_manager = KeyManager()
+        try:
+            from main import create_key_manager
+            self.key_manager = create_key_manager()
+        except Exception:
+            # Fallback for tests or when main module not fully initialized
+            self.key_manager = KeyManager(password=None)
         self.private_key = self.key_manager.get_private_key()
         self.account = Account.from_key(self.private_key)
         self._web3_connections = {}

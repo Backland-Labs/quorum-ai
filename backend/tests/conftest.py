@@ -12,6 +12,7 @@ from httpx import AsyncClient
 
 # Set test environment variables before imports
 os.environ.setdefault("OPENROUTER_API_KEY", "test-key")
+os.environ.setdefault("BASE_RPC_URL", "http://localhost:8545")
 
 
 @pytest.fixture
