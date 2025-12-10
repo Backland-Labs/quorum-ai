@@ -16,9 +16,9 @@ jobs:
     if: github.event.label.name == 'claude-implement' || github.event_name == 'workflow_dispatch'
     uses: mkrueger12/claude-parallel/.github/workflows/reusable-implement-issue.yml@main
     with:
-      issue_number: ${{ github.event.inputs.issue_number }}
+      issue_number: ${{ github.event.inputs.issue_number && fromJSON(github.event.inputs.issue_number) || 0 }}
       event_name: ${{ github.event_name }}
-      event_issue_number: ${{ github.event.issue.number }}
+      event_issue_number: ${{ github.event.issue.number && format('{0}', github.event.issue.number) || '' }}
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
