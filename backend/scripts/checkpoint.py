@@ -14,6 +14,8 @@
 # ///
 """Call checkpoint on staking contract every 24 hours."""
 
+import argparse
+import os
 import sys
 from pathlib import Path
 from web3 import Web3
@@ -27,6 +29,14 @@ from logging_config import setup_pearl_logger
 from services.key_manager import KeyManager
 
 logger = setup_pearl_logger(__name__)
+
+# Parse command line arguments
+argument_parser = argparse.ArgumentParser(description="Checkpoint script for staking contract")
+argument_parser.add_argument("--password", type=str, help="Password to decrypt V3 Keystore private key")
+args = argument_parser.parse_args()
+
+# Get password from CLI or environment variable
+key_password = args.password or os.environ.get("KEY_PASSWORD")
 
 # Default staking contract address (can be overridden via env)
 STAKING_CONTRACT_ADDRESS = "0xeF662b5266db0AeFe55554c50cA6Ad25c1DA16fb"
@@ -72,7 +82,7 @@ def main():
         logger.info(f"Connected to chain_id={w3.eth.chain_id}")
 
         # Load private key using KeyManager
-        key_manager = KeyManager()
+        key_manager = KeyManager(password=key_password)
         private_key = key_manager.get_private_key()
         account = Account.from_key(private_key)
 
