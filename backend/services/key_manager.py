@@ -5,11 +5,14 @@ security features including permission validation, secure memory handling,
 and caching with expiration.
 """
 
+import json
 import os
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
+
+from eth_account import Account
 
 from logging_config import setup_pearl_logger
 from config import settings
@@ -39,8 +42,11 @@ class KeyManager:
     - Secure error handling without exposing sensitive data
     """
 
-    def __init__(self):
+    def __init__(self, password: Optional[str] = None):
         """Initialize the KeyManager.
+
+        Args:
+            password: Optional password for decrypting V3 Keystore encrypted keys.
 
         Raises:
             KeyManagerError: If key file doesn't exist or has insecure permissions.
@@ -55,13 +61,17 @@ class KeyManager:
         self.key_file_path = self.working_directory / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
+        self._password = password
 
         # Validate key file setup during initialization
         self._validate_key_file_setup()
 
         logger.info(
             "KeyManager initialized",
-            extra={"working_directory": str(self.working_directory)},
+            extra={
+                "working_directory": str(self.working_directory),
+                "password_provided": password is not None,
+            },
         )
 
     def get_private_key(self) -> str:
@@ -148,19 +158,84 @@ class KeyManager:
                 "Key file not found. Ensure the key file exists in the working directory."
             )
 
+    def _is_v3_keystore(self, content: str) -> bool:
+        """Check if the content is a V3 Keystore JSON format.
+
+        Args:
+            content: The file content to check.
+
+        Returns:
+            True if content is a valid V3 keystore, False otherwise.
+        """
+        try:
+            keystore = json.loads(content)
+            return isinstance(keystore, dict) and keystore.get("version") == 3
+        except json.JSONDecodeError:
+            return False
+
+    def _decrypt_v3_keystore(self, keystore_json: str) -> str:
+        """Decrypt a V3 Keystore JSON and return the private key.
+
+        Args:
+            keystore_json: The V3 keystore JSON string.
+
+        Returns:
+            The decrypted private key as a hex string with 0x prefix.
+
+        Raises:
+            KeyManagerError: If decryption fails or password is incorrect.
+        """
+        try:
+            keystore = json.loads(keystore_json)
+            private_key_bytes = Account.decrypt(keystore, self._password)
+            private_key = "0x" + private_key_bytes.hex()
+            logger.debug("V3 keystore decrypted successfully")
+            return private_key
+        except ValueError as e:
+            # eth_account raises ValueError for incorrect password
+            logger.error("V3 keystore decryption failed: incorrect password")
+            raise KeyManagerError(
+                "Failed to decrypt V3 keystore: incorrect password provided"
+            ) from e
+        except Exception as e:
+            logger.error(f"V3 keystore decryption failed: {type(e).__name__}")
+            raise KeyManagerError(
+                f"Failed to decrypt V3 keystore: {type(e).__name__}"
+            ) from e
+
     def _read_file_content(self) -> str:
         """Read and return the file content.
 
+        If the content is a V3 Keystore JSON, it will be decrypted using the
+        provided password. Otherwise, the plaintext content is returned.
+
         Returns:
-            The file content, stripped of whitespace.
+            The private key (decrypted if V3 keystore, plaintext otherwise).
 
         Raises:
-            KeyManagerError: If file cannot be read.
+            KeyManagerError: If file cannot be read or V3 keystore requires password.
         """
         try:
             key_content = self.key_file_path.read_text().strip()
             logger.debug("Key file read successfully")
+
+            # Check if content is V3 keystore format
+            if self._is_v3_keystore(key_content):
+                logger.info("Detected V3 Keystore format")
+                if not self._password:
+                    logger.error("V3 keystore detected but no password provided")
+                    raise KeyManagerError(
+                        "V3 Keystore encrypted key file detected but no password provided. "
+                        "Please provide password via --password argument or KEY_PASSWORD environment variable."
+                    )
+                # Decrypt V3 keystore
+                return self._decrypt_v3_keystore(key_content)
+
+            # Return plaintext content
             return key_content
+        except KeyManagerError:
+            # Re-raise KeyManagerError as-is
+            raise
         except Exception as e:
             logger.error(f"Failed to read key file: {type(e).__name__}")
             raise KeyManagerError("Failed to read key file. Check file accessibility.")

@@ -1,7 +1,9 @@
 """Main FastAPI application for Quorum AI backend."""
 
+import argparse
 import hashlib
 import os
+import sys
 import time
 from contextlib import asynccontextmanager
 from typing import List, Optional, Any
@@ -68,6 +70,14 @@ withdrawal_service: WithdrawalService
 state_transition_tracker: Optional[StateTransitionTracker] = None
 health_status_service: Optional[HealthStatusService] = None
 staking_service: Optional[StakingService] = None
+
+# Module-level password storage for encrypted keystore files
+_key_password: Optional[str] = None
+
+
+def get_key_password() -> Optional[str]:
+    """Get the key password for encrypted keystore files."""
+    return _key_password
 
 
 @asynccontextmanager
@@ -224,6 +234,23 @@ async def lifespan(_app: FastAPI):
     await state_manager.cleanup()
 
     logger.info("Application shutdown completed")
+
+
+# Parse CLI arguments for password before FastAPI app creation
+parser = argparse.ArgumentParser(description="Quorum AI Backend")
+parser.add_argument(
+    "--password",
+    type=str,
+    help="Password for decrypting V3 Keystore encrypted private keys",
+)
+args, _ = parser.parse_known_args(sys.argv[1:])
+
+# Set module-level password from CLI arg or environment variable
+_key_password = args.password or os.environ.get("KEY_PASSWORD")
+if _key_password:
+    logger.info("Key password provided for encrypted keystore support")
+else:
+    logger.debug("No key password provided, plaintext keys only")
 
 
 # Create FastAPI app
