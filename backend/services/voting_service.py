@@ -39,8 +39,9 @@ class VotingService:
         """
         # Initialize KeyManager
         from services.key_manager import KeyManager
+        from main import get_key_password
 
-        self.key_manager = key_manager or KeyManager()
+        self.key_manager = key_manager or KeyManager(password=get_key_password())
 
         # Initialize account lazily
         self._account = None
