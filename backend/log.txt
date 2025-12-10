@@ -1,1 +1,626 @@
 [2025-11-24 07:23:44,542] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:36:34,674] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:36:50,348] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:36:51,177] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:25,214] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:25,990] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:51,920] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:52,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,013] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,013] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,013] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,014] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,014] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,015] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,015] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,015] [INFO] [agent] State transition: idle -> submitting_vote
+[2025-12-10 03:37:53,015] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,015] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,015] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,015] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,015] [INFO] [agent] Successfully created EAS attestation (proposal=test-proposal, safe_tx_hash=0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4)
+[2025-12-10 03:37:53,015] [INFO] [agent] Marked daily activity as completed (tx_hash=0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, proposal=test-proposal)
+[2025-12-10 03:37:53,015] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,015] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,015] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,015] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,018] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,018] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,018] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,019] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,019] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,019] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,019] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,019] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,019] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,020] [INFO] [agent] Vote service returned (proposal=test-proposal, success=False, result_keys=['success', 'error'])
+[2025-12-10 03:37:53,020] [ERROR] [agent] Vote submission FAILED (proposal=test-proposal, error=Snapshot API error, choice=1)
+[2025-12-10 03:37:53,020] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=False, vote_id=None, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,020] [INFO] [agent] Successfully created EAS attestation (proposal=test-proposal, safe_tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4)
+[2025-12-10 03:37:53,020] [INFO] [agent] Marked daily activity as completed (tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, proposal=test-proposal)
+[2025-12-10 03:37:53,020] [WARN] [agent] Vote 1/1 failed to execute (proposal_id=test-proposal)
+[2025-12-10 03:37:53,020] [INFO] [agent] Vote processing complete (total=1, successful=0)
+[2025-12-10 03:37:53,020] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=0)
+[2025-12-10 03:37:53,020] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,023] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,023] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,023] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,024] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=2, dry_run=False)
+[2025-12-10 03:37:53,024] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=2, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,024] [INFO] [agent] Normal mode - executing 2 votes
+[2025-12-10 03:37:53,024] [INFO] [agent] Processing vote 1/2 (proposal_id=proposal-1, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,024] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,024] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=proposal-1, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,024] [INFO] [agent] Vote service returned (proposal=proposal-1, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,024] [INFO] [agent] Vote submitted successfully (proposal=proposal-1, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,024] [INFO] [agent] Creating immediate EAS attestation (proposal=proposal-1, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,025] [ERROR] [agent] Failed to create EAS attestation (proposal=proposal-1, space=test.eth, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, rpc_url=http://localhost:8545, error=EAS contract not configured). Check configuration and network connectivity.
+[2025-12-10 03:37:53,025] [INFO] [agent] Vote 1/2 executed successfully (proposal_id=proposal-1)
+[2025-12-10 03:37:53,025] [INFO] [agent] Processing vote 2/2 (proposal_id=proposal-2, vote=VoteType.AGAINST, confidence=0.75)
+[2025-12-10 03:37:53,025] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,025] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=proposal-2, choice=2, vote_type=VoteType.AGAINST, confidence=0.75)
+[2025-12-10 03:37:53,025] [INFO] [agent] Vote service returned (proposal=proposal-2, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,025] [INFO] [agent] Vote submitted successfully (proposal=proposal-2, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=2)
+[2025-12-10 03:37:53,025] [INFO] [agent] Creating immediate EAS attestation (proposal=proposal-2, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,025] [ERROR] [agent] Failed to create EAS attestation (proposal=proposal-2, space=test.eth, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, rpc_url=http://localhost:8545, error=EAS contract not configured). Check configuration and network connectivity.
+[2025-12-10 03:37:53,025] [INFO] [agent] Vote 2/2 executed successfully (proposal_id=proposal-2)
+[2025-12-10 03:37:53,025] [INFO] [agent] Vote processing complete (total=2, successful=2)
+[2025-12-10 03:37:53,025] [INFO] [agent] Vote execution completed (total_decisions=2, successful_executions=2)
+[2025-12-10 03:37:53,025] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,027] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,028] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,028] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,028] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=True)
+[2025-12-10 03:37:53,028] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=True, dry_run_type=bool)
+[2025-12-10 03:37:53,028] [INFO] [agent] DRY RUN MODE - Simulating vote execution without actual submission. Skipping 1 vote submissions and attestations.
+[2025-12-10 03:37:53,028] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-12-10 03:37:53,031] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,031] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,031] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,033] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,033] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,033] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,033] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,033] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,033] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,033] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,033] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,033] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,033] [ERROR] [agent] Unexpected exception during immediate attestation. proposal=test-proposal, space=test.eth, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, safe_address=NOT_SET. Exception: Unexpected error
+Traceback (most recent call last):
+  File "/home/runner/work/quorum-ai/quorum-ai/backend/services/agent_run_service.py", line 834, in _create_immediate_attestation
+    attestation_result = await self.safe_service.create_eas_attestation(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 2262, in _execute_mock_call
+    raise effect
+Exception: Unexpected error
+[2025-12-10 03:37:53,068] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,068] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,068] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,069] [INFO] [agent] Completed execute_votes successfully in 0.036s
+[2025-12-10 03:37:53,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,072] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,072] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,073] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,073] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,073] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,073] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,073] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,073] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,074] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,074] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,074] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,074] [ERROR] [agent] Cannot create EAS attestation: EAS_CONTRACT_ADDRESS not configured. Set EAS_CONTRACT_ADDRESS environment variable to the EAS contract address on Base network (0x4200000000000000000000000000000000000021). proposal=test-proposal, space=test.eth
+[2025-12-10 03:37:53,074] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,074] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,074] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,074] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,076] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,076] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,076] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,078] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,078] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,078] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,078] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,078] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,078] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,078] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,078] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,078] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,078] [ERROR] [agent] EAS attestation failed due to RPC timeout. Check RPC_URL is responsive: http://localhost:8545. Try increasing timeout or switching RPC provider. proposal=test-proposal, error=Network timeout
+[2025-12-10 03:37:53,078] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,078] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,078] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,078] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,080] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,081] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,081] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,082] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,082] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,082] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,082] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,082] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,082] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,082] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,082] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,082] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,083] [ERROR] [agent] Cannot create EAS attestation: EAS_SCHEMA_UID not configured. Set EAS_SCHEMA_UID environment variable to your registered schema UID. Register schema at https://base.easscan.org/schema/create. proposal=test-proposal, space=test.eth
+[2025-12-10 03:37:53,083] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,083] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,083] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,083] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,083] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,083] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,083] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,083] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,083] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,083] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,084] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,084] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,084] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,084] [ERROR] [agent] EAS attestation failed: Safe has insufficient ETH for gas. Fund Safe address with ETH: UNKNOWN. Check balance at https://basescan.org/address/UNKNOWN. proposal=test-proposal, error=insufficient funds for gas
+[2025-12-10 03:37:53,084] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,084] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,084] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,084] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,084] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,084] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,084] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,084] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,084] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,085] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,085] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,085] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,085] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,085] [ERROR] [agent] EAS attestation failed due to nonce mismatch. This may indicate a pending transaction or concurrent execution. Check Safe Transaction Service for pending txs: https://safe-transaction-base.safe.global/api/v1/safes/UNKNOWN/multisig-transactions/. proposal=test-proposal, error=nonce too low
+[2025-12-10 03:37:53,085] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,085] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,085] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,085] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,085] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:37:53,085] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:37:53,085] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:37:53,085] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,085] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:37:53,086] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:37:53,086] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:37:53,086] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:37:53,086] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:37:53,086] [ERROR] [agent] EAS attestation failed due to RPC timeout. Check RPC_URL is responsive: http://localhost:8545. Try increasing timeout or switching RPC provider. proposal=test-proposal, error=timeout
+[2025-12-10 03:37:53,086] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:37:53,086] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:37:53,086] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:37:53,086] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:37:53,088] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,090] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,090] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:37:53,090] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:37:53,090] [INFO] [agent] Successfully saved state: agent_checkpoint_test.eth
+[2025-12-10 03:37:53,090] [INFO] [agent] Saved checkpoint state for space test.eth
+[2025-12-10 03:38:00,312] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:38:09,043] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:38:12,569] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:40:14,039] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:40:14,861] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:06,961] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:07,779] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:19,894] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,702] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,807] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,807] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,807] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,808] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,808] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,808] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,809] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,809] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,809] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,809] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,809] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,809] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,809] [INFO] [agent] Successfully created EAS attestation (proposal=test-proposal, safe_tx_hash=0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4)
+[2025-12-10 03:41:20,809] [INFO] [agent] Marked daily activity as completed (tx_hash=0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, proposal=test-proposal)
+[2025-12-10 03:41:20,809] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,809] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,809] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,809] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,812] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,812] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,813] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,813] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,813] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,813] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,813] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,814] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,814] [INFO] [agent] Vote service returned (proposal=test-proposal, success=False, result_keys=['success', 'error'])
+[2025-12-10 03:41:20,814] [ERROR] [agent] Vote submission FAILED (proposal=test-proposal, error=Snapshot API error, choice=1)
+[2025-12-10 03:41:20,814] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=False, vote_id=None, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,814] [INFO] [agent] Successfully created EAS attestation (proposal=test-proposal, safe_tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4)
+[2025-12-10 03:41:20,814] [INFO] [agent] Marked daily activity as completed (tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, proposal=test-proposal)
+[2025-12-10 03:41:20,814] [WARN] [agent] Vote 1/1 failed to execute (proposal_id=test-proposal)
+[2025-12-10 03:41:20,814] [INFO] [agent] Vote processing complete (total=1, successful=0)
+[2025-12-10 03:41:20,814] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=0)
+[2025-12-10 03:41:20,814] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,816] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,817] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,817] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,818] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=2, dry_run=False)
+[2025-12-10 03:41:20,818] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=2, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,818] [INFO] [agent] Normal mode - executing 2 votes
+[2025-12-10 03:41:20,818] [INFO] [agent] Processing vote 1/2 (proposal_id=proposal-1, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,819] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,819] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=proposal-1, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,819] [INFO] [agent] Vote service returned (proposal=proposal-1, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,819] [INFO] [agent] Vote submitted successfully (proposal=proposal-1, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,819] [INFO] [agent] Creating immediate EAS attestation (proposal=proposal-1, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,819] [ERROR] [agent] Failed to create EAS attestation (proposal=proposal-1, space=test.eth, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, rpc_url=http://localhost:8545, error=EAS contract not configured). Check configuration and network connectivity.
+[2025-12-10 03:41:20,819] [INFO] [agent] Vote 1/2 executed successfully (proposal_id=proposal-1)
+[2025-12-10 03:41:20,819] [INFO] [agent] Processing vote 2/2 (proposal_id=proposal-2, vote=VoteType.AGAINST, confidence=0.75)
+[2025-12-10 03:41:20,819] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,819] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=proposal-2, choice=2, vote_type=VoteType.AGAINST, confidence=0.75)
+[2025-12-10 03:41:20,820] [INFO] [agent] Vote service returned (proposal=proposal-2, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,820] [INFO] [agent] Vote submitted successfully (proposal=proposal-2, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=2)
+[2025-12-10 03:41:20,820] [INFO] [agent] Creating immediate EAS attestation (proposal=proposal-2, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,820] [ERROR] [agent] Failed to create EAS attestation (proposal=proposal-2, space=test.eth, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, rpc_url=http://localhost:8545, error=EAS contract not configured). Check configuration and network connectivity.
+[2025-12-10 03:41:20,820] [INFO] [agent] Vote 2/2 executed successfully (proposal_id=proposal-2)
+[2025-12-10 03:41:20,820] [INFO] [agent] Vote processing complete (total=2, successful=2)
+[2025-12-10 03:41:20,820] [INFO] [agent] Vote execution completed (total_decisions=2, successful_executions=2)
+[2025-12-10 03:41:20,820] [INFO] [agent] Completed execute_votes successfully in 0.002s
+[2025-12-10 03:41:20,822] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,822] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,822] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,823] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=True)
+[2025-12-10 03:41:20,823] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=True, dry_run_type=bool)
+[2025-12-10 03:41:20,823] [INFO] [agent] DRY RUN MODE - Simulating vote execution without actual submission. Skipping 1 vote submissions and attestations.
+[2025-12-10 03:41:20,823] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-12-10 03:41:20,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,825] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,825] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,826] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,826] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,826] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,826] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,826] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,827] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,827] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,827] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,827] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,827] [ERROR] [agent] Unexpected exception during immediate attestation. proposal=test-proposal, space=test.eth, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, safe_address=NOT_SET. Exception: Unexpected error
+Traceback (most recent call last):
+  File "/home/runner/work/quorum-ai/quorum-ai/backend/services/agent_run_service.py", line 834, in _create_immediate_attestation
+    attestation_result = await self.safe_service.create_eas_attestation(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 2262, in _execute_mock_call
+    raise effect
+Exception: Unexpected error
+[2025-12-10 03:41:20,828] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,828] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,828] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,828] [INFO] [agent] Completed execute_votes successfully in 0.002s
+[2025-12-10 03:41:20,830] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,830] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,830] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,831] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,831] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,831] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,831] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,832] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,832] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,832] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,832] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,832] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,832] [ERROR] [agent] Cannot create EAS attestation: EAS_CONTRACT_ADDRESS not configured. Set EAS_CONTRACT_ADDRESS environment variable to the EAS contract address on Base network (0x4200000000000000000000000000000000000021). proposal=test-proposal, space=test.eth
+[2025-12-10 03:41:20,832] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,832] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,832] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,832] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,834] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,834] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,835] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,836] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,836] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,836] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,836] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,836] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,836] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,836] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,836] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,836] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,836] [ERROR] [agent] EAS attestation failed due to RPC timeout. Check RPC_URL is responsive: http://localhost:8545. Try increasing timeout or switching RPC provider. proposal=test-proposal, error=Network timeout
+[2025-12-10 03:41:20,836] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,836] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,836] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,836] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,839] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,839] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,840] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,840] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,840] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,840] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,840] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,840] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,840] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,840] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,840] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,841] [ERROR] [agent] Cannot create EAS attestation: EAS_SCHEMA_UID not configured. Set EAS_SCHEMA_UID environment variable to your registered schema UID. Register schema at https://base.easscan.org/schema/create. proposal=test-proposal, space=test.eth
+[2025-12-10 03:41:20,841] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,841] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,841] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,841] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,842] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,842] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,842] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,842] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,842] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,842] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,843] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,843] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,843] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,843] [ERROR] [agent] EAS attestation failed: Safe has insufficient ETH for gas. Fund Safe address with ETH: UNKNOWN. Check balance at https://basescan.org/address/UNKNOWN. proposal=test-proposal, error=insufficient funds for gas
+[2025-12-10 03:41:20,843] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,843] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,843] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,843] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,843] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,843] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,843] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,843] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,843] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,844] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,844] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,844] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,844] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,844] [ERROR] [agent] EAS attestation failed due to nonce mismatch. This may indicate a pending transaction or concurrent execution. Check Safe Transaction Service for pending txs: https://safe-transaction-base.safe.global/api/v1/safes/UNKNOWN/multisig-transactions/. proposal=test-proposal, error=nonce too low
+[2025-12-10 03:41:20,844] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,844] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,844] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,844] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,844] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:41:20,844] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:41:20,844] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:41:20,844] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,845] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:41:20,845] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:41:20,845] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:41:20,845] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:41:20,845] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:41:20,845] [ERROR] [agent] EAS attestation failed due to RPC timeout. Check RPC_URL is responsive: http://localhost:8545. Try increasing timeout or switching RPC provider. proposal=test-proposal, error=timeout
+[2025-12-10 03:41:20,845] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:41:20,845] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:41:20,845] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:41:20,845] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:41:20,847] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:20,848] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:41:20,849] [INFO] [agent] Successfully saved state: agent_checkpoint_test.eth
+[2025-12-10 03:41:20,849] [INFO] [agent] Saved checkpoint state for space test.eth
+[2025-12-10 03:41:27,998] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:31,606] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:31,608] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:31,610] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:31,612] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:31,615] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:41:31,617] [ERROR] [agent] Error getting staking state for service 1: RPC Error
+[2025-12-10 03:42:11,764] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:12,546] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:12,688] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:31,250] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:39,863] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:40,605] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:46,778] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:47,602] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:42:47,736] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:43:22,048] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:43:22,836] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:43:23,001] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:44:10,442] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:44:18,549] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:44:19,308] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:44:57,892] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:44:58,738] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:44:58,898] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:33,876] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,720] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,832] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,833] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,833] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,834] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,835] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,835] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,835] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,835] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,835] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,835] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,835] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,835] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,835] [INFO] [agent] Successfully created EAS attestation (proposal=test-proposal, safe_tx_hash=0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4)
+[2025-12-10 03:45:34,836] [INFO] [agent] Marked daily activity as completed (tx_hash=0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, proposal=test-proposal)
+[2025-12-10 03:45:34,836] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,836] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,836] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,836] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,838] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,838] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,839] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,840] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,840] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,840] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,840] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,840] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,840] [INFO] [agent] Vote service returned (proposal=test-proposal, success=False, result_keys=['success', 'error'])
+[2025-12-10 03:45:34,840] [ERROR] [agent] Vote submission FAILED (proposal=test-proposal, error=Snapshot API error, choice=1)
+[2025-12-10 03:45:34,840] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=False, vote_id=None, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,840] [INFO] [agent] Successfully created EAS attestation (proposal=test-proposal, safe_tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4)
+[2025-12-10 03:45:34,840] [INFO] [agent] Marked daily activity as completed (tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, proposal=test-proposal)
+[2025-12-10 03:45:34,841] [WARN] [agent] Vote 1/1 failed to execute (proposal_id=test-proposal)
+[2025-12-10 03:45:34,841] [INFO] [agent] Vote processing complete (total=1, successful=0)
+[2025-12-10 03:45:34,841] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=0)
+[2025-12-10 03:45:34,841] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,843] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,844] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,844] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,845] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=2, dry_run=False)
+[2025-12-10 03:45:34,845] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=2, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,845] [INFO] [agent] Normal mode - executing 2 votes
+[2025-12-10 03:45:34,845] [INFO] [agent] Processing vote 1/2 (proposal_id=proposal-1, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,845] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,845] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=proposal-1, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,845] [INFO] [agent] Vote service returned (proposal=proposal-1, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,845] [INFO] [agent] Vote submitted successfully (proposal=proposal-1, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,845] [INFO] [agent] Creating immediate EAS attestation (proposal=proposal-1, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,846] [ERROR] [agent] Failed to create EAS attestation (proposal=proposal-1, space=test.eth, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, rpc_url=http://localhost:8545, error=EAS contract not configured). Check configuration and network connectivity.
+[2025-12-10 03:45:34,846] [INFO] [agent] Vote 1/2 executed successfully (proposal_id=proposal-1)
+[2025-12-10 03:45:34,846] [INFO] [agent] Processing vote 2/2 (proposal_id=proposal-2, vote=VoteType.AGAINST, confidence=0.75)
+[2025-12-10 03:45:34,846] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,846] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=proposal-2, choice=2, vote_type=VoteType.AGAINST, confidence=0.75)
+[2025-12-10 03:45:34,846] [INFO] [agent] Vote service returned (proposal=proposal-2, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,846] [INFO] [agent] Vote submitted successfully (proposal=proposal-2, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=2)
+[2025-12-10 03:45:34,846] [INFO] [agent] Creating immediate EAS attestation (proposal=proposal-2, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,846] [ERROR] [agent] Failed to create EAS attestation (proposal=proposal-2, space=test.eth, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, rpc_url=http://localhost:8545, error=EAS contract not configured). Check configuration and network connectivity.
+[2025-12-10 03:45:34,846] [INFO] [agent] Vote 2/2 executed successfully (proposal_id=proposal-2)
+[2025-12-10 03:45:34,846] [INFO] [agent] Vote processing complete (total=2, successful=2)
+[2025-12-10 03:45:34,846] [INFO] [agent] Vote execution completed (total_decisions=2, successful_executions=2)
+[2025-12-10 03:45:34,846] [INFO] [agent] Completed execute_votes successfully in 0.002s
+[2025-12-10 03:45:34,848] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,849] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,849] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,850] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=True)
+[2025-12-10 03:45:34,850] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=True, dry_run_type=bool)
+[2025-12-10 03:45:34,850] [INFO] [agent] DRY RUN MODE - Simulating vote execution without actual submission. Skipping 1 vote submissions and attestations.
+[2025-12-10 03:45:34,850] [INFO] [agent] Completed execute_votes successfully in 0.000s
+[2025-12-10 03:45:34,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,852] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,853] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,853] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,854] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,854] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,854] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,854] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,854] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,854] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,854] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,854] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,854] [ERROR] [agent] Unexpected exception during immediate attestation. proposal=test-proposal, space=test.eth, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, eas_contract=NOT_SET, schema_uid=0xc93c2cd5d2027a300cc7ca3d22b36b5581353f6dabab6e14eb41daf76d5b0eb4, safe_address=NOT_SET. Exception: Unexpected error
+Traceback (most recent call last):
+  File "/home/runner/work/quorum-ai/quorum-ai/backend/services/agent_run_service.py", line 834, in _create_immediate_attestation
+    attestation_result = await self.safe_service.create_eas_attestation(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/mock.py", line 2262, in _execute_mock_call
+    raise effect
+Exception: Unexpected error
+[2025-12-10 03:45:34,855] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,855] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,855] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,855] [INFO] [agent] Completed execute_votes successfully in 0.002s
+[2025-12-10 03:45:34,858] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,858] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,858] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,859] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,859] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,859] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,859] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,859] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,859] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,860] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,860] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,860] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,860] [ERROR] [agent] Cannot create EAS attestation: EAS_CONTRACT_ADDRESS not configured. Set EAS_CONTRACT_ADDRESS environment variable to the EAS contract address on Base network (0x4200000000000000000000000000000000000021). proposal=test-proposal, space=test.eth
+[2025-12-10 03:45:34,860] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,860] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,860] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,860] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,862] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,862] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,862] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,863] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,864] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,864] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,864] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,864] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,864] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,864] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,864] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,864] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,864] [ERROR] [agent] EAS attestation failed due to RPC timeout. Check RPC_URL is responsive: http://localhost:8545. Try increasing timeout or switching RPC provider. proposal=test-proposal, error=Network timeout
+[2025-12-10 03:45:34,864] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,864] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,864] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,864] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,867] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,867] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,869] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,869] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,869] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,869] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,869] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,869] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,870] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,870] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,870] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,870] [ERROR] [agent] Cannot create EAS attestation: EAS_SCHEMA_UID not configured. Set EAS_SCHEMA_UID environment variable to your registered schema UID. Register schema at https://base.easscan.org/schema/create. proposal=test-proposal, space=test.eth
+[2025-12-10 03:45:34,870] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,870] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,870] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,870] [INFO] [agent] Completed execute_votes successfully in 0.002s
+[2025-12-10 03:45:34,870] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,870] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,870] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,870] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,870] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,871] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,871] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,871] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,871] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,871] [ERROR] [agent] EAS attestation failed: Safe has insufficient ETH for gas. Fund Safe address with ETH: UNKNOWN. Check balance at https://basescan.org/address/UNKNOWN. proposal=test-proposal, error=insufficient funds for gas
+[2025-12-10 03:45:34,871] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,871] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,871] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,871] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,871] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,872] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,872] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,872] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,872] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,872] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,872] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,872] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,872] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,872] [ERROR] [agent] EAS attestation failed due to nonce mismatch. This may indicate a pending transaction or concurrent execution. Check Safe Transaction Service for pending txs: https://safe-transaction-base.safe.global/api/v1/safes/UNKNOWN/multisig-transactions/. proposal=test-proposal, error=nonce too low
+[2025-12-10 03:45:34,872] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,872] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,872] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,872] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,873] [INFO] [agent] Starting execute_votes (space_id=test.eth, decision_count=1, dry_run=False)
+[2025-12-10 03:45:34,873] [INFO] [agent] Executing votes (space_id=test.eth, decision_count=1, dry_run=False, dry_run_type=bool)
+[2025-12-10 03:45:34,873] [INFO] [agent] Normal mode - executing 1 votes
+[2025-12-10 03:45:34,873] [INFO] [agent] Processing vote 1/1 (proposal_id=test-proposal, vote=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,873] [INFO] [agent] State transition: submitting_vote -> submitting_vote
+[2025-12-10 03:45:34,873] [INFO] [agent] Attempting vote submission (space=test.eth, proposal=test-proposal, choice=1, vote_type=VoteType.FOR, confidence=0.85)
+[2025-12-10 03:45:34,873] [INFO] [agent] Vote service returned (proposal=test-proposal, success=True, result_keys=['success', 'submission_result'])
+[2025-12-10 03:45:34,874] [INFO] [agent] Vote submitted successfully (proposal=test-proposal, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, choice=1)
+[2025-12-10 03:45:34,874] [INFO] [agent] Creating immediate EAS attestation (proposal=test-proposal, vote_succeeded=True, vote_id=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, agent=0xTestAgent, space=test.eth)
+[2025-12-10 03:45:34,874] [ERROR] [agent] EAS attestation failed due to RPC timeout. Check RPC_URL is responsive: http://localhost:8545. Try increasing timeout or switching RPC provider. proposal=test-proposal, error=timeout
+[2025-12-10 03:45:34,874] [INFO] [agent] Vote 1/1 executed successfully (proposal_id=test-proposal)
+[2025-12-10 03:45:34,874] [INFO] [agent] Vote processing complete (total=1, successful=1)
+[2025-12-10 03:45:34,874] [INFO] [agent] Vote execution completed (total_decisions=1, successful_executions=1)
+[2025-12-10 03:45:34,874] [INFO] [agent] Completed execute_votes successfully in 0.001s
+[2025-12-10 03:45:34,875] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,877] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,877] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:34,877] [INFO] [agent] AgentRunService initialized with all dependencies
+[2025-12-10 03:45:34,877] [INFO] [agent] Successfully saved state: agent_checkpoint_test.eth
+[2025-12-10 03:45:34,877] [INFO] [agent] Saved checkpoint state for space test.eth
+[2025-12-10 03:45:42,170] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:42,793] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:42,795] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:42,797] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:42,799] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:42,802] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:42,803] [ERROR] [agent] Error getting staking state for service 1: RPC Error
+[2025-12-10 03:45:52,310] [INFO] [agent] Pearl logger initialized successfully
+[2025-12-10 03:45:53,153] [INFO] [agent] Pearl logger initialized successfully
