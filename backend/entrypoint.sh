@@ -57,7 +57,12 @@ if [ -f "/app/scripts/checkpoint.py" ] || [ -f "/app/scripts/trigger_agent_run.p
         # Write next checkpoint timestamp to file for API
         echo "$NEXT_CHECKPOINT_TIMESTAMP" > /app/next_checkpoint_time.txt
 
-        echo "$FUTURE_MINUTE $FUTURE_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/checkpoint.py >> /app/logs/checkpoint.log 2>&1" >> "$CRON_FILE"
+        # Add password to checkpoint script if KEY_PASSWORD is set
+        if [ -n "$KEY_PASSWORD" ]; then
+            echo "$FUTURE_MINUTE $FUTURE_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/checkpoint.py --password \"\$KEY_PASSWORD\" >> /app/logs/checkpoint.log 2>&1" >> "$CRON_FILE"
+        else
+            echo "$FUTURE_MINUTE $FUTURE_HOUR * * * cd /app && timeout 300 uv run --quiet --script scripts/checkpoint.py >> /app/logs/checkpoint.log 2>&1" >> "$CRON_FILE"
+        fi
         
         FIRST_RUN=$(date -d "+24 hours" '+%Y-%m-%d %H:%M:%S %Z')
         echo "Checkpoint schedule: Daily at ${FUTURE_HOUR}:${FUTURE_MINUTE} UTC"
@@ -100,7 +105,12 @@ echo "Starting Quorum AI application..."
 echo "Environment: $(printenv | grep -E '^(DEBUG|HOST|HEALTH_CHECK_PORT)=' || echo 'No relevant env vars set')"
 
 # Start the main application in the background
-uv run --no-sync python -O main.py &
+# Build command with optional password
+if [ -n "$KEY_PASSWORD" ]; then
+    uv run --no-sync python -O main.py --password "$KEY_PASSWORD" &
+else
+    uv run --no-sync python -O main.py &
+fi
 MAIN_PID=$!
 
 echo "Application started with PID: $MAIN_PID"
