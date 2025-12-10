@@ -1,0 +1,24 @@
+# .github/workflows/claude-implement.yml
+name: Claude Implement Issue
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to implement'
+        required: true
+        type: number
+
+jobs:
+  implement:
+    if: github.event.label.name == 'claude-implement' || github.event_name == 'workflow_dispatch'
+    uses: mkrueger12/claude-parallel/.github/workflows/reusable-implement-issue.yml@main
+    with:
+      issue_number: ${{ github.event.inputs.issue_number }}
+      event_name: ${{ github.event_name }}
+      event_issue_number: ${{ github.event.issue.number }}
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      GH_PAT: ${{ secrets.GH_PAT }}
