@@ -39,9 +39,16 @@ class VotingService:
         """
         # Initialize KeyManager
         from services.key_manager import KeyManager
-        from main import get_key_password
 
-        self.key_manager = key_manager or KeyManager(password=get_key_password())
+        # Get password for V3 keystore decryption if available
+        try:
+            from main import get_key_password
+            password = get_key_password()
+        except Exception:
+            # Import may fail in tests or when main module not fully initialized
+            password = None
+
+        self.key_manager = key_manager or KeyManager(password=password)
 
         # Initialize account lazily
         self._account = None
