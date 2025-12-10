@@ -9,7 +9,7 @@ on:
       issue_number:
         description: 'Issue number to implement'
         required: true
-        type: number
+        type: string
 
 jobs:
   implement:
