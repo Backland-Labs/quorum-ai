@@ -49,27 +49,25 @@ class KeyManager:
             password: Optional password for decrypting V3 Keystore encrypted keys.
 
         Raises:
-            KeyManagerError: If key file doesn't exist or has insecure permissions.
+            KeyManagerError: If key file doesn't exist.
         """
         # Get key directory from environment or use default
-        key_dir_env = os.environ.get("AGENT_KEY_DIR")
-        if key_dir_env:
-            self.working_directory = Path(key_dir_env)
-        else:
-            # Use /agent_key as default (Docker-friendly)
-            self.working_directory = Path("/agent_key")
-        self.key_file_path = self.working_directory / KEY_FILE_NAME
+        key_dir = os.environ.get("AGENT_KEY_DIR", "/agent_key")
+        self.key_file_path = Path(key_dir) / KEY_FILE_NAME
         self._cached_key: Optional[str] = None
         self._cache_timestamp: Optional[datetime] = None
         self._password = password
 
-        # Validate key file setup during initialization
-        self._validate_key_file_setup()
+        # Ensure key file exists early
+        if not self.key_file_path.exists():
+            raise KeyManagerError(
+                "Key file not found. Ensure the key file exists in the working directory."
+            )
 
         logger.info(
             "KeyManager initialized",
             extra={
-                "working_directory": str(self.working_directory),
+                "key_file": str(self.key_file_path),
                 "password_provided": password is not None,
             },
         )
@@ -105,17 +103,6 @@ class KeyManager:
         self._cache_timestamp = None
         logger.info("Private key cache cleared")
 
-    def _validate_key_file_setup(self) -> None:
-        """Validate that the key file exists and has secure permissions.
-
-        This method is called during initialization to provide early feedback
-        about key file configuration issues.
-
-        Raises:
-            KeyManagerError: If file doesn't exist or has insecure permissions.
-        """
-        self._ensure_file_exists()
-        logger.info("Key file setup validated successfully")
 
     def _is_cache_valid(self) -> bool:
         """Check if the cached key is still valid.
@@ -132,31 +119,37 @@ class KeyManager:
         return cache_age < max_age
 
     def _read_key_file(self) -> str:
-        """Read the private key from file with security checks.
+        """Read and process the private key from file.
 
         Returns:
-            The raw key content.
+            The processed private key (decrypted if V3 keystore).
 
         Raises:
-            KeyManagerError: If file doesn't exist or has insecure permissions.
+            KeyManagerError: If file cannot be read or is invalid.
         """
-        # Validate file exists
-        self._ensure_file_exists()
+        try:
+            content = self.key_file_path.read_text().strip()
+            logger.debug("Key file read successfully")
 
-        # Read the key
-        return self._read_file_content()
+            # Handle V3 keystore format
+            if self._is_v3_keystore(content):
+                logger.info("Detected V3 Keystore format")
+                if not self._password:
+                    raise KeyManagerError(
+                        "V3 Keystore encrypted key file detected but no password provided. "
+                        "Please provide password via --password argument or KEY_PASSWORD environment variable."
+                    )
+                return self._decrypt_v3_keystore(content)
 
-    def _ensure_file_exists(self) -> None:
-        """Ensure the key file exists.
+            # Return plaintext content
+            return content
+            
+        except KeyManagerError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to read key file: {type(e).__name__}")
+            raise KeyManagerError("Failed to read key file. Check file accessibility.")
 
-        Raises:
-            KeyManagerError: If file doesn't exist.
-        """
-        if not self.key_file_path.exists():
-            logger.error("Key file not found")
-            raise KeyManagerError(
-                "Key file not found. Ensure the key file exists in the working directory."
-            )
 
     def _is_v3_keystore(self, content: str) -> bool:
         """Check if the content is a V3 Keystore JSON format.
@@ -202,44 +195,6 @@ class KeyManager:
             raise KeyManagerError(
                 f"Failed to decrypt V3 keystore: {type(e).__name__}"
             ) from e
-
-    def _read_file_content(self) -> str:
-        """Read and return the file content.
-
-        If the content is a V3 Keystore JSON, it will be decrypted using the
-        provided password. Otherwise, the plaintext content is returned.
-
-        Returns:
-            The private key (decrypted if V3 keystore, plaintext otherwise).
-
-        Raises:
-            KeyManagerError: If file cannot be read or V3 keystore requires password.
-        """
-        try:
-            key_content = self.key_file_path.read_text().strip()
-            logger.debug("Key file read successfully")
-
-            # Check if content is V3 keystore format
-            if self._is_v3_keystore(key_content):
-                logger.info("Detected V3 Keystore format")
-                if not self._password:
-                    logger.error("V3 keystore detected but no password provided")
-                    raise KeyManagerError(
-                        "V3 Keystore encrypted key file detected but no password provided. "
-                        "Please provide password via --password argument or KEY_PASSWORD environment variable."
-                    )
-                # Decrypt V3 keystore
-                return self._decrypt_v3_keystore(key_content)
-
-            # Return plaintext content
-            return key_content
-        except KeyManagerError:
-            # Re-raise KeyManagerError as-is
-            raise
-        except Exception as e:
-            logger.error(f"Failed to read key file: {type(e).__name__}")
-            raise KeyManagerError("Failed to read key file. Check file accessibility.")
-
 
     def _validate_key_format(self, key: str) -> str:
         """Validate and normalize the private key format.

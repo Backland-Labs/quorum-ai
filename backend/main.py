@@ -76,8 +76,27 @@ _key_password: Optional[str] = None
 
 
 def get_key_password() -> Optional[str]:
-    """Get the key password for encrypted keystore files."""
+    """Get the key password for encrypted keystore files.
+    
+    Returns password from CLI args or environment variable.
+    Safe to call from any context including tests.
+    """
     return _key_password
+
+
+def create_key_manager():
+    """Create a KeyManager instance with appropriate password.
+    
+    This is a helper function that services can use to simplify
+    KeyManager initialization with proper error handling.
+    """
+    try:
+        from services.key_manager import KeyManager
+        return KeyManager(password=get_key_password())
+    except ImportError:
+        # In case of import issues during tests
+        from services.key_manager import KeyManager
+        return KeyManager(password=None)
 
 
 @asynccontextmanager
